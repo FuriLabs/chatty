@@ -23,6 +23,7 @@
 #include "chatty-manager.h"
 #include "chatty-list-row.h"
 #include "chatty-settings.h"
+#include "chatty-mm-chat.h"
 #include "chatty-pp-chat.h"
 #include "chatty-chat-view.h"
 #include "chatty-manager.h"
@@ -275,6 +276,10 @@ chatty_window_open_item (ChattyWindow *self,
 
     gtk_filter_changed (self->chat_filter, GTK_FILTER_CHANGE_DIFFERENT);
     window_chat_changed_cb (self);
+  }
+
+  if (CHATTY_IS_MM_CHAT (item)) {
+    chatty_window_open_chat (CHATTY_WINDOW (self), CHATTY_CHAT (item));
   }
 }
 
