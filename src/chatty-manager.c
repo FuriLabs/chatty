@@ -28,12 +28,14 @@
 #include "chatty-application.h"
 #include "chatty-window.h"
 #include "chatty-chat-view.h"
+#include "users/chatty-mm-account.h"
 #include "users/chatty-pp-account.h"
 #include "matrix/chatty-ma-account.h"
 #include "matrix/chatty-ma-chat.h"
 #include "matrix/matrix-db.h"
 #include "chatty-secret-store.h"
 #include "chatty-chat.h"
+#include "chatty-mm-chat.h"
 #include "chatty-pp-chat.h"
 #include "chatty-notification.h"
 #include "chatty-purple-request.h"
@@ -76,6 +78,8 @@ struct _ChattyManager
   PurplePlugin    *file_upload_plugin;
 
   MatrixDb        *matrix_db;
+  /* We have exactly one MM account */
+  ChattyMmAccount *mm_account;
 
   gboolean         disable_auto_login;
   gboolean         network_available;
@@ -205,6 +209,15 @@ manager_load_messages_cb (GObject      *object,
   }
 }
 
+static gboolean
+manager_mm_set_eds (gpointer user_data)
+{
+  g_autoptr(ChattyManager) self = user_data;
+
+  chatty_mm_account_set_eds (self->mm_account, self->chatty_eds);
+
+  return G_SOURCE_REMOVE;
+}
 
 static void
 manager_eds_is_ready (ChattyManager *self)
@@ -246,6 +259,9 @@ manager_eds_is_ready (ChattyManager *self)
       chatty_pp_buddy_set_contact (buddy, contact);
     }
   }
+
+  /* Set eds after some timeout so that most contacts are loaded */
+  g_timeout_add (200, manager_mm_set_eds, g_object_ref (self));
 }
 
 typedef struct _PurpleGLibIOClosure
@@ -339,8 +355,6 @@ PurpleEventLoopUiOps eventloop_ui_ops =
 static void
 chatty_purple_quit (void)
 {
-  chatty_chat_view_purple_uninit ();
-
   purple_conversations_set_ui_ops (NULL);
   purple_connections_set_ui_ops (NULL);
   purple_blist_set_ui_ops (NULL);
@@ -356,7 +370,6 @@ chatty_purple_quit (void)
 static void
 chatty_purple_ui_init (void)
 {
-  chatty_chat_view_purple_init ();
   chatty_manager_purple_init (chatty_manager_get_default ());
 }
 
@@ -976,18 +989,6 @@ manager_message_carbons_changed (ChattyManager  *self,
     chatty_manager_unload_plugin (self->carbon_plugin);
 }
 
-static void
-chatty_manager_enable_sms_account (ChattyManager *self)
-{
-  g_autoptr(ChattyPpAccount) account = NULL;
-
-  if (purple_accounts_find ("SMS", "prpl-mm-sms"))
-    return;
-
-  account = chatty_pp_account_new (CHATTY_PROTOCOL_SMS, "SMS", NULL, FALSE);
-  chatty_account_save (CHATTY_ACCOUNT (account));
-}
-
 static ChattyPpBuddy *
 manager_find_buddy (GListModel  *model,
                     PurpleBuddy *pp_buddy)
@@ -1024,6 +1025,9 @@ manager_buddy_added_cb (PurpleBuddy   *pp_buddy,
   g_assert (CHATTY_IS_MANAGER (self));
 
   pp_account = purple_buddy_get_account (pp_buddy);
+  if (g_strcmp0 (purple_account_get_protocol_id (pp_account), "prpl-mm-sms") == 0)
+    return;
+
   account = chatty_pp_account_get_object (pp_account);
   g_return_if_fail (account);
 
@@ -1145,6 +1149,9 @@ manager_account_added_cb (PurpleAccount *pp_account,
     return;
   }
 
+  if (g_strcmp0 (protocol_id, "prpl-mm-sms") == 0)
+    purple_account_set_enabled (pp_account, purple_core_get_ui (), FALSE);
+
   account = chatty_pp_account_get_object (pp_account);
 
   if (account)
@@ -1160,9 +1167,6 @@ manager_account_added_cb (PurpleAccount *pp_account,
 
   if (self->disable_auto_login)
     chatty_account_set_enabled (CHATTY_ACCOUNT (account), FALSE);
-
-  if (chatty_item_is_sms (CHATTY_ITEM (account)))
-    chatty_account_set_enabled (CHATTY_ACCOUNT (account), TRUE);
 }
 
 static void
@@ -1448,60 +1452,12 @@ manager_find_chat (GListModel *model,
 
     chat = g_list_model_get_item (model, i);
 
-    if (chatty_pp_chat_get_purple_chat (CHATTY_PP_CHAT (chat)) == pp_chat)
+    if (CHATTY_IS_PP_CHAT (chat) &&
+        chatty_pp_chat_get_purple_chat (CHATTY_PP_CHAT (chat)) == pp_chat)
       return chat;
   }
 
   return NULL;
-}
-
-static void
-manager_sms_modem_added_cb (gint status)
-{
-  ChattyPpAccount *account;
-  PurpleAccount   *pp_account;
-
-  pp_account = purple_accounts_find ("SMS", "prpl-mm-sms");
-  account = chatty_pp_account_get_object (pp_account);
-  g_return_if_fail (CHATTY_IS_PP_ACCOUNT (account));
-
-  chatty_account_connect (CHATTY_ACCOUNT (account), TRUE);
-}
-
-
-/* XXX: works only with one modem */
-static void
-manager_sms_state_changed_cb (int            state,
-                              ChattyManager *self)
-{
-  ChattyProtocol old_protocols;
-
-  g_assert (CHATTY_IS_MANAGER (self));
-
-  old_protocols = self->active_protocols;
-
-  if (state == PUR_MM_STATE_READY) {
-    self->has_modem = TRUE;
-    self->active_protocols |= CHATTY_PROTOCOL_SMS;
-  } else if (state != PUR_MM_STATE_MANAGER_FOUND && state != PUR_MM_STATE_MODEM_FOUND) {
-    self->has_modem = FALSE;
-    self->active_protocols &= ~CHATTY_PROTOCOL_SMS;
-  }
-
-  if (old_protocols != self->active_protocols)
-    g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ACTIVE_PROTOCOLS]);
-}
-
-static void
-manager_sms_get_country_cb (const char    *country_code,
-                            ChattyManager *self)
-{
-  ChattySettings *settings;
-
-  g_assert (CHATTY_IS_MANAGER (self));
-
-  settings = chatty_settings_get_default ();
-  chatty_settings_set_country_iso_code (settings, country_code);
 }
 
 static void
@@ -1698,18 +1654,6 @@ chatty_manager_initialize_libpurple (ChattyManager *self)
                          "signed-off", self,
                          PURPLE_CALLBACK (manager_connection_signed_off_cb), self);
 
-  purple_signal_connect (purple_plugins_get_handle (),
-                         "mm-sms-modem-added", self,
-                         PURPLE_CALLBACK (manager_sms_modem_added_cb), NULL);
-
-  purple_signal_connect (purple_plugins_get_handle (),
-                         "mm-sms-state", self,
-                         PURPLE_CALLBACK (manager_sms_state_changed_cb), self);
-
-  purple_signal_connect (purple_plugins_get_handle (),
-                         "mm-sms-country-code", self,
-                         PURPLE_CALLBACK (manager_sms_get_country_cb), self);
-
   g_signal_connect_object (network_monitor, "network-changed",
                            G_CALLBACK (manager_network_changed_cb), self,
                            G_CONNECT_AFTER);
@@ -1885,6 +1829,14 @@ chatty_manager_class_init (ChattyManagerClass *klass)
 }
 
 static void
+manager_mm_account_changed_cb (ChattyManager *self)
+{
+  g_assert (CHATTY_IS_MANAGER (self));
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ACTIVE_PROTOCOLS]);
+}
+
+static void
 chatty_manager_init (ChattyManager *self)
 {
   g_autoptr(GtkFlattenListModel) flatten_list = NULL;
@@ -1893,6 +1845,11 @@ chatty_manager_init (ChattyManager *self)
 
   self->chatty_eds = chatty_eds_new (CHATTY_PROTOCOL_SMS);
   self->account_list = g_list_store_new (CHATTY_TYPE_ACCOUNT);
+  self->mm_account = chatty_mm_account_new ();
+
+  g_signal_connect_object (self->mm_account, "notify::status",
+                           G_CALLBACK (manager_mm_account_changed_cb), self,
+                           G_CONNECT_SWAPPED);
 
   self->chat_list = g_list_store_new (CHATTY_TYPE_CHAT);
   self->list_of_chat_list = g_list_store_new (G_TYPE_LIST_MODEL);
@@ -2054,6 +2011,20 @@ matrix_db_open_cb (GObject      *object,
     g_warning ("Failed to open Matrix DB: %s", error->message);
 }
 
+static void
+manager_mm_account_load_cb (GObject      *object,
+                            GAsyncResult *result,
+                            gpointer      user_data)
+{
+  g_autoptr(ChattyManager) self = user_data;
+  GListModel *chat_list;
+
+  g_assert (CHATTY_IS_MANAGER (self));
+
+  chat_list = chatty_mm_account_get_chat_list (self->mm_account);
+  g_list_store_append (self->list_of_chat_list, chat_list);
+}
+
 void
 chatty_manager_purple (ChattyManager *self)
 {
@@ -2070,6 +2041,12 @@ chatty_manager_purple (ChattyManager *self)
 
   search_path = g_build_filename (purple_user_dir (), "plugins", NULL);
   purple_plugins_add_search_path (search_path);
+
+  chatty_mm_account_set_history_db (self->mm_account,
+                                    chatty_manager_get_history (self));
+  chatty_mm_account_load_async (self->mm_account,
+                                manager_mm_account_load_cb,
+                                g_object_ref (self));
 
   if (chatty_settings_get_experimental_features (chatty_settings_get_default ())) {
     self->matrix_db = matrix_db_new ();
@@ -2174,7 +2151,6 @@ chatty_manager_load_plugins (ChattyManager *self)
   purple_plugins_load_saved (CHATTY_PREFS_ROOT "/plugins/loaded");
   purple_plugins_probe (G_MODULE_SUFFIX);
 
-  self->sms_plugin = purple_plugins_find_with_id ("prpl-mm-sms");
   self->lurch_plugin = purple_plugins_find_with_id ("core-riba-lurch");
   self->carbon_plugin = purple_plugins_find_with_id ("core-riba-carbons");
   self->file_upload_plugin = purple_plugins_find_with_id ("xep-http-file-upload");
@@ -2191,8 +2167,7 @@ chatty_manager_load_plugins (ChattyManager *self)
   if (chatty_settings_get_experimental_features (chatty_settings_get_default ()))
     chatty_manager_unload_plugin (purple_plugins_find_with_id ("prpl-matrix"));
 
-  if (chatty_manager_load_plugin (self->sms_plugin))
-    chatty_manager_enable_sms_account (self);
+  chatty_manager_unload_plugin (purple_plugins_find_with_id ("prpl-mm-sms"));
 
   settings = chatty_settings_get_default ();
   g_signal_connect_object (settings, "notify::message-carbons",
@@ -2278,9 +2253,16 @@ chatty_manager_lurch_plugin_is_loaded (ChattyManager *self)
 ChattyProtocol
 chatty_manager_get_active_protocols (ChattyManager *self)
 {
+  ChattyProtocol protocols;
+
   g_return_val_if_fail (CHATTY_IS_MANAGER (self), CHATTY_PROTOCOL_NONE);
 
-  return self->active_protocols;
+  protocols = self->active_protocols;
+
+  if (chatty_account_get_status (CHATTY_ACCOUNT (self->mm_account)) == CHATTY_CONNECTED)
+    protocols = protocols | CHATTY_PROTOCOL_SMS;
+
+  return protocols;
 }
 
 
@@ -2376,7 +2358,8 @@ chatty_manager_find_chat (GListModel *model,
 
     chat = g_list_model_get_item (model, i);
 
-    if (chatty_pp_chat_are_same (CHATTY_PP_CHAT (chat), CHATTY_PP_CHAT (item)))
+    if (CHATTY_IS_PP_CHAT (chat) &&
+        chatty_pp_chat_are_same (CHATTY_PP_CHAT (chat), CHATTY_PP_CHAT (item)))
       return chat;
   }
 
@@ -2535,6 +2518,14 @@ chatty_manager_save_account_finish (ChattyManager  *self,
   return g_task_propagate_boolean (G_TASK (result), error);
 }
 
+ChattyAccount *
+chatty_manager_get_mm_account (ChattyManager *self)
+{
+  g_return_val_if_fail (CHATTY_IS_MANAGER (self), NULL);
+
+  return CHATTY_ACCOUNT (self->mm_account);
+}
+
 ChattyChat *
 chatty_manager_find_chat_with_name (ChattyManager *self,
                                     const char    *account_id,
@@ -2627,22 +2618,14 @@ chatty_manager_set_uri (ChattyManager *self,
 {
   g_autoptr(ChattyChat) chat = NULL;
   g_autofree char *who = NULL;
-  ChattyContact *contact;
-  PurpleAccount *pp_account;
-  ChattyPpBuddy *buddy;
   ChattyAccount *account;
-  PurpleBuddy *pp_buddy;
-  ChattyChat *item;
-  GPtrArray *buddies;
-  const char *alias, *country_code;
+  const char *country_code;
 
   if (!uri || !*uri)
     return FALSE;
 
-  pp_account = purple_accounts_find ("SMS", "prpl-mm-sms");
-  account = (ChattyAccount *)chatty_pp_account_get_object (pp_account);
-
-  if (!purple_account_is_connected (pp_account))
+  account = chatty_manager_get_mm_account (self);
+  if (chatty_account_get_status (account) != CHATTY_CONNECTED)
     return FALSE;
 
   country_code = chatty_settings_get_country_iso_code (chatty_settings_get_default ());
@@ -2650,35 +2633,8 @@ chatty_manager_set_uri (ChattyManager *self,
   if (!who)
     return FALSE;
 
-  contact = chatty_eds_find_by_number (self->chatty_eds, who);
-
-  if (contact)
-    alias = chatty_item_get_name (CHATTY_ITEM (contact));
-  else
-    alias = who;
-
-  pp_buddy = purple_find_buddy (pp_account, who);
-
-  if (!pp_buddy) {
-    pp_buddy = purple_buddy_new (pp_account, who, alias);
-
-    purple_blist_add_buddy (pp_buddy, NULL, NULL, NULL);
-  }
-
-  buddy = chatty_pp_buddy_get_object (pp_buddy);
-
-  if (buddy && contact)
-    chatty_pp_buddy_set_contact (buddy, contact);
-
-  chat = (ChattyChat *)chatty_pp_chat_new_im_chat (pp_account, pp_buddy, FALSE);
-  item = chatty_manager_add_chat (self, chat);
-
-  purple_blist_node_set_bool (PURPLE_BLIST_NODE(pp_buddy), "chatty-autojoin", TRUE);
-
-  buddies = g_ptr_array_new_full (1, g_free);
-  g_ptr_array_add (buddies, g_strdup (who));
-  chatty_account_start_direct_chat_async (account, buddies, NULL, NULL);
-  g_signal_emit_by_name (item, "changed");
+  chat = chatty_mm_account_start_chat (CHATTY_MM_ACCOUNT (account), who);
+  g_signal_emit (self, signals[OPEN_CHAT], 0, chat);
 
   return TRUE;
 }
