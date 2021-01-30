@@ -190,6 +190,10 @@ window_chat_name_matches (ChattyItem   *item,
   protocols = chatty_manager_get_active_protocols (self->manager);
   protocol = chatty_item_get_protocols (item);
 
+  if (chatty_item_get_protocols (item) == CHATTY_PROTOCOL_SMS &&
+      (!self->chat_needle || !*self->chat_needle))
+    return TRUE;
+
   if (protocol != CHATTY_PROTOCOL_MATRIX &&
       !(protocols & chatty_item_get_protocols (item)))
     return FALSE;
