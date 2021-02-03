@@ -1067,19 +1067,19 @@ ma_account_get_value (const char *str,
 }
 
 ChattyMaAccount *
-chatty_ma_account_new_secret (gpointer secret_item)
+chatty_ma_account_new_secret (gpointer secret_retrievable)
 {
   ChattyMaAccount *self = NULL;
   g_autoptr(GHashTable) attributes = NULL;
-  SecretItem *item = secret_item;
+  SecretRetrievable *item = secret_retrievable;
   g_autoptr(SecretValue) value = NULL;
   const char *username, *homeserver, *credentials = NULL;
   char *password, *token, *device_id;
   char *password_str, *token_str = NULL;
 
-  g_return_val_if_fail (SECRET_IS_ITEM (item), NULL);
+  g_return_val_if_fail (SECRET_IS_RETRIEVABLE (item), NULL);
 
-  value = secret_item_get_secret (item);
+  value = secret_retrievable_retrieve_secret_sync (item, NULL, NULL);
 
   if (value)
     credentials = secret_value_get_text (value);
@@ -1087,7 +1087,7 @@ chatty_ma_account_new_secret (gpointer secret_item)
   if (!credentials)
     return NULL;
 
-  attributes = secret_item_get_attributes (item);
+  attributes = secret_retrievable_get_attributes (item);
   username = g_hash_table_lookup (attributes, CHATTY_USERNAME_ATTRIBUTE);
   homeserver = g_hash_table_lookup (attributes, CHATTY_SERVER_ATTRIBUTE);
 
