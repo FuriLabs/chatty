@@ -1,4 +1,4 @@
-chatty (0.3.0~beta2-1) UNRELEASED; urgency=medium
+chatty (0.3.0~beta2-1) experimental; urgency=medium
 
   [ Henry-Nicolas Tourneur ]
   * d/changelog: remove duplicate line
@@ -6,6 +6,9 @@ chatty (0.3.0~beta2-1) UNRELEASED; urgency=medium
   [ Evangelos Ribeiro Tzaras ]
   * d/control: Bump required libhandy dependency
   * Update to 0.3.0~beta1
+
+  [ Guido Günther ]
+  * Upload to experimental 
 
  -- Evangelos Ribeiro Tzaras <devrtz-debian@fortysixandtwo.eu>  Wed, 14 Apr 2021 22:55:30 +0200
 
