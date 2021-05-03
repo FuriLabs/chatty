@@ -55,8 +55,6 @@ struct _ChattyChatView
   gboolean    first_scroll_to_bottom;
 };
 
-static GHashTable *ht_sms_id = NULL;
-
 #define INDICATOR_WIDTH   60
 #define INDICATOR_HEIGHT  40
 #define INDICATOR_MARGIN   2
@@ -89,14 +87,6 @@ enum {
 };
 
 static guint signals[N_SIGNALS];
-
-static gboolean
-chat_view_hash_table_match_item (gpointer key,
-                                 gpointer value,
-                                 gpointer user_data)
-{
-  return value == user_data;
-}
 
 static void
 chatty_draw_typing_indicator (cairo_t *cr)
@@ -267,6 +257,21 @@ chat_view_edge_overshot_cb (ChattyChatView  *self,
 }
 
 
+static void
+chat_account_status_changed_cb (ChattyChatView *self)
+{
+  ChattyAccount *account;
+  gboolean enabled;
+
+  account = chatty_chat_get_account (self->chat);
+  g_return_if_fail (account);
+
+  enabled = chatty_account_get_status (account) == CHATTY_CONNECTED;
+  gtk_widget_set_sensitive (self->message_input, enabled);
+  gtk_widget_set_sensitive (self->send_file_button, enabled);
+  gtk_widget_set_sensitive (self->send_message_button, enabled);
+}
+
 static GtkWidget *
 chat_view_message_row_new (ChattyMessage  *message,
                            ChattyChatView *self)
@@ -379,8 +384,6 @@ chat_view_send_message_button_clicked_cb (ChattyChatView *self)
   g_autoptr(ChattyMessage) msg = NULL;
   g_autofree char *message = NULL;
   GtkTextIter    start, end;
-  gchar         *sms_id_str;
-  guint          sms_id;
 
   g_assert (CHATTY_IS_CHAT_VIEW (self));
 
@@ -412,24 +415,6 @@ chat_view_send_message_button_clicked_cb (ChattyChatView *self)
     ChattyProtocol protocol;
 
     protocol = chatty_item_get_protocols (CHATTY_ITEM (self->chat));
-
-    /* provide a msg-id to the sms-plugin for send-receipts */
-    if (conv && chatty_item_get_protocols (CHATTY_ITEM (self->chat)) == CHATTY_PROTOCOL_SMS) {
-      sms_id = g_random_int ();
-
-      sms_id_str = g_strdup_printf ("%i", sms_id);
-
-      g_hash_table_insert (ht_sms_id, sms_id_str, g_object_ref (self->chat));
-
-      g_debug ("hash table insert sms_id_str: %s  ht_size: %i",
-               sms_id_str, g_hash_table_size (ht_sms_id));
-
-      purple_conv_im_send_with_flags (PURPLE_CONV_IM (conv),
-                                      sms_id_str,
-                                      PURPLE_MESSAGE_NO_LOG |
-                                      PURPLE_MESSAGE_NOTIFY |
-                                      PURPLE_MESSAGE_INVISIBLE);
-    }
 
     if (protocol == CHATTY_PROTOCOL_MATRIX ||
         protocol == CHATTY_PROTOCOL_XMPP ||
@@ -596,56 +581,6 @@ chat_view_file_requested_cb (ChattyChatView *self,
 }
 
 static void
-chat_view_sms_sent_cb (const char *sms_id,
-                       int         status)
-{
-  ChattyChat    *chat;
-  ChattyMessage *message;
-  GListModel    *message_list;
-  const gchar *message_id;
-  ChattyMsgStatus sent_status;
-  time_t       time_now;
-  guint        n_items;
-
-  if (sms_id == NULL)
-    return;
-
-  if (status == CHATTY_SMS_RECEIPT_NONE)
-    sent_status = CHATTY_STATUS_SENDING_FAILED;
-  else if (status == CHATTY_SMS_RECEIPT_MM_ACKN)
-    sent_status = CHATTY_STATUS_SENT;
-  else if (status == CHATTY_SMS_RECEIPT_SMSC_ACKN)
-    sent_status = CHATTY_STATUS_DELIVERED;
-  else
-    return;
-
-  chat = g_hash_table_lookup (ht_sms_id, sms_id);
-
-  if (!chat)
-    return;
-
-  message_list = chatty_chat_get_messages (chat);
-  n_items = g_list_model_get_n_items (message_list);
-  message = g_list_model_get_item (message_list, n_items - 1);
-  message_id = chatty_message_get_id (message);
-  time_now = time (NULL);
-
-  if (message_id == NULL)
-    chatty_message_set_id (message, sms_id);
-
-  if (g_strcmp0 (message_id, sms_id) == 0) {
-    chatty_message_set_status (message, sent_status, time_now);
-    g_object_unref (message);
-    return;
-  }
-
-  message = chatty_pp_chat_find_message_with_id (CHATTY_PP_CHAT (chat), sms_id);
-
-  if (message)
-    chatty_message_set_status (message, sent_status, time_now);
-}
-
-static void
 chatty_chat_view_map (GtkWidget *widget)
 {
   ChattyChatView *self = (ChattyChatView *)widget;
@@ -660,9 +595,6 @@ chatty_chat_view_finalize (GObject *object)
 {
   ChattyChatView *self = (ChattyChatView *)object;
 
-  g_hash_table_foreach_remove (ht_sms_id,
-                               chat_view_hash_table_match_item,
-                               self);
   g_clear_object (&self->chat);
 
   G_OBJECT_CLASS (chatty_chat_view_parent_class)->finalize (object);
@@ -744,29 +676,11 @@ chatty_chat_view_new (void)
   return g_object_new (CHATTY_TYPE_CHAT_VIEW, NULL);
 }
 
-
-void
-chatty_chat_view_purple_init (void)
-{
-  ht_sms_id = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_object_unref);
-
-  purple_signal_connect (purple_conversations_get_handle (),
-                         "sms-sent", ht_sms_id,
-                         PURPLE_CALLBACK (chat_view_sms_sent_cb), NULL);
-}
-
-void
-chatty_chat_view_purple_uninit (void)
-{
-  purple_signals_disconnect_by_handle (ht_sms_id);
-
-  g_hash_table_destroy (ht_sms_id);
-}
-
 void
 chatty_chat_view_set_chat (ChattyChatView *self,
                            ChattyChat     *chat)
 {
+  ChattyAccount *account;
   GListModel *messages;
 
   g_return_if_fail (CHATTY_IS_CHAT_VIEW (self));
@@ -790,8 +704,19 @@ chatty_chat_view_set_chat (ChattyChatView *self,
     return;
 
   messages = chatty_chat_get_messages (chat);
+  account = chatty_chat_get_account (chat);
+
   if (g_list_model_get_n_items (messages) <= 3)
     chatty_chat_load_past_messages (chat, -1);
+
+
+  if (account)
+    g_signal_connect_object (account, "notify::status",
+                             G_CALLBACK (chat_account_status_changed_cb),
+                             self,
+                             G_CONNECT_SWAPPED);
+
+  chat_account_status_changed_cb (self);
 
   gtk_list_box_bind_model (GTK_LIST_BOX (self->message_list),
                            chatty_chat_get_messages (self->chat),
