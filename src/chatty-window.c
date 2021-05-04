@@ -480,6 +480,8 @@ window_delete_buddy_clicked_cb (ChattyWindow *self)
                                 CHATTY_CHAT (self->selected_item));
     if (CHATTY_IS_PP_CHAT (self->selected_item)) {
       chatty_pp_chat_delete (CHATTY_PP_CHAT (self->selected_item));
+    } else if (CHATTY_IS_MM_CHAT (self->selected_item)) {
+      chatty_mm_chat_delete (CHATTY_MM_CHAT (self->selected_item));
     } else {
       g_return_if_reached ();
     }
@@ -880,6 +882,7 @@ chatty_window_open_chat (ChattyWindow *self,
   window_set_item (self, CHATTY_ITEM (chat));
   window_chat_changed_cb (self);
 
+  gtk_widget_set_visible (self->leave_button, !CHATTY_IS_MM_CHAT (chat));
   gtk_widget_set_visible (self->delete_button, CHATTY_IS_PP_CHAT (chat));
   hdy_leaflet_set_visible_child (HDY_LEAFLET (self->content_box), self->chat_view);
 
