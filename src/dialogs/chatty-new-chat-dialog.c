@@ -222,7 +222,7 @@ static void
 contact_search_entry_changed_cb (ChattyNewChatDialog *self,
                                  GtkEntry            *entry)
 {
-  PurpleAccount *account;
+  ChattyAccount *account;
   g_autofree char *old_needle = NULL;
   const char *str;
   GtkFilterChange change;
@@ -259,8 +259,8 @@ contact_search_entry_changed_cb (ChattyNewChatDialog *self,
 
   protocol = CHATTY_PROTOCOL_SMS;
   valid = protocol == chatty_utils_username_is_valid (self->search_str, protocol);
-  account = purple_accounts_find ("SMS", "prpl-mm-sms");
-  valid = valid && purple_account_is_connected (account);
+  account = chatty_manager_get_mm_account (self->manager);
+  valid = valid && chatty_account_get_status (account) == CHATTY_CONNECTED;
   gtk_widget_set_visible (self->new_contact_row, valid);
 
   if (valid || g_list_model_get_n_items (G_LIST_MODEL (self->slice_model)) > 0)
