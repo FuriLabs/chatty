@@ -13,6 +13,7 @@ Build-Depends:
  libebook-contacts1.2-dev,
  libgcrypt20-dev,
  libjson-glib-dev,
+ libmm-glib-dev (>= 1.12.0),
  libphonenumber-dev,
  libpurple-dev,
  libolm-dev,
