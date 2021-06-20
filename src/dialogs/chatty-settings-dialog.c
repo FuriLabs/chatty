@@ -268,7 +268,7 @@ chatty_settings_add_clicked_cb (ChattySettingsDialog *self)
 {
   ChattyManager *manager;
   g_autoptr (ChattyAccount) account = NULL;
-  const char *user_id, *password, *server_url;
+  const char *user_id, *password;
   gboolean is_matrix, is_telegram;
 
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
@@ -287,6 +287,7 @@ chatty_settings_add_clicked_cb (ChattySettingsDialog *self)
 
   if (is_matrix) {
     GtkEntry *entry;
+    const char *server_url;
     int response;
 
     entry = GTK_ENTRY (self->matrix_homeserver_entry);
@@ -304,13 +305,11 @@ chatty_settings_add_clicked_cb (ChattySettingsDialog *self)
       server_url = gtk_entry_get_text (GTK_ENTRY (self->matrix_homeserver_entry));
     else
       return;
-  }
 
-  if (is_matrix)
     account = (ChattyAccount *)chatty_pp_account_new (CHATTY_PROTOCOL_MATRIX, user_id, server_url, FALSE);
-  else if (is_telegram)
+  } else if (is_telegram) {
     account = (ChattyAccount *)chatty_pp_account_new (CHATTY_PROTOCOL_TELEGRAM, user_id, NULL, FALSE);
-  else {/* XMPP */
+  } else {/* XMPP */
     gboolean has_encryption;
 
     has_encryption = chatty_manager_lurch_plugin_is_loaded (chatty_manager_get_default ());
