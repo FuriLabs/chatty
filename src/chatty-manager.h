@@ -36,8 +36,6 @@ GListModel     *chatty_manager_get_chat_list         (ChattyManager *self);
 void            chatty_manager_disable_auto_login    (ChattyManager *self,
                                                       gboolean       disable);
 gboolean        chatty_manager_get_disable_auto_login (ChattyManager *self);
-gboolean        chatty_manager_is_account_supported (ChattyManager   *self,
-                                                     ChattyPpAccount *account);
 
 void            chatty_manager_load_plugins           (ChattyManager   *self);
 void            chatty_manager_load_buddies           (ChattyManager   *self);
