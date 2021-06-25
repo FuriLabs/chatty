@@ -35,7 +35,6 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (ChattyApplication, chatty_application, CHATTY, APPLICATION, GtkApplication)
 
 ChattyApplication *chatty_application_new (void);
-ChattyWindow      *chatty_application_get_main_window (ChattyApplication *self);
 ChattyChat        *chatty_application_get_active_chat (ChattyApplication *self);
 
 G_END_DECLS

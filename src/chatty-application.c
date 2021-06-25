@@ -449,17 +449,6 @@ chatty_application_new (void)
                        NULL);
 }
 
-ChattyWindow *
-chatty_application_get_main_window (ChattyApplication *self)
-{
-  g_return_val_if_fail (CHATTY_IS_APPLICATION (self), NULL);
-
-  if (self->main_window)
-    return CHATTY_WINDOW (self->main_window);
-
-  return NULL;
-}
-
 /**
  * chatty_application_get_active_chat:
  * @self: A #ChattyApplication
