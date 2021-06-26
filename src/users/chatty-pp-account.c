@@ -434,6 +434,7 @@ get_fp_list_cb (int         error,
 
   key_list = g_hash_table_get_keys (fp_table);
   g_clear_object (&self->device_fp);
+  g_list_store_remove_all (self->fp_list);
 
   for (GList *item = key_list; item; item = item->next) {
     const char *fp = NULL;
