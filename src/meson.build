@@ -12,6 +12,7 @@ libsrc = [
   'contrib/gtkcustomsorter.c',
   'contrib/gtksortlistmodel.c',
   'contrib/gtkslicelistmodel.c',
+  'dialogs/chatty-pp-account-details.c',
   'matrix/matrix-api.c',
   'matrix/matrix-enc.c',
   'matrix/matrix-db.c',
@@ -55,6 +56,8 @@ ui_files = files (
   'ui/chatty-fp-row.ui',
   'ui/chatty-list-row.ui',
   'ui/chatty-message-row.ui',
+  # FIXME
+  # 'ui/chatty-pp-account-details.ui',
   'ui/chatty-settings-dialog.ui',
   'ui/chatty-window.ui',
 )
