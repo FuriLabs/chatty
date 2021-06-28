@@ -466,6 +466,25 @@ matrix_get_room_state_cb (GObject      *obj,
 }
 
 static void
+matrix_get_room_name_cb (GObject      *obj,
+                         GAsyncResult *result,
+                         gpointer      user_data)
+{
+  g_autoptr(GTask) task = user_data;
+  JsonObject *object = NULL;
+  GError *error = NULL;
+
+  object = g_task_propagate_pointer (G_TASK (result), &error);
+
+  if (error) {
+    g_debug ("Error getting room state: %s", error->message);
+    g_task_return_error (task, error);
+  } else {
+    g_task_return_pointer (task, object, (GDestroyNotify)json_object_unref);
+  }
+}
+
+static void
 matrix_get_members_cb (GObject      *obj,
                        GAsyncResult *result,
                        gpointer      user_data)
@@ -1515,6 +1534,35 @@ matrix_api_get_room_state_finish (MatrixApi     *self,
   return g_task_propagate_pointer (G_TASK (result), error);
 }
 
+void
+matrix_api_get_room_name_async (MatrixApi           *self,
+                                const char          *room_id,
+                                GAsyncReadyCallback  callback,
+                                gpointer             user_data)
+{
+  g_autofree char *uri = NULL;
+  GTask *task;
+
+  g_return_if_fail (MATRIX_IS_API (self));
+  g_return_if_fail (room_id && *room_id);
+
+  task = g_task_new (self, self->cancellable, callback, user_data);
+  uri = g_strconcat ("/_matrix/client/r0/rooms/", room_id, "/state/m.room.name", NULL);
+  queue_data (self, NULL, 0, uri, SOUP_METHOD_GET,
+              NULL, matrix_get_room_name_cb, task);
+}
+
+JsonObject *
+matrix_api_get_room_name_finish (MatrixApi     *self,
+                                 GAsyncResult  *result,
+                                 GError       **error)
+{
+  g_return_val_if_fail (MATRIX_IS_API (self), NULL);
+  g_return_val_if_fail (G_IS_TASK (result), NULL);
+  g_return_val_if_fail (!error || !*error, NULL);
+
+  return g_task_propagate_pointer (G_TASK (result), error);
+}
 
 void
 matrix_api_get_members_async (MatrixApi           *self,
