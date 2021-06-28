@@ -250,6 +250,7 @@ ma_chat_get_avatar_pixbuf_cb (GObject      *object,
   self->avatar_is_loading = FALSE;
 }
 
+#if 0
 static void
 chat_got_room_avatar_cb (GObject      *object,
                          GAsyncResult *result,
@@ -263,6 +264,7 @@ chat_got_room_avatar_cb (GObject      *object,
     chatty_history_update_chat (self->history_db, CHATTY_CHAT (self));
   }
 }
+#endif
 
 static ChattyFileInfo *
 ma_chat_new_file (ChattyMaChat *self,
@@ -293,6 +295,7 @@ ma_chat_new_file (ChattyMaChat *self,
   return file;
 }
 
+#if 0
 static void
 handle_m_room_member (ChattyMaChat *self,
                       JsonObject   *object,
@@ -345,6 +348,7 @@ handle_m_room_member (ChattyMaChat *self,
     g_clear_pointer (&self->generated_name, g_free);
   }
 }
+#endif
 
 static void
 handle_m_room_name (ChattyMaChat *self,
@@ -384,6 +388,7 @@ handle_m_room_encryption (ChattyMaChat *self,
     g_object_notify (G_OBJECT (self), "encrypt");
 }
 
+#if 0
 static void
 handle_m_room_avatar (ChattyMaChat *self,
                       JsonObject   *root)
@@ -405,6 +410,7 @@ handle_m_room_avatar (ChattyMaChat *self,
                              chat_got_room_avatar_cb,
                              g_object_ref (self));
 }
+#endif
 
 static void
 ma_chat_download_cb (GObject      *object,
@@ -937,6 +943,7 @@ query_key_cb (GObject      *obj,
   CHATTY_EXIT;
 }
 
+#if 0
 static void
 get_room_state_cb (GObject      *obj,
                    GAsyncResult *result,
@@ -1014,6 +1021,39 @@ get_room_state_cb (GObject      *obj,
 
   chatty_history_update_chat (self->history_db, CHATTY_CHAT (self));
 }
+#endif
+
+static void
+get_room_name_cb (GObject      *obj,
+                  GAsyncResult *result,
+                  gpointer      user_data)
+{
+  ChattyMaChat *self = user_data;
+  g_autoptr(GError) error = NULL;
+  JsonObject *object;
+  const char *name;
+
+  g_assert (CHATTY_IS_MA_CHAT (self));
+  self->state_is_sync = TRUE;
+  self->state_is_syncing = FALSE;
+
+  object = matrix_api_get_room_name_finish (self->matrix_api, result, &error);
+
+  if (error) {
+    if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
+      g_warning ("error getting room name: %s", error->message);
+    return;
+  }
+
+  name = matrix_utils_json_object_get_string (object, "name");
+  g_free (self->room_name);
+  self->room_name = g_strdup (name);
+
+  CHATTY_TRACE_MSG ("Got room name, room: %s (%s)",
+                    self->room_id, chatty_item_get_name (CHATTY_ITEM (self)));
+
+  g_object_notify (G_OBJECT (self), "name");
+}
 
 static void
 parse_chat_array (ChattyMaChat *self,
@@ -1082,10 +1122,11 @@ matrix_chat_set_json_data (ChattyMaChat *self,
     self->state_is_syncing = TRUE;
     CHATTY_TRACE_MSG ("Getting room state of '%s(%s)'", self->room_id,
                       chatty_item_get_name (CHATTY_ITEM (self)));
-    matrix_api_get_room_state_async (self->matrix_api,
-                                     self->room_id,
-                                     get_room_state_cb,
-                                     self);
+
+    matrix_api_get_room_name_async (self->matrix_api,
+                                    self->room_id,
+                                    get_room_name_cb,
+                                    self);
   }
 
   object = matrix_utils_json_object_get_object (self->json_data, "ephemeral");
