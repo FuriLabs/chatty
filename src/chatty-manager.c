@@ -1885,24 +1885,11 @@ chatty_manager_class_init (ChattyManagerClass *klass)
 }
 
 static void
-notification_open_chat_cb (ChattyManager *self,
-                           ChattyChat    *chat)
-{
-  g_assert (CHATTY_IS_MANAGER (self));
-  g_assert (CHATTY_IS_CHAT (chat));
-
-  g_signal_emit (self,  signals[OPEN_CHAT], 0, chat);
-}
-
-static void
 chatty_manager_init (ChattyManager *self)
 {
   g_autoptr(GtkFlattenListModel) flatten_list = NULL;
 
   self->notification = chatty_notification_new ();
-  g_signal_connect_object (self->notification, "open-chat",
-                           G_CALLBACK (notification_open_chat_cb),
-                           self, G_CONNECT_SWAPPED);
 
   self->chatty_eds = chatty_eds_new (CHATTY_PROTOCOL_SMS);
   self->account_list = g_list_store_new (CHATTY_TYPE_ACCOUNT);
