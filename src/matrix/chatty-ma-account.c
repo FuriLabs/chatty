@@ -1225,6 +1225,20 @@ chatty_ma_account_set_homeserver (ChattyMaAccount *self,
   matrix_api_set_homeserver (self->matrix_api, server_url);
 }
 
+const char *
+chatty_ma_account_get_device_id (ChattyMaAccount *self)
+{
+  const char *device_id;
+  g_return_val_if_fail (CHATTY_IS_MA_ACCOUNT (self), "");
+
+  device_id = matrix_api_get_device_id (self->matrix_api);
+
+  if (device_id)
+    return device_id;
+
+  return "";
+}
+
 GListModel *
 chatty_ma_account_get_chat_list (ChattyMaAccount *self)
 {
@@ -1239,6 +1253,135 @@ chatty_ma_account_send_file (ChattyMaAccount *self,
                              const char      *file_name)
 {
   /* TODO */
+}
+
+static void
+ma_get_details_cb (GObject      *object,
+                   GAsyncResult *result,
+                   gpointer      user_data)
+{
+  ChattyMaAccount *self;
+  g_autoptr(GTask) task = user_data;
+  char *name, *avatar_url;
+  GError *error = NULL;
+
+  g_assert (G_IS_TASK (task));
+
+  self = g_task_get_source_object (task);
+  g_assert (CHATTY_IS_MA_ACCOUNT (self));
+
+  matrix_api_get_user_info_finish (self->matrix_api,
+                                   &name, &avatar_url,
+                                   result, &error);
+
+  if (error)
+    g_task_return_error (task, error);
+  else {
+    g_free (self->name);
+    self->name = name;
+
+    g_object_notify (G_OBJECT (self), "name");
+    g_task_return_boolean (task, TRUE);
+  }
+}
+
+void
+chatty_ma_account_get_details_async (ChattyMaAccount     *self,
+                                     GCancellable        *cancellable,
+                                     GAsyncReadyCallback  callback,
+                                     gpointer             user_data)
+{
+  g_autoptr(GTask) task = NULL;
+
+  g_return_if_fail (CHATTY_IS_MA_ACCOUNT (self));
+  g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  task = g_task_new (self, cancellable, callback, user_data);
+
+  if (self->name)
+    g_task_return_boolean (task, TRUE);
+  else
+    matrix_api_get_user_info_async (self->matrix_api, NULL, cancellable,
+                                    ma_get_details_cb,
+                                    g_steal_pointer (&task));
+}
+
+gboolean
+chatty_ma_account_get_details_finish (ChattyMaAccount  *self,
+                                      GAsyncResult     *result,
+                                      GError          **error)
+{
+  g_return_val_if_fail (CHATTY_IS_MA_ACCOUNT (self), FALSE);
+  g_return_val_if_fail (G_IS_TASK (result), FALSE);
+
+  return g_task_propagate_boolean (G_TASK (result), error);
+}
+
+static void
+ma_get_3pid_cb (GObject      *object,
+                GAsyncResult *result,
+                gpointer      user_data)
+{
+  ChattyMaAccount *self;
+  g_autoptr(GTask) task = user_data;
+  GPtrArray *emails, *phones;
+  GError *error = NULL;
+
+  g_assert (G_IS_TASK (task));
+
+  self = g_task_get_source_object (task);
+  g_assert (CHATTY_IS_MA_ACCOUNT (self));
+
+  matrix_api_get_3pid_finish (self->matrix_api,
+                              &emails, &phones,
+                              result, &error);
+
+  if (error)
+    g_task_return_error (task, error);
+  else {
+    g_object_set_data_full (G_OBJECT (task), "email", emails,
+                            (GDestroyNotify)g_ptr_array_unref);
+    g_object_set_data_full (G_OBJECT (task), "phone", phones,
+                            (GDestroyNotify)g_ptr_array_unref);
+
+    g_task_return_boolean (task, TRUE);
+  }
+}
+
+void
+chatty_ma_account_get_3pid_async (ChattyMaAccount     *self,
+                                  GCancellable        *cancellable,
+                                  GAsyncReadyCallback  callback,
+                                  gpointer             user_data)
+{
+  g_autoptr(GTask) task = NULL;
+
+  g_return_if_fail (CHATTY_IS_MA_ACCOUNT (self));
+  g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  task = g_task_new (self, cancellable, callback, user_data);
+
+  matrix_api_get_3pid_async (self->matrix_api, cancellable,
+                             ma_get_3pid_cb,
+                             g_steal_pointer (&task));
+}
+
+gboolean
+chatty_ma_account_get_3pid_finish (ChattyMaAccount  *self,
+                                   GPtrArray       **emails,
+                                   GPtrArray       **phones,
+                                   GAsyncResult     *result,
+                                   GError          **error)
+{
+  g_return_val_if_fail (CHATTY_IS_MA_ACCOUNT (self), FALSE);
+  g_return_val_if_fail (G_IS_TASK (result), FALSE);
+
+  if (emails)
+    *emails = g_object_steal_data (G_OBJECT (result), "email");
+  if (phones)
+    *phones = g_object_steal_data (G_OBJECT (result), "phone");
+
+  return g_task_propagate_boolean (G_TASK (result), error);
 }
 
 void
