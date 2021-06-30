@@ -2091,3 +2091,173 @@ matrix_api_leave_chat_finish (MatrixApi     *self,
 
   return g_task_propagate_boolean (G_TASK (result), error);
 }
+
+static void
+api_get_user_info_cb (GObject      *obj,
+                      GAsyncResult *result,
+                      gpointer      user_data)
+{
+  MatrixApi *self = (MatrixApi *)obj;
+  g_autoptr(GTask) task = user_data;
+  const char *name, *avatar_url;
+  GError *error = NULL;
+  JsonObject *object;
+
+  g_assert (MATRIX_IS_API (self));
+  g_assert (G_IS_TASK (task));
+
+  object = g_task_propagate_pointer (G_TASK (result), &error);
+
+  CHATTY_TRACE_MSG ("Getting user info. success: %d", !error);
+
+  if (error) {
+    g_task_return_error (task, error);
+    return;
+  }
+
+  name = matrix_utils_json_object_get_string (object, "displayname");
+  avatar_url = matrix_utils_json_object_get_string (object, "avatar_url");
+
+  g_object_set_data_full (G_OBJECT (task), "name", g_strdup (name), g_free);
+  g_object_set_data_full (G_OBJECT (task), "avatar-url", g_strdup (avatar_url), g_free);
+
+  g_task_return_boolean (task, TRUE);
+}
+
+void
+matrix_api_get_user_info_async (MatrixApi           *self,
+                                const char          *user_id,
+                                GCancellable        *cancellable,
+                                GAsyncReadyCallback  callback,
+                                gpointer             user_data)
+{
+  g_autofree char *uri = NULL;
+  GTask *task;
+
+  g_return_if_fail (MATRIX_IS_API (self));
+  g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  if (!user_id)
+    user_id = self->username;
+
+  CHATTY_TRACE_MSG ("Getting user info: %s", user_id);
+
+  task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_task_data (task, g_strdup (user_id), g_free);
+  uri = g_strdup_printf ("/_matrix/client/r0/profile/%s", user_id);
+  queue_data (self, NULL, 0, uri, SOUP_METHOD_GET,
+              NULL, api_get_user_info_cb, task);
+}
+
+gboolean
+matrix_api_get_user_info_finish (MatrixApi     *self,
+                                 char         **name,
+                                 char         **avatar_url,
+                                 GAsyncResult  *result,
+                                 GError       **error)
+{
+  g_return_val_if_fail (MATRIX_IS_API (self), FALSE);
+  g_return_val_if_fail (G_IS_TASK (result), FALSE);
+  g_return_val_if_fail (!error || !*error, FALSE);
+
+  *name = g_strdup (g_object_get_data (G_OBJECT (result), "name"));
+  *avatar_url = g_strdup (g_object_get_data (G_OBJECT (result), "avatar-url"));
+
+  return g_task_propagate_boolean (G_TASK (result), error);
+}
+
+static void
+api_get_3pid_cb (GObject      *obj,
+                 GAsyncResult *result,
+                 gpointer      user_data)
+{
+  MatrixApi *self = (MatrixApi *)obj;
+  g_autoptr(GTask) task = user_data;
+  GPtrArray *emails, *phones;
+  GError *error = NULL;
+  JsonObject *object;
+  JsonArray *array;
+  guint length;
+
+  g_assert (MATRIX_IS_API (self));
+  g_assert (G_IS_TASK (task));
+
+  object = g_task_propagate_pointer (G_TASK (result), &error);
+  array = matrix_utils_json_object_get_array (object, "threepids");
+
+  CHATTY_TRACE_MSG ("Getting 3pid. success: %d", !error);
+
+  if (!array) {
+    if (error)
+      g_task_return_error (task, error);
+    else
+      g_task_return_boolean (task, FALSE);
+
+    return;
+  }
+
+  emails = g_ptr_array_new_full (1, g_free);
+  phones = g_ptr_array_new_full (1, g_free);
+
+  length = json_array_get_length (array);
+
+  for (guint i = 0; i < length; i++) {
+    const char *type, *value;
+
+    object = json_array_get_object_element (array, i);
+    value = matrix_utils_json_object_get_string (object, "address");
+    type = matrix_utils_json_object_get_string (object, "medium");
+
+    if (g_strcmp0 (type, "email") == 0)
+      g_ptr_array_add (emails, g_strdup (value));
+    else if (g_strcmp0 (type, "msisdn") == 0)
+      g_ptr_array_add (phones, g_strdup (value));
+  }
+
+  g_object_set_data_full (G_OBJECT (task), "email", emails,
+                          (GDestroyNotify)g_ptr_array_unref);
+  g_object_set_data_full (G_OBJECT (task), "phone", phones,
+                          (GDestroyNotify)g_ptr_array_unref);
+
+  g_task_return_boolean (task, TRUE);
+}
+
+void
+matrix_api_get_3pid_async (MatrixApi           *self,
+                           GCancellable        *cancellable,
+                           GAsyncReadyCallback  callback,
+                           gpointer             user_data)
+{
+  g_autofree char *uri = NULL;
+  GTask *task;
+
+  g_return_if_fail (MATRIX_IS_API (self));
+  g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  CHATTY_TRACE_MSG ("Getting user 3pid: %s", self->username);
+
+  task = g_task_new (self, cancellable, callback, user_data);
+  uri = g_strdup ("/_matrix/client/r0/account/3pid");
+  queue_data (self, NULL, 0, uri, SOUP_METHOD_GET,
+              NULL, api_get_3pid_cb, task);
+}
+
+gboolean
+matrix_api_get_3pid_finish (MatrixApi     *self,
+                            GPtrArray    **emails,
+                            GPtrArray    **phones,
+                            GAsyncResult  *result,
+                            GError       **error)
+{
+  g_return_val_if_fail (MATRIX_IS_API (self), FALSE);
+  g_return_val_if_fail (G_IS_TASK (result), FALSE);
+  g_return_val_if_fail (!error || !*error, FALSE);
+
+  if (emails)
+    *emails = g_object_steal_data (G_OBJECT (result), "email");
+  if (phones)
+    *phones = g_object_steal_data (G_OBJECT (result), "phone");
+
+  return g_task_propagate_boolean (G_TASK (result), error);
+}
+
