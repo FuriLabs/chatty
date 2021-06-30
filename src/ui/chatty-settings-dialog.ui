@@ -293,6 +293,12 @@
                     <signal name="delete-clicked" handler="settings_pp_details_delete_cb" swapped="yes"/>
                   </object>
                 </child>
+                <child>
+                  <object class="ChattyMaAccountDetails" id="ma_account_details">
+                    <property name="visible">1</property>
+                    <signal name="delete-clicked" handler="settings_pp_details_delete_cb" swapped="yes"/>
+                  </object>
+                </child>
               </object>
               <packing>
                 <property name="name">edit-account-view</property>
