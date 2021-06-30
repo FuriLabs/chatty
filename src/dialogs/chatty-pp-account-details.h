@@ -35,7 +35,12 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (ChattyPpAccountDetails, chatty_pp_account_details, CHATTY, PP_ACCOUNT_DETAILS, HdyPreferencesPage)
 
 GtkWidget       *chatty_pp_account_details_new      (void);
-void             chatty_pp_account_save             (ChattyPpAccountDetails *self);
+void             chatty_pp_account_save_async       (ChattyPpAccountDetails *self,
+                                                     GAsyncReadyCallback     callback,
+                                                     gpointer                user_data);
+gboolean         chatty_pp_account_save_finish      (ChattyPpAccountDetails *self,
+                                                     GAsyncResult           *result,
+                                                     GError                **error);
 ChattyAccount   *chatty_pp_account_details_get_item (ChattyPpAccountDetails *self);
 void             chatty_pp_account_details_set_item (ChattyPpAccountDetails *self,
                                                      ChattyAccount          *account);

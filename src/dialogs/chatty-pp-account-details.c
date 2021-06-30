@@ -256,11 +256,15 @@ chatty_pp_account_details_new (void)
 }
 
 void
-chatty_pp_account_save (ChattyPpAccountDetails *self)
+chatty_pp_account_save_async (ChattyPpAccountDetails *self,
+                              GAsyncReadyCallback     callback,
+                              gpointer                user_data)
 {
+  g_autoptr(GTask) task = NULL;
   GtkEntry *entry;
 
   g_return_if_fail (CHATTY_IS_PP_ACCOUNT_DETAILS (self));
+  g_return_if_fail (callback);
 
   entry = (GtkEntry *)self->password_entry;
   chatty_account_set_password (self->account, gtk_entry_get_text (entry));
@@ -269,6 +273,19 @@ chatty_pp_account_save (ChattyPpAccountDetails *self)
   chatty_account_set_enabled (self->account, TRUE);
 
   gtk_entry_set_text (entry, "");
+
+  task = g_task_new (self, NULL, callback, user_data);
+  g_task_return_boolean (task, TRUE);
+}
+
+gboolean
+chatty_pp_account_save_finish (ChattyPpAccountDetails  *self,
+                               GAsyncResult            *result,
+                               GError                 **error)
+{
+  g_return_val_if_fail (CHATTY_IS_PP_ACCOUNT_DETAILS (self), FALSE);
+
+  return g_task_propagate_boolean (G_TASK (result), error);
 }
 
 ChattyAccount *

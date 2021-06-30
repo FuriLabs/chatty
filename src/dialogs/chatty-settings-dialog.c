@@ -312,6 +312,22 @@ chatty_settings_add_clicked_cb (ChattySettingsDialog *self)
 }
 
 static void
+pp_account_save_cb (GObject      *object,
+                    GAsyncResult *result,
+                    gpointer      user_data)
+{
+  g_autoptr(ChattySettingsDialog) self = user_data;
+
+  g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
+
+  g_object_set (self->matrix_spinner, "active", FALSE, NULL);
+  gtk_widget_set_sensitive (self->account_details_stack, TRUE);
+
+  gtk_widget_hide (self->save_button);
+  gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "main-settings");
+}
+
+static void
 chatty_settings_save_clicked_cb (ChattySettingsDialog *self)
 {
   GtkStack *stack;
@@ -320,11 +336,12 @@ chatty_settings_save_clicked_cb (ChattySettingsDialog *self)
 
   stack = GTK_STACK (self->account_details_stack);
 
-  if (gtk_stack_get_visible_child (stack) == self->pp_account_details)
-    chatty_pp_account_save (CHATTY_PP_ACCOUNT_DETAILS (self->pp_account_details));
+  g_object_set (self->matrix_spinner, "active", TRUE, NULL);
+  gtk_widget_set_sensitive (self->account_details_stack, FALSE);
 
-  gtk_widget_hide (self->save_button);
-  gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "main-settings");
+  if (gtk_stack_get_visible_child (stack) == self->pp_account_details)
+    chatty_pp_account_save_async (CHATTY_PP_ACCOUNT_DETAILS (self->pp_account_details),
+                                  pp_account_save_cb, g_object_ref (self));
 }
 
 static void
