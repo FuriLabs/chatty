@@ -371,6 +371,11 @@ chatty_ma_account_details_set_item (ChattyMaAccountDetails *self,
     gtk_entry_set_text (GTK_ENTRY (self->name_entry), "");
     gtk_widget_hide (self->email_box);
     gtk_widget_hide (self->phone_box);
+
+    gtk_container_foreach (GTK_CONTAINER (self->email_box),
+                           (GtkCallback)gtk_widget_destroy, NULL);
+    gtk_container_foreach (GTK_CONTAINER (self->phone_box),
+                           (GtkCallback)gtk_widget_destroy, NULL);
   }
 
   if (!g_set_object (&self->account, account) || !account)
