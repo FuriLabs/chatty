@@ -345,11 +345,17 @@ chatty_settings_save_clicked_cb (ChattySettingsDialog *self)
 }
 
 static void
-settings_pp_details_changed_cb (ChattySettingsDialog *self)
+settings_pp_details_changed_cb (ChattySettingsDialog *self,
+                                GParamSpec           *pspec,
+                                GtkWidget            *details)
 {
-  g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
+  gboolean modified;
 
-  gtk_widget_set_sensitive (self->save_button, TRUE);
+  g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
+  g_assert (GTK_IS_WIDGET (details));
+
+  g_object_get (details, "modified", &modified, NULL);
+  gtk_widget_set_sensitive (self->save_button, modified);
 }
 
 static void chatty_settings_dialog_populate_account_list (ChattySettingsDialog *self);
