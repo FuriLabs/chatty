@@ -56,11 +56,17 @@ struct _ChattyMaAccountDetails
 };
 
 enum {
-  CHANGED,
   DELETE_CLICKED,
   N_SIGNALS
 };
 
+enum {
+  PROP_0,
+  PROP_MODIFIED,
+  N_PROPS
+};
+
+static GParamSpec *properties[N_PROPS];
 static guint signals[N_SIGNALS];
 
 G_DEFINE_TYPE (ChattyMaAccountDetails, chatty_ma_account_details, HDY_TYPE_PREFERENCES_PAGE)
@@ -216,6 +222,55 @@ ma_details_status_changed_cb (ChattyMaAccountDetails *self)
 
 }
 
+static gboolean
+ma_account_details_get_modified (ChattyMaAccountDetails *self)
+{
+  gboolean modified = FALSE;
+
+  g_assert (CHATTY_IS_MA_ACCOUNT_DETAILS (self));
+
+  modified = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (self->name_entry), "modified"));
+
+  if (!modified) {
+    g_autoptr(GList) emails = NULL;
+
+    emails = gtk_container_get_children (GTK_CONTAINER (self->email_box));
+
+    for (GList *email = emails; !modified && email; email = email->next)
+      modified = GPOINTER_TO_INT (g_object_get_data (email->data, "modified"));
+  }
+
+  if (!modified) {
+    g_autoptr(GList) phones = NULL;
+
+    phones = gtk_container_get_children (GTK_CONTAINER (self->phone_box));
+
+    for (GList *phone = phones; !modified && phone; phone = phone->next)
+      modified = GPOINTER_TO_INT (g_object_get_data (phone->data, "modified"));
+  }
+
+  return modified;
+}
+
+static void
+chatty_ma_account_details_get_property (GObject    *object,
+                                        guint       prop_id,
+                                        GValue     *value,
+                                        GParamSpec *pspec)
+{
+  ChattyMaAccountDetails *self = (ChattyMaAccountDetails *)object;
+
+  switch (prop_id)
+    {
+    case PROP_MODIFIED:
+      g_value_set_boolean (value, ma_account_details_get_modified (self));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
+}
+
 static void
 chatty_ma_account_details_finalize (GObject *object)
 {
@@ -232,6 +287,7 @@ chatty_ma_account_details_class_init (ChattyMaAccountDetailsClass *klass)
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
 
+  object_class->get_property = chatty_ma_account_details_get_property;
   object_class->finalize = chatty_ma_account_details_finalize;
 
   signals [DELETE_CLICKED] =
@@ -241,12 +297,14 @@ chatty_ma_account_details_class_init (ChattyMaAccountDetailsClass *klass)
                   0, NULL, NULL, NULL,
                   G_TYPE_NONE, 0);
 
-  signals [CHANGED] =
-    g_signal_new ("changed",
-                  G_TYPE_FROM_CLASS (klass),
-                  G_SIGNAL_RUN_LAST,
-                  0, NULL, NULL, NULL,
-                  G_TYPE_NONE, 0);
+  properties[PROP_MODIFIED] =
+    g_param_spec_boolean ("modified",
+                          "Modified",
+                          "If Settings is modified",
+                          FALSE,
+                          G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+
+  g_object_class_install_properties (object_class, N_PROPS, properties);
 
   gtk_widget_class_set_template_from_resource (widget_class,
                                                "/sm/puri/Chatty/"

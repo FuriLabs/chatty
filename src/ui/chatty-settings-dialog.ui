@@ -296,6 +296,7 @@
                 <child>
                   <object class="ChattyMaAccountDetails" id="ma_account_details">
                     <property name="visible">1</property>
+                    <signal name="notify::modified" handler="settings_pp_details_changed_cb" swapped="yes"/>
                     <signal name="delete-clicked" handler="settings_pp_details_delete_cb" swapped="yes"/>
                   </object>
                 </child>
