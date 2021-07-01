@@ -2167,6 +2167,70 @@ matrix_api_get_user_info_finish (MatrixApi     *self,
 }
 
 static void
+api_set_name_cb (GObject      *obj,
+                 GAsyncResult *result,
+                 gpointer      user_data)
+{
+  MatrixApi *self = (MatrixApi *)obj;
+  g_autoptr(GTask) task = user_data;
+  GError *error = NULL;
+
+  g_assert (MATRIX_IS_API (self));
+  g_assert (G_IS_TASK (task));
+
+  g_task_propagate_pointer (G_TASK (result), &error);
+
+  CHATTY_TRACE_MSG ("Setting name success: %d", !error);
+
+  if (error)
+    g_task_return_error (task, error);
+  else
+    g_task_return_boolean (task, TRUE);
+}
+
+void
+matrix_api_set_name_async (MatrixApi           *self,
+                           const char          *name,
+                           GCancellable        *cancellable,
+                           GAsyncReadyCallback  callback,
+                           gpointer             user_data)
+{
+  g_autofree char *uri = NULL;
+  JsonObject *root = NULL;
+  GTask *task;
+
+  g_return_if_fail (MATRIX_IS_API (self));
+  g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  CHATTY_TRACE_MSG ("Setting name to '%s' for user '%s'",
+                    name, self->username);
+
+  if (name && *name) {
+    root = json_object_new ();
+    json_object_set_string_member (root, "displayname", name);
+  }
+
+  task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_task_data (task, g_strdup (name), g_free);
+
+  uri = g_strdup_printf ("/_matrix/client/r0/profile/%s/displayname", self->username);
+  queue_json_object (self, root, uri, SOUP_METHOD_PUT,
+                     NULL, api_set_name_cb, task);
+}
+
+gboolean
+matrix_api_set_name_finish (MatrixApi     *self,
+                            GAsyncResult  *result,
+                            GError       **error)
+{
+  g_return_val_if_fail (MATRIX_IS_API (self), FALSE);
+  g_return_val_if_fail (G_IS_TASK (result), FALSE);
+  g_return_val_if_fail (!error || !*error, FALSE);
+
+  return g_task_propagate_boolean (G_TASK (result), error);
+}
+
+static void
 api_get_3pid_cb (GObject      *obj,
                  GAsyncResult *result,
                  gpointer      user_data)

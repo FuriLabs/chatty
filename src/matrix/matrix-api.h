@@ -169,6 +169,14 @@ gboolean     matrix_api_get_user_info_finish     (MatrixApi      *self,
                                                   char         **avatar_url,
                                                   GAsyncResult   *result,
                                                   GError        **error);
+void         matrix_api_set_name_async           (MatrixApi      *self,
+                                                  const char     *name,
+                                                  GCancellable   *cancellable,
+                                                  GAsyncReadyCallback callback,
+                                                  gpointer        user_data);
+gboolean     matrix_api_set_name_finish          (MatrixApi      *self,
+                                                  GAsyncResult   *result,
+                                                  GError        **error);
 void         matrix_api_get_3pid_async           (MatrixApi      *self,
                                                   GCancellable   *cancellable,
                                                   GAsyncReadyCallback callback,
