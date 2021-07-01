@@ -53,6 +53,14 @@ void              chatty_ma_account_get_details_async  (ChattyMaAccount *self,
 gboolean          chatty_ma_account_get_details_finish (ChattyMaAccount *self,
                                                         GAsyncResult    *result,
                                                         GError         **error);
+void              chatty_ma_account_set_name_async     (ChattyMaAccount *self,
+                                                        const char      *name,
+                                                        GCancellable    *cancellable,
+                                                        GAsyncReadyCallback callback,
+                                                        gpointer         user_data);
+gboolean          chatty_ma_account_set_name_finish    (ChattyMaAccount *self,
+                                                        GAsyncResult    *result,
+                                                        GError         **error);
 void              chatty_ma_account_get_3pid_async     (ChattyMaAccount *self,
                                                         GCancellable    *cancellable,
                                                         GAsyncReadyCallback callback,

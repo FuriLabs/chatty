@@ -1318,6 +1318,66 @@ chatty_ma_account_get_details_finish (ChattyMaAccount  *self,
 }
 
 static void
+ma_set_name_cb (GObject      *object,
+                GAsyncResult *result,
+                gpointer      user_data)
+{
+  ChattyMaAccount *self;
+  g_autoptr(GTask) task = user_data;
+  GError *error = NULL;
+
+  g_assert (G_IS_TASK (task));
+
+  self = g_task_get_source_object (task);
+  g_assert (CHATTY_IS_MA_ACCOUNT (self));
+
+  matrix_api_set_name_finish (self->matrix_api, result, &error);
+
+  if (error)
+    g_task_return_error (task, error);
+  else {
+    char *name;
+
+    name = g_task_get_task_data (task);
+    g_free (self->name);
+    self->name = g_strdup (name);
+
+    g_object_notify (G_OBJECT (self), "name");
+    g_task_return_boolean (task, TRUE);
+  }
+}
+
+void
+chatty_ma_account_set_name_async (ChattyMaAccount     *self,
+                                  const char          *name,
+                                  GCancellable        *cancellable,
+                                  GAsyncReadyCallback  callback,
+                                  gpointer             user_data)
+{
+  GTask *task = NULL;
+
+  g_return_if_fail (CHATTY_IS_MA_ACCOUNT (self));
+  g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_task_data (task, g_strdup (name), g_free);
+
+  matrix_api_set_name_async (self->matrix_api, name, cancellable,
+                             ma_set_name_cb, task);
+}
+
+gboolean
+chatty_ma_account_set_name_finish (ChattyMaAccount  *self,
+                                   GAsyncResult     *result,
+                                   GError          **error)
+{
+  g_return_val_if_fail (CHATTY_IS_MA_ACCOUNT (self), FALSE);
+  g_return_val_if_fail (G_IS_TASK (result), FALSE);
+
+  return g_task_propagate_boolean (G_TASK (result), error);
+}
+
+static void
 ma_get_3pid_cb (GObject      *object,
                 GAsyncResult *result,
                 gpointer      user_data)
