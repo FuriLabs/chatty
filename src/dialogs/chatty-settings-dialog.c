@@ -342,6 +342,9 @@ chatty_settings_save_clicked_cb (ChattySettingsDialog *self)
   if (gtk_stack_get_visible_child (stack) == self->pp_account_details)
     chatty_pp_account_save_async (CHATTY_PP_ACCOUNT_DETAILS (self->pp_account_details),
                                   pp_account_save_cb, g_object_ref (self));
+  else if (gtk_stack_get_visible_child (stack) == self->ma_account_details)
+    chatty_ma_account_details_save_async (CHATTY_MA_ACCOUNT_DETAILS (self->ma_account_details),
+                                          pp_account_save_cb, g_object_ref (self));
 }
 
 static void

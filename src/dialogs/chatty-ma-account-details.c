@@ -52,6 +52,7 @@ struct _ChattyMaAccountDetails
   GtkWidget     *matrix_id_label;
   GtkWidget     *device_id_label;
 
+  guint          modified : 1;
   gulong         status_id;
 };
 
@@ -106,6 +107,26 @@ ma_details_avatar_button_clicked_cb (ChattyMaAccountDetails *self)
 }
 
 static void
+ma_details_name_entry_changed_cb (ChattyMaAccountDetails *self,
+                                  GtkEntry               *entry)
+{
+  const char *old, *new;
+
+  g_assert (CHATTY_IS_MA_ACCOUNT_DETAILS (self));
+  g_assert (GTK_IS_ENTRY (entry));
+
+  old = g_object_get_data (G_OBJECT (entry), "name");
+  new = gtk_entry_get_text (entry);
+
+  if (g_strcmp0 (old, new) == 0)
+    self->modified = FALSE;
+  else
+    self->modified = TRUE;
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_MODIFIED]);
+}
+
+static void
 ma_details_delete_account_clicked_cb (ChattyMaAccountDetails *self)
 {
   g_assert (CHATTY_IS_MA_ACCOUNT_DETAILS (self));
@@ -122,8 +143,10 @@ ma_account_details_update (ChattyMaAccountDetails *self)
 
   name = chatty_item_get_name (CHATTY_ITEM (self->account));
 
-  if (g_strcmp0 (name, gtk_entry_get_text (GTK_ENTRY (self->name_entry))) != 0)
-    gtk_entry_set_text (GTK_ENTRY (self->name_entry), name);
+  g_object_set_data_full (G_OBJECT (self->name_entry),
+                          "name", g_strdup (name), g_free);
+  gtk_entry_set_text (GTK_ENTRY (self->name_entry), name);
+  gtk_widget_set_sensitive (self->name_entry, TRUE);
 }
 
 static void
@@ -222,36 +245,6 @@ ma_details_status_changed_cb (ChattyMaAccountDetails *self)
 
 }
 
-static gboolean
-ma_account_details_get_modified (ChattyMaAccountDetails *self)
-{
-  gboolean modified = FALSE;
-
-  g_assert (CHATTY_IS_MA_ACCOUNT_DETAILS (self));
-
-  modified = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (self->name_entry), "modified"));
-
-  if (!modified) {
-    g_autoptr(GList) emails = NULL;
-
-    emails = gtk_container_get_children (GTK_CONTAINER (self->email_box));
-
-    for (GList *email = emails; !modified && email; email = email->next)
-      modified = GPOINTER_TO_INT (g_object_get_data (email->data, "modified"));
-  }
-
-  if (!modified) {
-    g_autoptr(GList) phones = NULL;
-
-    phones = gtk_container_get_children (GTK_CONTAINER (self->phone_box));
-
-    for (GList *phone = phones; !modified && phone; phone = phone->next)
-      modified = GPOINTER_TO_INT (g_object_get_data (phone->data, "modified"));
-  }
-
-  return modified;
-}
-
 static void
 chatty_ma_account_details_get_property (GObject    *object,
                                         guint       prop_id,
@@ -263,7 +256,7 @@ chatty_ma_account_details_get_property (GObject    *object,
   switch (prop_id)
     {
     case PROP_MODIFIED:
-      g_value_set_boolean (value, ma_account_details_get_modified (self));
+      g_value_set_boolean (value, self->modified);
       break;
 
     default:
@@ -321,6 +314,7 @@ chatty_ma_account_details_class_init (ChattyMaAccountDetailsClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyMaAccountDetails, device_id_label);
 
   gtk_widget_class_bind_template_callback (widget_class, ma_details_avatar_button_clicked_cb);
+  gtk_widget_class_bind_template_callback (widget_class, ma_details_name_entry_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, ma_details_delete_account_clicked_cb);
 }
 
@@ -345,10 +339,71 @@ chatty_ma_account_details_new (void)
   return g_object_new (CHATTY_TYPE_MA_ACCOUNT_DETAILS, NULL);
 }
 
-void
-chatty_ma_account_save (ChattyMaAccountDetails *self)
+static void
+ma_details_set_name_cb (GObject      *object,
+                        GAsyncResult *result,
+                        gpointer      user_data)
 {
+  ChattyMaAccountDetails *self;
+  g_autoptr(GTask) task = user_data;
+  GError *error = NULL;
+  const char *name;
+
+  g_assert (G_IS_TASK (task));
+
+  self = g_task_get_source_object (task);
+  g_assert (CHATTY_IS_MA_ACCOUNT_DETAILS (self));
+
+  chatty_ma_account_set_name_finish (CHATTY_MA_ACCOUNT (self->account),
+                                     result, &error);
+
+  if (error)
+    g_warning ("Error setting name: %s", error->message);
+
+  if (error)
+    g_task_return_error (task, error);
+  else
+    g_task_return_boolean (task, TRUE);
+
+  name = chatty_item_get_name (CHATTY_ITEM (self->account));
+  g_object_set_data_full (G_OBJECT (self->name_entry),
+                          "name", g_strdup (name), g_free);
+  self->modified = FALSE;
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_MODIFIED]);
+}
+
+void
+chatty_ma_account_details_save_async (ChattyMaAccountDetails *self,
+                                      GAsyncReadyCallback     callback,
+                                      gpointer                user_data)
+{
+  g_autoptr(GTask) task = NULL;
+
   g_return_if_fail (CHATTY_IS_MA_ACCOUNT_DETAILS (self));
+  g_return_if_fail (callback);
+
+  task = g_task_new (self, NULL, callback, user_data);
+
+  if (self->modified) {
+    const char *name;
+
+    name = gtk_entry_get_text (GTK_ENTRY (self->name_entry));
+    chatty_ma_account_set_name_async (CHATTY_MA_ACCOUNT (self->account),
+                                      name, NULL,
+                                      ma_details_set_name_cb,
+                                      g_steal_pointer (&task));
+  } else
+    g_task_return_boolean (task, TRUE);
+}
+
+gboolean
+chatty_ma_account_details_save_finish (ChattyMaAccountDetails *self,
+                                       GAsyncResult           *result,
+                                       GError                 **error)
+{
+  g_return_val_if_fail (CHATTY_IS_MA_ACCOUNT_DETAILS (self), FALSE);
+
+  return g_task_propagate_boolean (G_TASK (result), error);
 }
 
 ChattyAccount *
