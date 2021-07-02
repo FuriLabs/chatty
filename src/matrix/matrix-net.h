@@ -13,6 +13,8 @@
 
 #include <glib-object.h>
 
+#include "chatty-message.h"
+
 G_BEGIN_DECLS
 
 #define MATRIX_TYPE_NET (matrix_net_get_type ())
@@ -41,5 +43,15 @@ void       matrix_net_send_json_async  (MatrixNet         *self,
                                         GCancellable      *cancellable,
                                         GAsyncReadyCallback callback,
                                         gpointer           user_data);
+void       matrix_net_get_file_async   (MatrixNet         *self,
+                                        ChattyMessage     *message,
+                                        ChattyFileInfo    *file,
+                                        GCancellable      *cancellable,
+                                        GFileProgressCallback progress_callback,
+                                        GAsyncReadyCallback callback,
+                                        gpointer           user_data);
+gboolean   matrix_net_get_file_finish  (MatrixNet         *self,
+                                        GAsyncResult      *result,
+                                        GError           **error);
 
 G_END_DECLS
