@@ -27,6 +27,7 @@
 #include "matrix-enums.h"
 #include "matrix-utils.h"
 #include "matrix-api.h"
+#include "matrix-net.h"
 #include "chatty-log.h"
 
 /**
@@ -59,6 +60,7 @@ struct _MatrixApi
   SoupSession    *soup_session;
 
   MatrixEnc      *matrix_enc;
+  MatrixNet      *matrix_net;
 
   /* Executed for every request response */
   MatrixCallback  callback;
@@ -676,16 +678,14 @@ matrix_login_cb (GObject      *obj,
                  GAsyncResult *result,
                  gpointer      user_data)
 {
-  MatrixApi *self;
+  g_autoptr(MatrixApi) self = user_data;
   g_autoptr(JsonObject) root = NULL;
   JsonObject *object = NULL;
   GError *error = NULL;
   const char *value;
 
-  g_assert (G_IS_TASK (result));
-
-  self = g_task_get_source_object (G_TASK (result));
   g_assert (MATRIX_IS_API (self));
+  g_assert (G_IS_TASK (result));
 
   root = g_task_propagate_pointer (G_TASK (result), &error);
   g_clear_error (&self->error);
@@ -710,6 +710,7 @@ matrix_login_cb (GObject      *obj,
 
   value = matrix_utils_json_object_get_string (root, "access_token");
   api_set_string_value (&self->access_token, value);
+  matrix_net_set_access_token (self->matrix_net, self->access_token);
 
   value = matrix_utils_json_object_get_string (root, "device_id");
   api_set_string_value (&self->device_id, value);
@@ -732,15 +733,13 @@ matrix_upload_key_cb (GObject      *obj,
                       GAsyncResult *result,
                       gpointer      user_data)
 {
-  MatrixApi *self;
+  g_autoptr(MatrixApi) self = user_data;
   g_autoptr(JsonObject) root = NULL;
   JsonObject *object = NULL;
   GError *error = NULL;
 
-  g_assert (G_IS_TASK (result));
-
-  self = g_task_get_source_object (G_TASK (result));
   g_assert (MATRIX_IS_API (self));
+  g_assert (G_IS_TASK (result));
 
   root = g_task_propagate_pointer (G_TASK (result), &error);
   g_clear_error (&self->error);
@@ -770,15 +769,13 @@ matrix_take_red_pill_cb (GObject      *obj,
                          GAsyncResult *result,
                          gpointer      user_data)
 {
-  MatrixApi *self;
+  g_autoptr(MatrixApi) self = user_data;
   g_autoptr(JsonObject) root = NULL;
   JsonObject *object = NULL;
   GError *error = NULL;
 
-  g_assert (G_IS_TASK (result));
-
-  self = g_task_get_source_object (G_TASK (result));
   g_assert (MATRIX_IS_API (self));
+  g_assert (G_IS_TASK (result));
 
   root = g_task_propagate_pointer (G_TASK (result), &error);
   g_clear_error (&self->error);
@@ -816,161 +813,6 @@ matrix_take_red_pill_cb (GObject      *obj,
 
   /* Repeat */
   matrix_take_red_pill (self);
-}
-
-static void
-api_load_from_stream_cb (JsonParser   *parser,
-                         GAsyncResult *result,
-                         gpointer      user_data)
-{
-  MatrixApi *self;
-  g_autoptr(GTask) task = user_data;
-  JsonNode *root = NULL;
-  GError *error = NULL;
-
-  g_assert (JSON_IS_PARSER (parser));
-  g_assert (G_IS_TASK (task));
-
-  self = g_task_get_source_object (task);
-  g_assert (MATRIX_IS_API (self));
-
-  json_parser_load_from_stream_finish (parser, result, &error);
-
-  if (!error) {
-    root = json_parser_get_root (parser);
-    error = matrix_utils_json_node_get_error (root);
-  }
-
-  if (error) {
-    if (g_error_matches (error, MATRIX_ERROR, M_LIMIT_EXCEEDED) &&
-        root &&
-        JSON_NODE_HOLDS_OBJECT (root)) {
-      JsonObject *obj;
-      guint retry;
-
-      obj = json_node_get_object (root);
-      retry = matrix_utils_json_object_get_int (obj, "retry_after_ms");
-      g_object_set_data (G_OBJECT (task), "retry-after", GINT_TO_POINTER (retry));
-    } else {
-      CHATTY_TRACE_MSG ("Error loading from stream: %s", error->message);
-    }
-
-    g_task_return_error (task, error);
-    return;
-  }
-
-  if (JSON_NODE_HOLDS_OBJECT (root))
-    g_task_return_pointer (task, json_node_dup_object (root),
-                           (GDestroyNotify)json_object_unref);
-  else if (JSON_NODE_HOLDS_ARRAY (root))
-    g_task_return_pointer (task, json_node_dup_array (root),
-                           (GDestroyNotify)json_array_unref);
-  else
-    g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_INVALID_DATA,
-                             "Received invalid data");
-}
-
-static void
-session_send_cb (SoupSession  *session,
-                 GAsyncResult *result,
-                 gpointer      user_data)
-{
-  g_autoptr(GTask) task = user_data;
-  g_autoptr(GInputStream) stream = NULL;
-  g_autoptr(JsonParser) parser = NULL;
-  MatrixApi *self;
-  GError *error = NULL;
-
-  g_assert (SOUP_IS_SESSION (session));
-  g_assert (G_IS_TASK (task));
-
-  self = g_task_get_source_object (task);
-  g_assert (MATRIX_IS_API (self));
-
-  stream = soup_session_send_finish (session, result, &error);
-
-  if (error) {
-    CHATTY_TRACE_MSG ("Error session send: %s", error->message);
-    g_task_return_error (task, error);
-    return;
-  }
-
-  parser = json_parser_new ();
-  json_parser_load_from_stream_async (parser, stream, self->cancellable,
-                                      (GAsyncReadyCallback)api_load_from_stream_cb,
-                                      g_steal_pointer (&task));
-}
-
-static void
-queue_data (MatrixApi           *self,
-            char                *data,
-            gsize                size,
-            const char          *uri_path,
-            const char          *method, /* interned */
-            GHashTable          *query,
-            GAsyncReadyCallback  callback,
-            gpointer             user_data)
-{
-  g_autoptr(GTask) task = NULL;
-  g_autoptr(SoupURI) uri = NULL;
-  SoupMessage *message;
-
-  g_assert (MATRIX_IS_API (self));
-  g_assert (uri_path && *uri_path);
-  g_assert (method == SOUP_METHOD_GET ||
-            method == SOUP_METHOD_POST ||
-            method == SOUP_METHOD_PUT);
-  g_assert (callback);
-
-  g_return_if_fail (self->homeserver && *self->homeserver);
-
-  uri = soup_uri_new (self->homeserver);
-  soup_uri_set_path (uri, uri_path);
-
-  if (self->access_token) {
-    if (!query)
-      query = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
-
-    g_hash_table_replace (query, g_strdup ("access_token"), self->access_token);
-    soup_uri_set_query_from_form (uri, query);
-  }
-
-  message = soup_message_new_from_uri (method, uri);
-  soup_message_headers_append (message->request_headers, "Accept-Encoding", "gzip");
-
-  if (callback == matrix_take_red_pill_cb)
-    soup_message_set_priority (message, SOUP_MESSAGE_PRIORITY_VERY_HIGH);
-
-  if (data && size == -1)
-    size = strlen (data);
-
-  if (data)
-    soup_message_set_request (message, "application/json", SOUP_MEMORY_TAKE, data, size);
-
-  task = g_task_new (self, self->cancellable, callback, user_data);
-  g_task_set_task_data (task, g_object_ref (message), g_object_unref);
-  soup_session_send_async (self->soup_session, message, self->cancellable,
-                           (GAsyncReadyCallback)session_send_cb,
-                           g_steal_pointer (&task));
-}
-
-static void
-queue_json_object (MatrixApi           *self,
-                   JsonObject          *object,
-                   const char          *uri_path,
-                   const char          *method, /* interned */
-                   GHashTable          *query,
-                   GAsyncReadyCallback  callback,
-                   gpointer             user_data)
-{
-  char *body = NULL;
-
-  g_assert (MATRIX_IS_API (self));
-  g_assert (object);
-  g_return_if_fail (self->homeserver && *self->homeserver);
-
-  body = matrix_utils_json_object_to_string (object, FALSE);
-  queue_data (self, body, -1, uri_path, method, query, callback, user_data);
 }
 
 static void
@@ -1014,8 +856,10 @@ matrix_login (MatrixApi *self)
   json_object_set_string_member (child, "user", self->username);
   json_object_set_object_member (object, "identifier", child);
 
-  queue_json_object (self, object, "/_matrix/client/r0/login",
-                     SOUP_METHOD_POST, NULL, matrix_login_cb, NULL);
+  matrix_net_send_json_async (self->matrix_net, object,
+                              "/_matrix/client/r0/login", SOUP_METHOD_POST,
+                              NULL, NULL, matrix_login_cb,
+                              g_object_ref (self));
 }
 
 static void
@@ -1028,8 +872,10 @@ matrix_upload_key (MatrixApi *self)
 
   key = g_steal_pointer (&self->key);
 
-  queue_data (self, key, strlen (key), "/_matrix/client/r0/keys/upload",
-              SOUP_METHOD_POST, NULL, matrix_upload_key_cb, NULL);
+  matrix_net_send_data_async (self->matrix_net, key, strlen (key),
+                              "/_matrix/client/r0/keys/upload", SOUP_METHOD_POST,
+                              NULL, NULL, matrix_upload_key_cb,
+                              g_object_ref (self));
 }
 
 static void
@@ -1037,14 +883,14 @@ get_joined_rooms_cb (GObject      *obj,
                      GAsyncResult *result,
                      gpointer      user_data)
 {
-  MatrixApi *self;
+  g_autoptr(MatrixApi) self = user_data;
   g_autoptr(JsonObject) root = NULL;
   GError *error = NULL;
 
+  g_assert (MATRIX_IS_API (self));
   g_assert (G_IS_TASK (result));
 
-  self = g_task_get_source_object (G_TASK (result));
-  g_assert (MATRIX_IS_API (self));
+  CHATTY_TRACE_MSG ("Getting joined rooms, success: %d", !error);
 
   if (handle_common_errors (self, error))
     return;
@@ -1067,8 +913,11 @@ matrix_get_joined_rooms (MatrixApi *self)
   g_assert (MATRIX_IS_API (self));
   g_assert (!self->room_list_loaded);
 
-  queue_data (self, NULL, 0, "/_matrix/client/r0/joined_rooms",
-              SOUP_METHOD_GET, NULL, get_joined_rooms_cb, NULL);
+  CHATTY_TRACE_MSG ("Getting joined rooms");
+  matrix_net_send_json_async (self->matrix_net, NULL,
+                              "/_matrix/client/r0/joined_rooms", SOUP_METHOD_GET,
+                              NULL, NULL, get_joined_rooms_cb,
+                              g_object_ref (self));
 }
 
 static void
@@ -1125,8 +974,10 @@ matrix_take_red_pill (MatrixApi *self)
   if (!self->full_state_loaded)
     g_hash_table_insert (query, g_strdup ("full_state"), g_strdup ("true"));
 
-  queue_data (self, NULL, 0, "/_matrix/client/r0/sync",
-              SOUP_METHOD_GET, query, matrix_take_red_pill_cb, NULL);
+  matrix_net_send_json_async (self->matrix_net, NULL,
+                              "/_matrix/client/r0/sync", SOUP_METHOD_GET,
+                              query, self->cancellable, matrix_take_red_pill_cb,
+                              g_object_ref (self));
 }
 
 static void
@@ -1137,6 +988,8 @@ matrix_api_finalize (GObject *object)
   if (self->cancellable)
     g_cancellable_cancel (self->cancellable);
   g_clear_object (&self->cancellable);
+
+  g_clear_object (&self->matrix_net);
 
   g_clear_handle_id (&self->resync_id, g_source_remove);
   soup_session_abort (self->soup_session);
@@ -1167,6 +1020,7 @@ matrix_api_init (MatrixApi *self)
                                      "max-conns-per-host", MAX_CONNECTIONS,
                                      NULL);
   self->cancellable = g_cancellable_new ();
+  self->matrix_net = matrix_net_new ();
 }
 
 /**
@@ -1344,6 +1198,8 @@ matrix_api_set_homeserver (MatrixApi  *self,
   g_free (self->homeserver);
   self->homeserver = g_string_free (host, FALSE);
 
+  matrix_net_set_homeserver (self->matrix_net, self->homeserver);
+
   if (self->is_sync &&
       self->sync_failed &&
       self->action == MATRIX_GET_HOMESERVER) {
@@ -1396,6 +1252,8 @@ matrix_api_set_access_token (MatrixApi  *self,
 
   self->access_token = g_strdup (access_token);
   self->device_id = g_strdup (device_id);
+  matrix_net_set_access_token (self->matrix_net, self->access_token);
+
   if (self->matrix_enc)
     matrix_enc_set_details (self->matrix_enc, self->username, self->device_id);
 }
@@ -1484,8 +1342,8 @@ matrix_api_set_typing (MatrixApi  *self,
                        const char *room_id,
                        gboolean    is_typing)
 {
-  g_autoptr(JsonObject) object = NULL;
   g_autofree char *uri = NULL;
+  JsonObject *object;
 
   g_return_if_fail (MATRIX_IS_API (self));
 
@@ -1499,8 +1357,8 @@ matrix_api_set_typing (MatrixApi  *self,
   uri = g_strconcat (self->homeserver, "/_matrix/client/r0/rooms/",
                      room_id, "/typing/", self->username, NULL);
 
-  queue_json_object (self, object, uri, SOUP_METHOD_PUT,
-                     NULL, matrix_send_typing_cb, NULL);
+  matrix_net_send_json_async (self->matrix_net, object, uri, SOUP_METHOD_PUT,
+                              NULL, self->cancellable, matrix_send_typing_cb, NULL);
 }
 
 void
@@ -1518,8 +1376,8 @@ matrix_api_get_room_state_async (MatrixApi           *self,
   task = g_task_new (self, self->cancellable, callback, user_data);
 
   uri = g_strconcat ("/_matrix/client/r0/rooms/", room_id, "/state", NULL);
-  queue_data (self, NULL, 0, uri, SOUP_METHOD_GET,
-              NULL, matrix_get_room_state_cb, task);
+  matrix_net_send_json_async (self->matrix_net, NULL, uri, SOUP_METHOD_GET,
+                              NULL, self->cancellable, matrix_get_room_state_cb, task);
 }
 
 JsonArray *
@@ -1548,8 +1406,8 @@ matrix_api_get_room_name_async (MatrixApi           *self,
 
   task = g_task_new (self, self->cancellable, callback, user_data);
   uri = g_strconcat ("/_matrix/client/r0/rooms/", room_id, "/state/m.room.name", NULL);
-  queue_data (self, NULL, 0, uri, SOUP_METHOD_GET,
-              NULL, matrix_get_room_name_cb, task);
+  matrix_net_send_json_async (self->matrix_net, NULL, uri, SOUP_METHOD_GET,
+                              NULL, self->cancellable, matrix_get_room_name_cb, task);
 }
 
 JsonObject *
@@ -1570,9 +1428,9 @@ matrix_api_get_members_async (MatrixApi           *self,
                               GAsyncReadyCallback  callback,
                               gpointer             user_data)
 {
-  g_autoptr(GTask) task = NULL;
   g_autofree char *uri = NULL;
   GHashTable *query;
+  GTask *task;
 
   g_return_if_fail (MATRIX_IS_API (self));
 
@@ -1586,8 +1444,8 @@ matrix_api_get_members_async (MatrixApi           *self,
 
   /* https://matrix.org/docs/spec/client_server/r0.6.1#get-matrix-client-r0-rooms-roomid-members */
   uri = g_strconcat ("/_matrix/client/r0/rooms/", room_id, "/members", NULL);
-  queue_data (self, NULL, 0, uri, SOUP_METHOD_GET,
-              query, matrix_get_members_cb, g_steal_pointer (&task));
+  matrix_net_send_json_async (self->matrix_net, NULL, uri, SOUP_METHOD_GET,
+                              query, self->cancellable, matrix_get_members_cb, task);
 }
 
 JsonObject *
@@ -1632,8 +1490,8 @@ matrix_api_load_prev_batch_async (MatrixApi           *self,
   CHATTY_TRACE_MSG ("Load prev-batch");
   /* https://matrix.org/docs/spec/client_server/r0.6.1#get-matrix-client-r0-rooms-roomid-messages */
   uri = g_strconcat ("/_matrix/client/r0/rooms/", room_id, "/messages", NULL);
-  queue_data (self, NULL, 0, uri, SOUP_METHOD_GET,
-              query, matrix_get_messages_cb, task);
+  matrix_net_send_json_async (self->matrix_net, NULL, uri, SOUP_METHOD_GET,
+                              query, self->cancellable, matrix_get_messages_cb, task);
 }
 
 JsonObject *
@@ -1703,8 +1561,9 @@ matrix_api_query_keys_async (MatrixApi           *self,
 
   task = g_task_new (self, self->cancellable, callback, user_data);
 
-  queue_json_object (self, object, "/_matrix/client/r0/keys/query",
-                     SOUP_METHOD_POST, NULL, matrix_keys_query_cb, task);
+  matrix_net_send_json_async (self->matrix_net, object,
+                              "/_matrix/client/r0/keys/query", SOUP_METHOD_POST,
+                              NULL, self->cancellable, matrix_keys_query_cb, task);
 }
 
 JsonObject *
@@ -1766,8 +1625,9 @@ matrix_api_claim_keys_async (MatrixApi           *self,
 
   task = g_task_new (self, self->cancellable, callback, user_data);
 
-  queue_json_object (self, object, "/_matrix/client/r0/keys/claim",
-                     SOUP_METHOD_POST, NULL, matrix_keys_claim_cb, task);
+  matrix_net_send_json_async (self->matrix_net, object,
+                              "/_matrix/client/r0/keys/claim", SOUP_METHOD_POST,
+                              NULL, self->cancellable, matrix_keys_claim_cb, task);
 }
 
 JsonObject *
@@ -1856,7 +1716,7 @@ api_send_message_encrypted (MatrixApi     *self,
   root = json_object_new ();
   json_object_set_string_member (root, "type", "m.room.message");
   json_object_set_string_member (root, "room_id", room_id);
-  json_object_set_object_member (root, "content", json_object_ref (content));
+  json_object_set_object_member (root, "content", content);
 
   text = matrix_utils_json_object_to_string (root, FALSE);
   json_object_unref (root);
@@ -1874,9 +1734,8 @@ api_send_message_encrypted (MatrixApi     *self,
 
   uri = g_strdup_printf ("/_matrix/client/r0/rooms/%s/send/m.room.encrypted/%s", room_id, id);
 
-  queue_json_object (self, root, uri, SOUP_METHOD_PUT,
-                     NULL, api_send_message_cb, g_object_ref (task));
-  json_object_unref (root);
+  matrix_net_send_json_async (self->matrix_net, root, uri, SOUP_METHOD_PUT,
+                              NULL, self->cancellable, api_send_message_cb, task);
 }
 
 static void
@@ -1905,8 +1764,8 @@ api_send_message (MatrixApi     *self,
 
   /* https://matrix.org/docs/spec/client_server/r0.6.1#put-matrix-client-r0-rooms-roomid-send-eventtype-txnid */
   uri = g_strdup_printf ("/_matrix/client/r0/rooms/%s/send/m.room.message/%s", room_id, id);
-  queue_json_object (self, content, uri, SOUP_METHOD_PUT,
-                     NULL, api_send_message_cb, g_object_ref (task));
+  matrix_net_send_json_async (self->matrix_net, content, uri, SOUP_METHOD_PUT,
+                              NULL, self->cancellable, api_send_message_cb, task);
 }
 
 void
@@ -1917,8 +1776,8 @@ matrix_api_send_message_async (MatrixApi           *self,
                                GAsyncReadyCallback  callback,
                                gpointer             user_data)
 {
-  g_autoptr(JsonObject) object = NULL;
-  g_autoptr(GTask) task = NULL;
+  JsonObject *object;
+  GTask *task;
 
   g_return_if_fail (MATRIX_IS_API (self));
   g_return_if_fail (CHATTY_IS_MESSAGE (message));
@@ -1971,8 +1830,8 @@ matrix_api_set_read_marker_async (MatrixApi           *self,
   task = g_task_new (self, self->cancellable, callback, user_data);
 
   uri = g_strdup_printf ("/_matrix/client/r0/rooms/%s/read_markers", room_id);
-  queue_json_object (self, root, uri, SOUP_METHOD_POST,
-                     NULL, api_set_read_marker_cb, task);
+  matrix_net_send_json_async (self->matrix_net, root, uri, SOUP_METHOD_POST,
+                              NULL, self->cancellable, api_set_read_marker_cb, task);
 }
 
 gboolean
@@ -1998,8 +1857,6 @@ matrix_api_upload_group_keys_async (MatrixApi           *self,
   JsonObject *root, *object;
   GTask *task;
 
-  CHATTY_ENTRY;
-
   g_return_if_fail (MATRIX_IS_API (self));
   g_return_if_fail (G_IS_LIST_MODEL (member_list));
   g_return_if_fail (g_list_model_get_item_type (member_list) == CHATTY_TYPE_MA_BUDDY);
@@ -2015,9 +1872,8 @@ matrix_api_upload_group_keys_async (MatrixApi           *self,
   uri = g_strdup_printf ("/_matrix/client/r0/sendToDevice/m.room.encrypted/m%"G_GINT64_FORMAT".%d",
                          g_get_real_time () / G_TIME_SPAN_MILLISECOND,
                          self->event_id);
-  queue_json_object (self, root, uri, SOUP_METHOD_PUT,
-                     NULL, api_upload_group_keys_cb, task);
-  CHATTY_EXIT;
+  matrix_net_send_json_async (self->matrix_net, root, uri, SOUP_METHOD_PUT,
+                              NULL, self->cancellable, api_upload_group_keys_cb, task);
 }
 
 gboolean
@@ -2025,13 +1881,11 @@ matrix_api_upload_group_keys_finish (MatrixApi     *self,
                                      GAsyncResult  *result,
                                      GError       **error)
 {
-  CHATTY_ENTRY;
-
   g_return_val_if_fail (MATRIX_IS_API (self), FALSE);
   g_return_val_if_fail (G_IS_TASK (result), FALSE);
   g_return_val_if_fail (!error || !*error, FALSE);
 
-  CHATTY_RETURN (g_task_propagate_boolean (G_TASK (result), error));
+  return g_task_propagate_boolean (G_TASK (result), error);
 }
 
 static void
@@ -2039,12 +1893,14 @@ api_leave_room_cb (GObject      *object,
                    GAsyncResult *result,
                    gpointer      user_data)
 {
-  MatrixApi *self = (MatrixApi *)object;
+  MatrixApi *self;
   g_autoptr(GTask) task = user_data;
   GError *error = NULL;
 
-  g_assert (MATRIX_IS_API (self));
   g_assert (G_IS_TASK (task));
+
+  self = g_task_get_source_object (task);
+  g_assert (MATRIX_IS_API (self));
 
   object = g_task_propagate_pointer (G_TASK (result), &error);
 
@@ -2076,8 +1932,8 @@ matrix_api_leave_chat_async (MatrixApi           *self,
   task = g_task_new (self, self->cancellable, callback, user_data);
   g_task_set_task_data (task, g_strdup (room_id), g_free);
   uri = g_strdup_printf ("/_matrix/client/r0/rooms/%s/leave", room_id);
-  queue_data (self, NULL, 0, uri, SOUP_METHOD_POST,
-              NULL, api_leave_room_cb, task);
+  matrix_net_send_json_async (self->matrix_net, NULL, uri, SOUP_METHOD_POST,
+                              NULL, self->cancellable, api_leave_room_cb, task);
 }
 
 gboolean
@@ -2097,14 +1953,16 @@ api_get_user_info_cb (GObject      *obj,
                       GAsyncResult *result,
                       gpointer      user_data)
 {
-  MatrixApi *self = (MatrixApi *)obj;
+  MatrixApi *self;
   g_autoptr(GTask) task = user_data;
   const char *name, *avatar_url;
   GError *error = NULL;
   JsonObject *object;
 
-  g_assert (MATRIX_IS_API (self));
   g_assert (G_IS_TASK (task));
+
+  self = g_task_get_source_object (task);
+  g_assert (MATRIX_IS_API (self));
 
   object = g_task_propagate_pointer (G_TASK (result), &error);
 
@@ -2145,8 +2003,8 @@ matrix_api_get_user_info_async (MatrixApi           *self,
   task = g_task_new (self, cancellable, callback, user_data);
   g_task_set_task_data (task, g_strdup (user_id), g_free);
   uri = g_strdup_printf ("/_matrix/client/r0/profile/%s", user_id);
-  queue_data (self, NULL, 0, uri, SOUP_METHOD_GET,
-              NULL, api_get_user_info_cb, task);
+  matrix_net_send_json_async (self->matrix_net, NULL, uri, SOUP_METHOD_GET,
+                              NULL, self->cancellable, api_get_user_info_cb, task);
 }
 
 gboolean
@@ -2171,12 +2029,14 @@ api_set_name_cb (GObject      *obj,
                  GAsyncResult *result,
                  gpointer      user_data)
 {
-  MatrixApi *self = (MatrixApi *)obj;
+  MatrixApi *self;
   g_autoptr(GTask) task = user_data;
   GError *error = NULL;
 
-  g_assert (MATRIX_IS_API (self));
   g_assert (G_IS_TASK (task));
+
+  self = g_task_get_source_object (task);
+  g_assert (MATRIX_IS_API (self));
 
   g_task_propagate_pointer (G_TASK (result), &error);
 
@@ -2214,8 +2074,8 @@ matrix_api_set_name_async (MatrixApi           *self,
   g_task_set_task_data (task, g_strdup (name), g_free);
 
   uri = g_strdup_printf ("/_matrix/client/r0/profile/%s/displayname", self->username);
-  queue_json_object (self, root, uri, SOUP_METHOD_PUT,
-                     NULL, api_set_name_cb, task);
+  matrix_net_send_json_async (self->matrix_net, root, uri, SOUP_METHOD_PUT,
+                              NULL, self->cancellable, api_set_name_cb, task);
 }
 
 gboolean
@@ -2235,7 +2095,7 @@ api_get_3pid_cb (GObject      *obj,
                  GAsyncResult *result,
                  gpointer      user_data)
 {
-  MatrixApi *self = (MatrixApi *)obj;
+  MatrixApi *self;
   g_autoptr(GTask) task = user_data;
   GPtrArray *emails, *phones;
   GError *error = NULL;
@@ -2243,8 +2103,10 @@ api_get_3pid_cb (GObject      *obj,
   JsonArray *array;
   guint length;
 
-  g_assert (MATRIX_IS_API (self));
   g_assert (G_IS_TASK (task));
+
+  self = g_task_get_source_object (task);
+  g_assert (MATRIX_IS_API (self));
 
   object = g_task_propagate_pointer (G_TASK (result), &error);
   array = matrix_utils_json_object_get_array (object, "threepids");
@@ -2292,7 +2154,6 @@ matrix_api_get_3pid_async (MatrixApi           *self,
                            GAsyncReadyCallback  callback,
                            gpointer             user_data)
 {
-  g_autofree char *uri = NULL;
   GTask *task;
 
   g_return_if_fail (MATRIX_IS_API (self));
@@ -2301,9 +2162,9 @@ matrix_api_get_3pid_async (MatrixApi           *self,
   CHATTY_TRACE_MSG ("Getting user 3pid: %s", self->username);
 
   task = g_task_new (self, cancellable, callback, user_data);
-  uri = g_strdup ("/_matrix/client/r0/account/3pid");
-  queue_data (self, NULL, 0, uri, SOUP_METHOD_GET,
-              NULL, api_get_3pid_cb, task);
+  matrix_net_send_json_async (self->matrix_net, NULL,
+                              "/_matrix/client/r0/account/3pid", SOUP_METHOD_GET,
+                              NULL, self->cancellable, api_get_3pid_cb, task);
 }
 
 gboolean
@@ -2324,4 +2185,3 @@ matrix_api_get_3pid_finish (MatrixApi     *self,
 
   return g_task_propagate_boolean (G_TASK (result), error);
 }
-
