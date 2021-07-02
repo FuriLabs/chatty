@@ -15,8 +15,6 @@
 # include "config.h"
 #endif
 
-#define GCRYPT_NO_DEPRECATED
-#include <gcrypt.h>
 #include <libsoup/soup.h>
 #include <json-glib/json-glib.h>
 #include <olm/olm.h>
@@ -40,7 +38,6 @@
  * user REST APIs.
  */
 
-#define MAX_CONNECTIONS     6
 #define URI_REQUEST_TIMEOUT 60    /* seconds */
 #define SYNC_TIMEOUT        30000 /* milliseconds */
 #define TYPING_TIMEOUT      10000 /* milliseconds */
@@ -57,7 +54,6 @@ struct _MatrixApi
   char           *device_id;
   char           *access_token;
   char           *key;
-  SoupSession    *soup_session;
 
   MatrixEnc      *matrix_enc;
   MatrixNet      *matrix_net;
@@ -237,155 +233,29 @@ api_send_message_cb (GObject      *obj,
 }
 
 static void
-api_download_stream_cb (GObject      *obj,
-                        GAsyncResult *result,
-                        gpointer      user_data)
+api_get_file_cb (GObject      *object,
+                 GAsyncResult *result,
+                 gpointer      user_data)
 {
-  g_autoptr(GTask) task = user_data;
-  GCancellable *cancellable;
-  GOutputStream *out_stream = NULL;
-  GError *error = NULL;
-  char *buffer, *secret;
-  gsize n_written;
-  gssize n_read;
-
-  g_assert (G_IS_TASK (task));
-
-  n_read = g_input_stream_read_finish (G_INPUT_STREAM (obj), result, &error);
-
-  if (error) {
-    g_task_return_error (task, error);
-
-    return;
-  }
-
-  cancellable = g_task_get_cancellable (task);
-  buffer = g_task_get_task_data (task);
-  secret = g_object_get_data (user_data, "secret");
-  out_stream = g_object_get_data (user_data, "out-stream");
-  g_assert (out_stream);
-
-  if (secret) {
-    gcry_cipher_hd_t cipher_hd;
-    gcry_error_t err;
-
-    cipher_hd = g_object_get_data (user_data, "cipher");
-    g_assert (cipher_hd);
-
-    err = gcry_cipher_decrypt(cipher_hd, secret, n_read, buffer, n_read);
-    if (!err)
-      buffer = secret;
-  }
-  g_output_stream_write_all (out_stream, buffer, n_read, &n_written, NULL, NULL);
-  if (n_read == 0 || n_read == -1) {
-    g_output_stream_close (out_stream, cancellable, NULL);
-
-    if (n_read == 0) {
-      g_autoptr(GFile) parent = NULL;
-      GFile *out_file;
-      ChattyFileInfo *file;
-
-      file = g_object_get_data (user_data, "file");
-      out_file = g_object_get_data (user_data, "out-file");
-
-      /* We don't use absolute directory so that the path is user agnostic */
-      parent = g_file_new_build_filename (g_get_user_cache_dir (), "chatty", NULL);
-      file->path = g_file_get_relative_path (parent, out_file);
-    }
-
-    g_task_return_boolean (task, n_read == 0);
-
-    return;
-  }
-
-  buffer = g_task_get_task_data (task);
-  g_input_stream_read_async (G_INPUT_STREAM (obj), buffer, 1024 * 8, G_PRIORITY_DEFAULT, cancellable,
-                             api_download_stream_cb, g_steal_pointer (&task));
-}
-
-static void
-api_get_file_stream_cb  (GObject      *obj,
-                         GAsyncResult *result,
-                         gpointer      user_data)
-{
-  g_autoptr(GTask) task = user_data;
-  GCancellable *cancellable;
-  ChattyMessage *message;
-  ChattyFileInfo *file;
-  GInputStream *stream;
-  GError *error = NULL;
-  char *buffer = NULL;
   MatrixApi *self;
+  g_autoptr(GTask) task = user_data;
+  GError *error = NULL;
+  gboolean status;
 
   g_assert (G_IS_TASK (task));
-
-  CHATTY_ENTRY;
-
-  stream = soup_session_send_finish (SOUP_SESSION (obj), result, &error);
-  file = g_object_get_data (user_data, "file");
-  message = g_object_get_data (user_data, "message");
-  cancellable = g_task_get_cancellable (task);
-
-  if (!error) {
-    GFileOutputStream *out_stream;
-    GFile *out_file;
-    gboolean is_thumbnail = FALSE;
-    char *name, *file_name;
-
-    if (message &&
-        chatty_message_get_preview (message) == file)
-      is_thumbnail = TRUE;
-
-    name = g_path_get_basename (file->url);
-    file_name = g_strdup (name);
-
-    /* If @message is NULL, @file is an avatar image */
-    out_file = g_file_new_build_filename (g_get_user_cache_dir (), "chatty", "matrix",
-                                          message ? "files" : "avatars",
-                                          is_thumbnail ? "thumbnail" : "", file_name,
-                                          NULL);
-    out_stream = g_file_append_to (out_file, 0, cancellable, &error);
-    g_object_set_data_full (user_data, "out-file", out_file, g_object_unref);
-    g_object_set_data_full (user_data, "out-stream", out_stream, g_object_unref);
-  }
-
-  if (error) {
-    g_task_return_error (task, error);
-    CHATTY_EXIT;
-  }
 
   self = g_task_get_source_object (task);
   g_assert (MATRIX_IS_API (self));
 
-  buffer = g_malloc (1024 * 8);
-  g_task_set_task_data (task, buffer, g_free);
+  status = matrix_net_get_file_finish (self->matrix_net, result, &error);
 
-  if (message &&
-      chatty_message_get_encrypted (message) && file->user_data) {
-    gcry_cipher_hd_t cipher_hd;
-    MatrixFileEncInfo *key;
-    gcry_error_t err;
+  if (error) {
+    g_task_return_error (task, error);
 
-    key = file->user_data;
-    err = gcry_cipher_open (&cipher_hd, GCRY_CIPHER_AES256, GCRY_CIPHER_MODE_CTR, 0);
-
-    if (!err)
-      err = gcry_cipher_setkey (cipher_hd, key->aes_key, key->aes_key_len);
-
-    if (!err)
-      err = gcry_cipher_setctr (cipher_hd, key->aes_iv, key->aes_iv_len);
-
-    if (!err) {
-      char *secret = g_malloc (1024 * 8);
-      g_object_set_data_full (user_data, "secret", secret, g_free);
-      g_object_set_data_full (user_data, "cipher", cipher_hd,
-                              (GDestroyNotify)gcry_cipher_close);
-    }
+    return;
   }
 
-  g_input_stream_read_async (stream, buffer, 1024 * 8, G_PRIORITY_DEFAULT, cancellable,
-                             api_download_stream_cb, g_steal_pointer (&task));
-  CHATTY_EXIT;
+  g_task_return_boolean (task, status);
 }
 
 static void
@@ -992,8 +862,6 @@ matrix_api_finalize (GObject *object)
   g_clear_object (&self->matrix_net);
 
   g_clear_handle_id (&self->resync_id, g_source_remove);
-  soup_session_abort (self->soup_session);
-  g_object_unref (self->soup_session);
 
   g_free (self->username);
   g_free (self->homeserver);
@@ -1016,9 +884,6 @@ matrix_api_class_init (MatrixApiClass *klass)
 static void
 matrix_api_init (MatrixApi *self)
 {
-  self->soup_session = g_object_new (SOUP_TYPE_SESSION,
-                                     "max-conns-per-host", MAX_CONNECTIONS,
-                                     NULL);
   self->cancellable = g_cancellable_new ();
   self->matrix_net = matrix_net_new ();
 }
@@ -1651,21 +1516,17 @@ matrix_api_get_file_async (MatrixApi             *self,
                            GAsyncReadyCallback    callback,
                            gpointer               user_data)
 {
-  g_autoptr(SoupMessage) msg = NULL;
-  GTask *task;
+  g_autoptr(GTask) task = NULL;
 
   g_return_if_fail (MATRIX_IS_API (self));
   g_return_if_fail (!message || CHATTY_IS_MESSAGE (message));
 
-  CHATTY_TRACE_MSG ("Downloading file");
-
   if (message)
     g_object_ref (message);
 
-  task = g_task_new (self, self->cancellable, callback, user_data);
-  g_object_set_data (G_OBJECT (task), "progress", progress_callback);
+  task = g_task_new (self, cancellable, callback, user_data);
+
   g_object_set_data (G_OBJECT (task), "file", file);
-  g_object_set_data_full (G_OBJECT (task), "msg", msg, g_object_unref);
   g_object_set_data_full (G_OBJECT (task), "message", message, g_object_unref);
 
   if (file->status != CHATTY_FILE_UNKNOWN) {
@@ -1674,14 +1535,11 @@ matrix_api_get_file_async (MatrixApi             *self,
     return;
   }
 
-  file->status = CHATTY_FILE_DOWNLOADING;
-  if (message)
-    chatty_message_emit_updated (message);
-
-  msg = soup_message_new (SOUP_METHOD_GET, file->url);
-  soup_session_send_async (self->soup_session, msg, self->cancellable,
-                           (GAsyncReadyCallback)api_get_file_stream_cb,
-                           g_steal_pointer (&task));
+  matrix_net_get_file_async (self->matrix_net, message,
+                             file, cancellable,
+                             progress_callback,
+                             api_get_file_cb,
+                             g_steal_pointer (&task));
 }
 
 gboolean
