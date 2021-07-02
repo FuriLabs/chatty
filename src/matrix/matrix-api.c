@@ -726,7 +726,7 @@ matrix_login (MatrixApi *self)
   json_object_set_string_member (child, "user", self->username);
   json_object_set_object_member (object, "identifier", child);
 
-  matrix_net_send_json_async (self->matrix_net, object,
+  matrix_net_send_json_async (self->matrix_net, 2, object,
                               "/_matrix/client/r0/login", SOUP_METHOD_POST,
                               NULL, NULL, matrix_login_cb,
                               g_object_ref (self));
@@ -742,7 +742,7 @@ matrix_upload_key (MatrixApi *self)
 
   key = g_steal_pointer (&self->key);
 
-  matrix_net_send_data_async (self->matrix_net, key, strlen (key),
+  matrix_net_send_data_async (self->matrix_net, 2, key, strlen (key),
                               "/_matrix/client/r0/keys/upload", SOUP_METHOD_POST,
                               NULL, NULL, matrix_upload_key_cb,
                               g_object_ref (self));
@@ -784,7 +784,7 @@ matrix_get_joined_rooms (MatrixApi *self)
   g_assert (!self->room_list_loaded);
 
   CHATTY_TRACE_MSG ("Getting joined rooms");
-  matrix_net_send_json_async (self->matrix_net, NULL,
+  matrix_net_send_json_async (self->matrix_net, 0, NULL,
                               "/_matrix/client/r0/joined_rooms", SOUP_METHOD_GET,
                               NULL, NULL, get_joined_rooms_cb,
                               g_object_ref (self));
@@ -844,7 +844,7 @@ matrix_take_red_pill (MatrixApi *self)
   if (!self->full_state_loaded)
     g_hash_table_insert (query, g_strdup ("full_state"), g_strdup ("true"));
 
-  matrix_net_send_json_async (self->matrix_net, NULL,
+  matrix_net_send_json_async (self->matrix_net, 2, NULL,
                               "/_matrix/client/r0/sync", SOUP_METHOD_GET,
                               query, self->cancellable, matrix_take_red_pill_cb,
                               g_object_ref (self));
@@ -1222,7 +1222,7 @@ matrix_api_set_typing (MatrixApi  *self,
   uri = g_strconcat (self->homeserver, "/_matrix/client/r0/rooms/",
                      room_id, "/typing/", self->username, NULL);
 
-  matrix_net_send_json_async (self->matrix_net, object, uri, SOUP_METHOD_PUT,
+  matrix_net_send_json_async (self->matrix_net, 0, object, uri, SOUP_METHOD_PUT,
                               NULL, self->cancellable, matrix_send_typing_cb, NULL);
 }
 
@@ -1241,7 +1241,7 @@ matrix_api_get_room_state_async (MatrixApi           *self,
   task = g_task_new (self, self->cancellable, callback, user_data);
 
   uri = g_strconcat ("/_matrix/client/r0/rooms/", room_id, "/state", NULL);
-  matrix_net_send_json_async (self->matrix_net, NULL, uri, SOUP_METHOD_GET,
+  matrix_net_send_json_async (self->matrix_net, -1, NULL, uri, SOUP_METHOD_GET,
                               NULL, self->cancellable, matrix_get_room_state_cb, task);
 }
 
@@ -1271,7 +1271,7 @@ matrix_api_get_room_name_async (MatrixApi           *self,
 
   task = g_task_new (self, self->cancellable, callback, user_data);
   uri = g_strconcat ("/_matrix/client/r0/rooms/", room_id, "/state/m.room.name", NULL);
-  matrix_net_send_json_async (self->matrix_net, NULL, uri, SOUP_METHOD_GET,
+  matrix_net_send_json_async (self->matrix_net, -1, NULL, uri, SOUP_METHOD_GET,
                               NULL, self->cancellable, matrix_get_room_name_cb, task);
 }
 
@@ -1309,7 +1309,7 @@ matrix_api_get_members_async (MatrixApi           *self,
 
   /* https://matrix.org/docs/spec/client_server/r0.6.1#get-matrix-client-r0-rooms-roomid-members */
   uri = g_strconcat ("/_matrix/client/r0/rooms/", room_id, "/members", NULL);
-  matrix_net_send_json_async (self->matrix_net, NULL, uri, SOUP_METHOD_GET,
+  matrix_net_send_json_async (self->matrix_net, -1, NULL, uri, SOUP_METHOD_GET,
                               query, self->cancellable, matrix_get_members_cb, task);
 }
 
@@ -1355,7 +1355,7 @@ matrix_api_load_prev_batch_async (MatrixApi           *self,
   CHATTY_TRACE_MSG ("Load prev-batch");
   /* https://matrix.org/docs/spec/client_server/r0.6.1#get-matrix-client-r0-rooms-roomid-messages */
   uri = g_strconcat ("/_matrix/client/r0/rooms/", room_id, "/messages", NULL);
-  matrix_net_send_json_async (self->matrix_net, NULL, uri, SOUP_METHOD_GET,
+  matrix_net_send_json_async (self->matrix_net, 0, NULL, uri, SOUP_METHOD_GET,
                               query, self->cancellable, matrix_get_messages_cb, task);
 }
 
@@ -1426,7 +1426,7 @@ matrix_api_query_keys_async (MatrixApi           *self,
 
   task = g_task_new (self, self->cancellable, callback, user_data);
 
-  matrix_net_send_json_async (self->matrix_net, object,
+  matrix_net_send_json_async (self->matrix_net, 0, object,
                               "/_matrix/client/r0/keys/query", SOUP_METHOD_POST,
                               NULL, self->cancellable, matrix_keys_query_cb, task);
 }
@@ -1490,7 +1490,7 @@ matrix_api_claim_keys_async (MatrixApi           *self,
 
   task = g_task_new (self, self->cancellable, callback, user_data);
 
-  matrix_net_send_json_async (self->matrix_net, object,
+  matrix_net_send_json_async (self->matrix_net, 0, object,
                               "/_matrix/client/r0/keys/claim", SOUP_METHOD_POST,
                               NULL, self->cancellable, matrix_keys_claim_cb, task);
 }
@@ -1592,7 +1592,7 @@ api_send_message_encrypted (MatrixApi     *self,
 
   uri = g_strdup_printf ("/_matrix/client/r0/rooms/%s/send/m.room.encrypted/%s", room_id, id);
 
-  matrix_net_send_json_async (self->matrix_net, root, uri, SOUP_METHOD_PUT,
+  matrix_net_send_json_async (self->matrix_net, 0, root, uri, SOUP_METHOD_PUT,
                               NULL, self->cancellable, api_send_message_cb, task);
 }
 
@@ -1622,7 +1622,7 @@ api_send_message (MatrixApi     *self,
 
   /* https://matrix.org/docs/spec/client_server/r0.6.1#put-matrix-client-r0-rooms-roomid-send-eventtype-txnid */
   uri = g_strdup_printf ("/_matrix/client/r0/rooms/%s/send/m.room.message/%s", room_id, id);
-  matrix_net_send_json_async (self->matrix_net, content, uri, SOUP_METHOD_PUT,
+  matrix_net_send_json_async (self->matrix_net, 0, content, uri, SOUP_METHOD_PUT,
                               NULL, self->cancellable, api_send_message_cb, task);
 }
 
@@ -1688,7 +1688,7 @@ matrix_api_set_read_marker_async (MatrixApi           *self,
   task = g_task_new (self, self->cancellable, callback, user_data);
 
   uri = g_strdup_printf ("/_matrix/client/r0/rooms/%s/read_markers", room_id);
-  matrix_net_send_json_async (self->matrix_net, root, uri, SOUP_METHOD_POST,
+  matrix_net_send_json_async (self->matrix_net, 0, root, uri, SOUP_METHOD_POST,
                               NULL, self->cancellable, api_set_read_marker_cb, task);
 }
 
@@ -1730,7 +1730,7 @@ matrix_api_upload_group_keys_async (MatrixApi           *self,
   uri = g_strdup_printf ("/_matrix/client/r0/sendToDevice/m.room.encrypted/m%"G_GINT64_FORMAT".%d",
                          g_get_real_time () / G_TIME_SPAN_MILLISECOND,
                          self->event_id);
-  matrix_net_send_json_async (self->matrix_net, root, uri, SOUP_METHOD_PUT,
+  matrix_net_send_json_async (self->matrix_net, 0, root, uri, SOUP_METHOD_PUT,
                               NULL, self->cancellable, api_upload_group_keys_cb, task);
 }
 
@@ -1790,7 +1790,7 @@ matrix_api_leave_chat_async (MatrixApi           *self,
   task = g_task_new (self, self->cancellable, callback, user_data);
   g_task_set_task_data (task, g_strdup (room_id), g_free);
   uri = g_strdup_printf ("/_matrix/client/r0/rooms/%s/leave", room_id);
-  matrix_net_send_json_async (self->matrix_net, NULL, uri, SOUP_METHOD_POST,
+  matrix_net_send_json_async (self->matrix_net, 1, NULL, uri, SOUP_METHOD_POST,
                               NULL, self->cancellable, api_leave_room_cb, task);
 }
 
@@ -1861,7 +1861,7 @@ matrix_api_get_user_info_async (MatrixApi           *self,
   task = g_task_new (self, cancellable, callback, user_data);
   g_task_set_task_data (task, g_strdup (user_id), g_free);
   uri = g_strdup_printf ("/_matrix/client/r0/profile/%s", user_id);
-  matrix_net_send_json_async (self->matrix_net, NULL, uri, SOUP_METHOD_GET,
+  matrix_net_send_json_async (self->matrix_net, 1, NULL, uri, SOUP_METHOD_GET,
                               NULL, self->cancellable, api_get_user_info_cb, task);
 }
 
@@ -1932,7 +1932,7 @@ matrix_api_set_name_async (MatrixApi           *self,
   g_task_set_task_data (task, g_strdup (name), g_free);
 
   uri = g_strdup_printf ("/_matrix/client/r0/profile/%s/displayname", self->username);
-  matrix_net_send_json_async (self->matrix_net, root, uri, SOUP_METHOD_PUT,
+  matrix_net_send_json_async (self->matrix_net, 1, root, uri, SOUP_METHOD_PUT,
                               NULL, self->cancellable, api_set_name_cb, task);
 }
 
@@ -2020,7 +2020,7 @@ matrix_api_get_3pid_async (MatrixApi           *self,
   CHATTY_TRACE_MSG ("Getting user 3pid: %s", self->username);
 
   task = g_task_new (self, cancellable, callback, user_data);
-  matrix_net_send_json_async (self->matrix_net, NULL,
+  matrix_net_send_json_async (self->matrix_net, 1, NULL,
                               "/_matrix/client/r0/account/3pid", SOUP_METHOD_GET,
                               NULL, self->cancellable, api_get_3pid_cb, task);
 }

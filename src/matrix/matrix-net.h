@@ -27,6 +27,7 @@ void       matrix_net_set_homeserver   (MatrixNet         *self,
 void       matrix_net_set_access_token (MatrixNet         *self,
                                         const char        *access_token);
 void       matrix_net_send_data_async  (MatrixNet         *self,
+                                        int                priority,
                                         char              *data,
                                         gsize              size,
                                         const char        *uri_path,
@@ -36,6 +37,7 @@ void       matrix_net_send_data_async  (MatrixNet         *self,
                                         GAsyncReadyCallback callback,
                                         gpointer           user_data);
 void       matrix_net_send_json_async  (MatrixNet         *self,
+                                        int                priority,
                                         JsonObject        *object,
                                         const char        *uri_path,
                                         const char        *method, /* interned */

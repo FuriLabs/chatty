@@ -313,6 +313,8 @@ queue_data (MatrixNet  *self,
   g_autoptr(SoupMessage) message = NULL;
   g_autoptr(SoupURI) uri = NULL;
   GCancellable *cancellable;
+  SoupMessagePriority msg_priority;
+  int priority = 0;
 
   g_assert (MATRIX_IS_NET (self));
   g_assert (uri_path && *uri_path);
@@ -336,6 +338,21 @@ queue_data (MatrixNet  *self,
 
   message = soup_message_new_from_uri (method, uri);
   soup_message_headers_append (message->request_headers, "Accept-Encoding", "gzip");
+
+  priority = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (task), "priority"));
+
+  if (priority <= -2)
+    msg_priority = SOUP_MESSAGE_PRIORITY_VERY_LOW;
+  else if (priority == -1)
+    msg_priority = SOUP_MESSAGE_PRIORITY_LOW;
+  else if (priority == 1)
+    msg_priority = SOUP_MESSAGE_PRIORITY_HIGH;
+  else if (priority >= 2)
+    msg_priority = SOUP_MESSAGE_PRIORITY_VERY_HIGH;
+  else
+    msg_priority = SOUP_MESSAGE_PRIORITY_NORMAL;
+
+  soup_message_set_priority (message, msg_priority);
 
   if (data)
     soup_message_set_request (message, "application/json", SOUP_MEMORY_TAKE, data, size);
@@ -413,6 +430,7 @@ matrix_net_set_access_token (MatrixNet  *self,
 
 void
 matrix_net_send_data_async (MatrixNet           *self,
+                            int                  priority,
                             char                *data,
                             gsize                size,
                             const char          *uri_path,
@@ -441,11 +459,14 @@ matrix_net_send_data_async (MatrixNet           *self,
     cancellable = self->cancellable;
 
   task = g_task_new (self, cancellable, callback, user_data);
+  g_object_set_data (G_OBJECT (task), "priority", GINT_TO_POINTER (priority));
+
   queue_data (self, data, size, uri_path, method, query, task);
 }
 
 void
 matrix_net_send_json_async (MatrixNet           *self,
+                            int                  priority,
                             JsonObject          *object,
                             const char          *uri_path,
                             const char          *method, /* interned */
@@ -477,6 +498,8 @@ matrix_net_send_json_async (MatrixNet           *self,
     cancellable = self->cancellable;
 
   task = g_task_new (self, cancellable, callback, user_data);
+  g_object_set_data (G_OBJECT (task), "priority", GINT_TO_POINTER (priority));
+
   queue_data (self, data, size, uri_path, method, query, task);
 }
 
