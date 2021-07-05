@@ -829,7 +829,13 @@ chatty_ma_account_finalize (GObject *object)
   g_clear_object (&self->device_fp);
   g_clear_object (&self->chat_list);
   g_clear_object (&self->avatar);
+  g_clear_object (&self->matrix_db);
+  g_clear_object (&self->history_db);
   g_clear_pointer (&self->db_chat_list, g_ptr_array_unref);
+
+  g_free (self->name);
+  g_free (self->pickle_key);
+  g_free (self->next_batch);
 
   G_OBJECT_CLASS (chatty_ma_account_parent_class)->finalize (object);
 }
