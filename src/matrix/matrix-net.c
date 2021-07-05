@@ -378,6 +378,7 @@ matrix_net_finalize (GObject *object)
   g_clear_object (&self->soup_session);
   g_clear_object (&self->file_session);
 
+  matrix_utils_free_buffer (self->access_token);
   G_OBJECT_CLASS (matrix_net_parent_class)->finalize (object);
 }
 
@@ -424,7 +425,7 @@ matrix_net_set_access_token (MatrixNet  *self,
 {
   g_return_if_fail (MATRIX_IS_NET (self));
 
-  g_free (self->access_token);
+  matrix_utils_free_buffer (self->access_token);
   self->access_token = g_strdup (access_token);
 }
 

@@ -579,7 +579,8 @@ matrix_login_cb (GObject      *obj,
   api_set_string_value (&self->username, value);
 
   value = matrix_utils_json_object_get_string (root, "access_token");
-  api_set_string_value (&self->access_token, value);
+  matrix_utils_free_buffer (self->access_token);
+  self->access_token = g_strdup (value);
   matrix_net_set_access_token (self->matrix_net, self->access_token);
 
   value = matrix_utils_json_object_get_string (root, "device_id");
@@ -1112,7 +1113,7 @@ matrix_api_set_access_token (MatrixApi  *self,
 {
   g_return_if_fail (MATRIX_IS_API (self));
 
-  g_free (self->access_token);
+  matrix_utils_free_buffer (self->access_token);
   g_free (self->device_id);
 
   self->access_token = g_strdup (access_token);
