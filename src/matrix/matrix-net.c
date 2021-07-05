@@ -330,9 +330,10 @@ queue_data (MatrixNet  *self,
 
   if (self->access_token) {
     if (!query)
-      query = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+      query = g_hash_table_new_full (g_str_hash, g_str_equal, g_free,
+                                     (GDestroyNotify)matrix_utils_free_buffer);
 
-    g_hash_table_replace (query, g_strdup ("access_token"), self->access_token);
+    g_hash_table_replace (query, g_strdup ("access_token"), g_strdup (self->access_token));
     soup_uri_set_query_from_form (uri, query);
   }
 
