@@ -1720,10 +1720,22 @@ chatty_ma_chat_finalize (GObject *object)
   g_clear_object (&self->avatar_cancellable);
 
   g_list_store_remove_all (self->message_list);
+  g_list_store_remove_all (self->buddy_list);
   g_clear_object (&self->message_list);
+  g_clear_object (&self->sorted_message_list);
+  g_clear_object (&self->buddy_list);
   g_clear_object (&self->matrix_api);
   g_clear_object (&self->matrix_enc);
+  g_clear_object (&self->account);
   g_clear_object (&self->notification);
+  g_clear_object (&self->self_buddy);
+  g_clear_pointer (&self->avatar_file, chatty_file_info_free);
+  g_clear_object (&self->avatar);
+
+  g_clear_object (&self->matrix_db);
+  g_clear_object (&self->history_db);
+
+  g_clear_pointer (&self->json_data, json_object_unref);
   g_queue_free_full (self->message_queue, g_object_unref);
 
   g_free (self->room_name);
