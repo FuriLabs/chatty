@@ -860,6 +860,7 @@ matrix_api_finalize (GObject *object)
     g_cancellable_cancel (self->cancellable);
   g_clear_object (&self->cancellable);
 
+  g_clear_object (&self->matrix_enc);
   g_clear_object (&self->matrix_net);
 
   g_clear_handle_id (&self->resync_id, g_source_remove);
@@ -869,6 +870,9 @@ matrix_api_finalize (GObject *object)
   g_free (self->device_id);
   matrix_utils_free_buffer (self->password);
   matrix_utils_free_buffer (self->access_token);
+
+  g_free (self->next_batch);
+  g_clear_error (&self->error);
 
   G_OBJECT_CLASS (matrix_api_parent_class)->finalize (object);
 }
@@ -1302,8 +1306,9 @@ matrix_api_get_members_async (MatrixApi           *self,
 
   task = g_task_new (self, self->cancellable, callback, user_data);
 
-  query = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, NULL);
-  g_hash_table_insert (query, "membership", "join");
+  query = g_hash_table_new_full (g_str_hash, g_str_equal, g_free,
+                                 (GDestroyNotify)matrix_utils_free_buffer);
+  g_hash_table_insert (query, g_strdup ("membership"), g_strdup ("join"));
 
   if (self->next_batch)
     g_hash_table_insert (query, g_strdup ("since"), g_strdup (self->next_batch));
@@ -1346,7 +1351,8 @@ matrix_api_load_prev_batch_async (MatrixApi           *self,
   task = g_task_new (self, self->cancellable, callback, user_data);
 
   /* Create a query to get past 30 messages */
-  query = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, NULL);
+  query = g_hash_table_new_full (g_str_hash, g_str_equal, free,
+                                 (GDestroyNotify)matrix_utils_free_buffer);
   g_hash_table_insert (query, g_strdup ("from"), g_strdup (prev_batch));
   g_hash_table_insert (query, g_strdup ("dir"), g_strdup ("b"));
   g_hash_table_insert (query, g_strdup ("limit"), g_strdup ("30"));
