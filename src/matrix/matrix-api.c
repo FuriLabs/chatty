@@ -2050,3 +2050,78 @@ matrix_api_get_3pid_finish (MatrixApi     *self,
 
   return g_task_propagate_boolean (G_TASK (result), error);
 }
+
+static void
+api_delete_3pid_cb (GObject      *obj,
+                    GAsyncResult *result,
+                    gpointer      user_data)
+{
+  MatrixApi *self;
+  g_autoptr(GTask) task = user_data;
+  GError *error = NULL;
+  JsonObject *object;
+
+  g_assert (G_IS_TASK (task));
+
+  self = g_task_get_source_object (task);
+  g_assert (MATRIX_IS_API (self));
+
+  object = g_task_propagate_pointer (G_TASK (result), &error);
+
+  CHATTY_TRACE_MSG ("Deleting 3pid. success: %d", !error);
+
+  if (error) {
+    g_task_return_error (task, error);
+    return;
+  }
+
+  g_warning ("%s", matrix_utils_json_object_to_string (object, TRUE));
+  g_task_return_boolean (task, TRUE);
+}
+
+void
+matrix_api_delete_3pid_async (MatrixApi           *self,
+                              const char          *value,
+                              ChattyIdType         type,
+                              GCancellable        *cancellable,
+                              GAsyncReadyCallback  callback,
+                              gpointer             user_data)
+{
+  JsonObject *root;
+  GTask *task;
+
+  g_return_if_fail (MATRIX_IS_API (self));
+  g_return_if_fail (value && *value);
+  g_return_if_fail (type == CHATTY_ID_EMAIL || type == CHATTY_ID_PHONE);
+  g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  CHATTY_TRACE_MSG ("Deleting 3pid: %s", value);
+
+  root = json_object_new ();
+  json_object_set_string_member (root, "address", value);
+  if (type == CHATTY_ID_PHONE)
+    json_object_set_string_member (root, "medium", "msisdn");
+  else
+    json_object_set_string_member (root, "medium", "email");
+
+  task = g_task_new (self, cancellable, callback, user_data);
+  g_object_set_data (G_OBJECT (task), "type", GINT_TO_POINTER (type));
+  g_object_set_data_full (G_OBJECT (task), "value",
+                          g_strdup (value), g_free);
+
+  matrix_net_send_json_async (self->matrix_net, 2, root,
+                              "/_matrix/client/r0/account/3pid/delete", SOUP_METHOD_POST,
+                              NULL, cancellable, api_delete_3pid_cb, task);
+}
+
+gboolean
+matrix_api_delete_3pid_finish (MatrixApi    *self,
+                               GAsyncResult *result,
+                               GError       **error)
+{
+  g_return_val_if_fail (MATRIX_IS_API (self), FALSE);
+  g_return_val_if_fail (G_IS_TASK (result), FALSE);
+  g_return_val_if_fail (!error || !*error, FALSE);
+
+  return g_task_propagate_boolean (G_TASK (result), error);
+}

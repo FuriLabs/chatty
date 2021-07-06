@@ -186,5 +186,14 @@ gboolean     matrix_api_get_3pid_finish          (MatrixApi      *self,
                                                   GPtrArray     **phones,
                                                   GAsyncResult   *result,
                                                   GError        **error);
+void         matrix_api_delete_3pid_async        (MatrixApi      *self,
+                                                  const char     *value,
+                                                  ChattyIdType    type,
+                                                  GCancellable   *cancellable,
+                                                  GAsyncReadyCallback callback,
+                                                  gpointer        user_data);
+gboolean     matrix_api_delete_3pid_finish       (MatrixApi      *self,
+                                                  GAsyncResult   *result,
+                                                  GError        **error);
 
 G_END_DECLS
