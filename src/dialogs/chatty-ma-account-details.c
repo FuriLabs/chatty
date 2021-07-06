@@ -168,20 +168,119 @@ ma_account_details_get_cb (GObject      *object,
   ma_account_details_update (self);
 }
 
+
+static void
+ma_details_delete_3pid_cb (GObject      *object,
+                           GAsyncResult *result,
+                           gpointer      user_data)
+{
+  ChattyMaAccountDetails *self;
+  g_autoptr(GTask) task = user_data;
+  g_autoptr(GError) error = NULL;
+  GtkWidget *button, *row;
+  ChattyMaAccount *account;
+
+  g_assert (G_IS_TASK (task));
+
+  self = g_task_get_source_object (task);
+  g_assert (CHATTY_IS_MA_ACCOUNT_DETAILS (self));
+
+  button = g_task_get_task_data (task);
+  row = gtk_widget_get_parent (button);
+  account = CHATTY_MA_ACCOUNT (self->account);
+
+  if (chatty_ma_account_delete_3pid_finish (account, result, &error))
+    gtk_widget_destroy (row);
+  else {
+    GtkWidget *stack, *child;
+
+    stack = gtk_bin_get_child (GTK_BIN (button));
+    child = gtk_stack_get_child_by_name (GTK_STACK (stack), "spinner");
+    gtk_spinner_stop (GTK_SPINNER (child));
+
+    gtk_stack_set_visible_child_name (GTK_STACK (stack), "trash-image");
+    gtk_widget_set_sensitive (GTK_WIDGET (button), TRUE);
+  }
+}
+
+static void
+ma_details_delete_3pid_clicked (ChattyMaAccountDetails *self,
+                                GObject                *button)
+{
+  GtkWidget *stack, *child;
+  const char *value;
+  GTask *task;
+  ChattyIdType type;
+
+  g_assert (CHATTY_IS_MA_ACCOUNT_DETAILS (self));
+  g_assert (GTK_IS_BUTTON (button));
+
+  value = g_object_get_data (button, "value");
+  type = GPOINTER_TO_INT (g_object_get_data (button, "type"));
+
+  g_assert (value);
+  g_assert (type);
+
+  stack = gtk_bin_get_child (GTK_BIN (button));
+  child = gtk_stack_get_child_by_name (GTK_STACK (stack), "spinner");
+  gtk_stack_set_visible_child_name (GTK_STACK (stack), "trash-image");
+
+  gtk_spinner_start (GTK_SPINNER (child));
+  gtk_widget_set_sensitive (GTK_WIDGET (button), FALSE);
+
+  task = g_task_new (self, NULL, NULL, NULL);
+  g_task_set_task_data (task, g_object_ref (button), g_object_unref);
+  chatty_ma_account_delete_3pid_async (CHATTY_MA_ACCOUNT (self->account),
+                                       value, type, NULL,
+                                       ma_details_delete_3pid_cb,
+                                       task);
+}
+
 static void
 ma_account_details_add_entry (ChattyMaAccountDetails *self,
                               GtkWidget              *box,
                               const char             *value)
 {
-  GtkWidget *entry;
+  GtkWidget *entry, *row, *button, *stack, *spinner, *image;
+  GtkStyleContext *context;
+
+  row = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+  context = gtk_widget_get_style_context (row);
+  gtk_style_context_add_class (context, "linked");
+  /* gtk_style_context_add_class (context, "dim-label"); */
 
   entry = gtk_entry_new ();
   gtk_widget_show (entry);
   gtk_widget_set_hexpand (entry, TRUE);
   gtk_widget_set_sensitive (entry, FALSE);
   gtk_entry_set_text (GTK_ENTRY (entry), value);
+  gtk_container_add (GTK_CONTAINER (row), entry);
 
-  gtk_container_add (GTK_CONTAINER (box), entry);
+  stack = gtk_stack_new ();
+  image = gtk_image_new_from_icon_name ("user-trash-symbolic", GTK_ICON_SIZE_BUTTON);
+  gtk_stack_add_named (GTK_STACK (stack), image, "trash-image");
+
+  spinner = gtk_spinner_new ();
+  gtk_stack_add_named (GTK_STACK (stack), spinner, "spinner");
+
+  button = gtk_button_new ();
+  g_object_set_data_full (G_OBJECT (button), "value", g_strdup (value), g_free);
+  if (box == self->phone_box)
+    g_object_set_data (G_OBJECT (button), "type", GINT_TO_POINTER (CHATTY_ID_PHONE));
+  else
+    g_object_set_data (G_OBJECT (button), "type", GINT_TO_POINTER (CHATTY_ID_EMAIL));
+  gtk_container_add (GTK_CONTAINER (button), stack);
+  gtk_container_add (GTK_CONTAINER (row), button);
+
+  g_signal_connect_swapped (button, "clicked",
+                            (GCallback)ma_details_delete_3pid_clicked, self);
+  /* context = gtk_widget_get_style_context (button); */
+  /* gtk_style_context_add_class (context, "dim-label"); */
+  /* gtk_stack_add_named (GTK_STACK (stack), button, "delete-button"); */
+
+
+  gtk_widget_show_all (row);
+  gtk_container_add (GTK_CONTAINER (box), row);
 }
 
 static void
