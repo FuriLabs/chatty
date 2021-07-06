@@ -1048,6 +1048,7 @@ get_room_name_cb (GObject      *obj,
   name = matrix_utils_json_object_get_string (object, "name");
   g_free (self->room_name);
   self->room_name = g_strdup (name);
+  chatty_history_update_chat (self->history_db, CHATTY_CHAT (self));
 
   CHATTY_TRACE_MSG ("Got room name, room: %s (%s)",
                     self->room_id, chatty_item_get_name (CHATTY_ITEM (self)));
