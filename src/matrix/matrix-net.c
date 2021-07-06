@@ -490,7 +490,7 @@ matrix_net_send_json_async (MatrixNet           *self,
 
   if (object) {
     data = matrix_utils_json_object_to_string (object, FALSE);
-    g_object_unref (object);
+    json_object_unref (object);
   }
 
   if (data && *data)
