@@ -70,6 +70,15 @@ gboolean          chatty_ma_account_get_3pid_finish    (ChattyMaAccount *self,
                                                         GPtrArray      **phones,
                                                         GAsyncResult    *result,
                                                         GError         **error);
+void              chatty_ma_account_delete_3pid_async  (ChattyMaAccount *self,
+                                                        const char      *value,
+                                                        ChattyIdType     type,
+                                                        GCancellable    *cancellable,
+                                                        GAsyncReadyCallback callback,
+                                                        gpointer         user_data);
+gboolean          chatty_ma_account_delete_3pid_finish (ChattyMaAccount *self,
+                                                        GAsyncResult    *result,
+                                                        GError         **error);
 
 /* For tests */
 void             chatty_ma_account_add_chat            (ChattyMaAccount *self,
