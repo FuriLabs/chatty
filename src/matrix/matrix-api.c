@@ -472,6 +472,8 @@ handle_common_errors (MatrixApi *self,
   if (!error)
     return FALSE;
 
+  CHATTY_TRACE_MSG ("Error: %s", error->message);
+
   if (g_error_matches (error, MATRIX_ERROR, M_UNKNOWN_TOKEN)
       && self->password) {
     CHATTY_TRACE_MSG ("Re-logging in %s", self->username);
