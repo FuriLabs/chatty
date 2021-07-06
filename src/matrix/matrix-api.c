@@ -704,8 +704,7 @@ matrix_verify_homeserver (MatrixApi *self)
 static void
 matrix_login (MatrixApi *self)
 {
-  g_autoptr(JsonObject) object = NULL;
-  JsonObject *child;
+  JsonObject *object, *child;
 
   g_assert (MATRIX_IS_API (self));
   g_assert (self->username);
