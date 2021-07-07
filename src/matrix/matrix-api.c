@@ -68,13 +68,13 @@ struct _MatrixApi
   /* for sending events, incremented for each event */
   int             event_id;
 
-  gboolean        full_state_loaded;
-  gboolean        is_sync;
+  guint           full_state_loaded : 1;
+  guint           is_sync : 1;
   /* Set when error occurs with sync enabled */
-  gboolean        sync_failed;
-  gboolean        homeserver_verified;
-  gboolean        login_success;
-  gboolean        room_list_loaded;
+  guint           sync_failed : 1;
+  guint           homeserver_verified : 1;
+  guint           login_success : 1;
+  guint           room_list_loaded : 1;
 
   guint           resync_id;
 };
