@@ -473,9 +473,6 @@ matrix_net_send_data_async (MatrixNet           *self,
   if (data && *data)
     g_return_if_fail (size);
 
-  /* if (callback == matrix_take_red_pill_cb) */
-  /*   soup_message_set_priority (message, SOUP_MESSAGE_PRIORITY_VERY_HIGH); */
-
   if (!cancellable)
     cancellable = self->cancellable;
 
