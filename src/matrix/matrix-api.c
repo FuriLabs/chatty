@@ -63,7 +63,6 @@ struct _MatrixApi
   gpointer        cb_object;
   GCancellable   *cancellable;
   char           *next_batch;
-  GError         *error; /* Current error, if any. */
   MatrixAction    action;
 
   /* for sending events, incremented for each event */
@@ -111,12 +110,11 @@ api_get_version_cb (GObject      *obj,
   g_autoptr(JsonNode) root = NULL;
   JsonObject *object = NULL;
   JsonArray *array = NULL;
-  GError *error = NULL;
+  g_autoptr(GError) error = NULL;
 
   g_assert (MATRIX_IS_API (self));
 
   root = matrix_utils_read_uri_finish (result, &error);
-  g_clear_error (&self->error);
 
   if (!error)
     error = matrix_utils_json_node_get_error (root);
@@ -126,8 +124,7 @@ api_get_version_cb (GObject      *obj,
 
   if (!root) {
     CHATTY_TRACE_MSG ("Error verifying home server: %s", error->message);
-    self->error = error;
-    self->callback (self->cb_object, self, self->action, NULL, self->error);
+    self->callback (self->cb_object, self, self->action, NULL, error);
     return;
   }
 
@@ -160,10 +157,10 @@ api_get_version_cb (GObject      *obj,
   }
 
   if (!self->homeserver_verified) {
-    self->error = g_error_new (MATRIX_ERROR, M_BAD_HOME_SERVER,
-                               "Couldn't Verify Client-Server API to be "
-                               "‘r0.5.0’ or ‘r0.6.0’ for %s", self->homeserver);
-    self->callback (self->cb_object, self, self->action, NULL, self->error);
+    error = g_error_new (MATRIX_ERROR, M_BAD_HOME_SERVER,
+                         "Couldn't Verify Client-Server API to be "
+                         "‘r0.5.0’ or ‘r0.6.0’ for %s", self->homeserver);
+    self->callback (self->cb_object, self, self->action, NULL, error);
   } else {
     matrix_start_sync (self);
   }
@@ -175,21 +172,19 @@ api_get_homeserver_cb (gpointer      object,
                        gpointer      user_data)
 {
   MatrixApi *self = user_data;
-  GError *error = NULL;
+  g_autoptr(GError) error = NULL;
   char *homeserver;
 
   g_assert (MATRIX_IS_API (self));
 
   homeserver = matrix_utils_get_homeserver_finish (result, &error);
-  g_clear_error (&self->error);
 
   CHATTY_TRACE_MSG ("Get home server, has-error: %d, home server: %s",
                     !error, homeserver);
 
   if (!homeserver) {
     self->sync_failed = TRUE;
-    self->error = error;
-    self->callback (self->cb_object, self, self->action, NULL, self->error);
+    self->callback (self->cb_object, self, self->action, NULL, error);
 
     return;
   }
@@ -552,15 +547,14 @@ matrix_login_cb (GObject      *obj,
 {
   g_autoptr(MatrixApi) self = user_data;
   g_autoptr(JsonObject) root = NULL;
+  g_autoptr(GError) error = NULL;
   JsonObject *object = NULL;
-  GError *error = NULL;
   const char *value;
 
   g_assert (MATRIX_IS_API (self));
   g_assert (G_IS_TASK (result));
 
   root = g_task_propagate_pointer (G_TASK (result), &error);
-  g_clear_error (&self->error);
 
   CHATTY_TRACE_MSG ("login complete. success: %d", !error);
   if (error) {
@@ -568,8 +562,7 @@ matrix_login_cb (GObject      *obj,
     /* use a better code to inform invalid password */
     if (error->code == M_FORBIDDEN)
       error->code = M_BAD_PASSWORD;
-    self->error = error;
-    self->callback (self->cb_object, self, MATRIX_PASSWORD_LOGIN, NULL, self->error);
+    self->callback (self->cb_object, self, MATRIX_PASSWORD_LOGIN, NULL, error);
     g_debug ("Error logging in: %s", error->message);
     return;
   }
@@ -608,19 +601,17 @@ matrix_upload_key_cb (GObject      *obj,
 {
   g_autoptr(MatrixApi) self = user_data;
   g_autoptr(JsonObject) root = NULL;
+  g_autoptr(GError) error = NULL;
   JsonObject *object = NULL;
-  GError *error = NULL;
 
   g_assert (MATRIX_IS_API (self));
   g_assert (G_IS_TASK (result));
 
   root = g_task_propagate_pointer (G_TASK (result), &error);
-  g_clear_error (&self->error);
 
   if (error) {
     self->sync_failed = TRUE;
-    self->error = error;
-    self->callback (self->cb_object, self, MATRIX_UPLOAD_KEY, NULL, self->error);
+    self->callback (self->cb_object, self, MATRIX_UPLOAD_KEY, NULL, error);
     g_debug ("Error uploading key: %s", error->message);
     CHATTY_EXIT;
   }
@@ -644,14 +635,13 @@ matrix_take_red_pill_cb (GObject      *obj,
 {
   g_autoptr(MatrixApi) self = user_data;
   g_autoptr(JsonObject) root = NULL;
+  g_autoptr(GError) error = NULL;
   JsonObject *object = NULL;
-  GError *error = NULL;
 
   g_assert (MATRIX_IS_API (self));
   g_assert (G_IS_TASK (result));
 
   root = g_task_propagate_pointer (G_TASK (result), &error);
-  g_clear_error (&self->error);
 
   if (!self->next_batch || error || !self->full_state_loaded)
     CHATTY_TRACE_MSG ("sync success: %d, full-state: %d, next-batch: %s",
@@ -662,8 +652,7 @@ matrix_take_red_pill_cb (GObject      *obj,
 
   if (error) {
     self->sync_failed = TRUE;
-    self->error = error;
-    self->callback (self->cb_object, self, self->action, NULL, self->error);
+    self->callback (self->cb_object, self, self->action, NULL, error);
     g_debug ("Error syncing with time %s: %s", self->next_batch, error->message);
     return;
   }
@@ -757,7 +746,7 @@ get_joined_rooms_cb (GObject      *obj,
 {
   g_autoptr(MatrixApi) self = user_data;
   g_autoptr(JsonObject) root = NULL;
-  GError *error = NULL;
+  g_autoptr(GError) error = NULL;
 
   g_assert (MATRIX_IS_API (self));
   g_assert (G_IS_TASK (result));
@@ -768,8 +757,6 @@ get_joined_rooms_cb (GObject      *obj,
     return;
 
   root = g_task_propagate_pointer (G_TASK (result), &error);
-  g_clear_error (&self->error);
-  self->error = error;
 
   self->callback (self->cb_object, self, MATRIX_GET_JOINED_ROOMS, root, error);
 
@@ -799,16 +786,17 @@ matrix_start_sync (MatrixApi *self)
 
   self->is_sync = TRUE;
   self->sync_failed = FALSE;
-  g_clear_error (&self->error);
   g_clear_handle_id (&self->resync_id, g_source_remove);
 
   if (!self->homeserver) {
     self->action = MATRIX_GET_HOMESERVER;
     if (!matrix_utils_username_is_complete (self->username)) {
+      g_autoptr(GError) error = NULL;
+
       g_debug ("Error: No Homeserver provided");
       self->sync_failed = TRUE;
-      self->error = g_error_new (MATRIX_ERROR, M_NO_HOME_SERVER, "No Homeserver provided");
-      self->callback (self->cb_object, self, self->action, NULL, self->error);
+      error = g_error_new (MATRIX_ERROR, M_NO_HOME_SERVER, "No Homeserver provided");
+      self->callback (self->cb_object, self, self->action, NULL, error);
     } else {
       g_debug ("Fetching home server details from username");
       matrix_utils_get_homeserver_async (self->username, URI_REQUEST_TIMEOUT, self->cancellable,
@@ -873,7 +861,6 @@ matrix_api_finalize (GObject *object)
   matrix_utils_free_buffer (self->access_token);
 
   g_free (self->next_batch);
-  g_clear_error (&self->error);
 
   G_OBJECT_CLASS (matrix_api_parent_class)->finalize (object);
 }
