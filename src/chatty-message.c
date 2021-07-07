@@ -46,9 +46,9 @@ struct _ChattyMessage
   ChattyMsgDirection direction;
   time_t           time;
 
-  gboolean encrypted;
+  guint            encrypted : 1;
   /* Set if files are created with file path string */
-  gboolean         files_are_path;
+  guint            files_are_path : 1;
   guint            sms_id;
 };
 
