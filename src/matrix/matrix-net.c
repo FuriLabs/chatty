@@ -430,6 +430,25 @@ matrix_net_set_access_token (MatrixNet  *self,
   self->access_token = g_strdup (access_token);
 }
 
+/**
+ * matrix_net_send_data_async:
+ * @self: A #MatrixNet
+ * @priority: The priority of request, 0 for default
+ * @data: (nullable) (transfer full): The data to send
+ * @size: The @data size in bytes
+ * @uri_path: A string of the matrix uri path
+ * @method: An interned string for GET, PUT, POST, etc.
+ * @query: (nullable): A query to pass to internal #SoupURI
+ * @cancellable: (nullable): A #GCancellable
+ * @callback: The callback to run when completed
+ * @user_data: user data for @callback
+ *
+ * Send a JSON data @object to the @uri_path endpoint.
+ * @method should be one of %SOUP_METHOD_GET, %SOUP_METHOD_PUT
+ * or %SOUP_METHOD_POST.
+ * If @cancellable is %NULL, the internal cancellable
+ * shall be used
+ */
 void
 matrix_net_send_data_async (MatrixNet           *self,
                             int                  priority,
@@ -466,6 +485,24 @@ matrix_net_send_data_async (MatrixNet           *self,
   queue_data (self, data, size, uri_path, method, query, task);
 }
 
+/**
+ * matrix_net_send_json_async:
+ * @self: A #MatrixNet
+ * @priority: The priority of request, 0 for default
+ * @object: (nullable) (transfer full): The data to send
+ * @uri_path: A string of the matrix uri path
+ * @method: An interned string for GET, PUT, POST, etc.
+ * @query: (nullable): A query to pass to internal #SoupURI
+ * @cancellable: (nullable): A #GCancellable
+ * @callback: The callback to run when completed
+ * @user_data: user data for @callback
+ *
+ * Send a JSON data @object to the @uri_path endpoint.
+ * @method should be one of %SOUP_METHOD_GET, %SOUP_METHOD_PUT
+ * or %SOUP_METHOD_POST.
+ * If @cancellable is %NULL, the internal cancellable
+ * shall be used
+ */
 void
 matrix_net_send_json_async (MatrixNet           *self,
                             int                  priority,
@@ -505,6 +542,21 @@ matrix_net_send_json_async (MatrixNet           *self,
   queue_data (self, data, size, uri_path, method, query, task);
 }
 
+/**
+ * matrix_net_get_file_async:
+ * @self: A #MatrixNet
+ * @message: (nullable) (transfer full): A #ChattyMessage
+ * @file: A #ChattyFileInfo
+ * @cancellable: (nullable): A #GCancellable
+ * @progress_callback: (nullable): A #GFileProgressCallback
+ * @callback: The callback to run when completed
+ * @user_data: user data for @callback
+ *
+ * Download the file @file.  @file path shall be updated
+ * after download is completed, and if @file is encrypted
+ * and has keys to decrypt the file, the file shall be
+ * stored decrypted.
+ */
 void
 matrix_net_get_file_async (MatrixNet             *self,
                            ChattyMessage         *message,
