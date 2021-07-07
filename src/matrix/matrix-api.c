@@ -119,6 +119,12 @@ api_get_version_cb (GObject      *obj,
   if (!error)
     error = matrix_utils_json_node_get_error (root);
 
+  /* Since GTask can't have timeout, We cancel the cancellable to fake timeout */
+  if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_TIMED_OUT)) {
+    g_clear_object (&self->cancellable);
+    self->cancellable = g_cancellable_new ();
+  }
+
   if (handle_common_errors (self, error))
     return;
 
