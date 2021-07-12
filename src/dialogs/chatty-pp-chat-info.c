@@ -246,6 +246,7 @@ chatty_pp_chat_info_update (ChattyPpChatInfo *self)
   pp_chat_info_encrypt_changed_cb (self);
 
   if (protocol == CHATTY_PROTOCOL_SMS) {
+    gtk_widget_set_sensitive (self->avatar_button, FALSE);
     gtk_label_set_text (GTK_LABEL (self->user_id_title), _("Phone Number:"));
   } else if (protocol == CHATTY_PROTOCOL_XMPP) {
     gtk_label_set_text (GTK_LABEL (self->user_id_title), _("XMPP ID:"));
