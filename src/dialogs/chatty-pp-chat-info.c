@@ -293,9 +293,8 @@ chatty_pp_chat_info_update (ChattyPpChatInfo *self)
     gtk_widget_hide (self->status_label);
   }
 
-  gtk_widget_set_visible (self->notification_switch,
-                          protocol != CHATTY_PROTOCOL_MATRIX);
-  if (protocol != CHATTY_PROTOCOL_MATRIX)
+  gtk_widget_set_visible (self->notification_switch, CHATTY_IS_PP_CHAT (self->chat));
+  if (CHATTY_IS_PP_CHAT (self->chat))
     gtk_switch_set_state (GTK_SWITCH (self->notification_switch),
                           chatty_pp_chat_get_show_notifications (CHATTY_PP_CHAT (self->chat)));
 
