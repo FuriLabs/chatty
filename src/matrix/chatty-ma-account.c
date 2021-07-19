@@ -56,6 +56,7 @@ struct _ChattyMaAccount
   /* this will be moved to chat_list after login succeeds */
   GPtrArray      *db_chat_list;
   GdkPixbuf      *avatar;
+  ChattyFileInfo *avatar_file;
 
   ChattyStatus   status;
   gboolean       homeserver_valid;
@@ -816,6 +817,19 @@ chatty_ma_account_set_name (ChattyItem *item,
   self->name = g_strdup (name);
 }
 
+static ChattyFileInfo *
+chatty_ma_account_get_avatar_file (ChattyItem *item)
+{
+  ChattyMaAccount *self = (ChattyMaAccount *)item;
+
+  g_assert (CHATTY_IS_MA_ACCOUNT (self));
+
+  if (self->avatar_file && self->avatar_file->url)
+    return self->avatar_file;
+
+  return NULL;
+}
+
 static void
 chatty_ma_account_finalize (GObject *object)
 {
@@ -852,6 +866,7 @@ chatty_ma_account_class_init (ChattyMaAccountClass *klass)
   item_class->get_protocols = chatty_ma_account_get_protocols;
   item_class->get_name = chatty_ma_account_get_name;
   item_class->set_name = chatty_ma_account_set_name;
+  item_class->get_avatar_file = chatty_ma_account_get_avatar_file;
 
   account_class->get_protocol_name = chatty_ma_account_get_protocol_name;
   account_class->get_status   = chatty_ma_account_get_status;
