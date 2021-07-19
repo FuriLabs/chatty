@@ -846,6 +846,7 @@ chatty_ma_account_finalize (GObject *object)
   g_clear_object (&self->matrix_db);
   g_clear_object (&self->history_db);
   g_clear_pointer (&self->db_chat_list, g_ptr_array_unref);
+  g_clear_pointer (&self->avatar_file, chatty_file_info_free);
 
   g_free (self->name);
   g_free (self->pickle_key);
@@ -1298,9 +1299,22 @@ ma_get_details_cb (GObject      *object,
   if (error)
     g_task_return_error (task, error);
   else {
+    ChattyFileInfo *file;
+
+    CHATTY_TRACE_MSG ("Got user info for %s",
+                      matrix_api_get_username (self->matrix_api));
+
     g_free (self->name);
     self->name = name;
+    file = self->avatar_file;
 
+    if (g_strcmp0 (file->url, avatar_url) != 0) {
+      g_clear_pointer (&file->path, g_free);
+      g_free (file->url);
+      file->url = avatar_url;
+    }
+
+    chatty_history_update_user (self->history_db, CHATTY_ACCOUNT (self));
     g_object_notify (G_OBJECT (self), "name");
     g_task_return_boolean (task, TRUE);
   }
@@ -1363,6 +1377,7 @@ ma_set_name_cb (GObject      *object,
     g_free (self->name);
     self->name = g_strdup (name);
 
+    chatty_history_update_user (self->history_db, CHATTY_ACCOUNT (self));
     g_object_notify (G_OBJECT (self), "name");
     g_task_return_boolean (task, TRUE);
   }
