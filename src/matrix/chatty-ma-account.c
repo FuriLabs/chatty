@@ -1079,6 +1079,39 @@ db_load_chats_cb (GObject      *object,
                                 db_load_account_cb, self);
 }
 
+static void
+history_db_load_account_cb (GObject      *object,
+                            GAsyncResult *result,
+                            gpointer      user_data)
+{
+  g_autoptr(ChattyMaAccount) self = user_data;
+  const char *name, *avatar_url, *avatar_path;
+  g_autoptr(GError) error = NULL;
+  ChattyFileInfo *file;
+
+  g_assert (CHATTY_IS_MA_ACCOUNT (self));
+
+  chatty_history_load_account_finish (self->history_db, result, &error);
+
+  if (error)
+    g_warning ("error loading account: %s", error->message);
+
+  name = g_object_get_data (G_OBJECT (result), "name");
+  avatar_url = g_object_get_data (G_OBJECT (result), "avatar-url");
+  avatar_path = g_object_get_data (G_OBJECT (result), "avatar-path");
+
+  self->name = g_strdup (name);
+  g_object_notify (G_OBJECT (self), "name");
+
+  file = g_new0 (ChattyFileInfo, 1);
+  file->url = g_strdup (avatar_url);
+  file->path = g_strdup (avatar_path);
+  self->avatar_file = file;
+
+  chatty_history_get_chats_async (self->history_db, CHATTY_ACCOUNT (self),
+                                  db_load_chats_cb, self);
+}
+
 void
 chatty_ma_account_set_db (ChattyMaAccount *self,
                           gpointer         matrix_db)
@@ -1089,8 +1122,9 @@ chatty_ma_account_set_db (ChattyMaAccount *self,
   g_return_if_fail (self->history_db);
 
   self->matrix_db = g_object_ref (matrix_db);
-  chatty_history_get_chats_async (self->history_db, CHATTY_ACCOUNT (self),
-                                  db_load_chats_cb, self);
+  chatty_history_load_account_async (self->history_db, CHATTY_ACCOUNT (self),
+                                     history_db_load_account_cb,
+                                     g_object_ref (self));
 }
 
 static void
