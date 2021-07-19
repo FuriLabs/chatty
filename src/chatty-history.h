@@ -73,6 +73,13 @@ void           chatty_history_delete_chat_async   (ChattyHistory        *self,
 gboolean       chatty_history_delete_chat_finish  (ChattyHistory        *self,
                                                    GAsyncResult         *result,
                                                    GError              **error);
+void           chatty_history_load_account_async  (ChattyHistory       *self,
+                                                   ChattyAccount       *account,
+                                                   GAsyncReadyCallback  callback,
+                                                   gpointer             user_data);
+gboolean       chatty_history_load_account_finish (ChattyHistory        *self,
+                                                   GAsyncResult         *result,
+                                                   GError              **error);
 
 /* old APIs */
 void           chatty_history_open                (ChattyHistory         *self,
