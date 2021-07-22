@@ -500,6 +500,9 @@ chatty_pp_chat_get_username (ChattyChat *chat)
 
   g_assert (CHATTY_IS_PP_CHAT (self));
 
+  if (self->username && *self->username)
+    return self->username;
+
   if (self->pp_chat)
     username = purple_account_get_username (self->pp_chat->account);
 
@@ -511,9 +514,6 @@ chatty_pp_chat_get_username (ChattyChat *chat)
 
   if (username && *username && !self->username)
     self->username = chatty_utils_jabber_id_strip (username);
-
-  if (self->username && *self->username)
-    return self->username;
 
   return "";
 }
@@ -1005,6 +1005,7 @@ chatty_pp_chat_finalize (GObject *object)
   g_object_unref (self->sorted_chat_users);
   g_free (self->last_message);
   g_free (self->chat_name);
+  g_free (self->username);
 
   G_OBJECT_CLASS (chatty_pp_chat_parent_class)->finalize (object);
 }
