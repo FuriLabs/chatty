@@ -1818,7 +1818,7 @@ api_get_user_info_cb (GObject      *obj,
   g_autoptr(GTask) task = user_data;
   const char *name, *avatar_url;
   GError *error = NULL;
-  JsonObject *object;
+  g_autoptr(JsonObject) object = NULL;
 
   g_assert (G_IS_TASK (task));
 
@@ -1892,6 +1892,7 @@ api_set_name_cb (GObject      *obj,
 {
   MatrixApi *self;
   g_autoptr(GTask) task = user_data;
+  g_autoptr(JsonObject) object = NULL;
   GError *error = NULL;
 
   g_assert (G_IS_TASK (task));
@@ -1899,7 +1900,7 @@ api_set_name_cb (GObject      *obj,
   self = g_task_get_source_object (task);
   g_assert (MATRIX_IS_API (self));
 
-  g_task_propagate_pointer (G_TASK (result), &error);
+  object = g_task_propagate_pointer (G_TASK (result), &error);
 
   CHATTY_TRACE_MSG ("Setting name success: %d", !error);
 
@@ -1960,7 +1961,7 @@ api_get_3pid_cb (GObject      *obj,
   g_autoptr(GTask) task = user_data;
   GPtrArray *emails, *phones;
   GError *error = NULL;
-  JsonObject *object;
+  g_autoptr(JsonObject) object = NULL;
   JsonArray *array;
   guint length;
 
@@ -2055,7 +2056,7 @@ api_delete_3pid_cb (GObject      *obj,
   MatrixApi *self;
   g_autoptr(GTask) task = user_data;
   GError *error = NULL;
-  JsonObject *object;
+  g_autoptr(JsonObject) object = NULL;
 
   g_assert (G_IS_TASK (task));
 
