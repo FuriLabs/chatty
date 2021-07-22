@@ -948,7 +948,7 @@ chatty_ma_account_new_secret (gpointer secret_item)
   ChattyMaAccount *self = NULL;
   g_autoptr(GHashTable) attributes = NULL;
   SecretItem *item = secret_item;
-  SecretValue *value;
+  g_autoptr(SecretValue) value = NULL;
   const char *username, *homeserver, *credentials = NULL;
   char *password, *token, *device_id;
   char *password_str, *token_str = NULL;
