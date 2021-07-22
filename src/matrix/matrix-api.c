@@ -275,11 +275,12 @@ matrix_send_typing_cb (GObject      *obj,
 
 
 static void
-api_set_read_marker_cb (GObject      *object,
+api_set_read_marker_cb (GObject      *obj,
                         GAsyncResult *result,
                         gpointer      user_data)
 {
   g_autoptr(GTask) task = user_data;
+  g_autoptr(JsonObject) object = NULL;
   GError *error = NULL;
 
   object = g_task_propagate_pointer (G_TASK (result), &error);
@@ -1748,12 +1749,13 @@ matrix_api_upload_group_keys_finish (MatrixApi     *self,
 }
 
 static void
-api_leave_room_cb (GObject      *object,
+api_leave_room_cb (GObject      *obj,
                    GAsyncResult *result,
                    gpointer      user_data)
 {
   MatrixApi *self;
   g_autoptr(GTask) task = user_data;
+  g_autoptr(JsonObject) object = NULL;
   GError *error = NULL;
 
   g_assert (G_IS_TASK (task));
