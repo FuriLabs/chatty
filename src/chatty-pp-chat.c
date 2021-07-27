@@ -515,6 +515,9 @@ chatty_pp_chat_get_username (ChattyChat *chat)
   if (username && *username && !self->username)
     self->username = chatty_utils_jabber_id_strip (username);
 
+  if (self->username)
+    return self->username;
+
   return "";
 }
 
