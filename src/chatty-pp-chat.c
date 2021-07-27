@@ -1,5 +1,5 @@
 /* -*- mode: c; c-basic-offset: 2; indent-tabs-mode: nil; -*- */
-/* chatty-chat.c
+/* chatty-pp-chat.c
  *
  * Copyright 2020 Purism SPC
  *
@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#define G_LOG_DOMAIN "chatty-chat"
+#define G_LOG_DOMAIN "chatty-pp-chat"
 
 #include <purple.h>
 
@@ -37,10 +37,10 @@ enum {
 };
 
 /**
- * SECTION: chatty-chat
+ * SECTION: chatty-pp-chat
  * @title: ChattyChat
  * @short_description: An abstraction over #PurpleConversation
- * @include: "chatty-chat.h"
+ * @include: "chatty-pp-chat.h"
  *
  * libpurple doesn’t have a nice OOP interface for managing anything.
  * This class hides all the complexities surrounding it.
