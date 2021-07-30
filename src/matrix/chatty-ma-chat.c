@@ -1057,6 +1057,30 @@ get_room_name_cb (GObject      *obj,
 }
 
 static void
+get_room_encryption_cb (GObject      *obj,
+                        GAsyncResult *result,
+                        gpointer      user_data)
+{
+  ChattyMaChat *self = user_data;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (CHATTY_IS_MA_CHAT (self));
+
+  self->encryption = matrix_api_get_room_encryption_finish (self->matrix_api, result, &error);
+
+  CHATTY_TRACE_MSG ("Got room encryption state, room: %s: encrypted: %d",
+                    self->room_id, !!self->encryption);
+  g_object_notify (G_OBJECT (self), "encrypt");
+
+  CHATTY_TRACE_MSG ("Getting room name for '%s(%s)'", self->room_id,
+                    chatty_item_get_name (CHATTY_ITEM (self)));
+  matrix_api_get_room_name_async (self->matrix_api,
+                                  self->room_id,
+                                  get_room_name_cb,
+                                  self);
+}
+
+static void
 parse_chat_array (ChattyMaChat *self,
                   JsonArray    *array)
 {
@@ -1870,13 +1894,11 @@ chatty_ma_chat_set_data (ChattyMaChat  *self,
   if (!self->state_is_sync && !self->state_is_syncing &&
       self->matrix_api && self->matrix_enc) {
     self->state_is_syncing = TRUE;
-    CHATTY_TRACE_MSG ("Getting room name for '%s(%s)'", self->room_id,
-                      chatty_item_get_name (CHATTY_ITEM (self)));
-
-    matrix_api_get_room_name_async (self->matrix_api,
-                                    self->room_id,
-                                    get_room_name_cb,
-                                    self);
+    CHATTY_TRACE_MSG ("Getting encryption state for '%s(%s)'", self->room_id);
+    matrix_api_get_room_encryption_async (self->matrix_api,
+                                          self->room_id,
+                                          get_room_encryption_cb,
+                                          self);
   }
 }
 
