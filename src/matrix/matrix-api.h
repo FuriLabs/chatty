@@ -77,6 +77,13 @@ void          matrix_api_get_room_name_async     (MatrixApi      *self,
 JsonObject   *matrix_api_get_room_name_finish    (MatrixApi      *self,
                                                   GAsyncResult   *result,
                                                   GError        **error);
+void          matrix_api_get_room_encryption_async  (MatrixApi   *self,
+                                                     const char  *room_id,
+                                                     GAsyncReadyCallback callback,
+                                                     gpointer     user_data);
+char         *matrix_api_get_room_encryption_finish (MatrixApi   *self,
+                                                     GAsyncResult *result,
+                                                     GError     **error);
 void          matrix_api_get_members_async       (MatrixApi      *self,
                                                   const char *room_id,
                                                   GAsyncReadyCallback callback,
