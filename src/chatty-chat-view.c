@@ -811,6 +811,8 @@ chatty_chat_view_set_chat (ChattyChatView *self,
   chat_buddy_typing_changed_cb (self);
   chatty_chat_view_update (self);
   chat_view_adjustment_value_changed_cb (self);
+
+  gtk_widget_grab_focus (self->message_input);
 }
 
 ChattyChat *
