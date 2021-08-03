@@ -46,6 +46,9 @@ create_new_notification (ChattyNotification *self,
                                          "(ss)",
                                          chatty_chat_get_chat_name (chat),
                                          chatty_chat_get_username (chat));
+#if GLIB_CHECK_VERSION(2,70,0)
+  g_notification_set_category (self->notification, "im.received");
+#endif
 }
 
 static gboolean
