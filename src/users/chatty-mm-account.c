@@ -288,6 +288,115 @@ sms_create_cb (GObject      *object,
                g_steal_pointer (&task));
 }
 
+void
+chatty_mm_account_recieve_mms_cb (ChattyMmAccount *self,
+                                  ChattyMessage   *message,
+                                  const char      *sender,
+                                  const char      *recipientlist)
+{
+  ChattyChat *chat;
+  ChattyMmBuddy *senderbuddy;
+  ChattyMsgDirection message_dir;
+  ChattyMessage  *messagecheck;
+  int recipients;
+  guint position;
+
+  chat = chatty_mm_account_find_chat (self, recipientlist);
+  if (!chat) {
+    g_auto(GStrv) send = NULL;
+    const char *country_code = chatty_settings_get_country_iso_code (chatty_settings_get_default ());
+    g_autoptr(GPtrArray) array = NULL;
+
+    send = g_strsplit (recipientlist, ",", -1);
+    recipients = g_strv_length (send);
+    if (recipients == 1)
+      chat = (ChattyChat *)chatty_mm_chat_new (recipientlist, NULL, CHATTY_PROTOCOL_MMS_SMS, TRUE);
+    else /* There is more than one recipient */
+      chat = (ChattyChat *)chatty_mm_chat_new (recipientlist, recipientlist, CHATTY_PROTOCOL_MMS, FALSE);
+
+    chatty_chat_set_data (chat, self, self->history_db);
+
+    array = g_ptr_array_new ();
+    for (guint j = 0; j < recipients; j++) {
+      g_autofree char *number = NULL;
+      ChattyMmBuddy *newbuddy;
+
+      number = chatty_utils_check_phonenumber (send[j], country_code);
+      if (number == NULL) {
+        number = send[j];
+      }
+      newbuddy = chatty_mm_buddy_new (number, NULL);
+      g_ptr_array_add (array, newbuddy);
+    }
+    chatty_mm_chat_add_users (CHATTY_MM_CHAT (chat), array);
+    chatty_mm_chat_set_eds (CHATTY_MM_CHAT (chat), self->chatty_eds);
+
+    g_list_store_append (self->chat_list, chat);
+    g_object_unref (chat);
+  }
+  /*
+   * Check to see if this message exists (e.g. draft MMS sent)
+   */
+
+  /*
+   *  TODO: I think it would be nicer if I could have a
+   *        chatty_mm_chat_find_message_with_uid (), then this will work if
+   *        chatty is closed and then reopened.
+   */
+  messagecheck = chatty_mm_chat_find_message_with_id (CHATTY_MM_CHAT (chat),
+                                                      chatty_message_get_id(message));
+  if (messagecheck != NULL) {
+    chatty_message_set_status (messagecheck, chatty_message_get_status (message), 0);
+    return;
+  }
+
+  message_dir = chatty_message_get_msg_direction (message);
+  if (message_dir == CHATTY_DIRECTION_IN) {
+    GListModel *users;
+    guint items;
+    const char *buddy_number;
+    g_autofree char *phone1 = NULL;
+    g_autofree char *phone2 = NULL;
+
+    /* Find the Buddies associated with the recipients */
+    users = chatty_chat_get_users (chat);
+    items = g_list_model_get_n_items (users);
+    for (guint i = 0; i < items; i++) {
+      senderbuddy = g_list_model_get_item (users, i);
+      buddy_number = chatty_mm_buddy_get_number (senderbuddy);
+      phone1 = chatty_utils_check_phonenumber (buddy_number,
+                                               chatty_settings_get_country_iso_code (chatty_settings_get_default ()));
+      if (phone1 == NULL) {
+        g_warning ("Error with the number!");
+        phone1 = g_strdup (buddy_number);
+      }
+      phone2 = chatty_utils_check_phonenumber (sender,
+                                               chatty_settings_get_country_iso_code (chatty_settings_get_default ()));
+      if (phone2 == NULL) {
+        phone2 = g_strdup (buddy_number);
+      }
+      if (g_strcmp0 (phone1, phone2) == 0) {
+        break;
+      }
+    }
+  } else if (message_dir == CHATTY_DIRECTION_OUT) {
+    senderbuddy = chatty_mm_buddy_new (sender, sender);
+  }
+  chatty_message_set_user (message, CHATTY_ITEM (senderbuddy));
+  chatty_mm_chat_append_message (CHATTY_MM_CHAT (chat), message);
+  chatty_history_add_message (self->history_db, chat, message);
+  g_signal_emit_by_name (chat, "changed", 0);
+  /* Only show a notification for received MMS */
+  if (message_dir == CHATTY_DIRECTION_IN) {
+    chatty_mm_chat_show_notification (CHATTY_MM_CHAT (chat));
+  }
+
+  if (chatty_utils_get_item_position (G_LIST_MODEL (self->chat_list), chat, &position))
+    g_list_model_items_changed (G_LIST_MODEL (self->chat_list), position, 1, 1);
+
+
+}
+
 static void
 mm_account_delete_message_async (ChattyMmAccount     *self,
                                  ChattyMmDevice      *device,
@@ -1188,7 +1297,7 @@ chatty_mm_account_send_message_async (ChattyMmAccount     *self,
   if (is_mms) {
     CHATTY_TRACE_MSG ("Creating MMS message");
 
-    /* TODO: Handle MMS */
+    chatty_mmsd_send_mms_async (self->mmsd_struct, chat, message, g_steal_pointer (&task));
     return;
   }
 

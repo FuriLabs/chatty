@@ -55,5 +55,10 @@ void             chatty_mm_account_send_message_async  (ChattyMmAccount     *sel
 gboolean         chatty_mm_account_send_message_finish (ChattyMmAccount    *self,
                                                         GAsyncResult       *result,
                                                         GError            **error);
+void             chatty_mm_account_recieve_mms_cb      (ChattyMmAccount *self,
+                                                        ChattyMessage   *message,
+                                                        const char      *sender,
+                                                        const char      *recipientlist);
+
 
 G_END_DECLS
