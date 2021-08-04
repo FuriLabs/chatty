@@ -42,6 +42,7 @@ libsrc = [
   'chatty-avatar.c',
   'chatty-chat.c',
   'chatty-mm-chat.c',
+  'chatty-media.c',
   'chatty-pp-chat.c',
   'chatty-contact-provider.c',
   'chatty-message.c',
