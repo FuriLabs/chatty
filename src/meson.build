@@ -30,6 +30,7 @@ libsrc = [
   'users/chatty-pp-buddy.c',
   'users/chatty-account.c',
   'users/chatty-mm-account.c',
+  'users/chatty-mmsd.c',
   'users/chatty-pp-account.c',
   'chatty-selectable-row.c',
   'chatty-fp-row.c',
