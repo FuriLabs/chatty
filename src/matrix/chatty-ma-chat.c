@@ -1894,7 +1894,7 @@ chatty_ma_chat_set_data (ChattyMaChat  *self,
   if (!self->state_is_sync && !self->state_is_syncing &&
       self->matrix_api && self->matrix_enc) {
     self->state_is_syncing = TRUE;
-    CHATTY_TRACE_MSG ("Getting encryption state for '%s(%s)'", self->room_id);
+    CHATTY_TRACE_MSG ("Getting encryption state for '%s'", self->room_id);
     matrix_api_get_room_encryption_async (self->matrix_api,
                                           self->room_id,
                                           get_room_encryption_cb,
