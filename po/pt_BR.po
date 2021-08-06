@@ -1,24 +1,24 @@
 # Brazilian Portuguese translaiton to chatty.
-# Copyright (C) 2020 THE chatty'S COPYRIGHT HOLDER
+# Copyright (C) 2021 THE chatty'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the chatty package.
-# Rafael Fontenelle <rafaelff@gnome.org>, 2020.
 # Luís Fernando Stürmer da Rosa <luisfsr@dismail.de>, 2018-2020.
 # Bruno Lopes <brunolopesdsilv@gmail.com>, 2020.
+# Rafael Fontenelle <rafaelff@gnome.org>, 2020-2021.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://source.puri.sm/Librem5/chatty/issues\n"
-"POT-Creation-Date: 2021-08-04 15:25+0000\n"
-"PO-Revision-Date: 2021-01-09 11:07-0300\n"
-"Last-Translator: Bruno Lopes <brunolopesdsilv@gmail.com>\n"
+"POT-Creation-Date: 2021-08-06 03:25+0000\n"
+"PO-Revision-Date: 2021-08-06 09:04-0300\n"
+"Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language-Team: Brazilian Portuguese <gnome-pt_br-list@gnome.org>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4.2\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Gtranslator 40.0\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
 #: data/sm.puri.Chatty.desktop.in:3 data/sm.puri.Chatty.metainfo.xml.in:6
 #: src/chatty-application.c:359 src/ui/chatty-window.ui:183
@@ -155,7 +155,7 @@ msgstr "Desabilitar contas"
 
 #: src/chatty-application.c:82
 msgid "Enable libpurple debug messages"
-msgstr "Habilitar messagens de depuração do libpurple"
+msgstr "Habilitar mensagens de depuração do libpurple"
 
 #: src/chatty-application.c:84
 msgid "Enable verbose libpurple debug messages"
@@ -197,35 +197,32 @@ msgid "Please check ID and password"
 msgstr "Verifique o ID e a senha"
 
 #: src/chatty-chat-view.c:201
-#, fuzzy
 msgid "This is an SMS conversation"
-msgstr "Esta é uma conversa SMS."
+msgstr "Esta é uma conversa por SMS"
 
 #: src/chatty-chat-view.c:203
-#, fuzzy
 msgid "Your messages are not encrypted, and carrier rates may apply"
-msgstr "Suas mensagens não estão criptografadas,"
+msgstr ""
+"Suas mensagens não estão criptografadas e podem ser aplicadas taxas da "
+"operadora"
 
 #: src/chatty-chat-view.c:207
-#, fuzzy
 msgid "This is an IM conversation"
-msgstr "Esta é uma conversa IM."
+msgstr "Esta é uma conversa por IM"
 
 #: src/chatty-chat-view.c:210
-#, fuzzy
 msgid "Your messages are encrypted"
-msgstr "Suas mensagens não estão criptografadas,"
+msgstr "Suas mensagens estão criptografadas"
 
 #: src/chatty-chat-view.c:213
-#, fuzzy
 msgid "Your messages are not encrypted"
-msgstr "Suas mensagens não estão criptografadas,"
+msgstr "Suas mensagens não estão criptografadas"
 
 #. TRANSLATORS: %s is the Device ID
 #: src/chatty-fp-row.c:131
 #, c-format
 msgid "Device ID %s fingerprint:"
-msgstr ""
+msgstr "Impressão digital do ID de dispositivo %s:"
 
 #. Translators: Timestamp seconds suffix
 #: src/chatty-list-row.c:74
@@ -338,11 +335,11 @@ msgstr "Fechar"
 
 #: src/chatty-purple-request.c:186
 msgid "Save File..."
-msgstr "Salvar arquivo..."
+msgstr "Salvar arquivo…"
 
 #: src/chatty-purple-request.c:187
 msgid "Open File..."
-msgstr "Abrir arquivo..."
+msgstr "Abrir arquivo…"
 
 #: src/chatty-purple-request.c:191 src/chatty-window.c:463
 #: src/dialogs/chatty-ma-account-details.c:87
@@ -366,7 +363,7 @@ msgstr "Abrir"
 #: src/chatty-secret-store.c:86
 #, c-format
 msgid "Chatty password for \"%s\""
-msgstr "Senha do Chatty para \"%s\""
+msgstr "Senha do Chatty para “%s”"
 
 #. TRANSLATORS: Timestamp from the last week with 24 hour time, e.g. “Tuesday 18∶42”.
 #. See https://developer.gnome.org/glib/stable/glib-GDateTime.html#g-date-time-format
@@ -390,11 +387,8 @@ msgid "%Y-%m-%d"
 msgstr "%Y-%m-%d"
 
 #: src/chatty-window.c:173
-#, fuzzy
 msgid "Select a contact with the <b>“+”</b> button in the titlebar."
-msgstr ""
-"Escolha um contato de <b>mensagem instantânea</b> com o botão \"+\" na barra "
-"de título."
+msgstr "Escolha um contato com o botão <b>“+”</b> na barra de título."
 
 #: src/chatty-window.c:177
 msgid ""
@@ -425,9 +419,9 @@ msgid "Delete"
 msgstr "Apagar"
 
 #: src/chatty-window.c:535
-#, fuzzy, c-format
+#, c-format
 msgid "Error saving contact: %s"
-msgstr "Erro ao abrir o aplicativo Contatos: %s"
+msgstr "Erro ao salvar o contato: %s"
 
 #: src/chatty-window.c:618
 msgid "An SMS and XMPP messaging client"
@@ -462,30 +456,27 @@ msgid "Encryption not available"
 msgstr "Criptografia não disponível"
 
 #: src/dialogs/chatty-pp-chat-info.c:216
-#, fuzzy, c-format
+#, c-format
 msgid "%u Member"
 msgid_plural "%u Members"
-msgstr[0] "Participante"
-msgstr[1] "Participante"
+msgstr[0] "%u membro"
+msgstr[1] "%u membros"
 
 #: src/dialogs/chatty-pp-chat-info.c:250
 msgid "Phone Number:"
 msgstr "Número do telefone:"
 
 #: src/dialogs/chatty-pp-chat-info.c:252
-#, fuzzy
 msgid "XMPP ID:"
-msgstr "ID XMPP"
+msgstr "ID XMPP:"
 
 #: src/dialogs/chatty-pp-chat-info.c:257
-#, fuzzy
 msgid "Matrix ID:"
-msgstr "Matrix"
+msgstr "ID Matrix:"
 
 #: src/dialogs/chatty-pp-chat-info.c:261
-#, fuzzy
 msgid "Telegram ID:"
-msgstr "Telegram"
+msgstr "ID Telegram:"
 
 #: src/dialogs/chatty-new-chat-dialog.c:133
 msgid "Send To"
@@ -505,7 +496,7 @@ msgstr "Configurar avatar"
 #: src/dialogs/chatty-ma-account-details.c:325
 #: src/dialogs/chatty-pp-account-details.c:158
 msgid "connected"
-msgstr "contectado"
+msgstr "conectado"
 
 #: src/dialogs/chatty-ma-account-details.c:327
 #: src/dialogs/chatty-pp-account-details.c:160
@@ -650,9 +641,8 @@ msgid "Invite"
 msgstr "Convidar"
 
 #: src/ui/chatty-ma-chat-info.ui:79 src/ui/chatty-ma-account-details.ui:207
-#, fuzzy
 msgid "Matrix ID"
-msgstr "Matrix"
+msgstr "ID Matrix"
 
 #: src/ui/chatty-pp-chat-info.ui:59
 msgid "Room topic"
@@ -672,9 +662,8 @@ msgid "Status"
 msgstr "Estado"
 
 #: src/ui/chatty-pp-chat-info.ui:240
-#, fuzzy
 msgid "Chat settings"
-msgstr "Detalhes da conversa"
+msgstr "Configurações da conversa"
 
 #: src/ui/chatty-pp-chat-info.ui:261
 msgid "Notifications"
@@ -689,9 +678,8 @@ msgid "Show status messages in chat"
 msgstr "Exibir mensagens de status na conversa"
 
 #: src/ui/chatty-pp-chat-info.ui:296
-#, fuzzy
 msgid "Encrypt Messages"
-msgstr "Mensagem de convite"
+msgstr "Criptografar mensagens"
 
 #: src/ui/chatty-pp-chat-info.ui:318
 msgid "Fingerprints"
@@ -699,28 +687,27 @@ msgstr "Assinaturas digitais"
 
 #: src/ui/chatty-ma-account-details.ui:67
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 #: src/ui/chatty-ma-account-details.ui:97
 msgid "Email"
-msgstr ""
+msgstr "E-mail"
 
 #: src/ui/chatty-ma-account-details.ui:126
 msgid "Phone"
-msgstr ""
+msgstr "Telefone"
 
 #: src/ui/chatty-ma-account-details.ui:170
 msgid "Advanced information"
-msgstr ""
+msgstr "Informações avançadas"
 
 #: src/ui/chatty-ma-account-details.ui:181
-#, fuzzy
 msgid "Homeserver"
-msgstr "Servidor matrix doméstico"
+msgstr "Servidor doméstico"
 
 #: src/ui/chatty-ma-account-details.ui:233
 msgid "Device ID"
-msgstr ""
+msgstr "ID do dispositivo"
 
 #: src/ui/chatty-pp-account-details.ui:43
 msgid "Account ID"
@@ -879,9 +866,8 @@ msgid "Delete Chat"
 msgstr "Apagar conversa"
 
 #: src/ui/chatty-window.ui:378
-#, fuzzy
 msgid "Start Chatting"
-msgstr "Comece a conversar"
+msgstr "Começar a conversar"
 
 #: src/users/chatty-contact.c:317
 msgid "Mobile: "
