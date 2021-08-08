@@ -285,7 +285,7 @@ mm_account_delete_message_async (ChattyMmAccount     *self,
                              sms_path, self->cancellable, NULL, NULL);
 }
 
-static void
+static gboolean
 mm_account_add_sms (ChattyMmAccount *self,
                     ChattyMmDevice  *device,
                     MMSms           *sms,
@@ -304,7 +304,7 @@ mm_account_add_sms (ChattyMmAccount *self,
 
   msg = mm_sms_get_text (sms);
   if (!msg)
-    return;
+    return FALSE;
 
   phone = chatty_utils_check_phonenumber (mm_sms_get_number (sms),
                                           chatty_settings_get_country_iso_code (chatty_settings_get_default ()));
@@ -333,6 +333,8 @@ mm_account_add_sms (ChattyMmAccount *self,
 
   if (direction == CHATTY_DIRECTION_IN)
     mm_account_delete_message_async (self, device, sms, NULL, NULL);
+
+  return TRUE;
 }
 
 static void
@@ -351,11 +353,12 @@ sms_state_changed_cb (ChattyMmAccount *self,
     ChattyMmDevice *device;
 
     device = g_object_get_data (G_OBJECT (sms), "device");
-    mm_account_add_sms (self, device, sms, state);
-    CHATTY_TRACE_MSG ("deleting message %s", mm_sms_get_path (sms));
-    mm_modem_messaging_delete (mm_object_peek_modem_messaging (device->mm_object),
-                               mm_sms_get_path (sms),
-                               NULL, NULL, NULL);
+    if (mm_account_add_sms (self, device, sms, state)) {
+      CHATTY_TRACE_MSG ("deleting message %s", mm_sms_get_path (sms));
+      mm_modem_messaging_delete (mm_object_peek_modem_messaging (device->mm_object),
+                                 mm_sms_get_path (sms),
+                                 NULL, NULL, NULL);
+    }
   }
 }
 
@@ -405,9 +408,12 @@ parse_sms (ChattyMmAccount *self,
     }
   } else if (type == MM_SMS_PDU_TYPE_CDMA_DELIVER ||
              type == MM_SMS_PDU_TYPE_DELIVER) {
-    if (state == MM_SMS_STATE_RECEIVED)
-      mm_account_add_sms (self, device, sms, state);
-    else if (state == MM_SMS_STATE_RECEIVING) {
+    if (state == MM_SMS_STATE_RECEIVED && mm_account_add_sms (self, device, sms, state)) {
+        CHATTY_TRACE_MSG ("deleting message %s", mm_sms_get_path (sms));
+        mm_modem_messaging_delete (mm_object_peek_modem_messaging (device->mm_object),
+                                   mm_sms_get_path (sms),
+                                   NULL, NULL, NULL);
+    } else if (state == MM_SMS_STATE_RECEIVING) {
       g_object_set_data_full (G_OBJECT (sms), "device",
                               g_object_ref (device),
                               g_object_unref);
