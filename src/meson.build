@@ -110,6 +110,7 @@ chatty_deps = [
   dependency('json-glib-1.0'),
   libolm_dep,
   dependency('mm-glib', version: '>= 1.12.0'),
+  dependency('gspell-1'),
   libebook_dep,
   libfeedback_dep,
   libm_dep,

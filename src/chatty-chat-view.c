@@ -10,6 +10,7 @@
  */
 
 #include <glib/gi18n.h>
+#include <gspell/gspell.h>
 
 #include "chatty-avatar.h"
 #include "chatty-chat.h"
@@ -654,6 +655,7 @@ chatty_chat_view_class_init (ChattyChatViewClass *klass)
 static void
 chatty_chat_view_init (ChattyChatView *self)
 {
+  GspellTextView *gspell_view;
   GtkAdjustment *vadjustment;
 
   gtk_widget_init_template (GTK_WIDGET (self));
@@ -668,6 +670,9 @@ chatty_chat_view_init (ChattyChatView *self)
   gtk_list_box_set_header_func (GTK_LIST_BOX (self->message_list),
                                 (GtkListBoxUpdateHeaderFunc)chat_view_update_header_func,
                                 NULL, NULL);
+
+  gspell_view = gspell_text_view_get_from_gtk_text_view (GTK_TEXT_VIEW (self->message_input));
+  gspell_text_view_basic_setup (gspell_view);
 }
 
 GtkWidget *
