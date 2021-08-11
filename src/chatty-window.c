@@ -15,6 +15,7 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 #include <glib-object.h>
+#include <libgd/gd.h>
 #include "contrib/gtk.h"
 
 #include "chatty-window.h"
@@ -28,6 +29,7 @@
 #include "chatty-chat-view.h"
 #include "chatty-manager.h"
 #include "chatty-utils.h"
+#include "chatty-selectable-row.h"
 #include "matrix/chatty-ma-account.h"
 #include "matrix/chatty-ma-chat.h"
 #include "dialogs/chatty-info-dialog.h"
@@ -74,12 +76,19 @@ struct _ChattyWindow
 
   GtkWidget *chat_view;
 
+  GtkWidget *protocol_list;
+  GtkWidget *protocol_any_row;
+
+  GdTaggedEntryTag *protocol_tag;
+
   ChattyItem    *selected_item;
   ChattyManager *manager;
 
   char          *chat_needle;
   GtkFilter     *chat_filter;
   GtkFilterListModel *filter_model;
+  GtkWidget          *selected_protocol_row;
+  ChattyProtocol protocol_filter;
 };
 
 
@@ -189,6 +198,10 @@ window_chat_name_matches (ChattyItem   *item,
   g_assert (CHATTY_IS_WINDOW (self));
 
   protocol = chatty_item_get_protocols (item);
+
+  if (self->protocol_filter != CHATTY_PROTOCOL_ANY &&
+      protocol != self->protocol_filter)
+    return FALSE;
 
   if ((!self->chat_needle || !*self->chat_needle) &&
       CHATTY_IS_MM_CHAT (item))
@@ -322,6 +335,28 @@ window_search_changed_cb (ChattyWindow *self,
   self->chat_needle = g_strdup (gtk_entry_get_text (entry));
 
   gtk_filter_changed (self->chat_filter, GTK_FILTER_CHANGE_DIFFERENT);
+}
+
+static void
+search_tag_button_clicked_cb (ChattyWindow     *self,
+                              GdTaggedEntryTag *tag,
+                              GdTaggedEntry    *entry)
+{
+  g_assert (CHATTY_IS_WINDOW (self));
+  g_assert (GD_TAGGED_ENTRY_TAG (tag));
+
+  gtk_widget_activate (self->protocol_any_row);
+}
+
+static void
+window_search_toggled_cb (ChattyWindow    *self,
+                          GtkToggleButton *button)
+{
+  g_assert (CHATTY_IS_WINDOW (self));
+
+  if (!gtk_toggle_button_get_active (button) &&
+      self->protocol_any_row != self->selected_protocol_row)
+    gtk_widget_activate (self->protocol_any_row);
 }
 
 static void
@@ -669,6 +704,41 @@ chatty_window_show_about_dialog (ChattyWindow *self)
 }
 
 static void
+window_search_protocol_changed_cb (ChattyWindow *self,
+                                   GtkWidget    *selected_row,
+                                   GtkListBox   *box)
+{
+  GdTaggedEntry *entry;
+  GtkWidget *old_row;
+
+  g_assert (CHATTY_IS_WINDOW (self));
+  g_assert (GTK_IS_LIST_BOX (box));
+
+  entry = GD_TAGGED_ENTRY (self->chats_search_entry);
+  old_row = self->selected_protocol_row;
+
+  if (old_row == selected_row)
+    return;
+
+  self->protocol_filter = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (selected_row), "protocol"));
+  chatty_selectable_row_set_selected (CHATTY_SELECTABLE_ROW (old_row), FALSE);
+  chatty_selectable_row_set_selected (CHATTY_SELECTABLE_ROW (selected_row), TRUE);
+  self->selected_protocol_row = selected_row;
+
+  if (selected_row == self->protocol_any_row) {
+    gd_tagged_entry_remove_tag (entry, self->protocol_tag);
+  } else {
+    const char *title;
+
+    gd_tagged_entry_add_tag (entry, self->protocol_tag);
+    title = chatty_selectable_row_get_title (CHATTY_SELECTABLE_ROW (selected_row));
+    gd_tagged_entry_tag_set_label (self->protocol_tag, title);
+  }
+
+  gtk_filter_changed (self->chat_filter, GTK_FILTER_CHANGE_DIFFERENT);
+}
+
+static void
 window_active_protocols_changed_cb (ChattyWindow *self)
 {
   ChattyProtocol protocols;
@@ -700,6 +770,23 @@ window_chat_deleted_cb (ChattyWindow *self,
   window_set_item (self, NULL);
   chatty_chat_view_set_chat (CHATTY_CHAT_VIEW (self->chat_view), NULL);
 }
+
+static void
+protocol_list_header_func (GtkListBoxRow *row,
+                           GtkListBoxRow *before,
+                           gpointer       user_data)
+{
+  if (!before) {
+    gtk_list_box_row_set_header (row, NULL);
+  } else if (!gtk_list_box_row_get_header (row)) {
+    GtkWidget *separator;
+
+    separator = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
+    gtk_widget_show (separator);
+    gtk_list_box_row_set_header (row, separator);
+  }
+}
+
 
 static void
 chatty_window_unmap (GtkWidget *widget)
@@ -765,6 +852,7 @@ chatty_window_finalize (GObject *object)
   ChattyWindow *self = (ChattyWindow *)object;
 
   g_clear_object (&self->settings);
+  g_clear_object (&self->protocol_tag);
 
   G_OBJECT_CLASS (chatty_window_parent_class)->finalize (object);
 }
@@ -826,6 +914,8 @@ chatty_window_class_init (ChattyWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyWindow, chat_view);
   gtk_widget_class_bind_template_child (widget_class, ChattyWindow, header_chat_list_new_msg_popover);
 
+  gtk_widget_class_bind_template_child (widget_class, ChattyWindow, protocol_list);
+
   gtk_widget_class_bind_template_callback (widget_class, notify_fold_cb);
   gtk_widget_class_bind_template_callback (widget_class, window_new_message_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, window_new_muc_clicked_cb);
@@ -837,17 +927,27 @@ chatty_window_class_init (ChattyWindowClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, window_delete_buddy_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, window_call_button_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, window_search_changed_cb);
+  gtk_widget_class_bind_template_callback (widget_class, search_tag_button_clicked_cb);
+  gtk_widget_class_bind_template_callback (widget_class, window_search_toggled_cb);
   gtk_widget_class_bind_template_callback (widget_class, window_chat_row_activated_cb);
   gtk_widget_class_bind_template_callback (widget_class, chatty_window_show_settings_dialog);
   gtk_widget_class_bind_template_callback (widget_class, chatty_window_show_about_dialog);
+  gtk_widget_class_bind_template_callback (widget_class, window_search_protocol_changed_cb);
+
+  g_type_ensure (CHATTY_TYPE_SELECTABLE_ROW);
 }
 
 
 static void
 chatty_window_init (ChattyWindow *self)
 {
+  GtkWidget *row;
+
   gtk_widget_init_template (GTK_WIDGET (self));
 
+  self->protocol_filter = CHATTY_PROTOCOL_ANY;
+  hdy_search_bar_connect_entry (HDY_SEARCH_BAR (self->chats_search_bar),
+                                GTK_ENTRY (self->chats_search_entry));
   self->manager = g_object_ref (chatty_manager_get_default ());
   g_signal_connect_object (self->manager, "notify::active-protocols",
                            G_CALLBACK (window_active_protocols_changed_cb), self,
@@ -855,6 +955,44 @@ chatty_window_init (ChattyWindow *self)
   g_signal_connect_object (self->manager, "chat-deleted",
                            G_CALLBACK (window_chat_deleted_cb), self,
                            G_CONNECT_SWAPPED);
+
+  gtk_list_box_set_header_func (GTK_LIST_BOX (self->protocol_list),
+                                protocol_list_header_func,
+                                NULL, NULL);
+
+  self->protocol_tag = gd_tagged_entry_tag_new ("");
+  gd_tagged_entry_tag_set_style (self->protocol_tag, "protocol-tag");
+
+  row = chatty_selectable_row_new (_("Any Protocol"));
+  g_object_set_data (G_OBJECT (row), "protocol",
+                     GINT_TO_POINTER (CHATTY_PROTOCOL_ANY));
+  chatty_selectable_row_set_selected (CHATTY_SELECTABLE_ROW (row), TRUE);
+  gtk_container_add (GTK_CONTAINER (self->protocol_list), row);
+  self->protocol_any_row = self->selected_protocol_row = row;
+
+  row = chatty_selectable_row_new (_("Matrix"));
+  g_object_set_data (G_OBJECT (row), "protocol",
+                     GINT_TO_POINTER (CHATTY_PROTOCOL_MATRIX));
+  gtk_container_add (GTK_CONTAINER (self->protocol_list), row);
+
+  row = chatty_selectable_row_new (_("SMS/MMS"));
+  g_object_set_data (G_OBJECT (row), "protocol",
+                     GINT_TO_POINTER (CHATTY_PROTOCOL_MMS_SMS));
+  gtk_container_add (GTK_CONTAINER (self->protocol_list), row);
+
+  row = chatty_selectable_row_new (_("XMPP"));
+  g_object_set_data (G_OBJECT (row), "protocol",
+                     GINT_TO_POINTER (CHATTY_PROTOCOL_XMPP));
+  gtk_container_add (GTK_CONTAINER (self->protocol_list), row);
+
+  if (chatty_manager_telegram_plugin_is_loaded (self->manager)) {
+    row = chatty_selectable_row_new (_("Telegram"));
+    g_object_set_data (G_OBJECT (row), "protocol",
+                       GINT_TO_POINTER (CHATTY_PROTOCOL_TELEGRAM));
+    gtk_container_add (GTK_CONTAINER (self->protocol_list), row);
+  }
+
+  gtk_widget_show_all (self->protocol_list);
 }
 
 

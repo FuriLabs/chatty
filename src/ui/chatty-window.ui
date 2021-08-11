@@ -223,6 +223,7 @@
                     <property name="receives_default">False</property>
                     <property name="active" bind-source="chats_search_bar" bind-property="search-mode-enabled" bind-flags="sync-create|bidirectional"/>
                     <accelerator key="f" modifiers="primary" signal="clicked" />
+                    <signal name="toggled" handler="window_search_toggled_cb" swapped="yes"/>
                     <child>
                       <object class="GtkImage">
                         <property name="visible">True</property>
@@ -375,9 +376,25 @@
                 <property name="visible">True</property>
                 <property name="hexpand">False</property>
                 <child>
-                  <object class="GtkSearchEntry" id="chats_search_entry">
+                  <object class="GtkBox">
                     <property name="visible">True</property>
-                    <signal name="search-changed" handler="window_search_changed_cb" swapped="yes"/>
+                    <style>
+                      <class name="linked"/>
+                    </style>
+                    <child>
+                      <object class="GdTaggedEntry" id="chats_search_entry">
+                        <property name="visible">True</property>
+                        <property name="hexpand">True</property>
+                        <signal name="search-changed" handler="window_search_changed_cb" swapped="yes"/>
+                        <signal name="tag-button-clicked" handler="search_tag_button_clicked_cb" swapped="yes"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuButton">
+                        <property name="visible">1</property>
+                        <property name="popover">popover</property>
+                      </object>
+                    </child>
                   </object>
                 </child>
               </object>
@@ -455,6 +472,21 @@
       </object>
     </child>
   </template>
+
+  <object class="GtkPopover" id="popover">
+    <property name="position">bottom</property>
+    <style>
+      <class name="no-padding"/>
+    </style>
+    <child>
+      <object class="GtkListBox" id="protocol_list">
+        <property name="visible">True</property>
+        <property name="selection-mode">none</property>
+        <signal name="row-activated" handler="window_search_protocol_changed_cb" swapped="yes"/>
+      </object>
+    </child>
+  </object>
+
   <object class="GtkSizeGroup" id="start_pane_size_group">
     <property name="mode">horizontal</property>
     <widgets>

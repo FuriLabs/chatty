@@ -117,3 +117,42 @@ row:selected .unread-badge {
 .bold-label {
   font-weight: bold;
 }
+
+@define-color protocol_tag_bg #c12c87;
+@define-color protocol_tag_fg #ffffff;
+
+.protocol-tag {
+  background-image: none;
+  background-color: @protocol_tag_bg;
+  color: @protocol_tag_fg;
+
+  border-radius: 4px;
+  border-width: 0;
+
+  margin: 2px;
+  padding: 4px;
+}
+
+.protocol-tag:hover {
+    background-color: shade(@protocol_tag_bg, 1.10);
+    color: @protocol_tag_fg;
+}
+
+.protocol-tag.button,
+.protocol-tag.button:hover,
+.protocol-tag.button:active,
+.protocol-tag.button:active:hover {
+  background-color: transparent;
+  background-image: none;
+  box-shadow: none;
+  border-image: none;
+  border-width: 0;
+}
+
+.protocol-tag.button:hover {
+    color: shade(@protocol_tag_bg, 2.10);
+}
+
+popover.no-padding {
+  padding: 0px;
+}

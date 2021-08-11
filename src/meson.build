@@ -69,7 +69,8 @@ ui_files = files (
   # 'ui/chatty-ma-chat-info.ui',
   # 'ui/chatty-pp-user-info.ui',
   'ui/chatty-settings-dialog.ui',
-  'ui/chatty-window.ui',
+  # We can't test with GdTaggedEntry
+  # 'ui/chatty-window.ui',
 )
 
 chatty_sources = [
@@ -99,6 +100,7 @@ jabber_incdir = include_directories('xeps/prpl/jabber')
 chatty_deps = [
   dependency('gio-2.0', version: '>= 2.50'),
   dependency('gtk+-3.0', version: '>= 3.22'),
+  libgd_dep,
   purple, jabber,
   dependency('libsecret-1'),
   dependency('libhandy-1', version: '>= 1.1.90'),
