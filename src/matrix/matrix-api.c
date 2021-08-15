@@ -2004,6 +2004,72 @@ matrix_api_set_name_finish (MatrixApi     *self,
 }
 
 static void
+api_set_user_avatar_cb (GObject      *obj,
+                        GAsyncResult *result,
+                        gpointer      user_data)
+{
+  MatrixApi *self;
+  g_autoptr(GTask) task = user_data;
+  g_autoptr(JsonObject) object = NULL;
+  GError *error = NULL;
+
+  g_assert (G_IS_TASK (task));
+
+  self = g_task_get_source_object (task);
+  g_assert (MATRIX_IS_API (self));
+
+  object = g_task_propagate_pointer (G_TASK (result), &error);
+
+  CHATTY_TRACE_MSG ("Setting avatar success: %d", !error);
+
+  if (error)
+    g_task_return_error (task, error);
+  else
+    g_task_return_boolean (task, TRUE);
+}
+
+void
+matrix_api_set_user_avatar_async (MatrixApi           *self,
+                                  const char          *file_name,
+                                  GCancellable        *cancellable,
+                                  GAsyncReadyCallback  callback,
+                                  gpointer             user_data)
+{
+  g_autoptr(GTask) task = NULL;
+
+  g_return_if_fail (MATRIX_IS_API (self));
+  g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  task = g_task_new (self, cancellable, callback, user_data);
+
+  if (!file_name) {
+    g_autofree char *uri = NULL;
+    const char *data;
+
+    data = "{\"avatar_url\":\"\"}";
+    uri = g_strdup_printf ("/_matrix/client/r0/profile/%s/avatar_url", self->username);
+    matrix_net_send_data_async (self->matrix_net, 2, g_strdup (data), strlen (data),
+                                uri, SOUP_METHOD_PUT, NULL, self->cancellable,
+                                api_set_user_avatar_cb, g_steal_pointer (&task));
+  } else {
+    g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED,
+                             "Setting new user avatar not implemented");
+  }
+}
+
+gboolean
+matrix_api_set_user_avatar_finish (MatrixApi     *self,
+                                   GAsyncResult  *result,
+                                   GError       **error)
+{
+  g_return_val_if_fail (MATRIX_IS_API (self), FALSE);
+  g_return_val_if_fail (G_IS_TASK (result), FALSE);
+  g_return_val_if_fail (!error || !*error, FALSE);
+
+  return g_task_propagate_boolean (G_TASK (result), error);
+}
+
+static void
 api_get_3pid_cb (GObject      *obj,
                  GAsyncResult *result,
                  gpointer      user_data)
