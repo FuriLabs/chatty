@@ -906,6 +906,53 @@ chatty_ma_account_get_avatar (ChattyItem *item)
 }
 
 static void
+ma_account_set_user_avatar_cb (GObject      *object,
+                               GAsyncResult *result,
+                               gpointer      user_data)
+{
+  ChattyMaAccount *self;
+  g_autoptr(GTask) task = user_data;
+  GError *error = NULL;
+
+  g_assert (G_IS_TASK (task));
+
+  self = g_task_get_source_object (task);
+  g_assert (CHATTY_MA_ACCOUNT (self));
+
+  matrix_api_set_user_avatar_finish (self->matrix_api, result, &error);
+
+  if (error)
+    g_task_return_error (task, error);
+  else
+    g_task_return_boolean (task, TRUE);
+}
+
+static void
+chatty_ma_account_set_avatar_async (ChattyItem          *item,
+                                    const char          *file_name,
+                                    GCancellable        *cancellable,
+                                    GAsyncReadyCallback  callback,
+                                    gpointer             user_data)
+{
+  ChattyMaAccount *self = (ChattyMaAccount *)item;
+  g_autoptr(GTask) task = NULL;
+
+  g_assert (CHATTY_IS_MA_ACCOUNT (self));
+
+  task = g_task_new (self, cancellable, callback, user_data);
+
+  if (!file_name && !chatty_item_get_avatar_file (item))
+    {
+      g_task_return_boolean (task, TRUE);
+      return;
+    }
+
+  matrix_api_set_user_avatar_async (self->matrix_api, file_name, cancellable,
+                                    ma_account_set_user_avatar_cb,
+                                    g_steal_pointer (&task));
+}
+
+static void
 chatty_ma_account_finalize (GObject *object)
 {
   ChattyMaAccount *self = (ChattyMaAccount *)object;
@@ -944,6 +991,7 @@ chatty_ma_account_class_init (ChattyMaAccountClass *klass)
   item_class->set_name = chatty_ma_account_set_name;
   item_class->get_avatar_file = chatty_ma_account_get_avatar_file;
   item_class->get_avatar = chatty_ma_account_get_avatar;
+  item_class->set_avatar_async = chatty_ma_account_set_avatar_async;
 
   account_class->get_protocol_name = chatty_ma_account_get_protocol_name;
   account_class->get_status   = chatty_ma_account_get_status;
