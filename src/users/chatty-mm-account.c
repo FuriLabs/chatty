@@ -313,7 +313,7 @@ mm_account_add_sms (ChattyMmAccount *self,
   if (!phone)
     phone = mm_sms_dup_number (sms);
 
-  CHATTY_TRACE_MSG ("received message from %s", phone);
+  CHATTY_TRACE (phone, "received message from ");
 
   chat = chatty_mm_account_start_chat (self, phone);
 
@@ -1077,7 +1077,7 @@ chatty_mm_account_send_message_async (ChattyMmAccount     *self,
   if (chatty_utils_get_item_position (G_LIST_MODEL (self->chat_list), chat, &position))
     g_list_model_items_changed (G_LIST_MODEL (self->chat_list), position, 1, 1);
 
-  CHATTY_TRACE_MSG ("Creating sms message to number: %s", phone);
+  CHATTY_TRACE (phone, "Creating sms message to number: ");
   mm_modem_messaging_create (mm_object_peek_modem_messaging (device->mm_object),
                              sms_properties, cancellable,
                              sms_create_cb,

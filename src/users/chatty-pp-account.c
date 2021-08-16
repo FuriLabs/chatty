@@ -23,6 +23,7 @@
 #include "chatty-window.h"
 #include "chatty-pp-chat.h"
 #include "chatty-pp-account.h"
+#include "chatty-log.h"
 
 /**
  * SECTION: chatty-pp-account
@@ -130,7 +131,7 @@ account_connect (ChattyPpAccount *self)
   if (!purple_status_is_online (pp_status))
     return G_SOURCE_REMOVE;
 
-  g_debug ("connecting to %s", chatty_item_get_username (CHATTY_ITEM (self)));
+  CHATTY_DEBUG (chatty_item_get_username (CHATTY_ITEM (self)), "connecting to");
   purple_account_connect (self->pp_account);
 
   return G_SOURCE_REMOVE;

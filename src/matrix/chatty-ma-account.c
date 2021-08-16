@@ -197,7 +197,7 @@ matrix_parse_room_data (ChattyMaAccount *self,
       chat = matrix_find_chat_with_id (self, room_id->data, &index);
       room_data = matrix_utils_json_object_get_object (joined_rooms, room_id->data);
 
-      CHATTY_TRACE_MSG ("joined room: %s, new: %d", room_id->data, !!chat);
+      CHATTY_TRACE (room_id->data, "joined room, new: %d, room:", !!chat);
 
       if (!chat) {
         chat = g_object_new (CHATTY_TYPE_MA_CHAT, "room-id", room_id->data, NULL);
@@ -240,8 +240,6 @@ handle_get_homeserver (ChattyMaAccount *self,
                        JsonObject      *object,
                        GError          *error)
 {
-  CHATTY_ENTRY;
-
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
 
   if (error) {
@@ -253,8 +251,6 @@ handle_get_homeserver (ChattyMaAccount *self,
     g_warning ("Couldn't connect to ‘/.well-known/matrix/client’ ");
     matrix_api_set_homeserver (self->matrix_api, "https://chat.librem.one");
   }
-
-  CHATTY_EXIT;
 }
 
 static void
@@ -275,8 +271,6 @@ handle_password_login (ChattyMaAccount *self,
                        JsonObject      *object,
                        GError          *error)
 {
-  CHATTY_ENTRY;
-
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
 
   /* If no error, Api is informing us that logging in succeeded.
@@ -340,8 +334,6 @@ handle_password_login (ChattyMaAccount *self,
     self->status = CHATTY_CONNECTED;
     g_object_notify (G_OBJECT (self), "status");
   }
-
-  CHATTY_EXIT;
 }
 
 static void
@@ -562,9 +554,9 @@ chatty_ma_account_set_enabled (ChattyAccount *account,
 
   self->account_enabled = enable;
   network_monitor = g_network_monitor_get_default ();
-  CHATTY_TRACE_MSG ("Enable account %s: %d, is loading: %d",
-                    chatty_item_get_username (CHATTY_ITEM (account)),
-                    enable, self->is_loading);
+  CHATTY_TRACE (chatty_item_get_username (CHATTY_ITEM (account)),
+                "Enable account: %d, is loading: %d, user:",
+                enable, self->is_loading);
 
   if (self->account_enabled &&
       g_network_monitor_get_connectivity (network_monitor) == G_NETWORK_CONNECTIVITY_FULL) {
@@ -641,16 +633,13 @@ chatty_ma_account_connect (ChattyAccount *account,
 {
   ChattyMaAccount *self = (ChattyMaAccount *)account;
 
-  CHATTY_ENTRY;
-
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
 
   if (!chatty_account_get_enabled (account))
-    CHATTY_EXIT;
+    return;
 
   g_clear_handle_id (&self->connect_id, g_source_remove);
   self->connect_id = g_timeout_add (300, account_connect, g_object_ref (account));
-  CHATTY_EXIT;
 }
 
 static void
@@ -1145,9 +1134,9 @@ db_load_account_cb (GObject      *object,
     const char *pickle;
 
     pickle = g_object_get_data (G_OBJECT (task), "pickle");
-    CHATTY_TRACE_MSG ("Create new enc. user: %s has pickle: %d, has key: %d",
-                      chatty_item_get_username (CHATTY_ITEM (self)),
-                      !!pickle, !!self->pickle_key);
+    CHATTY_TRACE (chatty_item_get_username (CHATTY_ITEM (self)),
+                  "Create new enc. has pickle: %d, has key: %d, user:",
+                  !!pickle, !!self->pickle_key);
     self->matrix_enc = matrix_enc_new (self->matrix_db, pickle, self->pickle_key);
     matrix_api_set_enc (self->matrix_api, self->matrix_enc);
     if (!pickle)
@@ -1165,9 +1154,9 @@ db_load_account_cb (GObject      *object,
 
   enabled = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (task), "enabled"));
   self->next_batch = g_strdup (g_object_get_data (G_OBJECT (task), "batch"));
-  CHATTY_TRACE_MSG ("Loaded %s from db. enabled: %d, has next-batch: %d",
-                    chatty_item_get_username (CHATTY_ITEM (self)),
-                    !!enabled, !!self->next_batch);
+  CHATTY_TRACE (chatty_item_get_username (CHATTY_ITEM (self)),
+                "Loaded from db. enabled: %d, has next-batch: %d, user:",
+                !!enabled, !!self->next_batch);
 
   self->is_loading = TRUE;
   matrix_api_set_next_batch (self->matrix_api, self->next_batch);
@@ -1190,9 +1179,9 @@ db_load_chats_cb (GObject      *object,
 
   chats = chatty_history_get_chats_finish (self->history_db, result, &error);
   self->db_chat_list = chats;
-  CHATTY_TRACE_MSG ("%s Loaded %u chats from db",
-                    chatty_item_get_username (CHATTY_ITEM (self)),
-                    !chats ? 0 : chats->len);
+  CHATTY_TRACE (chatty_item_get_username (CHATTY_ITEM (self)),
+                "Loaded %u chats from db, user:",
+                !chats ? 0 : chats->len);
 
   if (error)
     g_warning ("Error getting chats: %s", error->message);
@@ -1291,8 +1280,6 @@ ma_account_save_cb (GObject      *object,
   GError *error = NULL;
   gboolean status;
 
-  CHATTY_ENTRY;
-
   g_assert (G_IS_ASYNC_RESULT (result));
   g_assert (G_IS_TASK (task));
 
@@ -1322,8 +1309,6 @@ ma_account_save_cb (GObject      *object,
   } else {
     g_task_return_boolean (task, status);
   }
-
-  CHATTY_EXIT;
 }
 
 void

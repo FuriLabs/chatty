@@ -12,6 +12,7 @@
 #include "users/chatty-pp-account.h"
 #include "chatty-xep-0352.h"
 #include "xeps.h"
+#include "chatty-log.h"
 
 #include <purple.h>
 #include "prpl.h"
@@ -76,9 +77,8 @@ on_screensaver_active_changed (GtkApplication *app)
       if (!conn)
 	continue;
 
-      g_debug ("Setting csi for %s to %sactive",
-	       purple_account_get_username (pa),
-	       blank ? "in" : "");
+      CHATTY_DEBUG (purple_account_get_username (pa), "Setting csi to %sactive user:",
+                    blank ? "in" : "");
       csi_set_active (conn, !blank);
     }
 }
@@ -108,7 +108,7 @@ on_xmlnode_received (PurpleConnection  *gc,
       if (!g_strcmp0 (xmlns, CHATTY_XEPS_NS_CSI)) {
 	ChattyPpAccount *ca = chatty_pp_account_get_object (pa);
 	g_return_if_fail (ca);
-	g_debug ("Server of %s supports CSI", purple_account_get_username (pa));
+	CHATTY_DEBUG (purple_account_get_username (pa), "Server supports CSI, user:");
 	chatty_pp_account_update_features (ca, CHATTY_PP_ACCOUNT_FEATURES_CSI);
 
 	/* Sync status with screen blank */

@@ -42,6 +42,7 @@
 #include "chatty-purple-notify.h"
 #include "chatty-history.h"
 #include "chatty-manager.h"
+#include "chatty-log.h"
 
 /**
  * SECTION: chatty-manager
@@ -785,8 +786,8 @@ chatty_conv_write_conversation (PurpleConversation *conv,
   // If anyone wants to suppress archiving - feel free to set NO_LOG flag
   purple_signal_emit (chatty_manager_get_default (),
                       "conversation-write", conv, &pcm, &uuid, type);
-  g_debug("Posting message id:%s flags:%d type:%d from:%s",
-          uuid, pcm.flags, type, pcm.who);
+  CHATTY_DEBUG (pcm.who, "Posting message id:%s flags:%d type:%d from:",
+                uuid, pcm.flags, type);
 
   if (!uuid)
     uuid = g_uuid_string_random ();

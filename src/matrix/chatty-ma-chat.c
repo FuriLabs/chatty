@@ -706,15 +706,13 @@ matrix_send_message_from_queue (ChattyMaChat *self)
 {
   g_autoptr(ChattyMessage) message = NULL;
 
-  CHATTY_ENTRY;
-
   g_assert (CHATTY_IS_MA_CHAT (self));
 
   if (self->is_sending_message ||
       !self->message_queue ||
       !self->message_queue->length ||
       self->message_timeout_id)
-    CHATTY_EXIT;
+    return;
 
   message = g_queue_pop_head (self->message_queue);
   self->is_sending_message = TRUE;
@@ -722,7 +720,6 @@ matrix_send_message_from_queue (ChattyMaChat *self)
                                  self->room_id, message,
                                  ma_chat_send_message_cb,
                                  g_object_ref (self));
-  CHATTY_EXIT;
 }
 
 static void
@@ -800,8 +797,6 @@ upload_out_group_key_cb (GObject      *obj,
   ChattyMaChat *self = user_data;
   g_autoptr(GError) error = NULL;
 
-  CHATTY_ENTRY;
-
   g_assert (CHATTY_IS_MA_CHAT (self));
 
   self->claiming_keys = FALSE;
@@ -811,11 +806,10 @@ upload_out_group_key_cb (GObject      *obj,
   if (error) {
     if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
       g_warning ("error uploading group keys: %s", error->message);
-    CHATTY_EXIT;
+    return;
   }
 
   matrix_send_message_from_queue (self);
-  CHATTY_EXIT;
 }
 
 static void
@@ -829,8 +823,6 @@ claim_key_cb (GObject      *obj,
   g_autoptr(GError) error = NULL;
   JsonObject *object;
 
-  CHATTY_ENTRY;
-
   g_assert (CHATTY_IS_MA_CHAT (self));
 
   root = matrix_api_claim_keys_finish (self->matrix_api, result, &error);
@@ -839,7 +831,7 @@ claim_key_cb (GObject      *obj,
     self->claiming_keys = FALSE;
     if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
       g_warning ("error: %s", error->message);
-    CHATTY_EXIT;
+    return;
   }
 
   object = matrix_utils_json_object_get_object (root, "one_time_keys");
@@ -867,7 +859,6 @@ claim_key_cb (GObject      *obj,
                                       G_LIST_MODEL (self->buddy_list),
                                       upload_out_group_key_cb,
                                       self);
-  CHATTY_EXIT;
 }
 
 static void
@@ -881,8 +872,6 @@ query_key_cb (GObject      *obj,
   g_autoptr(GError) error = NULL;
   JsonObject *object;
 
-  CHATTY_ENTRY;
-
   g_assert (CHATTY_IS_MA_CHAT (self));
   g_return_if_fail (!self->keys_claimed);
 
@@ -892,7 +881,7 @@ query_key_cb (GObject      *obj,
     self->claiming_keys = FALSE;
     if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
       g_warning ("error: %s", error->message);
-    CHATTY_EXIT;
+    return;
   }
 
   object = matrix_utils_json_object_get_object (root, "device_keys");
@@ -919,7 +908,6 @@ query_key_cb (GObject      *obj,
   matrix_api_claim_keys_async (self->matrix_api,
                                G_LIST_MODEL (self->buddy_list),
                                claim_key_cb, self);
-  CHATTY_EXIT;
 }
 
 static void
@@ -1077,8 +1065,7 @@ get_room_name_cb (GObject      *obj,
   self->room_name = g_strdup (name);
   chatty_history_update_chat (self->history_db, CHATTY_CHAT (self));
 
-  CHATTY_TRACE_MSG ("Got room name, room: %s (%s)",
-                    self->room_id, chatty_item_get_name (CHATTY_ITEM (self)));
+  CHATTY_TRACE (self->room_id, "Got room name, room:");
 
   g_object_notify (G_OBJECT (self), "name");
 }
@@ -1095,12 +1082,11 @@ get_room_encryption_cb (GObject      *obj,
 
   self->encryption = matrix_api_get_room_encryption_finish (self->matrix_api, result, &error);
 
-  CHATTY_TRACE_MSG ("Got room encryption state, room: %s: encrypted: %d",
-                    self->room_id, !!self->encryption);
+  CHATTY_TRACE (self->room_id, "Got room encryption state: encrypted: %d, room:",
+                !!self->encryption);
   g_object_notify (G_OBJECT (self), "encrypt");
 
-  CHATTY_TRACE_MSG ("Getting room name for '%s(%s)'", self->room_id,
-                    chatty_item_get_name (CHATTY_ITEM (self)));
+  CHATTY_TRACE (self->room_id, "Getting room name for");
   matrix_api_get_room_name_async (self->matrix_api,
                                   self->room_id,
                                   get_room_name_cb,
@@ -1274,8 +1260,8 @@ db_room_room_cb (GObject      *object,
 
   g_free (self->prev_batch);
   self->prev_batch = matrix_db_load_room_finish (self->matrix_db, result, &error);
-  CHATTY_TRACE_MSG ("Load chat %s from db, success: %d, has prev-batch: %d",
-                    self->room_id, !error, !!self->prev_batch);
+  CHATTY_TRACE (self->room_id, "Load from db, success: %d, has prev-batch: %d, chat:",
+                !error, !!self->prev_batch);
 
   if (error)
     g_warning ("Error loading prev batch: %s", error->message);
@@ -1378,8 +1364,7 @@ chatty_ma_chat_real_past_messages (ChattyChat *chat,
   if (self->history_is_loading)
     return;
 
-  CHATTY_TRACE_MSG ("Loading %d past messages from %s(%s)", count, self->room_id,
-                    chatty_item_get_name (CHATTY_ITEM (chat)));
+  CHATTY_TRACE (self->room_id, "Loading %d past messages from", count);
 
   self->history_is_loading = TRUE;
   g_object_notify (G_OBJECT (self), "loading-history");
@@ -1566,8 +1551,6 @@ chatty_ma_chat_send_message_async (ChattyChat          *chat,
 {
   ChattyMaChat *self = (ChattyMaChat *)chat;
 
-  CHATTY_ENTRY;
-
   g_assert (CHATTY_IS_MA_CHAT (self));
   g_assert (CHATTY_IS_MESSAGE (message));
 
@@ -1591,8 +1574,6 @@ chatty_ma_chat_send_message_async (ChattyChat          *chat,
                                  G_LIST_MODEL (self->buddy_list),
                                  NULL, query_key_cb, self);
   }
-
-  CHATTY_EXIT;
 }
 
 static void
@@ -1931,7 +1912,7 @@ chatty_ma_chat_set_data (ChattyMaChat  *self,
   if (!self->state_is_sync && !self->state_is_syncing &&
       self->matrix_api && self->matrix_enc) {
     self->state_is_syncing = TRUE;
-    CHATTY_TRACE_MSG ("Getting encryption state for '%s'", self->room_id);
+    CHATTY_TRACE (self->room_id, "Getting encryption state for");
     matrix_api_get_room_encryption_async (self->matrix_api,
                                           self->room_id,
                                           get_room_encryption_cb,
