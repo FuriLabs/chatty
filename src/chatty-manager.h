@@ -42,6 +42,7 @@ void            chatty_manager_load_buddies           (ChattyManager   *self);
 gboolean        chatty_manager_has_carbons_plugin     (ChattyManager   *self);
 gboolean        chatty_manager_has_file_upload_plugin (ChattyManager   *self);
 gboolean        chatty_manager_lurch_plugin_is_loaded (ChattyManager   *self);
+gboolean        chatty_manager_telegram_plugin_is_loaded (ChattyManager *self);
 ChattyProtocol  chatty_manager_get_active_protocols   (ChattyManager   *self);
 ChattyEds      *chatty_manager_get_eds                (ChattyManager   *self);
 void            chatty_manager_update_node            (ChattyManager   *self,

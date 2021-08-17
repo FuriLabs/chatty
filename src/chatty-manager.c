@@ -2160,6 +2160,21 @@ chatty_manager_lurch_plugin_is_loaded (ChattyManager *self)
   return purple_plugin_is_loaded (self->lurch_plugin);
 }
 
+gboolean
+chatty_manager_telegram_plugin_is_loaded (ChattyManager *self)
+{
+  PurplePlugin *telegram_plugin;
+
+  g_return_val_if_fail (CHATTY_IS_MANAGER (self), FALSE);
+
+  telegram_plugin = purple_plugins_find_with_id ("prpl-telegram");
+
+  if (telegram_plugin)
+    return purple_plugin_is_loaded (telegram_plugin);
+
+  return FALSE;
+}
+
 ChattyProtocol
 chatty_manager_get_active_protocols (ChattyManager *self)
 {
