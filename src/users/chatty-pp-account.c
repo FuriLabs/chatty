@@ -139,7 +139,7 @@ account_connect (ChattyPpAccount *self)
 static void
 chatty_pp_account_create (ChattyPpAccount *self)
 {
-  const char *protocol_id;
+  const char *protocol_id = NULL;
   ChattyProtocol protocol;
 
   g_assert (CHATTY_IS_PP_ACCOUNT (self));
@@ -150,8 +150,6 @@ chatty_pp_account_create (ChattyPpAccount *self)
     protocol_id = "prpl-jabber";
   else if (protocol == CHATTY_PROTOCOL_MATRIX)
     protocol_id = "prpl-matrix";
-  else if (protocol == CHATTY_PROTOCOL_SMS)
-    protocol_id = "prpl-mm-sms";
   else if (protocol == CHATTY_PROTOCOL_TELEGRAM)
     protocol_id = "prpl-telegram";
 
@@ -160,11 +158,6 @@ chatty_pp_account_create (ChattyPpAccount *self)
     if (protocol == CHATTY_PROTOCOL_MATRIX)
       {
         purple_account_set_string (self->pp_account, "home_server", self->server_url);
-      }
-    else if (protocol == CHATTY_PROTOCOL_SMS)
-      {
-        purple_account_set_password (self->pp_account, NULL);
-        purple_account_set_remember_password (self->pp_account, TRUE);
       }
 }
 
@@ -184,8 +177,6 @@ chatty_pp_load_protocol (ChattyPpAccount *self)
     protocol = CHATTY_PROTOCOL_XMPP;
   else if (g_str_equal (protocol_id, "prpl-matrix"))
     protocol = CHATTY_PROTOCOL_MATRIX;
-  else if (g_str_equal (protocol_id, "prpl-mm-sms"))
-    protocol = CHATTY_PROTOCOL_SMS;
   else if (g_str_equal (protocol_id, "prpl-telegram"))
     protocol = CHATTY_PROTOCOL_TELEGRAM;
   else if (g_str_equal (protocol_id, "prpl-delta"))
@@ -870,8 +861,7 @@ chatty_pp_account_new (ChattyProtocol  protocol,
 {
   ChattyPpAccount *self;
 
-  g_return_val_if_fail (protocol & (CHATTY_PROTOCOL_SMS |
-                                    CHATTY_PROTOCOL_XMPP |
+  g_return_val_if_fail (protocol & (CHATTY_PROTOCOL_XMPP |
                                     CHATTY_PROTOCOL_MATRIX |
                                     CHATTY_PROTOCOL_TELEGRAM), NULL);
   g_return_val_if_fail (username && *username, NULL);
