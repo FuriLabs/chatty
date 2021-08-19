@@ -265,11 +265,6 @@ chatty_window_open_item (ChattyWindow *self,
   if (CHATTY_IS_PP_CHAT (item))
     chat = CHATTY_CHAT (item);
 
-  if (chatty_item_get_protocols (item) == CHATTY_PROTOCOL_SMS &&
-      CHATTY_IS_PP_BUDDY (item) &&
-      !chatty_pp_buddy_get_contact (CHATTY_PP_BUDDY (item)))
-    gtk_widget_show (self->menu_add_contact_button);
-
   if (CHATTY_IS_PP_CHAT (chat)) {
     chatty_pp_chat_join (CHATTY_PP_CHAT (chat));
 
