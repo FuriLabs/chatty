@@ -182,21 +182,16 @@ static gboolean
 window_chat_name_matches (ChattyItem   *item,
                           ChattyWindow *self)
 {
-  ChattyProtocol protocols, protocol;
+  ChattyProtocol protocol;
 
   g_assert (CHATTY_IS_CHAT (item));
   g_assert (CHATTY_IS_WINDOW (self));
 
-  protocols = chatty_manager_get_active_protocols (self->manager);
   protocol = chatty_item_get_protocols (item);
 
-  if (chatty_item_get_protocols (item) == CHATTY_PROTOCOL_SMS &&
-      (!self->chat_needle || !*self->chat_needle))
+  if ((!self->chat_needle || !*self->chat_needle) &&
+      CHATTY_IS_MM_CHAT (item))
     return TRUE;
-
-  if (protocol != CHATTY_PROTOCOL_MATRIX &&
-      !(protocols & chatty_item_get_protocols (item)))
-    return FALSE;
 
   /* FIXME: Not a good idea */
   if (chatty_item_get_protocols (item) != CHATTY_PROTOCOL_SMS) {
