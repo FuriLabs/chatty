@@ -129,9 +129,6 @@ chatty_add_new_buddy (ChattyPpBuddy *self)
 
   g_debug ("%s: %s ", __func__, purple_buddy_get_name (self->pp_buddy));
 
-  if (chatty_item_get_protocols (CHATTY_ITEM (self)) != CHATTY_PROTOCOL_SMS)
-    purple_account_add_buddy_with_invite (self->pp_account, self->pp_buddy, NULL);
-
   conv = purple_find_conversation_with_account (PURPLE_CONV_TYPE_IM,
                                                 self->username,
                                                 self->pp_account);
