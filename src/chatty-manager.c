@@ -1399,13 +1399,6 @@ manager_connection_signed_on_cb (PurpleConnection *gc,
   account = chatty_pp_account_get_object (pp_account);
   g_return_if_fail (account);
 
-  /*
-   * SMS plugin emits “signed-on” regardless of the true state
-   * So it’s handled in “mm-sms-state” callback.
-   */
-  if (chatty_item_is_sms (CHATTY_ITEM (account)))
-    return;
-
   protocol = chatty_item_get_protocols (CHATTY_ITEM (account));
   self->active_protocols |= protocol;
 
@@ -1426,13 +1419,6 @@ manager_connection_signed_off_cb (PurpleConnection *gc,
   pp_account = purple_connection_get_account (gc);
   account = chatty_pp_account_get_object (pp_account);
   g_return_if_fail (account);
-
-  /*
-   * SMS plugin emits “signed-off” regardless of the true state
-   * So it’s handled in “mm-sms-state” callback.
-   */
-  if (chatty_item_is_sms (CHATTY_ITEM (account)))
-    return;
 
   manager_update_protocols (self);
 

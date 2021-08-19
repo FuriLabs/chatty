@@ -32,11 +32,6 @@ test_account (ChattyAccount *ac,
 
   g_assert_true (CHATTY_IS_PP_ACCOUNT (ac));
 
-  if (is_sms)
-    g_assert_true (chatty_item_is_sms (CHATTY_ITEM (ac)));
-  else
-    g_assert_false (chatty_item_is_sms (CHATTY_ITEM (ac)));
-
   account = chatty_pp_account_get_account (CHATTY_PP_ACCOUNT (ac));
   g_assert_nonnull (account);
 

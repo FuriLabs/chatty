@@ -67,9 +67,6 @@ on_screensaver_active_changed (GtkApplication *app)
       if (!CHATTY_IS_PP_ACCOUNT (ca))
         continue;
 
-      if (chatty_item_is_sms (CHATTY_ITEM (ca)))
-        continue;
-
       if (!chatty_pp_account_has_features (ca, CHATTY_PP_ACCOUNT_FEATURES_CSI))
 	continue;
 

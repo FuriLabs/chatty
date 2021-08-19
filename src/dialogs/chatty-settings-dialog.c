@@ -690,9 +690,6 @@ chatty_settings_dialog_populate_account_list (ChattySettingsDialog *self)
 
       account = g_list_model_get_item (model, i);
 
-      if (chatty_item_is_sms (CHATTY_ITEM (account)))
-        continue;
-
       row = chatty_account_row_new (account);
 
       if (!row)

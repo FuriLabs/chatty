@@ -346,9 +346,6 @@ chatty_pp_account_disconnect (ChattyAccount *account)
 
   g_assert (CHATTY_IS_PP_ACCOUNT (self));
 
-  if (chatty_item_is_sms (CHATTY_ITEM (self)))
-    return;
-
   status = chatty_account_get_status (CHATTY_ACCOUNT (self));
 
   if (status == CHATTY_DISCONNECTED)
