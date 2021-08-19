@@ -84,7 +84,6 @@ struct _ChattyManager
   gboolean         disable_auto_login;
   gboolean         network_available;
 
-  gboolean         has_modem;
   ChattyProtocol   active_protocols;
 };
 
@@ -612,7 +611,6 @@ chatty_conv_new (PurpleConversation *conv)
   PurpleValue        *value;
   PurpleBlistNode    *conv_node;
   const gchar        *conv_name;
-  const gchar        *folks_name;
 
   PurpleConversationType conv_type = purple_conversation_get_type (conv);
 
@@ -651,25 +649,6 @@ chatty_conv_new (PurpleConversation *conv)
     // instant messages do not sync contacts with the server
     conv_name = purple_conversation_get_name (conv);
     buddy = purple_find_buddy (account, conv_name);
-
-    if (chatty_item_get_protocols (CHATTY_ITEM (chat)) == CHATTY_PROTOCOL_SMS) {
-      if (buddy == NULL) {
-        ChattyEds *chatty_eds;
-        ChattyContact *contact;
-
-        chatty_eds = chatty_manager_get_eds (chatty_manager_get_default ());
-        contact = chatty_eds_find_by_number (chatty_eds, conv_name);
-
-        if (contact) {
-          folks_name = chatty_item_get_name (CHATTY_ITEM (contact));
-
-          buddy = purple_buddy_new (account, conv_name, folks_name);
-          purple_blist_node_set_bool (PURPLE_BLIST_NODE (buddy), "chatty-notifications", TRUE);
-
-          purple_blist_add_buddy (buddy, NULL, NULL, NULL);
-        }
-      }
-    }
 
     if (buddy == NULL) {
       buddy = purple_buddy_new (account, conv_name, NULL);
@@ -750,7 +729,6 @@ chatty_conv_write_conversation (PurpleConversation *conv,
                                    conv,
                                    NULL};
   ChattyProtocol            protocol;
-  ChattyMsgType             msg_type;
 
   if ((flags & PURPLE_MESSAGE_SYSTEM) && !(flags & PURPLE_MESSAGE_NOTIFY)) {
     flags &= ~(PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_RECV);
@@ -760,11 +738,6 @@ chatty_conv_write_conversation (PurpleConversation *conv,
   chat = conv->ui_data;
   self = chatty_manager_get_default ();
   protocol = chatty_item_get_protocols (CHATTY_ITEM (chat));
-
-  if (protocol == CHATTY_PROTOCOL_SMS)
-    msg_type = CHATTY_MESSAGE_TEXT;
-  else
-    msg_type = CHATTY_MESSAGE_HTML_ESCAPED;
 
   account = purple_conversation_get_account (conv);
   g_return_if_fail (account != NULL);
@@ -822,7 +795,8 @@ chatty_conv_write_conversation (PurpleConversation *conv,
 
     if (pcm.flags & (PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_ERROR)) {
       // System is usually also RECV so should be first to catch
-      chat_message = chatty_message_new (NULL, message, uuid, 0, msg_type, CHATTY_DIRECTION_SYSTEM, 0);
+      chat_message = chatty_message_new (NULL, message, uuid, 0, CHATTY_MESSAGE_HTML_ESCAPED,
+                                         CHATTY_DIRECTION_SYSTEM, 0);
       chatty_pp_chat_append_message (CHATTY_PP_CHAT (chat), chat_message);
     } else if (pcm.flags & PURPLE_MESSAGE_RECV) {
       g_autoptr(ChattyContact) contact = NULL;
@@ -833,7 +807,8 @@ chatty_conv_write_conversation (PurpleConversation *conv,
       chatty_contact_set_name (contact, pcm.who);
       chatty_contact_set_value (contact, pcm.who);
 
-      chat_message = chatty_message_new (CHATTY_ITEM (contact), message, uuid, mtime, msg_type, CHATTY_DIRECTION_IN, 0);
+      chat_message = chatty_message_new (CHATTY_ITEM (contact), message, uuid, mtime,
+                                         CHATTY_MESSAGE_HTML_ESCAPED, CHATTY_DIRECTION_IN, 0);
       chatty_pp_chat_append_message (CHATTY_PP_CHAT (chat), chat_message);
 
       if (buddy && purple_blist_node_get_bool (node, "chatty-notifications") &&
@@ -844,7 +819,8 @@ chatty_conv_write_conversation (PurpleConversation *conv,
       }
     } else if (flags & PURPLE_MESSAGE_SEND && pcm.flags & PURPLE_MESSAGE_SEND) {
       // normal send
-      chat_message = chatty_message_new (NULL, message, uuid, 0, msg_type, CHATTY_DIRECTION_OUT, 0);
+      chat_message = chatty_message_new (NULL, message, uuid, 0, CHATTY_MESSAGE_HTML_ESCAPED,
+                                         CHATTY_DIRECTION_OUT, 0);
       chatty_message_set_status (chat_message, CHATTY_STATUS_SENT, 0);
       chatty_pp_chat_append_message (CHATTY_PP_CHAT (chat), chat_message);
     } else if (pcm.flags & PURPLE_MESSAGE_SEND) {
@@ -852,7 +828,8 @@ chatty_conv_write_conversation (PurpleConversation *conv,
       // FIXME: current list_box does not allow ordering rows by timestamp
       // TODO: Needs proper sort function and timestamp as user_data for rows
       // FIXME: Alternatively may need to reload history to re-populate rows
-      chat_message = chatty_message_new (NULL, message, uuid, mtime, msg_type, CHATTY_DIRECTION_OUT, 0);
+      chat_message = chatty_message_new (NULL, message, uuid, mtime, CHATTY_MESSAGE_HTML_ESCAPED,
+                                         CHATTY_DIRECTION_OUT, 0);
       chatty_message_set_status (chat_message, CHATTY_STATUS_SENT, 0);
       chatty_pp_chat_append_message (CHATTY_PP_CHAT (chat), chat_message);
     }
@@ -1215,8 +1192,7 @@ manager_account_connection_failed_cb (PurpleAccount         *pp_account,
   g_return_if_fail (account);
 
   if (error == PURPLE_CONNECTION_ERROR_NETWORK_ERROR &&
-      self->network_available &&
-      chatty_item_get_protocols (CHATTY_ITEM (account)) != CHATTY_PROTOCOL_SMS)
+      self->network_available)
     chatty_account_connect (CHATTY_ACCOUNT (account), TRUE);
 
   if (purple_connection_error_is_fatal (error))
@@ -1378,9 +1354,6 @@ manager_update_protocols (ChattyManager *self)
     if (status == CHATTY_CONNECTED)
       self->active_protocols |= protocol;
   }
-
-  if (self->has_modem)
-    self->active_protocols |= CHATTY_PROTOCOL_SMS;
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ACTIVE_PROTOCOLS]);
 }
