@@ -860,18 +860,6 @@ chatty_pp_chat_get_name (ChattyItem *item)
 
   g_assert (CHATTY_IS_PP_CHAT (self));
 
-  /* If available, return locally saved contact name for SMS chats */
-  if (self->buddy &&
-      chatty_item_get_protocols (CHATTY_ITEM (item)) == CHATTY_PROTOCOL_SMS) {
-    PurpleBlistNode *node;
-
-    node = PURPLE_BLIST_NODE (self->buddy);
-
-    if (node->ui_data &&
-        chatty_pp_buddy_get_contact (node->ui_data))
-      return chatty_item_get_name (node->ui_data);
-  }
-
   if (self->pp_chat)
     name = purple_chat_get_name (self->pp_chat);
   else if (self->buddy)
@@ -1915,25 +1903,6 @@ chatty_pp_chat_delete (ChattyPpChat *self)
   }
 }
 
-static void
-write_buddy_contact_cb (GObject      *object,
-                        GAsyncResult *result,
-                        gpointer      user_data)
-{
-  g_autoptr(GTask) task = user_data;
-  GError *error = NULL;
-  gboolean status;
-
-  g_assert (G_IS_TASK (task));
-
-  status = chatty_eds_write_contact_finish (result, &error);
-
-  if (error)
-    g_task_return_error (task, error);
-  else
-    g_task_return_boolean (task, status);
-}
-
 void
 chatty_pp_chat_save_to_contacts_async (ChattyPpChat        *self,
                                        GAsyncReadyCallback  callback,
@@ -1951,26 +1920,7 @@ chatty_pp_chat_save_to_contacts_async (ChattyPpChat        *self,
   purple_blist_node_set_bool (PURPLE_BLIST_NODE (self->buddy), "chatty-notifications", TRUE);
 
   task = g_task_new (self, NULL, callback, user_data);
-
-  if (chatty_item_get_protocols (CHATTY_ITEM (self)) == CHATTY_PROTOCOL_SMS) {
-    ChattyPpBuddy *buddy;
-    g_autofree char *number = NULL;
-    const char *who, *country_code;
-
-    who = purple_buddy_get_name (self->buddy);
-    country_code = chatty_settings_get_country_iso_code (chatty_settings_get_default ());
-    number = chatty_utils_check_phonenumber (who, country_code);
-    buddy = chatty_pp_buddy_get_object (self->buddy);
-
-    if (!chatty_pp_buddy_get_contact (buddy))
-      chatty_eds_write_contact_async (who, number, write_buddy_contact_cb,
-                                      g_steal_pointer (&task));
-    else
-      g_task_return_boolean (task, TRUE);
-  } else {
-    g_task_return_boolean (task, TRUE);
-  }
-
+  g_task_return_boolean (task, TRUE);
 }
 
 gboolean
