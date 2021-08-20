@@ -194,7 +194,7 @@ window_chat_name_matches (ChattyItem   *item,
     return TRUE;
 
   /* FIXME: Not a good idea */
-  if (chatty_item_get_protocols (item) != CHATTY_PROTOCOL_SMS) {
+  if (chatty_item_get_protocols (item) != CHATTY_PROTOCOL_MMS_SMS) {
     ChattyAccount *account;
 
     if (CHATTY_IS_PP_CHAT (item) &&
@@ -383,7 +383,7 @@ window_add_chat_button_clicked_cb (ChattyWindow *self)
 {
   g_assert (CHATTY_IS_WINDOW (self));
 
-  if (chatty_manager_get_active_protocols (self->manager) == CHATTY_PROTOCOL_SMS)
+  if (chatty_manager_get_active_protocols (self->manager) == CHATTY_PROTOCOL_MMS_SMS)
     window_new_message_clicked_cb (self);
   else
     gtk_popover_popup (GTK_POPOVER (self->header_chat_list_new_msg_popover));
@@ -625,8 +625,8 @@ window_active_protocols_changed_cb (ChattyWindow *self)
   g_assert (CHATTY_IS_WINDOW (self));
 
   protocols = chatty_manager_get_active_protocols (self->manager);
-  has_sms = !!(protocols & CHATTY_PROTOCOL_SMS);
-  has_im  = !!(protocols & ~CHATTY_PROTOCOL_SMS);
+  has_sms = !!(protocols & CHATTY_PROTOCOL_MMS_SMS);
+  has_im  = !!(protocols & ~CHATTY_PROTOCOL_MMS_SMS);
 
   gtk_widget_set_sensitive (self->header_add_chat_button, has_sms || has_im);
   gtk_widget_set_sensitive (self->menu_new_group_message_button, has_im);

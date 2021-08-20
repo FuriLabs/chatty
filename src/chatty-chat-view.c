@@ -197,7 +197,7 @@ chatty_chat_view_update (ChattyChatView *self)
 
   gtk_widget_set_visible (self->send_file_button, chatty_chat_has_file_upload (self->chat));
 
-  if (protocol == CHATTY_PROTOCOL_SMS) {
+  if (protocol == CHATTY_PROTOCOL_MMS_SMS) {
     gtk_label_set_label (GTK_LABEL (self->empty_label0),
                          _("This is an SMS conversation"));
     gtk_label_set_label (GTK_LABEL (self->empty_label1),
@@ -216,7 +216,7 @@ chatty_chat_view_update (ChattyChatView *self)
 
   context = gtk_widget_get_style_context (self->send_message_button);
 
-  if (protocol == CHATTY_PROTOCOL_SMS)
+  if (protocol == CHATTY_PROTOCOL_MMS_SMS)
     gtk_style_context_add_class (context, "button_send_green");
   else if (chatty_chat_is_im (self->chat))
     gtk_style_context_add_class (context, "suggested-action");
@@ -468,7 +468,7 @@ chat_view_message_input_changed_cb (ChattyChatView *self)
     chatty_update_typing_status (self);
 
   if (chatty_settings_get_convert_emoticons (chatty_settings_get_default ()) &&
-      chatty_item_get_protocols (CHATTY_ITEM (self->chat)) != CHATTY_PROTOCOL_SMS)
+      chatty_item_get_protocols (CHATTY_ITEM (self->chat)) != CHATTY_PROTOCOL_MMS_SMS)
     chatty_check_for_emoticon (self);
 }
 

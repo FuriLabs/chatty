@@ -54,7 +54,7 @@ chatty_mm_buddy_get_protocols (ChattyItem *item)
 
   g_assert (CHATTY_IS_MM_BUDDY (self));
 
-  return CHATTY_PROTOCOL_SMS;
+  return CHATTY_PROTOCOL_MMS_SMS;
 }
 
 static gboolean

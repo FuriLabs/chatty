@@ -640,7 +640,7 @@ chatty_account_row_new (ChattyAccount *account)
                    CHATTY_PROTOCOL_TELEGRAM |
                    CHATTY_PROTOCOL_DELTA |
                    CHATTY_PROTOCOL_THREEPL |
-                   CHATTY_PROTOCOL_SMS))
+                   CHATTY_PROTOCOL_MMS_SMS))
     return NULL;
 
   spinner = gtk_spinner_new ();

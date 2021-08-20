@@ -253,7 +253,7 @@ chatty_message_row_new (ChattyMessage  *message,
     gtk_widget_set_halign (self->content_grid, GTK_ALIGN_START);
     gtk_widget_set_halign (self->message_event_box, GTK_ALIGN_START);
     gtk_widget_set_halign (self->author_label, GTK_ALIGN_START);
-  } else if (direction == CHATTY_DIRECTION_OUT && protocol == CHATTY_PROTOCOL_SMS) {
+  } else if (direction == CHATTY_DIRECTION_OUT && protocol == CHATTY_PROTOCOL_MMS_SMS) {
     gtk_style_context_add_class (sc, "bubble_green");
   } else if (direction == CHATTY_DIRECTION_OUT) {
     gtk_style_context_add_class (sc, "bubble_blue");

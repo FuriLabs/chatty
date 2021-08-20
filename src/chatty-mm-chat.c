@@ -410,7 +410,7 @@ chatty_mm_chat_get_protocols (ChattyItem *item)
 
   g_assert (CHATTY_IS_MM_CHAT (self));
 
-  return CHATTY_PROTOCOL_SMS;
+  return CHATTY_PROTOCOL_MMS_SMS;
 }
 
 static GdkPixbuf *

@@ -721,7 +721,7 @@ chatty_mm_account_get_username (ChattyAccount *account)
 static ChattyProtocol
 chatty_mm_account_get_protocols (ChattyItem *item)
 {
-  return CHATTY_PROTOCOL_SMS;
+  return CHATTY_PROTOCOL_MMS_SMS;
 }
 
 static void
@@ -971,7 +971,7 @@ chatty_mm_account_start_chat (ChattyMmAccount *self,
   if (!chat) {
     g_autoptr(ChattyMmBuddy) buddy = NULL;
 
-    chat = (ChattyChat *)chatty_mm_chat_new (phone, NULL, CHATTY_PROTOCOL_SMS, TRUE);
+    chat = (ChattyChat *)chatty_mm_chat_new (phone, NULL, CHATTY_PROTOCOL_MMS_SMS, TRUE);
     chatty_chat_set_data (chat, self, self->history_db);
     chatty_mm_chat_set_eds (CHATTY_MM_CHAT (chat), self->chatty_eds);
     buddy = chatty_mm_buddy_new (phone, NULL);

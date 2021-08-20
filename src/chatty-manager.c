@@ -239,7 +239,7 @@ manager_eds_is_ready (ChattyManager *self)
     account  = g_list_model_get_item (accounts, i);
     protocol = chatty_item_get_protocols (CHATTY_ITEM (account));
 
-    if (protocol != CHATTY_PROTOCOL_SMS)
+    if (protocol != CHATTY_PROTOCOL_MMS_SMS)
       continue;
 
     model = chatty_account_get_buddies (account);
@@ -1802,7 +1802,7 @@ chatty_manager_init (ChattyManager *self)
 
   self->notification = chatty_notification_new ();
 
-  self->chatty_eds = chatty_eds_new (CHATTY_PROTOCOL_SMS);
+  self->chatty_eds = chatty_eds_new (CHATTY_PROTOCOL_MMS_SMS);
   self->account_list = g_list_store_new (CHATTY_TYPE_ACCOUNT);
   self->mm_account = chatty_mm_account_new ();
 
@@ -2219,7 +2219,7 @@ chatty_manager_get_active_protocols (ChattyManager *self)
   protocols = self->active_protocols;
 
   if (chatty_account_get_status (CHATTY_ACCOUNT (self->mm_account)) == CHATTY_CONNECTED)
-    protocols = protocols | CHATTY_PROTOCOL_SMS;
+    protocols = protocols | CHATTY_PROTOCOL_MMS_SMS;
 
   return protocols;
 }

@@ -191,7 +191,7 @@ chatty_eds_load_contact (ChattyEds     *self,
     if (self->protocols & CHATTY_PROTOCOL_CALL)
       protocol = CHATTY_PROTOCOL_CALL;
     else
-      protocol = CHATTY_PROTOCOL_SMS;
+      protocol = CHATTY_PROTOCOL_MMS_SMS;
   } else if (field_id == E_CONTACT_IM_JABBER) {
     protocol = CHATTY_PROTOCOL_XMPP;
   } else {
@@ -240,7 +240,7 @@ chatty_eds_objects_added_cb (ChattyEds       *self,
 
   for (GSList *l = (GSList *)objects; l != NULL; l = l->next)
     {
-      if (self->protocols & CHATTY_PROTOCOL_SMS ||
+      if (self->protocols & CHATTY_PROTOCOL_MMS_SMS ||
           self->protocols & CHATTY_PROTOCOL_CALL)
         chatty_eds_load_contact (self, l->data, E_CONTACT_TEL);
 

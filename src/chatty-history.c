@@ -49,7 +49,7 @@
 
 /* Shouldn't be modified, new values should be appended */
 #define PROTOCOL_UNKNOWN   0
-#define PROTOCOL_SMS       1
+#define PROTOCOL_MMS_SMS   1
 #define PROTOCOL_MMS       2
 #define PROTOCOL_XMPP      3
 #define PROTOCOL_MATRIX    4
@@ -156,8 +156,8 @@ static int
 history_protocol_to_value (ChattyProtocol protocol)
 {
   switch (protocol) {
-  case CHATTY_PROTOCOL_SMS:
-    return PROTOCOL_SMS;
+  case CHATTY_PROTOCOL_MMS_SMS:
+    return PROTOCOL_MMS_SMS;
 
   case CHATTY_PROTOCOL_MMS:
     return PROTOCOL_MMS;
@@ -185,7 +185,7 @@ static int
 history_protocol_to_type_value (ChattyProtocol protocol)
 {
   switch (protocol) {
-  case CHATTY_PROTOCOL_SMS:
+  case CHATTY_PROTOCOL_MMS_SMS:
   case CHATTY_PROTOCOL_MMS:
   case CHATTY_PROTOCOL_TELEGRAM:
     return CHATTY_ID_PHONE_VALUE;
@@ -538,7 +538,7 @@ chatty_history_create_schema (ChattyHistory *self,
     "SELECT users.id,"
     "CASE "
     "WHEN users.username='SMS' "
-    "THEN " STRING (PROTOCOL_SMS) " "
+    "THEN " STRING (PROTOCOL_MMS_SMS) " "
     "ELSE " STRING (PROTOCOL_MMS) " "
     "END "
     "FROM users;"
@@ -646,7 +646,7 @@ insert_or_ignore_user (ChattyHistory  *self,
   if (!who || !*who)
     return 0;
 
-  if (protocol & (CHATTY_PROTOCOL_SMS | CHATTY_PROTOCOL_MMS | CHATTY_PROTOCOL_TELEGRAM)) {
+  if (protocol & (CHATTY_PROTOCOL_MMS_SMS | CHATTY_PROTOCOL_MMS | CHATTY_PROTOCOL_TELEGRAM)) {
     char *country;
 
     country = g_object_get_data (G_OBJECT (task), "country-code");
@@ -1105,7 +1105,7 @@ chatty_history_migrate_db_to_v1_to_v3 (ChattyHistory *self,
                          /*** Accounts ***/
                          /* We have exactly one account for SMS */
                          "INSERT OR IGNORE INTO accounts(user_id,protocol,enabled) "
-                         "SELECT DISTINCT users.id," STRING(PROTOCOL_SMS) ",1 FROM users "
+                         "SELECT DISTINCT users.id," STRING(PROTOCOL_MMS_SMS) ",1 FROM users "
                          "WHERE users.username='SMS';"
 
                          /* XMPP IM accounts */
@@ -1332,7 +1332,7 @@ chatty_history_migrate_db_to_v1_to_v3 (ChattyHistory *self,
       /* Fill in accounts */
       if (!history_add_phone_account (self, task,
                                       account_number ? account_number : account,
-                                      g_strcmp0 (account, "SMS") == 0 ? PROTOCOL_SMS : PROTOCOL_TELEGRAM))
+                                      g_strcmp0 (account, "SMS") == 0 ? PROTOCOL_MMS_SMS : PROTOCOL_TELEGRAM))
         return FALSE;
 
       if (!history_add_phone_user (self, task,
@@ -1418,7 +1418,7 @@ chatty_history_migrate_db_to_v1_to_v3 (ChattyHistory *self,
       /* Fill in accounts */
       if (!history_add_phone_account (self, task,
                                       account_number ? account_number : account,
-                                      g_strcmp0 (account, "SMS") == 0 ? PROTOCOL_SMS : PROTOCOL_TELEGRAM))
+                                      g_strcmp0 (account, "SMS") == 0 ? PROTOCOL_MMS_SMS : PROTOCOL_TELEGRAM))
         return FALSE;
 
       if (sender &&
@@ -2368,7 +2368,7 @@ history_get_chats (ChattyHistory *self,
   if (CHATTY_IS_MA_ACCOUNT (account))
     protocol = PROTOCOL_MATRIX;
   else
-    protocol = PROTOCOL_SMS;
+    protocol = PROTOCOL_MMS_SMS;
 
   sqlite3_prepare_v2 (self->db,
                       "SELECT threads.id,threads.name,threads.alias,threads.encrypted,"
@@ -2408,7 +2408,7 @@ history_get_chats (ChattyHistory *self,
       chat = (gpointer)chatty_ma_chat_new (name, alias, file);
       chatty_chat_set_encryption (CHATTY_CHAT (chat), encrypted);
     } else {
-      chat = (gpointer)chatty_mm_chat_new (name, alias, CHATTY_PROTOCOL_SMS, TRUE);
+      chat = (gpointer)chatty_mm_chat_new (name, alias, CHATTY_PROTOCOL_MMS_SMS, TRUE);
     }
 
     messages = get_messages_before_time (self, chat, NULL, thread_id, INT_MAX, 1);
@@ -2420,7 +2420,7 @@ history_get_chats (ChattyHistory *self,
 
     g_ptr_array_insert (threads, -1, chat);
 
-    if (protocol == PROTOCOL_SMS) {
+    if (protocol == PROTOCOL_MMS_SMS) {
       g_autoptr(GPtrArray) members = NULL;
 
       members = get_sms_thread_members (self, thread_id);

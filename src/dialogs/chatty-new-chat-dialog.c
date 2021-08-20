@@ -257,7 +257,7 @@ contact_search_entry_changed_cb (ChattyNewChatDialog *self,
   chatty_list_row_set_item (CHATTY_LIST_ROW (self->new_contact_row),
                             CHATTY_ITEM (self->dummy_contact));
 
-  protocol = CHATTY_PROTOCOL_SMS;
+  protocol = CHATTY_PROTOCOL_MMS_SMS;
   valid = protocol == chatty_utils_username_is_valid (self->search_str, protocol);
   account = chatty_manager_get_mm_account (self->manager);
   valid = valid && chatty_account_get_status (account) == CHATTY_CONNECTED;
@@ -396,7 +396,7 @@ chatty_new_chat_add_account_to_list (ChattyNewChatDialog *self,
   protocol = chatty_item_get_protocols (CHATTY_ITEM (account));
 
   // TODO list supported protocols here
-  if (protocol & ~(CHATTY_PROTOCOL_SMS |
+  if (protocol & ~(CHATTY_PROTOCOL_MMS_SMS |
                    CHATTY_PROTOCOL_XMPP |
                    CHATTY_PROTOCOL_MATRIX |
                    CHATTY_PROTOCOL_TELEGRAM |

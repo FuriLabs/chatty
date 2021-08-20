@@ -48,7 +48,7 @@ typedef enum
 typedef enum
 {
   CHATTY_PROTOCOL_NONE     = 0,
-  CHATTY_PROTOCOL_SMS      = 1 << 0,
+  CHATTY_PROTOCOL_MMS_SMS  = 1 << 0,
   CHATTY_PROTOCOL_MMS      = 1 << 1,
   CHATTY_PROTOCOL_CALL     = 1 << 2,
   CHATTY_PROTOCOL_XMPP     = 1 << 3,

@@ -78,8 +78,8 @@ chatty_contact_matches (ChattyItem     *item,
   value = chatty_contact_get_value (self);
   protocol = chatty_item_get_protocols (item);
 
-  if (protocol == CHATTY_PROTOCOL_SMS &&
-      protocols & CHATTY_PROTOCOL_SMS) {
+  if (protocol == CHATTY_PROTOCOL_MMS_SMS &&
+      protocols & CHATTY_PROTOCOL_MMS_SMS) {
     ChattySettings *settings;
     const char *country;
     EPhoneNumberMatch match;
