@@ -1126,8 +1126,10 @@ manager_account_added_cb (PurpleAccount *pp_account,
     return;
   }
 
-  if (g_strcmp0 (protocol_id, "prpl-mm-sms") == 0)
+  if (g_strcmp0 (protocol_id, "prpl-mm-sms") == 0) {
     purple_account_set_enabled (pp_account, purple_core_get_ui (), FALSE);
+    return;
+  }
 
   account = chatty_pp_account_get_object (pp_account);
 
