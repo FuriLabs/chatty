@@ -378,6 +378,16 @@ chat_view_send_file_button_clicked_cb (ChattyChatView *self,
 }
 
 static void
+view_send_message_async_cb (GObject      *object,
+                            GAsyncResult *result,
+                            gpointer      user_data)
+{
+  g_autoptr(ChattyChatView) self = user_data;
+
+  chatty_chat_set_unread_count (self->chat, 0);
+}
+
+static void
 chat_view_send_message_button_clicked_cb (ChattyChatView *self)
 {
   PurpleConversation *conv = NULL;
@@ -426,7 +436,9 @@ chat_view_send_message_button_clicked_cb (ChattyChatView *self)
                               NULL, time (NULL),
                               escaped ? CHATTY_MESSAGE_HTML_ESCAPED : CHATTY_MESSAGE_TEXT,
                               CHATTY_DIRECTION_OUT, 0);
-    chatty_chat_send_message_async (self->chat, msg, NULL, NULL);
+    chatty_chat_send_message_async (self->chat, msg,
+                                    view_send_message_async_cb,
+                                    g_object_ref (self));
 
     gtk_widget_hide (self->send_message_button);
   }
