@@ -1616,10 +1616,13 @@ chatty_ma_chat_send_message_async (ChattyChat          *chat,
     matrix_api_get_room_users_async (self->matrix_api, self->room_id,
                                      get_chat_users_cb,
                                      g_object_ref (self));
-  } else if (!self->state_is_syncing && !self->claiming_keys)
+  } else if (!self->state_is_syncing && !self->claiming_keys) {
+    self->claiming_keys = TRUE;
     matrix_api_query_keys_async (self->matrix_api,
                                  G_LIST_MODEL (self->buddy_list),
                                  NULL, query_key_cb, self);
+  }
+
   CHATTY_EXIT;
 }
 
