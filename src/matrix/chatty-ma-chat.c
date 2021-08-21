@@ -297,60 +297,37 @@ ma_chat_new_file (ChattyMaChat *self,
   return file;
 }
 
-#if 0
 static void
 handle_m_room_member (ChattyMaChat *self,
-                      JsonObject   *object,
-                      GListStore   *members_list)
+                      JsonObject   *object)
 {
   GListModel *model;
   ChattyMaBuddy *buddy;
   JsonObject *content;
-  const char *value, *membership, *sender, *name;
+  const char *membership, *sender, *name;
 
   g_assert (CHATTY_IS_MA_CHAT (self));
   g_assert (object);
-  g_assert (G_IS_LIST_STORE (members_list));
-
-  value = matrix_utils_json_object_get_string (object, "room_id");
-  if (g_strcmp0 (value, self->room_id) != 0) {
-    g_warning ("room_id '%s' doesn't match '%s", value, self->room_id);
-    return;
-  }
 
   sender = matrix_utils_json_object_get_string (object, "sender");
   content = matrix_utils_json_object_get_object (object, "content");
   membership = matrix_utils_json_object_get_string (content, "membership");
 
-  model = G_LIST_MODEL (members_list);
+  model = G_LIST_MODEL (self->buddy_list);
   buddy = ma_chat_find_buddy (self, model, sender, NULL);
-
-  if (!buddy && members_list != self->buddy_list) {
-    model = G_LIST_MODEL (self->buddy_list);
-    buddy = ma_chat_find_buddy (self, model, sender, NULL);
-  }
-
   name = matrix_utils_json_object_get_string (content, "displayname");
-  if (buddy)
-    chatty_item_set_name (CHATTY_ITEM (buddy), name);
 
   if (g_strcmp0 (membership, "join") == 0) {
-    if (buddy && model == (gpointer)members_list)
-      return;
-
-    if (buddy)
-      g_list_store_append (members_list, buddy);
-    else
-      buddy = ma_chat_add_buddy (self, members_list, sender);
+    if (!buddy)
+      buddy = ma_chat_add_buddy (self, self->buddy_list, sender);
     chatty_item_set_name (CHATTY_ITEM (buddy), name);
-  } else if (buddy &&
-             g_strcmp0 (membership, "leave") == 0) {
     self->keys_claimed = FALSE;
-    chatty_utils_remove_list_item (members_list, buddy);
+  } else if (buddy && g_strcmp0 (membership, "leave") == 0) {
+    chatty_utils_remove_list_item (self->buddy_list, buddy);
     g_clear_pointer (&self->generated_name, g_free);
+    self->keys_claimed = FALSE;
   }
 }
-#endif
 
 static void
 handle_m_room_name (ChattyMaChat *self,
@@ -1171,6 +1148,8 @@ parse_chat_array (ChattyMaChat *self,
       handle_m_room_encryption (self, object);
     } else if (g_str_equal (type, "m.room.encrypted")) {
       handle_m_room_encrypted (self, buddy, object);
+    } else if (g_str_equal (type, "m.room.member")) {
+      handle_m_room_member (self, object);
     }
   }
 
