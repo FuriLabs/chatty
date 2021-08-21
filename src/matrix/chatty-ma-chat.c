@@ -80,6 +80,8 @@ struct _ChattyMaChat
   guint          is_sending_message : 1;
   guint          notification_shown : 1;
 
+  guint          user_list_loading : 1;
+  guint          user_list_loaded : 1;
   guint          state_is_sync    : 1;
   guint          state_is_syncing : 1;
   /* Set if the complete buddy list is loaded */
@@ -943,6 +945,54 @@ query_key_cb (GObject      *obj,
   CHATTY_EXIT;
 }
 
+static void
+get_chat_users_cb (GObject      *obj,
+                   GAsyncResult *result,
+                   gpointer      user_data)
+{
+  g_autoptr(ChattyMaChat) self = user_data;
+  g_autoptr(JsonObject) object = NULL;
+  g_autoptr(GList) members = NULL;
+  g_autoptr(GError) error = NULL;
+  JsonObject *joined;
+
+  g_assert (CHATTY_IS_MA_CHAT (self));
+
+  object = matrix_api_get_room_users_finish (self->matrix_api, result, &error);
+
+  self->user_list_loading = FALSE;
+  self->user_list_loaded = !error;
+
+  if (error) {
+    if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
+      g_warning ("Error loading chat members: %s", error->message);
+
+    return;
+  }
+
+  joined = matrix_utils_json_object_get_object (object, "joined");
+  members = json_object_get_members (joined);
+
+  for (GList *member = members; member; member = member->next) {
+    ChattyMaBuddy *buddy;
+    JsonObject *data;
+    const char *name;
+
+    buddy = ma_chat_find_buddy (self, G_LIST_MODEL (self->buddy_list), member->data, NULL);
+    if (!buddy)
+      buddy = ma_chat_add_buddy (self, self->buddy_list, member->data);
+
+    data = json_object_get_object_member (joined, member->data);
+    name = matrix_utils_json_object_get_string (data, "display_name");
+    chatty_item_set_name (CHATTY_ITEM (buddy), name);
+  };
+
+  self->claiming_keys = TRUE;
+  matrix_api_query_keys_async (self->matrix_api,
+                               G_LIST_MODEL (self->buddy_list),
+                               NULL, query_key_cb, self);
+}
+
 #if 0
 static void
 get_room_state_cb (GObject      *obj,
@@ -1561,7 +1611,12 @@ chatty_ma_chat_send_message_async (ChattyChat          *chat,
   if (chatty_chat_get_encryption (chat) != CHATTY_ENCRYPTION_ENABLED ||
       self->keys_claimed)
     matrix_send_message_from_queue (self);
-  else if (!self->state_is_syncing && !self->claiming_keys)
+  else if (!self->user_list_loaded && !self->user_list_loading) {
+    self->user_list_loading = TRUE;
+    matrix_api_get_room_users_async (self->matrix_api, self->room_id,
+                                     get_chat_users_cb,
+                                     g_object_ref (self));
+  } else if (!self->state_is_syncing && !self->claiming_keys)
     matrix_api_query_keys_async (self->matrix_api,
                                  G_LIST_MODEL (self->buddy_list),
                                  NULL, query_key_cb, self);
