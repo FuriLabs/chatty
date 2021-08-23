@@ -1023,9 +1023,10 @@ chatty_mm_account_send_message_async (ChattyMmAccount     *self,
   g_autoptr(MMSmsProperties) sms_properties = NULL;
   g_autoptr(GTask) task = NULL;
   g_autofree char *phone = NULL;
+  ChattySettings *settings;
   ChattyMmDevice *device;
   guint position;
-  gboolean is_mms;
+  gboolean is_mms, request_report;
 
   g_return_if_fail (CHATTY_IS_MM_ACCOUNT (self));
   g_return_if_fail (CHATTY_IS_MM_CHAT (chat));
@@ -1066,10 +1067,12 @@ chatty_mm_account_send_message_async (ChattyMmAccount     *self,
     return;
   }
 
+  settings = chatty_settings_get_default ();
+  request_report = chatty_settings_request_sms_delivery_reports (settings);
   sms_properties = mm_sms_properties_new ();
   mm_sms_properties_set_text (sms_properties, chatty_message_get_text (message));
   mm_sms_properties_set_number (sms_properties, phone);
-  mm_sms_properties_set_delivery_report_request (sms_properties, TRUE);
+  mm_sms_properties_set_delivery_report_request (sms_properties, request_report);
   mm_sms_properties_set_validity_relative (sms_properties, 168);
 
   chatty_mm_chat_append_message (CHATTY_MM_CHAT (chat), message);
