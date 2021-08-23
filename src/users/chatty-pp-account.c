@@ -130,7 +130,7 @@ account_connect (ChattyPpAccount *self)
   if (!purple_status_is_online (pp_status))
     return G_SOURCE_REMOVE;
 
-  g_debug ("connecting to %s", chatty_account_get_username (CHATTY_ACCOUNT (self)));
+  g_debug ("connecting to %s", chatty_item_get_username (CHATTY_ITEM (self)));
   purple_account_connect (self->pp_account);
 
   return G_SOURCE_REMOVE;
@@ -210,27 +210,6 @@ chatty_pp_account_get_status (ChattyAccount *account)
     return CHATTY_CONNECTING;
 
   return CHATTY_DISCONNECTED;
-}
-
-static const gchar *
-chatty_pp_account_get_username (ChattyAccount *account)
-{
-  ChattyPpAccount *self = (ChattyPpAccount *)account;
-
-  g_assert (CHATTY_IS_PP_ACCOUNT (self));
-
-  return purple_account_get_username (self->pp_account);
-}
-
-static void
-chatty_pp_account_set_username (ChattyAccount *account,
-                                const char    *username)
-{
-  ChattyPpAccount *self = (ChattyPpAccount *)account;
-
-  g_assert (CHATTY_IS_PP_ACCOUNT (self));
-
-  purple_account_set_username (self->pp_account, username);
 }
 
 static GListModel *
@@ -595,6 +574,27 @@ chatty_pp_account_set_name (ChattyItem *item,
   purple_account_set_alias (self->pp_account, name);
 }
 
+static const char *
+chatty_pp_account_get_username (ChattyItem *item)
+{
+  ChattyPpAccount *self = (ChattyPpAccount *)item;
+
+  g_assert (CHATTY_IS_PP_ACCOUNT (self));
+
+  return purple_account_get_username (self->pp_account);
+}
+
+static void
+chatty_pp_account_set_username (ChattyItem *item,
+                                const char *username)
+{
+  ChattyPpAccount *self = (ChattyPpAccount *)item;
+
+  g_assert (CHATTY_IS_PP_ACCOUNT (self));
+
+  purple_account_set_username (self->pp_account, username);
+}
+
 static GdkPixbuf *
 chatty_icon_from_data (const guchar *buf,
                        gsize         size)
@@ -774,13 +774,13 @@ chatty_pp_account_class_init (ChattyPpAccountClass *klass)
   item_class->get_protocols = chatty_pp_account_get_protocols;
   item_class->get_name = chatty_pp_account_get_name;
   item_class->set_name = chatty_pp_account_set_name;
+  item_class->get_username = chatty_pp_account_get_username;
+  item_class->set_username = chatty_pp_account_set_username;
   item_class->get_avatar = chatty_pp_account_get_avatar;
   item_class->set_avatar_async = chatty_pp_account_set_avatar_async;
 
   account_class->get_protocol_name = chatty_pp_account_get_protocol_name;
   account_class->get_status   = chatty_pp_account_get_status;
-  account_class->get_username = chatty_pp_account_get_username;
-  account_class->set_username = chatty_pp_account_set_username;
   account_class->get_buddies  = chatty_pp_account_get_buddies;
   account_class->buddy_exists = chatty_pp_account_buddy_exists;
   account_class->get_enabled  = chatty_pp_account_get_enabled;

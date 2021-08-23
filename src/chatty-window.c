@@ -243,7 +243,7 @@ chatty_window_open_item (ChattyWindow *self,
   if (CHATTY_IS_CONTACT (item)) {
     const char *number;
 
-    number = chatty_contact_get_value (CHATTY_CONTACT (item));
+    number = chatty_item_get_username (item);
     chatty_window_set_uri (self, number);
 
     return;
@@ -353,7 +353,7 @@ window_new_message_clicked_cb (ChattyWindow *self)
 
   if (CHATTY_IS_CONTACT (item) &&
       chatty_contact_is_dummy (CHATTY_CONTACT (item)))
-    phone_number = chatty_contact_get_value (CHATTY_CONTACT (item));
+    phone_number = chatty_item_get_username (item);
 
   if (phone_number)
     chatty_window_set_uri (self, phone_number);

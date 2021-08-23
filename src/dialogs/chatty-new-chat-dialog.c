@@ -426,7 +426,8 @@ chatty_new_chat_add_account_to_list (ChattyNewChatDialog *self,
                      (gpointer)prefix_radio_button);
 
   hdy_action_row_add_prefix (row, GTK_WIDGET (prefix_radio_button ));
-  hdy_preferences_row_set_title (HDY_PREFERENCES_ROW (row), chatty_account_get_username (account));
+  hdy_preferences_row_set_title (HDY_PREFERENCES_ROW (row),
+                                 chatty_item_get_username (CHATTY_ITEM (account)));
 
   gtk_container_add (GTK_CONTAINER (self->accounts_list), GTK_WIDGET (row));
 

@@ -1523,7 +1523,7 @@ matrix_api_query_keys_async (MatrixApi           *self,
 
     buddy = g_list_model_get_item (member_list, i);
     json_object_set_array_member (child,
-                                  chatty_ma_buddy_get_id (buddy),
+                                  chatty_item_get_username (CHATTY_ITEM (buddy)),
                                   json_array_new ());
   }
 
@@ -1587,7 +1587,7 @@ matrix_api_claim_keys_async (MatrixApi           *self,
 
     if (key_json)
       json_object_set_object_member (child,
-                                     chatty_ma_buddy_get_id (buddy),
+                                     chatty_item_get_username (CHATTY_ITEM (buddy)),
                                      key_json);
   }
 

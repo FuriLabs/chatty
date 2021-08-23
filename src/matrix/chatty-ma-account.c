@@ -529,30 +529,6 @@ chatty_ma_account_get_status (ChattyAccount *account)
   return self->status;
 }
 
-static const char *
-chatty_ma_account_get_username (ChattyAccount *account)
-{
-  ChattyMaAccount *self = (ChattyMaAccount *)account;
-
-  g_assert (CHATTY_IS_MA_ACCOUNT (self));
-
-  if (matrix_api_get_username (self->matrix_api))
-    return matrix_api_get_username (self->matrix_api);
-
-  return "";
-}
-
-static void
-chatty_ma_account_set_username (ChattyAccount *account,
-                                const char    *username)
-{
-  ChattyMaAccount *self = (ChattyMaAccount *)account;
-
-  g_assert (CHATTY_IS_MA_ACCOUNT (self));
-
-  matrix_api_set_username (self->matrix_api, username);
-}
-
 static gboolean
 chatty_ma_account_get_enabled (ChattyAccount *account)
 {
@@ -579,7 +555,7 @@ chatty_ma_account_set_enabled (ChattyAccount *account,
 
   if (!self->matrix_enc && enable) {
     CHATTY_TRACE_MSG ("Create new enc. user: %s has pickle: %d, has key: %d",
-                      chatty_account_get_username (account), FALSE, FALSE);
+                      chatty_item_get_username (CHATTY_ITEM (account)), FALSE, FALSE);
     self->matrix_enc = matrix_enc_new (self->matrix_db, NULL, NULL);
     matrix_api_set_enc (self->matrix_api, self->matrix_enc);
   }
@@ -587,7 +563,7 @@ chatty_ma_account_set_enabled (ChattyAccount *account,
   self->account_enabled = enable;
   network_monitor = g_network_monitor_get_default ();
   CHATTY_TRACE_MSG ("Enable account %s: %d, is loading: %d",
-                    chatty_account_get_username (account),
+                    chatty_item_get_username (CHATTY_ITEM (account)),
                     enable, self->is_loading);
 
   if (self->account_enabled &&
@@ -857,6 +833,30 @@ chatty_ma_account_set_name (ChattyItem *item,
   self->name = g_strdup (name);
 }
 
+static const char *
+chatty_ma_account_get_username (ChattyItem *item)
+{
+  ChattyMaAccount *self = (ChattyMaAccount *)item;
+
+  g_assert (CHATTY_IS_MA_ACCOUNT (self));
+
+  if (matrix_api_get_username (self->matrix_api))
+    return matrix_api_get_username (self->matrix_api);
+
+  return "";
+}
+
+static void
+chatty_ma_account_set_username (ChattyItem *item,
+                                const char *username)
+{
+  ChattyMaAccount *self = (ChattyMaAccount *)item;
+
+  g_assert (CHATTY_IS_MA_ACCOUNT (self));
+
+  matrix_api_set_username (self->matrix_api, username);
+}
+
 static ChattyFileInfo *
 chatty_ma_account_get_avatar_file (ChattyItem *item)
 {
@@ -989,14 +989,14 @@ chatty_ma_account_class_init (ChattyMaAccountClass *klass)
   item_class->get_protocols = chatty_ma_account_get_protocols;
   item_class->get_name = chatty_ma_account_get_name;
   item_class->set_name = chatty_ma_account_set_name;
+  item_class->get_username = chatty_ma_account_get_username;
+  item_class->set_username = chatty_ma_account_set_username;
   item_class->get_avatar_file = chatty_ma_account_get_avatar_file;
   item_class->get_avatar = chatty_ma_account_get_avatar;
   item_class->set_avatar_async = chatty_ma_account_set_avatar_async;
 
   account_class->get_protocol_name = chatty_ma_account_get_protocol_name;
   account_class->get_status   = chatty_ma_account_get_status;
-  account_class->get_username = chatty_ma_account_get_username;
-  account_class->set_username = chatty_ma_account_set_username;
   account_class->get_enabled  = chatty_ma_account_get_enabled;
   account_class->set_enabled  = chatty_ma_account_set_enabled;
   account_class->get_password = chatty_ma_account_get_password;
@@ -1030,7 +1030,7 @@ chatty_ma_account_new (const char *username,
 
   self = g_object_new (CHATTY_TYPE_MA_ACCOUNT, NULL);
 
-  chatty_account_set_username (CHATTY_ACCOUNT (self), username);
+  chatty_item_set_username (CHATTY_ITEM (self), username);
   chatty_account_set_password (CHATTY_ACCOUNT (self), password);
 
   return self;
@@ -1146,7 +1146,7 @@ db_load_account_cb (GObject      *object,
 
     pickle = g_object_get_data (G_OBJECT (task), "pickle");
     CHATTY_TRACE_MSG ("Create new enc. user: %s has pickle: %d, has key: %d",
-                      chatty_account_get_username (CHATTY_ACCOUNT (self)),
+                      chatty_item_get_username (CHATTY_ITEM (self)),
                       !!pickle, !!self->pickle_key);
     self->matrix_enc = matrix_enc_new (self->matrix_db, pickle, self->pickle_key);
     matrix_api_set_enc (self->matrix_api, self->matrix_enc);
@@ -1158,7 +1158,7 @@ db_load_account_cb (GObject      *object,
   if (!matrix_db_load_account_finish (self->matrix_db, result, &error)) {
     if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
       g_warning ("Error loading account %s: %s",
-                 chatty_account_get_username (CHATTY_ACCOUNT (self)),
+                 chatty_item_get_username (CHATTY_ITEM (self)),
                  error->message);
     return;
   }
@@ -1166,7 +1166,7 @@ db_load_account_cb (GObject      *object,
   enabled = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (task), "enabled"));
   self->next_batch = g_strdup (g_object_get_data (G_OBJECT (task), "batch"));
   CHATTY_TRACE_MSG ("Loaded %s from db. enabled: %d, has next-batch: %d",
-                    chatty_account_get_username (CHATTY_ACCOUNT (self)),
+                    chatty_item_get_username (CHATTY_ITEM (self)),
                     !!enabled, !!self->next_batch);
 
   self->is_loading = TRUE;
@@ -1191,7 +1191,7 @@ db_load_chats_cb (GObject      *object,
   chats = chatty_history_get_chats_finish (self->history_db, result, &error);
   self->db_chat_list = chats;
   CHATTY_TRACE_MSG ("%s Loaded %u chats from db",
-                    chatty_account_get_username (CHATTY_ACCOUNT (self)),
+                    chatty_item_get_username (CHATTY_ITEM (self)),
                     !chats ? 0 : chats->len);
 
   if (error)
@@ -1270,7 +1270,7 @@ ma_account_db_save_cb (GObject      *object,
   status = matrix_db_save_account_finish (self->matrix_db, result, &error);
   if (error || !status)
     CHATTY_TRACE_MSG ("Saving %s failed",
-                      chatty_account_get_username (CHATTY_ACCOUNT (self)));
+                      chatty_item_get_username (CHATTY_ITEM (self)));
 
   if (error || !status)
     self->save_account_pending = TRUE;
@@ -1337,7 +1337,7 @@ chatty_ma_account_save_async (ChattyMaAccount     *self,
 
   g_return_if_fail (CHATTY_IS_MA_ACCOUNT (self));
   g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
-  g_return_if_fail (*chatty_account_get_username (CHATTY_ACCOUNT (self)));
+  g_return_if_fail (*chatty_item_get_username (CHATTY_ITEM (self)));
   g_return_if_fail (*chatty_account_get_password (CHATTY_ACCOUNT (self)));
   g_return_if_fail (*chatty_ma_account_get_homeserver (self));
 

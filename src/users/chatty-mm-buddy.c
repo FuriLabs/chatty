@@ -170,7 +170,7 @@ chatty_mm_buddy_get_number (ChattyMmBuddy *self)
   g_return_val_if_fail (CHATTY_IS_MM_BUDDY (self), "");
 
   if (self->contact)
-    return chatty_contact_get_value (self->contact);
+    return chatty_item_get_username (CHATTY_ITEM (self->contact));
 
   if (self->phone_number)
     return self->phone_number;

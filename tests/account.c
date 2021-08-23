@@ -38,7 +38,7 @@ test_account (ChattyAccount *ac,
   str = chatty_pp_account_get_protocol_id (CHATTY_PP_ACCOUNT (ac));
   g_assert_cmpstr (str, ==, protocol_id);
 
-  str = chatty_account_get_username (CHATTY_ACCOUNT (ac));
+  str = chatty_item_get_username (CHATTY_ITEM (ac));
   g_assert_cmpstr (str, ==, username);
 
   chatty_account_set_enabled (ac, TRUE);

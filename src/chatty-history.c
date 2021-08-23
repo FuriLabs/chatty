@@ -795,7 +795,7 @@ get_thread_id (ChattyHistory *self,
                       "ON users.username=? AND accounts.user_id=users.id "
                       "AND threads.name=? AND threads.type=?;",
                       -1, &stmt, NULL);
-  history_bind_text (stmt, 1, chatty_chat_get_username (chat), "binding when getting thread");
+  history_bind_text (stmt, 1, chatty_item_get_username (CHATTY_ITEM (chat)), "binding when getting thread");
   history_bind_text (stmt, 2, chatty_chat_get_chat_name (chat), "binding when getting thread");
   history_bind_int (stmt, 3, chatty_chat_is_im (chat) ? THREAD_DIRECT_CHAT : THREAD_GROUP_CHAT,
                     "binding when adding phone number");
@@ -825,13 +825,13 @@ insert_or_ignore_thread (ChattyHistory *self,
 
   user_id = insert_or_ignore_user (self,
                                    chatty_item_get_protocols (CHATTY_ITEM (chat)),
-                                   chatty_chat_get_username (chat),
+                                   chatty_item_get_username (CHATTY_ITEM (chat)),
                                    NULL,
                                    task);
   if (!user_id) {
     const char *who;
 
-    who = chatty_chat_get_username (chat);
+    who = chatty_item_get_username (CHATTY_ITEM (chat));
 
     if (!who || !*who)
       g_task_return_new_error (task,
@@ -2225,7 +2225,7 @@ history_add_message (ChattyHistory *self,
   alias = chatty_message_get_user_alias (message);
 
   if (direction == CHATTY_DIRECTION_OUT)
-    who = chatty_chat_get_username (chat);
+    who = chatty_item_get_username (CHATTY_ITEM (chat));
 
   if ((!who || !*who) && direction == CHATTY_DIRECTION_IN && chatty_chat_is_im (chat))
     who = chatty_chat_get_chat_name (chat);
@@ -2363,7 +2363,7 @@ history_get_chats (ChattyHistory *self,
   /* We currently handle only matrix accounts */
   g_assert (CHATTY_IS_MA_ACCOUNT (account) || CHATTY_IS_MM_ACCOUNT (account));
 
-  user_id = chatty_account_get_username (account);
+  user_id = chatty_item_get_username (CHATTY_ITEM (account));
 
   if (CHATTY_IS_MA_ACCOUNT (account))
     protocol = PROTOCOL_MATRIX;
@@ -2481,7 +2481,7 @@ history_update_user (ChattyHistory *self,
   account = g_object_get_data (G_OBJECT (task), "account");
   g_assert (CHATTY_IS_ACCOUNT (account));
 
-  user_name = chatty_account_get_username (account);
+  user_name = chatty_item_get_username (CHATTY_ITEM (account));
   protocol = chatty_item_get_protocols (CHATTY_ITEM (account));
   name = chatty_item_get_name (CHATTY_ITEM (account));
 
@@ -2549,7 +2549,7 @@ history_delete_chat (ChattyHistory *self,
     return;
   }
 
-  account = chatty_chat_get_username (chat);
+  account = chatty_item_get_username (CHATTY_ITEM (chat));
 
   status = sqlite3_prepare_v2 (self->db,
                                "DELETE FROM threads "
@@ -2601,7 +2601,7 @@ history_load_account (ChattyHistory *self,
   account = g_object_get_data (G_OBJECT (task), "account");
   g_assert (CHATTY_IS_ACCOUNT (account));
 
-  user_name = chatty_account_get_username (account);
+  user_name = chatty_item_get_username (CHATTY_ITEM (account));
 
   if (!user_name || !*user_name) {
     g_task_return_new_error (task,

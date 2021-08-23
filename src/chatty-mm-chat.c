@@ -103,16 +103,6 @@ chatty_mm_chat_get_chat_name (ChattyChat *chat)
   return "";
 }
 
-static const char *
-chatty_mm_chat_get_username (ChattyChat *chat)
-{
-  ChattyMmChat *self = (ChattyMmChat *)chat;
-
-  g_assert (CHATTY_IS_MM_CHAT (self));
-
-  return "SMS";
-}
-
 static ChattyAccount *
 chatty_mm_chat_get_account (ChattyChat *chat)
 {
@@ -403,6 +393,12 @@ chatty_mm_chat_get_name (ChattyItem *item)
   return "";
 }
 
+static const char *
+chatty_mm_chat_get_username (ChattyItem *item)
+{
+  return "SMS";
+}
+
 static ChattyProtocol
 chatty_mm_chat_get_protocols (ChattyItem *item)
 {
@@ -461,13 +457,13 @@ chatty_mm_chat_class_init (ChattyMmChatClass *klass)
   object_class->finalize = chatty_mm_chat_finalize;
 
   item_class->get_name = chatty_mm_chat_get_name;
+  item_class->get_username = chatty_mm_chat_get_username;
   item_class->get_protocols = chatty_mm_chat_get_protocols;
   item_class->get_avatar = chatty_mm_chat_get_avatar;
 
   chat_class->set_data = chatty_mm_chat_set_data;
   chat_class->is_im = chatty_mm_chat_is_im;
   chat_class->get_chat_name = chatty_mm_chat_get_chat_name;
-  chat_class->get_username = chatty_mm_chat_get_username;
   chat_class->get_account = chatty_mm_chat_get_account;
   chat_class->load_past_messages = chatty_mm_chat_load_past_messages;
   chat_class->get_messages = chatty_mm_chat_get_messages;

@@ -248,7 +248,7 @@ manager_eds_is_ready (ChattyManager *self)
       g_autoptr(ChattyPpBuddy) buddy = NULL;
 
       buddy = g_list_model_get_item (model, j);
-      id = chatty_pp_buddy_get_id (buddy);
+      id = chatty_item_get_username (CHATTY_ITEM (buddy));
 
       if (chatty_pp_buddy_get_contact (buddy))
         continue;
@@ -1014,7 +1014,7 @@ manager_buddy_added_cb (PurpleBuddy   *pp_buddy,
   if (!buddy)
     buddy = chatty_pp_account_add_purple_buddy (account, pp_buddy);
 
-  id = chatty_pp_buddy_get_id (buddy);
+  id = chatty_item_get_username (CHATTY_ITEM (buddy));
   contact = chatty_eds_find_by_number (self->chatty_eds, id);
   chatty_pp_buddy_set_contact (buddy, contact);
 
@@ -2509,7 +2509,7 @@ chatty_manager_find_chat_with_name (ChattyManager *self,
     chat = g_list_model_get_item (chat_list, i);
     account = chatty_chat_get_account (chat);
 
-    if (g_strcmp0 (chatty_account_get_username (account), account_id) != 0)
+    if (g_strcmp0 (chatty_item_get_username (CHATTY_ITEM (account)), account_id) != 0)
       continue;
 
     id = chatty_chat_get_chat_name (chat);
@@ -2527,7 +2527,7 @@ chatty_manager_find_chat_with_name (ChattyManager *self,
     account = g_list_model_get_item (accounts, i);
 
     if (!CHATTY_IS_MA_ACCOUNT (account) ||
-        g_strcmp0 (chatty_account_get_username (account), account_id) != 0)
+        g_strcmp0 (chatty_item_get_username (CHATTY_ITEM (account)), account_id) != 0)
       continue;
 
     chat_list = chatty_ma_account_get_chat_list (CHATTY_MA_ACCOUNT (account));

@@ -1194,7 +1194,7 @@ matrix_enc_create_out_group_keys (MatrixEnc  *self,
     devices = chatty_ma_buddy_get_devices (buddy);
 
     user = json_object_new ();
-    json_object_set_object_member (root, chatty_ma_buddy_get_id (buddy), user);
+    json_object_set_object_member (root, chatty_item_get_username (CHATTY_ITEM (buddy)), user);
 
     for (GList *node = devices; node; node = node->next) {
       OlmSession *olm_session = NULL;
@@ -1250,7 +1250,7 @@ matrix_enc_create_out_group_keys (MatrixEnc  *self,
         json_object_set_object_member (object, "content", child);
 
         /* User specific data */
-        json_object_set_string_member (object, "recipient", chatty_ma_buddy_get_id (buddy));
+        json_object_set_string_member (object, "recipient", chatty_item_get_username (CHATTY_ITEM (buddy)));
 
         /* Device specific data */
         child = json_object_new ();

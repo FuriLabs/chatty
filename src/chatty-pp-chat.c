@@ -382,7 +382,7 @@ chat_find_user (ChattyPpChat *self,
     g_autoptr(ChattyPpBuddy) buddy = NULL;
 
     buddy = g_list_model_get_item (G_LIST_MODEL (self->chat_users), i);
-    if (chatty_pp_buddy_get_id (buddy) == user) {
+    if (chatty_item_get_username (CHATTY_ITEM (buddy)) == user) {
       if (index)
         *index = i;
 
@@ -488,35 +488,6 @@ chatty_pp_chat_get_chat_name (ChattyChat *chat)
 
   if (self->chat_name)
     return self->chat_name;
-
-  return "";
-}
-
-static const char *
-chatty_pp_chat_get_username (ChattyChat *chat)
-{
-  ChattyPpChat *self = (ChattyPpChat *)chat;
-  const char *username = NULL;
-
-  g_assert (CHATTY_IS_PP_CHAT (self));
-
-  if (self->username && *self->username)
-    return self->username;
-
-  if (self->pp_chat)
-    username = purple_account_get_username (self->pp_chat->account);
-
-  if (self->buddy)
-    username = purple_account_get_username (self->buddy->account);
-
-  if (self->conv)
-    username = purple_account_get_username (self->conv->account);
-
-  if (username && *username && !self->username)
-    self->username = chatty_utils_jabber_id_strip (username);
-
-  if (self->username)
-    return self->username;
 
   return "";
 }
@@ -896,6 +867,35 @@ chatty_pp_chat_get_name (ChattyItem *item)
   return name;
 }
 
+static const char *
+chatty_pp_chat_get_username (ChattyItem *item)
+{
+    ChattyPpChat *self = (ChattyPpChat *)item;
+    const char *username = NULL;
+
+    g_assert (CHATTY_IS_PP_CHAT (self));
+
+    if (self->username && *self->username)
+      return self->username;
+
+    if (self->pp_chat)
+      username = purple_account_get_username (self->pp_chat->account);
+
+    if (self->buddy)
+      username = purple_account_get_username (self->buddy->account);
+
+    if (self->conv)
+      username = purple_account_get_username (self->conv->account);
+
+    if (username && *username && !self->username)
+      self->username = chatty_utils_jabber_id_strip (username);
+
+    if (self->username)
+      return self->username;
+
+    return "";
+}
+
 static ChattyProtocol
 chatty_pp_chat_get_protocols (ChattyItem *item)
 {
@@ -1011,6 +1011,7 @@ chatty_pp_chat_class_init (ChattyPpChatClass *klass)
   object_class->finalize = chatty_pp_chat_finalize;
 
   item_class->get_name = chatty_pp_chat_get_name;
+  item_class->get_username = chatty_pp_chat_get_username;
   item_class->get_protocols = chatty_pp_chat_get_protocols;
   item_class->get_avatar = chatty_pp_chat_get_avatar;
   item_class->set_avatar_async = chatty_pp_chat_set_avatar_async;
@@ -1019,7 +1020,6 @@ chatty_pp_chat_class_init (ChattyPpChatClass *klass)
   chat_class->is_im = chatty_pp_chat_is_im;
   chat_class->has_file_upload = chatty_pp_chat_has_file_upload;
   chat_class->get_chat_name = chatty_pp_chat_get_chat_name;
-  chat_class->get_username = chatty_pp_chat_get_username;
   chat_class->get_account = chatty_pp_chat_get_account;
   chat_class->load_past_messages = chatty_pp_chat_load_past_messages;
   chat_class->is_loading_history = chatty_pp_chat_is_loading_history;

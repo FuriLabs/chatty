@@ -603,7 +603,7 @@ chatty_ma_account_details_set_item (ChattyMaAccountDetails *self,
   gtk_label_set_text (GTK_LABEL (self->homeserver_label),
                       chatty_ma_account_get_homeserver (CHATTY_MA_ACCOUNT (self->account)));
   gtk_label_set_text (GTK_LABEL (self->matrix_id_label),
-                      chatty_account_get_username (account));
+                      chatty_item_get_username (CHATTY_ITEM (account)));
 
   chatty_avatar_set_item (CHATTY_AVATAR (self->avatar_image), CHATTY_ITEM (account));
 

@@ -83,11 +83,12 @@ chatty_secret_store_save_async (ChattyAccount       *account,
                                  key ? key : "", device_id);
   schema = secret_store_get_schema ();
   server = chatty_ma_account_get_homeserver (CHATTY_MA_ACCOUNT (account));
-  label = g_strdup_printf (_("Chatty password for \"%s\""), chatty_account_get_username (account));
+  label = g_strdup_printf (_("Chatty password for \"%s\""),
+                           chatty_item_get_username (CHATTY_ITEM (account)));
 
   secret_password_store (schema, NULL, label, credentials,
                          cancellable, callback, user_data,
-                         CHATTY_USERNAME_ATTRIBUTE, chatty_account_get_username (account),
+                         CHATTY_USERNAME_ATTRIBUTE, chatty_item_get_username (CHATTY_ITEM (account)),
                          CHATTY_SERVER_ATTRIBUTE, server,
                          CHATTY_PROTOCOL_ATTRIBUTE, PROTOCOL_MATRIX_STR,
                          NULL);
@@ -195,7 +196,7 @@ chatty_secret_delete_async (ChattyAccount       *account,
   schema = secret_store_get_schema ();
   server = chatty_ma_account_get_homeserver (CHATTY_MA_ACCOUNT (account));
   secret_password_clear (schema, cancellable, callback, user_data,
-                         CHATTY_USERNAME_ATTRIBUTE, chatty_account_get_username (account),
+                         CHATTY_USERNAME_ATTRIBUTE, chatty_item_get_username (CHATTY_ITEM (account)),
                          CHATTY_SERVER_ATTRIBUTE, server,
                          CHATTY_PROTOCOL_ATTRIBUTE, PROTOCOL_MATRIX_STR,
                          NULL);

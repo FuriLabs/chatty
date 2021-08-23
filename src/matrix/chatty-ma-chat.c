@@ -149,7 +149,7 @@ chatty_mat_chat_update_name (ChattyMaChat *self)
     buddy = g_list_model_get_item (G_LIST_MODEL (self->buddy_list), i);
 
     /* Don't add self to create room name */
-    if (g_strcmp0 (chatty_ma_buddy_get_id (CHATTY_MA_BUDDY (buddy)), chatty_account_get_username (self->account)) == 0) {
+    if (g_strcmp0 (chatty_item_get_username (buddy), chatty_item_get_username (CHATTY_ITEM (self))) == 0) {
       count--;
       continue;
     }
@@ -197,7 +197,7 @@ ma_chat_find_buddy (ChattyMaChat *self,
 
     buddy = g_list_model_get_item (model, i);
     if (id_hash == chatty_ma_buddy_get_id_hash (buddy) &&
-        g_str_equal (chatty_ma_buddy_get_id (buddy), matrix_id)) {
+        g_str_equal (chatty_item_get_username (CHATTY_ITEM (buddy)), matrix_id)) {
       if (index)
         *index = i;
 
@@ -1137,7 +1137,7 @@ parse_chat_array (ChattyMaChat *self,
       buddy = ma_chat_add_buddy (self, self->buddy_list, sender);
 
     if (!self->self_buddy &&
-        g_strcmp0 (sender, chatty_chat_get_username (CHATTY_CHAT (self))) == 0)
+        g_strcmp0 (sender, chatty_item_get_username (CHATTY_ITEM (self))) == 0)
       g_set_object (&self->self_buddy, buddy);
 
     if (g_str_equal (type, "m.room.name")) {
@@ -1361,16 +1361,6 @@ chatty_ma_chat_get_chat_name (ChattyChat *chat)
   g_assert (CHATTY_IS_MA_CHAT (self));
 
   return self->room_id;
-}
-
-static const char *
-chatty_ma_chat_get_username (ChattyChat *chat)
-{
-  ChattyMaChat *self = (ChattyMaChat *)chat;
-
-  g_assert (CHATTY_IS_MA_CHAT (self));
-
-  return matrix_api_get_username (self->matrix_api);
 }
 
 static void
@@ -1674,6 +1664,16 @@ chatty_ma_chat_get_name (ChattyItem *item)
   return "";
 }
 
+static const char *
+chatty_ma_chat_get_username (ChattyItem *item)
+{
+  ChattyMaChat *self = (ChattyMaChat *)item;
+
+  g_assert (CHATTY_IS_MA_CHAT (self));
+
+  return matrix_api_get_username (self->matrix_api);
+}
+
 static ChattyItemState
 chatty_ma_chat_get_state (ChattyItem *item)
 {
@@ -1810,6 +1810,7 @@ chatty_ma_chat_class_init (ChattyMaChatClass *klass)
   object_class->finalize = chatty_ma_chat_finalize;
 
   item_class->get_name = chatty_ma_chat_get_name;
+  item_class->get_username = chatty_ma_chat_get_username;
   item_class->get_state = chatty_ma_chat_get_state;
   item_class->set_state = chatty_ma_chat_set_state;
   item_class->get_protocols = chatty_ma_chat_get_protocols;
@@ -1818,7 +1819,6 @@ chatty_ma_chat_class_init (ChattyMaChatClass *klass)
 
   chat_class->is_im = chatty_ma_chat_is_im;
   chat_class->get_chat_name = chatty_ma_chat_get_chat_name;
-  chat_class->get_username = chatty_ma_chat_get_username;
   chat_class->load_past_messages = chatty_ma_chat_real_past_messages;
   chat_class->is_loading_history = chatty_ma_chat_is_loading_history;
   chat_class->get_messages = chatty_ma_chat_get_messages;

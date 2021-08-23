@@ -193,7 +193,7 @@ application_show_connection_error (ChattyApplication *self,
   gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG(dialog),
                                             "%s: %s\n\n%s",
                                             message,
-                                            chatty_account_get_username (CHATTY_ACCOUNT (account)),
+                                            chatty_item_get_username (CHATTY_ITEM (account)),
                                             _("Please check ID and password"));
 
   run_dialog_and_destroy (GTK_DIALOG (dialog));

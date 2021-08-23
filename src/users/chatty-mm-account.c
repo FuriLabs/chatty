@@ -712,16 +712,16 @@ chatty_mm_account_get_status (ChattyAccount *account)
   return self->status;
 }
 
-static const char *
-chatty_mm_account_get_username (ChattyAccount *account)
-{
-  return "SMS";
-}
-
 static ChattyProtocol
 chatty_mm_account_get_protocols (ChattyItem *item)
 {
   return CHATTY_PROTOCOL_MMS_SMS;
+}
+
+static const char *
+chatty_mm_account_get_username (ChattyItem *item)
+{
+  return "SMS";
 }
 
 static void
@@ -752,10 +752,10 @@ chatty_mm_account_class_init (ChattyMmAccountClass *klass)
   object_class->finalize = chatty_mm_account_finalize;
 
   item_class->get_protocols = chatty_mm_account_get_protocols;
+  item_class->get_username = chatty_mm_account_get_username;
 
   account_class->get_protocol_name = chatty_mm_account_get_protocol_name;
   account_class->get_status   = chatty_mm_account_get_status;
-  account_class->get_username = chatty_mm_account_get_username;
 }
 
 static void
