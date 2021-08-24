@@ -118,7 +118,11 @@ message_activate_gesture_cb (ChattyMessageRow *self)
   if (!info || !info->path)
     return;
 
-  file = g_file_new_build_filename (g_get_user_cache_dir (), "chatty", info->path, NULL);
+  if (self->protocol == CHATTY_PROTOCOL_MMS_SMS || self->protocol == CHATTY_PROTOCOL_MMS)
+    file = g_file_new_build_filename (g_get_user_data_dir (), "chatty", info->path, NULL);
+  else
+    file = g_file_new_build_filename (g_get_user_cache_dir (), "chatty", info->path, NULL);
+
   uri = g_file_get_uri (file);
 
   gtk_show_uri_on_window (NULL, uri, GDK_CURRENT_TIME, NULL);
