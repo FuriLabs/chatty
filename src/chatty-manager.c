@@ -204,7 +204,9 @@ manager_load_messages_cb (GObject      *object,
       }
     }
 
-  } else if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
+  } else if (error &&
+             !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED) &&
+             !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND)) {
     g_warning ("Error fetching messages: %s,", error->message);
   }
 }
