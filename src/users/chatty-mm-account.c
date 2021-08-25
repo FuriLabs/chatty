@@ -973,9 +973,9 @@ chatty_mm_account_start_chat (ChattyMmAccount *self,
 
     chat = (ChattyChat *)chatty_mm_chat_new (phone, NULL, CHATTY_PROTOCOL_MMS_SMS, TRUE);
     chatty_chat_set_data (chat, self, self->history_db);
-    chatty_mm_chat_set_eds (CHATTY_MM_CHAT (chat), self->chatty_eds);
     buddy = chatty_mm_buddy_new (phone, NULL);
     chatty_mm_chat_add_user (CHATTY_MM_CHAT (chat), buddy);
+    chatty_mm_chat_set_eds (CHATTY_MM_CHAT (chat), self->chatty_eds);
 
     g_list_store_append (self->chat_list, chat);
     g_object_unref (chat);
