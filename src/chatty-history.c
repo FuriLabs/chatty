@@ -2075,7 +2075,7 @@ history_get_messages (ChattyHistory *self,
 
   if (!thread_id) {
     g_task_return_new_error (task,
-                             G_IO_ERROR, G_IO_ERROR_FAILED,
+                             G_IO_ERROR, G_IO_ERROR_NOT_FOUND,
                              "Couldn't find chat %s",
                              chatty_chat_get_chat_name (chat));
     return;
