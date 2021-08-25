@@ -335,6 +335,39 @@ chatty_contact_get_uid (ChattyContact *self)
   return "";
 }
 
+gboolean
+chatty_contact_is_exact_match (ChattyContact  *self,
+                               const char     *value,
+                               ChattyProtocol  protocols)
+{
+  const char *contact_value;
+  ChattyProtocol protocol;
+
+  g_assert (CHATTY_IS_CONTACT (self));
+
+  contact_value = chatty_item_get_username (CHATTY_ITEM (self));
+  protocol = chatty_item_get_protocols (CHATTY_ITEM (self));
+
+  if (protocol & (CHATTY_PROTOCOL_MMS_SMS | CHATTY_PROTOCOL_MMS) &&
+      protocols & (CHATTY_PROTOCOL_MMS_SMS | CHATTY_PROTOCOL_MMS)) {
+    ChattySettings *settings;
+    const char *country;
+    EPhoneNumberMatch match;
+
+    if (g_str_equal (contact_value, value))
+      return TRUE;
+
+    settings = chatty_settings_get_default ();
+    country = chatty_settings_get_country_iso_code (settings);
+    match = e_phone_number_compare_strings_with_region (contact_value, value, country, NULL);
+
+    if (match == E_PHONE_NUMBER_MATCH_EXACT ||
+        match == E_PHONE_NUMBER_MATCH_NATIONAL)
+      return TRUE;
+  }
+
+  return FALSE;
+}
 
 /**
  * chatty_contact_clear_cache:
