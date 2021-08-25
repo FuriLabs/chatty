@@ -84,6 +84,9 @@ chatty_contact_matches (ChattyItem     *item,
     const char *country;
     EPhoneNumberMatch match;
 
+    if (strstr (value, needle))
+      return TRUE;
+
     settings = chatty_settings_get_default ();
     country = chatty_settings_get_country_iso_code (settings);
     match = e_phone_number_compare_strings_with_region (value, needle, country, NULL);
