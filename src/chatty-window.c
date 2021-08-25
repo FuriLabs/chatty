@@ -862,6 +862,8 @@ void
 chatty_window_open_chat (ChattyWindow *self,
                          ChattyChat   *chat)
 {
+  gboolean can_delete;
+
   g_return_if_fail (CHATTY_IS_WINDOW (self));
   g_return_if_fail (CHATTY_IS_CHAT (chat));
   g_debug ("opening item of type: %s, protocol: %d",
@@ -873,7 +875,8 @@ chatty_window_open_chat (ChattyWindow *self,
   window_chat_changed_cb (self);
 
   gtk_widget_set_visible (self->leave_button, !CHATTY_IS_MM_CHAT (chat));
-  gtk_widget_set_visible (self->delete_button, CHATTY_IS_PP_CHAT (chat));
+  can_delete = CHATTY_IS_PP_CHAT (chat) || CHATTY_IS_MM_CHAT (chat);
+  gtk_widget_set_visible (self->delete_button, can_delete);
   hdy_leaflet_set_visible_child (HDY_LEAFLET (self->content_box), self->chat_view);
 
   if (chatty_window_get_active_chat (self))
