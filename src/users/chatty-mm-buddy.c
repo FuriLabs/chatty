@@ -169,11 +169,16 @@ chatty_mm_buddy_get_number (ChattyMmBuddy *self)
 {
   g_return_val_if_fail (CHATTY_IS_MM_BUDDY (self), "");
 
-  if (self->contact)
-    return chatty_item_get_username (CHATTY_ITEM (self->contact));
-
+  /* Prefer local copy of the phone number, as it will
+   * be well formatted, or in international format,
+   * while there is no guarantee for that to be the case
+   * for the value saved in contacts
+   */
   if (self->phone_number)
     return self->phone_number;
+
+  if (self->contact)
+    return chatty_item_get_username (CHATTY_ITEM (self->contact));
 
   return "";
 }
