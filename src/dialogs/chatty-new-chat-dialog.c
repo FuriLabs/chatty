@@ -19,6 +19,7 @@
 #include "chatty-pp-chat.h"
 #include "users/chatty-contact.h"
 #include "contrib/gtk.h"
+#include "users/chatty-mm-account.h"
 #include "users/chatty-pp-account.h"
 #include "matrix/chatty-ma-account.h"
 #include "chatty-list-row.h"
@@ -366,7 +367,10 @@ account_list_row_activated_cb (ChattyNewChatDialog *self,
   self->selected_account = account;
 
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (prefix_radio), TRUE);
-  chatty_new_chat_set_edit_mode (self, TRUE);
+  if (CHATTY_IS_MM_ACCOUNT (account))
+    chatty_new_chat_set_edit_mode (self, FALSE);
+  else
+    chatty_new_chat_set_edit_mode (self, TRUE);
 }
 
 
@@ -433,9 +437,9 @@ chatty_new_chat_add_account_to_list (ChattyNewChatDialog *self,
                    CHATTY_PROTOCOL_THREEPL))
     return;
 
-  if (chatty_account_get_status (account) == CHATTY_DISCONNECTED) {
+  if (chatty_account_get_status (account) == CHATTY_DISCONNECTED &&
+      !CHATTY_IS_MM_ACCOUNT (account))
     return;
-  }
 
   /* We don't handle native matrix accounts here  */
   if (CHATTY_IS_MA_ACCOUNT (account))
@@ -485,6 +489,7 @@ chatty_new_chat_account_list_clear (GtkWidget *list)
 static void
 chatty_new_chat_populate_account_list (ChattyNewChatDialog *self)
 {
+  ChattyAccount *mm_account;
   GListModel   *model;
   HdyActionRow *row;
   guint         n_items;
@@ -504,6 +509,10 @@ chatty_new_chat_populate_account_list (ChattyNewChatDialog *self)
 
     chatty_new_chat_add_account_to_list (self, account);
   }
+
+  /* Add sms account */
+  mm_account = chatty_manager_get_mm_account (self->manager);
+  chatty_new_chat_add_account_to_list (self, mm_account);
 
   row = HDY_ACTION_ROW(gtk_list_box_get_row_at_index (GTK_LIST_BOX (self->accounts_list), 0));
 
