@@ -528,16 +528,45 @@ write_contact_cb (GObject      *object,
 }
 
 static void
+write_eds_contact_cb (GObject      *object,
+                      GAsyncResult *result,
+                      gpointer      user_data)
+{
+  g_autoptr(ChattyWindow) self = user_data;
+  g_autoptr(GError) error = NULL;
+  GtkWidget *dialog;
+
+  g_assert (CHATTY_IS_WINDOW (self));
+
+  if (chatty_eds_write_contact_finish (result, &error))
+    return;
+
+  dialog = gtk_message_dialog_new (GTK_WINDOW (self),
+                                   GTK_DIALOG_MODAL,
+                                   GTK_MESSAGE_WARNING,
+                                   GTK_BUTTONS_CLOSE,
+                                   _("Error saving contact: %s"), error->message);
+  gtk_dialog_run (GTK_DIALOG (dialog));
+  gtk_widget_destroy (dialog);
+}
+
+static void
 window_add_contact_clicked_cb (ChattyWindow *self)
 {
   g_assert (CHATTY_IS_WINDOW (self));
   g_return_if_fail (self->selected_item);
 
-  if (!CHATTY_IS_PP_CHAT (self->selected_item))
-    return;
+  if (CHATTY_IS_PP_CHAT (self->selected_item)) {
+    chatty_pp_chat_save_to_contacts_async (CHATTY_PP_CHAT (self->selected_item),
+                                           write_contact_cb, g_object_ref (self));
+  } else if (CHATTY_IS_MM_CHAT (self->selected_item)) {
+    const char *phone;
 
-  chatty_pp_chat_save_to_contacts_async (CHATTY_PP_CHAT (self->selected_item),
-                                         write_contact_cb, g_object_ref (self));
+    phone = chatty_chat_get_chat_name (CHATTY_CHAT (self->selected_item));
+    chatty_eds_write_contact_async ("", phone,
+                                    write_eds_contact_cb,
+                                    g_object_ref (self));
+  }
 
   gtk_widget_hide (self->menu_add_contact_button);
 }
@@ -878,7 +907,26 @@ chatty_window_open_chat (ChattyWindow *self,
   can_delete = CHATTY_IS_PP_CHAT (chat) || CHATTY_IS_MM_CHAT (chat);
   gtk_widget_set_visible (self->delete_button, can_delete);
   hdy_leaflet_set_visible_child (HDY_LEAFLET (self->content_box), self->chat_view);
+  gtk_widget_hide (self->menu_add_contact_button);
 
   if (chatty_window_get_active_chat (self))
     chatty_chat_set_unread_count (chat, 0);
+
+  if (CHATTY_IS_MM_CHAT (chat)) {
+    GListModel *users;
+    const char *name;
+
+    users = chatty_chat_get_users (chat);
+    name = chatty_chat_get_chat_name (chat);
+
+    if (g_list_model_get_n_items (users) == 1 &&
+        chatty_utils_username_is_valid (name, CHATTY_PROTOCOL_MMS_SMS)) {
+      g_autoptr(ChattyMmBuddy) buddy = NULL;
+
+      buddy = g_list_model_get_item (users, 0);
+
+      if (!chatty_mm_buddy_get_contact (buddy))
+        gtk_widget_show (self->menu_add_contact_button);
+    }
+  }
 }
