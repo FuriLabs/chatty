@@ -38,6 +38,7 @@ struct _ChattyMmDevice
   GObject    parent_instance;
 
   MMObject  *mm_object;
+  gulong     modem_state_id;
 };
 
 #define CHATTY_TYPE_MM_DEVICE (chatty_mm_device_get_type ())
@@ -49,6 +50,8 @@ chatty_mm_device_finalize (GObject *object)
 {
   ChattyMmDevice *self = (ChattyMmDevice *)object;
 
+  g_clear_signal_handler (&self->modem_state_id,
+                          mm_object_get_modem (self->mm_object));
   g_clear_object (&self->mm_object);
 
   G_OBJECT_CLASS (chatty_mm_device_parent_class)->finalize (object);
@@ -517,6 +520,26 @@ mm_account_sms_recieved_cb (ChattyMmAccount  *self,
 }
 
 static void
+mm_account_modem_state_changed (ChattyMmAccount *self,
+                                GParamSpec      *pspec,
+                                MMModem         *modem)
+{
+  MMModemState state;
+
+  g_assert (CHATTY_IS_MM_ACCOUNT (self));
+
+  state = mm_modem_get_state (modem);
+
+  if ((state <= MM_MODEM_STATE_ENABLING &&
+      self->status == CHATTY_CONNECTED) ||
+      (state > MM_MODEM_STATE_ENABLING &&
+       self->status != CHATTY_CONNECTED)) {
+    self->status = CHATTY_UNKNOWN;
+    g_object_notify (G_OBJECT (self), "status");
+  }
+}
+
+static void
 mm_object_added_cb (ChattyMmAccount *self,
                     GDBusObject     *object)
 {
@@ -538,12 +561,16 @@ mm_object_added_cb (ChattyMmAccount *self,
 
   device = chatty_mm_device_new ();
   device->mm_object = g_object_ref (MM_OBJECT (object));
+  device->modem_state_id = g_signal_connect_swapped (mm_object_get_modem (device->mm_object),
+                                                     "notify::state",
+                                                     G_CALLBACK (mm_account_modem_state_changed),
+                                                     self);
   g_list_store_append (self->device_list, device);
-  self->status = CHATTY_CONNECTED;
 
-  /* Status change is emitted only when the first device is added */
-  if (g_list_model_get_n_items (G_LIST_MODEL (self->device_list)) == 1)
+  if (self->status != CHATTY_CONNECTED) {
+    self->status = CHATTY_UNKNOWN;
     g_object_notify (G_OBJECT (self), "status");
+  }
 
   /* We already have the messaging object, so SIM should be ready too */
   sim = mm_modem_get_sim_sync (mm_object_peek_modem (MM_OBJECT (object)),
@@ -600,15 +627,14 @@ mm_object_removed_cb (ChattyMmAccount *self,
     device = g_list_model_get_item (G_LIST_MODEL (self->device_list), i);
     if (g_strcmp0 (mm_object_get_path (MM_OBJECT (object)),
                    mm_object_get_path (device->mm_object)) == 0) {
+      self->status = CHATTY_UNKNOWN;
       g_list_store_remove (self->device_list, i);
       break;
     }
   }
 
-  if (g_list_model_get_n_items (G_LIST_MODEL (self->device_list)) == 0) {
-    self->status = CHATTY_DISCONNECTED;
+  if (self->status == CHATTY_UNKNOWN)
     g_object_notify (G_OBJECT (self), "status");
-  }
 }
 
 static void
@@ -673,7 +699,7 @@ mm_vanished_cb (GDBusConnection *connection,
   g_clear_object (&self->mm_manager);
   g_list_store_remove_all (self->device_list);
 
-  self->status = CHATTY_DISCONNECTED;
+  self->status = CHATTY_UNKNOWN;
   g_object_notify (G_OBJECT (self), "status");
 }
 
@@ -741,8 +767,35 @@ static ChattyStatus
 chatty_mm_account_get_status (ChattyAccount *account)
 {
   ChattyMmAccount *self = (ChattyMmAccount *)account;
+  GListModel *devices;
+  guint n_items;
 
   g_assert (CHATTY_IS_MM_ACCOUNT (self));
+
+  if (self->status != CHATTY_UNKNOWN)
+    return self->status;
+
+  devices = G_LIST_MODEL (self->device_list);
+  n_items = g_list_model_get_n_items (devices);
+
+  if (n_items == 0)
+    self->status = CHATTY_DISCONNECTED;
+
+  for (guint i = 0; i < n_items; i++) {
+    g_autoptr(ChattyMmDevice) device = NULL;
+    MMModem *modem;
+
+    device = g_list_model_get_item (devices, i);
+    modem = mm_object_get_modem (device->mm_object);
+
+    if (modem && mm_modem_get_state (modem) >= MM_MODEM_STATE_ENABLED) {
+      self->status = CHATTY_CONNECTED;
+      break;
+    }
+  }
+
+  if (self->status == CHATTY_UNKNOWN)
+    self->status = CHATTY_DISCONNECTED;
 
   return self->status;
 }
