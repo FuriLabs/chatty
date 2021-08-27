@@ -197,6 +197,8 @@ open_contacts_finish_cb (GObject      *object,
   g_assert (CHATTY_IS_EDS (chatty_eds));
 
   chatty_eds_open_contacts_app_finish (chatty_eds, result, &error);
+  gtk_widget_set_sensitive (self->add_in_contacts_button, TRUE);
+  gtk_stack_set_visible_child_name (GTK_STACK (self->new_chat_stack), "view-new-chat");
 
   if (!error)
     return;
@@ -219,11 +221,10 @@ add_in_contacts_button_clicked_cb (ChattyNewChatDialog *self)
   g_assert (CHATTY_IS_NEW_CHAT_DIALOG (self));
 
   chatty_eds = chatty_manager_get_eds (self->manager);
+  gtk_widget_set_sensitive (self->add_in_contacts_button, FALSE);
   chatty_eds_open_contacts_app (chatty_eds,
                                 self->cancellable,
                                 open_contacts_finish_cb, self);
-
-  gtk_stack_set_visible_child_name (GTK_STACK (self->new_chat_stack), "view-new-chat");
 }
 
 
