@@ -80,10 +80,25 @@ G_DEFINE_TYPE (ChattyNewChatDialog, chatty_new_chat_dialog, GTK_TYPE_DIALOG)
 static void
 dialog_active_protocols_changed_cb (ChattyNewChatDialog *self)
 {
+  ChattyAccount *mm_account;
+  ChattyProtocol protocol;
+  gboolean valid;
+
   g_assert (CHATTY_IS_NEW_CHAT_DIALOG (self));
 
   self->active_protocols = chatty_manager_get_active_protocols (self->manager);
   gtk_filter_changed (self->filter, GTK_FILTER_CHANGE_DIFFERENT);
+
+  protocol = CHATTY_PROTOCOL_MMS_SMS;
+  valid = protocol == chatty_utils_username_is_valid (self->search_str, protocol);
+  mm_account = chatty_manager_get_mm_account (self->manager);
+  valid = valid && chatty_account_get_status (mm_account) == CHATTY_CONNECTED;
+  gtk_widget_set_visible (self->new_contact_row, valid);
+
+  if (valid || g_list_model_get_n_items (G_LIST_MODEL (self->slice_model)) > 0)
+    gtk_stack_set_visible_child (GTK_STACK (self->contact_list_stack), self->contact_list_view);
+  else
+    gtk_stack_set_visible_child (GTK_STACK (self->contact_list_stack), self->empty_search_view);
 }
 
 
@@ -585,19 +600,22 @@ chatty_new_chat_dialog_init (ChattyNewChatDialog *self)
   self->dummy_prefix_radio = gtk_radio_button_new_from_widget (GTK_RADIO_BUTTON (NULL));
 
   self->manager = g_object_ref (chatty_manager_get_default ());
-  self->filter = gtk_custom_filter_new ((GtkCustomFilterFunc)dialog_filter_item_cb, self, NULL);
-  g_signal_connect_object (self->manager, "notify::active-protocols",
-                           G_CALLBACK (dialog_active_protocols_changed_cb), self, G_CONNECT_SWAPPED);
-  dialog_active_protocols_changed_cb (self);
 
   sorter = gtk_custom_sorter_new ((GCompareDataFunc)chatty_item_compare, NULL, NULL);
   sort_model = gtk_sort_list_model_new (chatty_manager_get_contact_list (self->manager), sorter);
+
+  self->filter = gtk_custom_filter_new ((GtkCustomFilterFunc)dialog_filter_item_cb, self, NULL);
   filter_model = gtk_filter_list_model_new (G_LIST_MODEL (sort_model), self->filter);
+
   self->slice_model = gtk_slice_list_model_new (G_LIST_MODEL (filter_model), 0, ITEMS_COUNT);
   gtk_list_box_bind_model (GTK_LIST_BOX (self->chats_listbox),
                            G_LIST_MODEL (self->slice_model),
                            (GtkListBoxCreateWidgetFunc)chatty_list_contact_row_new,
                            NULL, NULL);
+
+  g_signal_connect_object (self->manager, "notify::active-protocols",
+                           G_CALLBACK (dialog_active_protocols_changed_cb), self, G_CONNECT_SWAPPED);
+  dialog_active_protocols_changed_cb (self);
 
   chatty_new_chat_dialog_update_new_contact_row (self);
 }
