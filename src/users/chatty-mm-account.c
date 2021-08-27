@@ -292,11 +292,13 @@ mm_account_add_sms (ChattyMmAccount *self,
                     MMSmsState       state)
 {
   g_autoptr(ChattyMessage) message = NULL;
+  g_autoptr(GDateTime) date_time = NULL;
   ChattyChat *chat;
   g_autofree char *phone = NULL;
   g_autofree char *uuid = NULL;
   const char *msg;
   ChattyMsgDirection direction = CHATTY_DIRECTION_UNKNOWN;
+  gint64 unix_time = 0;
   guint position;
 
   g_assert (CHATTY_IS_MM_ACCOUNT (self));
@@ -320,9 +322,15 @@ mm_account_add_sms (ChattyMmAccount *self,
   else if (state == MM_SMS_STATE_SENT)
     direction = CHATTY_DIRECTION_OUT;
 
+  date_time = g_date_time_new_from_iso8601 (mm_sms_get_timestamp (sms), NULL);
+  if (date_time)
+    unix_time = g_date_time_to_unix (date_time);
+  if (!unix_time)
+    unix_time = time (NULL);
+
   uuid = g_uuid_string_random ();
   message = chatty_message_new (CHATTY_ITEM (chatty_mm_chat_get_user (CHATTY_MM_CHAT (chat))),
-                                msg, uuid, time (NULL), CHATTY_MESSAGE_TEXT, direction, 0);
+                                msg, uuid, unix_time, CHATTY_MESSAGE_TEXT, direction, 0);
   chatty_mm_chat_append_message (CHATTY_MM_CHAT (chat), message);
   chatty_history_add_message (self->history_db, chat, message);
   g_signal_emit_by_name (chat, "changed", 0);
