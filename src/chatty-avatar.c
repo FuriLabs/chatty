@@ -18,6 +18,7 @@
 #include "users/chatty-pp-buddy.h"
 #include "chatty-settings.h"
 #include "chatty-chat.h"
+#include "chatty-mm-chat.h"
 #include "chatty-pp-chat.h"
 #include "matrix/chatty-ma-buddy.h"
 #include "matrix/chatty-ma-chat.h"
@@ -66,6 +67,14 @@ static void
 item_name_changed_cb (ChattyAvatar *self)
 {
   chatty_avatar_set_title (self, chatty_item_get_name (self->item));
+
+  if (CHATTY_IS_MM_CHAT (self->item)) {
+    gboolean has_name;
+
+    has_name = !g_str_equal (chatty_item_get_name (self->item),
+                             chatty_chat_get_chat_name (CHATTY_CHAT (self->item)));
+    hdy_avatar_set_show_initials (HDY_AVATAR (self->avatar), has_name);
+  }
 }
 
 static void
