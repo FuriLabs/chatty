@@ -138,6 +138,20 @@ dialog_filter_item_cb (ChattyItem          *item,
   return chatty_item_matches (item, self->search_str, self->active_protocols, TRUE);
 }
 
+static void
+new_chat_list_changed_cb (ChattyNewChatDialog *self)
+{
+  guint n_items;
+
+  g_assert (CHATTY_IS_NEW_CHAT_DIALOG (self));
+
+  n_items = g_list_model_get_n_items (G_LIST_MODEL (self->slice_model));
+
+  if (n_items > 0 || gtk_widget_get_visible (self->new_contact_row))
+    gtk_stack_set_visible_child (GTK_STACK (self->contact_list_stack), self->contact_list_view);
+  else
+    gtk_stack_set_visible_child (GTK_STACK (self->contact_list_stack), self->empty_search_view);
+}
 
 static void
 chatty_new_chat_dialog_update_new_contact_row (ChattyNewChatDialog *self)
@@ -608,6 +622,9 @@ chatty_new_chat_dialog_init (ChattyNewChatDialog *self)
   filter_model = gtk_filter_list_model_new (G_LIST_MODEL (sort_model), self->filter);
 
   self->slice_model = gtk_slice_list_model_new (G_LIST_MODEL (filter_model), 0, ITEMS_COUNT);
+  g_signal_connect_object (self->slice_model, "items-changed",
+                           G_CALLBACK (new_chat_list_changed_cb), self,
+                           G_CONNECT_SWAPPED);
   gtk_list_box_bind_model (GTK_LIST_BOX (self->chats_listbox),
                            G_LIST_MODEL (self->slice_model),
                            (GtkListBoxCreateWidgetFunc)chatty_list_contact_row_new,
