@@ -236,7 +236,7 @@ cb_mam_query_prefs(JabberStream *js, const char *from,
 
   if(type == JABBER_IQ_RESULT && prefs) {
     const char *srv_def = xmlnode_get_attrib(prefs, "default");
-    const char *clt_def = chatty_mam_get_chat_prefs(pa, from, MAM_DEF_ROSTER);
+    const char *clt_def = chatty_mam_get_chat_prefs(pa, from, srv_def);
     if(g_strcmp0(clt_def, srv_def)) {
       JabberIq *iq = jabber_iq_new(js, JABBER_IQ_SET);
       prefs = xmlnode_new_child(iq->node, "prefs");
