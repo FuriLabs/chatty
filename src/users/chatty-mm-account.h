@@ -49,6 +49,7 @@ void             chatty_mm_account_send_message_async  (ChattyMmAccount     *sel
                                                         ChattyChat          *chat,
                                                         ChattyMmBuddy       *buddy,
                                                         ChattyMessage       *message,
+                                                        gboolean             is_mms,
                                                         GCancellable        *cancellable,
                                                         GAsyncReadyCallback  callback,
                                                         gpointer             user_data);

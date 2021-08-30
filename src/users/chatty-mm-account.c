@@ -1260,6 +1260,7 @@ chatty_mm_account_send_message_async (ChattyMmAccount     *self,
                                       ChattyChat          *chat,
                                       ChattyMmBuddy       *buddy,
                                       ChattyMessage       *message,
+                                      gboolean             is_mms,
                                       GCancellable        *cancellable,
                                       GAsyncReadyCallback  callback,
                                       gpointer             user_data)
@@ -1270,11 +1271,12 @@ chatty_mm_account_send_message_async (ChattyMmAccount     *self,
   ChattySettings *settings;
   ChattyMmDevice *device;
   guint position;
-  gboolean is_mms, request_report;
+  gboolean request_report;
 
   g_return_if_fail (CHATTY_IS_MM_ACCOUNT (self));
   g_return_if_fail (CHATTY_IS_MM_CHAT (chat));
-  g_return_if_fail (CHATTY_IS_MM_BUDDY (buddy));
+  if (!is_mms)
+    g_return_if_fail (CHATTY_IS_MM_BUDDY (buddy));
   g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
 
   task = g_task_new (self, cancellable, callback, user_data);
@@ -1291,8 +1293,6 @@ chatty_mm_account_send_message_async (ChattyMmAccount     *self,
                              "No modem found");
     return;
   }
-
-  is_mms = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (message), "mms"));
 
   if (is_mms) {
     CHATTY_TRACE_MSG ("Creating MMS message");

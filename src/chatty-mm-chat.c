@@ -292,7 +292,9 @@ mm_chat_send_message_cb (GObject      *object,
   g_autoptr(ChattyMmBuddy) buddy = NULL;
   g_autoptr(GError) error = NULL;
   ChattyMessage *message;
-  gboolean is_mms;
+  GList *files;
+  gboolean is_mms = FALSE;
+
 
   g_assert (G_IS_TASK (task));
 
@@ -312,7 +314,10 @@ mm_chat_send_message_cb (GObject      *object,
     chatty_message_set_status (message, CHATTY_STATUS_SENDING_FAILED, 0);
   }
 
-  is_mms = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (message), "mms"));
+  files = chatty_message_get_files (message);
+  if (self->protocol == CHATTY_PROTOCOL_MMS || files != NULL) {
+    is_mms = TRUE;
+  }
 
   if (!is_mms) {
     GListModel *users;
@@ -349,7 +354,8 @@ mm_chat_send_message_from_queue (ChattyMmChat *self)
   ChattyMessage *message;
   GListModel *users;
   GTask *task;
-  gboolean is_mms;
+  GList *files;
+  gboolean is_mms = FALSE;
 
   g_assert (CHATTY_IS_MM_CHAT (self));
 
@@ -364,7 +370,11 @@ mm_chat_send_message_from_queue (ChattyMmChat *self)
   self->is_sending_message = TRUE;
   task = g_queue_peek_head (self->message_queue);
   message = g_task_get_task_data (task);
-  is_mms = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (message), "mms"));
+
+  files = chatty_message_get_files (message);
+  if (self->protocol == CHATTY_PROTOCOL_MMS || files != NULL) {
+    is_mms = TRUE;
+  }
 
   /*
    * For SMS, we iterate over the buddy list and send individual message
@@ -379,7 +389,7 @@ mm_chat_send_message_from_queue (ChattyMmChat *self)
   }
 
   chatty_mm_account_send_message_async (self->account, CHATTY_CHAT (self),
-                                        buddy, message,
+                                        buddy, message, is_mms,
                                         g_task_get_cancellable (task),
                                         mm_chat_send_message_cb,
                                         g_object_ref (task));
