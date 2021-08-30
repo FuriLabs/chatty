@@ -1,3 +1,24 @@
+chatty (0.4.0~beta2) byzantium; urgency=medium
+
+  * contact: Add API to test for exact match
+  * contact-provider: Test for exact match to find matching contact
+  * contact: Let item_matches() match partial matches
+  * new-chat-dialog: Place the new contact at top of the list
+  * new-chat-dialog: Update search list on protocol changes
+  * mm-account: Use time from the SMS for new messages
+  * mm-buddy: Prefer locally parsed number as the SMS number
+  * new-chat-dialog: Update search view when list item changes
+  * window: Allow adding non existing contacts to GNOME contacts
+  * message-row: Hide avatar image only if not hidden before
+  * log: Improve logging
+  * history: Return not-found error if chat is not found
+  * manager: Don't warn if chat is not found in db
+  * settings: Add settings for SMS delivery report request
+  * mm-account: Request delivery reports only if asked for one
+  * settings-dialog: Add UI to set SMS delivery report request
+
+ -- Mohammed Sadiq <sadiq@sadiqpk.org>  Mon, 30 Aug 2021 16:38:08 +0530
+
 chatty (0.4.0~beta) byzantium; urgency=medium
 
   [ Mohammed Sadiq ]
