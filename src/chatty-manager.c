@@ -1177,9 +1177,9 @@ manager_account_changed_cb (PurpleAccount *pp_account,
   ChattyPpAccount *account;
 
   account = chatty_pp_account_get_object (pp_account);
-  g_return_if_fail (account);
 
-  g_object_notify (G_OBJECT (account), "enabled");
+  if (account)
+    g_object_notify (G_OBJECT (account), "enabled");
 }
 
 static void
