@@ -390,16 +390,12 @@ view_send_message_async_cb (GObject      *object,
 static void
 chat_view_send_message_button_clicked_cb (ChattyChatView *self)
 {
-  PurpleConversation *conv = NULL;
   ChattyAccount *account;
   g_autoptr(ChattyMessage) msg = NULL;
   g_autofree char *message = NULL;
   GtkTextIter    start, end;
 
   g_assert (CHATTY_IS_CHAT_VIEW (self));
-
-  if (CHATTY_IS_PP_CHAT (self->chat))
-    conv = chatty_pp_chat_get_purple_conv (CHATTY_PP_CHAT (self->chat));
 
   gtk_text_buffer_get_bounds (self->message_input_buffer, &start, &end);
   message = gtk_text_buffer_get_text (self->message_input_buffer, &start, &end, FALSE);
@@ -417,9 +413,6 @@ chat_view_send_message_button_clicked_cb (ChattyChatView *self)
     return;
 
   gtk_widget_grab_focus (self->message_input);
-
-  if (conv)
-    purple_idle_touch ();
 
   if (gtk_text_buffer_get_char_count (self->message_input_buffer)) {
     g_autofree char *escaped = NULL;
