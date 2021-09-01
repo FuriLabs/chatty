@@ -131,7 +131,9 @@ mm_chat_load_db_messages_cb (GObject      *object,
     g_list_store_splice (self->message_store, 0, 0, messages->pdata, messages->len);
     self->last_notify_message = g_object_ref (messages->pdata[messages->len - 1]);
     g_signal_emit_by_name (self, "changed", 0);
-  } else if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
+  } else if (error &&
+             !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED) &&
+             !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND)) {
     g_warning ("Error fetching messages: %s,", error->message);
   }
 }
