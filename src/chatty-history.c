@@ -320,6 +320,9 @@ history_msg_status_to_value (ChattyMsgStatus status)
   case CHATTY_STATUS_RECIEVED:
     return MESSAGE_STATUS_RECIEVED;
 
+  case CHATTY_STATUS_DRAFT:
+    return MESSAGE_STATUS_DRAFT;
+
   case CHATTY_STATUS_UNKNOWN:
   case CHATTY_STATUS_SENDING:
     return MESSAGE_STATUS_UNKNOWN;
@@ -352,7 +355,7 @@ history_msg_status_from_value (int value)
   if (value == MESSAGE_STATUS_UNKNOWN)
     return CHATTY_STATUS_UNKNOWN;
   if (value == MESSAGE_STATUS_DRAFT)
-    return CHATTY_STATUS_UNKNOWN;
+    return CHATTY_STATUS_DRAFT;
   if (value == MESSAGE_STATUS_RECIEVED)
     return CHATTY_STATUS_RECIEVED;
   if (value == MESSAGE_STATUS_SENT)
@@ -2444,7 +2447,7 @@ history_add_message (ChattyHistory *self,
   ChattyMsgDirection direction;
   ChattyMsgType type;
   int thread_id = 0, sender_id = 0, preview_id = 0;
-  int status, dir;
+  int status, msg_status, dir;
   time_t time_stamp;
 
   g_assert (CHATTY_IS_HISTORY (self));
@@ -2517,9 +2520,9 @@ history_add_message (ChattyHistory *self,
     history_bind_int (stmt, 9, preview_id, "binding when adding message");
   history_bind_int (stmt, 10, chatty_message_get_encrypted (message),
                     "binding when adding message");
-  status = history_msg_status_to_value (chatty_message_get_status (message));
-  if (status != MESSAGE_STATUS_UNKNOWN)
-    history_bind_int (stmt, 11, status, "binding when adding message");
+  msg_status = history_msg_status_to_value (chatty_message_get_status (message));
+  if (msg_status != MESSAGE_STATUS_UNKNOWN)
+    history_bind_int (stmt, 11, msg_status, "binding when adding message");
   history_bind_text (stmt, 12, chatty_message_get_subject (message), "binding when adding message");
 
   status = sqlite3_step (stmt);
