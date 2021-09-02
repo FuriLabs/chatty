@@ -798,6 +798,8 @@ chatty_window_init (ChattyWindow *self)
   hdy_search_bar_connect_entry (HDY_SEARCH_BAR (self->chats_search_bar),
                                 GTK_ENTRY (self->chats_search_entry));
   self->manager = g_object_ref (chatty_manager_get_default ());
+  chatty_chat_view_set_db (CHATTY_CHAT_VIEW (self->chat_view),
+                           chatty_manager_get_history (self->manager));
   g_signal_connect_object (self->manager, "chat-deleted",
                            G_CALLBACK (window_chat_deleted_cb), self,
                            G_CONNECT_SWAPPED);
