@@ -2166,6 +2166,7 @@ get_messages_before_time (ChattyHistory *self,
                                "WHERE thread_id=? "
                                "AND messages.time <= ? "
                                "AND body NOT NULL "
+                               "AND (messages.status !=" STRING(MESSAGE_STATUS_DRAFT) " OR messages.status is null) "
                                "ORDER BY time DESC, messages.id DESC LIMIT ?;",
                                -1, &stmt, NULL);
   history_bind_int (stmt, 1, thread_id, "binding when getting messages");
@@ -2314,6 +2315,61 @@ history_get_messages (ChattyHistory *self,
   g_task_return_pointer (task, messages, (GDestroyNotify)g_ptr_array_unref);
 }
 
+static void
+history_get_chat_draft_message (ChattyHistory *self,
+                                GTask         *task)
+{
+  sqlite3_stmt *stmt;
+  ChattyChat *chat;
+  int thread_id;
+
+  g_assert (CHATTY_IS_HISTORY (self));
+  g_assert (G_IS_TASK (task));
+  g_assert (g_thread_self () == self->worker_thread);
+
+  if (!self->db) {
+    g_task_return_new_error (task,
+                             G_IO_ERROR, G_IO_ERROR_FAILED,
+                             "Database not opened");
+    return;
+  }
+
+  chat = g_object_get_data (G_OBJECT (task), "chat");
+
+  g_assert (CHATTY_IS_CHAT (chat));
+
+  thread_id = get_thread_id (self, chat);
+
+  if (!thread_id) {
+    g_task_return_new_error (task,
+                             G_IO_ERROR, G_IO_ERROR_NOT_FOUND,
+                             "Couldn't find chat %s",
+                             chatty_chat_get_chat_name (chat));
+    return;
+  }
+
+  sqlite3_prepare_v2 (self->db,
+                      "SELECT DISTINCT body "
+                      "FROM messages "
+                      "WHERE thread_id=? "
+                      "AND messages.status=" STRING(MESSAGE_STATUS_DRAFT) " "
+                      "ORDER BY time DESC, messages.id DESC LIMIT 1;",
+                      -1, &stmt, NULL);
+
+  history_bind_int (stmt, 1, thread_id, "binding when getting draft message");
+
+  if (sqlite3_step (stmt) == SQLITE_ROW) {
+    const char *msg = NULL;
+
+    msg = (const char *)sqlite3_column_text (stmt, 0);
+    g_task_return_pointer (task, g_strdup (msg), g_free);
+  } else {
+    g_task_return_pointer (task, NULL, NULL);
+  }
+
+  sqlite3_finalize (stmt);
+}
+
 static int
 add_file_info (ChattyHistory  *self,
                ChattyFileInfo *file)
@@ -2436,6 +2492,30 @@ history_add_files (ChattyHistory *self,
   }
 }
 
+static int
+get_chat_draft_id (ChattyHistory *self,
+                   int            thread_id)
+{
+  int message_id = 0;
+  sqlite3_stmt *stmt;
+
+  g_assert (CHATTY_IS_HISTORY (self));
+  g_assert (thread_id);
+
+  sqlite3_prepare_v2 (self->db,
+                      "SELECT messages.id FROM messages "
+                      "WHERE thread_id=? AND status=" STRING(MESSAGE_STATUS_DRAFT),
+                      -1, &stmt, NULL);
+  history_bind_int (stmt, 1, thread_id, "binding when getting draft message");
+
+  if (sqlite3_step (stmt) == SQLITE_ROW)
+    message_id = sqlite3_column_int (stmt, 0);
+
+  sqlite3_finalize (stmt);
+
+  return message_id;
+}
+
 static void
 history_add_message (ChattyHistory *self,
                      GTask         *task)
@@ -2474,6 +2554,7 @@ history_add_message (ChattyHistory *self,
   dir = history_direction_to_value (direction);
   type = chatty_message_get_msg_type (message);
   alias = chatty_message_get_user_alias (message);
+  msg_status = history_msg_status_to_value (chatty_message_get_status (message));
 
   if (direction == CHATTY_DIRECTION_OUT)
     who = chatty_item_get_username (CHATTY_ITEM (chat));
@@ -2486,6 +2567,51 @@ history_add_message (ChattyHistory *self,
     return;
 
   sender_id = insert_or_ignore_user (self, chatty_item_get_protocols (CHATTY_ITEM (chat)), who, alias, task);
+
+  if (direction == CHATTY_DIRECTION_OUT &&
+      msg_status == MESSAGE_STATUS_DRAFT) {
+    int message_id = 0;
+
+    if (!msg) {
+      g_task_return_boolean (task, TRUE);
+      return;
+    }
+
+    message_id = get_chat_draft_id (self, thread_id);
+
+    if (message_id) {
+      sqlite3_prepare_v2 (self->db,
+                          "UPDATE messages SET body=?1 "
+                          "WHERE messages.id=?2",
+                          -1, &stmt, NULL);
+      history_bind_text (stmt, 1, msg, "binding when adding draft message");
+      history_bind_int (stmt, 2, message_id, "binding when adding draft message");
+    } else {
+      sqlite3_prepare_v2 (self->db,
+                          /*                     ?1    ?2      ?3     ?4        ?5      ?6    ?7 */
+                          "INSERT INTO messages(uid,thread_id,body,body_type,direction,time,status) "
+                          "VALUES(?1,?2,?3,?4,?5,?6," STRING(MESSAGE_STATUS_DRAFT) ") ",
+                          -1, &stmt, NULL);
+      history_bind_text (stmt, 1, uid, "binding when adding draft message");
+      history_bind_int (stmt, 2, thread_id, "binding when adding draft message");
+      history_bind_text (stmt, 3, msg, "binding when adding draft message");
+      history_bind_int (stmt, 4, history_message_type_to_value (type), "binding when adding draft message");
+      history_bind_int (stmt, 5, dir, "binding when adding draft message");
+      history_bind_int (stmt, 6, time_stamp, "binding when adding draft message");
+    }
+
+    status = sqlite3_step (stmt);
+    sqlite3_finalize (stmt);
+
+    if (status == SQLITE_DONE)
+      g_task_return_boolean (task, TRUE);
+    else
+      g_task_return_new_error (task,
+                               G_IO_ERROR, G_IO_ERROR_FAILED,
+                               "Failed to save message. errno: %d, desc: %s",
+                               status, sqlite3_errmsg (self->db));
+    return;
+  }
 
   if (sender_id && direction == CHATTY_DIRECTION_IN) {
     sqlite3_prepare_v2 (self->db,
@@ -2520,7 +2646,6 @@ history_add_message (ChattyHistory *self,
     history_bind_int (stmt, 9, preview_id, "binding when adding message");
   history_bind_int (stmt, 10, chatty_message_get_encrypted (message),
                     "binding when adding message");
-  msg_status = history_msg_status_to_value (chatty_message_get_status (message));
   if (msg_status != MESSAGE_STATUS_UNKNOWN)
     history_bind_int (stmt, 11, msg_status, "binding when adding message");
   history_bind_text (stmt, 12, chatty_message_get_subject (message), "binding when adding message");
@@ -3306,6 +3431,37 @@ GPtrArray *
 chatty_history_get_messages_finish (ChattyHistory  *self,
                                     GAsyncResult   *result,
                                     GError        **error)
+{
+  g_return_val_if_fail (CHATTY_IS_HISTORY (self), FALSE);
+  g_return_val_if_fail (G_IS_TASK (result), FALSE);
+  g_return_val_if_fail (!error || !*error, FALSE);
+
+  return g_task_propagate_pointer (G_TASK (result), error);
+}
+
+void
+chatty_history_get_draft_async (ChattyHistory       *self,
+                                ChattyChat          *chat,
+                                GAsyncReadyCallback  callback,
+                                gpointer             user_data)
+{
+  GTask *task;
+
+  g_return_if_fail (CHATTY_IS_HISTORY (self));
+  g_return_if_fail (CHATTY_IS_CHAT (chat));
+
+  task = g_task_new (self, NULL, callback, user_data);
+  g_task_set_source_tag (task, chatty_history_get_draft_async);
+  g_task_set_task_data (task, history_get_chat_draft_message, NULL);
+  g_object_set_data_full (G_OBJECT (task), "chat", g_object_ref (chat), g_object_unref);
+
+  g_async_queue_push_front (self->queue, task);
+}
+
+char *
+chatty_history_get_draft_finish (ChattyHistory  *self,
+                                 GAsyncResult   *result,
+                                 GError        **error)
 {
   g_return_val_if_fail (CHATTY_IS_HISTORY (self), FALSE);
   g_return_val_if_fail (G_IS_TASK (result), FALSE);

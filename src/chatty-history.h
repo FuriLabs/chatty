@@ -47,6 +47,13 @@ void           chatty_history_get_messages_async  (ChattyHistory        *self,
 GPtrArray     *chatty_history_get_messages_finish (ChattyHistory        *self,
                                                    GAsyncResult         *result,
                                                    GError              **error);
+void           chatty_history_get_draft_async     (ChattyHistory        *self,
+                                                   ChattyChat           *chat,
+                                                   GAsyncReadyCallback  callback,
+                                                   gpointer             user_data);
+char          *chatty_history_get_draft_finish    (ChattyHistory        *self,
+                                                   GAsyncResult         *result,
+                                                   GError              **error);
 void           chatty_history_add_message_async   (ChattyHistory        *self,
                                                    ChattyChat           *chat,
                                                    ChattyMessage        *message,
