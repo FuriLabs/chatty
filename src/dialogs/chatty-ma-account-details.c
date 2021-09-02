@@ -156,7 +156,6 @@ ma_details_delete_avatar_button_clicked_cb (ChattyMaAccountDetails *self)
   if (self->is_deleting_avatar)
     return;
 
-  g_warning ("xxxxxxxxxx");
   self->is_deleting_avatar = TRUE;
   update_delete_avatar_button_state (self);
   chatty_item_set_avatar_async (CHATTY_ITEM (self->account), NULL, NULL,

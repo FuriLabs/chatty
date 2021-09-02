@@ -2231,7 +2231,6 @@ api_delete_3pid_cb (GObject      *obj,
     return;
   }
 
-  g_warning ("%s", matrix_utils_json_object_to_string (object, TRUE));
   g_task_return_boolean (task, TRUE);
 }
 
