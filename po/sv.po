@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty master\n"
 "Report-Msgid-Bugs-To: https://source.puri.sm/Librem5/chatty/issues\n"
-"POT-Creation-Date: 2021-08-30 15:25+0000\n"
-"PO-Revision-Date: 2021-08-30 19:44+0200\n"
+"POT-Creation-Date: 2021-09-03 14:33+0000\n"
+"PO-Revision-Date: 2021-09-03 20:04+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -19,7 +19,7 @@ msgstr ""
 "X-Generator: Poedit 3.0\n"
 
 #: data/sm.puri.Chatty.desktop.in:3 data/sm.puri.Chatty.metainfo.xml.in:6
-#: src/chatty-application.c:356 src/ui/chatty-window.ui:183
+#: src/chatty-application.c:362 src/ui/chatty-window.ui:183
 msgid "Chats"
 msgstr "Chattar"
 
@@ -345,7 +345,7 @@ msgstr "Spara fil…"
 msgid "Open File..."
 msgstr "Öppna fil…"
 
-#: src/chatty-purple-request.c:191 src/chatty-window.c:453
+#: src/chatty-purple-request.c:191 src/chatty-window.c:471
 #: src/dialogs/chatty-ma-account-details.c:118
 #: src/dialogs/chatty-pp-account-details.c:87
 #: src/ui/chatty-dialog-join-muc.ui:16 src/ui/chatty-info-dialog.ui:44
@@ -390,11 +390,11 @@ msgstr "%A %I∶%M %p"
 msgid "%Y-%m-%d"
 msgstr "%Y-%m-%d"
 
-#: src/chatty-window.c:173
+#: src/chatty-window.c:174
 msgid "Select a contact with the <b>“+”</b> button in the titlebar."
 msgstr "Välj en kontakt med <b>”+”</b>-knappen i namnlisten."
 
-#: src/chatty-window.c:177
+#: src/chatty-window.c:178
 msgid ""
 "For <b>Instant Messaging</b> add or activate an account in <i>\"preferences"
 "\"</i>."
@@ -402,40 +402,40 @@ msgstr ""
 "För <b>Snabbmeddelanden</b>, lägg till eller aktivera ett konto i "
 "<i>”inställningar”</i>."
 
-#: src/chatty-window.c:438
+#: src/chatty-window.c:456
 msgid "Delete chat with"
 msgstr "Ta bort chatt med"
 
-#: src/chatty-window.c:439
+#: src/chatty-window.c:457
 msgid "This deletes the conversation history"
 msgstr "Det här tar bort meddelandehistoriken"
 
-#: src/chatty-window.c:441
+#: src/chatty-window.c:459
 msgid "Disconnect group chat"
 msgstr "Lämna gruppchatt"
 
-#: src/chatty-window.c:442
+#: src/chatty-window.c:460
 msgid "This removes chat from chats list"
 msgstr "Detta tar bort chatten från chattlistan"
 
-#: src/chatty-window.c:455
+#: src/chatty-window.c:473
 msgid "Delete"
 msgstr "Ta bort"
 
-#: src/chatty-window.c:525 src/chatty-window.c:548
+#: src/chatty-window.c:543 src/chatty-window.c:566
 #, c-format
 msgid "Error saving contact: %s"
 msgstr "Fel vid sparande av kontakt: %s"
 
-#: src/chatty-window.c:637
+#: src/chatty-window.c:655
 msgid "An SMS and XMPP messaging client"
 msgstr "En SMS- och XMPP-meddelandeklient"
 
-#: src/chatty-window.c:644
+#: src/chatty-window.c:662
 msgid "translator-credits"
 msgstr "Anders Jonsson <anders.jonsson@norsjovallen.se>"
 
-#: src/chatty-window.c:862
+#: src/chatty-window.c:882
 #, c-format
 msgid "“%s” is not a valid phone number"
 msgstr "”%s” är inte ett giltigt telefonnummer"
@@ -509,18 +509,23 @@ msgstr "ansluter…"
 msgid "disconnected"
 msgstr "frånkopplad"
 
-#: src/dialogs/chatty-settings-dialog.c:380
+#: src/dialogs/chatty-settings-dialog.c:383
 #: src/ui/chatty-ma-account-details.ui:195
 #: src/ui/chatty-pp-account-details.ui:150
 msgid "Delete Account"
 msgstr "Ta bort konto"
 
-#: src/dialogs/chatty-settings-dialog.c:383
+#: src/dialogs/chatty-settings-dialog.c:386
 #, c-format
 msgid "Delete account %s?"
 msgstr "Ta bort kontot %s?"
 
-#: src/dialogs/chatty-settings-dialog.c:493
+#. TRANSLATORS: Don't translate "r0.5.x", "r0.6.x" strings
+#: src/dialogs/chatty-settings-dialog.c:555
+msgid "Chatty requires Client-Server API to be ‘r0.5.x’ or ‘r0.6.x’"
+msgstr "Chatty kräver att klient-server-API:t är ‘r0.5.x’ eller ‘r0.6.x’"
+
+#: src/dialogs/chatty-settings-dialog.c:610
 msgid "Select Protocol"
 msgstr "Välj protokoll"
 
@@ -533,7 +538,7 @@ msgid "_OK"
 msgstr "_OK"
 
 #: src/matrix/chatty-ma-account.c:289 src/ui/chatty-settings-dialog.ui:41
-#: src/ui/chatty-settings-dialog.ui:564
+#: src/ui/chatty-settings-dialog.ui:532
 msgid "_Cancel"
 msgstr "A_vbryt"
 
@@ -858,13 +863,13 @@ msgstr "Telegram"
 msgid "Matrix Home Server"
 msgstr "Matrix-hemserver"
 
-#: src/ui/chatty-settings-dialog.ui:537
-msgid "Enter the matrix home server address."
-msgstr "Ange Matrix-hemserverns adress."
-
 #: src/ui/chatty-settings-dialog.ui:555
 msgid "_Accept"
 msgstr "_Acceptera"
+
+#: src/ui/chatty-settings-dialog.ui:584
+msgid "Enter the matrix home server address."
+msgstr "Ange Matrix-hemserverns adress."
 
 #: src/ui/chatty-window.ui:30
 msgid "About Chats"
@@ -886,7 +891,11 @@ msgstr "Lämna chatt"
 msgid "Delete Chat"
 msgstr "Ta bort chatt"
 
-#: src/ui/chatty-window.ui:378
+#: src/ui/chatty-window.ui:338
+msgid "Call"
+msgstr "Ring"
+
+#: src/ui/chatty-window.ui:402
 msgid "Start Chatting"
 msgstr "Börja chatta"
 
