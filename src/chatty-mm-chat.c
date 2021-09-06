@@ -373,6 +373,7 @@ chatty_mm_chat_send_message_async (ChattyChat          *chat,
 
   task = g_task_new (self, NULL, callback, user_data);
   g_task_set_task_data (task, g_object_ref (message), g_object_unref);
+  chatty_mm_chat_append_message (CHATTY_MM_CHAT (chat), message);
   g_queue_push_head (self->message_queue, task);
 
   mm_chat_send_message_from_queue (self);
