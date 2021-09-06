@@ -90,18 +90,6 @@ struct _ChattyManager
 
 G_DEFINE_TYPE (ChattyManager, chatty_manager, G_TYPE_OBJECT)
 
-/* XXX: A copy from purple-mm-sms */
-enum {
-  PUR_MM_STATE_NO_MANAGER,
-  PUR_MM_STATE_MANAGER_FOUND,
-  PUR_MM_STATE_NO_MODEM,
-  PUR_MM_STATE_MODEM_FOUND,
-  PUR_MM_STATE_NO_MESSAGING_MODEM,
-  PUR_MM_STATE_MODEM_DISABLED,
-  PUR_MM_STATE_MODEM_UNLOCK_ERROR,
-  PUR_MM_STATE_READY
-} e_purple_connection;
-
 enum {
   PROP_0,
   PROP_ACTIVE_PROTOCOLS,
