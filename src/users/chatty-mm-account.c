@@ -956,8 +956,14 @@ chatty_mm_account_find_chat (ChattyMmAccount *self,
     number1 = chatty_utils_check_phonenumber (user_id, country_code);
     number2 = chatty_utils_check_phonenumber (phone, country_code);
 
-    if (g_strcmp0 (number1, number2) == 0)
-      return chat;
+    /* If We don't have number2, number2 could be a non-digit number (like provider SMS) */
+    if (!number2) {
+      if (g_strcmp0 (user_id, phone) == 0)
+        return chat;
+    } else {
+      if (g_strcmp0 (number1, number2) == 0)
+        return chat;
+    }
   }
 
   return NULL;
