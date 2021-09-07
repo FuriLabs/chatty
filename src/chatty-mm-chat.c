@@ -442,6 +442,7 @@ chatty_mm_chat_finalize (GObject *object)
   g_clear_object (&self->last_notify_message);
   g_clear_object (&self->history_db);
   g_clear_object (&self->chatty_eds);
+  g_clear_object (&self->account);
   g_object_unref (self->message_store);
   g_object_unref (self->chat_users);
   g_free (self->last_message);
