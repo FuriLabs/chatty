@@ -246,14 +246,30 @@ sms_create_cb (GObject      *object,
                GAsyncResult *result,
                gpointer      user_data)
 {
+  ChattyMmAccount *self;
   g_autoptr(GTask) task = user_data;
   g_autoptr(MMSms) sms = NULL;
   GCancellable *cancellable;
   GError *error = NULL;
 
+  g_assert (G_IS_TASK (task));
+
+  self = g_task_get_source_object (task);
+  g_assert (CHATTY_IS_MM_ACCOUNT (self));
+
   sms = mm_modem_messaging_create_finish (MM_MODEM_MESSAGING (object), result, &error);
 
   if (!sms) {
+    ChattyMessage *message;
+    ChattyChat *chat;
+
+    chat = g_object_get_data (G_OBJECT (task), "chat");
+    message = g_task_get_task_data (task);
+    g_assert (CHATTY_IS_CHAT (chat));
+
+    chatty_message_set_status (message, CHATTY_STATUS_SENDING_FAILED, 0);
+    chatty_history_add_message (self->history_db, chat, message);
+
     g_debug ("Failed creating sms: %s", error->message);
     g_task_return_error (task, error);
     return;
