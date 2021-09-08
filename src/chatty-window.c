@@ -495,7 +495,8 @@ window_delete_buddy_clicked_cb (ChattyWindow *self)
     }
 
     window_set_item (self, NULL);
-    chatty_window_chat_list_select_first (self);
+    if (!hdy_leaflet_get_folded (HDY_LEAFLET (self->content_box)))
+      chatty_window_chat_list_select_first (self);
   }
 
   gtk_widget_destroy (dialog);
