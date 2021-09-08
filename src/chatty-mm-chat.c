@@ -687,3 +687,38 @@ chatty_mm_chat_show_notification (ChattyMmChat *self)
   if (g_set_object (&self->last_notify_message, message))
     chatty_notification_show_message (self->notification, chat, message, NULL);
 }
+
+/*
+ * In the past, we were not storing thread members in db,
+ * which was fixed in b5d4f448ecdfef3189d794c2c136ed869e48f59f
+ * but the chats created before the fix had empty members,
+ * Let's work around by adding the members if that's the case
+ */
+void
+chatty_mm_chat_refresh (ChattyMmChat *self)
+{
+  g_autoptr(ChattyMmBuddy) buddy = NULL;
+  g_autofree char *number = NULL;
+  ChattySettings *settings;
+  const char *name, *country;
+
+  g_return_if_fail (CHATTY_IS_MM_CHAT (self));
+
+  if (g_list_model_get_n_items (G_LIST_MODEL (self->chat_users)) > 0)
+    return;
+
+  settings = chatty_settings_get_default ();
+  country = chatty_settings_get_country_iso_code (settings);
+  name = chatty_chat_get_chat_name (CHATTY_CHAT (self));
+
+  if (country)
+    number = chatty_utils_check_phonenumber (name, country);
+  if (!number)
+    number = g_strdup (name);
+
+  CHATTY_DEBUG (number, "Updating chat member in db, number:");
+
+  buddy = chatty_mm_buddy_new (number, chatty_item_get_name (CHATTY_ITEM (self)));
+  chatty_mm_chat_add_user (self, buddy);
+  chatty_history_update_chat (self->history_db, CHATTY_CHAT (self));
+}
