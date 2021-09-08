@@ -506,8 +506,10 @@ mm_object_added_cb (ChattyMmAccount *self,
 {
   g_autoptr(ChattyMmAccount) account = NULL;
   g_autoptr(ChattyMmDevice) device = NULL;
+  GListModel *chat_list;
   MessagingData *data;
   MMSim *sim;
+  guint n_chats;
 
   g_assert (CHATTY_IS_MM_ACCOUNT (self));
   g_assert (MM_IS_OBJECT (object));
@@ -540,6 +542,15 @@ mm_object_added_cb (ChattyMmAccount *self,
 
     if (code && *code)
       chatty_settings_set_country_iso_code (settings, code);
+  }
+
+  chat_list = chatty_mm_account_get_chat_list (self);
+  n_chats = g_list_model_get_n_items (chat_list);
+  for (guint i = 0; i < n_chats; i++) {
+    g_autoptr(ChattyMmChat) chat = NULL;
+
+    chat = g_list_model_get_item (chat_list, i);
+    chatty_mm_chat_refresh (chat);
   }
 
   g_signal_connect_swapped (mm_object_peek_modem_messaging (MM_OBJECT (object)),
