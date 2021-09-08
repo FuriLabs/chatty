@@ -14,6 +14,7 @@
 
 #include "chatty-avatar.h"
 #include "chatty-chat.h"
+#include "chatty-mm-chat.h"
 #include "chatty-pp-chat.h"
 #include "chatty-history.h"
 #include "chatty-utils.h"
@@ -550,6 +551,7 @@ chat_view_update_header_func (ChattyMessageRow *row,
                               ChattyMessageRow *before,
                               gpointer          user_data)
 {
+  ChattyChatView *self = user_data;
   ChattyMessage *a, *b;
   time_t a_time, b_time;
 
@@ -563,6 +565,13 @@ chat_view_update_header_func (ChattyMessageRow *row,
 
   if (chatty_message_user_matches (a, b))
     chatty_message_row_hide_user_detail (row);
+
+  /* Don't hide footers in outgoing SMS as it helps understanding
+   * the delivery status of the message
+   */
+  if (CHATTY_IS_MM_CHAT (self->chat) &&
+      chatty_message_get_msg_direction (a) == CHATTY_DIRECTION_OUT)
+    return;
 
   /* Hide footer of the previous message if both have same time (in minutes) */
   if (a_time / 60 == b_time / 60)
@@ -674,7 +683,7 @@ chatty_chat_view_init (ChattyChatView *self)
                           G_CALLBACK (chat_view_file_requested_cb), self);
   gtk_list_box_set_header_func (GTK_LIST_BOX (self->message_list),
                                 (GtkListBoxUpdateHeaderFunc)chat_view_update_header_func,
-                                NULL, NULL);
+                                g_object_ref (self), g_object_unref);
 
   gspell_view = gspell_text_view_get_from_gtk_text_view (GTK_TEXT_VIEW (self->message_input));
   gspell_text_view_basic_setup (gspell_view);
