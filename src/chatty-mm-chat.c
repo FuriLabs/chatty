@@ -80,6 +80,39 @@ chatty_mm_chat_set_data (ChattyChat *chat,
   g_set_object (&self->history_db, history_db);
 }
 
+static void
+chatty_mm_chat_update_contact (ChattyMmChat *self)
+{
+  guint n_items;
+
+  g_assert (CHATTY_IS_MM_CHAT (self));
+
+  if (!self->chatty_eds)
+    return;
+
+  n_items = g_list_model_get_n_items (G_LIST_MODEL (self->chat_users));
+
+  for (guint i = 0; i < n_items; i++) {
+    g_autoptr(ChattyMmBuddy) buddy = NULL;
+    ChattyContact *contact;
+    const char *phone;
+
+    buddy = g_list_model_get_item (G_LIST_MODEL (self->chat_users), i);
+    phone = chatty_mm_buddy_get_number (buddy);
+    contact = chatty_eds_find_by_number (self->chatty_eds, phone);
+    if (contact) {
+      chatty_mm_buddy_set_contact (buddy, contact);
+
+      if (n_items == 1) {
+        g_free (self->name);
+        self->name = g_strdup (chatty_item_get_name (CHATTY_ITEM (contact)));
+        g_object_notify (G_OBJECT (self), "name");
+        g_signal_emit_by_name (self, "avatar-changed");
+      }
+    }
+  }
+}
+
 static gboolean
 chatty_mm_chat_is_im (ChattyChat *chat)
 {
@@ -509,35 +542,13 @@ void
 chatty_mm_chat_set_eds (ChattyMmChat *self,
                         ChattyEds    *chatty_eds)
 {
-  guint n_items;
-
   g_return_if_fail (CHATTY_IS_MM_CHAT (self));
   g_return_if_fail (!chatty_eds || CHATTY_IS_EDS (chatty_eds));
 
   if (!g_set_object (&self->chatty_eds, chatty_eds))
     return;
 
-  n_items = g_list_model_get_n_items (G_LIST_MODEL (self->chat_users));
-
-  for (guint i = 0; i < n_items; i++) {
-    g_autoptr(ChattyMmBuddy) buddy = NULL;
-    ChattyContact *contact;
-    const char *phone;
-
-    buddy = g_list_model_get_item (G_LIST_MODEL (self->chat_users), i);
-    phone = chatty_mm_buddy_get_number (buddy);
-    contact = chatty_eds_find_by_number (self->chatty_eds, phone);
-    if (contact) {
-      chatty_mm_buddy_set_contact (buddy, contact);
-
-      if (n_items == 1) {
-        g_free (self->name);
-        self->name = g_strdup (chatty_item_get_name (CHATTY_ITEM (contact)));
-        g_object_notify (G_OBJECT (self), "name");
-        g_signal_emit_by_name (self, "avatar-changed");
-      }
-    }
-  }
+  chatty_mm_chat_update_contact (self);
 }
 
 ChattyMessage *
