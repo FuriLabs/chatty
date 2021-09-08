@@ -732,4 +732,5 @@ chatty_mm_chat_refresh (ChattyMmChat *self)
   buddy = chatty_mm_buddy_new (number, chatty_item_get_name (CHATTY_ITEM (self)));
   chatty_mm_chat_add_user (self, buddy);
   chatty_history_update_chat (self->history_db, CHATTY_CHAT (self));
+  chatty_mm_chat_update_contact (self);
 }
