@@ -65,7 +65,7 @@ struct _ChattyChatView
 G_DEFINE_TYPE (ChattyChatView, chatty_chat_view, GTK_TYPE_BOX)
 
 
-const char *emoticons[][15] = {
+const char *emoticons[][2] = {
   {":)", "🙂"},
   {";)", "😉"},
   {":(", "🙁"},
