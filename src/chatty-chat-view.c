@@ -716,11 +716,18 @@ chatty_chat_view_set_chat (ChattyChatView *self,
     g_clear_object (&self->history_binding);
   }
 
+  gtk_widget_set_sensitive (self->message_input, !!chat);
+  gtk_widget_set_visible (self->empty_view, !!chat);
+  gtk_widget_set_visible (self->empty_view, !!chat);
+
   if (!g_set_object (&self->chat, chat))
     return;
 
-  if (!chat)
+  if (!chat) {
+    gtk_list_box_bind_model (GTK_LIST_BOX (self->message_list),
+                             NULL, NULL, NULL, NULL);
     return;
+  }
 
   messages = chatty_chat_get_messages (chat);
   account = chatty_chat_get_account (chat);
