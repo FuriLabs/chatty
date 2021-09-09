@@ -495,6 +495,10 @@ window_delete_buddy_clicked_cb (ChattyWindow *self)
     }
 
     window_set_item (self, NULL);
+    gtk_widget_hide (self->call_button);
+    gtk_widget_set_sensitive (self->header_sub_menu_button, FALSE);
+    chatty_chat_view_set_chat (CHATTY_CHAT_VIEW (self->chat_view), NULL);
+
     if (!hdy_leaflet_get_folded (HDY_LEAFLET (self->content_box)))
       chatty_window_chat_list_select_first (self);
   }
