@@ -1305,6 +1305,7 @@ chatty_mmsd_get_service_cb (GObject      *service,
   } else {
     g_debug ("Got MMSD Service");
 
+    chatty_mm_account_set_mms_feature (self->mm_account, TRUE);
     self->mmsd_service_proxy_watch_id =
       g_dbus_connection_signal_subscribe (self->connection,
                                           MMSD_SERVICE,

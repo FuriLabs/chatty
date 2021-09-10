@@ -45,6 +45,8 @@ ChattyChat      *chatty_mm_account_start_chat          (ChattyMmAccount     *sel
 void             chatty_mm_account_delete_chat         (ChattyMmAccount     *self,
                                                         ChattyChat          *chat);
 gboolean         chatty_mm_account_has_mms_feature     (ChattyMmAccount     *self);
+void             chatty_mm_account_set_mms_feature     (ChattyMmAccount *self,
+                                                        gboolean mms_feature);
 void             chatty_mm_account_send_message_async  (ChattyMmAccount     *self,
                                                         ChattyChat          *chat,
                                                         ChattyMmBuddy       *buddy,

@@ -91,6 +91,7 @@ struct _ChattyMmAccount
 
   guint             mm_watch_id;
   gboolean          mm_loaded;
+  gboolean          has_mms;
 
   ChattyMmsd       *mmsd_struct;
 };
@@ -978,6 +979,7 @@ chatty_mm_account_init (ChattyMmAccount *self)
   self->mmsd_struct = chatty_mmsd_new(self);
   self->pending_sms = g_hash_table_new_full (g_direct_hash, g_direct_equal,
                                              NULL, g_object_unref);
+  self->has_mms = FALSE;
 }
 
 ChattyMmAccount *
@@ -1251,8 +1253,15 @@ chatty_mm_account_has_mms_feature (ChattyMmAccount *self)
 {
   g_return_val_if_fail (CHATTY_IS_MM_ACCOUNT (self), FALSE);
 
-  /* TODO */
-  return FALSE;
+  return self->has_mms;
+}
+
+void
+chatty_mm_account_set_mms_feature (ChattyMmAccount *self, gboolean mms_feature)
+{
+  g_return_if_fail (CHATTY_IS_MM_ACCOUNT (self));
+
+  self->has_mms = mms_feature;
 }
 
 void
