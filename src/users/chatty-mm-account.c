@@ -24,6 +24,7 @@
 #include "itu-e212-iso.h"
 #include "chatty-mm-account.h"
 #include "chatty-log.h"
+#include "chatty-mmsd.h"
 
 /**
  * SECTION: chatty-mm-account
@@ -90,6 +91,8 @@ struct _ChattyMmAccount
 
   guint             mm_watch_id;
   gboolean          mm_loaded;
+
+  ChattyMmsd       *mmsd_struct;
 };
 
 typedef struct _MessagingData {
@@ -561,6 +564,8 @@ mm_object_added_cb (ChattyMmAccount *self,
 
   device = chatty_mm_device_new ();
   device->mm_object = g_object_ref (MM_OBJECT (object));
+  /* Load chatty_mmsd */
+  chatty_mmsd_load (self->mmsd_struct, device->mm_object);
   device->modem_state_id = g_signal_connect_swapped (mm_object_peek_modem (device->mm_object),
                                                      "notify::state",
                                                      G_CALLBACK (mm_account_modem_state_changed),
@@ -627,6 +632,7 @@ mm_object_removed_cb (ChattyMmAccount *self,
     device = g_list_model_get_item (G_LIST_MODEL (self->device_list), i);
     if (g_strcmp0 (mm_object_get_path (MM_OBJECT (object)),
                    mm_object_get_path (device->mm_object)) == 0) {
+      chatty_mmsd_close (self->mmsd_struct, device->mm_object);
       self->status = CHATTY_UNKNOWN;
       g_list_store_remove (self->device_list, i);
       break;
@@ -826,6 +832,7 @@ chatty_mm_account_finalize (GObject *object)
   g_clear_object (&self->chat_list);
   g_clear_object (&self->device_list);
   g_clear_object (&self->chatty_eds);
+  g_clear_object (&self->mmsd_struct);
 
   G_OBJECT_CLASS (chatty_mm_account_parent_class)->finalize (object);
 }
@@ -851,6 +858,7 @@ chatty_mm_account_init (ChattyMmAccount *self)
 {
   self->chat_list = g_list_store_new (CHATTY_TYPE_MM_CHAT);
   self->device_list = g_list_store_new (CHATTY_TYPE_MM_DEVICE);
+  self->mmsd_struct = chatty_mmsd_new(self);
   self->pending_sms = g_hash_table_new_full (g_direct_hash, g_direct_equal,
                                              NULL, g_object_unref);
 }
