@@ -51,7 +51,7 @@ chatty_mm_device_finalize (GObject *object)
   ChattyMmDevice *self = (ChattyMmDevice *)object;
 
   g_clear_signal_handler (&self->modem_state_id,
-                          mm_object_get_modem (self->mm_object));
+                          mm_object_peek_modem (self->mm_object));
   g_clear_object (&self->mm_object);
 
   G_OBJECT_CLASS (chatty_mm_device_parent_class)->finalize (object);
@@ -561,7 +561,7 @@ mm_object_added_cb (ChattyMmAccount *self,
 
   device = chatty_mm_device_new ();
   device->mm_object = g_object_ref (MM_OBJECT (object));
-  device->modem_state_id = g_signal_connect_swapped (mm_object_get_modem (device->mm_object),
+  device->modem_state_id = g_signal_connect_swapped (mm_object_peek_modem (device->mm_object),
                                                      "notify::state",
                                                      G_CALLBACK (mm_account_modem_state_changed),
                                                      self);
@@ -786,7 +786,7 @@ chatty_mm_account_get_status (ChattyAccount *account)
     MMModem *modem;
 
     device = g_list_model_get_item (devices, i);
-    modem = mm_object_get_modem (device->mm_object);
+    modem = mm_object_peek_modem (device->mm_object);
 
     if (modem && mm_modem_get_state (modem) >= MM_MODEM_STATE_ENABLED) {
       self->status = CHATTY_CONNECTED;
