@@ -9,6 +9,7 @@
         <property name="visible">True</property>
         <property name="expand">True</property>
         <property name="orientation">vertical</property>
+
         <child>
           <object class="GtkOverlay">
             <property name="visible">True</property>
@@ -39,6 +40,22 @@
                     </child>
                   </object>
                 </child>
+              </object>
+            </child>
+            <child type="overlay">
+              <object class="GtkRevealer" id="attachment_revealer">
+                <property name="visible">true</property>
+                <property name="reveal-child">False</property>
+                <property name="halign">fill</property>
+                <property name="valign">end</property>
+                <signal name="notify::reveal-child" handler="chat_view_attachment_revealer_notify_cb" swapped="yes"/>
+
+                <child>
+                  <object class="ChattyAttachmentsView" id="attachment_view">
+                    <property name="visible">true</property>
+                  </object>
+                </child>
+
               </object>
             </child>
 

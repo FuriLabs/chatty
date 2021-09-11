@@ -24,6 +24,7 @@
 #include "users/chatty-contact.h"
 #include "users/chatty-pp-buddy.h"
 #include "chatty-message-row.h"
+#include "chatty-attachments-view.h"
 #include "chatty-chat-view.h"
 
 struct _ChattyChatView
@@ -40,6 +41,8 @@ struct _ChattyChatView
   GtkWidget  *chatty_message_list;
   GtkWidget  *input_frame;
   GtkWidget  *scrolled_window;
+  GtkWidget  *attachment_revealer;
+  GtkWidget  *attachment_view;
   GtkWidget  *message_input;
   GtkWidget  *send_file_button;
   GtkWidget  *encrypt_icon;
@@ -261,6 +264,18 @@ chat_view_edge_overshot_cb (ChattyChatView  *self,
     chatty_chat_load_past_messages (self->chat, -1);
 }
 
+static void
+chat_view_attachment_revealer_notify_cb (ChattyChatView *self)
+{
+  gboolean has_files, has_text;
+
+  g_assert (CHATTY_IS_CHAT_VIEW (self));
+
+  has_files = gtk_revealer_get_reveal_child (GTK_REVEALER (self->attachment_revealer));
+  has_text = gtk_text_buffer_get_char_count (self->message_input_buffer) > 0;
+
+  gtk_widget_set_visible (self->send_message_button, has_files || has_text);
+}
 
 static void
 chat_account_status_changed_cb (ChattyChatView *self)
@@ -384,6 +399,39 @@ chat_view_input_focus_out_cb (ChattyChatView *self)
 }
 
 static void
+chat_view_show_file_chooser (ChattyChatView *self)
+{
+  GtkWindow *window;
+  GtkWidget *dialog;
+  int response;
+
+  g_assert (CHATTY_IS_CHAT_VIEW (self));
+
+  window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
+  dialog = gtk_file_chooser_dialog_new (_("Select File..."),
+                                        window,
+                                        GTK_FILE_CHOOSER_ACTION_OPEN,
+                                        _("Cancel"), GTK_RESPONSE_CANCEL,
+                                        _("Open"), GTK_RESPONSE_ACCEPT,
+                                        NULL);
+
+  response = gtk_dialog_run (GTK_DIALOG (dialog));
+
+  if (response == GTK_RESPONSE_ACCEPT) {
+    g_autofree char *filename = NULL;
+
+    filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+    chatty_attachments_view_add_file (CHATTY_ATTACHMENTS_VIEW (self->attachment_view), filename);
+    gtk_revealer_set_reveal_child (GTK_REVEALER (self->attachment_revealer), TRUE);
+
+    /* Currently multiple files are allowed only for MMS chats */
+    gtk_widget_set_sensitive (self->send_file_button, CHATTY_IS_MM_CHAT (self->chat));
+  }
+
+  gtk_widget_destroy (dialog);
+}
+
+static void
 chat_view_send_file_button_clicked_cb (ChattyChatView *self,
                                        GtkButton      *button)
 {
@@ -391,7 +439,9 @@ chat_view_send_file_button_clicked_cb (ChattyChatView *self,
   g_assert (GTK_IS_BUTTON (button));
   g_return_if_fail (chatty_chat_has_file_upload (self->chat));
 
-  if (CHATTY_IS_MA_CHAT (self->chat)) {
+  if (CHATTY_IS_MM_CHAT (self->chat)) {
+    chat_view_show_file_chooser (self);
+  } if (CHATTY_IS_MA_CHAT (self->chat)) {
     /* TODO */
 
   } else if (CHATTY_IS_PP_CHAT (self->chat)) {
@@ -667,6 +717,8 @@ chatty_chat_view_class_init (ChattyChatViewClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, typing_indicator);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, input_frame);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, scrolled_window);
+  gtk_widget_class_bind_template_child (widget_class, ChattyChatView, attachment_revealer);
+  gtk_widget_class_bind_template_child (widget_class, ChattyChatView, attachment_view);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, message_input);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, send_file_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, encrypt_icon);
@@ -677,6 +729,7 @@ chatty_chat_view_class_init (ChattyChatViewClass *klass)
 
   gtk_widget_class_bind_template_callback (widget_class, chat_view_scroll_down_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, chat_view_edge_overshot_cb);
+  gtk_widget_class_bind_template_callback (widget_class, chat_view_attachment_revealer_notify_cb);
   gtk_widget_class_bind_template_callback (widget_class, chat_view_typing_indicator_draw_cb);
   gtk_widget_class_bind_template_callback (widget_class, chat_view_input_focus_in_cb);
   gtk_widget_class_bind_template_callback (widget_class, chat_view_input_focus_out_cb);
@@ -686,6 +739,8 @@ chatty_chat_view_class_init (ChattyChatViewClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, chat_view_message_input_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, list_page_size_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, chat_view_adjustment_value_changed_cb);
+
+  g_type_ensure (CHATTY_TYPE_ATTACHMENTS_VIEW);
 }
 
 static void
@@ -759,6 +814,7 @@ chatty_chat_view_set_chat (ChattyChatView *self,
     return;
   }
 
+  chatty_attachments_view_reset (CHATTY_ATTACHMENTS_VIEW (self->attachment_view));
   messages = chatty_chat_get_messages (chat);
   account = chatty_chat_get_account (chat);
 
