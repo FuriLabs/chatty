@@ -438,7 +438,7 @@ chatty_new_chat_add_account_to_list (ChattyNewChatDialog *self,
                    CHATTY_PROTOCOL_THREEPL))
     return;
 
-  if (chatty_account_get_status (account) == CHATTY_DISCONNECTED &&
+  if (chatty_account_get_status (account) <= CHATTY_DISCONNECTED &&
       !CHATTY_IS_MM_ACCOUNT (account))
     return;
 
