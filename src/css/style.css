@@ -156,3 +156,9 @@ row:selected .unread-badge {
 popover.no-padding {
   padding: 0px;
 }
+
+button.delete-button {
+  padding: 0px;
+  min-height: 27px;
+  min-width: 27px;
+}

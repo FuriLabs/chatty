@@ -34,6 +34,7 @@ libsrc = [
   'users/chatty-pp-account.c',
   'chatty-selectable-row.c',
   'chatty-fp-row.c',
+  'chatty-file-item.c',
   'chatty-list-row.c',
   'chatty-chat-view.c',
   'chatty-message-row.c',
