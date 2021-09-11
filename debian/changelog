@@ -1,3 +1,32 @@
+chatty (0.4.0) byzantium; urgency=medium
+
+  * mm-chat: Fix a memory leak
+  * tests: Add mm-account test
+  * new-chat-dialog: List SMS account to add contacts
+  * new-chat-dialog: Improve 'Add in contacts' workflow
+  * window: Don't open next chat on deleting one when folded
+  * mm-chat: Send messages in the order they are added
+  * mm-chat: Add API to update db thread members
+  * mm-account: Refresh chat when modem is ready
+  * message-row: Ellipsize author label
+  * chat-view: Don't hide footers in outgoing SMS
+  * mm-account: Save failed to send messages on polkit errors
+  * mm-chat: Move update eds contact to a function
+  * mm-chat: Update eds contact on refresh
+  * window: Update chat view buttons on deleting chat
+  * chat-view: Fix view with no chat in non-folded mode
+  * enums: Add CHATTY_UNKNOWN
+  * mm-account: Update status based on modem state
+  * test: Fix memory leaks in history
+  * chat-view: Use the right sized arrays
+  * mm-account: Fix memory leaks
+  * account: Fix bounds of status property
+  * new-muc-dialog: Don't list accounts with unknown status
+  * new-chat-dialog: Don't list accounts with unknown status
+  * pp-account: Don't try disconnecting if account has an unknown status
+
+ -- Mohammed Sadiq <sadiq@sadiqpk.org>  Sat, 11 Sep 2021 15:25:36 +0530
+
 chatty (0.4.0~beta3) byzantium; urgency=high
 
   [ Yuri Chornoivan ]
