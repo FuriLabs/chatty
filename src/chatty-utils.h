@@ -4,9 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-
-#ifndef __UTILS_H_INCLUDE__
-#define __UTILS_H_INCLUDE__
+#pragma once
 
 #include <stdio.h>
 #include <gio/gio.h>
@@ -52,5 +50,3 @@ GdkPixbuf           *chatty_utils_get_pixbuf_from_data  (const guchar *buf,
                                                          gsize         count);
 ChattyMsgDirection   chatty_utils_direction_from_flag   (PurpleMessageFlags flag);
 void                 chatty_file_info_free              (ChattyFileInfo     *file_info);
-
-#endif
