@@ -15,7 +15,6 @@
 #include <purple.h>
 
 #include "chatty-account.h"
-#include "chatty-contact.h"
 #include "chatty-item.h"
 #include "chatty-enums.h"
 
@@ -30,9 +29,6 @@ ChattyAccount   *chatty_pp_buddy_get_account   (ChattyPpBuddy *self);
 void             chatty_pp_buddy_set_chat      (ChattyPpBuddy      *self,
                                                 PurpleConversation *conv);
 PurpleBuddy     *chatty_pp_buddy_get_buddy      (ChattyPpBuddy *self);
-ChattyContact   *chatty_pp_buddy_get_contact   (ChattyPpBuddy *self);
-void             chatty_pp_buddy_set_contact   (ChattyPpBuddy *self,
-                                                ChattyContact *contact);
 ChattyUserFlag   chatty_pp_buddy_get_flags     (ChattyPpBuddy *self);
 
 G_END_DECLS

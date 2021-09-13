@@ -41,7 +41,6 @@ struct _ChattyPpBuddy
   char              *name;
   PurpleAccount     *pp_account;
   PurpleBuddy       *pp_buddy;
-  ChattyContact     *contact;
   PurpleConversation *conv;
 
   PurpleConvChatBuddy *chat_buddy;
@@ -186,9 +185,6 @@ chatty_pp_buddy_get_name (ChattyItem *item)
 
   g_assert (CHATTY_IS_PP_BUDDY (self));
 
-  if (self->contact)
-    return chatty_item_get_name (CHATTY_ITEM (self->contact));
-
   if (self->chat_buddy) {
     const char *name;
 
@@ -239,9 +235,6 @@ chatty_pp_buddy_get_username (ChattyItem *item)
   const char *name;
 
   g_assert (CHATTY_IS_PP_BUDDY (self));
-
-  if (self->contact)
-    return chatty_item_get_username (CHATTY_ITEM (self->contact));
 
   if (self->chat_buddy && self->chat_buddy->name)
     return self->chat_buddy->name;
@@ -537,27 +530,6 @@ chatty_pp_buddy_get_buddy (ChattyPpBuddy *self)
 
   return self->pp_buddy;
 }
-
-ChattyContact *
-chatty_pp_buddy_get_contact (ChattyPpBuddy *self)
-{
-  g_return_val_if_fail (CHATTY_IS_PP_BUDDY (self), NULL);
-
-  return self->contact;
-}
-
-
-void
-chatty_pp_buddy_set_contact (ChattyPpBuddy *self,
-                             ChattyContact *contact)
-{
-  g_return_if_fail (CHATTY_IS_PP_BUDDY (self));
-  g_return_if_fail (!contact || CHATTY_IS_CONTACT (contact));
-
-  if (g_set_object (&self->contact, contact))
-    g_object_notify (G_OBJECT (self), "name");
-}
-
 
 ChattyUserFlag
 chatty_pp_buddy_get_flags (ChattyPpBuddy *self)
