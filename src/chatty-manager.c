@@ -212,43 +212,7 @@ manager_mm_set_eds (gpointer user_data)
 static void
 manager_eds_is_ready (ChattyManager *self)
 {
-  GListModel *accounts, *model;
-  ChattyContact *contact;
-  const char *id;
-  ChattyProtocol protocol;
-  guint n_accounts, n_buddies;
-
   g_assert (CHATTY_IS_MANAGER (self));
-
-  accounts = chatty_manager_get_accounts (self);
-  n_accounts = g_list_model_get_n_items (accounts);
-
-  /* TODO: Optimize */
-  for (guint i = 0; i < n_accounts; i++) {
-    g_autoptr(ChattyAccount) account = NULL;
-
-    account  = g_list_model_get_item (accounts, i);
-    protocol = chatty_item_get_protocols (CHATTY_ITEM (account));
-
-    if (protocol != CHATTY_PROTOCOL_MMS_SMS)
-      continue;
-
-    model = chatty_account_get_buddies (account);
-    n_buddies = g_list_model_get_n_items (model);
-    for (guint j = 0; j < n_buddies; j++) {
-      g_autoptr(ChattyPpBuddy) buddy = NULL;
-
-      buddy = g_list_model_get_item (model, j);
-      id = chatty_item_get_username (CHATTY_ITEM (buddy));
-
-      if (chatty_pp_buddy_get_contact (buddy))
-        continue;
-
-      contact = chatty_eds_find_by_number (self->chatty_eds, id);
-
-      chatty_pp_buddy_set_contact (buddy, contact);
-    }
-  }
 
   /* Set eds after some timeout so that most contacts are loaded */
   g_timeout_add (200, manager_mm_set_eds, g_object_ref (self));
@@ -985,10 +949,8 @@ manager_buddy_added_cb (PurpleBuddy   *pp_buddy,
   PurpleConversation *conv;
   ChattyPpAccount *account;
   ChattyPpBuddy *buddy;
-  ChattyContact *contact;
   PurpleAccount *pp_account;
   GListModel *model;
-  const char *id;
 
   g_assert (CHATTY_IS_MANAGER (self));
 
@@ -1004,10 +966,6 @@ manager_buddy_added_cb (PurpleBuddy   *pp_buddy,
 
   if (!buddy)
     buddy = chatty_pp_account_add_purple_buddy (account, pp_buddy);
-
-  id = chatty_item_get_username (CHATTY_ITEM (buddy));
-  contact = chatty_eds_find_by_number (self->chatty_eds, id);
-  chatty_pp_buddy_set_contact (buddy, contact);
 
   conv = purple_find_conversation_with_account (PURPLE_CONV_TYPE_IM,
                                                 pp_buddy->name,
