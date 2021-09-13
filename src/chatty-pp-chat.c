@@ -1159,31 +1159,6 @@ chatty_pp_chat_set_purple_conv (ChattyPpChat       *self,
     chatty_pp_chat_set_purple_buddy (self, PURPLE_BUDDY (node));
 }
 
-ChattyProtocol
-chatty_pp_chat_get_protocol (ChattyPpChat *self)
-{
-  ChattyPpAccount *account;
-  PurpleAccount *pp_account;
-
-  g_return_val_if_fail (CHATTY_IS_PP_CHAT (self), CHATTY_PROTOCOL_NONE);
-
-  if (self->account)
-    pp_account = self->account;
-  else if (self->conv)
-    pp_account = self->conv->account;
-  else if (self->pp_chat)
-    pp_account = self->pp_chat->account;
-  else
-    return CHATTY_PROTOCOL_NONE;
-
-  account = chatty_pp_account_get_object (pp_account);
-
-  if (account)
-    return chatty_item_get_protocols (CHATTY_ITEM (account));
-
-  return CHATTY_PROTOCOL_NONE;
-}
-
 PurpleChat *
 chatty_pp_chat_get_purple_chat (ChattyPpChat *self)
 {
@@ -1378,42 +1353,6 @@ chatty_pp_chat_match_purple_conv (ChattyPpChat       *self,
   return FALSE;
 }
 
-ChattyMessage *
-chatty_pp_chat_find_message_with_id (ChattyPpChat *self,
-                                     const char   *id)
-{
-  guint n_items;
-
-  g_return_val_if_fail (CHATTY_IS_PP_CHAT (self), NULL);
-  g_return_val_if_fail (id, NULL);
-
-  n_items = g_list_model_get_n_items (G_LIST_MODEL (self->message_store));
-
-  if (n_items == 0)
-    return NULL;
-
-  /* Search from end, the item is more likely to be at the end */
-  for (guint i = n_items; i > 0; i--) {
-    g_autoptr(ChattyMessage) message = NULL;
-    const char *message_id;
-
-    message = g_list_model_get_item (G_LIST_MODEL (self->message_store), i - 1);
-    message_id = chatty_message_get_id (message);
-
-    /*
-     * Once we have a message with no id, all preceding items shall likely
-     * have loaded from database, and thus no id, so don’t bother searching.
-     */
-    if (!message_id)
-      break;
-
-    if (g_str_equal (id, message_id))
-      return message;
-  }
-
-  return NULL;
-}
-
 void
 chatty_pp_chat_append_message (ChattyPpChat  *self,
                                ChattyMessage *message)
@@ -1422,17 +1361,6 @@ chatty_pp_chat_append_message (ChattyPpChat  *self,
   g_return_if_fail (CHATTY_IS_MESSAGE (message));
 
   g_list_store_append (self->message_store, message);
-  g_signal_emit_by_name (self, "changed", 0);
-}
-
-void
-chatty_pp_chat_prepend_message (ChattyPpChat  *self,
-                                ChattyMessage *message)
-{
-  g_return_if_fail (CHATTY_IS_PP_CHAT (self));
-  g_return_if_fail (CHATTY_IS_MESSAGE (message));
-
-  g_list_store_insert (self->message_store, 0, message);
   g_signal_emit_by_name (self, "changed", 0);
 }
 
@@ -1517,16 +1445,6 @@ chatty_pp_chat_remove_user (ChattyPpChat *self,
 
   if (buddy)
     g_list_store_remove (self->chat_users, index);
-}
-
-ChattyPpBuddy *
-chatty_pp_chat_find_user (ChattyPpChat *self,
-                          const char   *username)
-{
-  g_return_val_if_fail (CHATTY_IS_PP_CHAT (self), NULL);
-  g_return_val_if_fail (username, NULL);
-
-  return chat_find_user (self, username, NULL);
 }
 
 /**
