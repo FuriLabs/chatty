@@ -304,7 +304,6 @@ ma_account_details_add_entry (ChattyMaAccountDetails *self,
   row = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
   context = gtk_widget_get_style_context (row);
   gtk_style_context_add_class (context, "linked");
-  /* gtk_style_context_add_class (context, "dim-label"); */
 
   entry = gtk_entry_new ();
   gtk_widget_show (entry);
@@ -331,10 +330,6 @@ ma_account_details_add_entry (ChattyMaAccountDetails *self,
 
   g_signal_connect_swapped (button, "clicked",
                             (GCallback)ma_details_delete_3pid_clicked, self);
-  /* context = gtk_widget_get_style_context (button); */
-  /* gtk_style_context_add_class (context, "dim-label"); */
-  /* gtk_stack_add_named (GTK_STACK (stack), button, "delete-button"); */
-
 
   gtk_widget_show_all (row);
   gtk_container_add (GTK_CONTAINER (box), row);
