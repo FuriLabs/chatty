@@ -38,7 +38,6 @@ ChattyPpChat       *chatty_pp_chat_new_purple_conv        (PurpleConversation *c
                                                            gboolean            supports_encryption);
 void                chatty_pp_chat_set_purple_conv        (ChattyPpChat       *self,
                                                            PurpleConversation *conv);
-ChattyProtocol      chatty_pp_chat_get_protocol           (ChattyPpChat       *self);
 PurpleChat         *chatty_pp_chat_get_purple_chat        (ChattyPpChat       *self);
 PurpleBuddy        *chatty_pp_chat_get_purple_buddy       (ChattyPpChat       *self);
 PurpleConversation *chatty_pp_chat_get_purple_conv        (ChattyPpChat       *self);
@@ -49,11 +48,7 @@ gboolean            chatty_pp_chat_run_command            (ChattyPpChat       *s
                                                            const char         *command);
 gboolean            chatty_pp_chat_match_purple_conv      (ChattyPpChat       *self,
                                                            PurpleConversation *conv);
-ChattyMessage      *chatty_pp_chat_find_message_with_id   (ChattyPpChat       *self,
-                                                           const char         *id);
 void                chatty_pp_chat_append_message         (ChattyPpChat       *self,
-                                                           ChattyMessage      *message);
-void                chatty_pp_chat_prepend_message        (ChattyPpChat       *self,
                                                            ChattyMessage      *message);
 void                chatty_pp_chat_prepend_messages       (ChattyPpChat       *self,
                                                            GPtrArray          *messages);
@@ -61,8 +56,6 @@ void                chatty_pp_chat_add_users              (ChattyPpChat       *s
                                                            GList              *users);
 void                chatty_pp_chat_remove_user            (ChattyPpChat       *self,
                                                            const char         *user);
-ChattyPpBuddy      *chatty_pp_chat_find_user              (ChattyPpChat       *self,
-                                                           const char         *username);
 char               *chatty_pp_chat_get_buddy_name         (ChattyPpChat       *chat,
                                                            const char         *who);
 void                chatty_pp_chat_emit_user_changed      (ChattyPpChat       *self,
