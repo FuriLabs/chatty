@@ -109,10 +109,6 @@ dialog_filter_item_cb (ChattyItem          *item,
 {
   g_return_val_if_fail (CHATTY_IS_NEW_CHAT_DIALOG (self), FALSE);
 
-  if (CHATTY_IS_PP_BUDDY (item))
-    if (chatty_pp_buddy_get_contact (CHATTY_PP_BUDDY (item)))
-      return FALSE;
-
   if (CHATTY_IS_PP_BUDDY (item)) {
     ChattyAccount *account;
 
