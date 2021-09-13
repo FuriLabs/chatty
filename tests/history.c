@@ -24,6 +24,7 @@
 #include "matrix/chatty-ma-chat.h"
 
 #include "purple-init.h"
+#include "users/chatty-contact.h"
 #include "chatty-settings.h"
 #include "chatty-utils.h"
 #include "chatty-history.h"
