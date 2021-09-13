@@ -988,18 +988,6 @@ chatty_pp_account_get_active_status (ChattyPpAccount *self)
   return purple_account_get_active_status (self->pp_account);
 }
 
-const char *
-chatty_pp_account_get_protocol_id (ChattyPpAccount *self)
-{
-  const char *id;
-
-  g_return_val_if_fail (CHATTY_IS_PP_ACCOUNT (self), "");
-
-  id = purple_account_get_protocol_id (self->pp_account);
-
-  return id ? id : "";
-}
-
 void
 chatty_pp_account_set_features (ChattyPpAccount *self,
                                 ChattyPpAccountFeatures features)
