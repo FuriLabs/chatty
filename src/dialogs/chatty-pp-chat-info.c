@@ -44,8 +44,9 @@ struct _ChattyPpChatInfo
   ChattyChat    *chat;
 
   GtkWidget     *room_name;
-  GtkWidget     *avatar_button;
   GtkWidget     *avatar;
+  GtkWidget     *edit_avatar_button;
+  GtkWidget     *delete_avatar_button;
   GtkWidget     *room_topic_view;
   GtkTextBuffer *topic_buffer;
 
@@ -67,12 +68,13 @@ struct _ChattyPpChatInfo
   GtkWidget     *avatar_chooser_dialog;
 
   GBinding      *binding;
+  gulong         avatar_changed_id;
 };
 
 G_DEFINE_TYPE (ChattyPpChatInfo, chatty_pp_chat_info, HDY_TYPE_PREFERENCES_PAGE)
 
 static void
-pp_info_avatar_button_clicked_cb (ChattyPpChatInfo *self)
+pp_info_edit_avatar_button_clicked_cb (ChattyPpChatInfo *self)
 {
   GtkDialog *dialog;
   g_autofree char *file_name = NULL;
@@ -90,6 +92,35 @@ pp_info_avatar_button_clicked_cb (ChattyPpChatInfo *self)
   if (file_name)
     chatty_item_set_avatar_async (CHATTY_ITEM (self->chat), file_name,
                                   NULL, NULL, NULL);
+}
+
+static void
+pp_info_delete_avatar_button_clicked_cb (ChattyPpChatInfo *self)
+{
+  g_assert (CHATTY_IS_PP_CHAT_INFO (self));
+
+  chatty_item_set_avatar_async (CHATTY_ITEM (self->chat),
+                                NULL, NULL, NULL, NULL);
+}
+
+static void
+pp_info_avatar_changed_cb (ChattyPpChatInfo *self)
+{
+  GdkPixbuf *avatar;
+  ChattyProtocol protocol;
+  gboolean can_change;
+
+  g_assert (CHATTY_IS_PP_CHAT_INFO (self));
+
+  if (!self->chat)
+    return;
+
+  protocol = chatty_item_get_protocols (CHATTY_ITEM (self->chat));
+  avatar = chatty_item_get_avatar (CHATTY_ITEM (self->chat));
+  can_change = protocol & (CHATTY_PROTOCOL_XMPP | CHATTY_PROTOCOL_TELEGRAM);
+  can_change = can_change && chatty_chat_is_im (CHATTY_CHAT (self->chat));
+  gtk_widget_set_visible (self->delete_avatar_button, can_change && !!avatar);
+  gtk_widget_set_visible (self->edit_avatar_button, can_change);
 }
 
 static void
@@ -247,7 +278,6 @@ chatty_pp_chat_info_update (ChattyPpChatInfo *self)
 
   if (protocol == CHATTY_PROTOCOL_MMS_SMS ||
       protocol == CHATTY_PROTOCOL_MMS) {
-    gtk_widget_set_sensitive (self->avatar_button, FALSE);
     gtk_label_set_text (GTK_LABEL (self->user_id_title), _("Phone Number:"));
   } else if (protocol == CHATTY_PROTOCOL_XMPP) {
     gtk_label_set_text (GTK_LABEL (self->user_id_title), _("XMPP ID:"));
@@ -256,7 +286,6 @@ chatty_pp_chat_info_update (ChattyPpChatInfo *self)
                         chatty_pp_chat_get_status (CHATTY_PP_CHAT (self->chat)));
   } else if (protocol == CHATTY_PROTOCOL_MATRIX) {
     gtk_label_set_text (GTK_LABEL (self->user_id_title), _("Matrix ID:"));
-    gtk_widget_set_sensitive (self->avatar_button, FALSE);
     gtk_widget_hide (self->user_id_label);
   } else if (protocol == CHATTY_PROTOCOL_TELEGRAM) {
     gtk_label_set_text (GTK_LABEL (self->user_id_title), _("Telegram ID:"));
@@ -271,7 +300,6 @@ chatty_pp_chat_info_update (ChattyPpChatInfo *self)
   if (chatty_chat_is_im (self->chat)) {
     gtk_widget_show (self->user_id_label);
     gtk_widget_show (self->name_label);
-    gtk_widget_show (self->avatar_button);
   } else {
     gtk_widget_hide (self->user_id_label);
     gtk_widget_hide (self->name_label);
@@ -346,8 +374,9 @@ chatty_pp_chat_info_class_init (ChattyPpChatInfoClass *klass)
                                                "ui/chatty-pp-chat-info.ui");
 
   gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, room_name);
-  gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, avatar_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, avatar);
+  gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, edit_avatar_button);
+  gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, delete_avatar_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, room_topic_view);
 
   gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, name_label);
@@ -368,7 +397,8 @@ chatty_pp_chat_info_class_init (ChattyPpChatInfoClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, avatar_chooser_dialog);
   gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, topic_buffer);
 
-  gtk_widget_class_bind_template_callback (widget_class, pp_info_avatar_button_clicked_cb);
+  gtk_widget_class_bind_template_callback (widget_class, pp_info_edit_avatar_button_clicked_cb);
+  gtk_widget_class_bind_template_callback (widget_class, pp_info_delete_avatar_button_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, pp_chat_info_edit_topic_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, pp_chat_info_notification_switch_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, pp_chat_info_show_status_switch_changed_cb);
@@ -416,14 +446,20 @@ chatty_pp_chat_info_set_item (ChattyPpChatInfo *self,
   g_return_if_fail (CHATTY_IS_PP_CHAT_INFO (self));
   g_return_if_fail (!chat || CHATTY_IS_CHAT (chat));
 
-  if (self->chat)
+  if (self->chat && self->chat != chat) {
+    g_clear_signal_handler (&self->avatar_changed_id, self->chat);
     g_signal_handlers_disconnect_by_func (self->chat,
                                           pp_chat_info_encrypt_changed_cb,
                                           self);
+  }
 
   if (!g_set_object (&self->chat, chat))
     return;
 
+  self->avatar_changed_id = g_signal_connect_object (self->chat, "avatar-changed",
+                                                     G_CALLBACK (pp_info_avatar_changed_cb),
+                                                     self, G_CONNECT_SWAPPED);
+  pp_info_avatar_changed_cb (self);
   gtk_text_buffer_set_text (self->topic_buffer, "", 0);
   gtk_widget_hide (self->key_list);
 
