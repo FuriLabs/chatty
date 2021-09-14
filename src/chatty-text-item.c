@@ -13,6 +13,7 @@
 
 #include "chatty-avatar.h"
 #include "chatty-utils.h"
+#include "chatty-settings.h"
 #include "chatty-text-item.h"
 
 
@@ -102,14 +103,24 @@ text_item_update_quotes (ChattyTextItem *self)
 static void
 text_item_update_message (ChattyTextItem *self)
 {
-  g_autofree char *message = NULL;
+  ChattySettings *settings;
+  const char *text;
 
   g_assert (CHATTY_IS_TEXT_ITEM (self));
   g_assert (self->message);
 
-  message = chatty_msg_list_escape_message (self, chatty_message_get_text (self->message));
+  settings = chatty_settings_get_default ();
+  text = chatty_message_get_text (self->message);
 
-  gtk_label_set_markup (GTK_LABEL (self->content_label), message);
+  if (self->protocol == CHATTY_PROTOCOL_MATRIX &&
+      chatty_settings_get_experimental_features (settings)) {
+    gtk_label_set_text (GTK_LABEL (self->content_label), text);
+  } else {
+    g_autofree char *message = NULL;
+
+    message = chatty_msg_list_escape_message (self, text);
+    gtk_label_set_markup (GTK_LABEL (self->content_label), message);
+  }
 
   text_item_update_quotes (self);
 }
