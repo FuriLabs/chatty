@@ -659,9 +659,9 @@ chatty_pp_account_set_avatar_async (ChattyItem          *item,
   g_autoptr(GTask) task = NULL;
   g_autoptr(GError) error = NULL;
   const char *protocol_id;
-  guchar *data;
+  guchar *data = NULL;
   int width, height;
-  size_t len;
+  size_t len = 0;
 
   g_assert (CHATTY_IS_PP_ACCOUNT (self));
   g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
@@ -673,9 +673,11 @@ chatty_pp_account_set_avatar_async (ChattyItem          *item,
   prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO (purple_find_prpl (protocol_id));
   width  = prpl_info->icon_spec.max_width;
   height = prpl_info->icon_spec.max_height;
-  data   = chatty_icon_get_data_from_image (file_name, width, height, &len, &error);
 
-  if (!data)
+  if (file_name)
+    data = chatty_icon_get_data_from_image (file_name, width, height, &len, &error);
+
+  if (error)
     {
       g_task_return_error (task, g_steal_pointer (&error));
       g_debug ("Error: %s", error->message);
