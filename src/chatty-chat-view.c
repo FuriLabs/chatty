@@ -52,7 +52,6 @@ struct _ChattyChatView
   GBinding   *history_binding;
 
   ChattyChat *chat;
-  char       *last_message_id;  /* id of last sent message, currently used only for SMS */
   guint       refresh_typing_id;
   gboolean    first_scroll_to_bottom;
 };
