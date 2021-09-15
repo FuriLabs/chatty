@@ -43,7 +43,6 @@ struct _ChattyMaChatInfo
 
   ChattyChat    *chat;
 
-  GtkWidget     *avatar_button;
   GtkWidget     *avatar;
 
   GtkWidget     *name_label;
@@ -76,7 +75,6 @@ chatty_ma_chat_info_class_init (ChattyMaChatInfoClass *klass)
                                                "/sm/puri/Chatty/"
                                                "ui/chatty-ma-chat-info.ui");
 
-  gtk_widget_class_bind_template_child (widget_class, ChattyMaChatInfo, avatar_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyMaChatInfo, avatar);
 
   gtk_widget_class_bind_template_child (widget_class, ChattyMaChatInfo, name_label);
