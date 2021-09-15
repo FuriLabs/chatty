@@ -870,7 +870,7 @@ chatty_ma_account_get_avatar (ChattyItem *item)
     return self->avatar;
 
   if (!self->avatar_file || !self->avatar_file->url ||
-      self->avatar_is_loading)
+      !*self->avatar_file->url || self->avatar_is_loading)
     return NULL;
 
   self->avatar_is_loading = TRUE;
@@ -914,6 +914,13 @@ ma_account_set_user_avatar_cb (GObject      *object,
     g_task_return_error (task, error);
   else
     g_task_return_boolean (task, TRUE);
+
+  if (!error) {
+    g_clear_pointer (&self->avatar_file, chatty_file_info_free);
+    g_clear_object (&self->avatar);
+    chatty_history_update_user (self->history_db, CHATTY_ACCOUNT (self));
+    g_signal_emit_by_name (self, "avatar-changed");
+  }
 }
 
 static void
