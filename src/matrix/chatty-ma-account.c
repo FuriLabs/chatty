@@ -916,6 +916,16 @@ ma_account_set_user_avatar_cb (GObject      *object,
     g_task_return_boolean (task, TRUE);
 
   if (!error) {
+    if (self->avatar_file && self->avatar_file->path) {
+      g_autoptr(GFile) file = NULL;
+      g_autofree char *path = NULL;
+
+      path = g_build_filename (g_get_user_cache_dir (), "chatty",
+                               self->avatar_file->path, NULL);
+      file = g_file_new_for_path (path);
+      g_file_delete (file, NULL, NULL);
+    }
+
     g_clear_pointer (&self->avatar_file, chatty_file_info_free);
     g_clear_object (&self->avatar);
     chatty_history_update_user (self->history_db, CHATTY_ACCOUNT (self));
