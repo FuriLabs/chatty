@@ -2500,13 +2500,8 @@ history_update_user (ChattyHistory *self,
   file_info = chatty_item_get_avatar_file (CHATTY_ITEM (account));
   file_id = add_file_info (self, file_info);
 
-  if (!file_id) {
-    g_task_return_boolean (task, TRUE);
-    return;
-  }
-
   sqlite3_prepare_v2 (self->db,
-                      "UPDATE users SET avatar_id=?1 "
+                      "UPDATE users SET avatar_id=iif(?1 = 0, null, ?1) "
                       "WHERE users.id=?2",
                       -1, &stmt, NULL);
   history_bind_int (stmt, 1, file_id, "binding when setting avatar");
