@@ -91,14 +91,15 @@ update_delete_avatar_button_state (ChattyMaAccountDetails *self)
 
   status = chatty_account_get_status (CHATTY_ACCOUNT (self->account));
   can_delete = has_avatar && !self->is_deleting_avatar && status == CHATTY_CONNECTED;
-  gtk_widget_set_sensitive (self->delete_avatar_button, can_delete);
-
   button_stack = GTK_STACK (self->delete_button_stack);
 
   if (self->is_deleting_avatar)
     gtk_stack_set_visible_child (button_stack, self->delete_avatar_spinner);
   else
     gtk_stack_set_visible_child (button_stack, self->delete_button_image);
+
+  gtk_widget_set_visible (self->delete_avatar_button, can_delete || self->is_deleting_avatar);
+  gtk_widget_set_sensitive (self->delete_avatar_button, can_delete);
 
   g_object_set (self->delete_avatar_spinner, "active", self->is_deleting_avatar, NULL);
 }
