@@ -158,7 +158,8 @@ chatty_new_muc_populate_account_list (ChattyNewMucDialog *self)
 
     account = chatty_pp_account_get_object (l->data);
 
-    chatty_new_muc_add_account_to_list (self, account);
+    if (account)
+      chatty_new_muc_add_account_to_list (self, account);
   }
 
   row = HDY_ACTION_ROW(gtk_list_box_get_row_at_index (GTK_LIST_BOX(self->accounts_list), 0));
