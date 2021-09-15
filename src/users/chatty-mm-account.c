@@ -552,6 +552,7 @@ mm_object_added_cb (ChattyMmAccount *self,
   MessagingData *data;
   MMSim *sim;
   guint n_chats;
+  ChattySettings *settings;
 
   g_assert (CHATTY_IS_MM_ACCOUNT (self));
   g_assert (MM_IS_OBJECT (object));
@@ -562,10 +563,14 @@ mm_object_added_cb (ChattyMmAccount *self,
   if (!mm_object_peek_modem_messaging (MM_OBJECT (object)))
     return;
 
+  settings = chatty_settings_get_default ();
   device = chatty_mm_device_new ();
   device->mm_object = g_object_ref (MM_OBJECT (object));
-  /* Load chatty_mmsd */
-  chatty_mmsd_load (self->mmsd_struct, device->mm_object);
+  if (chatty_settings_get_experimental_features (settings)) {
+    /* Load chatty_mmsd */
+    chatty_mmsd_load (self->mmsd_struct, device->mm_object);
+  }
+
   device->modem_state_id = g_signal_connect_swapped (mm_object_peek_modem (device->mm_object),
                                                      "notify::state",
                                                      G_CALLBACK (mm_account_modem_state_changed),
@@ -582,10 +587,8 @@ mm_object_added_cb (ChattyMmAccount *self,
                                NULL, NULL);
 
   if (sim) {
-    ChattySettings *settings;
     const char *code;
 
-    settings = chatty_settings_get_default ();
     code = get_country_iso_for_mcc (mm_sim_get_imsi (sim));
 
     if (code && *code)
@@ -620,9 +623,12 @@ mm_object_removed_cb (ChattyMmAccount *self,
                       GDBusObject     *object)
 {
   gsize n_items;
+  ChattySettings *settings;
 
   g_assert (CHATTY_IS_MM_ACCOUNT (self));
   g_assert (MM_IS_OBJECT (object));
+
+  settings = chatty_settings_get_default ();
 
   n_items = g_list_model_get_n_items (G_LIST_MODEL (self->device_list));
 
@@ -632,7 +638,9 @@ mm_object_removed_cb (ChattyMmAccount *self,
     device = g_list_model_get_item (G_LIST_MODEL (self->device_list), i);
     if (g_strcmp0 (mm_object_get_path (MM_OBJECT (object)),
                    mm_object_get_path (device->mm_object)) == 0) {
-      chatty_mmsd_close (self->mmsd_struct, device->mm_object);
+        if (chatty_settings_get_experimental_features (settings)) {
+          chatty_mmsd_close (self->mmsd_struct, device->mm_object);
+        }
       self->status = CHATTY_UNKNOWN;
       g_list_store_remove (self->device_list, i);
       break;
