@@ -305,8 +305,15 @@ load_icon (gpointer user_data)
     if (icon)
       data = purple_buddy_icon_get_data (icon, &len);
 
-    if (!data)
+    if (!data) {
+      self->avatar_data = NULL;
+      if (self->avatar) {
+        g_clear_object (&self->avatar);
+        g_signal_emit_by_name (self, "avatar-changed");
+      }
+
       return G_SOURCE_REMOVE;
+    }
   }
 
   if (!data) {
