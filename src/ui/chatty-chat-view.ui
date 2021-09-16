@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="ChattyChatView" parent="GtkBox">
+  <template class="ChattyChatView" parent="GtkStack">
     <property name="visible">True</property>
     <property name="expand">True</property>
-    <property name="orientation">vertical</property>
 
+    <child>
+      <object class="GtkBox" id="message_view">
+        <property name="visible">True</property>
+        <property name="expand">True</property>
+        <property name="orientation">vertical</property>
     <child>
       <object class="GtkOverlay">
         <property name="visible">True</property>
@@ -212,6 +216,17 @@
         </child>
       </object> <!-- ./HdyClamp -->
     </child>
+      </object>
+    </child>
+
+    <child>
+      <object class="HdyStatusPage" id="empty_view">
+        <property name="visible">True</property>
+        <property name="icon-name">sm.puri.Chatty-symbolic</property>
+        <property name="title" translatable="yes">No chat selected</property>
+      </object>
+    </child>
+
   </template>
 
   <object class="GtkTextBuffer" id="message_input_buffer">
