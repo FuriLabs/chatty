@@ -41,9 +41,7 @@ struct _ChattyChatView
   GtkWidget  *send_file_button;
   GtkWidget  *encrypt_icon;
   GtkWidget  *send_message_button;
-  GtkWidget  *empty_view;
-  GtkWidget  *empty_label0;
-  GtkWidget  *empty_label1;
+  GtkWidget  *no_message_status;
   GtkWidget  *scroll_down_button;
   GtkTextBuffer *message_input_buffer;
   GtkAdjustment *vadjustment;
@@ -198,20 +196,23 @@ chatty_chat_view_update (ChattyChatView *self)
   gtk_widget_set_visible (self->send_file_button, chatty_chat_has_file_upload (self->chat));
 
   if (protocol == CHATTY_PROTOCOL_MMS_SMS) {
-    gtk_label_set_label (GTK_LABEL (self->empty_label0),
-                         _("This is an SMS conversation"));
-    gtk_label_set_label (GTK_LABEL (self->empty_label1),
-                         _("Your messages are not encrypted, "
-                           "and carrier rates may apply"));
+    hdy_status_page_set_title (HDY_STATUS_PAGE (self->no_message_status),
+                               _("This is an SMS conversation"));
+    hdy_status_page_set_description (HDY_STATUS_PAGE (self->no_message_status),
+                                     _("Your messages are not encrypted, "
+                                       "and carrier rates may apply"));
   } else if (chatty_chat_is_im (self->chat)) {
-    gtk_label_set_label (GTK_LABEL (self->empty_label0),
-                         _("This is an IM conversation"));
+    hdy_status_page_set_title (HDY_STATUS_PAGE (self->no_message_status),
+                               _("This is an IM conversation"));
+    hdy_status_page_set_description (HDY_STATUS_PAGE (self->no_message_status),
+                                     _("Your messages are not encrypted, "
+                                       "and carrier rates may apply"));
     if (chatty_chat_get_encryption (self->chat) == CHATTY_ENCRYPTION_ENABLED)
-      gtk_label_set_label (GTK_LABEL (self->empty_label1),
-                           _("Your messages are encrypted"));
+      hdy_status_page_set_description (HDY_STATUS_PAGE (self->no_message_status),
+                                       _("Your messages are encrypted"));
     else
-      gtk_label_set_label (GTK_LABEL (self->empty_label1),
-                           _("Your messages are not encrypted"));
+      hdy_status_page_set_description (HDY_STATUS_PAGE (self->no_message_status),
+                                       _("Your messages are not encrypted"));
   }
 
   context = gtk_widget_get_style_context (self->send_message_button);
@@ -330,6 +331,24 @@ chat_buddy_typing_changed_cb (ChattyChatView *self)
     gtk_revealer_set_reveal_child (GTK_REVEALER (self->typing_revealer), FALSE);
     g_clear_handle_id (&self->refresh_typing_id, g_source_remove);
   }
+}
+
+static void
+chat_view_message_items_changed (ChattyChatView *self)
+{
+  GListModel *messages;
+
+  g_assert (CHATTY_IS_CHAT_VIEW (self));
+
+  if (!self->chat)
+    return;
+
+  messages = chatty_chat_get_messages (self->chat);
+
+  if (g_list_model_get_n_items (messages) == 0)
+    gtk_widget_set_valign (self->message_list, GTK_ALIGN_FILL);
+  else
+    gtk_widget_set_valign (self->message_list, GTK_ALIGN_END);
 }
 
 static gboolean
@@ -646,9 +665,7 @@ chatty_chat_view_class_init (ChattyChatViewClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, send_file_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, encrypt_icon);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, send_message_button);
-  gtk_widget_class_bind_template_child (widget_class, ChattyChatView, empty_view);
-  gtk_widget_class_bind_template_child (widget_class, ChattyChatView, empty_label0);
-  gtk_widget_class_bind_template_child (widget_class, ChattyChatView, empty_label1);
+  gtk_widget_class_bind_template_child (widget_class, ChattyChatView, no_message_status);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, message_input_buffer);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, vadjustment);
 
@@ -672,7 +689,7 @@ chatty_chat_view_init (ChattyChatView *self)
   GtkAdjustment *vadjustment;
 
   gtk_widget_init_template (GTK_WIDGET (self));
-  gtk_list_box_set_placeholder(GTK_LIST_BOX (self->message_list), self->empty_view);
+  gtk_list_box_set_placeholder (GTK_LIST_BOX (self->message_list), self->no_message_status);
 
   vadjustment = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (self->scrolled_window));
   g_signal_connect_after (G_OBJECT (vadjustment), "notify::upper",
@@ -711,13 +728,15 @@ chatty_chat_view_set_chat (ChattyChatView *self,
     g_signal_handlers_disconnect_by_func (self->chat,
                                           chat_buddy_typing_changed_cb,
                                           self);
+    g_signal_handlers_disconnect_by_func (chatty_chat_get_messages (self->chat),
+                                          chat_view_message_items_changed,
+                                          self);
 
     g_clear_object (&self->history_binding);
   }
 
   gtk_widget_set_sensitive (self->message_input, !!chat);
-  gtk_widget_set_visible (self->empty_view, !!chat);
-  gtk_widget_set_visible (self->empty_view, !!chat);
+  gtk_widget_set_visible (self->no_message_status, !!chat);
 
   if (!g_set_object (&self->chat, chat))
     return;
@@ -730,6 +749,11 @@ chatty_chat_view_set_chat (ChattyChatView *self,
 
   messages = chatty_chat_get_messages (chat);
   account = chatty_chat_get_account (chat);
+
+  g_signal_connect_swapped (messages, "items-changed",
+                            G_CALLBACK (chat_view_message_items_changed),
+                            self);
+  chat_view_message_items_changed (self);
 
   if (g_list_model_get_n_items (messages) <= 3)
     chatty_chat_load_past_messages (chat, -1);

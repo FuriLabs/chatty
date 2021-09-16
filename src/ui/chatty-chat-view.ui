@@ -224,26 +224,9 @@
   </object>
 
   <!-- Disclaimer label -->
-  <object class="GtkBox" id="empty_view">
-    <property name="visible">True</property>
-    <property name="orientation">vertical</property>
-    <child>
-      <object class="GtkLabel" id="empty_label0">
-        <property name="visible">True</property>
-        <property name="wrap">True</property>
-        <property name="justify">center</property>
-        <style>
-          <class name="label_disclaim"/>
-        </style>
-      </object>
-    </child>
-    <child>
-      <object class="GtkLabel" id="empty_label1">
-        <property name="visible">True</property>
-        <property name="wrap">True</property>
-        <property name="justify">center</property>
-      </object>
-    </child>
+  <object class="HdyStatusPage" id="no_message_status">
+    <property name="visible">False</property>
+    <property name="icon-name">sm.puri.Chatty-symbolic</property>
   </object>
 
 </interface>
