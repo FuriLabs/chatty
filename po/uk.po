@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://source.puri.sm/Librem5/chatty/issues\n"
-"POT-Creation-Date: 2021-09-16 03:25+0000\n"
-"PO-Revision-Date: 2021-09-16 17:42+0300\n"
+"POT-Creation-Date: 2021-09-16 15:24+0000\n"
+"PO-Revision-Date: 2021-09-17 14:45+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -351,7 +351,7 @@ msgstr "Зберегти файл…"
 msgid "Open File..."
 msgstr "Відкрити файл…"
 
-#: src/chatty-purple-request.c:191 src/chatty-window.c:471
+#: src/chatty-purple-request.c:191 src/chatty-window.c:506
 #: src/dialogs/chatty-ma-account-details.c:119
 #: src/dialogs/chatty-pp-account-details.c:91
 #: src/ui/chatty-dialog-join-muc.ui:16 src/ui/chatty-info-dialog.ui:44
@@ -396,11 +396,11 @@ msgstr "%a %I∶%M %p"
 msgid "%Y-%m-%d"
 msgstr "%d-%m-%Y"
 
-#: src/chatty-window.c:174
+#: src/chatty-window.c:183
 msgid "Select a contact with the <b>“+”</b> button in the titlebar."
 msgstr "Виберіть контакт за допомогою кнопки <b>«+»</b> на смужці заголовка."
 
-#: src/chatty-window.c:178
+#: src/chatty-window.c:187
 msgid ""
 "For <b>Instant Messaging</b> add or activate an account in <i>\"preferences"
 "\"</i>."
@@ -408,40 +408,62 @@ msgstr ""
 "Для спілкування <b>обміном повідомленнями</b> додайте або активуйте "
 "обліковий запис у <i>параметрах програми</i>."
 
-#: src/chatty-window.c:456
+#: src/chatty-window.c:491
 msgid "Delete chat with"
 msgstr "Вилучити спілкування з"
 
-#: src/chatty-window.c:457
+#: src/chatty-window.c:492
 msgid "This deletes the conversation history"
 msgstr "У результаті буде вилучено журнал спілкування"
 
-#: src/chatty-window.c:459
+#: src/chatty-window.c:494
 msgid "Disconnect group chat"
 msgstr "Від'єднатися від групового спілкування"
 
-#: src/chatty-window.c:460
+#: src/chatty-window.c:495
 msgid "This removes chat from chats list"
 msgstr "У результаті спілкування буде вилучено зі списку спілкувань"
 
-#: src/chatty-window.c:473
+#: src/chatty-window.c:508
 msgid "Delete"
 msgstr "Вилучити"
 
-#: src/chatty-window.c:548 src/chatty-window.c:571
+#: src/chatty-window.c:583 src/chatty-window.c:606
 #, c-format
 msgid "Error saving contact: %s"
 msgstr "Помилка під час спроби зберегти контакт: %s"
 
-#: src/chatty-window.c:660
+#: src/chatty-window.c:695
 msgid "An SMS and XMPP messaging client"
 msgstr "Клієнт обміну повідомленнями SMS і XMPP"
 
-#: src/chatty-window.c:667
+#: src/chatty-window.c:702
 msgid "translator-credits"
 msgstr "Юрій Чорноіван <yurchor@ukr.net>, 2020"
 
-#: src/chatty-window.c:887
+#: src/chatty-window.c:966
+#| msgid "Protocol"
+msgid "Any Protocol"
+msgstr "Будь-який протокол"
+
+#: src/chatty-window.c:973 src/ui/chatty-settings-dialog.ui:396
+msgid "Matrix"
+msgstr "Matrix"
+
+#: src/chatty-window.c:978
+#| msgid "SMS/MMS Settings"
+msgid "SMS/MMS"
+msgstr "SMS/MMS"
+
+#: src/chatty-window.c:983 src/ui/chatty-settings-dialog.ui:382
+msgid "XMPP"
+msgstr "XMPP"
+
+#: src/chatty-window.c:989 src/ui/chatty-settings-dialog.ui:411
+msgid "Telegram"
+msgstr "Telegram"
+
+#: src/chatty-window.c:1025
 #, c-format
 msgid "“%s” is not a valid phone number"
 msgstr "«%s» не є коректним номером телефону"
@@ -661,12 +683,10 @@ msgid "Matrix ID"
 msgstr "Ід. Matrix"
 
 #: src/ui/chatty-pp-chat-info.ui:43 src/ui/chatty-pp-account-details.ui:60
-#| msgid "Set Avatar"
 msgid "Change Avatar"
 msgstr "Змінити аватар"
 
 #: src/ui/chatty-pp-chat-info.ui:69 src/ui/chatty-pp-account-details.ui:34
-#| msgid "Set Avatar"
 msgid "Delete Avatar"
 msgstr "Вилучити аватар"
 
@@ -867,18 +887,6 @@ msgstr "Звіти щодо доставлення"
 msgid "Request delivery reports for SMS messages"
 msgstr "Надсилати запит щодо звіту про доставлення SMS"
 
-#: src/ui/chatty-settings-dialog.ui:382
-msgid "XMPP"
-msgstr "XMPP"
-
-#: src/ui/chatty-settings-dialog.ui:396
-msgid "Matrix"
-msgstr "Matrix"
-
-#: src/ui/chatty-settings-dialog.ui:411
-msgid "Telegram"
-msgstr "Telegram"
-
 #: src/ui/chatty-settings-dialog.ui:520
 msgid "Matrix Home Server"
 msgstr "Домашній сервер Matrix"
@@ -911,11 +919,11 @@ msgstr "Полишити спілкування"
 msgid "Delete Chat"
 msgstr "Вилучити спілкування"
 
-#: src/ui/chatty-window.ui:338
+#: src/ui/chatty-window.ui:339
 msgid "Call"
 msgstr "Виклик"
 
-#: src/ui/chatty-window.ui:402
+#: src/ui/chatty-window.ui:419
 msgid "Start Chatting"
 msgstr "Почати спілкування"
 
