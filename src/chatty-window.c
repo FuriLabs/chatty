@@ -118,7 +118,6 @@ window_set_item (ChattyWindow *self,
 static void
 chatty_window_update_sidebar_view (ChattyWindow *self)
 {
-  GtkWidget *current_view;
   GListModel *model;
   gboolean has_child;
 
@@ -127,13 +126,7 @@ chatty_window_update_sidebar_view (ChattyWindow *self)
   model = G_LIST_MODEL (self->filter_model);
   has_child = g_list_model_get_n_items (model) > 0;
 
-  if (has_child)
-    current_view = self->chat_list_view;
-  else
-    current_view = self->empty_view;
-
   gtk_widget_set_sensitive (self->search_button, has_child);
-  gtk_stack_set_visible_child (GTK_STACK (self->sidebar_stack), current_view);
 
   if (!has_child)
     hdy_search_bar_set_search_mode (HDY_SEARCH_BAR (self->chats_search_bar), FALSE);
