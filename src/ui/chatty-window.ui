@@ -416,8 +416,6 @@
                       <object class="HdyStatusPage" id="empty_view">
                         <property name="visible">True</property>
                         <property name="expand">True</property>
-                        <property name="title" translatable="yes">Start Chatting</property>
-                        <property name="icon-name">sm.puri.Chatty-symbolic</property>
                       </object>
                     </child>
 

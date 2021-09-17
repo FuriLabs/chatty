@@ -140,6 +140,45 @@ chatty_window_update_sidebar_view (ChattyWindow *self)
 }
 
 static void
+window_filter_changed_cb (ChattyWindow *self)
+{
+  GtkWidget *current_view;
+  HdyStatusPage *page;
+  GListModel *model;
+  gboolean search_active, has_child;
+
+  g_assert (CHATTY_IS_WINDOW (self));
+
+  search_active = self->protocol_filter != CHATTY_PROTOCOL_ANY;
+  search_active |= self->chat_needle && *self->chat_needle;
+
+  model = G_LIST_MODEL (self->filter_model);
+  has_child = g_list_model_get_n_items (model) > 0;
+
+  if (has_child)
+    current_view = self->chat_list_view;
+  else
+    current_view = self->empty_view;
+
+  gtk_stack_set_visible_child (GTK_STACK (self->sidebar_stack), current_view);
+
+  if (has_child)
+    return;
+
+  page = HDY_STATUS_PAGE (self->empty_view);
+
+  if (search_active) {
+    hdy_status_page_set_icon_name (page, "system-search-symbolic");
+    hdy_status_page_set_title (page, _("No Search Results"));
+    hdy_status_page_set_description (page, _("Try different search"));
+  } else {
+    hdy_status_page_set_icon_name (page, "sm.puri.Chatty-symbolic");
+    hdy_status_page_set_title (page, _("Start Chatting"));
+    hdy_status_page_set_description (page, NULL);
+  }
+}
+
+static void
 window_chat_changed_cb (ChattyWindow *self)
 {
   GListModel *model;
@@ -836,10 +875,15 @@ chatty_window_constructed (GObject *object)
                            (GtkListBoxCreateWidgetFunc)chatty_list_row_new,
                            g_object_ref(self), g_object_unref);
 
+  g_signal_connect_object (self->filter_model,
+                           "items-changed",
+                           G_CALLBACK (window_filter_changed_cb), self,
+                           G_CONNECT_SWAPPED);
   g_signal_connect_object (gtk_filter_list_model_get_model (self->filter_model),
                            "items-changed",
                            G_CALLBACK (window_chat_changed_cb), self,
                            G_CONNECT_SWAPPED);
+  window_filter_changed_cb (self);
   window_chat_changed_cb (self);
 
   G_OBJECT_CLASS (chatty_window_parent_class)->constructed (object);
