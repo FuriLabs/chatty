@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty master\n"
 "Report-Msgid-Bugs-To: https://source.puri.sm/Librem5/chatty/issues\n"
-"POT-Creation-Date: 2021-09-16 03:25+0000\n"
-"PO-Revision-Date: 2021-09-16 10:02+0200\n"
+"POT-Creation-Date: 2021-09-17 15:25+0000\n"
+"PO-Revision-Date: 2021-09-17 21:23+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -202,23 +202,23 @@ msgstr "Inloggning misslyckades"
 msgid "Please check ID and password"
 msgstr "Kontrollera ID och lösenord"
 
-#: src/chatty-chat-view.c:202
+#: src/chatty-chat-view.c:203
 msgid "This is an SMS conversation"
 msgstr "Detta är en SMS-konversation"
 
-#: src/chatty-chat-view.c:204
+#: src/chatty-chat-view.c:205 src/chatty-chat-view.c:211
 msgid "Your messages are not encrypted, and carrier rates may apply"
 msgstr "Dina meddelanden krypteras inte, och operatörskostnader kan tillkomma"
 
-#: src/chatty-chat-view.c:208
+#: src/chatty-chat-view.c:209
 msgid "This is an IM conversation"
 msgstr "Detta är en snabbmeddelandekonversation"
 
-#: src/chatty-chat-view.c:211
+#: src/chatty-chat-view.c:215
 msgid "Your messages are encrypted"
 msgstr "Dina meddelanden krypteras"
 
-#: src/chatty-chat-view.c:214
+#: src/chatty-chat-view.c:218
 msgid "Your messages are not encrypted"
 msgstr "Dina meddelanden krypteras inte"
 
@@ -345,7 +345,7 @@ msgstr "Spara fil…"
 msgid "Open File..."
 msgstr "Öppna fil…"
 
-#: src/chatty-purple-request.c:191 src/chatty-window.c:471
+#: src/chatty-purple-request.c:191 src/chatty-window.c:538
 #: src/dialogs/chatty-ma-account-details.c:119
 #: src/dialogs/chatty-pp-account-details.c:91
 #: src/ui/chatty-dialog-join-muc.ui:16 src/ui/chatty-info-dialog.ui:44
@@ -390,11 +390,23 @@ msgstr "%A %I∶%M %p"
 msgid "%Y-%m-%d"
 msgstr "%Y-%m-%d"
 
-#: src/chatty-window.c:174
+#: src/chatty-window.c:165 src/ui/chatty-dialog-new-chat.ui:220
+msgid "No Search Results"
+msgstr "Inga sökresultat"
+
+#: src/chatty-window.c:166
+msgid "Try different search"
+msgstr "Försök med en annan sökning"
+
+#: src/chatty-window.c:169
+msgid "Start Chatting"
+msgstr "Börja chatta"
+
+#: src/chatty-window.c:215
 msgid "Select a contact with the <b>“+”</b> button in the titlebar."
 msgstr "Välj en kontakt med <b>”+”</b>-knappen i namnlisten."
 
-#: src/chatty-window.c:178
+#: src/chatty-window.c:219
 msgid ""
 "For <b>Instant Messaging</b> add or activate an account in <i>\"preferences"
 "\"</i>."
@@ -402,40 +414,60 @@ msgstr ""
 "För <b>Snabbmeddelanden</b>, lägg till eller aktivera ett konto i "
 "<i>”inställningar”</i>."
 
-#: src/chatty-window.c:456
+#: src/chatty-window.c:523
 msgid "Delete chat with"
 msgstr "Ta bort chatt med"
 
-#: src/chatty-window.c:457
+#: src/chatty-window.c:524
 msgid "This deletes the conversation history"
 msgstr "Det här tar bort meddelandehistoriken"
 
-#: src/chatty-window.c:459
+#: src/chatty-window.c:526
 msgid "Disconnect group chat"
 msgstr "Lämna gruppchatt"
 
-#: src/chatty-window.c:460
+#: src/chatty-window.c:527
 msgid "This removes chat from chats list"
 msgstr "Detta tar bort chatten från chattlistan"
 
-#: src/chatty-window.c:473
+#: src/chatty-window.c:540
 msgid "Delete"
 msgstr "Ta bort"
 
-#: src/chatty-window.c:548 src/chatty-window.c:571
+#: src/chatty-window.c:615 src/chatty-window.c:638
 #, c-format
 msgid "Error saving contact: %s"
 msgstr "Fel vid sparande av kontakt: %s"
 
-#: src/chatty-window.c:660
+#: src/chatty-window.c:727
 msgid "An SMS and XMPP messaging client"
 msgstr "En SMS- och XMPP-meddelandeklient"
 
-#: src/chatty-window.c:667
+#: src/chatty-window.c:734
 msgid "translator-credits"
 msgstr "Anders Jonsson <anders.jonsson@norsjovallen.se>"
 
-#: src/chatty-window.c:887
+#: src/chatty-window.c:1003
+msgid "Any Protocol"
+msgstr "Alla protokoll"
+
+#: src/chatty-window.c:1010 src/ui/chatty-settings-dialog.ui:396
+msgid "Matrix"
+msgstr "Matrix"
+
+#: src/chatty-window.c:1015
+msgid "SMS/MMS"
+msgstr "SMS/MMS"
+
+#: src/chatty-window.c:1020 src/ui/chatty-settings-dialog.ui:382
+msgid "XMPP"
+msgstr "XMPP"
+
+#: src/chatty-window.c:1026 src/ui/chatty-settings-dialog.ui:411
+msgid "Telegram"
+msgstr "Telegram"
+
+#: src/chatty-window.c:1062
 #, c-format
 msgid "“%s” is not a valid phone number"
 msgstr "”%s” är inte ett giltigt telefonnummer"
@@ -596,7 +628,7 @@ msgstr "Ny gruppchatt"
 msgid "Join Chat"
 msgstr "Gå in i chatt"
 
-#: src/ui/chatty-dialog-join-muc.ui:80 src/ui/chatty-dialog-new-chat.ui:306
+#: src/ui/chatty-dialog-join-muc.ui:80 src/ui/chatty-dialog-new-chat.ui:275
 msgid "Select chat account"
 msgstr "Välj chattkonto"
 
@@ -620,21 +652,17 @@ msgstr "Lägg till kontakt"
 msgid "Send To:"
 msgstr "Skicka till:"
 
-#: src/ui/chatty-dialog-new-chat.ui:234
-msgid "No Search Results"
-msgstr "Inga sökresultat"
-
-#: src/ui/chatty-dialog-new-chat.ui:247
+#: src/ui/chatty-dialog-new-chat.ui:221
 msgid "Try different search, or type a valid number to create new chat"
 msgstr ""
 "Försök med en annan sökning, eller skriv in ett giltigt nummer för att skapa "
 "en ny chatt"
 
-#: src/ui/chatty-dialog-new-chat.ui:353
+#: src/ui/chatty-dialog-new-chat.ui:322
 msgid "Name (optional)"
 msgstr "Namn (valfritt)"
 
-#: src/ui/chatty-dialog-new-chat.ui:393
+#: src/ui/chatty-dialog-new-chat.ui:362
 msgid "Add to Contacts"
 msgstr "Lägg till i Kontakter"
 
@@ -855,18 +883,6 @@ msgstr "Leveransrapporter"
 msgid "Request delivery reports for SMS messages"
 msgstr "Begär leveransrapporter för SMS-meddelanden"
 
-#: src/ui/chatty-settings-dialog.ui:382
-msgid "XMPP"
-msgstr "XMPP"
-
-#: src/ui/chatty-settings-dialog.ui:396
-msgid "Matrix"
-msgstr "Matrix"
-
-#: src/ui/chatty-settings-dialog.ui:411
-msgid "Telegram"
-msgstr "Telegram"
-
 #: src/ui/chatty-settings-dialog.ui:520
 msgid "Matrix Home Server"
 msgstr "Matrix-hemserver"
@@ -899,13 +915,9 @@ msgstr "Lämna chatt"
 msgid "Delete Chat"
 msgstr "Ta bort chatt"
 
-#: src/ui/chatty-window.ui:338
+#: src/ui/chatty-window.ui:339
 msgid "Call"
 msgstr "Ring"
-
-#: src/ui/chatty-window.ui:402
-msgid "Start Chatting"
-msgstr "Börja chatta"
 
 #: src/users/chatty-contact.c:311
 msgid "Mobile: "
