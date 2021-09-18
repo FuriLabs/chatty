@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://source.puri.sm/Librem5/chatty/issues\n"
-"POT-Creation-Date: 2021-09-16 15:24+0000\n"
-"PO-Revision-Date: 2021-09-17 14:45+0300\n"
+"POT-Creation-Date: 2021-09-17 15:25+0000\n"
+"PO-Revision-Date: 2021-09-17 21:25+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -206,25 +206,25 @@ msgstr "Невдала спроба увійти"
 msgid "Please check ID and password"
 msgstr "Будь ласка, перевірте ідентифікатор і пароль"
 
-#: src/chatty-chat-view.c:202
+#: src/chatty-chat-view.c:203
 msgid "This is an SMS conversation"
 msgstr "Це обмін повідомленнями SMS"
 
-#: src/chatty-chat-view.c:204
+#: src/chatty-chat-view.c:205 src/chatty-chat-view.c:211
 msgid "Your messages are not encrypted, and carrier rates may apply"
 msgstr ""
 "Ваші повідомлення не зашифровано, оператор може стягувати сплату за "
 "передавання даних"
 
-#: src/chatty-chat-view.c:208
+#: src/chatty-chat-view.c:209
 msgid "This is an IM conversation"
 msgstr "Це спілкування у службі обміну повідомленнями"
 
-#: src/chatty-chat-view.c:211
+#: src/chatty-chat-view.c:215
 msgid "Your messages are encrypted"
 msgstr "Ваші повідомлення зашифровано"
 
-#: src/chatty-chat-view.c:214
+#: src/chatty-chat-view.c:218
 msgid "Your messages are not encrypted"
 msgstr "Ваші повідомлення не зашифровано"
 
@@ -351,7 +351,7 @@ msgstr "Зберегти файл…"
 msgid "Open File..."
 msgstr "Відкрити файл…"
 
-#: src/chatty-purple-request.c:191 src/chatty-window.c:506
+#: src/chatty-purple-request.c:191 src/chatty-window.c:538
 #: src/dialogs/chatty-ma-account-details.c:119
 #: src/dialogs/chatty-pp-account-details.c:91
 #: src/ui/chatty-dialog-join-muc.ui:16 src/ui/chatty-info-dialog.ui:44
@@ -396,11 +396,24 @@ msgstr "%a %I∶%M %p"
 msgid "%Y-%m-%d"
 msgstr "%d-%m-%Y"
 
-#: src/chatty-window.c:183
+#: src/chatty-window.c:165 src/ui/chatty-dialog-new-chat.ui:220
+msgid "No Search Results"
+msgstr "Нічого не знайдено"
+
+#: src/chatty-window.c:166
+msgid "Try different search"
+msgstr ""
+"Спробувати інші критерії пошуку"
+
+#: src/chatty-window.c:169
+msgid "Start Chatting"
+msgstr "Почати спілкування"
+
+#: src/chatty-window.c:215
 msgid "Select a contact with the <b>“+”</b> button in the titlebar."
 msgstr "Виберіть контакт за допомогою кнопки <b>«+»</b> на смужці заголовка."
 
-#: src/chatty-window.c:187
+#: src/chatty-window.c:219
 msgid ""
 "For <b>Instant Messaging</b> add or activate an account in <i>\"preferences"
 "\"</i>."
@@ -408,62 +421,60 @@ msgstr ""
 "Для спілкування <b>обміном повідомленнями</b> додайте або активуйте "
 "обліковий запис у <i>параметрах програми</i>."
 
-#: src/chatty-window.c:491
+#: src/chatty-window.c:523
 msgid "Delete chat with"
 msgstr "Вилучити спілкування з"
 
-#: src/chatty-window.c:492
+#: src/chatty-window.c:524
 msgid "This deletes the conversation history"
 msgstr "У результаті буде вилучено журнал спілкування"
 
-#: src/chatty-window.c:494
+#: src/chatty-window.c:526
 msgid "Disconnect group chat"
 msgstr "Від'єднатися від групового спілкування"
 
-#: src/chatty-window.c:495
+#: src/chatty-window.c:527
 msgid "This removes chat from chats list"
 msgstr "У результаті спілкування буде вилучено зі списку спілкувань"
 
-#: src/chatty-window.c:508
+#: src/chatty-window.c:540
 msgid "Delete"
 msgstr "Вилучити"
 
-#: src/chatty-window.c:583 src/chatty-window.c:606
+#: src/chatty-window.c:615 src/chatty-window.c:638
 #, c-format
 msgid "Error saving contact: %s"
 msgstr "Помилка під час спроби зберегти контакт: %s"
 
-#: src/chatty-window.c:695
+#: src/chatty-window.c:727
 msgid "An SMS and XMPP messaging client"
 msgstr "Клієнт обміну повідомленнями SMS і XMPP"
 
-#: src/chatty-window.c:702
+#: src/chatty-window.c:734
 msgid "translator-credits"
 msgstr "Юрій Чорноіван <yurchor@ukr.net>, 2020"
 
-#: src/chatty-window.c:966
-#| msgid "Protocol"
+#: src/chatty-window.c:1003
 msgid "Any Protocol"
 msgstr "Будь-який протокол"
 
-#: src/chatty-window.c:973 src/ui/chatty-settings-dialog.ui:396
+#: src/chatty-window.c:1010 src/ui/chatty-settings-dialog.ui:396
 msgid "Matrix"
 msgstr "Matrix"
 
-#: src/chatty-window.c:978
-#| msgid "SMS/MMS Settings"
+#: src/chatty-window.c:1015
 msgid "SMS/MMS"
 msgstr "SMS/MMS"
 
-#: src/chatty-window.c:983 src/ui/chatty-settings-dialog.ui:382
+#: src/chatty-window.c:1020 src/ui/chatty-settings-dialog.ui:382
 msgid "XMPP"
 msgstr "XMPP"
 
-#: src/chatty-window.c:989 src/ui/chatty-settings-dialog.ui:411
+#: src/chatty-window.c:1026 src/ui/chatty-settings-dialog.ui:411
 msgid "Telegram"
 msgstr "Telegram"
 
-#: src/chatty-window.c:1025
+#: src/chatty-window.c:1062
 #, c-format
 msgid "“%s” is not a valid phone number"
 msgstr "«%s» не є коректним номером телефону"
@@ -628,7 +639,7 @@ msgstr "Нове групове спілкування"
 msgid "Join Chat"
 msgstr "Долучитися до спілкування"
 
-#: src/ui/chatty-dialog-join-muc.ui:80 src/ui/chatty-dialog-new-chat.ui:306
+#: src/ui/chatty-dialog-join-muc.ui:80 src/ui/chatty-dialog-new-chat.ui:275
 msgid "Select chat account"
 msgstr "Виберіть обліковий запис"
 
@@ -652,21 +663,17 @@ msgstr "Додати контакт"
 msgid "Send To:"
 msgstr "Надіслати:"
 
-#: src/ui/chatty-dialog-new-chat.ui:234
-msgid "No Search Results"
-msgstr "Нічого не знайдено"
-
-#: src/ui/chatty-dialog-new-chat.ui:247
+#: src/ui/chatty-dialog-new-chat.ui:221
 msgid "Try different search, or type a valid number to create new chat"
 msgstr ""
 "Спробуйте інший критерій пошуку або введіть коректне число, щоб розпочати "
 "нове спілкування"
 
-#: src/ui/chatty-dialog-new-chat.ui:353
+#: src/ui/chatty-dialog-new-chat.ui:322
 msgid "Name (optional)"
 msgstr "Назва (необов’язково):"
 
-#: src/ui/chatty-dialog-new-chat.ui:393
+#: src/ui/chatty-dialog-new-chat.ui:362
 msgid "Add to Contacts"
 msgstr "Додати до контактів"
 
@@ -922,10 +929,6 @@ msgstr "Вилучити спілкування"
 #: src/ui/chatty-window.ui:339
 msgid "Call"
 msgstr "Виклик"
-
-#: src/ui/chatty-window.ui:419
-msgid "Start Chatting"
-msgstr "Почати спілкування"
 
 #: src/users/chatty-contact.c:311
 msgid "Mobile: "
