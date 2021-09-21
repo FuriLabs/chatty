@@ -13,6 +13,8 @@
 #include "chatty-phone-utils.h"
 #include "chatty-utils.h"
 #include <libebook-contacts/libebook-contacts.h>
+#define GNOME_DESKTOP_USE_UNSTABLE_API
+#include <libgnome-desktop/gnome-desktop-thumbnail.h>
 #include <gdesktop-enums.h>
 
 #include "chatty-log.h"
@@ -476,4 +478,102 @@ chatty_file_info_free (ChattyFileInfo *file_info)
   g_free (file_info->path);
   g_free (file_info->mime_type);
   g_free (file_info);
+}
+
+static void
+utils_create_thumbnail (GTask        *task,
+                        gpointer      source_object,
+                        gpointer      task_data,
+                        GCancellable *cancellable)
+{
+  g_autoptr(GnomeDesktopThumbnailFactory) factory = NULL;
+  g_autoptr(GdkPixbuf) thumbnail = NULL;
+  g_autoptr(GFileInfo) file_info = NULL;
+  g_autoptr(GFile) file = NULL;
+  g_autofree char *uri = NULL;
+  const char *file_name = task_data;
+  const char *content_type;
+  GError *error = NULL;
+  gboolean thumbnail_valid, thumbnail_failed;
+  time_t mtime;
+
+  file = g_file_new_for_path (file_name);
+  file_info = g_file_query_info (file,
+                                 G_FILE_ATTRIBUTE_THUMBNAIL_IS_VALID ","
+                                 G_FILE_ATTRIBUTE_THUMBNAILING_FAILED ","
+                                 G_FILE_ATTRIBUTE_TIME_MODIFIED ","
+                                 G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE,
+                                 G_FILE_QUERY_INFO_NONE,
+                                 NULL, &error);
+  if (error) {
+    g_task_return_error (task, error);
+    return;
+  }
+
+  thumbnail_valid = g_file_info_get_attribute_boolean (file_info, G_FILE_ATTRIBUTE_THUMBNAIL_IS_VALID);
+  thumbnail_failed = g_file_info_get_attribute_boolean (file_info, G_FILE_ATTRIBUTE_THUMBNAILING_FAILED);
+
+  if (thumbnail_valid && thumbnail_failed) {
+    g_task_return_boolean (task, TRUE);
+    return;
+  }
+
+  uri = g_file_get_uri (file);
+  factory = gnome_desktop_thumbnail_factory_new (GNOME_DESKTOP_THUMBNAIL_SIZE_LARGE);
+  content_type = g_file_info_get_attribute_string (file_info, G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE);
+  mtime = g_file_info_get_attribute_uint64 (file_info, G_FILE_ATTRIBUTE_TIME_MODIFIED);
+
+  if (!gnome_desktop_thumbnail_factory_can_thumbnail (factory, uri, content_type, mtime)) {
+    g_task_return_boolean (task, FALSE);
+    return;
+  }
+
+  if (gnome_desktop_thumbnail_factory_has_valid_failed_thumbnail (factory, uri, mtime)) {
+    g_task_return_boolean (task, FALSE);
+    return;
+  }
+
+  if (!content_type) {
+    g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_INVALID_DATA,
+                             "NULL content type");
+    return;
+  }
+
+  thumbnail = gnome_desktop_thumbnail_factory_generate_thumbnail (factory, uri, content_type);
+
+  if (thumbnail) {
+    gnome_desktop_thumbnail_factory_save_thumbnail (factory, thumbnail, uri, mtime);
+  } else {
+    /* TODO: seems to fail always on Librem5/pinephone.  So fix it instead of
+     * creating a failed thumbnail */
+    /* gnome_desktop_thumbnail_factory_create_failed_thumbnail (factory, uri, mtime); */
+    g_warning ("Failed to create thumbnail for file: %s", uri);
+  }
+
+  g_task_return_boolean (task, TRUE);
+}
+
+void
+chatty_utils_create_thumbnail_async (const char          *file,
+                                     GAsyncReadyCallback  callback,
+                                     gpointer             user_data)
+{
+  g_autoptr(GTask) task = NULL;
+
+  g_return_if_fail (file && *file);
+  g_return_if_fail (callback);
+
+  task = g_task_new (NULL, NULL, callback, user_data);
+  g_task_set_task_data (task, g_strdup (file), g_free);
+
+  g_task_run_in_thread (task, utils_create_thumbnail);
+}
+
+gboolean
+chatty_utils_create_thumbnail_finish (GAsyncResult  *result,
+                                      GError       **error)
+{
+  g_return_val_if_fail (G_IS_TASK (result), FALSE);
+
+  return g_task_propagate_boolean (G_TASK (result), error);
 }

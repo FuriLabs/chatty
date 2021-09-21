@@ -116,6 +116,7 @@ chatty_deps = [
   libolm_dep,
   dependency('mm-glib', version: '>= 1.12.0'),
   dependency('gspell-1'),
+  dependency('gnome-desktop-3.0', version: '>= 3.0.0'),
   libebook_dep,
   libfeedback_dep,
   libm_dep,
