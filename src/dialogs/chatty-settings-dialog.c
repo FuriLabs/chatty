@@ -60,6 +60,8 @@ struct _ChattySettingsDialog
   GtkWidget      *add_button;
   GtkWidget      *matrix_spinner;
   GtkWidget      *save_button;
+  GtkWidget      *mms_cancel_button;
+  GtkWidget      *mms_save_button;
 
   GtkWidget      *main_stack;
   GtkWidget      *accounts_list_box;
@@ -81,6 +83,10 @@ struct _ChattySettingsDialog
   GtkWidget      *new_password_entry;
 
   GtkWidget      *delivery_reports_switch;
+  GtkWidget      *handle_smil_switch;
+  GtkWidget      *carrier_mmsc_entry;
+  GtkWidget      *mms_apn_entry;
+  GtkWidget      *mms_proxy_entry;
 
   GtkWidget      *send_receipts_switch;
   GtkWidget      *message_archive_switch;
@@ -100,6 +106,9 @@ struct _ChattySettingsDialog
   GtkWidget      *matrix_homeserver_spinner;
   GtkWidget      *matrix_cancel_button;
   GtkWidget      *matrix_error_label;
+
+  gboolean        sms_delivery_reports;
+  gboolean        smil_mms;
 
   ChattySettings *settings;
   ChattyAccount  *selected_account;
@@ -424,6 +433,11 @@ sms_mms_settings_row_activated_cb (ChattySettingsDialog *self)
 {
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
 
+  gtk_widget_show (self->mms_save_button);
+  gtk_widget_show (self->mms_cancel_button);
+  gtk_widget_hide (self->back_button);
+  self->sms_delivery_reports = gtk_switch_get_state (GTK_SWITCH (self->delivery_reports_switch));
+  self->smil_mms = gtk_switch_get_state (GTK_SWITCH (self->handle_smil_switch));
   gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "message-settings-view");
 }
 
@@ -647,6 +661,81 @@ chatty_settings_dialog_update_status (GtkListBoxRow *row)
   g_object_set (spinner,
                 "active", status == CHATTY_CONNECTING,
                 NULL);
+}
+
+static void
+mms_carrier_settings_apply_button_clicked_cb (ChattySettingsDialog *self)
+{
+  ChattySettings *settings;
+  const char *mmsc = NULL;
+  const char *carrier_mmsc = NULL;
+  const char *apn = NULL;
+  const char *carrier_apn = NULL;
+  const char *proxy = NULL;
+  const char *carrier_proxy = NULL;
+
+  g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
+
+  settings = chatty_settings_get_default ();
+  g_object_freeze_notify (G_OBJECT (settings));
+
+  carrier_mmsc = chatty_settings_get_mms_carrier_mmsc (settings);
+  carrier_proxy = chatty_settings_get_mms_carrier_proxy (settings);
+  carrier_apn = chatty_settings_get_mms_carrier_apn (settings);
+
+  mmsc = gtk_entry_get_text (GTK_ENTRY (self->carrier_mmsc_entry));
+  apn = gtk_entry_get_text (GTK_ENTRY (self->mms_apn_entry));
+  proxy = gtk_entry_get_text (GTK_ENTRY (self->mms_proxy_entry));
+
+  if (g_strcmp0 (mmsc, carrier_mmsc) != 0) {
+    chatty_settings_set_mms_carrier_mmsc (settings, mmsc);
+  }
+
+  if (g_strcmp0 (apn, carrier_apn) != 0) {
+    chatty_settings_set_mms_carrier_apn (settings, apn);
+  }
+
+  if (g_strcmp0 (proxy, carrier_proxy) != 0) {
+    chatty_settings_set_mms_carrier_proxy (settings, proxy);
+  }
+
+  g_object_thaw_notify (G_OBJECT (settings));
+
+  gtk_widget_hide (self->mms_cancel_button);
+  gtk_widget_hide (self->mms_save_button);
+  gtk_widget_show (self->back_button);
+  gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "main-settings");
+}
+
+static void
+mms_carrier_settings_cancel_button_clicked_cb (ChattySettingsDialog *self)
+{
+  ChattySettings *settings;
+  const char *proxy;
+  const char *apn;
+  const char *mmsc;
+
+  g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
+
+  settings = chatty_settings_get_default ();
+  proxy = chatty_settings_get_mms_carrier_proxy (settings);
+  apn = chatty_settings_get_mms_carrier_apn (settings);
+  mmsc = chatty_settings_get_mms_carrier_mmsc (settings);
+
+  gtk_entry_set_text (GTK_ENTRY (self->carrier_mmsc_entry), mmsc);
+  gtk_entry_set_text (GTK_ENTRY (self->mms_apn_entry), apn);
+  gtk_entry_set_text (GTK_ENTRY (self->mms_proxy_entry), proxy);
+
+  if (self->sms_delivery_reports != gtk_switch_get_state (GTK_SWITCH (self->delivery_reports_switch)))
+    gtk_switch_set_state (GTK_SWITCH (self->delivery_reports_switch), self->sms_delivery_reports);
+
+  if (self->smil_mms != gtk_switch_get_state (GTK_SWITCH (self->handle_smil_switch)))
+    gtk_switch_set_state (GTK_SWITCH (self->handle_smil_switch), self->smil_mms);
+
+  gtk_widget_hide (self->mms_cancel_button);
+  gtk_widget_hide (self->mms_save_button);
+  gtk_widget_show (self->back_button);
+  gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "main-settings");
 }
 
 static void
@@ -906,6 +995,10 @@ chatty_settings_dialog_constructed (GObject *object)
                           self->delivery_reports_switch, "active",
                           G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
 
+  g_object_bind_property (settings, "request-mmsd-smil",
+                          self->handle_smil_switch, "active",
+                          G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
+
   chatty_settings_dialog_populate_account_list (self);
 }
 
@@ -940,6 +1033,8 @@ chatty_settings_dialog_class_init (ChattySettingsDialogClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, add_button);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, matrix_spinner);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, save_button);
+  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, mms_cancel_button);
+  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, mms_save_button);
 
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, main_stack);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, accounts_list_box);
@@ -961,6 +1056,10 @@ chatty_settings_dialog_class_init (ChattySettingsDialogClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, new_password_entry);
 
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, delivery_reports_switch);
+  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, handle_smil_switch);
+  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, carrier_mmsc_entry);
+  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, mms_apn_entry);
+  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, mms_proxy_entry);
 
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, send_receipts_switch);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, message_archive_switch);
@@ -986,6 +1085,9 @@ chatty_settings_dialog_class_init (ChattySettingsDialogClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, settings_pp_details_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, settings_pp_details_delete_cb);
   gtk_widget_class_bind_template_callback (widget_class, sms_mms_settings_row_activated_cb);
+  gtk_widget_class_bind_template_callback (widget_class, mms_carrier_settings_cancel_button_clicked_cb);
+  gtk_widget_class_bind_template_callback (widget_class, mms_carrier_settings_apply_button_clicked_cb);
+
   gtk_widget_class_bind_template_callback (widget_class, account_list_row_activated_cb);
   gtk_widget_class_bind_template_callback (widget_class, chatty_settings_back_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, chatty_settings_cancel_clicked_cb);
@@ -1003,8 +1105,16 @@ static void
 chatty_settings_dialog_init (ChattySettingsDialog *self)
 {
   ChattyManager *manager;
+  const char *carrier_mmsc = NULL;
+  const char *carrier_apn = NULL;
+  const char *carrier_proxy = NULL;
+  ChattySettings *settings;
 
   manager = chatty_manager_get_default ();
+  settings = chatty_settings_get_default ();
+  carrier_mmsc = chatty_settings_get_mms_carrier_mmsc (settings);
+  carrier_apn = chatty_settings_get_mms_carrier_apn (settings);
+  carrier_proxy = chatty_settings_get_mms_carrier_proxy (settings);
 
   g_signal_connect_object (G_OBJECT (chatty_manager_get_accounts (manager)),
                            "items-changed",
@@ -1016,6 +1126,10 @@ chatty_settings_dialog_init (ChattySettingsDialog *self)
 
   gtk_widget_set_visible (self->message_carbons_row,
                           chatty_manager_has_carbons_plugin (manager));
+
+  gtk_entry_set_text (GTK_ENTRY (self->carrier_mmsc_entry), carrier_mmsc);
+  gtk_entry_set_text (GTK_ENTRY (self->mms_apn_entry), carrier_apn);
+  gtk_entry_set_text (GTK_ENTRY (self->mms_proxy_entry), carrier_proxy);
 }
 
 GtkWidget *
