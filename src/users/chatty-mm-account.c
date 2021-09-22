@@ -947,10 +947,12 @@ chatty_mm_account_finalize (GObject *object)
   g_list_store_remove_all (self->device_list);
 
   g_clear_handle_id (&self->mm_watch_id, g_bus_unwatch_name);
+  g_clear_object (&self->history_db);
   g_clear_object (&self->chat_list);
   g_clear_object (&self->device_list);
   g_clear_object (&self->chatty_eds);
   g_clear_object (&self->mmsd_struct);
+  g_hash_table_unref (self->pending_sms);
 
   G_OBJECT_CLASS (chatty_mm_account_parent_class)->finalize (object);
 }
