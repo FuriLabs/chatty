@@ -1011,13 +1011,12 @@ matrix_api_set_password (MatrixApi  *self,
  * matrix_api_set_sync_callback:
  * @self: A #MatrixApi
  * @callback: A #MatriCallback
- * @object: (nullable) (transfer full): A #GObject
+ * @object: A #GObject
  *
  * Set sync callback. It’s allowed to set callback
  * only once.
  *
- * @object should be a #GObject (derived) object
- * or %NULL.
+ * @object should be a #GObject (derived) object.
  *
  * callback shall run as `callback(@object, ...)`
  *
@@ -1036,12 +1035,11 @@ matrix_api_set_sync_callback (MatrixApi      *self,
 {
   g_return_if_fail (MATRIX_IS_API (self));
   g_return_if_fail (callback);
-  g_return_if_fail (!object || G_IS_OBJECT (object));
+  g_return_if_fail (G_IS_OBJECT (object));
   g_return_if_fail (!self->callback);
 
   self->callback = callback;
-  g_clear_object (&self->cb_object);
-  self->cb_object = g_object_ref (object);
+  g_set_weak_pointer (&self->cb_object, object);
 }
 
 const char *
