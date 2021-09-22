@@ -435,7 +435,9 @@ test_history_new (void)
   g_assert_false (chatty_history_is_open (history));
   g_assert_true (status);
   g_clear_object (&task);
-  g_clear_object (&history);
+  g_object_unref (history);
+  /* FIXME */
+  /* g_assert_finalize_object (history); */
 
   g_remove (file_name);
   g_assert_false (g_file_test (file_name, G_FILE_TEST_EXISTS));
@@ -491,6 +493,7 @@ add_message (ChattyHistory      *history,
     g_main_context_iteration (NULL, TRUE);
 
   msg_array = g_task_propagate_pointer (task, NULL);
+  g_assert_finalize_object (task);
   g_assert_nonnull (msg_array);
   g_assert_cmpint (test_msg_array->len, ==, msg_array->len);
 
@@ -511,6 +514,7 @@ add_message (ChattyHistory      *history,
 
   for (guint i = 0; i < msg_array->len; i++)
     compare_message (test_msg_array->pdata[i], msg_array->pdata[i]);
+  g_ptr_array_unref (msg_array);
 }
 
 static void
@@ -617,6 +621,9 @@ add_chatty_message (ChattyHistory      *history,
 
     for (guint i = 0; i < msg_array->len - 2; i++)
       compare_chat_message (msg_array->pdata[i], old_msg_array->pdata[i]);
+
+    g_assert_finalize_object (task);
+    g_ptr_array_unref (old_msg_array);
   }
 }
 
@@ -733,7 +740,10 @@ test_history_message (void)
                       CHATTY_MESSAGE_HTML_ESCAPED, CHATTY_DIRECTION_IN, 0);
   add_chatty_message (history, chat, msg_array, "More message", when + 1,
                       CHATTY_MESSAGE_HTML_ESCAPED, CHATTY_DIRECTION_OUT, 0);
+  /* FIXME */
+  /* g_assert_finalize_object (chat); */
 
+  g_ptr_array_unref (msg_array);
   chatty_history_close (history);
 }
 
@@ -879,6 +889,7 @@ test_history_raw_message (void)
                "geo:51.5008,0.1247", when + 2, CHATTY_MESSAGE_LOCATION, PURPLE_MESSAGE_RECV);
   add_message (history, msg_array, account, room, who, uuid,
                "And one more", when + 3, CHATTY_MESSAGE_TEXT, PURPLE_MESSAGE_RECV);
+  g_ptr_array_unref (msg_array);
 
   /* Test deletion */
   delete_existing_chat (history, account, "buddy@test", TRUE);
