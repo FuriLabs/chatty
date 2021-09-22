@@ -1758,7 +1758,6 @@ chatty_ma_chat_finalize (GObject *object)
   g_clear_object (&self->buddy_list);
   g_clear_object (&self->matrix_api);
   g_clear_object (&self->matrix_enc);
-  g_clear_object (&self->account);
   g_clear_object (&self->notification);
   g_clear_object (&self->self_buddy);
   g_clear_pointer (&self->avatar_file, chatty_file_info_free);
@@ -1905,7 +1904,7 @@ chatty_ma_chat_set_data (ChattyMaChat  *self,
   g_return_if_fail (CHATTY_IS_MA_CHAT (self));
   g_return_if_fail (MATRIX_IS_API (api));
 
-  g_set_object (&self->account, account);
+  g_set_weak_pointer (&self->account, account);
   g_set_object (&self->matrix_api, api);
   g_set_object (&self->matrix_enc, enc);
 
