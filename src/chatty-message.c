@@ -71,6 +71,7 @@ chatty_message_finalize (GObject *object)
   g_free (self->uid);
   g_free (self->user_name);
   g_free (self->id);
+  g_clear_pointer (&self->preview, chatty_file_info_free);
 
   if (self->files)
     g_list_free_full (self->files, (GDestroyNotify)chatty_file_info_free);
