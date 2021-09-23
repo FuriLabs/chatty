@@ -181,6 +181,28 @@ test_utils_groupname_valid (void)
   }
 }
 
+static void
+test_utils_jabber_id_strip (void)
+{
+  typedef struct data {
+    char *username;
+    char *expected;
+  } data;
+  data array[] = {
+    { "test@example.com", "test@example.com"},
+    { "test@example.com/aacc", "test@example.com"},
+    { "test@example.com/", "test@example.com"},
+    { "test@example", "test@example"},
+  };
+
+  for (int i = 0; i < G_N_ELEMENTS (array); i++) {
+    g_autofree char *expected = NULL;
+
+    expected = chatty_utils_jabber_id_strip (array[i].username);
+    g_assert_cmpstr (expected, ==, array[i].expected);
+  }
+}
+
 int
 main (int   argc,
       char *argv[])
@@ -191,6 +213,7 @@ main (int   argc,
   g_test_add_func ("/utils/check-phone", test_phone_utils_check_phone);
   g_test_add_func ("/utils/username_valid", test_utils_username_valid);
   g_test_add_func ("/utils/groupname_valid", test_utils_groupname_valid);
+  g_test_add_func ("/utils/jabber_id_strip", test_utils_jabber_id_strip);
 
   return g_test_run ();
 }
