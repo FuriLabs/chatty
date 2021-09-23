@@ -143,6 +143,7 @@ test_matrix_db_account (void)
     g_main_context_iteration (NULL, TRUE);
 
   status = g_task_propagate_boolean (task, NULL);
+  g_assert_finalize_object (task);
   g_assert_true (status);
 
   account_array = g_ptr_array_new ();
@@ -170,6 +171,8 @@ test_matrix_db_account (void)
                       NULL, NULL, TRUE);
   add_matrix_account (db, account_array, "@alice:example.com",
                       NULL, NULL, FALSE);
+
+  g_ptr_array_unref (account_array);
 }
 
 static void
