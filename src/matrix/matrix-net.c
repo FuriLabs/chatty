@@ -380,6 +380,8 @@ matrix_net_finalize (GObject *object)
   g_clear_object (&self->soup_session);
   g_clear_object (&self->file_session);
 
+  g_free (self->homeserver);
+
   matrix_utils_free_buffer (self->access_token);
   G_OBJECT_CLASS (matrix_net_parent_class)->finalize (object);
 }
