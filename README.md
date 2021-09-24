@@ -70,6 +70,8 @@ To run Chatty from source tree (without installing) do:
 build/run
 ```
 
+To start Chatty under `gdb` set `CHATTY_GDB=1` for the run script.
+
 ## Commands
 
 In a messaging conversation (except SMS conversations) the following commands can be used:
