@@ -55,6 +55,7 @@ test_mm_account_find_chat (void)
 
   g_list_store_remove_all (G_LIST_STORE (chat_list));
   g_assert_finalize_object (account);
+  g_assert_finalize_object (history);
 }
 
 static void
