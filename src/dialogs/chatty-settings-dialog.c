@@ -191,7 +191,8 @@ matrix_home_server_got_cb (GObject      *object,
     url = matrix_utils_get_url_from_username (username);
     entry = GTK_ENTRY (self->matrix_homeserver_entry);
 
-    if (g_strcmp0 (url, "librem.one") == 0)
+    if (g_strcmp0 (url, "librem.one") == 0 ||
+        strstr (username, "@librem.one"))
       gtk_entry_set_text (entry, "https://chat.librem.one");
     else
       gtk_entry_set_text (entry, "https://");
@@ -228,9 +229,6 @@ chatty_settings_save_matrix (ChattySettingsDialog *self,
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
   g_return_if_fail (user_id && *user_id);
   g_return_if_fail (password && *password);
-
-  if (!matrix_utils_get_url_from_username (user_id))
-    g_return_if_reached ();
 
   gtk_widget_set_sensitive (self->main_stack, FALSE);
   gtk_widget_set_sensitive (self->add_button, FALSE);
@@ -723,6 +721,10 @@ settings_new_detail_changed_cb (ChattySettingsDialog *self)
     protocol = CHATTY_PROTOCOL_TELEGRAM;
   else
     protocol = CHATTY_PROTOCOL_XMPP;
+
+  if (chatty_settings_get_experimental_features (chatty_settings_get_default ()) &&
+      gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (self->matrix_radio_button)))
+    protocol = CHATTY_PROTOCOL_MATRIX | CHATTY_PROTOCOL_EMAIL;
 
   /* Allow empty passwords for telegram accounts */
   if (protocol != CHATTY_PROTOCOL_TELEGRAM)
