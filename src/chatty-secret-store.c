@@ -54,7 +54,7 @@ chatty_secret_store_save_async (ChattyAccount       *account,
 {
   const SecretSchema *schema;
   g_autofree char *label = NULL;
-  const char *server, *old_pass;
+  const char *server, *old_pass, *username;
   char *password = NULL, *token = NULL, *key = NULL;
   char *credentials;
 
@@ -74,6 +74,11 @@ chatty_secret_store_save_async (ChattyAccount       *account,
   if (!device_id)
     device_id = "";
 
+  if (CHATTY_IS_MA_ACCOUNT (account))
+    username = chatty_ma_account_get_login_username (CHATTY_MA_ACCOUNT (account));
+  else
+    username = chatty_item_get_username (CHATTY_ITEM (account));
+
   /* We don't use json APIs here so that we can manage memory better (and securely free them)  */
   /* TODO: Use a non-pageable memory */
   /* XXX: We use a dumb string search, so don't change the order or spacing of the format string */
@@ -83,12 +88,11 @@ chatty_secret_store_save_async (ChattyAccount       *account,
                                  key ? key : "", device_id);
   schema = secret_store_get_schema ();
   server = chatty_ma_account_get_homeserver (CHATTY_MA_ACCOUNT (account));
-  label = g_strdup_printf (_("Chatty password for \"%s\""),
-                           chatty_item_get_username (CHATTY_ITEM (account)));
+  label = g_strdup_printf (_("Chatty password for \"%s\""), username);
 
   secret_password_store (schema, NULL, label, credentials,
                          cancellable, callback, user_data,
-                         CHATTY_USERNAME_ATTRIBUTE, chatty_item_get_username (CHATTY_ITEM (account)),
+                         CHATTY_USERNAME_ATTRIBUTE, username,
                          CHATTY_SERVER_ATTRIBUTE, server,
                          CHATTY_PROTOCOL_ATTRIBUTE, PROTOCOL_MATRIX_STR,
                          NULL);
@@ -189,14 +193,19 @@ chatty_secret_delete_async (ChattyAccount       *account,
                             gpointer             user_data)
 {
   const SecretSchema *schema;
-  const char *server;
+  const char *server, *username;
 
   g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  if (CHATTY_IS_MA_ACCOUNT (account))
+    username = chatty_ma_account_get_login_username (CHATTY_MA_ACCOUNT (account));
+  else
+    username = chatty_item_get_username (CHATTY_ITEM (account));
 
   schema = secret_store_get_schema ();
   server = chatty_ma_account_get_homeserver (CHATTY_MA_ACCOUNT (account));
   secret_password_clear (schema, cancellable, callback, user_data,
-                         CHATTY_USERNAME_ATTRIBUTE, chatty_item_get_username (CHATTY_ITEM (account)),
+                         CHATTY_USERNAME_ATTRIBUTE, username,
                          CHATTY_SERVER_ATTRIBUTE, server,
                          CHATTY_PROTOCOL_ATTRIBUTE, PROTOCOL_MATRIX_STR,
                          NULL);
