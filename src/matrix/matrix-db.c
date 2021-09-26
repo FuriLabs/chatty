@@ -996,6 +996,12 @@ matrix_db_load_account_async (MatrixDb            *self,
   g_task_set_task_data (task, matrix_db_load_account, NULL);
 
   username = chatty_item_get_username (CHATTY_ITEM (account));
+
+  if (!username || !*username) {
+    g_task_return_boolean (task, FALSE);
+    return;
+  }
+
   g_object_set_data_full (G_OBJECT (task), "device", g_strdup (device_id), g_free);
   g_object_set_data_full (G_OBJECT (task), "username", g_strdup (username), g_free);
   g_object_set_data_full (G_OBJECT (task), "account", g_object_ref (account), g_object_unref);
