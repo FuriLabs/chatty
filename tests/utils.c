@@ -117,6 +117,7 @@ test_utils_username_valid (void)
     { "+919995123456", CHATTY_PROTOCOL_MMS_SMS | CHATTY_PROTOCOL_TELEGRAM},
     { "5555", CHATTY_PROTOCOL_MMS_SMS},
     { "valid@xmpp.example.com", CHATTY_PROTOCOL_XMPP},
+    { "email@example.com", CHATTY_PROTOCOL_EMAIL},
     { "@valid:example.com", CHATTY_PROTOCOL_MATRIX},
     { "@നല്ല:matrix.example.com", 0},
     { "invalid", 0},
@@ -142,7 +143,11 @@ test_utils_username_valid (void)
     g_assert_cmpint (protocol, ==, array[i].protocol);
 
     protocol = chatty_utils_username_is_valid (array[i].user_name, CHATTY_PROTOCOL_ANY);
-    g_assert_cmpint (protocol, ==, array[i].protocol);
+
+    if (array[i].protocol & (CHATTY_PROTOCOL_XMPP | CHATTY_PROTOCOL_EMAIL))
+      g_assert_cmpint (protocol, ==, array[i].protocol | CHATTY_PROTOCOL_XMPP | CHATTY_PROTOCOL_EMAIL);
+    else
+      g_assert_cmpint (protocol, ==, array[i].protocol);
   }
 }
 

@@ -174,6 +174,7 @@ history_protocol_to_value (ChattyProtocol protocol)
   case CHATTY_PROTOCOL_ANY:
   case CHATTY_PROTOCOL_NONE:
   case CHATTY_PROTOCOL_CALL:
+  case CHATTY_PROTOCOL_EMAIL:
   case CHATTY_PROTOCOL_DELTA:
   case CHATTY_PROTOCOL_THREEPL:
   default:
@@ -199,6 +200,7 @@ history_protocol_to_type_value (ChattyProtocol protocol)
   case CHATTY_PROTOCOL_CALL:
   case CHATTY_PROTOCOL_ANY:
   case CHATTY_PROTOCOL_NONE:
+  case CHATTY_PROTOCOL_EMAIL:
   case CHATTY_PROTOCOL_DELTA:
   case CHATTY_PROTOCOL_THREEPL:
   default:

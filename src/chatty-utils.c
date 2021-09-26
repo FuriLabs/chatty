@@ -155,7 +155,7 @@ chatty_utils_username_is_valid (const char     *name,
   if (len < 3)
     return valid;
 
-  if (protocol & CHATTY_PROTOCOL_XMPP) {
+  if (protocol & (CHATTY_PROTOCOL_XMPP | CHATTY_PROTOCOL_EMAIL)) {
     const char *at_char, *at_char_end;
 
     at_char = strchr (name, '@');
@@ -174,7 +174,7 @@ chatty_utils_username_is_valid (const char     *name,
         *(at_char + 1) &&
         /* We require exact one ‘@’ */
         at_char == at_char_end)
-      valid |= CHATTY_PROTOCOL_XMPP;
+      valid |= ((CHATTY_PROTOCOL_XMPP | CHATTY_PROTOCOL_EMAIL) & protocol);
   }
 
   if (protocol & CHATTY_PROTOCOL_MATRIX) {
