@@ -1105,7 +1105,7 @@ chatty_ma_account_new_secret (gpointer secret_retrievable)
   SecretRetrievable *item = secret_retrievable;
   g_autoptr(SecretValue) value = NULL;
   const char *homeserver, *credentials = NULL;
-  const char *login_username;
+  const char *username, *login_username;
   char *password, *token, *device_id;
   char *password_str, *token_str = NULL;
 
@@ -1130,6 +1130,10 @@ chatty_ma_account_new_secret (gpointer secret_retrievable)
   self = chatty_ma_account_new (login_username, password_str);
   token = ma_account_get_value (credentials, "\"access-token\"");
   device_id = ma_account_get_value (credentials, "\"device-id\"");
+  username = ma_account_get_value (credentials, "\"username\"");
+
+  if (username && *username)
+    matrix_api_set_username (self->matrix_api, username);
   chatty_ma_account_set_homeserver (self, homeserver);
 
   if (token)
