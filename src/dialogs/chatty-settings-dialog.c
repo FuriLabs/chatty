@@ -370,9 +370,15 @@ static void
 settings_delete_account_clicked_cb (ChattySettingsDialog *self)
 {
   GtkWidget *dialog;
+  const char *username;
   int response;
 
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
+
+  if (CHATTY_IS_MA_ACCOUNT (self->selected_account))
+    username = chatty_ma_account_get_login_username (CHATTY_MA_ACCOUNT (self->selected_account));
+  else
+    username = chatty_item_get_username (CHATTY_ITEM (self->selected_account));
 
   dialog = gtk_message_dialog_new ((GtkWindow*)self,
                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -381,8 +387,7 @@ settings_delete_account_clicked_cb (ChattySettingsDialog *self)
                                    _("Delete Account"));
 
   gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-                                            _("Delete account %s?"),
-                                            chatty_item_get_username (CHATTY_ITEM (self->selected_account)));
+                                            _("Delete account %s?"), username);
 
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_CANCEL);
   gtk_window_set_position (GTK_WINDOW (dialog), GTK_WIN_POS_CENTER_ON_PARENT);
@@ -754,6 +759,7 @@ chatty_account_row_new (ChattyAccount *account)
   HdyActionRow   *row;
   GtkWidget      *account_enabled_switch;
   GtkWidget      *spinner;
+  const char     *username;
   ChattyProtocol protocol;
 
   row = HDY_ACTION_ROW (hdy_action_row_new ());
@@ -792,7 +798,12 @@ chatty_account_row_new (ChattyAccount *account)
                           account_enabled_switch, "active",
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
 
-  hdy_preferences_row_set_title (HDY_PREFERENCES_ROW (row), chatty_item_get_username (CHATTY_ITEM (account)));
+  if (CHATTY_IS_MA_ACCOUNT (account))
+    username = chatty_ma_account_get_login_username (CHATTY_MA_ACCOUNT (account));
+  else
+    username = chatty_item_get_username (CHATTY_ITEM (account));
+
+  hdy_preferences_row_set_title (HDY_PREFERENCES_ROW (row), username);
   hdy_action_row_set_subtitle (row, chatty_account_get_protocol_name (CHATTY_ACCOUNT (account)));
   gtk_container_add (GTK_CONTAINER (row), account_enabled_switch);
   hdy_action_row_set_activatable_widget (row, NULL);
