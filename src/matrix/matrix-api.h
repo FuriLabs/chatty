@@ -37,6 +37,9 @@ void           matrix_api_set_enc                (MatrixApi      *self,
 const char    *matrix_api_get_username           (MatrixApi      *self);
 void           matrix_api_set_username           (MatrixApi      *self,
                                                   const char     *username);
+const char    *matrix_api_get_login_username     (MatrixApi      *self);
+void           matrix_api_set_login_username     (MatrixApi      *self,
+                                                  const char     *username);
 
 const char    *matrix_api_get_password           (MatrixApi      *self);
 void           matrix_api_set_password           (MatrixApi      *self,

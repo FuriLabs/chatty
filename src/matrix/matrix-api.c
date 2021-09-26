@@ -47,7 +47,9 @@ struct _MatrixApi
 {
   GObject         parent_instance;
 
-
+   /* The username used to log in.  This can be different from
+    * the @username as this can be an email, phone number, etc. */
+  char           *login_username;
   char           *username;
   char           *password;
   char           *homeserver;
@@ -491,7 +493,7 @@ handle_common_errors (MatrixApi *self,
 
   if (g_error_matches (error, MATRIX_ERROR, M_UNKNOWN_TOKEN)
       && self->password) {
-    CHATTY_TRACE (self->username, "Re-logging in ");
+    CHATTY_TRACE (self->username ? self->username : self->login_username, "Re-logging in ");
     self->login_success = FALSE;
     self->room_list_loaded = FALSE;
     g_clear_pointer (&self->access_token, matrix_utils_free_buffer);
@@ -718,13 +720,13 @@ matrix_login (MatrixApi *self)
   JsonObject *object, *child;
 
   g_assert (MATRIX_IS_API (self));
-  g_assert (self->username);
+  g_assert (self->login_username);
   g_assert (self->homeserver);
   g_assert (!self->access_token);
   g_assert (self->password && *self->password);
 
   CHATTY_TRACE_MSG ("logging in to account '%s' on server '%s'",
-                    self->username, self->homeserver);
+                    self->login_username, self->homeserver);
 
   /* https://matrix.org/docs/spec/client_server/r0.6.1#post-matrix-client-r0-login */
   object = json_object_new ();
@@ -733,8 +735,16 @@ matrix_login (MatrixApi *self)
   json_object_set_string_member (object, "initial_device_display_name", "Chatty");
 
   child = json_object_new ();
-  json_object_set_string_member (child, "type", "m.id.user");
-  json_object_set_string_member (child, "user", self->username);
+
+  if (chatty_utils_username_is_valid (self->login_username, CHATTY_PROTOCOL_EMAIL)) {
+    json_object_set_string_member (child, "type", "m.id.thirdparty");
+    json_object_set_string_member (child, "medium", "email");
+    json_object_set_string_member (child, "address", self->login_username);
+  } else {
+    json_object_set_string_member (child, "type", "m.id.user");
+    json_object_set_string_member (child, "user", self->login_username);
+  }
+
   json_object_set_object_member (object, "identifier", child);
 
   matrix_net_send_json_async (self->matrix_net, 2, object,
@@ -810,7 +820,7 @@ matrix_start_sync (MatrixApi *self)
 
   if (!self->homeserver) {
     self->action = MATRIX_GET_HOMESERVER;
-    if (!matrix_utils_username_is_complete (self->username)) {
+    if (!matrix_utils_username_is_complete (self->login_username)) {
       g_autoptr(GError) error = NULL;
 
       g_debug ("Error: No Homeserver provided");
@@ -819,7 +829,7 @@ matrix_start_sync (MatrixApi *self)
       self->callback (self->cb_object, self, self->action, NULL, error);
     } else {
       g_debug ("Fetching home server details from username");
-      matrix_utils_get_homeserver_async (self->username, URI_REQUEST_TIMEOUT, self->cancellable,
+      matrix_utils_get_homeserver_async (self->login_username, URI_REQUEST_TIMEOUT, self->cancellable,
                                          (GAsyncReadyCallback)api_get_homeserver_cb,
                                          self);
     }
@@ -875,6 +885,7 @@ matrix_api_finalize (GObject *object)
   g_clear_handle_id (&self->resync_id, g_source_remove);
 
   g_free (self->username);
+  g_free (self->login_username);
   g_free (self->homeserver);
   g_free (self->device_id);
   matrix_utils_free_buffer (self->password);
@@ -910,8 +921,9 @@ matrix_api_init (MatrixApi *self)
  * and sync_callback should be set.
  *
  * If @username is not in full form (ie,
- * @user:example.com), homeserver should be set
- * with matrix_api_set_homeserver()
+ * @user:example.com) or an email or phone
+ * number, homeserver should be set with
+ * matrix_api_set_homeserver()
  *
  * Returns: (transfer full): A new #MatrixApi.
  * Free with g_object_unref().
@@ -922,7 +934,7 @@ matrix_api_new (const char *username)
   MatrixApi *self;
 
   self = g_object_new (MATRIX_TYPE_API, NULL);
-  self->username = g_strdup (username);
+  self->login_username = g_strdup (username);
 
   return self;
 }
@@ -948,10 +960,12 @@ matrix_api_set_enc (MatrixApi *self,
  * Get the username of @self.  This will be a fully
  * qualified Matrix ID (eg: @user:example.com) if
  * @self has succeeded in synchronizing with the
- * server.  Otherwise, the username set for @self
- * shall be returned.
+ * server, otherwise NULL is returned
  *
- * Returns: The matrix username.
+ * Please note that this can return a different value
+ * than the one set with matrix_api_set_login_username().
+ *
+ * Returns: (nullable): The matrix username.
  */
 const char *
 matrix_api_get_username (MatrixApi *self)
@@ -968,7 +982,46 @@ matrix_api_set_username (MatrixApi  *self,
   g_return_if_fail (MATRIX_IS_API (self));
   g_return_if_fail (!self->username);
 
-  self->username = g_strdup (username);
+  if (chatty_utils_username_is_valid (username, CHATTY_PROTOCOL_MATRIX))
+    self->username = g_strdup (username);
+}
+
+/**
+ * matrix_api_get_login_username:
+ * @self: A #MatrixApi
+ *
+ * Get the username as set with
+ * matrix_api_set_login_username().
+ *
+ * Returns: The matrix username.
+ */
+const char *
+matrix_api_get_login_username (MatrixApi *self)
+{
+  g_return_val_if_fail (MATRIX_IS_API (self), "");
+
+  return self->login_username;
+}
+
+/**
+ * matrix_api_set_login_username:
+ * @self: A #MatrixApi
+ * @userame: The usernamed to use for login
+ *
+ * Set the username of @self.  This is not required to
+ * be a fully qualified Matrix ID like @user:example.com
+ * and can also be an email ID or phone number.
+ *
+ * username can be set only once.
+ */
+void
+matrix_api_set_login_username (MatrixApi  *self,
+                               const char *username)
+{
+  g_return_if_fail (MATRIX_IS_API (self));
+  g_return_if_fail (!self->login_username);
+
+  self->login_username = g_strdup (username);
 }
 
 /**
@@ -1133,7 +1186,7 @@ matrix_api_set_access_token (MatrixApi  *self,
   self->device_id = g_strdup (device_id);
   matrix_net_set_access_token (self->matrix_net, self->access_token);
 
-  if (self->matrix_enc)
+  if (self->matrix_enc && self->username)
     matrix_enc_set_details (self->matrix_enc, self->username, self->device_id);
 }
 
@@ -1178,7 +1231,7 @@ matrix_api_start_sync (MatrixApi *self)
 {
   g_return_if_fail (MATRIX_IS_API (self));
   g_return_if_fail (self->callback);
-  g_return_if_fail (self->username);
+  g_return_if_fail (self->login_username);
   g_return_if_fail (self->password || self->access_token);
 
   if (self->is_sync && !self->sync_failed)
@@ -1954,9 +2007,16 @@ matrix_api_get_user_info_async (MatrixApi           *self,
   if (!user_id)
     user_id = self->username;
 
+  task = g_task_new (self, cancellable, callback, user_data);
+
+  if (!user_id) {
+    g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_INVALID_ARGUMENT,
+                             "No user id provided");
+    return;
+  }
+
   CHATTY_TRACE (user_id, "Getting user info: ");
 
-  task = g_task_new (self, cancellable, callback, user_data);
   g_task_set_task_data (task, g_strdup (user_id), g_free);
   uri = g_strdup_printf ("/_matrix/client/r0/profile/%s", user_id);
   matrix_net_send_json_async (self->matrix_net, 1, NULL, uri, SOUP_METHOD_GET,
@@ -2181,9 +2241,16 @@ matrix_api_get_3pid_async (MatrixApi           *self,
   g_return_if_fail (MATRIX_IS_API (self));
   g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
 
+  task = g_task_new (self, cancellable, callback, user_data);
+
+  if (!self->username) {
+    g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_INVALID_ARGUMENT,
+                             "user hasn't logged in yet");
+    return;
+  }
+
   CHATTY_TRACE (self->username, "Getting 3pid of user ");
 
-  task = g_task_new (self, cancellable, callback, user_data);
   matrix_net_send_json_async (self->matrix_net, 1, NULL,
                               "/_matrix/client/r0/account/3pid", SOUP_METHOD_GET,
                               NULL, self->cancellable, api_get_3pid_cb, task);

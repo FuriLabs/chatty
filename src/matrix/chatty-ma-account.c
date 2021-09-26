@@ -293,7 +293,7 @@ handle_password_login (ChattyMaAccount *self,
     gtk_container_set_border_width (GTK_CONTAINER (content), 18);
     gtk_box_set_spacing (GTK_BOX (content), 12);
     label = g_strdup_printf (_("Please enter password for “%s”"),
-                             matrix_api_get_username (self->matrix_api));
+                             matrix_api_get_login_username (self->matrix_api));
     gtk_container_add (GTK_CONTAINER (content), gtk_label_new (label));
     entry = gtk_entry_new ();
     gtk_entry_set_visibility (GTK_ENTRY (entry), FALSE);
@@ -667,7 +667,7 @@ chatty_ma_account_save (ChattyAccount *account)
   ChattyMaAccount *self = (ChattyMaAccount *)account;
 
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
-  g_return_if_fail (matrix_api_get_username (self->matrix_api));
+  g_return_if_fail (matrix_api_get_login_username (self->matrix_api));
 
   chatty_ma_account_save_async (self, FALSE, NULL, NULL, NULL);
 }
@@ -843,7 +843,11 @@ chatty_ma_account_set_username (ChattyItem *item,
 
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
 
-  matrix_api_set_username (self->matrix_api, username);
+  matrix_api_set_login_username (self->matrix_api, username);
+
+  /* If in test, also set username */
+  if (g_test_initialized ())
+    matrix_api_set_username (self->matrix_api, username);
 }
 
 static ChattyFileInfo *
@@ -1079,7 +1083,8 @@ chatty_ma_account_new_secret (gpointer secret_retrievable)
   g_autoptr(GHashTable) attributes = NULL;
   SecretRetrievable *item = secret_retrievable;
   g_autoptr(SecretValue) value = NULL;
-  const char *username, *homeserver, *credentials = NULL;
+  const char *homeserver, *credentials = NULL;
+  const char *login_username;
   char *password, *token, *device_id;
   char *password_str, *token_str = NULL;
 
@@ -1094,14 +1099,14 @@ chatty_ma_account_new_secret (gpointer secret_retrievable)
     return NULL;
 
   attributes = secret_retrievable_get_attributes (item);
-  username = g_hash_table_lookup (attributes, CHATTY_USERNAME_ATTRIBUTE);
+  login_username = g_hash_table_lookup (attributes, CHATTY_USERNAME_ATTRIBUTE);
   homeserver = g_hash_table_lookup (attributes, CHATTY_SERVER_ATTRIBUTE);
 
   password = ma_account_get_value (credentials, "\"password\"");
   g_return_val_if_fail (password, NULL);
   password_str = g_strcompress (password);
 
-  self = chatty_ma_account_new (username, password_str);
+  self = chatty_ma_account_new (login_username, password_str);
   token = ma_account_get_value (credentials, "\"access-token\"");
   device_id = ma_account_get_value (credentials, "\"device-id\"");
   chatty_ma_account_set_homeserver (self, homeserver);
@@ -1339,7 +1344,7 @@ chatty_ma_account_save_async (ChattyMaAccount     *self,
 
   g_return_if_fail (CHATTY_IS_MA_ACCOUNT (self));
   g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
-  g_return_if_fail (*chatty_item_get_username (CHATTY_ITEM (self)));
+  g_return_if_fail (*chatty_ma_account_get_login_username (self));
   g_return_if_fail (*chatty_account_get_password (CHATTY_ACCOUNT (self)));
   g_return_if_fail (*chatty_ma_account_get_homeserver (self));
 
