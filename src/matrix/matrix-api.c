@@ -1123,8 +1123,11 @@ matrix_api_set_access_token (MatrixApi  *self,
 {
   g_return_if_fail (MATRIX_IS_API (self));
 
-  matrix_utils_free_buffer (self->access_token);
-  g_free (self->device_id);
+  g_clear_pointer (&self->access_token, matrix_utils_free_buffer);
+  g_clear_pointer (&self->device_id, g_free);
+
+  if (!access_token || !device_id)
+    return;
 
   self->access_token = g_strdup (access_token);
   self->device_id = g_strdup (device_id);
