@@ -1046,6 +1046,27 @@ chatty_ma_account_new (const char *username,
   return self;
 }
 
+/**
+ * chatty_ma_account_get_login_username:
+ * @self: A #ChattyMaAccount
+ *
+ * Get the username set when @self was created.  This
+ * can be different from chatty_item_get_username().
+ *
+ * Say for example the user may have logged in using
+ * an email address.  So If you want to get the original
+ * username (which is the mail) which was used for login,
+ * use this method.
+ */
+
+const char *
+chatty_ma_account_get_login_username (ChattyMaAccount *self)
+{
+  g_return_val_if_fail (CHATTY_IS_MA_ACCOUNT (self), "");
+
+  return matrix_api_get_login_username (self->matrix_api);
+}
+
 static char *
 ma_account_get_value (const char *str,
                       const char *key)
