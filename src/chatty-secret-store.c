@@ -82,8 +82,10 @@ chatty_secret_store_save_async (ChattyAccount       *account,
   /* We don't use json APIs here so that we can manage memory better (and securely free them)  */
   /* TODO: Use a non-pageable memory */
   /* XXX: We use a dumb string search, so don't change the order or spacing of the format string */
-  credentials = g_strdup_printf ("{\"password\": \"%s\", \"access-token\": \"%s\", "
+  credentials = g_strdup_printf ("{\"username\": \"%s\",  \"password\": \"%s\","
+                                 "\"access-token\": \"%s\", "
                                  "\"pickle-key\": \"%s\", \"device-id\": \"%s\"}",
+                                 chatty_item_get_username (CHATTY_ITEM (account)),
                                  password ? password : "", token ? token : "",
                                  key ? key : "", device_id);
   schema = secret_store_get_schema ();
