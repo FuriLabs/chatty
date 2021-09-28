@@ -226,8 +226,6 @@ scale_image_thread (GTask         *task,
                                        scale_data->original_desired_size,
                                        scale_data->use_temp_file);
 
-  g_free (scale_data);
-
   if (new_file) {
     g_task_return_pointer (task, new_file, NULL);
   } else {
@@ -278,6 +276,6 @@ chatty_media_scale_image_to_size_async (ChattyFileInfo      *input_file,
   scale_data->original_desired_size = original_desired_size;
   scale_data->use_temp_file = use_temp_file;
 
-  g_task_set_task_data (task, scale_data, NULL);
+  g_task_set_task_data (task, scale_data, g_free);
   g_task_run_in_thread (task, scale_image_thread);
 }
