@@ -204,7 +204,7 @@ chatty_media_scale_image_to_size_sync (ChattyFileInfo *input_file,
 
 typedef struct {
   ChattyFileInfo *input_file;
-  gulong          desired_size;
+  gsize           desired_size;
   gboolean        use_temp_file;
 } ChattyMediaScaleData;
 
@@ -233,7 +233,7 @@ scale_image_thread (GTask         *task,
 
 void
 chatty_media_scale_image_to_size_async (ChattyFileInfo      *input_file,
-                                        gulong               desired_size,
+                                        gsize                desired_size,
                                         gboolean             use_temp_file,
                                         GCancellable        *cancellable,
                                         GAsyncReadyCallback  callback,

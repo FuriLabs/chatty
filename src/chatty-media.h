@@ -24,7 +24,7 @@ ChattyFileInfo *chatty_media_scale_image_to_size_sync (ChattyFileInfo  *input_fi
                                                        gboolean         temp_file);
 void
 chatty_media_scale_image_to_size_async (ChattyFileInfo      *input_file,
-                                        unsigned long        desired_size,
+                                        gsize                desired_size,
                                         gboolean             use_temp_file,
                                         GCancellable        *cancellable,
                                         GAsyncReadyCallback  callback,
