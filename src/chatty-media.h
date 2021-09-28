@@ -21,7 +21,7 @@ G_BEGIN_DECLS
 
 ChattyFileInfo *chatty_media_scale_image_to_size_sync   (ChattyFileInfo *input_file,
                                                          gsize           desired_size,
-                                                         gboolean        temp_file);
+                                                         gboolean        use_temp_file);
 void            chatty_media_scale_image_to_size_async  (ChattyFileInfo *input_file,
                                                          gsize           desired_size,
                                                          gboolean        use_temp_file,
