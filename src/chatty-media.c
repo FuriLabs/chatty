@@ -47,7 +47,7 @@
 
 ChattyFileInfo *
 chatty_media_scale_image_to_size_sync (ChattyFileInfo *input_file,
-                                       gulong          original_desired_size,
+                                       gsize           original_desired_size,
                                        gboolean        use_temp_file)
 {
   g_autoptr(GFileInfo) file_info = NULL;
