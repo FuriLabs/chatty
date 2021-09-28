@@ -177,7 +177,7 @@ chatty_media_scale_image_to_size_sync (ChattyFileInfo *input_file,
 
   /* Debug: Figure out size of images */
   file_info = g_file_query_info (resized_file,
-                                 "*",
+                                 G_FILE_ATTRIBUTE_STANDARD_SIZE,
                                  G_FILE_QUERY_INFO_NONE,
                                  NULL,
                                  &error);
