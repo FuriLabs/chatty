@@ -47,7 +47,7 @@
 
 ChattyFileInfo *
 chatty_media_scale_image_to_size_sync (ChattyFileInfo *input_file,
-                                       gsize           original_desired_size,
+                                       gsize           desired_size,
                                        gboolean        use_temp_file)
 {
   g_autoptr(GFileInfo) file_info = NULL;
@@ -109,20 +109,20 @@ chatty_media_scale_image_to_size_sync (ChattyFileInfo *input_file,
    * 320 by 320:   ~ 25000 Bytes
    */
 
-  if (original_desired_size < 25000 * aspect_ratio) {
+  if (desired_size < 25000 * aspect_ratio) {
     g_warning ("Requested size is too small!\n");
     return NULL;
-  } else if (original_desired_size < 50000 * aspect_ratio) {
+  } else if (desired_size < 50000 * aspect_ratio) {
     new_aspect = 320;
-  } else if (original_desired_size < 80000 * aspect_ratio) {
+  } else if (desired_size < 80000 * aspect_ratio) {
     new_aspect = 480;
-  } else if (original_desired_size < 150000 * aspect_ratio) {
+  } else if (desired_size < 150000 * aspect_ratio) {
     new_aspect = 720;
-  } else if (original_desired_size < 300000 * aspect_ratio) {
+  } else if (desired_size < 300000 * aspect_ratio) {
     new_aspect = 1080;
-  } else if (original_desired_size < 500000 * aspect_ratio) {
+  } else if (desired_size < 500000 * aspect_ratio) {
     new_aspect = 1600;
-  } else if (original_desired_size < 750000 * aspect_ratio) {
+  } else if (desired_size < 750000 * aspect_ratio) {
     new_aspect = 2048;
   } else {
     new_aspect = 2560;
@@ -209,7 +209,7 @@ chatty_media_scale_image_to_size_sync (ChattyFileInfo *input_file,
 
 typedef struct {
   ChattyFileInfo *input_file;
-  gulong          original_desired_size;
+  gulong          desired_size;
   gboolean        use_temp_file;
 } ChattyMediaScaleData;
 
@@ -223,7 +223,7 @@ scale_image_thread (GTask         *task,
   ChattyFileInfo *new_file;
 
   new_file = chatty_media_scale_image_to_size_sync (scale_data->input_file,
-                                       scale_data->original_desired_size,
+                                       scale_data->desired_size,
                                        scale_data->use_temp_file);
 
   if (new_file) {
@@ -238,7 +238,7 @@ scale_image_thread (GTask         *task,
 
 void
 chatty_media_scale_image_to_size_async (ChattyFileInfo      *input_file,
-                                        gulong               original_desired_size,
+                                        gulong               desired_size,
                                         gboolean             use_temp_file,
                                         GCancellable        *cancellable,
                                         GAsyncReadyCallback  callback,
@@ -273,7 +273,7 @@ chatty_media_scale_image_to_size_async (ChattyFileInfo      *input_file,
   }
 
   scale_data->input_file = input_file;
-  scale_data->original_desired_size = original_desired_size;
+  scale_data->desired_size = desired_size;
   scale_data->use_temp_file = use_temp_file;
 
   g_task_set_task_data (task, scale_data, g_free);
