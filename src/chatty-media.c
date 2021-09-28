@@ -90,12 +90,7 @@ chatty_media_scale_image_to_size_sync (ChattyFileInfo *input_file,
 
   width = gdk_pixbuf_get_width (dest);
   height = gdk_pixbuf_get_height (dest);
-
-  if (width > height) {
-    aspect_ratio = (float) width / (float) height;
-  } else {
-    aspect_ratio = (float) height / (float) width;
-  }
+  aspect_ratio = MAX (width, height) / MIN (width, height);
 
   /*
    * Image size scales about linearly with either width or height changes
