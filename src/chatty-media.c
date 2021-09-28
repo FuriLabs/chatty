@@ -50,12 +50,12 @@ chatty_media_scale_image_to_size_sync (ChattyFileInfo *input_file,
                                        gulong          original_desired_size,
                                        gboolean        use_temp_file)
 {
-  g_autoptr (GFileInfo) file_info = NULL;
-  g_autoptr (GFile) resized_file = NULL;
-  g_autoptr (GdkPixbuf) dest = NULL;
-  g_autoptr (GdkPixbuf) src = NULL;
-  g_autoptr (GString) path = NULL;
-  g_autoptr (GError) error = NULL;
+  g_autoptr(GFileInfo) file_info = NULL;
+  g_autoptr(GFile) resized_file = NULL;
+  g_autoptr(GdkPixbuf) dest = NULL;
+  g_autoptr(GdkPixbuf) src = NULL;
+  g_autoptr(GString) path = NULL;
+  g_autoptr(GError) error = NULL;
   ChattyFileInfo *new_attachment;
   g_autofree char *basename = NULL;
   char *file_extension = NULL;
