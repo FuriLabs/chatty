@@ -274,3 +274,12 @@ chatty_media_scale_image_to_size_async (ChattyFileInfo      *input_file,
   g_task_set_task_data (task, scale_data, g_free);
   g_task_run_in_thread (task, scale_image_thread);
 }
+
+ChattyFileInfo *
+chatty_media_scale_image_to_size_finish (GAsyncResult  *result,
+                                         GError       **error)
+{
+  g_return_val_if_fail (G_IS_TASK (result), NULL);
+
+  return g_task_propagate_pointer (G_TASK (result), error);
+}

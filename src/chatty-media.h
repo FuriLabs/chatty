@@ -29,5 +29,7 @@ chatty_media_scale_image_to_size_async (ChattyFileInfo      *input_file,
                                         GCancellable        *cancellable,
                                         GAsyncReadyCallback  callback,
                                         gpointer             user_data);
+ChattyFileInfo *chatty_media_scale_image_to_size_finish (GAsyncResult   *result,
+                                                         GError        **error);
 
 G_END_DECLS
