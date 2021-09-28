@@ -183,8 +183,8 @@ chatty_media_scale_image_to_size_sync (ChattyFileInfo *input_file,
                                  &error);
 
   if (error) {
-      g_warning ("Error getting file info: %s", error->message);
-      return NULL;
+    g_warning ("Error getting file info: %s", error->message);
+    return NULL;
   }
 
   /*
@@ -209,17 +209,17 @@ typedef struct {
 } ChattyMediaScaleData;
 
 static void
-scale_image_thread (GTask         *task,
-                    gpointer       source_object,
-                    gpointer       task_data,
-                    GCancellable  *cancellable)
+scale_image_thread (GTask        *task,
+                    gpointer      source_object,
+                    gpointer      task_data,
+                    GCancellable *cancellable)
 {
   ChattyMediaScaleData *scale_data = task_data;
   ChattyFileInfo *new_file;
 
   new_file = chatty_media_scale_image_to_size_sync (scale_data->input_file,
-                                       scale_data->desired_size,
-                                       scale_data->use_temp_file);
+                                                    scale_data->desired_size,
+                                                    scale_data->use_temp_file);
 
   if (new_file) {
     g_task_return_pointer (task, new_file, (GDestroyNotify)chatty_file_info_free);
