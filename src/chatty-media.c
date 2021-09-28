@@ -10,7 +10,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
-#define G_LOG_DOMAIN "chatty-multimedia"
+#define G_LOG_DOMAIN "chatty-media"
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
