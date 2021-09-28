@@ -222,7 +222,7 @@ scale_image_thread (GTask         *task,
                                        scale_data->use_temp_file);
 
   if (new_file) {
-    g_task_return_pointer (task, new_file, NULL);
+    g_task_return_pointer (task, new_file, (GDestroyNotify)chatty_file_info_free);
   } else {
     g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_FAILED,
                              "Error in creating scaled image");
