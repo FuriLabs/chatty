@@ -99,7 +99,7 @@ chatty_media_scale_image_to_size_sync (ChattyFileInfo *input_file,
 
   /*
    * Image size scales about linearly with either width or height changes
-   * Some (conservative) experiemental figures for jpeg quality 80%:
+   * Some (conservative) experimental figures for jpeg quality 80%:
    * 2560 by 2560: ~750000 Bytes
    * 2048 by 2048: ~500000 Bytes
    * 1600 by 1600: ~300000 Bytes
