@@ -246,7 +246,7 @@ chatty_media_scale_image_to_size_async (ChattyFileInfo      *input_file,
                                         GAsyncReadyCallback  callback,
                                         gpointer             user_data)
 {
-  GTask *task;
+  g_autoptr(GTask) task = NULL;
   ChattyMediaScaleData *scale_data;
 
   g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
@@ -257,7 +257,6 @@ chatty_media_scale_image_to_size_async (ChattyFileInfo      *input_file,
     g_warning ("File is not an image! Cannot Resize");
     g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED,
                              "File is not an image! Cannot Resize");
-    g_object_unref (task);
     return;
   }
 
@@ -265,7 +264,6 @@ chatty_media_scale_image_to_size_async (ChattyFileInfo      *input_file,
   if (strstr (input_file->mime_type, "gif")) {
     g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED,
                              "File is a gif! Cannot resize");
-    g_object_unref (task);
     return;
   }
 
@@ -273,7 +271,6 @@ chatty_media_scale_image_to_size_async (ChattyFileInfo      *input_file,
   if (scale_data == NULL) {
     g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_NO_SPACE,
                              "Error in creating new attachment");
-    g_object_unref (task);
     return;
   }
 
@@ -283,6 +280,4 @@ chatty_media_scale_image_to_size_async (ChattyFileInfo      *input_file,
 
   g_task_set_task_data (task, scale_data, NULL);
   g_task_run_in_thread (task, scale_image_thread);
-  g_object_unref (task);
-
 }
