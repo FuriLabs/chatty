@@ -59,8 +59,7 @@ chatty_media_scale_image_to_size_sync (ChattyFileInfo *input_file,
   ChattyFileInfo *new_attachment;
   g_autofree char *basename = NULL;
   char *file_extension = NULL;
-  int width, height, new_aspect;
-  float aspect_ratio;
+  int width = -1, height = -1;
 
   if (!input_file->mime_type || !g_str_has_prefix (input_file->mime_type, "image")) {
     g_warning ("File is not an image! Cannot Resize");
@@ -85,56 +84,66 @@ chatty_media_scale_image_to_size_sync (ChattyFileInfo *input_file,
     return NULL;
   }
 
+  {
+    float aspect_ratio;
+    int size;
+
+    /* We don't have to apply the embedded orientation here
+     * as we care only the largest of the width/height */
+    width = gdk_pixbuf_get_width (src);
+    height = gdk_pixbuf_get_height (src);
+    aspect_ratio = MAX (width, height) / MIN (width, height);
+
+    /*
+     * Image size scales about linearly with either width or height changes
+     * Some (conservative) experimental figures for jpeg quality 80%:
+     * 2560 by 2560: ~750000 Bytes
+     * 2048 by 2048: ~500000 Bytes
+     * 1600 by 1600: ~300000 Bytes
+     * 1080 by 1080: ~150000 Bytes
+     * 720 by 720:   ~ 80000 Bytes
+     * 480 by 480:   ~ 50000 Bytes
+     * 320 by 320:   ~ 25000 Bytes
+     */
+
+    if (desired_size < 25000 * aspect_ratio) {
+      g_warning ("Requested size is too small!\n");
+      return NULL;
+    }
+
+    if (desired_size < 50000 * aspect_ratio)
+      size = 320;
+    else if (desired_size < 80000 * aspect_ratio)
+      size = 480;
+    else if (desired_size < 150000 * aspect_ratio)
+      size = 720;
+    else if (desired_size < 300000 * aspect_ratio)
+      size = 1080;
+    else if (desired_size < 500000 * aspect_ratio)
+      size = 1600;
+    else if (desired_size < 750000 * aspect_ratio)
+      size = 2048;
+    else
+      size = 2560;
+
+    /* Don't grow image more than the available size */
+    if (width > height) {
+      height = CLAMP (size, 0, height);
+      width = -1;
+    } else {
+      width = CLAMP (size, 0, width);
+      height = -1;
+    }
+
+    g_debug ("New width: %d, New height: %d", width, height);
+  }
+
+  g_clear_object (&src);
+
+  src = gdk_pixbuf_new_from_file_at_size (input_file->path, width, height, &error);
+
   /* Make sure the pixbuf is in the correct orientation */
   dest = gdk_pixbuf_apply_embedded_orientation (src);
-
-  width = gdk_pixbuf_get_width (dest);
-  height = gdk_pixbuf_get_height (dest);
-  aspect_ratio = MAX (width, height) / MIN (width, height);
-
-  /*
-   * Image size scales about linearly with either width or height changes
-   * Some (conservative) experimental figures for jpeg quality 80%:
-   * 2560 by 2560: ~750000 Bytes
-   * 2048 by 2048: ~500000 Bytes
-   * 1600 by 1600: ~300000 Bytes
-   * 1080 by 1080: ~150000 Bytes
-   * 720 by 720:   ~ 80000 Bytes
-   * 480 by 480:   ~ 50000 Bytes
-   * 320 by 320:   ~ 25000 Bytes
-   */
-
-  if (desired_size < 25000 * aspect_ratio) {
-    g_warning ("Requested size is too small!\n");
-    return NULL;
-  } else if (desired_size < 50000 * aspect_ratio) {
-    new_aspect = 320;
-  } else if (desired_size < 80000 * aspect_ratio) {
-    new_aspect = 480;
-  } else if (desired_size < 150000 * aspect_ratio) {
-    new_aspect = 720;
-  } else if (desired_size < 300000 * aspect_ratio) {
-    new_aspect = 1080;
-  } else if (desired_size < 500000 * aspect_ratio) {
-    new_aspect = 1600;
-  } else if (desired_size < 750000 * aspect_ratio) {
-    new_aspect = 2048;
-  } else {
-    new_aspect = 2560;
-  }
-
-  g_debug ("Old width: %d, Old height: %d", width, height);
-  if (width > height) {
-    height = new_aspect;
-    width = (float) new_aspect * aspect_ratio;
-  } else {
-    width = new_aspect;
-    height = (float) new_aspect * aspect_ratio;
-  }
-  g_debug ("New width: %d, New height: %d", width, height);
-
-  dest = gdk_pixbuf_scale_simple (dest, width, height,
-                                  GDK_INTERP_BILINEAR);
 
   new_attachment = g_try_new0 (ChattyFileInfo, 1);
   if (new_attachment == NULL) {
