@@ -80,6 +80,7 @@ ui_files = files (
 chatty_sources = [
   'main.c',
   'chatty-manager.c',
+  'chatty-purple.c',
   'chatty-application.c',
   'chatty-window.c',
   'dialogs/chatty-info-dialog.c',
