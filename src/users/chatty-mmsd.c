@@ -89,6 +89,7 @@ struct _ChattyMmsd {
   char             *mms_apn;
   char             *carrier_proxy;
   gboolean          auto_create_smil;
+  gboolean          is_ready;
 };
 
 typedef struct _mms_payload mms_payload;
@@ -1305,6 +1306,7 @@ chatty_mmsd_get_service_cb (GObject      *service,
   } else {
     g_debug ("Got MMSD Service");
 
+    self->is_ready = TRUE;
     chatty_mm_account_set_mms_feature (self->mm_account, TRUE);
     self->mmsd_service_proxy_watch_id =
       g_dbus_connection_signal_subscribe (self->connection,
@@ -1802,6 +1804,14 @@ chatty_mmsd_new (ChattyMmAccount *account)
   self->mm_account = account;
 
   return self;
+}
+
+gboolean
+chatty_mmsd_is_ready (ChattyMmsd *self)
+{
+  g_return_val_if_fail (CHATTY_IS_MMSD (self), FALSE);
+
+  return self->is_ready;
 }
 
 void
