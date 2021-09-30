@@ -1255,7 +1255,10 @@ chatty_mm_account_has_mms_feature (ChattyMmAccount *self)
 {
   g_return_val_if_fail (CHATTY_IS_MM_ACCOUNT (self), FALSE);
 
-  return self->has_mms;
+  if (self->mmsd_struct)
+    return chatty_mmsd_is_ready (self->mmsd_struct);
+
+  return FALSE;
 }
 
 void
