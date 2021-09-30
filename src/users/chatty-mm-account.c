@@ -1262,14 +1262,6 @@ chatty_mm_account_has_mms_feature (ChattyMmAccount *self)
 }
 
 void
-chatty_mm_account_set_mms_feature (ChattyMmAccount *self, gboolean mms_feature)
-{
-  g_return_if_fail (CHATTY_IS_MM_ACCOUNT (self));
-
-  self->has_mms = mms_feature;
-}
-
-void
 chatty_mm_account_send_message_async (ChattyMmAccount     *self,
                                       ChattyChat          *chat,
                                       ChattyMmBuddy       *buddy,
