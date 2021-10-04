@@ -15,6 +15,7 @@
 # include "config.h"
 #endif
 
+#include "chatty-utils.h"
 #include "chatty-file-item.h"
 #include "chatty-attachments-view.h"
 
@@ -116,8 +117,8 @@ chatty_attachments_view_add_file (ChattyAttachmentsView *self,
  * @self: A #ChattyAttachmentsView
  *
  * Get the list of files attached. The list contains
- * file names and the list should be freed with
- * g_list_free_full(list, (GDestroyNotify)g_free)
+ * ChattyFileInfo and the list should be freed with
+ * g_list_free_full(list, (GDestroyNotify)chatty_file_info_free)
  *
  * Returns: (transfer full) (nullable): A List of strings.
  */
@@ -132,10 +133,12 @@ chatty_attachments_view_get_files (ChattyAttachmentsView *self)
   children = gtk_container_get_children (GTK_CONTAINER (self->files_box));
 
   for (GList *child = children; child; child = child->next) {
+    ChattyFileInfo *attachment;
     const char *name;
 
     name = chatty_file_item_get_file (child->data);
-    files = g_list_append (files, g_strdup (name));
+    attachment = chatty_file_info_new_for_path (name);
+    files = g_list_append (files, attachment);
   }
 
   return files;
