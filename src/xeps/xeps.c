@@ -39,7 +39,7 @@ jabber_disco_bare_info_result_cb(JabberStream *js, const char *from,
     if(!(var = xmlnode_get_attrib(child, "var")))
       continue;
 
-    g_debug ("Discovered feature %s on own bare", var);
+    g_log (G_LOG_DOMAIN, CHATTY_LOG_LEVEL_TRACE, "Discovered feature %s on own bare", var);
     purple_signal_emit (jabber, "jabber-bare-info", js->gc, from, var);
   }
 }
@@ -68,7 +68,7 @@ jabber_disco_bare_items_result_cb(JabberStream *js, const char *from,
       continue;
 
     // find out some useful nodes perhaps? Like, eh... ava, nick
-    CHATTY_DEBUG (jid, "Discovered node %s on bare", node);
+    g_log (G_LOG_DOMAIN, CHATTY_LOG_LEVEL_TRACE, "Discovered node %s on bare", node);
     purple_signal_emit (jabber, "jabber-bare-items", js->gc, jid, node);
   }
 }
