@@ -35,6 +35,11 @@
               G_STRFUNC, fmt, ##__VA_ARGS__)
 #define CHATTY_DEBUG(value, fmt, ...)                           \
   chatty_log (G_LOG_DOMAIN,                                     \
+              G_LOG_LEVEL_DEBUG,                                \
+              value, __FILE__, G_STRINGIFY (__LINE__),          \
+              G_STRFUNC, fmt, ##__VA_ARGS__)
+#define CHATTY_DEBUG_DETAILED(value, fmt, ...)                  \
+  chatty_log (G_LOG_DOMAIN,                                     \
               G_LOG_LEVEL_DEBUG | CHATTY_LOG_DETAILED,          \
               value, __FILE__, G_STRINGIFY (__LINE__),          \
               G_STRFUNC, fmt, ##__VA_ARGS__)
