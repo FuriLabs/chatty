@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://source.puri.sm/Librem5/chatty/issues\n"
-"POT-Creation-Date: 2021-09-17 15:25+0000\n"
-"PO-Revision-Date: 2021-09-17 21:25+0300\n"
+"POT-Creation-Date: 2021-10-04 15:25+0000\n"
+"PO-Revision-Date: 2021-10-04 22:42+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -206,27 +206,48 @@ msgstr "Невдала спроба увійти"
 msgid "Please check ID and password"
 msgstr "Будь ласка, перевірте ідентифікатор і пароль"
 
-#: src/chatty-chat-view.c:203
+#: src/chatty-chat-view.c:206
 msgid "This is an SMS conversation"
 msgstr "Це обмін повідомленнями SMS"
 
-#: src/chatty-chat-view.c:205 src/chatty-chat-view.c:211
+#: src/chatty-chat-view.c:208 src/chatty-chat-view.c:214
 msgid "Your messages are not encrypted, and carrier rates may apply"
 msgstr ""
 "Ваші повідомлення не зашифровано, оператор може стягувати сплату за "
 "передавання даних"
 
-#: src/chatty-chat-view.c:209
+#: src/chatty-chat-view.c:212
 msgid "This is an IM conversation"
 msgstr "Це спілкування у службі обміну повідомленнями"
 
-#: src/chatty-chat-view.c:215
+#: src/chatty-chat-view.c:218
 msgid "Your messages are encrypted"
 msgstr "Ваші повідомлення зашифровано"
 
-#: src/chatty-chat-view.c:218
+#: src/chatty-chat-view.c:221
 msgid "Your messages are not encrypted"
 msgstr "Ваші повідомлення не зашифровано"
+
+#: src/chatty-chat-view.c:411
+#| msgid "Save File..."
+msgid "Select File..."
+msgstr "Вибір файла…"
+
+#: src/chatty-chat-view.c:414 src/chatty-purple-request.c:191
+#: src/chatty-window.c:538 src/dialogs/chatty-ma-account-details.c:119
+#: src/dialogs/chatty-pp-account-details.c:91
+#: src/ui/chatty-dialog-join-muc.ui:16 src/ui/chatty-info-dialog.ui:44
+#: src/ui/chatty-info-dialog.ui:191 src/ui/chatty-ma-chat-info.ui:102
+#: src/ui/chatty-pp-chat-info.ui:429
+msgid "Cancel"
+msgstr "Скасувати"
+
+#: src/chatty-chat-view.c:415 src/chatty-purple-request.c:193
+#: src/dialogs/chatty-ma-account-details.c:118
+#: src/dialogs/chatty-pp-account-details.c:90 src/ui/chatty-info-dialog.ui:198
+#: src/ui/chatty-ma-chat-info.ui:109 src/ui/chatty-pp-chat-info.ui:436
+msgid "Open"
+msgstr "Відкрити"
 
 #. TRANSLATORS: %s is the Device ID
 #: src/chatty-fp-row.c:131
@@ -351,26 +372,11 @@ msgstr "Зберегти файл…"
 msgid "Open File..."
 msgstr "Відкрити файл…"
 
-#: src/chatty-purple-request.c:191 src/chatty-window.c:538
-#: src/dialogs/chatty-ma-account-details.c:119
-#: src/dialogs/chatty-pp-account-details.c:91
-#: src/ui/chatty-dialog-join-muc.ui:16 src/ui/chatty-info-dialog.ui:44
-#: src/ui/chatty-info-dialog.ui:191 src/ui/chatty-ma-chat-info.ui:102
-#: src/ui/chatty-pp-chat-info.ui:429
-msgid "Cancel"
-msgstr "Скасувати"
-
 #: src/chatty-purple-request.c:193
 msgid "Save"
 msgstr "Зберегти"
 
-#: src/chatty-purple-request.c:193 src/dialogs/chatty-ma-account-details.c:118
-#: src/dialogs/chatty-pp-account-details.c:90 src/ui/chatty-info-dialog.ui:198
-#: src/ui/chatty-ma-chat-info.ui:109 src/ui/chatty-pp-chat-info.ui:436
-msgid "Open"
-msgstr "Відкрити"
-
-#: src/chatty-secret-store.c:86
+#: src/chatty-secret-store.c:93
 #, c-format
 msgid "Chatty password for \"%s\""
 msgstr "Пароль Chatty до «%s»"
@@ -378,21 +384,21 @@ msgstr "Пароль Chatty до «%s»"
 #. TRANSLATORS: Timestamp from the last week with 24 hour time, e.g. “Tuesday 18∶42”.
 #. See https://developer.gnome.org/glib/stable/glib-GDateTime.html#g-date-time-format
 #.
-#: src/chatty-utils.c:379
+#: src/chatty-utils.c:381
 msgid "%A %H∶%M"
 msgstr "%a %H∶%M"
 
 #. TRANSLATORS: Timestamp from the last week with 12 hour time, e.g. “Tuesday 06∶42 PM”.
 #. See https://developer.gnome.org/glib/stable/glib-GDateTime.html#g-date-time-format
 #.
-#: src/chatty-utils.c:384
+#: src/chatty-utils.c:386
 msgid "%A %I∶%M %p"
 msgstr "%a %I∶%M %p"
 
 #. TRANSLATORS: Timestamp from more than 7 days ago, e.g. “2020-08-11”.
 #. See https://developer.gnome.org/glib/stable/glib-GDateTime.html#g-date-time-format
 #.
-#: src/chatty-utils.c:391
+#: src/chatty-utils.c:393
 msgid "%Y-%m-%d"
 msgstr "%d-%m-%Y"
 
@@ -402,8 +408,7 @@ msgstr "Нічого не знайдено"
 
 #: src/chatty-window.c:166
 msgid "Try different search"
-msgstr ""
-"Спробувати інші критерії пошуку"
+msgstr "Спробувати інші критерії пошуку"
 
 #: src/chatty-window.c:169
 msgid "Start Chatting"
@@ -549,25 +554,25 @@ msgstr "З'єднання…"
 msgid "disconnected"
 msgstr "від'єднано"
 
-#: src/dialogs/chatty-settings-dialog.c:383
+#: src/dialogs/chatty-settings-dialog.c:387
 #: src/ui/chatty-ma-account-details.ui:182
 #: src/ui/chatty-pp-account-details.ui:199
 msgid "Delete Account"
 msgstr "Вилучити запис"
 
-#: src/dialogs/chatty-settings-dialog.c:386
+#: src/dialogs/chatty-settings-dialog.c:390
 #, c-format
 msgid "Delete account %s?"
 msgstr "Вилучити запис %s?"
 
 #. TRANSLATORS: Don't translate "r0.5.x", "r0.6.x" strings
-#: src/dialogs/chatty-settings-dialog.c:555
+#: src/dialogs/chatty-settings-dialog.c:558
 msgid "Chatty requires Client-Server API to be ‘r0.5.x’ or ‘r0.6.x’"
 msgstr ""
 "Для роботи Chatty потрібен програмний інтерфейс клієнт-сервер «r0.5.x» або "
 "«r0.6.x»"
 
-#: src/dialogs/chatty-settings-dialog.c:610
+#: src/dialogs/chatty-settings-dialog.c:613
 msgid "Select Protocol"
 msgstr "Виберіть протокол"
 
