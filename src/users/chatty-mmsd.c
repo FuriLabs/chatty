@@ -76,6 +76,7 @@ struct _ChattyMmsd {
   guint             mmsd_manager_proxy_remove_watch_id;
   guint             modemmanager_watch_id;
   guint             modemmanager_bearer_handler_watch_id;
+  guint             modemmanager_settings_changed_watch_id;
   GDBusProxy       *modemmanager_proxy;
   MMObject         *mm_object;
   MMModem          *modem;
@@ -90,6 +91,8 @@ struct _ChattyMmsd {
   char             *carrier_proxy;
   gboolean          auto_create_smil;
   gboolean          is_ready;
+  gulong            setting_signal_id;
+  gulong            smil_signal_id;
 };
 
 typedef struct _mms_payload mms_payload;
@@ -1228,6 +1231,162 @@ chatty_mmsd_get_all_mms_cb (GObject      *service,
   }
 }
 
+static gboolean
+chatty_mmsd_sync_settings (ChattyMmsd *self)
+{
+  ChattySettings *settings;
+  gboolean sync_mmsd = FALSE;
+  const char *carrier_mmsc = NULL;
+  const char *carrier_apn = NULL;
+  const char *carrier_proxy = NULL;
+
+  g_debug ("Syncing settings");
+  settings = chatty_settings_get_default ();
+  carrier_mmsc = chatty_settings_get_mms_carrier_mmsc (settings);
+  carrier_apn = chatty_settings_get_mms_carrier_apn (settings);
+  carrier_proxy = chatty_settings_get_mms_carrier_proxy (settings);
+  if (g_strcmp0 (self->carrier_mmsc, carrier_mmsc) != 0) {
+    g_debug ("Changing MMSC from %s to %s", self->carrier_mmsc, carrier_mmsc);
+    g_free (self->carrier_mmsc);
+    self->carrier_mmsc = g_strdup (carrier_mmsc);
+    if (!carrier_mmsc)
+      carrier_mmsc = "";
+
+    g_dbus_proxy_call_sync (self->modemmanager_proxy,
+                            "ChangeSettings",
+                            g_variant_new_parsed ("('CarrierMMSC', <%s>)", carrier_mmsc),
+                            G_DBUS_CALL_FLAGS_NONE,
+                            -1,
+                            NULL,
+                            NULL);
+    sync_mmsd = TRUE;
+  }
+  if (g_strcmp0 (self->mms_apn, carrier_apn) != 0) {
+    g_debug ("Changing APN from %s to %s", self->mms_apn, carrier_apn);
+    g_free (self->mms_apn);
+    self->mms_apn = g_strdup (carrier_apn);
+    if (!carrier_apn)
+      carrier_apn = "";
+
+    g_dbus_proxy_call_sync (self->modemmanager_proxy,
+                            "ChangeSettings",
+                            g_variant_new_parsed ("('MMS_APN', <%s>)", carrier_apn),
+                            G_DBUS_CALL_FLAGS_NONE,
+                            -1,
+                            NULL,
+                            NULL);
+    sync_mmsd = TRUE;
+  }
+  if (g_strcmp0 (self->carrier_proxy, carrier_proxy) != 0) {
+    g_debug ("Changing Proxy from %s to %s", self->carrier_proxy, carrier_proxy);
+    g_free (self->carrier_proxy);
+    self->carrier_proxy = g_strdup (carrier_proxy);
+    if (!carrier_proxy)
+      carrier_proxy = "NULL";
+
+    g_dbus_proxy_call_sync (self->modemmanager_proxy,
+                            "ChangeSettings",
+                            g_variant_new_parsed ("('CarrierMMSProxy', <%s>)", carrier_proxy),
+                            G_DBUS_CALL_FLAGS_NONE,
+                            -1,
+                            NULL,
+                            NULL);
+    sync_mmsd = TRUE;
+  }
+
+  return sync_mmsd;
+}
+
+static void
+chatty_mmsd_get_message_queue_cb (GObject      *service,
+                                  GAsyncResult *res,
+                                  gpointer      user_data)
+{
+  ChattyMmsd *self = user_data;
+  g_autoptr(GError) error = NULL;
+
+  g_debug ("%s", __func__);
+
+  g_dbus_proxy_call_finish (self->modemmanager_proxy,
+                            res,
+                            &error);
+
+  if (error != NULL) {
+    g_warning ("Error syncing messages: %s", error->message);
+  } else {
+    g_debug ("Finished syncing messages!");
+  }
+}
+
+static void
+chatty_mmsd_settings_changed_cb (ChattyMmsd *self)
+{
+  if (chatty_mmsd_sync_settings (self)) {
+    g_dbus_proxy_call (self->modemmanager_proxy,
+                       "ProcessMessageQueue",
+                       NULL,
+                       G_DBUS_CALL_FLAGS_NONE,
+                       -1,
+                       NULL,
+                       (GAsyncReadyCallback)chatty_mmsd_get_message_queue_cb,
+                       self);
+  }
+}
+
+static void
+chatty_mmsd_smil_changed_cb (ChattyMmsd *self)
+{
+  ChattySettings *settings;
+  gboolean create_smil_setting;
+
+  settings = chatty_settings_get_default ();
+  create_smil_setting = chatty_settings_request_mmsd_tng_smil (settings);
+  if (create_smil_setting != self->auto_create_smil) {
+    self->auto_create_smil = create_smil_setting;
+    g_debug ("Changing AutoCreateSMIL to %d", create_smil_setting);
+    g_dbus_proxy_call_sync (self->service_proxy,
+                            "SetProperty",
+                            g_variant_new_parsed ("('AutoCreateSMIL', <%b>)", self->auto_create_smil),
+                            G_DBUS_CALL_FLAGS_NONE,
+                            -1,
+                            NULL,
+                            NULL);
+  }
+}
+
+static void
+chatty_mmsd_settings_signal_changed_cb (GDBusConnection *connection,
+                                        const char      *sender_name,
+                                        const char      *object_path,
+                                        const char      *interface_name,
+                                        const char      *signal_name,
+                                        GVariant        *parameters,
+                                        gpointer        user_data)
+{
+  ChattyMmsd *self = user_data;
+  char *apn, *mmsc, *proxy;
+  ChattySettings *settings;
+
+  g_variant_get (parameters, "(sss)", &apn, &mmsc, &proxy);
+  g_debug("Settings Changed: apn %s, mmsc %s, proxy %s", apn, mmsc, proxy);
+
+  g_free (self->mms_apn);
+  self->mms_apn = g_strdup(apn);
+  g_free (self->carrier_mmsc);
+  self->carrier_mmsc = g_strdup(mmsc);
+  g_free (self->carrier_proxy);
+  if (g_strcmp0 (proxy, "NULL") == 0)
+    self->carrier_proxy = NULL;
+  else
+    self->carrier_proxy = g_strdup(proxy);
+
+  settings = chatty_settings_get_default ();
+  chatty_settings_set_mms_carrier_mmsc (settings, self->carrier_mmsc);
+  chatty_settings_set_mms_carrier_apn (settings, self->mms_apn);
+  chatty_settings_set_mms_carrier_proxy (settings, self->carrier_proxy);
+}
+
+
 static void
 chatty_mmsd_get_mmsd_service_settings_cb (GObject      *service,
                                           GAsyncResult *res,
@@ -1258,6 +1417,15 @@ chatty_mmsd_get_mmsd_service_settings_cb (GObject      *service,
     settings = chatty_settings_get_default ();
     request_report = chatty_settings_request_sms_delivery_reports (settings);
 
+    self->setting_signal_id = g_signal_connect_swapped (settings,
+                                                  "mms-settings-changed",
+                                                  G_CALLBACK (chatty_mmsd_settings_changed_cb),
+                                                  self);
+    self->smil_signal_id = g_signal_connect_swapped (settings,
+                                                  "notify::request-mmsd-smil",
+                                                  G_CALLBACK (chatty_mmsd_smil_changed_cb),
+                                                  self);
+
     g_variant_dict_init (&dict, all_settings);
     if (g_variant_dict_lookup (&dict, "UseDeliveryReports", "b", &use_delivery_reports)) {
       g_debug ("UseDeliveryReports is set to %d", use_delivery_reports);
@@ -1273,8 +1441,19 @@ chatty_mmsd_get_mmsd_service_settings_cb (GObject      *service,
       }
     }
     if (g_variant_dict_lookup (&dict, "AutoCreateSMIL", "b", &auto_create_smil)) {
+      gboolean chatty_smil_setting = chatty_settings_request_mmsd_tng_smil (settings);
       self->auto_create_smil = auto_create_smil;
       g_debug ("AutoCreateSMIL is set to %d", self->auto_create_smil);
+      if (chatty_smil_setting != self->auto_create_smil) {
+        g_debug ("Changing AutoCreateSMIL to %d", chatty_smil_setting);
+        g_dbus_proxy_call_sync (self->service_proxy,
+                                "SetProperty",
+                                g_variant_new_parsed ("('AutoCreateSMIL', <%b>)", chatty_smil_setting),
+                                G_DBUS_CALL_FLAGS_NONE,
+                                -1,
+                                NULL,
+                                NULL);
+      }
     }
     if (g_variant_dict_lookup (&dict, "TotalMaxAttachmentSize", "i", &max_attach_total_size))
       self->max_attach_size = max_attach_total_size;
@@ -1289,6 +1468,31 @@ chatty_mmsd_get_mmsd_service_settings_cb (GObject      *service,
       self->max_num_attach = DEFAULT_MAXIMUM_ATTACHMENTS;
 
     g_debug ("MaxAttachments is set to %d", self->max_num_attach);
+
+    /* If carrier MMSC is blank, assume no settings are valid */
+    if (chatty_settings_get_mms_carrier_mmsc(settings) == NULL ||
+        (strlen(chatty_settings_get_mms_carrier_mmsc(settings)) < 1)) {
+      /* mmsd-tng default for MMSC is http://mms.invalid */
+      if (g_strcmp0 (self->carrier_mmsc, "http://mms.invalid") != 0) {
+        chatty_settings_set_mms_carrier_mmsc (settings, self->carrier_mmsc);
+        chatty_settings_set_mms_carrier_apn (settings, self->mms_apn);
+        chatty_settings_set_mms_carrier_proxy (settings, self->carrier_proxy);
+      } else {
+        self->modemmanager_settings_changed_watch_id =
+          g_dbus_connection_signal_subscribe (self->connection,
+                                              MMSD_SERVICE,
+                                              MMSD_MODEMMANAGER_INTERFACE,
+                                              "SettingsChanged",
+                                              MMSD_PATH,
+                                              NULL,
+                                              G_DBUS_SIGNAL_FLAGS_NONE,
+                                              (GDBusSignalCallback)chatty_mmsd_settings_signal_changed_cb,
+                                              self,
+                                              NULL);
+      }
+    } else {
+      chatty_mmsd_sync_settings (self);
+    }
   }
 }
 
@@ -1561,7 +1765,6 @@ chatty_mmsd_get_mmsd_modemmanager_settings_cb (GObject      *service,
 
     g_variant_get (ret, "(@a{?*})", &all_settings);
 
-    //TODO: We can also set this settings. Do we want to?
     g_variant_dict_init (&dict, all_settings);
     if (g_variant_dict_lookup (&dict, "CarrierMMSC", "s", &message_center))
       self->carrier_mmsc = g_strdup(message_center);
@@ -1747,7 +1950,11 @@ mmsd_vanished_cb (GDBusConnection *connection,
   g_assert (G_IS_DBUS_CONNECTION (connection));
   g_debug ("MMSD vanished");
   if (G_IS_OBJECT (self->service_proxy)) {
+    ChattySettings *settings;
+    settings = chatty_settings_get_default ();
     chatty_mmsd_remove_service (self);
+    g_clear_signal_handler (&self->setting_signal_id, settings);
+    g_clear_signal_handler (&self->smil_signal_id, settings);
   }
   if (G_IS_OBJECT (self->manager_proxy)) {
     g_object_unref (self->manager_proxy);
@@ -1759,8 +1966,11 @@ mmsd_vanished_cb (GDBusConnection *connection,
 
   if (G_IS_OBJECT (self->modemmanager_proxy)) {
     g_object_unref (self->modemmanager_proxy);
-    g_dbus_connection_unregister_object (self->connection,
-                                         self->modemmanager_bearer_handler_watch_id);
+    g_dbus_connection_signal_unsubscribe (self->connection,
+                                          self->modemmanager_bearer_handler_watch_id);
+
+    g_dbus_connection_signal_unsubscribe (self->connection,
+                                          self->modemmanager_settings_changed_watch_id);
   }
 
   if (G_IS_DBUS_CONNECTION (self->connection)) {
