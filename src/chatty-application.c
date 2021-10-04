@@ -432,7 +432,7 @@ chatty_application_activate (GApplication *application)
                              G_CALLBACK (main_window_focus_changed_cb),
                              self, G_CONNECT_SWAPPED);
 
-    chatty_manager_purple (self->manager);
+    chatty_manager_load (self->manager);
     g_object_add_weak_pointer (G_OBJECT (self->main_window), (gpointer *)&self->main_window);
   }
 
