@@ -368,13 +368,14 @@ chatty_log_anonymize_value (GString    *str,
 
   g_assert (str);
 
+  if (str->len && str->str[str->len - 1] != ' ')
+    g_string_append_c (str, ' ');
+
   if (no_anonymize)
     {
       g_string_append (str, value);
       return;
     }
-
-  g_string_append_c (str, ' ');
 
   if (!isalnum (*value))
     g_string_append_c (str, *value++);
