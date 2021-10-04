@@ -50,6 +50,7 @@ GdkPixbuf           *chatty_utils_get_pixbuf_from_data  (const guchar *buf,
                                                          gsize         count);
 ChattyMsgDirection   chatty_utils_direction_from_flag   (PurpleMessageFlags flag);
 void                 chatty_file_info_free              (ChattyFileInfo     *file_info);
+ChattyFileInfo      *chatty_file_info_new_for_path      (const char *attachment_path);
 void      chatty_utils_create_thumbnail_async  (const char     *file,
                                                 GAsyncReadyCallback callback,
                                                 gpointer       user_data);

@@ -480,6 +480,64 @@ chatty_file_info_free (ChattyFileInfo *file_info)
   g_free (file_info);
 }
 
+/**
+ * chatty_file_info_new_for_path:
+ * A @path: A path string
+ *
+ * Takes an absolute path and creates a ChattyFileInfo Object
+ * with MIME Type, path, URI, and size. Returned object must be freed
+ * with chatty_file_info_free ()
+ *
+ * Returns: (transfer full) (nullable): A ChattyFileInfo with MIME Type, path,
+ * URI, and size
+ */
+
+ChattyFileInfo *
+chatty_file_info_new_for_path (const char *path)
+{
+  g_autoptr(GError) error = NULL;
+  GFile *file;
+  GFileInfo *file_info;
+  ChattyFileInfo *attachment = NULL;
+
+  attachment = g_try_new0 (ChattyFileInfo, 1);
+  g_debug ("Attachment Path: %s", path);
+  file = g_file_new_for_path (path);
+
+  file_info = g_file_query_info (file,
+                                 G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE "," G_FILE_ATTRIBUTE_STANDARD_SIZE,
+                                 G_FILE_QUERY_INFO_NONE,
+                                 NULL,
+                                 &error);
+
+
+
+  if (error != NULL) {
+    g_warning ("Error getting file info: %s", error->message);
+    chatty_file_info_free (attachment);
+    return NULL;
+  }
+  /*
+   *  https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types
+   */
+  attachment->file_name = g_file_get_basename (file);
+  attachment->mime_type = g_content_type_get_mime_type (g_file_info_get_content_type (file_info));
+  if (attachment->mime_type == NULL) {
+    g_warning ("Could not get MIME type! Trying Content Type instead");
+    if (g_file_info_get_content_type (file_info) != NULL) {
+      attachment->mime_type = g_strdup (g_file_info_get_content_type (file_info));
+    } else {
+      g_warning ("Could not figure out Content Type! Using a Generic one");
+      attachment->mime_type = g_strdup ("application/octet-stream");
+    }
+  }
+  attachment->size = g_file_info_get_size (file_info);
+  attachment->path = g_file_get_path (file);
+  attachment->url  = g_file_get_uri (file);
+
+  return attachment;
+}
+
 static void
 utils_create_thumbnail (GTask        *task,
                         gpointer      source_object,
