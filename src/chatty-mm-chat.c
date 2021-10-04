@@ -121,6 +121,16 @@ chatty_mm_chat_is_im (ChattyChat *chat)
   return self->is_im;
 }
 
+static gboolean
+chatty_mm_chat_has_file_upload (ChattyChat *chat)
+{
+  ChattyMmChat *self = (ChattyMmChat *)chat;
+
+  g_assert (CHATTY_IS_MM_CHAT (self));
+
+  return chatty_mm_account_has_mms_feature (self->account);
+}
+
 static const char *
 chatty_mm_chat_get_chat_name (ChattyChat *chat)
 {
@@ -522,6 +532,7 @@ chatty_mm_chat_class_init (ChattyMmChatClass *klass)
 
   chat_class->set_data = chatty_mm_chat_set_data;
   chat_class->is_im = chatty_mm_chat_is_im;
+  chat_class->has_file_upload = chatty_mm_chat_has_file_upload;
   chat_class->get_chat_name = chatty_mm_chat_get_chat_name;
   chat_class->get_account = chatty_mm_chat_get_account;
   chat_class->load_past_messages = chatty_mm_chat_load_past_messages;
