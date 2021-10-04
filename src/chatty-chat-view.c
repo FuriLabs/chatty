@@ -484,8 +484,11 @@ chat_view_send_message_button_clicked_cb (ChattyChatView *self)
   g_autoptr(ChattyMessage) msg = NULL;
   g_autofree char *message = NULL;
   GtkTextIter    start, end;
+  GList *files;
 
   g_assert (CHATTY_IS_CHAT_VIEW (self));
+
+  files = chatty_attachments_view_get_files (CHATTY_ATTACHMENTS_VIEW (self->attachment_view));
 
   gtk_text_buffer_get_bounds (self->message_input_buffer, &start, &end);
   message = gtk_text_buffer_get_text (self->message_input_buffer, &start, &end, FALSE);
@@ -504,7 +507,7 @@ chat_view_send_message_button_clicked_cb (ChattyChatView *self)
 
   gtk_widget_grab_focus (self->message_input);
 
-  if (gtk_text_buffer_get_char_count (self->message_input_buffer)) {
+  if (gtk_text_buffer_get_char_count (self->message_input_buffer) || files) {
     g_autofree char *escaped = NULL;
     ChattyProtocol protocol;
 
@@ -519,12 +522,16 @@ chat_view_send_message_button_clicked_cb (ChattyChatView *self)
                               NULL, time (NULL),
                               escaped ? CHATTY_MESSAGE_HTML_ESCAPED : CHATTY_MESSAGE_TEXT,
                               CHATTY_DIRECTION_OUT, 0);
+    if (files) {
+      chatty_message_set_files (msg, files);
+    }
     chatty_chat_send_message_async (self->chat, msg,
                                     view_send_message_async_cb,
                                     g_object_ref (self));
 
     gtk_widget_hide (self->send_message_button);
   }
+  chatty_attachments_view_reset (CHATTY_ATTACHMENTS_VIEW (self->attachment_view));
 
   gtk_text_buffer_delete (self->message_input_buffer, &start, &end);
 }
