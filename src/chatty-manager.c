@@ -519,14 +519,6 @@ manager_mm_account_load_cb (GObject      *object,
 }
 
 void
-chatty_manager_purple (ChattyManager *self)
-{
-  g_return_if_fail (CHATTY_IS_MANAGER (self));
-
-  chatty_manager_load (self);
-}
-
-void
 chatty_manager_load (ChattyManager *self)
 {
   g_return_if_fail (CHATTY_IS_MANAGER (self));

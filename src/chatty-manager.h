@@ -28,7 +28,6 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (ChattyManager, chatty_manager, CHATTY, MANAGER, GObject)
 
 ChattyManager  *chatty_manager_get_default        (void);
-void            chatty_manager_purple             (ChattyManager *self);
 void            chatty_manager_load               (ChattyManager *self);
 GListModel     *chatty_manager_get_accounts       (ChattyManager *self);
 GListModel     *chatty_manager_get_contact_list      (ChattyManager *self);
