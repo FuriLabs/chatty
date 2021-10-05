@@ -477,6 +477,21 @@ settings_homeserver_entry_changed (ChattySettingsDialog *self,
 }
 
 static void
+settings_dialog_page_changed_cb (ChattySettingsDialog *self)
+{
+  const char *name;
+
+  g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
+
+  name = gtk_stack_get_visible_child_name (GTK_STACK (self->main_stack));
+
+  if (g_strcmp0 (name, "message-settings-view") == 0)
+    gtk_window_set_title (GTK_WINDOW (self), _("SMS/MMS Settings"));
+  else
+    gtk_window_set_title (GTK_WINDOW (self), _("Preferences"));
+}
+
+static void
 settings_matrix_cancel_clicked_cb (ChattySettingsDialog *self)
 {
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
@@ -979,6 +994,7 @@ chatty_settings_dialog_class_init (ChattySettingsDialogClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, settings_pw_entry_icon_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, settings_homeserver_entry_changed);
 
+  gtk_widget_class_bind_template_callback (widget_class, settings_dialog_page_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, settings_matrix_cancel_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, settings_matrix_accept_clicked_cb);
 }
