@@ -223,10 +223,13 @@ chatty_chat_view_update (ChattyChatView *self)
 
   context = gtk_widget_get_style_context (self->send_message_button);
 
-  if (protocol == CHATTY_PROTOCOL_MMS_SMS)
+  if (protocol == CHATTY_PROTOCOL_MMS_SMS) {
+    gtk_style_context_remove_class (context, "suggested-action");
     gtk_style_context_add_class (context, "button_send_green");
-  else if (chatty_chat_is_im (self->chat))
+  } else if (chatty_chat_is_im (self->chat)) {
+    gtk_style_context_remove_class (context, "button_send_green");
     gtk_style_context_add_class (context, "suggested-action");
+  }
 }
 
 static void
