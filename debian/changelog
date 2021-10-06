@@ -2053,7 +2053,7 @@ chatty (0.1.2) amber-phone; urgency=medium
   * Show jabber status independentlly from lurch
   * Mitigate phonenumber parsing message
 
- -- Andrea Schaefer <andrea@localhost.localdomain>  Tue, 19 Nov 2019 13:01:39 +0100
+ -- Andrea Schaefer <andrea.schaefer@puri.sm>  Tue, 19 Nov 2019 13:01:39 +0100
 
 chatty (0.1.1) amber-phone; urgency=medium
 
@@ -2143,7 +2143,7 @@ chatty (0.1.1) amber-phone; urgency=medium
   * Update po files
   * Add debian gpb.conf
 
- -- Andrea Schaefer <andrea@localhost.localdomain>  Mon, 04 Nov 2019 09:45:56 +0100
+ -- Andrea Schaefer <andrea.schaefer@puri.sm>  Mon, 04 Nov 2019 09:45:56 +0100
 
 chatty (0.1.0) amber-phone; urgency=medium
 
@@ -2186,7 +2186,7 @@ chatty (0.0.7) purple; urgency=medium
   * Chatty won't start anymore if another libpurple client, like Pidgin, 
     is running already
 
- -- Andrea Schaefer <andrea@localhost.localdomain>  Tue, 16 Apr 2019 10:12:34 +0200
+ -- Andrea Schaefer <andrea.schaefer@puri.sm>  Tue, 16 Apr 2019 10:12:34 +0200
 
 chatty (0.0.6) purple; urgency=medium
 
@@ -2197,7 +2197,7 @@ chatty (0.0.6) purple; urgency=medium
   * Improved css styling of message panel
   * Shows 'close' button when leaflet is foldet
 
- -- Andrea Schaefer <andrea@localhost.localdomain>  Thu, 07 Mar 2019 19:05:43 +0100
+ -- Andrea Schaefer <andrea.schaefer@puri.sm>  Thu, 07 Mar 2019 19:05:43 +0100
 
 chatty (0.0.5) purple; urgency=medium
 
@@ -2210,7 +2210,7 @@ chatty (0.0.5) purple; urgency=medium
   * Fixed issue #54 'New accounts should be enabled'
   * Added bugfix: return to contacts list after new contact has been added 
 
- -- Andrea Schaefer <andrea@localhost.localdomain>  Mon, 04 Mar 2019 16:13:51 +0100
+ -- Andrea Schaefer <andrea.schaefer@puri.sm>  Mon, 04 Mar 2019 16:13:51 +0100
 
 chatty (0.0.4) purple; urgency=medium
 
@@ -2222,7 +2222,7 @@ chatty (0.0.4) purple; urgency=medium
   * Indicated selected chat in chats-list when msg-view is unfolded
   * Introduced XMPP multi user chat
 
- -- Andrea Schaefer <andrea@localhost.localdomain>  Wed, 30 Jan 2019 19:15:11 +0100
+ -- Andrea Schaefer <andrea.schaefer@puri.sm>  Wed, 30 Jan 2019 19:15:11 +0100
 
 chatty (0.0.3) purple; urgency=medium
 	
@@ -2237,7 +2237,7 @@ chatty (0.0.3) purple; urgency=medium
   * Added emoticon translation
   * Added support for sending typing messages
 
- -- Andrea Schaefer <andrea@localhost.localdomain>  Mon, 07 Jan 2019 14:20:14 +0100
+ -- Andrea Schaefer <andrea.schaefer@puri.sm>  Mon, 07 Jan 2019 14:20:14 +0100
 
 chatty (0.0.2) purple; urgency=medium
 
@@ -2250,7 +2250,7 @@ chatty (0.0.2) purple; urgency=medium
   * Replaced GtkSearchBar with HdySearchBar
   * Added handling for XMPP authorization requests
 
- -- Andrea Schaefer <andrea@localhost.localdomain>  Fri, 14 Dec 2018 18:55:21 +0100
+ -- Andrea Schaefer <andrea.schaefer@puri.sm>  Fri, 14 Dec 2018 18:55:21 +0100
 
 chatty (0.0.1) purple; urgency=low
 
