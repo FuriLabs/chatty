@@ -91,35 +91,6 @@
     </child>
 
   </template>
-  <object class="GtkFileChooserDialog" id="avatar_chooser_dialog">
-    <property name="modal">1</property>
-    <property name="filter">image_filter</property>
-    <property name="title" translatable="yes">Set Avatar</property>
-    <signal name="delete-event" handler="gtk_widget_hide_on_delete"/>
-    <child type="action">
-      <object class="GtkButton" id="avatar_cancel_button">
-        <property name="visible">1</property>
-        <property name="label" translatable="yes">Cancel</property>
-      </object>
-    </child>
-    <child type="action">
-      <object class="GtkButton" id="avatar_apply_button">
-        <property name="visible">1</property>
-        <property name="can-default">1</property>
-        <property name="label" translatable="yes">Open</property>
-      </object>
-    </child>
-    <action-widgets>
-      <action-widget response="cancel">avatar_cancel_button</action-widget>
-      <action-widget response="apply" default="true">avatar_apply_button</action-widget>
-    </action-widgets>
-  </object>
-
-  <object class="GtkFileFilter" id="image_filter">
-    <mime-types>
-      <mime-type>image/*</mime-type>
-    </mime-types>
-  </object>
 
   <object class="GtkTextBuffer" id="topic_buffer"/>
 

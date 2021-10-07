@@ -47,8 +47,6 @@ struct _ChattyMaChatInfo
 
   GtkWidget     *name_label;
   GtkWidget     *matrix_id_label;
-
-  GtkWidget     *avatar_chooser_dialog;
 };
 
 G_DEFINE_TYPE (ChattyMaChatInfo, chatty_ma_chat_info, HDY_TYPE_PREFERENCES_PAGE)
@@ -79,14 +77,12 @@ chatty_ma_chat_info_class_init (ChattyMaChatInfoClass *klass)
 
   gtk_widget_class_bind_template_child (widget_class, ChattyMaChatInfo, name_label);
   gtk_widget_class_bind_template_child (widget_class, ChattyMaChatInfo, matrix_id_label);
-
-  gtk_widget_class_bind_template_child (widget_class, ChattyMaChatInfo, avatar_chooser_dialog);
 }
 
 static void
 chatty_ma_chat_info_init (ChattyMaChatInfo *self)
 {
-  GtkWidget *clamp, *window;
+  GtkWidget *clamp;
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
@@ -96,12 +92,6 @@ chatty_ma_chat_info_init (ChattyMaChatInfo *self)
     hdy_clamp_set_maximum_size (HDY_CLAMP (clamp), 360);
     hdy_clamp_set_tightening_threshold (HDY_CLAMP (clamp), 320);
   }
-
-  window = gtk_widget_get_ancestor (self->avatar, GTK_TYPE_DIALOG);
-
-  if (window)
-    gtk_window_set_transient_for (GTK_WINDOW (self->avatar_chooser_dialog),
-                                  GTK_WINDOW (window));
 }
 
 GtkWidget *
