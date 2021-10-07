@@ -28,8 +28,6 @@ cb_file_exists (GtkWidget         *widget,
                 gint               response,
                 ChattyRequestData *data)
 {
-  gchar *current_folder;
-
   if (response != GTK_RESPONSE_ACCEPT) {
     if (data->cbs[0] != NULL) {
       ((PurpleRequestFileCb)data->cbs[0])(data->user_data, NULL);
@@ -41,18 +39,6 @@ cb_file_exists (GtkWidget         *widget,
   }
 
   data->file_name = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER(data->dialog));
-
-  current_folder = gtk_file_chooser_get_current_folder (GTK_FILE_CHOOSER(data->dialog));
-
-  if (current_folder != NULL) {
-    if (data->save_dialog) {
-      purple_prefs_set_path (CHATTY_PREFS_ROOT "/filelocations/last_save_folder", current_folder);
-    } else {
-      purple_prefs_set_path (CHATTY_PREFS_ROOT "/filelocations/last_open_folder", current_folder);
-    }
-
-    g_free (current_folder);
-  }
 
   if (data->cbs[1] != NULL) {
     ((PurpleRequestFileCb)data->cbs[1])(data->user_data, data->file_name);
@@ -169,8 +155,6 @@ chatty_request_file (const char         *title,
   ChattyRequestData *data;
   GtkWindow         *window;
   GtkWidget         *dialog;
-  const gchar       *current_folder;
-  gboolean           folder_set = FALSE;
 
   data = g_new0 (ChattyRequestData, 1);
   data->type = PURPLE_REQUEST_FILE;
@@ -196,12 +180,6 @@ chatty_request_file (const char         *title,
 
   gtk_dialog_set_default_response (GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
 
-  if (save_dialog) {
-    current_folder = purple_prefs_get_path(CHATTY_PREFS_ROOT "/filelocations/last_save_folder");
-  } else {
-    current_folder = purple_prefs_get_path(CHATTY_PREFS_ROOT "/filelocations/last_open_folder");
-  }
-
   if ((filename != NULL) && (*filename != '\0')) {
     if (save_dialog) {
       gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER(dialog), filename);
@@ -209,14 +187,6 @@ chatty_request_file (const char         *title,
       gtk_file_chooser_set_filename (GTK_FILE_CHOOSER(dialog), filename);
     }
   }
-
-  if ((filename == NULL || *filename == '\0' || !g_file_test(filename, G_FILE_TEST_EXISTS)) &&
-      (current_folder != NULL) && (*current_folder != '\0')) {
-
-    folder_set = gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER(dialog), current_folder);
-  }
-
-  (void) folder_set;
 
   g_signal_connect (G_OBJECT(GTK_FILE_CHOOSER(dialog)),
                     "response",
