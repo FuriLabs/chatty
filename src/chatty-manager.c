@@ -37,7 +37,6 @@
 #include "chatty-chat.h"
 #include "chatty-mm-chat.h"
 #include "chatty-pp-chat.h"
-#include "chatty-notification.h"
 #include "chatty-purple-request.h"
 #include "chatty-purple-notify.h"
 #include "chatty-history.h"
@@ -70,8 +69,6 @@ struct _ChattyManager
   GtkFlattenListModel *contact_list;
   GtkSortListModel    *sorted_chat_list;
   GtkSorter           *chat_sorter;
-
-  ChattyNotification  *notification;
 
   PurplePlugin    *sms_plugin;
   PurplePlugin    *lurch_plugin;
@@ -1595,7 +1592,6 @@ chatty_manager_dispose (GObject *object)
   ChattyManager *self = (ChattyManager *)object;
 
   purple_signals_disconnect_by_handle (self);
-  g_clear_object (&self->notification);
   g_clear_object (&self->chatty_eds);
   g_clear_object (&self->chat_list);
   g_clear_object (&self->list_of_chat_list);
@@ -1749,8 +1745,6 @@ static void
 chatty_manager_init (ChattyManager *self)
 {
   g_autoptr(GtkFlattenListModel) flatten_list = NULL;
-
-  self->notification = chatty_notification_new ();
 
   self->chatty_eds = chatty_eds_new (CHATTY_PROTOCOL_MMS_SMS);
   self->account_list = g_list_store_new (CHATTY_TYPE_ACCOUNT);
