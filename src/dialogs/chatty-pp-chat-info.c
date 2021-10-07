@@ -76,13 +76,16 @@ G_DEFINE_TYPE (ChattyPpChatInfo, chatty_pp_chat_info, HDY_TYPE_PREFERENCES_PAGE)
 static void
 pp_info_edit_avatar_button_clicked_cb (ChattyPpChatInfo *self)
 {
+  GtkWindow *window;
   GtkDialog *dialog;
   g_autofree char *file_name = NULL;
   int response;
 
   g_assert (CHATTY_IS_PP_CHAT_INFO (self));
 
+  window = (GtkWindow *)gtk_widget_get_ancestor (GTK_WIDGET (self), GTK_TYPE_WINDOW);
   dialog = GTK_DIALOG (self->avatar_chooser_dialog);
+  gtk_window_set_transient_for (GTK_WINDOW (dialog), window);
   response = gtk_dialog_run (dialog);
   gtk_widget_hide (GTK_WIDGET (dialog));
 
