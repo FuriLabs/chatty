@@ -19,7 +19,6 @@
 
 #include "contrib/gtk.h"
 #include "chatty-history.h"
-#include "chatty-notification.h"
 #include "chatty-utils.h"
 #include "matrix-api.h"
 #include "matrix-db.h"
@@ -58,7 +57,6 @@ struct _ChattyMaChat
   GListStore          *buddy_list;
   GListStore          *message_list;
   GtkSortListModel    *sorted_message_list;
-  ChattyNotification  *notification;
 
   /* Pending messages to be sent.  Queue messages here when
      @self is busy (eg: claiming keys for encrypted chat) */
@@ -1772,7 +1770,6 @@ chatty_ma_chat_finalize (GObject *object)
   g_clear_object (&self->buddy_list);
   g_clear_object (&self->matrix_api);
   g_clear_object (&self->matrix_enc);
-  g_clear_object (&self->notification);
   g_clear_object (&self->self_buddy);
   g_clear_pointer (&self->avatar_file, chatty_file_info_free);
   g_clear_object (&self->avatar);
@@ -1857,7 +1854,6 @@ chatty_ma_chat_init (ChattyMaChat *self)
   self->sorted_message_list = gtk_sort_list_model_new (G_LIST_MODEL (self->message_list), sorter);
   self->buddy_list = g_list_store_new (CHATTY_TYPE_MA_BUDDY);
   self->message_queue = g_queue_new ();
-  self->notification  = chatty_notification_new ();
   self->avatar_cancellable = g_cancellable_new ();
 }
 
