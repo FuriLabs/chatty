@@ -52,6 +52,23 @@ show_notification (gpointer user_data)
   return G_SOURCE_REMOVE;
 }
 
+static void
+notification_chat_changed_cb (ChattyNotification *self)
+{
+  GApplication *app;
+
+  g_assert (CHATTY_IS_NOTIFICATION (self));
+
+  if (chatty_chat_get_unread_count (self->chat) > 0)
+    return;
+
+  g_clear_handle_id (&self->timeout_id, g_source_remove);
+  app = g_application_get_default ();
+
+  if (app)
+    g_application_withdraw_notification (app, self->chat_name);
+}
+
 static GdkPixbuf *
 chatty_manager_round_pixbuf (GdkPixbuf *pixbuf)
 {
@@ -156,6 +173,10 @@ chatty_notification_new (ChattyChat *chat)
   self->chat = chat;
   self->chat_name = g_strdup (chatty_chat_get_chat_name (chat));
   g_set_weak_pointer (&self->chat, chat);
+
+  g_signal_connect_object (self->chat, "changed",
+                           G_CALLBACK (notification_chat_changed_cb),
+                           self, G_CONNECT_SWAPPED);
 
   g_notification_add_button_with_target (self->notification, _("Open Message"), "app.open-chat",
                                          "(ss)", self->chat_name,
