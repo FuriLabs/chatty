@@ -769,8 +769,7 @@ chatty_conv_write_conversation (PurpleConversation *conv,
       if (buddy && purple_blist_node_get_bool (node, "chatty-notifications") &&
           active_chat != chat) {
         buddy_name = purple_buddy_get_alias (buddy);
-        chatty_notification_show_message (self->notification, chat,
-                                          chat_message, buddy_name);
+        chatty_chat_show_notification (CHATTY_CHAT (chat), buddy_name);
       }
     } else if (flags & PURPLE_MESSAGE_SEND && pcm.flags & PURPLE_MESSAGE_SEND) {
       // normal send
@@ -1835,7 +1834,7 @@ chat_changed_cb (ChattyManager *self,
   g_assert (CHATTY_IS_MA_CHAT (chat));
 
   if (CHATTY_IS_MA_CHAT (chat))
-    chatty_ma_chat_show_notification (CHATTY_MA_CHAT (chat));
+    chatty_chat_show_notification (chat, NULL);
 }
 
 static void
