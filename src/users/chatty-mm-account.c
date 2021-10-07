@@ -389,7 +389,7 @@ chatty_mm_account_recieve_mms_cb (ChattyMmAccount *self,
   g_signal_emit_by_name (chat, "changed", 0);
   /* Only show a notification for received MMS */
   if (message_dir == CHATTY_DIRECTION_IN) {
-    chatty_mm_chat_show_notification (CHATTY_MM_CHAT (chat));
+    chatty_chat_show_notification (CHATTY_CHAT (chat), NULL);
   }
 
   if (chatty_utils_get_item_position (G_LIST_MODEL (self->chat_list), chat, &position))
@@ -466,7 +466,7 @@ mm_account_add_sms (ChattyMmAccount *self,
   chatty_mm_chat_append_message (CHATTY_MM_CHAT (chat), message);
   chatty_history_add_message (self->history_db, chat, message);
   g_signal_emit_by_name (chat, "changed", 0);
-  chatty_mm_chat_show_notification (CHATTY_MM_CHAT (chat));
+  chatty_chat_show_notification (CHATTY_CHAT (chat), NULL);
 
   if (chatty_utils_get_item_position (G_LIST_MODEL (self->chat_list), chat, &position))
     g_list_model_items_changed (G_LIST_MODEL (self->chat_list), position, 1, 1);
