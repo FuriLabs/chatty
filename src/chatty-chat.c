@@ -306,10 +306,9 @@ chatty_chat_real_show_notification (ChattyChat *self,
   g_set_weak_pointer (&priv->last_message, message);
 
   if (!priv->notification)
-    priv->notification = chatty_notification_new ();
+    priv->notification = chatty_notification_new (self);
 
-  chatty_notification_show_message (priv->notification, self,
-                                    message, name);
+  chatty_notification_show_message (priv->notification, message, name);
 }
 
 static const char *
