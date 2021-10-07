@@ -22,7 +22,7 @@
 #include "chatty-utils.h"
 #include "users/chatty-mm-buddy.h"
 #include "users/chatty-mm-account.h"
-#include "chatty-notification.h"
+/* #include "chatty-notification.h" */
 #include "chatty-history.h"
 #include "chatty-mm-chat.h"
 #include "chatty-log.h"
@@ -38,8 +38,6 @@ struct _ChattyMmChat
 {
   ChattyChat       parent_instance;
 
-  ChattyNotification *notification;
-  ChattyMessage   *last_notify_message;
   ChattyEds       *chatty_eds;
   ChattyMmAccount *account;
   ChattyHistory   *history_db;
@@ -162,7 +160,6 @@ mm_chat_load_db_messages_cb (GObject      *object,
 
   if (messages && messages->len) {
     g_list_store_splice (self->message_store, 0, 0, messages->pdata, messages->len);
-    self->last_notify_message = g_object_ref (messages->pdata[messages->len - 1]);
     g_signal_emit_by_name (self, "changed", 0);
   } else if (error &&
              !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED) &&
@@ -481,8 +478,6 @@ chatty_mm_chat_finalize (GObject *object)
   g_queue_free_full (self->message_queue, g_object_unref);
   g_list_store_remove_all (self->chat_users);
   g_list_store_remove_all (self->message_store);
-  g_clear_object (&self->notification);
-  g_clear_object (&self->last_notify_message);
   g_clear_object (&self->history_db);
   g_clear_object (&self->chatty_eds);
   g_clear_object (&self->account);
@@ -528,7 +523,6 @@ chatty_mm_chat_init (ChattyMmChat *self)
   self->chat_users = g_list_store_new (CHATTY_TYPE_MM_BUDDY);
   self->message_store = g_list_store_new (CHATTY_TYPE_MESSAGE);
   self->message_queue = g_queue_new ();
-  self->notification  = chatty_notification_new ();
 }
 
 ChattyMmChat *
@@ -682,31 +676,6 @@ chatty_mm_chat_delete (ChattyMmChat *self)
 
   account = chatty_chat_get_account (CHATTY_CHAT (self));
   chatty_mm_account_delete_chat (CHATTY_MM_ACCOUNT (account), CHATTY_CHAT (self));
-}
-
-/**
- * chatty_mm_chat_show_notification:
- * @self: A #ChattyMmChat
- *
- * Show notification for the last unread #ChattyMessage,
- * if any.
- */
-void
-chatty_mm_chat_show_notification (ChattyMmChat *self)
-{
-  g_autoptr(ChattyMessage) message = NULL;
-  ChattyChat *chat;
-  guint n_items;
-
-  g_return_if_fail (CHATTY_IS_MM_CHAT (self));
-
-  chat = CHATTY_CHAT (self);
-
-  n_items = g_list_model_get_n_items (chatty_chat_get_messages (chat));
-  message = g_list_model_get_item (chatty_chat_get_messages (chat), n_items - 1);
-
-  if (g_set_object (&self->last_notify_message, message))
-    chatty_notification_show_message (self->notification, chat, message, NULL);
 }
 
 /*
