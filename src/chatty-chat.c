@@ -18,6 +18,7 @@
 #define _GNU_SOURCE
 #include <string.h>
 
+#include "chatty-notification.h"
 #include "chatty-history.h"
 #include "chatty-chat.h"
 
@@ -36,6 +37,9 @@ typedef struct
 
   gpointer account;
   gpointer history;
+
+  ChattyMessage *last_message;
+  ChattyNotification *notification;
 
   gboolean is_im;
 } ChattyChatPrivate;
@@ -276,6 +280,38 @@ chatty_chat_real_invite_finish (ChattyChat   *self,
   return g_task_propagate_boolean (G_TASK (result), error);
 }
 
+static void
+chatty_chat_real_show_notification (ChattyChat *self,
+                                    const char *name)
+{
+  ChattyChatPrivate *priv = chatty_chat_get_instance_private (self);
+  g_autoptr(ChattyMessage) message = NULL;
+  GListModel *messages;
+  guint n_items;
+
+  g_assert (CHATTY_IS_CHAT (self));
+
+  messages = chatty_chat_get_messages (self);
+  n_items = g_list_model_get_n_items (messages);
+
+  if (!n_items)
+    return;
+
+  message = g_list_model_get_item (messages, n_items - 1);
+
+  if (message == priv->last_message)
+    return;
+
+  priv->last_message = message;
+  g_set_weak_pointer (&priv->last_message, message);
+
+  if (!priv->notification)
+    priv->notification = chatty_notification_new ();
+
+  chatty_notification_show_message (priv->notification, self,
+                                    message, name);
+}
+
 static const char *
 chatty_chat_real_get_name (ChattyItem *item)
 {
@@ -363,6 +399,9 @@ chatty_chat_finalize (GObject *object)
   g_clear_object (&priv->account);
   g_clear_object (&priv->history);
 
+  priv->last_message = NULL;
+  g_clear_object (&priv->notification);
+
   G_OBJECT_CLASS (chatty_chat_parent_class)->finalize (object);
 }
 
@@ -403,6 +442,7 @@ chatty_chat_class_init (ChattyChatClass *klass)
   klass->set_typing = chatty_chat_real_set_typing;
   klass->invite_async = chatty_chat_real_invite_async;
   klass->invite_finish = chatty_chat_real_invite_finish;
+  klass->show_notification = chatty_chat_real_show_notification;
 
   properties[PROP_ENCRYPT] =
     g_param_spec_boolean ("encrypt",
@@ -751,4 +791,22 @@ chatty_chat_invite_finish (ChattyChat    *self,
   g_return_val_if_fail (G_IS_ASYNC_RESULT (result), FALSE);
 
   return CHATTY_CHAT_GET_CLASS (self)->invite_finish (self, result, error);
+}
+
+/**
+ * chatty_chat_show_notification:
+ * @self: A #ChattyChat
+ * @name: (nullable): Name of last message sender
+ *
+ * Show the last message in chat as notification.
+ * @name can be set if you want to override the sender
+ * name.
+ */
+void
+chatty_chat_show_notification (ChattyChat *self,
+                               const char *name)
+{
+  g_return_if_fail (CHATTY_IS_CHAT (self));
+
+  CHATTY_CHAT_GET_CLASS (self)->show_notification (self, name);
 }

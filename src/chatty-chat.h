@@ -77,6 +77,8 @@ struct _ChattyChatClass
   gboolean         (*invite_finish)       (ChattyChat    *self,
                                            GAsyncResult  *result,
                                            GError       **error);
+  void             (*show_notification)   (ChattyChat    *self,
+                                           const char    *name);
 };
 
 ChattyChat         *chatty_chat_new                (const char *account_username,
@@ -131,5 +133,7 @@ void                chatty_chat_invite_async       (ChattyChat *self,
 gboolean           chatty_chat_invite_finish       (ChattyChat    *self,
                                                     GAsyncResult  *result,
                                                     GError       **error);
+void               chatty_chat_show_notification   (ChattyChat    *self,
+                                                    const char    *name);
 
 G_END_DECLS
