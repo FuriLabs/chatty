@@ -1620,6 +1620,20 @@ chatty_ma_chat_set_typing (ChattyChat *chat,
   matrix_api_set_typing (self->matrix_api, self->room_id, is_typing);
 }
 
+static void
+chatty_ma_chat_show_notification (ChattyChat *chat,
+                                  const char *name)
+{
+  ChattyMaChat *self = (ChattyMaChat *)chat;
+
+  g_assert (CHATTY_IS_MA_CHAT (self));
+
+  if (!self->unread_count || self->notification_shown)
+    return;
+
+  CHATTY_CHAT_CLASS (chatty_ma_chat_parent_class)->show_notification (chat, name);
+}
+
 static const char *
 chatty_ma_chat_get_name (ChattyItem *item)
 {
@@ -1813,6 +1827,7 @@ chatty_ma_chat_class_init (ChattyMaChatClass *klass)
   chat_class->get_files_async = chatty_ma_chat_get_files_async;
   chat_class->get_buddy_typing = chatty_ma_chat_get_buddy_typing;
   chat_class->set_typing = chatty_ma_chat_set_typing;
+  chat_class->show_notification = chatty_ma_chat_show_notification;
 
   properties[PROP_JSON_DATA] =
     g_param_spec_boxed ("json-data",
@@ -1992,32 +2007,4 @@ chatty_ma_chat_add_messages (ChattyMaChat *self,
   if (messages && messages->len)
     g_list_store_splice (self->message_list, 0, 0,
                          messages->pdata, messages->len);
-}
-
-/**
- * chatty_ma_chat_show_notification:
- * @self: A #ChattyMaChat
- *
- * Show notification for the last unread #ChattyMessage,
- * if any.
- *
- */
-void
-chatty_ma_chat_show_notification (ChattyMaChat *self)
-{
-  g_autoptr(ChattyMessage) message = NULL;
-  ChattyChat *chat;
-  guint n_items;
-
-  g_return_if_fail (CHATTY_IS_MA_CHAT (self));
-
-  if (!self->unread_count || self->notification_shown)
-    return;
-
-  chat = CHATTY_CHAT (self);
-  self->notification_shown = TRUE;
-
-  n_items = g_list_model_get_n_items (chatty_chat_get_messages (chat));
-  message = g_list_model_get_item (chatty_chat_get_messages (chat), n_items - 1);
-  chatty_notification_show_message (self->notification, chat, message, NULL);
 }
