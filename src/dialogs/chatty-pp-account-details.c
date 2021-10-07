@@ -80,6 +80,7 @@ static char *
 pp_account_show_dialog_load_avatar (ChattyPpAccountDetails *self)
 {
   g_autoptr(GtkFileChooserNative) dialog = NULL;
+  GtkFileFilter *filter;
   GtkWidget *window;
   int response;
 
@@ -89,6 +90,11 @@ pp_account_show_dialog_load_avatar (ChattyPpAccountDetails *self)
                                         GTK_FILE_CHOOSER_ACTION_OPEN,
                                         _("Open"),
                                         _("Cancel"));
+
+  filter = gtk_file_filter_new ();
+  gtk_file_filter_add_mime_type (filter, "image/*");
+  gtk_file_filter_set_name (filter, _("Images"));
+  gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dialog), filter);
 
   response = gtk_native_dialog_run (GTK_NATIVE_DIALOG (dialog));
 
