@@ -118,6 +118,8 @@ ma_account_show_dialog_load_avatar (ChattyMaAccountDetails *self)
                                         GTK_FILE_CHOOSER_ACTION_OPEN,
                                         _("Open"),
                                         _("Cancel"));
+  gtk_native_dialog_set_transient_for (GTK_NATIVE_DIALOG (dialog), GTK_WINDOW (window));
+  gtk_native_dialog_set_modal (GTK_NATIVE_DIALOG (dialog), TRUE);
 
   filter = gtk_file_filter_new ();
   gtk_file_filter_add_mime_type (filter, "image/*");
