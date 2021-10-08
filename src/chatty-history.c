@@ -2407,8 +2407,7 @@ history_get_chats (ChattyHistory *self,
     }
 
     if (CHATTY_IS_MA_ACCOUNT (account)) {
-      chat = (gpointer)chatty_ma_chat_new (name, alias, file);
-      chatty_chat_set_encryption (CHATTY_CHAT (chat), encrypted);
+      chat = (gpointer)chatty_ma_chat_new (name, alias, file, encrypted);
     } else {
       chat = (gpointer)chatty_mm_chat_new (name, alias, CHATTY_PROTOCOL_MMS_SMS, TRUE);
     }

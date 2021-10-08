@@ -1860,7 +1860,8 @@ chatty_ma_chat_init (ChattyMaChat *self)
 ChattyMaChat *
 chatty_ma_chat_new (const char     *room_id,
                     const char     *name,
-                    ChattyFileInfo *avatar)
+                    ChattyFileInfo *avatar,
+                    gboolean        encrypted)
 {
   ChattyMaChat *self;
 
@@ -1870,6 +1871,8 @@ chatty_ma_chat_new (const char     *room_id,
                        "room-id", room_id, NULL);
   self->room_name = g_strdup (name);
   self->avatar_file = avatar;
+  if (encrypted)
+    self->encryption = g_strdup ("encrypted");
 
   return self;
 }
