@@ -1385,9 +1385,11 @@ chatty_mmsd_settings_signal_changed_cb (GDBusConnection *connection,
     self->carrier_proxy = g_strdup(proxy);
 
   settings = chatty_settings_get_default ();
+  g_object_freeze_notify (G_OBJECT (settings));
   chatty_settings_set_mms_carrier_mmsc (settings, self->carrier_mmsc);
   chatty_settings_set_mms_carrier_apn (settings, self->mms_apn);
   chatty_settings_set_mms_carrier_proxy (settings, self->carrier_proxy);
+  g_object_thaw_notify (G_OBJECT (settings));
 }
 
 
@@ -1488,9 +1490,11 @@ chatty_mmsd_get_mmsd_service_settings_cb (GObject      *service,
     if (!carrier_mmsc || !*carrier_mmsc) {
       /* mmsd-tng default for MMSC is http://mms.invalid */
       if (g_strcmp0 (self->carrier_mmsc, "http://mms.invalid") != 0) {
+        g_object_freeze_notify (G_OBJECT (settings));
         chatty_settings_set_mms_carrier_mmsc (settings, self->carrier_mmsc);
         chatty_settings_set_mms_carrier_apn (settings, self->mms_apn);
         chatty_settings_set_mms_carrier_proxy (settings, self->carrier_proxy);
+        g_object_thaw_notify (G_OBJECT (settings));
       } else {
         self->modemmanager_settings_changed_watch_id =
           g_dbus_connection_signal_subscribe (self->connection,
