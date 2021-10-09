@@ -85,6 +85,56 @@
               </packing>
             </child>
 
+            <child>
+              <object class="GtkLabel" id="settings_label">
+                <property name="visible">1</property>
+                <property name="halign">start</property>
+                <property name="margin-top">12</property>
+                <property name="label" translatable="yes">Chat settings</property>
+                <attributes>
+                  <attribute name="weight" value="bold"/>
+                </attributes>
+              </object>
+            </child>
+
+            <child>
+              <object class="GtkListBox">
+                <property name="visible">1</property>
+                <property name="expand">1</property>
+                <property name="selection-mode">none</property>
+                <style>
+                  <class name="content"/>
+                </style>
+                <child>
+                  <object class="HdyActionRow">
+                    <property name="visible">1</property>
+                    <property name="activatable" bind-source="encryption_switch" bind-property="active"
+                              bind-flags="sync-create|invert-boolean"/>
+                    <property name="title" translatable="yes">Encryption</property>
+                    <property name="subtitle" translatable="yes">Encrypt Messages</property>
+                    <property name="activatable-widget">encryption_switch</property>
+                    <child>
+                      <object class="GtkSpinner" id="encryption_spinner">
+                        <property name="visible">1</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSwitch" id="encryption_switch">
+                        <property name="visible">1</property>
+                        <property name="sensitive" bind-source="encryption_switch" bind-property="active"
+                                  bind-flags="sync-create|invert-boolean"/>
+                        <property name="valign">center</property>
+                        <signal name="notify::active" handler="ma_chat_info_encryption_switch_changed_cb" swapped="yes"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="width">2</property>
+              </packing>
+            </child>
+
           </object>
         </child>
       </object>

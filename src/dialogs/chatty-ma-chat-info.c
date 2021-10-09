@@ -47,9 +47,59 @@ struct _ChattyMaChatInfo
 
   GtkWidget     *name_label;
   GtkWidget     *matrix_id_label;
+  GtkWidget     *encryption_spinner;
+  GtkWidget     *encryption_switch;
 };
 
 G_DEFINE_TYPE (ChattyMaChatInfo, chatty_ma_chat_info, HDY_TYPE_PREFERENCES_PAGE)
+
+static void     ma_chat_info_encryption_switch_changed_cb    (ChattyMaChatInfo *self);
+
+static void
+ma_chat_encrypt_changed_cb (ChattyMaChatInfo *self)
+{
+  g_assert (CHATTY_IS_MA_CHAT_INFO (self));
+
+  g_signal_handlers_block_by_func (self->encryption_switch,
+                                   ma_chat_info_encryption_switch_changed_cb,
+                                   self);
+  gtk_switch_set_active (GTK_SWITCH (self->encryption_switch),
+                         chatty_chat_get_encryption (self->chat) == CHATTY_ENCRYPTION_ENABLED);
+  g_signal_handlers_unblock_by_func (self->encryption_switch,
+                                     ma_chat_info_encryption_switch_changed_cb,
+                                     self);
+}
+
+static void
+ma_chat_info_set_encryption_cb (GObject      *object,
+                                GAsyncResult *result,
+                                gpointer      user_data)
+{
+  g_autoptr(ChattyMaChatInfo) self = user_data;
+
+  g_assert (CHATTY_IS_MA_CHAT_INFO (self));
+
+  if (gtk_widget_in_destruction (GTK_WIDGET (self)))
+    return;
+
+  gtk_spinner_stop (GTK_SPINNER (self->encryption_spinner));
+  ma_chat_encrypt_changed_cb (self);
+}
+
+static void
+ma_chat_info_encryption_switch_changed_cb (ChattyMaChatInfo *self)
+{
+  g_assert (CHATTY_IS_MA_CHAT_INFO (self));
+  g_assert (self->chat);
+
+  if (!gtk_switch_get_active (GTK_SWITCH (self->encryption_switch)))
+    return;
+
+  gtk_spinner_start (GTK_SPINNER (self->encryption_spinner));
+  chatty_chat_set_encryption_async (self->chat, TRUE,
+                                    ma_chat_info_set_encryption_cb,
+                                    g_object_ref (self));
+}
 
 static void
 chatty_ma_chat_info_finalize (GObject *object)
@@ -77,6 +127,10 @@ chatty_ma_chat_info_class_init (ChattyMaChatInfoClass *klass)
 
   gtk_widget_class_bind_template_child (widget_class, ChattyMaChatInfo, name_label);
   gtk_widget_class_bind_template_child (widget_class, ChattyMaChatInfo, matrix_id_label);
+  gtk_widget_class_bind_template_child (widget_class, ChattyMaChatInfo, encryption_spinner);
+  gtk_widget_class_bind_template_child (widget_class, ChattyMaChatInfo, encryption_switch);
+
+  gtk_widget_class_bind_template_callback (widget_class, ma_chat_info_encryption_switch_changed_cb);
 }
 
 static void
@@ -115,6 +169,12 @@ chatty_ma_chat_info_set_item (ChattyMaChatInfo *self,
   g_return_if_fail (CHATTY_IS_MA_CHAT_INFO (self));
   g_return_if_fail (!chat || CHATTY_IS_CHAT (chat));
 
+  if (self->chat && chat != self->chat) {
+    g_signal_handlers_disconnect_by_func (self->chat,
+                                          ma_chat_encrypt_changed_cb,
+                                          self);
+  }
+
   if (!g_set_object (&self->chat, chat) || !chat)
     return;
 
@@ -122,4 +182,9 @@ chatty_ma_chat_info_set_item (ChattyMaChatInfo *self,
                       chatty_chat_get_chat_name (self->chat));
   gtk_label_set_text (GTK_LABEL (self->name_label),
                       chatty_item_get_name (CHATTY_ITEM (self->chat)));
+
+  g_signal_connect_swapped (self->chat, "notify::encrypt",
+                            G_CALLBACK (ma_chat_encrypt_changed_cb),
+                            self);
+  ma_chat_encrypt_changed_cb (self);
 }
