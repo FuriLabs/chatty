@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty master\n"
 "Report-Msgid-Bugs-To: https://source.puri.sm/Librem5/chatty/issues\n"
-"POT-Creation-Date: 2021-10-05 15:25+0000\n"
-"PO-Revision-Date: 2021-10-04 17:40+0200\n"
-"Last-Translator: Luna Jernberg <droidbittin@gmail.com> \n"
+"POT-Creation-Date: 2021-10-08 15:25+0000\n"
+"PO-Revision-Date: 2021-10-09 10:48+0200\n"
+"Last-Translator: Luna Jernberg <droidbittin@gmail.com>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
@@ -223,23 +223,22 @@ msgstr "Dina meddelanden krypteras"
 msgid "Your messages are not encrypted"
 msgstr "Dina meddelanden krypteras inte"
 
-#: src/chatty-chat-view.c:411
+#: src/chatty-chat-view.c:414
 msgid "Select File..."
 msgstr "Välj fil…"
 
-#: src/chatty-chat-view.c:414 src/chatty-purple-request.c:191
-#: src/chatty-window.c:538 src/dialogs/chatty-ma-account-details.c:119
-#: src/dialogs/chatty-pp-account-details.c:91
+#: src/chatty-chat-view.c:417 src/chatty-purple-request.c:191
+#: src/chatty-window.c:538 src/dialogs/chatty-pp-chat-info.c:90
+#: src/dialogs/chatty-ma-account-details.c:120
+#: src/dialogs/chatty-pp-account-details.c:92
 #: src/ui/chatty-dialog-join-muc.ui:16 src/ui/chatty-info-dialog.ui:44
-#: src/ui/chatty-info-dialog.ui:191 src/ui/chatty-ma-chat-info.ui:102
-#: src/ui/chatty-pp-chat-info.ui:429
 msgid "Cancel"
 msgstr "Avbryt"
 
-#: src/chatty-chat-view.c:415 src/chatty-purple-request.c:193
-#: src/dialogs/chatty-ma-account-details.c:118
-#: src/dialogs/chatty-pp-account-details.c:90 src/ui/chatty-info-dialog.ui:198
-#: src/ui/chatty-ma-chat-info.ui:109 src/ui/chatty-pp-chat-info.ui:436
+#: src/chatty-chat-view.c:418 src/chatty-purple-request.c:193
+#: src/dialogs/chatty-pp-chat-info.c:89
+#: src/dialogs/chatty-ma-account-details.c:119
+#: src/dialogs/chatty-pp-account-details.c:91
 msgid "Open"
 msgstr "Öppna"
 
@@ -341,16 +340,16 @@ msgstr "Medlem"
 msgid "Copy"
 msgstr "Kopiera"
 
-#: src/chatty-notification.c:45
+#: src/chatty-notification.c:181
 msgid "Open Message"
 msgstr "Öppna meddelande"
 
-#: src/chatty-notification.c:185
+#: src/chatty-notification.c:212
 #, c-format
 msgid "New message from %s"
 msgstr "Nytt meddelande från %s"
 
-#: src/chatty-notification.c:187
+#: src/chatty-notification.c:214
 msgid "Message Received"
 msgstr "Meddelande togs emot"
 
@@ -478,42 +477,54 @@ msgstr "Telegram"
 msgid "“%s” is not a valid phone number"
 msgstr "”%s” är inte ett giltigt telefonnummer"
 
-#: src/dialogs/chatty-pp-chat-info.c:194
+#: src/dialogs/chatty-pp-chat-info.c:86
+#: src/dialogs/chatty-ma-account-details.c:116
+#: src/dialogs/chatty-pp-account-details.c:88
+msgid "Set Avatar"
+msgstr "Ställ in profilbild"
+
+#: src/dialogs/chatty-pp-chat-info.c:96
+#: src/dialogs/chatty-ma-account-details.c:126
+#: src/dialogs/chatty-pp-account-details.c:98
+msgid "Images"
+msgstr "Bilder"
+
+#: src/dialogs/chatty-pp-chat-info.c:206
 msgid "Encryption is not available"
 msgstr "Kryptering är inte tillgänglig"
 
-#: src/dialogs/chatty-pp-chat-info.c:198
+#: src/dialogs/chatty-pp-chat-info.c:210
 msgid "This chat is encrypted"
 msgstr "Denna chatt är krypterad"
 
-#: src/dialogs/chatty-pp-chat-info.c:202
+#: src/dialogs/chatty-pp-chat-info.c:214
 msgid "This chat is not encrypted"
 msgstr "Denna chatt är inte krypterad"
 
-#: src/dialogs/chatty-pp-chat-info.c:226
+#: src/dialogs/chatty-pp-chat-info.c:238
 msgid "Encryption not available"
 msgstr "Kryptering inte tillgänglig"
 
-#: src/dialogs/chatty-pp-chat-info.c:247
+#: src/dialogs/chatty-pp-chat-info.c:259
 #, c-format
 msgid "%u Member"
 msgid_plural "%u Members"
 msgstr[0] "%u medlem"
 msgstr[1] "%u medlemmar"
 
-#: src/dialogs/chatty-pp-chat-info.c:281
+#: src/dialogs/chatty-pp-chat-info.c:293
 msgid "Phone Number:"
 msgstr "Telefonnummer:"
 
-#: src/dialogs/chatty-pp-chat-info.c:283
+#: src/dialogs/chatty-pp-chat-info.c:295
 msgid "XMPP ID:"
 msgstr "XMPP-ID:"
 
-#: src/dialogs/chatty-pp-chat-info.c:288
+#: src/dialogs/chatty-pp-chat-info.c:300
 msgid "Matrix ID:"
 msgstr "Matrix-ID:"
 
-#: src/dialogs/chatty-pp-chat-info.c:291
+#: src/dialogs/chatty-pp-chat-info.c:303
 msgid "Telegram ID:"
 msgstr "Telegram-ID:"
 
@@ -526,24 +537,18 @@ msgstr "Skicka till"
 msgid "Error opening GNOME Contacts: %s"
 msgstr "Fel vid öppnande av GNOME Kontakter: %s"
 
-#: src/dialogs/chatty-ma-account-details.c:115
-#: src/dialogs/chatty-pp-account-details.c:87 src/ui/chatty-info-dialog.ui:186
-#: src/ui/chatty-ma-chat-info.ui:97 src/ui/chatty-pp-chat-info.ui:424
-msgid "Set Avatar"
-msgstr "Ställ in profilbild"
-
-#: src/dialogs/chatty-ma-account-details.c:378
-#: src/dialogs/chatty-pp-account-details.c:171
+#: src/dialogs/chatty-ma-account-details.c:386
+#: src/dialogs/chatty-pp-account-details.c:179
 msgid "connected"
 msgstr "ansluten"
 
-#: src/dialogs/chatty-ma-account-details.c:380
-#: src/dialogs/chatty-pp-account-details.c:173
+#: src/dialogs/chatty-ma-account-details.c:388
+#: src/dialogs/chatty-pp-account-details.c:181
 msgid "connecting…"
 msgstr "ansluter…"
 
-#: src/dialogs/chatty-ma-account-details.c:382
-#: src/dialogs/chatty-pp-account-details.c:175
+#: src/dialogs/chatty-ma-account-details.c:390
+#: src/dialogs/chatty-pp-account-details.c:183
 msgid "disconnected"
 msgstr "frånkopplad"
 
@@ -595,16 +600,16 @@ msgstr "A_vbryt"
 msgid "Please enter password for “%s”"
 msgstr "Ange lösenordet för ”%s”"
 
-#: src/matrix/chatty-ma-chat.c:166
+#: src/matrix/chatty-ma-chat.c:164
 msgid "Empty room"
 msgstr "Tomt rum"
 
-#: src/matrix/chatty-ma-chat.c:170
+#: src/matrix/chatty-ma-chat.c:168
 #, c-format
 msgid "%s and %s"
 msgstr "%s och %s"
 
-#: src/matrix/chatty-ma-chat.c:172
+#: src/matrix/chatty-ma-chat.c:170
 #, c-format
 msgid "%s and %u other"
 msgid_plural "%s and %u others"
