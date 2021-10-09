@@ -801,6 +801,7 @@ chatty_chat_view_set_chat (ChattyChatView *self,
                                           self);
 
     g_clear_object (&self->history_binding);
+    gtk_widget_hide (self->scroll_down_button);
   }
 
   gtk_widget_set_sensitive (self->message_input, !!chat);
