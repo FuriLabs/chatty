@@ -1423,6 +1423,72 @@ chatty_ma_chat_get_encryption (ChattyChat *chat)
   return CHATTY_ENCRYPTION_DISABLED;
 }
 
+static void
+ma_chat_set_encryption_cb (GObject      *object,
+                           GAsyncResult *result,
+                           gpointer      user_data)
+{
+  ChattyMaChat *self;
+  g_autoptr(GTask) task = user_data;
+  GError *error = NULL;
+  gboolean ret;
+
+  g_assert (G_IS_TASK (task));
+
+  self = g_task_get_source_object (task);
+  g_assert (CHATTY_IS_MA_CHAT (self));
+
+  ret = matrix_api_set_room_encryption_finish (self->matrix_api, result, &error);
+  CHATTY_DEBUG (self->room_id, "Setting encryption, success: %d, room:", ret);
+
+  if (error) {
+    g_warning ("Failed to set encryption: %s", error->message);
+    g_task_return_error (task, error);
+  } else {
+    if (ret)
+      self->encryption = g_strdup ("encrypted");
+
+    g_object_notify (G_OBJECT (self), "encrypt");
+    g_task_return_boolean (task, ret);
+  }
+}
+
+static void
+chatty_ma_chat_set_encryption_async (ChattyChat          *chat,
+                                     gboolean             enable,
+                                     GAsyncReadyCallback  callback,
+                                     gpointer             user_data)
+{
+  ChattyMaChat *self = (ChattyMaChat *)chat;
+  g_autoptr(GTask) task = NULL;
+
+  g_assert (CHATTY_IS_MA_CHAT (self));
+  g_assert (self->matrix_api);
+
+  task = g_task_new (self, NULL, callback, user_data);
+
+  if (!enable) {
+    g_task_return_new_error (task,
+                             G_IO_ERROR,
+                             G_IO_ERROR_NOT_SUPPORTED,
+                             "Disabling encryption not allowed");
+    return;
+  }
+
+  if (enable &&
+      chatty_chat_get_encryption (chat) == CHATTY_ENCRYPTION_ENABLED) {
+    g_debug ("Encryption is already enabled");
+    g_task_return_boolean (task, TRUE);
+
+    return;
+  }
+
+  CHATTY_DEBUG (self->room_id, "Setting encryption for room:");
+  matrix_api_set_room_encryption_async (self->matrix_api, self->room_id,
+                                        ma_chat_set_encryption_cb,
+                                        g_steal_pointer (&task));
+}
+
 static const char *
 chatty_ma_chat_get_last_message (ChattyChat *chat)
 {
@@ -1797,6 +1863,7 @@ chatty_ma_chat_class_init (ChattyMaChatClass *klass)
   chat_class->get_messages = chatty_ma_chat_get_messages;
   chat_class->get_account  = chatty_ma_chat_get_account;
   chat_class->get_encryption = chatty_ma_chat_get_encryption;
+  chat_class->set_encryption_async = chatty_ma_chat_set_encryption_async;
   chat_class->get_last_message = chatty_ma_chat_get_last_message;
   chat_class->get_unread_count = chatty_ma_chat_get_unread_count;
   chat_class->set_unread_count = chatty_ma_chat_set_unread_count;
