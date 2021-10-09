@@ -1280,7 +1280,8 @@ chatty_mmsd_sync_settings (ChattyMmsd *self)
     g_debug ("Changing Proxy from %s to %s", self->carrier_proxy, carrier_proxy);
     g_free (self->carrier_proxy);
     self->carrier_proxy = g_strdup (carrier_proxy);
-    if (!carrier_proxy)
+    /* mmsd-tng prefers "NULL" to "" */
+    if (!carrier_proxy || !*carrier_proxy)
       carrier_proxy = "NULL";
 
     g_dbus_proxy_call_sync (self->modemmanager_proxy,
