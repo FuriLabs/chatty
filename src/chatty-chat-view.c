@@ -52,9 +52,6 @@ struct _ChattyChatView
   GtkTextBuffer *message_input_buffer;
   GtkAdjustment *vadjustment;
 
-  /* Signal ids */
-  GBinding   *history_binding;
-
   ChattyChat *chat;
   guint       refresh_typing_id;
   gboolean    first_scroll_to_bottom;
@@ -351,6 +348,24 @@ chat_buddy_typing_changed_cb (ChattyChatView *self)
   } else {
     gtk_revealer_set_reveal_child (GTK_REVEALER (self->typing_revealer), FALSE);
     g_clear_handle_id (&self->refresh_typing_id, g_source_remove);
+  }
+}
+
+static void
+chat_view_loading_history_cb (ChattyChatView *self)
+{
+  gboolean loading;
+
+  g_assert (CHATTY_IS_CHAT_VIEW (self));
+
+  loading = chatty_chat_is_loading_history (self->chat);
+
+  if (loading) {
+    gtk_spinner_start (GTK_SPINNER (self->loading_spinner));
+    gtk_widget_set_opacity (self->loading_spinner, 1.0);
+  } else {
+    gtk_spinner_stop (GTK_SPINNER (self->loading_spinner));
+    gtk_widget_set_opacity (self->loading_spinner, 0.0);
   }
 }
 
@@ -796,11 +811,13 @@ chatty_chat_view_set_chat (ChattyChatView *self,
     g_signal_handlers_disconnect_by_func (self->chat,
                                           chat_buddy_typing_changed_cb,
                                           self);
+    g_signal_handlers_disconnect_by_func (self->chat,
+                                          chat_view_loading_history_cb,
+                                          self);
     g_signal_handlers_disconnect_by_func (chatty_chat_get_messages (self->chat),
                                           chat_view_message_items_changed,
                                           self);
 
-    g_clear_object (&self->history_binding);
     gtk_widget_hide (self->scroll_down_button);
     self->first_scroll_to_bottom = FALSE;
   }
@@ -853,13 +870,14 @@ chatty_chat_view_set_chat (ChattyChatView *self,
   g_signal_connect_swapped (self->chat, "notify::buddy-typing",
                             G_CALLBACK (chat_buddy_typing_changed_cb),
                             self);
-  self->history_binding = g_object_bind_property (self->chat, "loading-history",
-                                                  self->loading_spinner, "active",
-                                                  G_BINDING_SYNC_CREATE);
+  g_signal_connect_swapped (self->chat, "notify::loading-history",
+                            G_CALLBACK (chat_view_loading_history_cb),
+                            self);
 
   chat_encrypt_changed_cb (self);
   chat_buddy_typing_changed_cb (self);
   chatty_chat_view_update (self);
+  chat_view_loading_history_cb (self);
   chat_view_adjustment_value_changed_cb (self);
 
   gtk_widget_grab_focus (self->message_input);
