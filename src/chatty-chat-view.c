@@ -787,6 +787,9 @@ chatty_chat_view_set_chat (ChattyChatView *self,
   g_return_if_fail (!chat || CHATTY_IS_CHAT (chat));
 
   if (self->chat && chat != self->chat) {
+    g_signal_handlers_disconnect_by_func (chatty_chat_get_account (self->chat),
+                                          chat_account_status_changed_cb,
+                                          self);
     g_signal_handlers_disconnect_by_func (self->chat,
                                           chat_encrypt_changed_cb,
                                           self);
