@@ -238,6 +238,40 @@ chatty_chat_real_get_encryption (ChattyChat *self)
   return CHATTY_ENCRYPTION_UNKNOWN;
 }
 
+static void
+chatty_chat_real_set_encryption (ChattyChat *self,
+                                 gboolean    enable)
+{
+  /* Do nothing */
+}
+
+static void
+chatty_chat_real_set_encryption_async (ChattyChat          *self,
+                                       gboolean             enable,
+                                       GAsyncReadyCallback  callback,
+                                       gpointer             user_data)
+{
+  g_assert (CHATTY_IS_CHAT (self));
+
+  g_task_report_new_error (self, callback, user_data,
+                           chatty_chat_real_set_encryption_async,
+                           G_IO_ERROR,
+                           G_IO_ERROR_NOT_SUPPORTED,
+                           "Setting encryption not supported");
+}
+
+
+static gboolean
+chatty_chat_real_set_encryption_finish (ChattyChat   *self,
+                                        GAsyncResult *result,
+                                        GError       **error)
+{
+  g_assert (CHATTY_IS_CHAT (self));
+  g_assert (G_IS_TASK (result));
+
+  return g_task_propagate_boolean (G_TASK (result), error);
+}
+
 static gboolean
 chatty_chat_real_get_buddy_typing (ChattyChat *self)
 {
@@ -437,6 +471,9 @@ chatty_chat_class_init (ChattyChatClass *klass)
   klass->get_files_async = chatty_chat_real_get_files_async;
   klass->get_files_finish = chatty_chat_real_get_files_finish;
   klass->get_encryption = chatty_chat_real_get_encryption;
+  klass->set_encryption = chatty_chat_real_set_encryption;
+  klass->set_encryption_async = chatty_chat_real_set_encryption_async;
+  klass->set_encryption_finish = chatty_chat_real_set_encryption_finish;
   klass->get_buddy_typing = chatty_chat_real_get_buddy_typing;
   klass->set_typing = chatty_chat_real_set_typing;
   klass->invite_async = chatty_chat_real_invite_async;
@@ -737,6 +774,41 @@ chatty_chat_set_encryption (ChattyChat *self,
   g_return_if_fail (CHATTY_IS_CHAT (self));
 
   CHATTY_CHAT_GET_CLASS (self)->set_encryption (self, !!enable);
+}
+
+/**
+ * chatty_chat_set_encryption_async:
+ * @self: A #ChattyChat
+ * @enable: Whether to enable/disable encryption
+ * @callback: A #GAsyncReadyCallback
+ * @user_data: user data for @callback
+ *
+ * Enable/disable encryption for the chat.  Please note that
+ * not all protocols may have async support.  See
+ * chatty_chat_set_encryption().
+ * Also, some protocols doesn't allow disabling encryption
+ * once enabled.
+ */
+void
+chatty_chat_set_encryption_async (ChattyChat          *self,
+                                  gboolean             enable,
+                                  GAsyncReadyCallback  callback,
+                                  gpointer             user_data)
+{
+  g_return_if_fail (CHATTY_IS_CHAT (self));
+
+  CHATTY_CHAT_GET_CLASS (self)->set_encryption_async (self, !!enable, callback, user_data);
+}
+
+gboolean
+chatty_chat_set_encryption_finish (ChattyChat    *self,
+                                   GAsyncResult  *result,
+                                   GError       **error)
+{
+  g_return_val_if_fail (CHATTY_IS_CHAT (self), FALSE);
+  g_return_val_if_fail (G_IS_TASK (result), FALSE);
+
+  return CHATTY_CHAT_GET_CLASS (self)->set_encryption_finish (self, result, error);
 }
 
 /**

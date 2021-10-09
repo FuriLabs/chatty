@@ -65,6 +65,13 @@ struct _ChattyChatClass
   ChattyEncryption  (*get_encryption)     (ChattyChat *self);
   void              (*set_encryption)     (ChattyChat *self,
                                            gboolean    enable);
+  void              (*set_encryption_async) (ChattyChat *self,
+                                             gboolean    enable,
+                                             GAsyncReadyCallback callback,
+                                             gpointer       user_data);
+  gboolean          (*set_encryption_finish) (ChattyChat    *self,
+                                              GAsyncResult  *result,
+                                              GError       **error);
   gboolean          (*get_buddy_typing)   (ChattyChat *self);
   void              (*set_typing)         (ChattyChat *self,
                                            gboolean    is_typing);
@@ -121,6 +128,13 @@ gboolean            chatty_chat_get_files_finish   (ChattyChat    *self,
 ChattyEncryption    chatty_chat_get_encryption     (ChattyChat *self);
 void                chatty_chat_set_encryption     (ChattyChat *self,
                                                     gboolean    enable);
+void                chatty_chat_set_encryption_async (ChattyChat     *self,
+                                                      gboolean        enable,
+                                                      GAsyncReadyCallback callback,
+                                                      gpointer        user_data);
+gboolean            chatty_chat_set_encryption_finish (ChattyChat    *self,
+                                                       GAsyncResult  *result,
+                                                       GError       **error);
 gboolean            chatty_chat_get_buddy_typing   (ChattyChat *self);
 void                chatty_chat_set_typing         (ChattyChat *self,
                                                     gboolean    is_typing);
