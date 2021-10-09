@@ -157,6 +157,7 @@ mm_chat_load_db_messages_cb (GObject      *object,
 
   messages = chatty_history_get_messages_finish (self->history_db, result, &error);
   self->history_is_loading = FALSE;
+  g_object_notify (G_OBJECT (self), "loading-history");
 
   if (messages && messages->len) {
     g_list_store_splice (self->message_store, 0, 0, messages->pdata, messages->len);
@@ -183,11 +184,22 @@ chatty_mm_chat_load_past_messages (ChattyChat *chat,
 
   self->history_is_loading = TRUE;
   model = chatty_chat_get_messages (chat);
+  g_object_notify (G_OBJECT (self), "loading-history");
 
   chatty_history_get_messages_async (self->history_db, chat,
                                      g_list_model_get_item (model, 0),
                                      count, mm_chat_load_db_messages_cb,
                                      g_object_ref (self));
+}
+
+static gboolean
+chatty_mm_chat_is_loading_history (ChattyChat *chat)
+{
+  ChattyMmChat *self = (ChattyMmChat *)chat;
+
+  g_assert (CHATTY_IS_MM_CHAT (self));
+
+  return self->history_is_loading;
 }
 
 static GListModel *
@@ -508,6 +520,7 @@ chatty_mm_chat_class_init (ChattyMmChatClass *klass)
   chat_class->get_chat_name = chatty_mm_chat_get_chat_name;
   chat_class->get_account = chatty_mm_chat_get_account;
   chat_class->load_past_messages = chatty_mm_chat_load_past_messages;
+  chat_class->is_loading_history = chatty_mm_chat_is_loading_history;
   chat_class->get_messages = chatty_mm_chat_get_messages;
   chat_class->get_users = chatty_mm_chat_get_users;
   chat_class->get_last_message = chatty_mm_chat_get_last_message;
