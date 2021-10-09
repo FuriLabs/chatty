@@ -378,6 +378,27 @@ matrix_get_room_encryption_cb (GObject      *obj,
 }
 
 static void
+matrix_set_room_encryption_cb (GObject      *obj,
+                               GAsyncResult *result,
+                               gpointer      user_data)
+{
+  g_autoptr(GTask) task = user_data;
+  g_autoptr(JsonObject) object = NULL;
+  const char *event;
+  GError *error = NULL;
+
+  object = g_task_propagate_pointer (G_TASK (result), &error);
+
+  if (error &&
+      !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED) &&
+      !g_error_matches (error, MATRIX_ERROR, M_NOT_FOUND))
+    g_warning ("Error setting encryption: %s", error->message);
+
+  event = matrix_utils_json_object_get_string (object, "event_id");
+  g_task_return_boolean (task, !!event);
+}
+
+static void
 matrix_get_members_cb (GObject      *obj,
                        GAsyncResult *result,
                        gpointer      user_data)
@@ -1435,6 +1456,53 @@ matrix_api_get_room_encryption_finish (MatrixApi     *self,
   g_return_val_if_fail (!error || !*error, NULL);
 
   return g_task_propagate_pointer (G_TASK (result), error);
+}
+
+/**
+ * matrix_api_set_room_encryption_async:
+ * @self: A #MatrixApi
+ * @room_id: The room id to set encryption for
+ * @callback: A #GAsyncReadyCallback
+ * @user_data: user data passed to @callback
+ *
+ * Calling this method shall enable encryption.
+ * There is no way to disable encryption once
+ * enabled.
+ *
+ * To get the result, finish the call with
+ * matrix_api_set_room_encryption_finish()
+ */
+void
+matrix_api_set_room_encryption_async (MatrixApi           *self,
+                                      const char          *room_id,
+                                      GAsyncReadyCallback  callback,
+                                      gpointer             user_data)
+{
+  g_autofree char *uri = NULL;
+  JsonObject *object;
+  GTask *task;
+
+  g_return_if_fail (MATRIX_IS_API (self));
+  g_return_if_fail (room_id && *room_id);
+
+  task = g_task_new (self, self->cancellable, callback, user_data);
+  object = json_object_new ();
+  json_object_set_string_member (object, "algorithm", ALGORITHM_MEGOLM);
+  uri = g_strconcat ("/_matrix/client/r0/rooms/", room_id, "/state/m.room.encryption", NULL);
+  matrix_net_send_json_async (self->matrix_net, 2, object, uri, SOUP_METHOD_PUT,
+                              NULL, self->cancellable, matrix_set_room_encryption_cb, task);
+}
+
+gboolean
+matrix_api_set_room_encryption_finish (MatrixApi     *self,
+                                       GAsyncResult  *result,
+                                       GError       **error)
+{
+  g_return_val_if_fail (MATRIX_IS_API (self), FALSE);
+  g_return_val_if_fail (G_IS_TASK (result), FALSE);
+  g_return_val_if_fail (!error || !*error, FALSE);
+
+  return g_task_propagate_boolean (G_TASK (result), error);
 }
 
 void
