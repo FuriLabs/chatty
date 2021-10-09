@@ -91,7 +91,9 @@ struct _ChattyMmsd {
   char             *carrier_proxy;
   gboolean          auto_create_smil;
   gboolean          is_ready;
-  gulong            setting_signal_id;
+  gulong            mmsc_signal_id;
+  gulong            apn_signal_id;
+  gulong            proxy_signal_id;
   gulong            smil_signal_id;
 };
 
@@ -1422,10 +1424,18 @@ chatty_mmsd_get_mmsd_service_settings_cb (GObject      *service,
     carrier_mmsc = chatty_settings_get_mms_carrier_mmsc(settings);
     request_report = chatty_settings_request_sms_delivery_reports (settings);
 
-    self->setting_signal_id = g_signal_connect_swapped (settings,
-                                                  "mms-settings-changed",
-                                                  G_CALLBACK (chatty_mmsd_settings_changed_cb),
-                                                  self);
+    self->mmsc_signal_id = g_signal_connect_swapped (settings,
+                                                     "notify::mmsd-carrier-mmsc",
+                                                     G_CALLBACK (chatty_mmsd_settings_changed_cb),
+                                                     self);
+    self->apn_signal_id = g_signal_connect_swapped (settings,
+                                                    "notify::mmsd-carrier-mms-apn",
+                                                    G_CALLBACK (chatty_mmsd_settings_changed_cb),
+                                                    self);
+    self->proxy_signal_id = g_signal_connect_swapped (settings,
+                                                      "notify::mmsd-carrier-mms-proxy",
+                                                      G_CALLBACK (chatty_mmsd_settings_changed_cb),
+                                                      self);
     self->smil_signal_id = g_signal_connect_swapped (settings,
                                                   "notify::request-mmsd-smil",
                                                   G_CALLBACK (chatty_mmsd_smil_changed_cb),
@@ -1957,7 +1967,9 @@ mmsd_vanished_cb (GDBusConnection *connection,
     ChattySettings *settings;
     settings = chatty_settings_get_default ();
     chatty_mmsd_remove_service (self);
-    g_clear_signal_handler (&self->setting_signal_id, settings);
+    g_clear_signal_handler (&self->mmsc_signal_id, settings);
+    g_clear_signal_handler (&self->apn_signal_id, settings);
+    g_clear_signal_handler (&self->proxy_signal_id, settings);
     g_clear_signal_handler (&self->smil_signal_id, settings);
   }
   if (G_IS_OBJECT (self->manager_proxy)) {
