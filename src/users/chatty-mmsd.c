@@ -695,7 +695,6 @@ chatty_mmsd_send_mms_async (ChattyMmsd    *self,
                      self);
 
   g_strfreev (send);
-  g_object_unref (message);
 
   g_task_return_boolean (task, TRUE);
   return TRUE;
