@@ -45,9 +45,6 @@ struct _ChattySettings
 
   GSettings  *settings;
   char       *country_code;
-  char       *mms_carrier_mmsc;
-  char       *mms_carrier_apn;
-  char       *mms_carrier_proxy;
 };
 
 G_DEFINE_TYPE (ChattySettings, chatty_settings, G_TYPE_OBJECT)
@@ -65,6 +62,9 @@ enum {
   PROP_RETURN_SENDS_MESSAGE,
   PROP_REQUEST_SMS_DELIVERY_REPORTS,
   PROP_REQUEST_MMSD_TNG_SMIL,
+  PROP_MMSD_CARRIER_MMSC,
+  PROP_MMSD_CARRIER_APN,
+  PROP_MMSD_CARRIER_PROXY,
   PROP_MAM_ENABLED,
   N_PROPS
 };
@@ -129,6 +129,18 @@ chatty_settings_get_property (GObject    *object,
 
     case PROP_REQUEST_MMSD_TNG_SMIL:
       g_value_set_boolean (value, chatty_settings_request_mmsd_tng_smil (self));
+      break;
+
+    case PROP_MMSD_CARRIER_MMSC:
+      g_value_set_string (value, chatty_settings_get_mms_carrier_mmsc (self));
+      break;
+
+    case PROP_MMSD_CARRIER_APN:
+      g_value_set_string (value, chatty_settings_get_mms_carrier_apn (self));
+      break;
+
+    case PROP_MMSD_CARRIER_PROXY:
+      g_value_set_string (value, chatty_settings_get_mms_carrier_proxy (self));
       break;
 
     default:
@@ -203,6 +215,21 @@ chatty_settings_set_property (GObject      *object,
                               g_value_get_boolean (value));
       break;
 
+    case PROP_MMSD_CARRIER_MMSC:
+      g_settings_set_string (G_SETTINGS (self->settings), "mmsd-carrier-mmsc",
+                             g_value_get_string (value));
+      break;
+
+    case PROP_MMSD_CARRIER_APN:
+      g_settings_set_string (G_SETTINGS (self->settings), "mmsd-carrier-mms-apn",
+                             g_value_get_string (value));
+      break;
+
+    case PROP_MMSD_CARRIER_PROXY:
+      g_settings_set_string (G_SETTINGS (self->settings), "mmsd-carrier-mms-proxy",
+                             g_value_get_string (value));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -234,10 +261,13 @@ chatty_settings_constructed (GObject *object)
                    self, "request-sms-delivery-reports", G_SETTINGS_BIND_DEFAULT);
   g_settings_bind (self->settings, "request-mmsd-smil",
                    self, "request-mmsd-smil", G_SETTINGS_BIND_DEFAULT);
+  g_settings_bind (self->settings, "mmsd-carrier-mmsc",
+                   self, "mmsd-carrier-mmsc", G_SETTINGS_BIND_DEFAULT);
+  g_settings_bind (self->settings, "mmsd-carrier-mms-apn",
+                   self, "mmsd-carrier-mms-apn", G_SETTINGS_BIND_DEFAULT);
+  g_settings_bind (self->settings, "mmsd-carrier-mms-proxy",
+                   self, "mmsd-carrier-mms-proxy", G_SETTINGS_BIND_DEFAULT);
   self->country_code = g_settings_get_string (self->settings, "country-code");
-  self->mms_carrier_mmsc = g_settings_get_string (self->settings, "mmsd-carrier-mmsc");
-  self->mms_carrier_apn = g_settings_get_string (self->settings, "mmsd-carrier-mms-apn");
-  self->mms_carrier_proxy = g_settings_get_string (self->settings, "mmsd-carrier-mms-proxy");
 }
 
 static void
@@ -248,9 +278,6 @@ chatty_settings_finalize (GObject *object)
   g_settings_set_boolean (self->settings, "first-start", FALSE);
   g_object_unref (self->settings);
   g_free (self->country_code);
-  g_free (self->mms_carrier_mmsc);
-  g_free (self->mms_carrier_apn);
-  g_free (self->mms_carrier_proxy);
 
   G_OBJECT_CLASS (chatty_settings_parent_class)->finalize (object);
 }
@@ -339,8 +366,29 @@ chatty_settings_class_init (ChattySettingsClass *klass)
       g_param_spec_boolean ("request-mmsd-smil",
                             "Request mmsd to handle smil",
                             "Whether to request mmsd to create smil",
-                            FALSE,
+                            TRUE,
                             G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+    properties[PROP_MMSD_CARRIER_MMSC] =
+      g_param_spec_string ("mmsd-carrier-mmsc",
+                           "Carrier mmsc for mmsd",
+                           "The carrier mmsc to set for mmsd",
+                           "",
+                           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+    properties[PROP_MMSD_CARRIER_APN] =
+      g_param_spec_string ("mmsd-carrier-mms-apn",
+                           "Carrier mms apn for mmsd",
+                           "The mms APN to set for mmsd",
+                           "",
+                           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+    properties[PROP_MMSD_CARRIER_PROXY] =
+      g_param_spec_string ("mmsd-carrier-mms-proxy",
+                           "Carrier mms proxy for mmsd",
+                           "The mms proxy to set for mmsd",
+                           "",
+                           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
     g_object_class_install_properties (object_class, N_PROPS, properties);
 
@@ -596,15 +644,13 @@ chatty_settings_set_country_iso_code (ChattySettings *self,
   g_settings_set (G_SETTINGS (self->settings), "country-code", "s", country_code);
 }
 
-const char *
+char *
 chatty_settings_get_mms_carrier_mmsc (ChattySettings *self)
 {
   g_return_val_if_fail (CHATTY_IS_SETTINGS (self), NULL);
 
-  if (self->mms_carrier_mmsc)
-    return self->mms_carrier_mmsc;
-
-  return "";
+  return g_settings_get_string (G_SETTINGS (self->settings),
+                                 "mmsd-carrier-mmsc");
 }
 
 void
@@ -613,25 +659,21 @@ chatty_settings_set_mms_carrier_mmsc (ChattySettings *self,
 {
   g_return_if_fail (CHATTY_IS_SETTINGS (self));
 
-  g_free (self->mms_carrier_mmsc);
   if (mms_carrier_mmsc)
-    self->mms_carrier_mmsc = g_strdup (mms_carrier_mmsc);
+    g_object_set (self, "mmsd-carrier-mmsc", mms_carrier_mmsc, NULL);
   else
-    self->mms_carrier_mmsc = g_strdup ("");
+    g_object_set (self, "mmsd-carrier-mmsc", "", NULL);
 
-  g_settings_set (G_SETTINGS (self->settings), "mmsd-carrier-mmsc", "s", self->mms_carrier_mmsc);
   g_signal_emit (self, signals[SIGNAL_MMS_SETTING_CHANGED], 0);
 }
 
-const char *
+char *
 chatty_settings_get_mms_carrier_apn (ChattySettings *self)
 {
   g_return_val_if_fail (CHATTY_IS_SETTINGS (self), NULL);
 
-  if (self->mms_carrier_apn)
-    return self->mms_carrier_apn;
-
-  return "";
+  return g_settings_get_string (G_SETTINGS (self->settings),
+                                 "mmsd-carrier-mms-apn");
 }
 
 void
@@ -640,25 +682,21 @@ chatty_settings_set_mms_carrier_apn (ChattySettings *self,
 {
   g_return_if_fail (CHATTY_IS_SETTINGS (self));
 
-  g_free (self->mms_carrier_apn);
   if (mms_carrier_apn)
-    self->mms_carrier_apn = g_strdup (mms_carrier_apn);
+    g_object_set (self, "mmsd-carrier-mms-apn", mms_carrier_apn, NULL);
   else
-    self->mms_carrier_apn = g_strdup ("");
+    g_object_set (self, "mmsd-carrier-mms-apn", "", NULL);
 
-  g_settings_set (G_SETTINGS (self->settings), "mmsd-carrier-mms-apn", "s", self->mms_carrier_apn);
   g_signal_emit (self, signals[SIGNAL_MMS_SETTING_CHANGED], 0);
 }
 
-const char *
+char *
 chatty_settings_get_mms_carrier_proxy (ChattySettings *self)
 {
   g_return_val_if_fail (CHATTY_IS_SETTINGS (self), NULL);
 
-  if (self->mms_carrier_proxy)
-    return self->mms_carrier_proxy;
-
-  return "";
+  return g_settings_get_string (G_SETTINGS (self->settings),
+                                 "mmsd-carrier-mms-proxy");
 }
 
 void
@@ -666,13 +704,12 @@ chatty_settings_set_mms_carrier_proxy (ChattySettings *self,
                                        const char     *mms_carrier_proxy)
 {
   g_return_if_fail (CHATTY_IS_SETTINGS (self));
-  g_free (self->mms_carrier_proxy);
-  if (mms_carrier_proxy)
-    self->mms_carrier_proxy = g_strdup (mms_carrier_proxy);
-  else
-    self->mms_carrier_proxy = g_strdup ("");
 
-  g_settings_set (G_SETTINGS (self->settings), "mmsd-carrier-mms-proxy", "s", self->mms_carrier_proxy);
+  if (mms_carrier_proxy)
+    g_object_set (self, "mmsd-carrier-mms-proxy", mms_carrier_proxy, NULL);
+  else
+    g_object_set (self, "mmsd-carrier-mms-proxy", "", NULL);
+
   g_signal_emit (self, signals[SIGNAL_MMS_SETTING_CHANGED], 0);
 }
 
