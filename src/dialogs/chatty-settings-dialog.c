@@ -667,12 +667,12 @@ static void
 mms_carrier_settings_apply_button_clicked_cb (ChattySettingsDialog *self)
 {
   ChattySettings *settings;
+  g_autofree char *carrier_mmsc = NULL;
+  g_autofree char *carrier_apn = NULL;
+  g_autofree char *carrier_proxy = NULL;
   const char *mmsc = NULL;
-  const char *carrier_mmsc = NULL;
   const char *apn = NULL;
-  const char *carrier_apn = NULL;
   const char *proxy = NULL;
-  const char *carrier_proxy = NULL;
 
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
 
@@ -711,9 +711,9 @@ static void
 mms_carrier_settings_cancel_button_clicked_cb (ChattySettingsDialog *self)
 {
   ChattySettings *settings;
-  const char *proxy;
-  const char *apn;
-  const char *mmsc;
+  g_autofree char *proxy;
+  g_autofree char *apn;
+  g_autofree char *mmsc;
 
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
 
@@ -1105,9 +1105,9 @@ static void
 chatty_settings_dialog_init (ChattySettingsDialog *self)
 {
   ChattyManager *manager;
-  const char *carrier_mmsc = NULL;
-  const char *carrier_apn = NULL;
-  const char *carrier_proxy = NULL;
+  g_autofree char *carrier_mmsc = NULL;
+  g_autofree char *carrier_apn = NULL;
+  g_autofree char *carrier_proxy = NULL;
   ChattySettings *settings;
 
   manager = chatty_manager_get_default ();
