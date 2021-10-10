@@ -1075,13 +1075,9 @@ chatty_window_set_uri (ChattyWindow *self,
 ChattyChat *
 chatty_window_get_active_chat (ChattyWindow *self)
 {
-  GtkWidget *widget;
-
   g_return_val_if_fail (CHATTY_IS_WINDOW (self), NULL);
 
-  widget = gtk_window_get_focus (GTK_WINDOW (self));
-
-  if (widget && gtk_widget_has_focus (widget))
+  if (gtk_window_has_toplevel_focus (GTK_WINDOW (self)))
     return chatty_chat_view_get_chat (CHATTY_CHAT_VIEW (self->chat_view));
 
   return NULL;
