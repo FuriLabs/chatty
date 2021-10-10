@@ -267,6 +267,29 @@ chatty_application_open_chat (GSimpleAction *action,
 }
 
 static void
+main_window_focus_changed_cb (ChattyApplication *self)
+{
+  ChattyChat *chat = NULL;
+  GtkWindow *window;
+
+  g_assert (CHATTY_IS_APPLICATION (self));
+
+  if (!self->main_window)
+    return;
+
+  window = GTK_WINDOW (self->main_window);
+
+  if (gtk_application_get_active_window (GTK_APPLICATION (self)) != window)
+    return;
+
+  if (gtk_window_has_toplevel_focus (window))
+    chat = chatty_application_get_active_chat (self);
+
+  if (chat)
+    chatty_chat_set_unread_count (chat, 0);
+}
+
+static void
 chatty_application_finalize (GObject *object)
 {
   ChattyApplication *self = (ChattyApplication *)object;
@@ -405,6 +428,9 @@ chatty_application_activate (GApplication *application)
 
   if (!self->main_window) {
     self->main_window = chatty_window_new (app);
+    g_signal_connect_object (self->main_window, "notify::has-toplevel-focus",
+                             G_CALLBACK (main_window_focus_changed_cb),
+                             self, G_CONNECT_SWAPPED);
 
     chatty_manager_purple (self->manager);
     g_object_add_weak_pointer (G_OBJECT (self->main_window), (gpointer *)&self->main_window);
