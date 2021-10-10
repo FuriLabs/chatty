@@ -1235,9 +1235,9 @@ chatty_mmsd_sync_settings (ChattyMmsd *self)
 {
   ChattySettings *settings;
   gboolean sync_mmsd = FALSE;
-  const char *carrier_mmsc = NULL;
-  const char *carrier_apn = NULL;
-  const char *carrier_proxy = NULL;
+  g_autofree char *carrier_mmsc = NULL;
+  g_autofree char *carrier_apn = NULL;
+  g_autofree char *carrier_proxy = NULL;
 
   g_debug ("Syncing settings");
   settings = chatty_settings_get_default ();
@@ -1281,8 +1281,10 @@ chatty_mmsd_sync_settings (ChattyMmsd *self)
     g_free (self->carrier_proxy);
     self->carrier_proxy = g_strdup (carrier_proxy);
     /* mmsd-tng prefers "NULL" to "" */
-    if (!carrier_proxy || !*carrier_proxy)
-      carrier_proxy = "NULL";
+    if (!carrier_proxy || !*carrier_proxy) {
+      g_free (carrier_proxy);
+      carrier_proxy = g_strdup("NULL");
+    }
 
     g_dbus_proxy_call_sync (self->modemmanager_proxy,
                             "ChangeSettings",
@@ -1412,9 +1414,12 @@ chatty_mmsd_get_mmsd_service_settings_cb (GObject      *service,
     gboolean request_report;
     gboolean use_delivery_reports, auto_create_smil;
     int max_attach_total_size, max_attachments;
+    g_autofree char *carrier_mmsc = NULL;
+
     g_variant_get (ret, "(@a{?*})", &all_settings);
 
     settings = chatty_settings_get_default ();
+    carrier_mmsc = chatty_settings_get_mms_carrier_mmsc(settings);
     request_report = chatty_settings_request_sms_delivery_reports (settings);
 
     self->setting_signal_id = g_signal_connect_swapped (settings,
@@ -1470,8 +1475,7 @@ chatty_mmsd_get_mmsd_service_settings_cb (GObject      *service,
     g_debug ("MaxAttachments is set to %d", self->max_num_attach);
 
     /* If carrier MMSC is blank, assume no settings are valid */
-    if (chatty_settings_get_mms_carrier_mmsc(settings) == NULL ||
-        (strlen(chatty_settings_get_mms_carrier_mmsc(settings)) < 1)) {
+    if (!carrier_mmsc || !*carrier_mmsc) {
       /* mmsd-tng default for MMSC is http://mms.invalid */
       if (g_strcmp0 (self->carrier_mmsc, "http://mms.invalid") != 0) {
         chatty_settings_set_mms_carrier_mmsc (settings, self->carrier_mmsc);
