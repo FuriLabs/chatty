@@ -314,77 +314,77 @@ chatty_settings_class_init (ChattySettingsClass *klass)
                           FALSE,
                           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-    properties[PROP_SEND_TYPING] =
-      g_param_spec_boolean ("send-typing",
-                            "Send Typing",
-                            "Send typing notifications",
-                            FALSE,
-                            G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+  properties[PROP_SEND_TYPING] =
+    g_param_spec_boolean ("send-typing",
+                          "Send Typing",
+                          "Send typing notifications",
+                          FALSE,
+                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-    properties[PROP_BLUR_IDLE_BUDDIES] =
-      g_param_spec_boolean ("blur-idle-buddies",
-                            "Blur Idle Buddies",
-                            "Blur Idle Buddies",
-                            FALSE,
-                            G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+  properties[PROP_BLUR_IDLE_BUDDIES] =
+    g_param_spec_boolean ("blur-idle-buddies",
+                          "Blur Idle Buddies",
+                          "Blur Idle Buddies",
+                          FALSE,
+                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-    properties[PROP_INDICATE_UNKNOWN_CONTACTS] =
-      g_param_spec_boolean ("indicate-unknown-contacts",
-                            "Indicate Unknown Contacts",
-                            "Indicate Unknown Contacts",
-                            FALSE,
-                            G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+  properties[PROP_INDICATE_UNKNOWN_CONTACTS] =
+    g_param_spec_boolean ("indicate-unknown-contacts",
+                          "Indicate Unknown Contacts",
+                          "Indicate Unknown Contacts",
+                          FALSE,
+                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-    properties[PROP_CONVERT_EMOTICONS] =
-      g_param_spec_boolean ("convert-emoticons",
-                            "Convert Emoticons",
-                            "Convert Emoticons",
-                            FALSE,
-                            G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+  properties[PROP_CONVERT_EMOTICONS] =
+    g_param_spec_boolean ("convert-emoticons",
+                          "Convert Emoticons",
+                          "Convert Emoticons",
+                          FALSE,
+                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-    properties[PROP_RETURN_SENDS_MESSAGE] =
-      g_param_spec_boolean ("return-sends-message",
-                            "Return Sends Message",
-                            "Whether Return key sends message",
-                            FALSE,
-                            G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+  properties[PROP_RETURN_SENDS_MESSAGE] =
+    g_param_spec_boolean ("return-sends-message",
+                          "Return Sends Message",
+                          "Whether Return key sends message",
+                          FALSE,
+                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-    properties[PROP_REQUEST_SMS_DELIVERY_REPORTS] =
-      g_param_spec_boolean ("request-sms-delivery-reports",
-                            "Request SMS delivery reports",
-                            "Whether to request delivery reports for outgoing SMS",
-                            FALSE,
-                            G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+  properties[PROP_REQUEST_SMS_DELIVERY_REPORTS] =
+    g_param_spec_boolean ("request-sms-delivery-reports",
+                          "Request SMS delivery reports",
+                          "Whether to request delivery reports for outgoing SMS",
+                          FALSE,
+                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-    properties[PROP_REQUEST_MMSD_TNG_SMIL] =
-      g_param_spec_boolean ("request-mmsd-smil",
-                            "Request mmsd to handle smil",
-                            "Whether to request mmsd to create smil",
-                            TRUE,
-                            G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+  properties[PROP_REQUEST_MMSD_TNG_SMIL] =
+    g_param_spec_boolean ("request-mmsd-smil",
+                          "Request mmsd to handle smil",
+                          "Whether to request mmsd to create smil",
+                          TRUE,
+                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-    properties[PROP_MMSD_CARRIER_MMSC] =
-      g_param_spec_string ("mmsd-carrier-mmsc",
-                           "Carrier mmsc for mmsd",
-                           "The carrier mmsc to set for mmsd",
-                           "",
-                           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+  properties[PROP_MMSD_CARRIER_MMSC] =
+    g_param_spec_string ("mmsd-carrier-mmsc",
+                         "Carrier mmsc for mmsd",
+                         "The carrier mmsc to set for mmsd",
+                         "",
+                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-    properties[PROP_MMSD_CARRIER_APN] =
-      g_param_spec_string ("mmsd-carrier-mms-apn",
-                           "Carrier mms apn for mmsd",
-                           "The mms APN to set for mmsd",
-                           "",
-                           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+  properties[PROP_MMSD_CARRIER_APN] =
+    g_param_spec_string ("mmsd-carrier-mms-apn",
+                         "Carrier mms apn for mmsd",
+                         "The mms APN to set for mmsd",
+                         "",
+                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-    properties[PROP_MMSD_CARRIER_PROXY] =
-      g_param_spec_string ("mmsd-carrier-mms-proxy",
-                           "Carrier mms proxy for mmsd",
-                           "The mms proxy to set for mmsd",
-                           "",
-                           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+  properties[PROP_MMSD_CARRIER_PROXY] =
+    g_param_spec_string ("mmsd-carrier-mms-proxy",
+                         "Carrier mms proxy for mmsd",
+                         "The mms proxy to set for mmsd",
+                         "",
+                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
-    g_object_class_install_properties (object_class, N_PROPS, properties);
+  g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
 static void
