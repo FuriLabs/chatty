@@ -69,13 +69,7 @@ enum {
   N_PROPS
 };
 
-enum {
-  SIGNAL_MMS_SETTING_CHANGED,
-  N_SIGNALS
-};
-
 static GParamSpec *properties[N_PROPS];
-static guint signals[N_SIGNALS];
 
 static void
 chatty_settings_get_property (GObject    *object,
@@ -391,19 +385,6 @@ chatty_settings_class_init (ChattySettingsClass *klass)
                            G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
     g_object_class_install_properties (object_class, N_PROPS, properties);
-
-  /**
-   * settings::changed:
-   * @self: a #ChattySettings
-   *
-   * Emitted when MMS settings change
-   */
-  signals [SIGNAL_MMS_SETTING_CHANGED] =
-    g_signal_new ("mms-settings-changed",
-                  G_TYPE_FROM_CLASS (klass),
-                  G_SIGNAL_RUN_LAST,
-                  0, NULL, NULL, NULL,
-                  G_TYPE_NONE, 0);
 }
 
 static void
@@ -663,8 +644,6 @@ chatty_settings_set_mms_carrier_mmsc (ChattySettings *self,
     g_object_set (self, "mmsd-carrier-mmsc", mms_carrier_mmsc, NULL);
   else
     g_object_set (self, "mmsd-carrier-mmsc", "", NULL);
-
-  g_signal_emit (self, signals[SIGNAL_MMS_SETTING_CHANGED], 0);
 }
 
 char *
@@ -686,8 +665,6 @@ chatty_settings_set_mms_carrier_apn (ChattySettings *self,
     g_object_set (self, "mmsd-carrier-mms-apn", mms_carrier_apn, NULL);
   else
     g_object_set (self, "mmsd-carrier-mms-apn", "", NULL);
-
-  g_signal_emit (self, signals[SIGNAL_MMS_SETTING_CHANGED], 0);
 }
 
 char *
@@ -709,8 +686,6 @@ chatty_settings_set_mms_carrier_proxy (ChattySettings *self,
     g_object_set (self, "mmsd-carrier-mms-proxy", mms_carrier_proxy, NULL);
   else
     g_object_set (self, "mmsd-carrier-mms-proxy", "", NULL);
-
-  g_signal_emit (self, signals[SIGNAL_MMS_SETTING_CHANGED], 0);
 }
 
 gboolean
