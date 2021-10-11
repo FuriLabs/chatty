@@ -2049,8 +2049,7 @@ void
 chatty_mmsd_load (ChattyMmsd *self,
                   MMObject   *mm_object)
 {
-  const char *const *modem_number_ref;
-  const char *country_code = chatty_settings_get_country_iso_code (chatty_settings_get_default ());
+  const char *const *own_numbers;
 
   if (self->mm_object == mm_object)
     return;
@@ -2060,13 +2059,21 @@ chatty_mmsd_load (ChattyMmsd *self,
   g_hash_table_remove_all (self->mms_hash_table);
 
   /* Figure out what number the modem is on. */
-  modem_number_ref = mm_modem_get_own_numbers (self->modem);
-  if (modem_number_ref != NULL) {
-    self->modem_number = chatty_utils_check_phonenumber (*modem_number_ref, country_code);
-    if (self->modem_number == NULL) {
-      self->modem_number = g_strdup (*modem_number_ref);
-    }
-  } else {
+  own_numbers = mm_modem_get_own_numbers (self->modem);
+  g_clear_pointer (&self->modem_number, g_free);
+
+  for (guint i = 0; own_numbers && own_numbers[i]; i++) {
+    const char *number, *country_code;
+
+    number = own_numbers[i];
+    country_code = chatty_settings_get_country_iso_code (chatty_settings_get_default ());
+    self->modem_number = chatty_utils_check_phonenumber (number, country_code);
+
+    if (self->modem_number)
+      break;
+  }
+
+  if (!self->modem_number) {
     g_warning ("Your SIM or Modem does not support modem manger's number! Please file a bug report");
     self->modem_number = g_strdup ("");
     g_debug ("Making Dummy modem number: %s", self->modem_number);
