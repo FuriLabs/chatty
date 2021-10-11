@@ -2006,6 +2006,7 @@ chatty_mmsd_finalize (GObject *object)
 
   clear_chatty_mmsd (self);
   self->mm_account = NULL;
+  g_hash_table_destroy (self->mms_hash_table);
   G_OBJECT_CLASS (chatty_mmsd_parent_class)->finalize (object);
 }
 
@@ -2020,6 +2021,7 @@ chatty_mmsd_class_init (ChattyMmsdClass *klass)
 static void
 chatty_mmsd_init (ChattyMmsd *self)
 {
+  self->mms_hash_table = g_hash_table_new (g_str_hash, g_str_equal);
 }
 
 ChattyMmsd *
@@ -2052,8 +2054,7 @@ chatty_mmsd_load (ChattyMmsd *self,
 
   self->mm_object = mm_object;
   self->modem = mm_object_get_modem (MM_OBJECT (mm_object));
-  self->mms_hash_table = g_hash_table_new (g_str_hash, g_str_equal);
-
+  g_hash_table_remove_all (self->mms_hash_table);
 
   /* Figure out what number the modem is on. */
   modem_number_ref = mm_modem_get_own_numbers (self->modem);
@@ -2084,7 +2085,6 @@ chatty_mmsd_close (ChattyMmsd *self,
                  mm_object_get_path (mm_object)) == 0) {
     g_debug ("Modem that MMSD tracks is being removed");
     clear_chatty_mmsd (self);
-    g_hash_table_unref (self->mms_hash_table);
   } else {
     g_debug ("Modem that MMSD tracks is not being removed");
   }
