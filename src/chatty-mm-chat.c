@@ -438,9 +438,8 @@ chatty_mm_chat_send_message_async (ChattyChat          *chat,
   g_task_set_task_data (task, g_object_ref (message), g_object_unref);
   files = chatty_message_get_files (message);
   /* Don't append the message if it is an MMS */
-  if (self->protocol != CHATTY_PROTOCOL_MMS || files == NULL) {
+  if (self->protocol == CHATTY_PROTOCOL_MMS_SMS && files == NULL)
     chatty_mm_chat_append_message (CHATTY_MM_CHAT (chat), message);
-  }
   g_queue_push_tail (self->message_queue, task);
 
   mm_chat_send_message_from_queue (self);
