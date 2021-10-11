@@ -1575,7 +1575,7 @@ static void
 clear_chatty_mmsd (ChattyMmsd *self)
 {
   self->mm_object = NULL;
-  self->modem = NULL;
+  g_clear_object (&self->modem);
   g_free (self->modem_number);
   self->modem_number = NULL;
   g_free (self->carrier_mmsc);
@@ -2055,6 +2055,7 @@ chatty_mmsd_load (ChattyMmsd *self,
     return;
 
   self->mm_object = mm_object;
+  g_clear_object (&self->modem);
   self->modem = mm_object_get_modem (MM_OBJECT (mm_object));
   g_hash_table_remove_all (self->mms_hash_table);
 
