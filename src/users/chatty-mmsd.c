@@ -2082,8 +2082,8 @@ chatty_mmsd_load (ChattyMmsd *self,
   self->mmsd_watch_id = g_bus_watch_name (G_BUS_TYPE_SESSION,
                                           MMSD_SERVICE,
                                           G_BUS_NAME_WATCHER_FLAGS_AUTO_START,
-                                          (GBusNameAppearedCallback)mmsd_appeared_cb,
-                                          (GBusNameVanishedCallback)mmsd_vanished_cb,
+                                          mmsd_appeared_cb,
+                                          mmsd_vanished_cb,
                                           self, NULL);
 }
 
