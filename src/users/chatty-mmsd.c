@@ -188,8 +188,6 @@ chatty_mmsd_process_delivery_status (const char *delivery_status)
   g_auto(GStrv) numbers = g_strsplit (delivery_status, ",", 0);
   guint len = g_strv_length (numbers);
 
-  g_debug ("Delivery Status: %s", delivery_status);
-
   for (int i = 0; i < len; i++) {
     g_auto(GStrv) number = NULL;
 
@@ -197,10 +195,9 @@ chatty_mmsd_process_delivery_status (const char *delivery_status)
       continue;
 
     number = g_strsplit (numbers[i], "=", 0);
-    g_debug ("Number: %s, Status: %s", number[0], number[1]);
     if ((g_strcmp0 (number[1], "none") != 0) && (g_strcmp0 (number[1], "retrieved") != 0)) {
       /* TODO: There was an error with delivery. Do we want to raise some sort of flag? */
-      g_warning ("There was an error delivering to: %s. Error: %s", number[0], number[1]);
+      g_warning ("There was an error delivering message. Error: %s", number[1]);
     }
   }
 }
@@ -218,13 +215,8 @@ chatty_mmsd_message_status_changed_cb (GDBusConnection *connection,
   g_autoptr (GVariant) variantstatus = NULL;
   const char *status;
 
-  g_debug ("Parameters: %s", g_variant_print (parameters, TRUE));
   g_variant_get (parameters, "(sv)", NULL, &variantstatus);
   status = g_variant_get_string (variantstatus, NULL);
-
-  g_debug ("%s", __func__);
-  g_debug ("object_path %s", object_path);
-  g_debug ("Status: %s", status);
 
   if (g_strcmp0 (status, "sent") == 0) {
     g_debug ("Message was sent.");
@@ -336,9 +328,7 @@ chatty_mmsd_send_mms_create_sender (ChattyChat *chat)
 
     who = g_string_append (who, temp);
     who = g_string_append (who, ",");
-    g_debug ("buddy_number %s", buddy_number);
   }
-  g_debug ("Sending String: %s", who->str);
 
   /* Convert the string *who into an array of strings **send */
   send = g_strsplit (who->str, ",", items);
@@ -404,14 +394,12 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
     g_autofree char *temp = NULL;
     gulong *bytes_written = 0;
 
-    g_debug ("contents size (bytes): %d, message: %s", size, text);
     /* Make Temporary file for message: /tmp/chatty/mms-${UUID}.txt */
     temp = g_uuid_string_random ();
     mms_path_string = g_string_new (g_get_tmp_dir ());
     g_string_append_printf (mms_path_string, "/chatty/mms-%s.txt", temp);
 
     MMS_path = g_string_free (mms_path_string, FALSE);
-    g_debug ("MMS Path: %s", MMS_path);
     MMS_file = g_file_new_for_path (MMS_path);
 
     if (!g_file_make_directory_with_parents (MMS_file, NULL, &error)) {
@@ -442,10 +430,7 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
                  g_file_peek_path (MMS_file), error->message);
       return NULL;
     }
-    g_debug ("MMS Message URI: %s, Message size: %d", MMS_path, size);
     g_variant_builder_add_parsed (&attachment_builder, "('message-contents.txt','text/plain',%s)", MMS_path);
-  } else {
-    g_debug ("No Text Message in this MMS");
   }
 
   /* Get attachments to process for MMSD */
@@ -475,12 +460,6 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
       total_number_of_attachments = total_number_of_attachments + 1;
       attachments_size = attachments_size + attachment->size;
 
-      g_debug ("Attachment Path: %s", attachment->path);
-      g_debug ("Attachment Size: %ld", attachment->size);
-      g_debug ("Number of Attachments: %d", total_number_of_attachments);
-      g_debug ("Total attachment Size: %ld", attachments_size);
-      g_debug ("MIME Type: %s", attachment->mime_type);
-
       if (g_str_match_string ("image", attachment->mime_type, FALSE)) {
         /*
          * gifs tend to be animated, and the scaler in chatty-media does not
@@ -500,19 +479,15 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
                    total_number_of_attachments,
                    self->max_num_attach);
         return NULL;
-      } else {
-        g_debug ("Total Number of attachments %d", total_number_of_attachments);
       }
     }
 
+    g_debug ("Total Number of attachments %d", total_number_of_attachments);
     other_attachments_size = attachments_size-image_attachments_size;
     if (other_attachments_size > self->max_attach_size) {
       g_warning ("Size of attachments that can't be resized %ld greater then maximum attachment size %d",
                  other_attachments_size, self->max_attach_size);
       return NULL;
-    } else {
-      g_debug ("Total Attachment Size (of attachments that can't be resized) %ld",
-               other_attachments_size);
     }
     /*
      * TODO: Add support for resizing Videos.
@@ -535,10 +510,6 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
 
     /* Figure out the average attachment size needed for the image */
     image_attachments_size = (self->max_attach_size - other_attachments_size) / image_attachments;
-    g_debug ("Total Image Attachment size to fit in %ld, Average Image attachment size: %ld",
-             self->max_attach_size - other_attachments_size,
-             image_attachments_size);
-
     for (GList *l = MMS_files; l != NULL; l = l->next) {
       ChattyFileInfo *attachment = l->data;
 
@@ -550,10 +521,9 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
         if (!g_str_match_string ("gif", attachment->mime_type, FALSE)) {
           if (attachment->size > image_attachments_size) {
             ChattyFileInfo *new_attachment;
-            g_debug ("Total Attachment Size %ld, Image size reduction needed: %ld, Percentage reduction needed %ld",
+            g_debug ("Total Attachment Size %ld, Image size reduction needed: %ld",
                      attachment->size,
-                     attachment->size - image_attachments_size,
-                     (((attachment->size - image_attachments_size)*100)/attachment->size));
+                     attachment->size - image_attachments_size);
 
             new_attachment = chatty_media_scale_image_to_size_sync (attachment,
                                                                     image_attachments_size,
@@ -564,15 +534,8 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
             }
             chatty_file_info_free (l->data);
             l->data = new_attachment;
-          } else {
-            g_debug ("Total Image Attachment size %ld, smaller than average Image attachment size: %ld",
-                     attachment->size, image_attachments_size);
           }
-        } else {
-          g_debug ("GIF cannot be resized");
         }
-      } else {
-        g_debug ("Attachment cannot be resized");
       }
     }
 
@@ -584,11 +547,8 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
       guint attachment_name_segments;
 
       number_of_attachments = number_of_attachments + 1;
-      g_debug ("File you are looking at: %s", attachment->file_name);
-      g_debug ("MIME Type: %s", attachment->mime_type);
 
       attachment_name = g_path_get_basename (attachment->path);
-      g_debug ("Original name: %s", attachment_name);
 
       attachment_name_str = g_string_new (NULL);
       attachment_name_builder = g_strsplit (attachment_name, ".", -1);
@@ -600,9 +560,6 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
                                                       attachment_name_builder[i]);
         if (i < (attachment_name_segments-2))
           attachment_name_str = g_string_append (attachment_name_str, ".");
-        g_debug ("Name Builder: %s, Name: %s",
-                 attachment_name_builder[i],
-                 attachment_name_str->str);
       }
       attachment_name_str = g_string_append (attachment_name_str,
                                                     g_strdup_printf ("-%05d",
@@ -616,7 +573,6 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
                                                        attachment_name_builder[attachment_name_segments-1]);
       }
 
-      g_debug ("New File Name: %s", attachment_name_str->str);
       attachment_name = g_string_free (attachment_name_str, FALSE);
       attachment_name_str = NULL;
       g_strfreev (attachment_name_builder);
@@ -627,12 +583,9 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
                              attachment->mime_type,
                              attachment->path);
     }
-  } else {
-    g_debug ("No MMS Attachments");
   }
 
   return g_variant_builder_end (&attachment_builder);
-
 }
 
 static void
@@ -652,7 +605,6 @@ chatty_mmsd_send_mms_async_cb (GObject      *service,
   if (error != NULL) {
     g_warning ("Error in Proxy call: %s\n", error->message);
   }
-
 }
 
 gboolean
@@ -671,7 +623,6 @@ chatty_mmsd_send_mms_async (ChattyMmsd    *self,
     g_task_return_boolean (task, FALSE);
     return FALSE;
   }
-  g_debug ("Attachments: %s", g_variant_print (attachments, FALSE));
 
   send = chatty_mmsd_send_mms_create_sender (chat);
 
@@ -684,8 +635,6 @@ chatty_mmsd_send_mms_async (ChattyMmsd    *self,
                               send,
                               options,
                               attachments);
-
-  g_debug ("Parameters: %s", g_variant_print (parameters, FALSE));
 
   g_dbus_proxy_call (self->service_proxy,
                      "SendMessage",
