@@ -2052,6 +2052,9 @@ chatty_mmsd_load (ChattyMmsd *self,
   const char *const *modem_number_ref;
   const char *country_code = chatty_settings_get_country_iso_code (chatty_settings_get_default ());
 
+  if (self->mm_object == mm_object)
+    return;
+
   self->mm_object = mm_object;
   self->modem = mm_object_get_modem (MM_OBJECT (mm_object));
   g_hash_table_remove_all (self->mms_hash_table);
