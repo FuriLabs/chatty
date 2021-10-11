@@ -1576,14 +1576,10 @@ clear_chatty_mmsd (ChattyMmsd *self)
 {
   self->mm_object = NULL;
   g_clear_object (&self->modem);
-  g_free (self->modem_number);
-  self->modem_number = NULL;
-  g_free (self->carrier_mmsc);
-  self->carrier_mmsc = NULL;
-  g_free (self->mms_apn);
-  self->mms_apn = NULL;
-  g_free (self->carrier_proxy);
-  self->carrier_proxy = NULL;
+  g_clear_pointer (&self->modem_number, g_free);
+  g_clear_pointer (&self->carrier_mmsc, g_free);
+  g_clear_pointer (&self->mms_apn, g_free);
+  g_clear_pointer (&self->carrier_proxy, g_free);
 
   if (G_IS_DBUS_CONNECTION (self->connection)) {
     g_debug ("Removing any active MMSD connections");
