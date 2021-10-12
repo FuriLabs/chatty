@@ -519,6 +519,7 @@ handle_common_errors (MatrixApi *self,
     self->room_list_loaded = FALSE;
     g_clear_pointer (&self->access_token, matrix_utils_free_buffer);
     matrix_enc_set_details (self->matrix_enc, NULL, NULL);
+    self->callback (self->cb_object, self, MATRIX_ACCESS_TOKEN_LOGIN, NULL, NULL);
     matrix_start_sync (self);
 
     return TRUE;
@@ -545,6 +546,7 @@ handle_common_errors (MatrixApi *self,
       g_clear_handle_id (&self->resync_id, g_source_remove);
 
       self->sync_failed = TRUE;
+      self->callback (self->cb_object, self, MATRIX_RED_PILL, NULL, NULL);
       CHATTY_TRACE (self->username, "Schedule sync for user ");
       self->resync_id = g_timeout_add_seconds (URI_REQUEST_TIMEOUT,
                                                schedule_resync, self);
