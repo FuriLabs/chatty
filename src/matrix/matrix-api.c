@@ -544,6 +544,7 @@ handle_common_errors (MatrixApi *self,
     if (g_network_monitor_get_connectivity (network_monitor) == G_NETWORK_CONNECTIVITY_FULL) {
       g_clear_handle_id (&self->resync_id, g_source_remove);
 
+      self->sync_failed = TRUE;
       CHATTY_TRACE (self->username, "Schedule sync for user ");
       self->resync_id = g_timeout_add_seconds (URI_REQUEST_TIMEOUT,
                                                schedule_resync, self);
@@ -1259,6 +1260,15 @@ matrix_api_start_sync (MatrixApi *self)
     return;
 
   matrix_start_sync (self);
+}
+
+gboolean
+matrix_api_is_sync (MatrixApi *self)
+{
+  g_return_val_if_fail (MATRIX_IS_API (self), FALSE);
+
+  return self->access_token && self->login_success &&
+    self->is_sync && !self->sync_failed;
 }
 
 void

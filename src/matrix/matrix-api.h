@@ -59,6 +59,7 @@ void           matrix_api_set_next_batch         (MatrixApi      *self,
 void          matrix_api_set_sync_callback       (MatrixApi      *self,
                                                   MatrixCallback  callback,
                                                   gpointer        object);
+gboolean      matrix_api_is_sync                 (MatrixApi      *self);
 void          matrix_api_start_sync              (MatrixApi      *self);
 void          matrix_api_stop_sync               (MatrixApi      *self);
 void          matrix_api_set_upload_key          (MatrixApi      *self,
