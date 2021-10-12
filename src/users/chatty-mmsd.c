@@ -377,7 +377,7 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
   const char *text = chatty_message_get_text (message);
   GVariantBuilder attachment_builder;
   g_autoptr(GError) error = NULL;
-  GList *MMS_files;
+  GList *files;
   int size = 0;
 
   g_variant_builder_init (&attachment_builder, G_VARIANT_TYPE_ARRAY);
@@ -408,9 +408,9 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
   }
 
   /* Get attachments to process for MMSD */
-  MMS_files = chatty_message_get_files (message);
+  files = chatty_message_get_files (message);
 
-  if (MMS_files != NULL) {
+  if (files) {
     int number_of_attachments = 0;
     int total_number_of_attachments = 0;
     int image_attachments = 0;
@@ -429,7 +429,7 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
      *  Figure out the total size of images (excluding gifs), videos,
      *  and any other attachments
      */
-    for (GList *l = MMS_files; l != NULL; l = l->next) {
+    for (GList *l = files; l != NULL; l = l->next) {
       ChattyFileInfo *attachment = l->data;
       total_number_of_attachments = total_number_of_attachments + 1;
       attachments_size = attachments_size + attachment->size;
@@ -484,7 +484,7 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
 
     /* Figure out the average attachment size needed for the image */
     image_attachments_size = (self->max_attach_size - other_attachments_size) / image_attachments;
-    for (GList *l = MMS_files; l != NULL; l = l->next) {
+    for (GList *l = files; l != NULL; l = l->next) {
       ChattyFileInfo *attachment = l->data;
 
       if (g_str_match_string ("image", attachment->mime_type, FALSE)) {
@@ -513,7 +513,7 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
       }
     }
 
-    for (GList *l = MMS_files; l != NULL; l = l->next) {
+    for (GList *l = files; l != NULL; l = l->next) {
       GString *attachment_name_str;
       ChattyFileInfo *attachment = l->data;
       g_autofree char *attachment_name = NULL;
