@@ -20,6 +20,8 @@
     <file preprocess="xml-stripblanks">ui/chatty-window.ui</file>
     <file preprocess="xml-stripblanks">icons/eye-not-looking-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/eye-open-negative-filled-symbolic.svg</file>
+    <file preprocess="xml-stripblanks">icons/send-symbolic.svg</file>
+    <file preprocess="xml-stripblanks">icons/send-encrypted-symbolic.svg</file>
     <file>css/style.css</file>
   </gresource>
 </gresources>
