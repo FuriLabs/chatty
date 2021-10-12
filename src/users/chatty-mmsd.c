@@ -387,50 +387,24 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
 
   /* If there is text in the ChattyMessage, convert it into a file for MMSD */
   if (size > 0) {
-    char *MMS_path;
-    GString *mms_path_string;
-    g_autoptr (GFile) MMS_file = NULL;
-    GFileOutputStream *MMS_contents;
-    g_autofree char *temp = NULL;
-    gulong *bytes_written = 0;
+    g_autoptr(GFile) text_file = NULL;
+    GFileIOStream *iostream;
 
-    /* Make Temporary file for message: /tmp/chatty/mms-${UUID}.txt */
-    temp = g_uuid_string_random ();
-    mms_path_string = g_string_new (g_get_tmp_dir ());
-    g_string_append_printf (mms_path_string, "/chatty/mms-%s.txt", temp);
-
-    MMS_path = g_string_free (mms_path_string, FALSE);
-    MMS_file = g_file_new_for_path (MMS_path);
-
-    if (!g_file_make_directory_with_parents (MMS_file, NULL, &error)) {
-      if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_EXISTS)) {
-        g_debug ("Directory exists, skipping error...");
-        g_clear_error (&error);
-      } else if (error) {
-        g_warning ("Error creating Directory: %s", error->message);
-        return NULL;
-      }
-    }
-    /* Delete any existing /tmp/chatty/mms-${UUID}.txt */
-    g_file_delete (MMS_file, NULL, NULL);
-    MMS_contents = g_file_create (MMS_file, G_FILE_CREATE_PRIVATE, NULL, &error);
-    if (MMS_contents == NULL) {
-      g_warning ("Failed to create %s: %s",
-                 g_file_peek_path (MMS_file), error->message);
+    text_file = g_file_new_tmp ("chatty-mms-text.XXXXXX.txt", &iostream, &error);
+    if (error) {
+      g_warning ("Error creating Temp file: %s", error->message);
       return NULL;
     }
 
-    if (!g_output_stream_write_all ((GOutputStream *) MMS_contents,
-                                    text,
-                                    size,
-                                    bytes_written,
-                                    NULL,
-                                    &error)) {
+    if (!g_file_replace_contents (text_file, text, size, NULL, FALSE,
+                                  G_FILE_CREATE_NONE, NULL, NULL, &error)) {
       g_warning ("Failed to write to file %s: %s",
-                 g_file_peek_path (MMS_file), error->message);
+                 g_file_peek_path (text_file), error->message);
       return NULL;
     }
-    g_variant_builder_add_parsed (&attachment_builder, "('message-contents.txt','text/plain',%s)", MMS_path);
+
+    g_variant_builder_add_parsed (&attachment_builder, "('message-contents.txt','text/plain',%s)",
+                                  g_file_peek_path (text_file));
   }
 
   /* Get attachments to process for MMSD */
