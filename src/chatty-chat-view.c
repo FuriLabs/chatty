@@ -45,8 +45,8 @@ struct _ChattyChatView
   GtkWidget  *attachment_view;
   GtkWidget  *message_input;
   GtkWidget  *send_file_button;
-  GtkWidget  *encrypt_icon;
   GtkWidget  *send_message_button;
+  GtkWidget  *send_button_icon;
   GtkWidget  *no_message_status;
   GtkWidget  *scroll_down_button;
   GtkTextBuffer *message_input_buffer;
@@ -191,8 +191,6 @@ chatty_chat_view_update (ChattyChatView *self)
 
   protocol = chatty_item_get_protocols (CHATTY_ITEM (self->chat));
 
-  gtk_widget_show (self->encrypt_icon);
-
   if (chatty_chat_is_im (self->chat) && CHATTY_IS_PP_CHAT (self->chat))
     chatty_pp_chat_load_encryption_status (CHATTY_PP_CHAT (self->chat));
 
@@ -313,26 +311,19 @@ chat_view_message_row_new (ChattyMessage  *message,
 static void
 chat_encrypt_changed_cb (ChattyChatView *self)
 {
-  GtkStyleContext *context;
   const char *icon_name;
   ChattyEncryption encryption;
 
   g_assert (CHATTY_IS_CHAT_VIEW (self));
 
-  context = gtk_widget_get_style_context (self->encrypt_icon);
   encryption = chatty_chat_get_encryption (self->chat);
 
-  if (encryption == CHATTY_ENCRYPTION_ENABLED) {
-    icon_name = "changes-prevent-symbolic";
-    gtk_style_context_remove_class (context, "dim-label");
-    gtk_style_context_add_class (context, "encrypt");
-  } else {
-    icon_name = "changes-allow-symbolic";
-    gtk_style_context_add_class (context, "dim-label");
-    gtk_style_context_remove_class (context, "encrypt");
-  }
+  if (encryption == CHATTY_ENCRYPTION_ENABLED)
+    icon_name = "send-encrypted-symbolic";
+   else
+     icon_name = "send-symbolic";
 
-  gtk_image_set_from_icon_name (GTK_IMAGE (self->encrypt_icon), icon_name, 1);
+  gtk_image_set_from_icon_name (GTK_IMAGE (self->send_button_icon), icon_name, 1);
 }
 
 static void
@@ -385,35 +376,6 @@ chat_view_message_items_changed (ChattyChatView *self)
     gtk_widget_set_valign (self->message_list, GTK_ALIGN_FILL);
   else
     gtk_widget_set_valign (self->message_list, GTK_ALIGN_END);
-}
-
-static gboolean
-chat_view_input_focus_in_cb (ChattyChatView *self)
-{
-  GtkStyleContext *context;
-
-  g_assert (CHATTY_IS_CHAT_VIEW (self));
-
-  context = gtk_widget_get_style_context (self->input_frame);
-  gtk_style_context_remove_class (context, "msg_entry_defocused");
-  gtk_style_context_add_class (context, "msg_entry_focused");
-
-  return FALSE;
-}
-
-
-static gboolean
-chat_view_input_focus_out_cb (ChattyChatView *self)
-{
-  GtkStyleContext *context;
-
-  g_assert (CHATTY_IS_CHAT_VIEW (self));
-
-  context = gtk_widget_get_style_context (self->input_frame);
-  gtk_style_context_remove_class (context, "msg_entry_focused");
-  gtk_style_context_add_class (context, "msg_entry_defocused");
-
-  return FALSE;
 }
 
 static void
@@ -633,10 +595,8 @@ chat_view_adjustment_changed_cb (GtkAdjustment  *adjustment,
 
   if (upper > (gdouble)max_height) {
     gtk_widget_set_visible (vscroll, TRUE);
-    gtk_widget_hide (self->encrypt_icon);
   } else {
     gtk_widget_set_visible (vscroll, FALSE);
-    gtk_widget_show (self->encrypt_icon);
   }
 
   chat_view_adjustment_value_changed_cb (self);
@@ -746,8 +706,8 @@ chatty_chat_view_class_init (ChattyChatViewClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, attachment_view);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, message_input);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, send_file_button);
-  gtk_widget_class_bind_template_child (widget_class, ChattyChatView, encrypt_icon);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, send_message_button);
+  gtk_widget_class_bind_template_child (widget_class, ChattyChatView, send_button_icon);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, no_message_status);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, message_input_buffer);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, vadjustment);
@@ -756,8 +716,6 @@ chatty_chat_view_class_init (ChattyChatViewClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, chat_view_edge_overshot_cb);
   gtk_widget_class_bind_template_callback (widget_class, chat_view_attachment_revealer_notify_cb);
   gtk_widget_class_bind_template_callback (widget_class, chat_view_typing_indicator_draw_cb);
-  gtk_widget_class_bind_template_callback (widget_class, chat_view_input_focus_in_cb);
-  gtk_widget_class_bind_template_callback (widget_class, chat_view_input_focus_out_cb);
   gtk_widget_class_bind_template_callback (widget_class, chat_view_send_file_button_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, chat_view_send_message_button_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, chat_view_input_key_pressed_cb);
@@ -809,6 +767,7 @@ chatty_chat_view_set_chat (ChattyChatView *self,
   g_return_if_fail (!chat || CHATTY_IS_CHAT (chat));
 
   if (self->chat && chat != self->chat) {
+    gtk_image_set_from_icon_name (GTK_IMAGE (self->send_button_icon), "send-symbolic", 1);
     g_signal_handlers_disconnect_by_func (chatty_chat_get_account (self->chat),
                                           chat_account_status_changed_cb,
                                           self);
