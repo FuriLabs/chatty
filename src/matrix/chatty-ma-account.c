@@ -466,6 +466,12 @@ matrix_account_sync_cb (ChattyMaAccount *self,
     return;
   }
 
+  if (!error && !matrix_api_is_sync (self->matrix_api)) {
+    self->status = CHATTY_DISCONNECTED;
+    g_object_notify (G_OBJECT (self), "status");
+    return;
+  }
+
   switch (action) {
   case MATRIX_BLUE_PILL:
     return;
