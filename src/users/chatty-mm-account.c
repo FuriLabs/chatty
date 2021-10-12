@@ -22,6 +22,7 @@
 #include "chatty-mm-chat.h"
 #include "chatty-utils.h"
 #include "itu-e212-iso.h"
+#include "chatty-mm-account-private.h"
 #include "chatty-mm-account.h"
 #include "chatty-log.h"
 #include "chatty-mmsd.h"
@@ -42,8 +43,6 @@ struct _ChattyMmDevice
   gulong     modem_state_id;
 };
 
-#define CHATTY_TYPE_MM_DEVICE (chatty_mm_device_get_type ())
-G_DECLARE_FINAL_TYPE (ChattyMmDevice, chatty_mm_device, CHATTY, MM_DEVICE, GObject)
 G_DEFINE_TYPE (ChattyMmDevice, chatty_mm_device, G_TYPE_OBJECT)
 
 static void
@@ -72,6 +71,14 @@ static ChattyMmDevice *
 chatty_mm_device_new (void)
 {
   return g_object_new (CHATTY_TYPE_MM_DEVICE, NULL);
+}
+
+MMObject *
+chatty_mm_device_get_object (ChattyMmDevice *device)
+{
+  g_return_val_if_fail (CHATTY_IS_MM_DEVICE (device), NULL);
+
+  return device->mm_object;
 }
 
 struct _ChattyMmAccount
@@ -1345,4 +1352,12 @@ chatty_mm_account_send_message_finish (ChattyMmAccount *self,
   g_return_val_if_fail (!error || !*error, FALSE);
 
   return g_task_propagate_boolean (G_TASK (result), error);
+}
+
+GListModel *
+chatty_mm_account_get_devices (ChattyMmAccount *self)
+{
+  g_return_val_if_fail (CHATTY_MM_ACCOUNT (self), NULL);
+
+  return G_LIST_MODEL (self->device_list);
 }
