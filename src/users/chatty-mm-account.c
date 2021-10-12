@@ -683,10 +683,6 @@ mm_object_added_cb (ChattyMmAccount *self,
   settings = chatty_settings_get_default ();
   device = chatty_mm_device_new ();
   device->mm_object = g_object_ref (MM_OBJECT (object));
-  if (chatty_settings_get_experimental_features (settings)) {
-    /* Load chatty_mmsd */
-    chatty_mmsd_load (self->mmsd_struct, device->mm_object);
-  }
 
   device->modem_state_id = g_signal_connect_swapped (mm_object_peek_modem (device->mm_object),
                                                      "notify::state",
@@ -740,12 +736,9 @@ mm_object_removed_cb (ChattyMmAccount *self,
                       GDBusObject     *object)
 {
   gsize n_items;
-  ChattySettings *settings;
 
   g_assert (CHATTY_IS_MM_ACCOUNT (self));
   g_assert (MM_IS_OBJECT (object));
-
-  settings = chatty_settings_get_default ();
 
   n_items = g_list_model_get_n_items (G_LIST_MODEL (self->device_list));
 
@@ -755,9 +748,6 @@ mm_object_removed_cb (ChattyMmAccount *self,
     device = g_list_model_get_item (G_LIST_MODEL (self->device_list), i);
     if (g_strcmp0 (mm_object_get_path (MM_OBJECT (object)),
                    mm_object_get_path (device->mm_object)) == 0) {
-        if (chatty_settings_get_experimental_features (settings)) {
-          chatty_mmsd_close (self->mmsd_struct, device->mm_object);
-        }
       self->status = CHATTY_UNKNOWN;
       g_list_store_remove (self->device_list, i);
       break;
@@ -850,6 +840,10 @@ mm_new_cb (GObject      *object,
   g_assert (CHATTY_IS_MM_ACCOUNT (self));
 
   self->mm_manager = mm_manager_new_finish (result, &error);
+  if (chatty_settings_get_experimental_features (chatty_settings_get_default ())) {
+    /* Load chatty_mmsd */
+    chatty_mmsd_load (self->mmsd_struct);
+  }
 
   if (!self->mm_watch_id)
     self->mm_watch_id = g_bus_watch_name (G_BUS_TYPE_SYSTEM,

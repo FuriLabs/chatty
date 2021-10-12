@@ -25,10 +25,7 @@ G_DECLARE_FINAL_TYPE (ChattyMmsd, chatty_mmsd, CHATTY, MMSD, GObject)
 
 ChattyMmsd *chatty_mmsd_new                   (ChattyMmAccount *account);
 gboolean    chatty_mmsd_is_ready              (ChattyMmsd      *self);
-void        chatty_mmsd_load                  (ChattyMmsd      *self,
-                                               MMObject        *mm_object);
-void        chatty_mmsd_close                 (ChattyMmsd      *self,
-                                               MMObject        *mm_object);
+void        chatty_mmsd_load                  (ChattyMmsd      *self);
 gboolean    chatty_mmsd_send_mms_async        (ChattyMmsd      *self,
                                                ChattyChat      *chat,
                                                ChattyMessage   *message,

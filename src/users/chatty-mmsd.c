@@ -27,6 +27,7 @@
 #include "chatty-mm-chat.h"
 #include "chatty-utils.h"
 #include "chatty-mm-account.h"
+#include "chatty-mm-account-private.h"
 #include "chatty-media.h"
 #include "chatty-mmsd.h"
 #include "chatty-log.h"
@@ -67,6 +68,7 @@ struct _ChattyMmsd {
   GObject          parent_instance;
 
   ChattyMmAccount  *mm_account;
+  ChattyMmDevice   *mm_device;
   GDBusConnection  *connection;
   guint             mmsd_watch_id;
   GDBusProxy       *manager_proxy;
@@ -78,8 +80,6 @@ struct _ChattyMmsd {
   guint             modemmanager_bearer_handler_watch_id;
   guint             modemmanager_settings_changed_watch_id;
   GDBusProxy       *modemmanager_proxy;
-  MMObject         *mm_object;
-  MMModem          *modem;
   char             *modem_number;
   char             *default_modem_number;
   GPtrArray        *mms_arr;
@@ -1523,8 +1523,8 @@ static void mmsd_vanished_cb (GDBusConnection *connection,
 static void
 clear_chatty_mmsd (ChattyMmsd *self)
 {
-  self->mm_object = NULL;
-  g_clear_object (&self->modem);
+  self->is_ready = FALSE;
+  g_clear_object (&self->mm_device);
   g_clear_pointer (&self->modem_number, g_free);
   g_clear_pointer (&self->carrier_mmsc, g_free);
   g_clear_pointer (&self->mms_apn, g_free);
@@ -1538,8 +1538,8 @@ clear_chatty_mmsd (ChattyMmsd *self)
   if (self->mmsd_watch_id) {
     g_debug ("Unwatching MMSD");
     g_bus_unwatch_name (self->mmsd_watch_id);
+    self->mmsd_watch_id = 0;
   }
-
 }
 
 static void
@@ -1945,6 +1945,82 @@ mmsd_vanished_cb (GDBusConnection *connection,
 }
 
 static void
+chatty_mmsd_reload (ChattyMmsd *self)
+{
+  const char *const *own_numbers;
+  GListModel *devices;
+  MMObject *mm_object;
+  MMModem *mm_modem;
+
+  g_assert (CHATTY_IS_MMSD (self));
+  g_assert (!self->mm_device);
+  g_assert (!self->mmsd_watch_id);
+
+  g_hash_table_remove_all (self->mms_hash_table);
+  g_clear_pointer (&self->modem_number, g_free);
+
+  devices = chatty_mm_account_get_devices (self->mm_account);
+  /* We can handle only one device, get the first one */
+  self->mm_device = g_list_model_get_item (devices, 0);
+  g_return_if_fail (self->mm_device);
+
+  mm_object = chatty_mm_device_get_object (self->mm_device);
+  mm_modem = mm_object_peek_modem (MM_OBJECT (mm_object));
+
+  /* Figure out what number the modem is on. */
+  own_numbers = mm_modem_get_own_numbers (mm_modem);
+
+  for (guint i = 0; own_numbers && own_numbers[i]; i++) {
+    const char *number, *country_code;
+
+    number = own_numbers[i];
+    country_code = chatty_settings_get_country_iso_code (chatty_settings_get_default ());
+    self->modem_number = chatty_utils_check_phonenumber (number, country_code);
+
+    if (self->modem_number)
+      break;
+  }
+
+  if (!self->modem_number) {
+    g_warning ("Your SIM or Modem does not support modem manger's number! Please file a bug report");
+    self->modem_number = g_strdup ("");
+    g_debug ("Making Dummy modem number: %s", self->modem_number);
+  }
+
+  self->mmsd_watch_id = g_bus_watch_name (G_BUS_TYPE_SESSION,
+                                          MMSD_SERVICE,
+                                          G_BUS_NAME_WATCHER_FLAGS_AUTO_START,
+                                          mmsd_appeared_cb,
+                                          mmsd_vanished_cb,
+                                          self, NULL);
+}
+
+static void
+mmsd_device_list_changed_cb (ChattyMmsd *self)
+{
+  GListModel *devices;
+  guint n_items;
+
+  g_assert (CHATTY_IS_MMSD (self));
+
+  devices = chatty_mm_account_get_devices (self->mm_account);
+  n_items = g_list_model_get_n_items (devices);
+
+  if (n_items == 0) {
+    clear_chatty_mmsd (self);
+    return;
+  }
+
+  /* If the device list no longer have the device we track, clear mmsd */
+  if (self->mm_device &&
+      !chatty_utils_get_item_position (devices, self->mm_device, NULL))
+    clear_chatty_mmsd (self);
+
+  if (!self->mm_device)
+    chatty_mmsd_reload (self);
+}
+
+static void
 chatty_mmsd_finalize (GObject *object)
 {
   ChattyMmsd *self = (ChattyMmsd *)object;
@@ -1992,57 +2068,15 @@ chatty_mmsd_is_ready (ChattyMmsd *self)
 }
 
 void
-chatty_mmsd_load (ChattyMmsd *self,
-                  MMObject   *mm_object)
+chatty_mmsd_load (ChattyMmsd *self)
 {
-  const char *const *own_numbers;
+  GListModel *devices;
 
-  if (self->mm_object == mm_object)
-    return;
+  g_return_if_fail (CHATTY_IS_MMSD (self));
 
-  self->mm_object = mm_object;
-  g_clear_object (&self->modem);
-  self->modem = mm_object_get_modem (MM_OBJECT (mm_object));
-  g_hash_table_remove_all (self->mms_hash_table);
-
-  /* Figure out what number the modem is on. */
-  own_numbers = mm_modem_get_own_numbers (self->modem);
-  g_clear_pointer (&self->modem_number, g_free);
-
-  for (guint i = 0; own_numbers && own_numbers[i]; i++) {
-    const char *number, *country_code;
-
-    number = own_numbers[i];
-    country_code = chatty_settings_get_country_iso_code (chatty_settings_get_default ());
-    self->modem_number = chatty_utils_check_phonenumber (number, country_code);
-
-    if (self->modem_number)
-      break;
-  }
-
-  if (!self->modem_number) {
-    g_warning ("Your SIM or Modem does not support modem manger's number! Please file a bug report");
-    self->modem_number = g_strdup ("");
-    g_debug ("Making Dummy modem number: %s", self->modem_number);
-  }
-
-  self->mmsd_watch_id = g_bus_watch_name (G_BUS_TYPE_SESSION,
-                                          MMSD_SERVICE,
-                                          G_BUS_NAME_WATCHER_FLAGS_AUTO_START,
-                                          mmsd_appeared_cb,
-                                          mmsd_vanished_cb,
-                                          self, NULL);
-}
-
-void
-chatty_mmsd_close (ChattyMmsd *self,
-                   MMObject   *mm_object)
-{
-  if (g_strcmp0 (mm_object_get_path (self->mm_object),
-                 mm_object_get_path (mm_object)) == 0) {
-    g_debug ("Modem that MMSD tracks is being removed");
-    clear_chatty_mmsd (self);
-  } else {
-    g_debug ("Modem that MMSD tracks is not being removed");
-  }
+  devices = chatty_mm_account_get_devices (self->mm_account);
+  g_signal_connect_object (devices, "items-changed",
+                           G_CALLBACK (mmsd_device_list_changed_cb),
+                           self, G_CONNECT_SWAPPED);
+  mmsd_device_list_changed_cb (self);
 }
