@@ -1978,6 +1978,7 @@ chatty_mmsd_new (ChattyMmAccount *account)
 
   self = g_object_new (CHATTY_TYPE_MMSD, NULL);
   self->mm_account = account;
+  g_set_weak_pointer (&self->mm_account, account);
 
   return self;
 }
