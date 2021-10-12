@@ -100,7 +100,7 @@ struct _ChattyMmAccount
   gboolean          mm_loaded;
   gboolean          has_mms;
 
-  ChattyMmsd       *mmsd_struct;
+  ChattyMmsd       *mmsd;
 };
 
 typedef struct _MessagingData {
@@ -842,7 +842,7 @@ mm_new_cb (GObject      *object,
   self->mm_manager = mm_manager_new_finish (result, &error);
   if (chatty_settings_get_experimental_features (chatty_settings_get_default ())) {
     /* Load chatty_mmsd */
-    chatty_mmsd_load (self->mmsd_struct);
+    chatty_mmsd_load (self->mmsd);
   }
 
   if (!self->mm_watch_id)
@@ -952,7 +952,7 @@ chatty_mm_account_finalize (GObject *object)
   g_clear_object (&self->chat_list);
   g_clear_object (&self->device_list);
   g_clear_object (&self->chatty_eds);
-  g_clear_object (&self->mmsd_struct);
+  g_clear_object (&self->mmsd);
   g_hash_table_unref (self->pending_sms);
 
   G_OBJECT_CLASS (chatty_mm_account_parent_class)->finalize (object);
@@ -979,7 +979,7 @@ chatty_mm_account_init (ChattyMmAccount *self)
 {
   self->chat_list = g_list_store_new (CHATTY_TYPE_MM_CHAT);
   self->device_list = g_list_store_new (CHATTY_TYPE_MM_DEVICE);
-  self->mmsd_struct = chatty_mmsd_new(self);
+  self->mmsd = chatty_mmsd_new (self);
   self->pending_sms = g_hash_table_new_full (g_direct_hash, g_direct_equal,
                                              NULL, g_object_unref);
   self->has_mms = FALSE;
@@ -1256,8 +1256,8 @@ chatty_mm_account_has_mms_feature (ChattyMmAccount *self)
 {
   g_return_val_if_fail (CHATTY_IS_MM_ACCOUNT (self), FALSE);
 
-  if (self->mmsd_struct)
-    return chatty_mmsd_is_ready (self->mmsd_struct);
+  if (self->mmsd)
+    return chatty_mmsd_is_ready (self->mmsd);
 
   return FALSE;
 }
@@ -1304,7 +1304,7 @@ chatty_mm_account_send_message_async (ChattyMmAccount     *self,
   if (is_mms) {
     CHATTY_TRACE_MSG ("Creating MMS message");
 
-    chatty_mmsd_send_mms_async (self->mmsd_struct, chat, message, g_steal_pointer (&task));
+    chatty_mmsd_send_mms_async (self->mmsd, chat, message, g_steal_pointer (&task));
     return;
   }
 
