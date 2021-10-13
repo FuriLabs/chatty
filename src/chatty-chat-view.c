@@ -534,6 +534,13 @@ chat_view_message_input_changed_cb (ChattyChatView *self)
   if (chatty_settings_get_convert_emoticons (chatty_settings_get_default ()) &&
       chatty_item_get_protocols (CHATTY_ITEM (self->chat)) != CHATTY_PROTOCOL_MMS_SMS)
     chatty_check_for_emoticon (self);
+
+  if (gtk_text_buffer_get_line_count (self->message_input_buffer) > 3)
+    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (self->scrolled_window),
+                                    GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+  else
+    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (self->scrolled_window),
+                                    GTK_POLICY_NEVER, GTK_POLICY_NEVER);
 }
 
 static void chat_view_adjustment_value_changed_cb (ChattyChatView *self);
@@ -570,36 +577,6 @@ chat_view_adjustment_value_changed_cb (ChattyChatView *self)
 
   gtk_widget_set_visible (self->scroll_down_button,
                           (upper - value) > page_size + 1.0);
-}
-
-static void
-chat_view_adjustment_changed_cb (GtkAdjustment  *adjustment,
-                                 GParamSpec     *pspec,
-                                 ChattyChatView *self)
-{
-  GtkAdjustment *vadjust;
-  GtkWidget     *vscroll;
-  gdouble        upper;
-  gdouble        page_size;
-  gint           max_height;
-
-  g_assert (CHATTY_IS_CHAT_VIEW (self));
-
-  vadjust = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (self->scrolled_window));
-  vscroll = gtk_scrolled_window_get_vscrollbar (GTK_SCROLLED_WINDOW (self->scrolled_window));
-  upper = gtk_adjustment_get_upper (GTK_ADJUSTMENT (vadjust));
-  page_size = gtk_adjustment_get_page_size (GTK_ADJUSTMENT (vadjust));
-  max_height = gtk_scrolled_window_get_max_content_height (GTK_SCROLLED_WINDOW (self->scrolled_window));
-
-  gtk_adjustment_set_value (vadjust, upper - page_size);
-
-  if (upper > (gdouble)max_height) {
-    gtk_widget_set_visible (vscroll, TRUE);
-  } else {
-    gtk_widget_set_visible (vscroll, FALSE);
-  }
-
-  chat_view_adjustment_value_changed_cb (self);
 }
 
 static void
@@ -730,16 +707,11 @@ static void
 chatty_chat_view_init (ChattyChatView *self)
 {
   GspellTextView *gspell_view;
-  GtkAdjustment *vadjustment;
 
   gtk_widget_init_template (GTK_WIDGET (self));
   gtk_list_box_set_placeholder (GTK_LIST_BOX (self->message_list), self->no_message_status);
   gtk_stack_set_visible_child (GTK_STACK (self), self->empty_view);
 
-  vadjustment = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (self->scrolled_window));
-  g_signal_connect_after (G_OBJECT (vadjustment), "notify::upper",
-                          G_CALLBACK (chat_view_adjustment_changed_cb),
-                          self);
   g_signal_connect_after (G_OBJECT (self), "file-requested",
                           G_CALLBACK (chat_view_file_requested_cb), self);
   gtk_list_box_set_header_func (GTK_LIST_BOX (self->message_list),
@@ -765,6 +737,13 @@ chatty_chat_view_set_chat (ChattyChatView *self,
 
   g_return_if_fail (CHATTY_IS_CHAT_VIEW (self));
   g_return_if_fail (!chat || CHATTY_IS_CHAT (chat));
+
+  if (gtk_text_buffer_get_line_count (self->message_input_buffer) > 3)
+    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (self->scrolled_window),
+                                    GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+  else
+    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (self->scrolled_window),
+                                    GTK_POLICY_NEVER, GTK_POLICY_NEVER);
 
   if (self->chat && chat != self->chat) {
     gtk_image_set_from_icon_name (GTK_IMAGE (self->send_button_icon), "send-symbolic", 1);
