@@ -52,8 +52,12 @@ struct _ChattyChatView
   GtkTextBuffer *message_input_buffer;
   GtkAdjustment *vadjustment;
 
+  GDBusProxy *osk_proxy;
+
   ChattyChat *chat;
   guint       refresh_typing_id;
+  guint       update_view_id;
+  guint       osk_id;
   gboolean    first_scroll_to_bottom;
 };
 
@@ -628,6 +632,105 @@ chat_view_file_requested_cb (ChattyChatView *self,
                                g_object_ref (self));
 }
 
+static gboolean
+update_view_scroll (gpointer user_data)
+{
+  ChattyChatView *self = user_data;
+  gdouble size, upper, value;
+
+  g_assert (CHATTY_IS_CHAT_VIEW (self));
+
+  g_clear_handle_id (&self->update_view_id, g_source_remove);
+
+  size  = gtk_adjustment_get_page_size (self->vadjustment);
+  value = gtk_adjustment_get_value (self->vadjustment);
+  upper = gtk_adjustment_get_upper (self->vadjustment);
+
+  if (upper - size <= DBL_EPSILON)
+    return G_SOURCE_REMOVE;
+
+  /* If close to bottom, scroll to bottom */
+  if (upper - value < (size * 1.75))
+    gtk_adjustment_set_value (self->vadjustment, upper);
+
+  return G_SOURCE_REMOVE;
+}
+
+static void
+osk_properties_changed_cb (ChattyChatView *self,
+                           GVariant       *changed_properties)
+{
+  g_autoptr(GVariant) value = NULL;
+  GtkWindow *window;
+
+  window = (GtkWindow *)gtk_widget_get_ancestor (GTK_WIDGET (self), GTK_TYPE_WINDOW);
+  if (!window || !gtk_window_has_toplevel_focus (window))
+    return;
+
+  value = g_variant_lookup_value (changed_properties, "Visible", NULL);
+
+  if (value) {
+    g_clear_handle_id (&self->update_view_id, g_source_remove);
+    if (g_variant_get_boolean (value))
+      self->update_view_id = g_timeout_add (60, update_view_scroll, self);
+  }
+}
+
+static void
+osk_proxy_new_cb (GObject      *service,
+                  GAsyncResult *res,
+                  gpointer      user_data)
+{
+  g_autoptr(ChattyChatView) self = user_data;
+  g_autoptr(GError) error = NULL;
+
+  self->osk_proxy = g_dbus_proxy_new_finish (res, &error);
+
+  if (error) {
+    g_warning ("Error creating osk proxy: %s", error->message);
+    return;
+  }
+
+  g_signal_connect_object (self->osk_proxy, "g-properties-changed",
+                           G_CALLBACK (osk_properties_changed_cb), self,
+                           G_CONNECT_SWAPPED | G_CONNECT_AFTER);
+}
+
+static void
+osk_appeared_cb (GDBusConnection *connection,
+                 const char      *name,
+                 const char      *name_owner,
+                 gpointer         user_data)
+{
+  ChattyChatView *self = user_data;
+
+  g_assert (CHATTY_IS_CHAT_VIEW (self));
+
+  g_dbus_proxy_new (connection,
+                    G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START_AT_CONSTRUCTION |
+                    G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START |
+                    G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS,
+                    NULL,
+                    "sm.puri.OSK0",
+                    "/sm/puri/OSK0",
+                    "sm.puri.OSK0",
+                    NULL,
+                    osk_proxy_new_cb,
+                    g_object_ref (self));
+}
+
+static void
+oks_vanished_cb (GDBusConnection *connection,
+                 const char      *name,
+                 gpointer         user_data)
+{
+  ChattyChatView *self = user_data;
+
+  g_assert (CHATTY_IS_CHAT_VIEW (self));
+
+  g_clear_object (&self->osk_proxy);
+}
+
 static void
 chatty_chat_view_map (GtkWidget *widget)
 {
@@ -643,6 +746,9 @@ chatty_chat_view_finalize (GObject *object)
 {
   ChattyChatView *self = (ChattyChatView *)object;
 
+  g_clear_handle_id (&self->osk_id, g_bus_unwatch_name);
+  g_clear_handle_id (&self->update_view_id, g_source_remove);
+  g_clear_object (&self->osk_proxy);
   g_clear_object (&self->chat);
 
   G_OBJECT_CLASS (chatty_chat_view_parent_class)->finalize (object);
@@ -717,6 +823,13 @@ chatty_chat_view_init (ChattyChatView *self)
   gtk_list_box_set_header_func (GTK_LIST_BOX (self->message_list),
                                 (GtkListBoxUpdateHeaderFunc)chat_view_update_header_func,
                                 g_object_ref (self), g_object_unref);
+
+  self->osk_id = g_bus_watch_name (G_BUS_TYPE_SESSION, "sm.puri.OSK0",
+                                   G_BUS_NAME_WATCHER_FLAGS_NONE,
+                                   osk_appeared_cb,
+                                   oks_vanished_cb,
+                                   g_object_ref (self),
+                                   g_object_unref);
 
   gspell_view = gspell_text_view_get_from_gtk_text_view (GTK_TEXT_VIEW (self->message_input));
   gspell_text_view_basic_setup (gspell_view);
