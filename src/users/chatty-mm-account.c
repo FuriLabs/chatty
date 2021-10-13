@@ -1199,7 +1199,7 @@ chatty_mm_account_find_chat (ChattyMmAccount *self,
           number2 = g_strdup (send[j]);
 
         if (g_strcmp0 (number1, number2) == 0) {
-          recipient_matches = recipient_matches + 1;
+          recipient_matches++;
           break;
         }
       }
