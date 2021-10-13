@@ -411,8 +411,8 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
   files = chatty_message_get_files (message);
 
   if (files) {
-    int number_of_attachments = 0;
-    int total_number_of_attachments = 0;
+    int files_count = 0;
+    int total_files_count = 0;
     int image_attachments = 0;
     int video_attachments = 0;
     gulong attachments_size = size;
@@ -421,8 +421,8 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
     gulong other_attachments_size = 0;
 
     if (size > 0) {
-      number_of_attachments = 1;
-      total_number_of_attachments = 1;
+      files_count = 1;
+      total_files_count = 1;
     }
 
     /*
@@ -431,7 +431,7 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
      */
     for (GList *l = files; l != NULL; l = l->next) {
       ChattyFileInfo *attachment = l->data;
-      total_number_of_attachments = total_number_of_attachments + 1;
+      total_files_count = total_files_count + 1;
       attachments_size = attachments_size + attachment->size;
 
       if (g_str_match_string ("image", attachment->mime_type, FALSE)) {
@@ -448,15 +448,15 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
         video_attachments = video_attachments + 1;
       }
 
-      if (total_number_of_attachments > self->max_num_attach) {
+      if (total_files_count > self->max_num_attach) {
         g_warning ("Total Number of attachment %d greater then maximum number of attachments %d",
-                   total_number_of_attachments,
+                   total_files_count,
                    self->max_num_attach);
         return NULL;
       }
     }
 
-    g_debug ("Total Number of attachments %d", total_number_of_attachments);
+    g_debug ("Total Number of attachments %d", total_files_count);
     other_attachments_size = attachments_size-image_attachments_size;
     if (other_attachments_size > self->max_attach_size) {
       g_warning ("Size of attachments that can't be resized %ld greater then maximum attachment size %d",
@@ -520,7 +520,7 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
       char **attachment_name_builder;
       guint attachment_name_segments;
 
-      number_of_attachments = number_of_attachments + 1;
+      files_count = files_count + 1;
 
       attachment_name = g_path_get_basename (attachment->path);
 
@@ -537,7 +537,7 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
       }
       attachment_name_str = g_string_append (attachment_name_str,
                                                     g_strdup_printf ("-%05d",
-                                                                     number_of_attachments));
+                                                                     files_count));
       if (attachment_name_segments > 1) {
         attachment_name_str = g_string_append (attachment_name_str, ".");
         attachment_name_str = g_string_append (attachment_name_str,
