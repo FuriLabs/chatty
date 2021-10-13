@@ -431,7 +431,7 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
      */
     for (GList *l = files; l != NULL; l = l->next) {
       ChattyFileInfo *attachment = l->data;
-      total_files_count = total_files_count + 1;
+      total_files_count++;
       attachments_size = attachments_size + attachment->size;
 
       if (g_str_match_string ("image", attachment->mime_type, FALSE)) {
@@ -441,11 +441,11 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
          */
         if (!g_str_match_string ("gif", attachment->mime_type, FALSE)) {
           image_attachments_size = image_attachments_size + attachment->size;
-          image_attachments = image_attachments + 1;
+          image_attachments++;
         }
       } else if (g_str_match_string ("video", attachment->mime_type, FALSE)) {
         video_attachments_size = video_attachments_size + attachment->size;
-        video_attachments = video_attachments + 1;
+        video_attachments++;
       }
 
       if (total_files_count > self->max_num_attach) {
@@ -520,7 +520,7 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
       char **attachment_name_builder;
       guint attachment_name_segments;
 
-      files_count = files_count + 1;
+      files_count++;
 
       attachment_name = g_path_get_basename (attachment->path);
 
