@@ -399,6 +399,7 @@ mm_account_add_sms (ChattyMmAccount *self,
 {
   g_autoptr(ChattyMessage) message = NULL;
   g_autoptr(GDateTime) date_time = NULL;
+  g_autoptr(ChattyMmBuddy) senderbuddy = NULL;
   ChattyChat *chat;
   g_autofree char *phone = NULL;
   g_autofree char *uuid = NULL;
@@ -423,10 +424,14 @@ mm_account_add_sms (ChattyMmAccount *self,
 
   chat = chatty_mm_account_start_chat (self, phone);
 
-  if (state == MM_SMS_STATE_RECEIVED)
+  if (state == MM_SMS_STATE_RECEIVED) {
     direction = CHATTY_DIRECTION_IN;
-  else if (state == MM_SMS_STATE_SENT)
+    senderbuddy = chatty_mm_chat_get_user (CHATTY_MM_CHAT (chat));
+    g_object_ref (senderbuddy);
+  } else if (state == MM_SMS_STATE_SENT) {
     direction = CHATTY_DIRECTION_OUT;
+    senderbuddy = chatty_mm_buddy_new (phone, phone);
+  }
 
   date_time = g_date_time_new_from_iso8601 (mm_sms_get_timestamp (sms), NULL);
   if (date_time)
@@ -435,7 +440,7 @@ mm_account_add_sms (ChattyMmAccount *self,
     unix_time = time (NULL);
 
   uuid = g_uuid_string_random ();
-  message = chatty_message_new (CHATTY_ITEM (chatty_mm_chat_get_user (CHATTY_MM_CHAT (chat))),
+  message = chatty_message_new (CHATTY_ITEM (senderbuddy),
                                 msg, uuid, unix_time, CHATTY_MESSAGE_TEXT, direction, 0);
   chatty_mm_chat_append_message (CHATTY_MM_CHAT (chat), message);
   chatty_history_add_message (self->history_db, chat, message);
