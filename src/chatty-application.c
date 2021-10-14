@@ -99,106 +99,6 @@ cmd_verbose_cb (const char  *option_name,
   return TRUE;
 }
 
-static int
-run_dialog_and_destroy (GtkDialog *dialog)
-{
-  int response;
-
-  gtk_dialog_set_default_response (dialog, GTK_RESPONSE_CANCEL);
-  gtk_window_set_position (GTK_WINDOW (dialog), GTK_WIN_POS_CENTER_ON_PARENT);
-
-  response = gtk_dialog_run (dialog);
-
-  gtk_widget_destroy (GTK_WIDGET (dialog));
-
-  return response;
-}
-
-static int
-application_authorize_buddy_cb (ChattyApplication *self,
-                                ChattyPpAccount   *account,
-                                const char        *remote_user,
-                                const char        *name)
-{
-  GtkWidget *dialog;
-  GtkWindow *window;
-
-  g_assert (CHATTY_IS_APPLICATION (self));
-  g_assert (CHATTY_IS_PP_ACCOUNT (account));
-
-  window = gtk_application_get_active_window (GTK_APPLICATION (self));
-  dialog = gtk_message_dialog_new (window,
-                                   GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                   GTK_MESSAGE_QUESTION,
-                                   GTK_BUTTONS_NONE,
-                                   _("Authorize %s?"),
-                                   name);
-
-  gtk_dialog_add_buttons (GTK_DIALOG (dialog),
-                          _("Reject"),
-                          GTK_RESPONSE_REJECT,
-                          _("Accept"),
-                          GTK_RESPONSE_ACCEPT,
-                          NULL);
-
-  gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-                                            _("Add %s to contact list"),
-                                            remote_user);
-
-  return run_dialog_and_destroy (GTK_DIALOG (dialog));
-}
-
-static void
-application_buddy_added_cb (ChattyApplication *self,
-                            ChattyPpAccount   *account,
-                            const char        *remote_user,
-                            const char        *id)
-{
-  GtkWindow *window;
-  GtkWidget *dialog;
-
-  g_assert (CHATTY_IS_APPLICATION (self));
-  g_assert (CHATTY_IS_ACCOUNT (account));
-
-  window = gtk_application_get_active_window (GTK_APPLICATION (self));
-  dialog = gtk_message_dialog_new (window,
-                                   GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                   GTK_MESSAGE_INFO,
-                                   GTK_BUTTONS_OK,
-                                   _("Contact added"));
-
-  gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-                                            _("User %s has added %s to the contacts"),
-                                            remote_user, id);
-
-  run_dialog_and_destroy (GTK_DIALOG (dialog));
-}
-
-static void
-application_show_connection_error (ChattyApplication *self,
-                                   ChattyPpAccount   *account,
-                                   const char        *message)
-{
-  GtkWindow *window;
-  GtkWidget *dialog;
-
-  g_assert (CHATTY_IS_APPLICATION (self));
-  window = gtk_application_get_active_window (GTK_APPLICATION (self));
-  dialog = gtk_message_dialog_new (window,
-                                   GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                   GTK_MESSAGE_ERROR,
-                                   GTK_BUTTONS_OK,
-                                   _("Login failed"));
-
-  gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG(dialog),
-                                            "%s: %s\n\n%s",
-                                            message,
-                                            chatty_item_get_username (CHATTY_ITEM (account)),
-                                            _("Please check ID and password"));
-
-  run_dialog_and_destroy (GTK_DIALOG (dialog));
-}
-
 static void
 application_open_chat (ChattyApplication *self,
                        ChattyChat        *chat)
@@ -405,16 +305,6 @@ chatty_application_startup (GApplication *application)
 
   g_action_map_add_action_entries (G_ACTION_MAP (self), app_entries,
                                    G_N_ELEMENTS (app_entries), self);
-
-  g_signal_connect_object (self->manager, "authorize-buddy",
-                           G_CALLBACK (application_authorize_buddy_cb), self,
-                           G_CONNECT_SWAPPED);
-  g_signal_connect_object (self->manager, "notify-added",
-                           G_CALLBACK (application_buddy_added_cb), self,
-                           G_CONNECT_SWAPPED);
-  g_signal_connect_object (self->manager, "connection-error",
-                           G_CALLBACK (application_show_connection_error), self,
-                           G_CONNECT_SWAPPED);
 }
 
 
