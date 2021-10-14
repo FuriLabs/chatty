@@ -303,7 +303,7 @@ chatty_mm_account_recieve_mms_cb (ChattyMmAccount *self,
                                   const char      *recipientlist)
 {
   ChattyChat *chat;
-  ChattyMmBuddy *senderbuddy;
+  g_autoptr(ChattyMmBuddy) senderbuddy = NULL;
   ChattyMsgDirection message_dir;
   ChattyMessage  *messagecheck;
   int recipients;
@@ -313,7 +313,6 @@ chatty_mm_account_recieve_mms_cb (ChattyMmAccount *self,
   if (!chat) {
     g_auto(GStrv) send = NULL;
     const char *country_code = chatty_settings_get_country_iso_code (chatty_settings_get_default ());
-    g_autoptr(GPtrArray) array = NULL;
 
     send = g_strsplit (recipientlist, ",", -1);
     recipients = g_strv_length (send);
@@ -324,19 +323,17 @@ chatty_mm_account_recieve_mms_cb (ChattyMmAccount *self,
 
     chatty_chat_set_data (chat, self, self->history_db);
 
-    array = g_ptr_array_new ();
     for (guint j = 0; j < recipients; j++) {
       g_autofree char *number = NULL;
-      ChattyMmBuddy *newbuddy;
+      ChattyMmBuddy *newbuddy = NULL;
 
       number = chatty_utils_check_phonenumber (send[j], country_code);
       if (number == NULL) {
         number = send[j];
       }
       newbuddy = chatty_mm_buddy_new (number, NULL);
-      g_ptr_array_add (array, newbuddy);
+      chatty_mm_chat_add_user (CHATTY_MM_CHAT (chat), newbuddy);
     }
-    chatty_mm_chat_add_users (CHATTY_MM_CHAT (chat), array);
     chatty_mm_chat_set_eds (CHATTY_MM_CHAT (chat), self->chatty_eds);
 
     g_list_store_append (self->chat_list, chat);
