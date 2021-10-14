@@ -92,10 +92,7 @@ enum {
 };
 
 enum {
-  AUTHORIZE_BUDDY,
   CHAT_DELETED,
-  NOTIFY_ADDED,
-  CONNECTION_ERROR,
   OPEN_CHAT,
   N_SIGNALS
 };
@@ -245,30 +242,6 @@ chatty_manager_class_init (ChattyManagerClass *klass)
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
-
-  /**
-   * ChattyManager::authorize-buddy:
-   * @self: a #ChattyManager
-   * @account: A #ChattyPpAccount
-   * @remote_user: username of the remote user
-   * @name: The Alias of @remote_user
-   * @message: The message sent by @remote_user
-   *
-   * Emitted when some one requests to add them to the
-   * @account’s buddy list.
-   *
-   * Returns: %GTK_RESPONSE_ACCEPT if authorized to be
-   * added to buddy list, any other value means unauthorized.
-   */
-  signals [AUTHORIZE_BUDDY] =
-    g_signal_new ("authorize-buddy",
-                  G_TYPE_FROM_CLASS (klass),
-                  G_SIGNAL_RUN_LAST,
-                  0, NULL, NULL, NULL,
-                  G_TYPE_INT,
-                  4, CHATTY_TYPE_PP_ACCOUNT, G_TYPE_STRING,
-                  G_TYPE_STRING, G_TYPE_STRING);
-
   /**
    * ChattyManager::chat-deleted:
    * @self: a #ChattyManager
@@ -285,40 +258,6 @@ chatty_manager_class_init (ChattyManagerClass *klass)
                   0, NULL, NULL, NULL,
                   G_TYPE_NONE,
                   1, CHATTY_TYPE_CHAT);
-
-  /**
-   * ChattyManager::connection-error:
-   * @self: a #ChattyManager
-   * @account: A #ChattyPpAccount
-   * @error: The error message
-   *
-   * Emitted when connection to @account failed
-   */
-  signals [CONNECTION_ERROR] =
-    g_signal_new ("connection-error",
-                  G_TYPE_FROM_CLASS (klass),
-                  G_SIGNAL_RUN_LAST,
-                  0, NULL, NULL, NULL,
-                  G_TYPE_NONE,
-                  2, CHATTY_TYPE_PP_ACCOUNT, G_TYPE_STRING);
-
-  /**
-   * ChattyManager::notify-added:
-   * @self: a #ChattyManager
-   * @account: A #ChattyPpAccount
-   * @remote_user: username of the remote user
-   * @id: The ID for @remote_user
-   *
-   * Emitted when some buddy added @account username to their
-   * buddy list.
-   */
-  signals [NOTIFY_ADDED] =
-    g_signal_new ("notify-added",
-                  G_TYPE_FROM_CLASS (klass),
-                  G_SIGNAL_RUN_LAST,
-                  0, NULL, NULL, NULL,
-                  G_TYPE_NONE,
-                  3, CHATTY_TYPE_PP_ACCOUNT, G_TYPE_STRING, G_TYPE_STRING);
 
   /**
    * ChattyManager::open-chat:
