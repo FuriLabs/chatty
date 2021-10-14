@@ -55,6 +55,7 @@ struct _ChattyChatView
   GDBusProxy *osk_proxy;
 
   ChattyChat *chat;
+  gdouble     last_vadj_upper;
   guint       refresh_typing_id;
   guint       update_view_id;
   guint       osk_id;
@@ -551,19 +552,25 @@ static void chat_view_adjustment_value_changed_cb (ChattyChatView *self);
 static void
 list_page_size_changed_cb (ChattyChatView *self)
 {
-  gdouble size, upper, value;
+  gdouble size, upper, value, old_upper;
 
   g_assert (CHATTY_IS_CHAT_VIEW (self));
 
   size  = gtk_adjustment_get_page_size (self->vadjustment);
   value = gtk_adjustment_get_value (self->vadjustment);
   upper = gtk_adjustment_get_upper (self->vadjustment);
+  old_upper = self->last_vadj_upper;
+  self->last_vadj_upper = upper;
+
+  /* If the view grew in height, don't do anything. */
+  if (old_upper < upper)
+    return;
 
   if (upper - size <= DBL_EPSILON)
     return;
 
   /* If close to bottom, scroll to bottom */
-  if (!self->first_scroll_to_bottom || upper - value < (size * 1.75))
+  if (!self->first_scroll_to_bottom || upper - value < (size * 1.15))
     gtk_adjustment_set_value (self->vadjustment, upper);
 
   self->first_scroll_to_bottom = TRUE;
