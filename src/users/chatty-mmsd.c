@@ -750,10 +750,12 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
                              GVariant   *message_t)
 {
   g_autoptr(GFile) parent = NULL;
+  g_autoptr(GVariant) recipients = NULL;
+  g_autoptr(GVariant) attachments = NULL;
   ChattyMsgDirection direction = CHATTY_DIRECTION_UNKNOWN;
   ChattyMsgStatus mms_status = CHATTY_STATUS_UNKNOWN;
   ChattyMsgType chatty_msg_type = CHATTY_MESSAGE_TEXT;
-  GVariant *properties, *recipients, *attachments, *attach;
+  GVariant *properties, *reciever, *attach;
   GVariantDict dict;
   GVariantIter iter;
   GFile *container = NULL;
@@ -763,7 +765,6 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
   char *smil = NULL, *status = NULL, *subject = NULL, *mms_message = NULL;
   GString *who;
   GVariantIter recipientiter;
-  GVariant *reciever;
   mms_payload *payload;
   struct tm tm;
   int delivery_report = FALSE;
@@ -877,6 +878,7 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
         who = g_string_append (who, ",");
       }
       who = g_string_append (who, temp);
+      g_variant_unref (reciever);
     }
   }
   payload->chat = g_string_free (who, FALSE);
@@ -900,6 +902,7 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
                    &containerpath,
                    &data,
                    &size);
+    g_variant_unref (attach);
 
     if (!container) {
       g_autofree char *tag = NULL;
@@ -1121,7 +1124,7 @@ chatty_mmsd_get_all_mms_cb (GObject      *service,
   if (error != NULL) {
     g_warning ("Error in Proxy call: %s\n", error->message);
   } else {
-    GVariant *msg_pack = g_variant_get_child_value (ret, 0);
+    g_autoptr(GVariant) msg_pack = g_variant_get_child_value (ret, 0);
     GVariantIter iter;
     gulong num;
 
@@ -1136,9 +1139,11 @@ chatty_mmsd_get_all_mms_cb (GObject      *service,
         g_variant_get (message_t, "(o@a{?*})", &objectpath, &properties);
         if (g_hash_table_lookup (self->mms_hash_table, objectpath) != NULL) {
           g_debug ("MMS Already exists! skipping...");
+          g_variant_unref (message_t);
           continue;
         }
         payload = chatty_mmsd_receive_message (self, message_t);
+        g_variant_unref (message_t);
         if (payload == NULL) {
           g_warning ("There was an error with decoding the MMS Payload!");
         } else {
@@ -1628,7 +1633,8 @@ chatty_mmsd_get_manager_cb (GObject      *manager,
   if (error != NULL) {
     g_warning ("Error in MMSD Manager Proxy call: %s\n", error->message);
   } else {
-    GVariant *all_services, *service_pack;
+    g_autoptr(GVariant) service_pack = NULL;
+    g_autoptr(GVariant) all_services = NULL;
     GVariantIter iter;
     gulong num;
     g_debug ("Got MMSD Manager");
@@ -1671,6 +1677,7 @@ chatty_mmsd_get_manager_cb (GObject      *manager,
 
       while ((service = g_variant_iter_next_value (&iter))) {
         chatty_mmsd_connect_to_service (self, service);
+        g_variant_unref (service);
       }
     }
   }
