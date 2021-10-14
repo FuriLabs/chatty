@@ -27,6 +27,7 @@ src/chatty-purple-notify.c
 src/chatty-purple-notify.h
 src/chatty-purple-request.c
 src/chatty-purple-request.h
+src/chatty-purple.c
 src/chatty-secret-store.c
 src/chatty-secret-store.h
 src/chatty-settings.c

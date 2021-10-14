@@ -16,6 +16,7 @@
 #endif
 
 #include <glib.h>
+#include <glib/gi18n.h>
 #include <purple.h>
 
 #include "contrib/gtk.h"
@@ -173,6 +174,50 @@ PurpleEventLoopUiOps eventloop_ui_ops =
   g_timeout_add_seconds,
 };
 
+static int
+run_dialog_and_destroy (GtkDialog *dialog)
+{
+  int response;
+
+  gtk_dialog_set_default_response (dialog, GTK_RESPONSE_CANCEL);
+  gtk_window_set_position (GTK_WINDOW (dialog), GTK_WIN_POS_CENTER_ON_PARENT);
+
+  response = gtk_dialog_run (dialog);
+
+  gtk_widget_destroy (GTK_WIDGET (dialog));
+
+  return response;
+}
+
+static GtkDialog *
+message_dialog_new (GtkMessageType  type,
+                    GtkButtonsType  buttons,
+                    const gchar    *message_format,
+                    ...) G_GNUC_PRINTF (3, 4);
+static GtkDialog *
+message_dialog_new (GtkMessageType  type,
+                    GtkButtonsType  buttons,
+                    const gchar    *message_format,
+                    ...)
+{
+  GtkApplication *app;
+  GtkWidget *dialog;
+  GtkWindow *window;
+  g_autofree char *message = NULL;
+  va_list args;
+
+  va_start (args, message_format);
+  message = g_strdup_vprintf (message_format, args);
+  va_end (args);
+
+  app = GTK_APPLICATION (g_application_get_default ());
+  window = gtk_application_get_active_window (app);
+  dialog = gtk_message_dialog_new (window,
+                                   GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                   type, buttons, "%s", message);
+
+  return GTK_DIALOG (dialog);
+}
 
 static void
 chatty_purple_account_notify_added (PurpleAccount *pp_account,
@@ -181,12 +226,13 @@ chatty_purple_account_notify_added (PurpleAccount *pp_account,
                                     const char    *alias,
                                     const char    *msg)
 {
-  ChattyManager *manager;
-  ChattyPpAccount *account;
+  GtkDialog *dialog;
 
-  manager = chatty_manager_get_default ();
-  account = chatty_pp_account_get_object (pp_account);
-  g_signal_emit_by_name (manager, "notify-added", account, remote_user, id);
+  dialog = message_dialog_new (GTK_MESSAGE_INFO, GTK_BUTTONS_OK, _("Contact added"));
+  gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
+                                            _("User %s has added %s to the contacts"),
+                                            remote_user, id);
+  run_dialog_and_destroy (dialog);
 }
 
 
@@ -201,16 +247,19 @@ chatty_purple_account_request_authorization (PurpleAccount                      
                                              PurpleAccountRequestAuthorizationCb  deny_cb,
                                              void                                *user_data)
 {
-  ChattyManager *manager;
-  ChattyPpAccount *account;
-  GtkResponseType  response = GTK_RESPONSE_CANCEL;
+  GtkDialog *dialog;
 
-  manager = chatty_manager_get_default ();
-  account = chatty_pp_account_get_object (pp_account);
-  g_signal_emit_by_name (manager, "authorize-buddy", account, remote_user,
-                         alias ? alias : remote_user, message, &response);
+  dialog = message_dialog_new (GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE,
+                               _("Authorize %s?"), alias ? alias : remote_user);
+  gtk_dialog_add_buttons ((dialog),
+                          _("Reject"), GTK_RESPONSE_REJECT,
+                          _("Accept"), GTK_RESPONSE_ACCEPT,
+                          NULL);
+  gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
+                                            _("Add %s to contact list"),
+                                            remote_user);
 
-  if (response == GTK_RESPONSE_ACCEPT) {
+  if (run_dialog_and_destroy (dialog) == GTK_RESPONSE_ACCEPT) {
     if (!on_list)
       purple_blist_request_add_buddy (pp_account, remote_user, NULL, alias);
     auth_cb (user_data);
@@ -489,7 +538,6 @@ purple_account_connection_failed_cb (PurpleAccount         *pp_account,
                                      ChattyPurple          *self)
 {
   ChattyPpAccount *account;
-  ChattyManager *manager;
 
   g_assert (CHATTY_IS_PURPLE (self));
 
@@ -501,9 +549,17 @@ purple_account_connection_failed_cb (PurpleAccount         *pp_account,
       self->network_available)
     chatty_account_connect (CHATTY_ACCOUNT (account), TRUE);
 
-  manager = chatty_manager_get_default ();
-  if (purple_connection_error_is_fatal (error))
-    g_signal_emit_by_name (manager, "connection-error", account, error_msg);
+  if (purple_connection_error_is_fatal (error)) {
+    GtkDialog *dialog;
+
+    dialog = message_dialog_new (GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Login failed"));
+    gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
+                                              "%s: %s\n\n%s",
+                                              error_msg,
+                                              chatty_item_get_username (CHATTY_ITEM (account)),
+                                              _("Please check ID and password"));
+    run_dialog_and_destroy (dialog);
+  }
 }
 
 static void
