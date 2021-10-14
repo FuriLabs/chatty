@@ -306,39 +306,9 @@ chatty_mm_account_recieve_mms_cb (ChattyMmAccount *self,
   g_autoptr(ChattyMmBuddy) senderbuddy = NULL;
   ChattyMsgDirection message_dir;
   ChattyMessage  *messagecheck;
-  int recipients;
   guint position;
 
-  chat = chatty_mm_account_find_chat (self, recipientlist);
-  if (!chat) {
-    g_auto(GStrv) send = NULL;
-    const char *country_code = chatty_settings_get_country_iso_code (chatty_settings_get_default ());
-
-    send = g_strsplit (recipientlist, ",", -1);
-    recipients = g_strv_length (send);
-    if (recipients == 1)
-      chat = (ChattyChat *)chatty_mm_chat_new (recipientlist, NULL, CHATTY_PROTOCOL_MMS_SMS, TRUE);
-    else /* There is more than one recipient */
-      chat = (ChattyChat *)chatty_mm_chat_new (recipientlist, recipientlist, CHATTY_PROTOCOL_MMS, FALSE);
-
-    chatty_chat_set_data (chat, self, self->history_db);
-
-    for (guint j = 0; j < recipients; j++) {
-      g_autofree char *number = NULL;
-      ChattyMmBuddy *newbuddy = NULL;
-
-      number = chatty_utils_check_phonenumber (send[j], country_code);
-      if (number == NULL) {
-        number = send[j];
-      }
-      newbuddy = chatty_mm_buddy_new (number, NULL);
-      chatty_mm_chat_add_user (CHATTY_MM_CHAT (chat), newbuddy);
-    }
-    chatty_mm_chat_set_eds (CHATTY_MM_CHAT (chat), self->chatty_eds);
-
-    g_list_store_append (self->chat_list, chat);
-    g_object_unref (chat);
-  }
+  chat = chatty_mm_account_start_chat (self, recipientlist);
   /*
    * Check to see if this message exists (e.g. draft MMS sent)
    */
@@ -1211,24 +1181,42 @@ chatty_mm_account_find_chat (ChattyMmAccount *self,
 
 ChattyChat *
 chatty_mm_account_start_chat (ChattyMmAccount *self,
-                              const char      *phone)
+                              const char      *recipientlist)
 {
   ChattyChat *chat;
 
   g_return_val_if_fail (CHATTY_IS_MM_ACCOUNT (self), NULL);
 
-  if (!phone || !*phone)
+  if (!recipientlist || !*recipientlist)
     return NULL;
 
-  chat = chatty_mm_account_find_chat (self, phone);
-
+  chat = chatty_mm_account_find_chat (self, recipientlist);
   if (!chat) {
-    g_autoptr(ChattyMmBuddy) buddy = NULL;
+    g_auto(GStrv) send = NULL;
+    const char *country_code = chatty_settings_get_country_iso_code (chatty_settings_get_default ());
+    int recipients;
 
-    chat = (ChattyChat *)chatty_mm_chat_new (phone, NULL, CHATTY_PROTOCOL_MMS_SMS, TRUE);
+    send = g_strsplit (recipientlist, ",", -1);
+    recipients = g_strv_length (send);
+    if (recipients == 1)
+      chat = (ChattyChat *)chatty_mm_chat_new (recipientlist, NULL, CHATTY_PROTOCOL_MMS_SMS, TRUE);
+    else /* Only MMS has multiple recipients */
+      chat = (ChattyChat *)chatty_mm_chat_new (recipientlist, recipientlist, CHATTY_PROTOCOL_MMS, FALSE);
+
     chatty_chat_set_data (chat, self, self->history_db);
-    buddy = chatty_mm_buddy_new (phone, NULL);
-    chatty_mm_chat_add_user (CHATTY_MM_CHAT (chat), buddy);
+
+    for (guint j = 0; j < recipients; j++) {
+      char *number = NULL;
+      g_autoptr(ChattyMmBuddy) newbuddy = NULL;
+
+      number = chatty_utils_check_phonenumber (send[j], country_code);
+      if (number == NULL) {
+        number = g_strdup (send[j]);
+      }
+      newbuddy = chatty_mm_buddy_new (number, NULL);
+      chatty_mm_chat_add_user (CHATTY_MM_CHAT (chat), newbuddy);
+      g_clear_pointer (&number, g_free);
+    }
     chatty_mm_chat_set_eds (CHATTY_MM_CHAT (chat), self->chatty_eds);
 
     g_list_store_append (self->chat_list, chat);
