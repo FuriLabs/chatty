@@ -296,6 +296,28 @@ sms_create_cb (GObject      *object,
                g_steal_pointer (&task));
 }
 
+static void
+chatty_mm_account_append_message (ChattyMmAccount *self,
+                                  ChattyMessage   *message,
+                                  ChattyChat      *chat)
+{
+  guint position;
+
+  g_assert (CHATTY_IS_MM_ACCOUNT (self));
+  g_assert (CHATTY_IS_MESSAGE (message));
+  g_assert (CHATTY_IS_CHAT (chat));
+
+  chatty_mm_chat_append_message (CHATTY_MM_CHAT (chat), message);
+  chatty_history_add_message (self->history_db, chat, message);
+  g_signal_emit_by_name (chat, "changed", 0);
+  if (chatty_message_get_msg_direction (message) == CHATTY_DIRECTION_IN) {
+    chatty_chat_show_notification (CHATTY_CHAT (chat), NULL);
+  }
+
+  if (chatty_utils_get_item_position (G_LIST_MODEL (self->chat_list), chat, &position))
+    g_list_model_items_changed (G_LIST_MODEL (self->chat_list), position, 1, 1);
+}
+
 void
 chatty_mm_account_recieve_mms_cb (ChattyMmAccount *self,
                                   ChattyMessage   *message,
@@ -306,7 +328,6 @@ chatty_mm_account_recieve_mms_cb (ChattyMmAccount *self,
   g_autoptr(ChattyMmBuddy) senderbuddy = NULL;
   ChattyMsgDirection message_dir;
   ChattyMessage  *messagecheck;
-  guint position;
 
   chat = chatty_mm_account_start_chat (self, recipientlist);
   /*
@@ -358,18 +379,8 @@ chatty_mm_account_recieve_mms_cb (ChattyMmAccount *self,
     senderbuddy = chatty_mm_buddy_new (sender, sender);
   }
   chatty_message_set_user (message, CHATTY_ITEM (senderbuddy));
-  chatty_mm_chat_append_message (CHATTY_MM_CHAT (chat), message);
-  chatty_history_add_message (self->history_db, chat, message);
-  g_signal_emit_by_name (chat, "changed", 0);
-  /* Only show a notification for received MMS */
-  if (message_dir == CHATTY_DIRECTION_IN) {
-    chatty_chat_show_notification (CHATTY_CHAT (chat), NULL);
-  }
 
-  if (chatty_utils_get_item_position (G_LIST_MODEL (self->chat_list), chat, &position))
-    g_list_model_items_changed (G_LIST_MODEL (self->chat_list), position, 1, 1);
-
-
+  chatty_mm_account_append_message (self, message, chat);
 }
 
 static void
@@ -406,7 +417,6 @@ mm_account_add_sms (ChattyMmAccount *self,
   const char *msg;
   ChattyMsgDirection direction = CHATTY_DIRECTION_UNKNOWN;
   gint64 unix_time = 0;
-  guint position;
 
   g_assert (CHATTY_IS_MM_ACCOUNT (self));
   g_assert (MM_IS_SMS (sms));
@@ -442,13 +452,8 @@ mm_account_add_sms (ChattyMmAccount *self,
   uuid = g_uuid_string_random ();
   message = chatty_message_new (CHATTY_ITEM (senderbuddy),
                                 msg, uuid, unix_time, CHATTY_MESSAGE_TEXT, direction, 0);
-  chatty_mm_chat_append_message (CHATTY_MM_CHAT (chat), message);
-  chatty_history_add_message (self->history_db, chat, message);
-  g_signal_emit_by_name (chat, "changed", 0);
-  chatty_chat_show_notification (CHATTY_CHAT (chat), NULL);
 
-  if (chatty_utils_get_item_position (G_LIST_MODEL (self->chat_list), chat, &position))
-    g_list_model_items_changed (G_LIST_MODEL (self->chat_list), position, 1, 1);
+  chatty_mm_account_append_message (self, message, chat);
 
   if (direction == CHATTY_DIRECTION_IN)
     mm_account_delete_message_async (self, device, sms, NULL, NULL);
