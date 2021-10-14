@@ -333,7 +333,7 @@ chatty_mm_account_recieve_mms_cb (ChattyMmAccount *self,
     g_autofree char *phone1 = NULL;
     g_autofree char *phone2 = NULL;
 
-    /* Find the Buddies associated with the recipients */
+    /* Find the sender of the message */
     users = chatty_chat_get_users (chat);
     items = g_list_model_get_n_items (users);
     for (guint i = 0; i < items; i++) {
