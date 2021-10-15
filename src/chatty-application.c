@@ -34,6 +34,7 @@
 #include "chatty-utils.h"
 #include "users/chatty-pp-account.h"
 #include "chatty-manager.h"
+#include "chatty-purple.h"
 #include "chatty-application.h"
 #include "chatty-settings.h"
 #include "chatty-history.h"
@@ -65,7 +66,6 @@ struct _ChattyApplication
 
   gboolean daemon;
   gboolean show_window;
-  gboolean enable_debug;
 };
 
 G_DEFINE_TYPE (ChattyApplication, chatty_application, GTK_TYPE_APPLICATION)
@@ -92,9 +92,6 @@ cmd_verbose_cb (const char  *option_name,
                 GError     **error)
 {
   chatty_log_increase_verbosity ();
-
-  purple_debug_set_enabled (TRUE);
-  purple_debug_set_verbose (TRUE);
 
   return TRUE;
 }
@@ -242,10 +239,7 @@ chatty_application_command_line (GApplication            *application,
     chatty_manager_disable_auto_login (chatty_manager_get_default (), TRUE);
 
   if (g_variant_dict_contains (options, "debug"))
-    self->enable_debug = TRUE;
-
-  purple_debug_set_enabled (self->enable_debug);
-  purple_debug_set_verbose (chatty_log_get_verbosity () > 0);
+    chatty_purple_enable_debug ();
 
   arguments = g_application_command_line_get_arguments (command_line, &argc);
 
