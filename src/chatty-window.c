@@ -22,6 +22,7 @@
 #include "chatty-history.h"
 #include "chatty-avatar.h"
 #include "chatty-manager.h"
+#include "chatty-purple.h"
 #include "chatty-list-row.h"
 #include "chatty-settings.h"
 #include "chatty-mm-chat.h"
@@ -301,7 +302,7 @@ chatty_window_open_item (ChattyWindow *self,
     if (!chat) {
       gboolean has_encryption;
 
-      has_encryption = chatty_manager_lurch_plugin_is_loaded (self->manager);
+      has_encryption = chatty_purple_has_encryption (chatty_purple_get_default ());
       chat = (ChattyChat *)chatty_pp_chat_new_buddy_chat (CHATTY_PP_BUDDY (item),
                                                           has_encryption);
       chatty_manager_add_chat (self->manager, chat);
@@ -1022,7 +1023,7 @@ chatty_window_init (ChattyWindow *self)
                      GINT_TO_POINTER (CHATTY_PROTOCOL_XMPP));
   gtk_container_add (GTK_CONTAINER (self->protocol_list), row);
 
-  if (chatty_manager_telegram_plugin_is_loaded (self->manager)) {
+  if (chatty_purple_has_telegram_loaded (chatty_purple_get_default ())) {
     row = chatty_selectable_row_new (_("Telegram"));
     g_object_set_data (G_OBJECT (row), "protocol",
                        GINT_TO_POINTER (CHATTY_PROTOCOL_TELEGRAM));
