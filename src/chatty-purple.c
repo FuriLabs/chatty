@@ -300,8 +300,8 @@ static PurpleAccountUiOps ui_ops =
 };
 
 static ChattyPpChat *
-chatty_purple_find_chat (GListModel *model,
-                         PurpleChat *pp_chat)
+chatty_purple_find_pp_chat (GListModel *model,
+                            PurpleChat *pp_chat)
 {
   guint n_items;
 
@@ -337,7 +337,7 @@ chatty_purple_add_chat (ChattyPurple *self,
   if (chatty_utils_get_item_position (model, chat, NULL))
     item = chat;
   else
-    item = chatty_purple_find_chat (model, chatty_pp_chat_get_purple_chat (chat));
+    item = chatty_purple_find_pp_chat (model, chatty_pp_chat_get_purple_chat (chat));
 
   if (!item) {
     CHATTY_DEBUG (chatty_chat_get_chat_name (CHATTY_CHAT (chat)), "Added chat:");
@@ -367,7 +367,7 @@ chatty_purple_update_node (ChattyPurple    *self,
   if(!purple_account_is_connected (pp_chat->account))
     return;
 
-  chat = chatty_purple_find_chat (G_LIST_MODEL (self->chat_list), pp_chat);
+  chat = chatty_purple_find_pp_chat (G_LIST_MODEL (self->chat_list), pp_chat);
 
   if (chat) {
     ChattyManager *manager;
