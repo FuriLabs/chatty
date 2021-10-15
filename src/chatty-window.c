@@ -299,14 +299,9 @@ chatty_window_open_item (ChattyWindow *self,
   if (CHATTY_IS_PP_BUDDY (item)) {
     chat = g_object_get_data (G_OBJECT (item), "chat");
 
-    if (!chat) {
-      gboolean has_encryption;
-
-      has_encryption = chatty_purple_has_encryption (chatty_purple_get_default ());
-      chat = (ChattyChat *)chatty_pp_chat_new_buddy_chat (CHATTY_PP_BUDDY (item),
-                                                          has_encryption);
-      chatty_manager_add_chat (self->manager, chat);
-    }
+    if (!chat)
+      chat = chatty_purple_start_buddy_chat (chatty_purple_get_default (),
+                                             CHATTY_PP_BUDDY (item));
   }
 
   if (CHATTY_IS_PP_CHAT (item))
