@@ -36,9 +36,6 @@ void            chatty_manager_disable_auto_login    (ChattyManager *self,
                                                       gboolean       disable);
 gboolean        chatty_manager_get_disable_auto_login (ChattyManager *self);
 
-gboolean        chatty_manager_has_carbons_plugin     (ChattyManager   *self);
-gboolean        chatty_manager_lurch_plugin_is_loaded (ChattyManager   *self);
-gboolean        chatty_manager_telegram_plugin_is_loaded (ChattyManager *self);
 ChattyProtocol  chatty_manager_get_active_protocols   (ChattyManager   *self);
 ChattyEds      *chatty_manager_get_eds                (ChattyManager   *self);
 void            chatty_manager_delete_account_async   (ChattyManager      *self,

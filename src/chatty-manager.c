@@ -512,39 +512,6 @@ chatty_manager_get_disable_auto_login (ChattyManager *self)
   return self->disable_auto_login;
 }
 
-gboolean
-chatty_manager_has_carbons_plugin (ChattyManager *self)
-{
-  g_return_val_if_fail (CHATTY_IS_MANAGER (self), FALSE);
-
-  if (self->purple)
-    return chatty_purple_has_carbon_plugin (self->purple);
-
-  return FALSE;
-}
-
-gboolean
-chatty_manager_lurch_plugin_is_loaded (ChattyManager *self)
-{
-  g_return_val_if_fail (CHATTY_IS_MANAGER (self), FALSE);
-
-  if (self->purple)
-    return chatty_purple_has_encryption (self->purple);
-
-  return FALSE;
-}
-
-gboolean
-chatty_manager_telegram_plugin_is_loaded (ChattyManager *self)
-{
-  g_return_val_if_fail (CHATTY_IS_MANAGER (self), FALSE);
-
-  if (self->purple)
-    return chatty_purple_has_telegram_loaded (self->purple);
-
-  return FALSE;
-}
-
 ChattyProtocol
 chatty_manager_get_active_protocols (ChattyManager *self)
 {
