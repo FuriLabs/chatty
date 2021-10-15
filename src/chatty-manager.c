@@ -192,7 +192,6 @@ chatty_manager_dispose (GObject *object)
 {
   ChattyManager *self = (ChattyManager *)object;
 
-  purple_signals_disconnect_by_handle (self);
   g_clear_object (&self->chatty_eds);
   g_clear_object (&self->chat_list);
   g_clear_object (&self->list_of_chat_list);
@@ -348,52 +347,23 @@ chatty_manager_get_default (void)
   return self;
 }
 
-/* Currently only handles ChattyMaChat */
-static void
-chat_changed_cb (ChattyManager *self,
-                 ChattyChat    *chat)
-{
-  g_assert (CHATTY_IS_MANAGER (self));
-  g_assert (CHATTY_IS_MA_CHAT (chat));
-
-  if (CHATTY_IS_MA_CHAT (chat))
-    chatty_chat_show_notification (chat, NULL);
-}
-
 static void
 manager_ma_account_changed_cb (ChattyMaAccount *account)
 {
   ChattyManager *self;
   GListModel *chat_list;
   ChattyStatus status;
-  guint n_items;
 
   g_assert (CHATTY_IS_MA_ACCOUNT (account));
 
   self = chatty_manager_get_default ();
   status = chatty_account_get_status (CHATTY_ACCOUNT (account));
   chat_list = chatty_ma_account_get_chat_list (account);
-  n_items = g_list_model_get_n_items (chat_list);
 
   if (status == CHATTY_CONNECTED)
     g_list_store_append (self->list_of_chat_list, chat_list);
   else
     chatty_utils_remove_list_item (self->list_of_chat_list, chat_list);
-
-  for (guint i = 0; i < n_items; i++) {
-    g_autoptr(ChattyChat) chat = NULL;
-    gulong signal_id;
-
-    chat = g_list_model_get_item (chat_list, i);
-
-    if (g_object_get_data (G_OBJECT (chat), "changed-id"))
-      continue;
-
-    signal_id = g_signal_connect_object (chat, "changed",
-                                         G_CALLBACK (chat_changed_cb),
-                                         self, G_CONNECT_SWAPPED);
-    g_object_set_data (G_OBJECT (chat), "changed-id", GUINT_TO_POINTER (signal_id));
-  }
 }
 
 static void
