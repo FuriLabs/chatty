@@ -23,6 +23,7 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (ChattyPurple, chatty_purple, CHATTY, PURPLE, GObject)
 
 ChattyPurple   *chatty_purple_get_default          (void);
+void            chatty_purple_enable_debug         (void);
 gboolean        chatty_purple_is_loaded            (ChattyPurple   *self);
 GListModel     *chatty_purple_get_accounts         (ChattyPurple   *self);
 GListModel     *chatty_purple_get_chat_list        (ChattyPurple   *self);

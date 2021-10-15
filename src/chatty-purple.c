@@ -65,6 +65,7 @@ struct _ChattyPurple
 G_DEFINE_TYPE (ChattyPurple, chatty_purple, G_TYPE_OBJECT)
 
 static GHashTable *ui_info = NULL;
+static gboolean enable_debug;
 
 static void
 chatty_purple_emit_updated (void)
@@ -1764,6 +1765,12 @@ chatty_purple_get_default (void)
   return self;
 }
 
+void
+chatty_purple_enable_debug (void)
+{
+  enable_debug = TRUE;
+}
+
 gboolean
 chatty_purple_is_loaded (ChattyPurple *self)
 {
@@ -1895,6 +1902,11 @@ chatty_purple_load (ChattyPurple *self,
 
   if (self->is_loaded)
     return;
+
+  purple_debug_set_enabled (enable_debug);
+
+  if (chatty_log_get_verbosity () > 3)
+    purple_debug_set_verbose (TRUE);
 
   self->is_loaded = TRUE;
   self->disable_auto_login = !!disable_auto_login;
