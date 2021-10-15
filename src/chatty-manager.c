@@ -58,7 +58,6 @@ struct _ChattyManager
   GListStore          *account_list;
   GListStore          *list_of_account_list;
 
-  GListStore      *chat_list;
   GListStore      *list_of_chat_list;
   GListStore      *list_of_user_list;
   GtkFlattenListModel *contact_list;
@@ -185,7 +184,6 @@ chatty_manager_dispose (GObject *object)
   ChattyManager *self = (ChattyManager *)object;
 
   g_clear_object (&self->chatty_eds);
-  g_clear_object (&self->chat_list);
   g_clear_object (&self->list_of_chat_list);
   g_clear_object (&self->list_of_user_list);
   g_clear_object (&self->contact_list);
@@ -294,14 +292,11 @@ chatty_manager_init (ChattyManager *self)
                            G_CALLBACK (manager_mm_account_changed_cb), self,
                            G_CONNECT_SWAPPED);
 
-  self->chat_list = g_list_store_new (CHATTY_TYPE_CHAT);
   self->list_of_chat_list = g_list_store_new (G_TYPE_LIST_MODEL);
   self->list_of_user_list = g_list_store_new (G_TYPE_LIST_MODEL);
-  g_list_store_append (self->list_of_chat_list, G_LIST_MODEL (self->chat_list));
 
   self->contact_list = gtk_flatten_list_model_new (G_TYPE_OBJECT,
                                                    G_LIST_MODEL (self->list_of_user_list));
-  g_list_store_append (self->list_of_user_list, G_LIST_MODEL (self->chat_list));
   g_list_store_append (self->list_of_user_list,
                        chatty_eds_get_model (self->chatty_eds));
 
@@ -537,27 +532,6 @@ chatty_manager_get_eds (ChattyManager *self)
   return self->chatty_eds;
 }
 
-static ChattyChat *
-chatty_manager_find_chat (GListModel *model,
-                          ChattyChat *item)
-{
-  guint n_items;
-
-  n_items = g_list_model_get_n_items (model);
-
-  for (guint i = 0; i < n_items; i++) {
-    g_autoptr(ChattyChat) chat = NULL;
-
-    chat = g_list_model_get_item (model, i);
-
-    if (CHATTY_IS_PP_CHAT (chat) &&
-        chatty_pp_chat_are_same (CHATTY_PP_CHAT (chat), CHATTY_PP_CHAT (item)))
-      return chat;
-  }
-
-  return NULL;
-}
-
 static void
 matrix_db_account_delete_cb (GObject      *object,
                              GAsyncResult *result,
@@ -745,25 +719,6 @@ chatty_manager_find_chat_with_name (ChattyManager *self,
       return chat;
   }
 
-  chat_list = G_LIST_MODEL (self->chat_list);
-  n_items = g_list_model_get_n_items (chat_list);
-
-  for (guint i = 0; i < n_items; i++) {
-    g_autoptr(ChattyChat) chat = NULL;
-    ChattyAccount *account;
-
-    chat = g_list_model_get_item (chat_list, i);
-    account = chatty_chat_get_account (chat);
-
-    if (g_strcmp0 (chatty_item_get_username (CHATTY_ITEM (account)), account_id) != 0)
-      continue;
-
-    id = chatty_chat_get_chat_name (chat);
-
-    if (g_strcmp0 (id, chat_id) == 0)
-      return chat;
-  }
-
   accounts = G_LIST_MODEL (self->account_list);
   n_accounts = g_list_model_get_n_items (accounts);
 
@@ -790,33 +745,6 @@ chatty_manager_find_chat_with_name (ChattyManager *self,
   }
 
   return NULL;
-}
-
-ChattyChat *
-chatty_manager_add_chat (ChattyManager *self,
-                         ChattyChat    *chat)
-{
-  ChattyChat *item;
-  GListModel *model;
-
-  g_return_val_if_fail (CHATTY_IS_MANAGER (self), NULL);
-  g_return_val_if_fail (CHATTY_IS_CHAT (chat), NULL);
-
-  model = G_LIST_MODEL (self->chat_list);
-
-  if (chatty_utils_get_item_position (model, chat, NULL))
-    item = chat;
-  else
-    item = chatty_manager_find_chat (model, chat);
-
-  if (!item) {
-      g_list_store_append (self->chat_list, chat);
-      chatty_chat_set_data (chat, NULL, self->history);
-  }
-
-  gtk_sorter_changed (self->chat_sorter, GTK_SORTER_CHANGE_DIFFERENT);
-
-  return item ? item : chat;
 }
 
 gboolean
