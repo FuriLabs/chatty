@@ -1176,6 +1176,7 @@ matrix_chat_set_json_data (ChattyMaChat *self,
 
     old_count = self->unread_count;
     self->unread_count = matrix_utils_json_object_get_int (object, "notification_count");
+    chatty_chat_show_notification (CHATTY_CHAT (self), NULL);
     g_signal_emit_by_name (self, "changed", 0);
 
     /* Reset notification state on new messages */
@@ -1306,6 +1307,7 @@ ma_chat_load_db_messages_cb (GObject      *object,
 
   if (messages && messages->len) {
     g_list_store_splice (self->message_list, 0, 0, messages->pdata, messages->len);
+    chatty_chat_show_notification (CHATTY_CHAT (self), NULL);
     g_signal_emit_by_name (self, "changed", 0);
     g_task_return_boolean (task, TRUE);
   } else if (!messages && self->prev_batch) {
@@ -1564,6 +1566,7 @@ chatty_ma_chat_set_unread_count (ChattyChat *chat,
                                       chat_set_read_marker_cb, self);
   } else {
     self->unread_count = unread_count;
+    chatty_chat_show_notification (CHATTY_CHAT (chat), NULL);
     g_signal_emit_by_name (self, "changed", 0);
   }
 }
