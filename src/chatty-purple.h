@@ -14,6 +14,7 @@
 #include <glib-object.h>
 #include <gio/gio.h>
 
+#include "users/chatty-pp-buddy.h"
 #include "chatty-history.h"
 
 G_BEGIN_DECLS
@@ -25,6 +26,8 @@ G_DECLARE_FINAL_TYPE (ChattyPurple, chatty_purple, CHATTY, PURPLE, GObject)
 ChattyPurple   *chatty_purple_get_default          (void);
 void            chatty_purple_enable_debug         (void);
 gboolean        chatty_purple_is_loaded            (ChattyPurple   *self);
+ChattyChat     *chatty_purple_start_buddy_chat     (ChattyPurple   *self,
+                                                    ChattyPpBuddy  *buddy);
 GListModel     *chatty_purple_get_accounts         (ChattyPurple   *self);
 GListModel     *chatty_purple_get_chat_list        (ChattyPurple   *self);
 GListModel     *chatty_purple_get_user_list        (ChattyPurple   *self);

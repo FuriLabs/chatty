@@ -323,6 +323,29 @@ chatty_purple_find_pp_chat (GListModel *model,
 }
 
 static ChattyPpChat *
+chatty_purple_find_chat (GListModel   *model,
+                         ChattyPpChat *chat)
+{
+  guint n_items;
+
+  if (!chat)
+    return NULL;
+
+  n_items = g_list_model_get_n_items (model);
+
+  for (guint i = 0; i < n_items; i++) {
+    g_autoptr(ChattyPpChat) item = NULL;
+
+    item = g_list_model_get_item (model, i);
+
+    if (chatty_pp_chat_are_same (chat, item))
+      return item;
+  }
+
+  return NULL;
+}
+
+static ChattyPpChat *
 chatty_purple_add_chat (ChattyPurple *self,
                         ChattyPpChat *chat)
 {
@@ -1777,6 +1800,36 @@ chatty_purple_is_loaded (ChattyPurple *self)
   g_return_val_if_fail (CHATTY_IS_PURPLE (self), FALSE);
 
   return self->is_loaded;
+}
+
+ChattyChat *
+chatty_purple_start_buddy_chat (ChattyPurple  *self,
+                                ChattyPpBuddy *buddy)
+{
+  ChattyPpChat *item, *chat;
+  GListModel *model;
+
+  g_return_val_if_fail (CHATTY_IS_PURPLE (self), NULL);
+  g_return_val_if_fail (CHATTY_IS_PP_BUDDY (buddy), NULL);
+
+  model = G_LIST_MODEL (self->chat_list);
+  chat = chatty_pp_chat_new_buddy_chat (buddy, chatty_purple_has_encryption (self));
+
+  if (chatty_utils_get_item_position (model, chat, NULL))
+    item = chat;
+  else
+    item = chatty_purple_find_chat (model, chat);
+
+  CHATTY_DEBUG (chatty_item_get_username (CHATTY_ITEM (chat)),
+                "Starting buddy chat, pre-existing: %d, buddy:", !!item);
+
+  if (!item) {
+    item = chat;
+    g_list_store_append (self->chat_list, chat);
+    chatty_chat_set_data (CHATTY_CHAT (chat), NULL, self->history);
+  }
+
+  return CHATTY_CHAT (item);
 }
 
 GListModel *
