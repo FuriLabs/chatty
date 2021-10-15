@@ -45,13 +45,7 @@
  * @title: ChattyManager
  * @short_description: A class to manage various providers and accounts
  * @include: "chatty-manager.h"
- *
- * libpurple doesn’t have a nice OOP interface for managing anything.
- * This class hides all the complexities surrounding it.
  */
-
-#define MAX_TIMESTAMP_SIZE 256
-#define CHATTY_UI          "chatty-ui"
 
 struct _ChattyManager
 {
@@ -79,8 +73,6 @@ struct _ChattyManager
   gboolean         disable_auto_login;
   gboolean         network_available;
   gboolean         has_loaded;
-
-  ChattyProtocol   active_protocols;
 };
 
 G_DEFINE_TYPE (ChattyManager, chatty_manager, G_TYPE_OBJECT)
@@ -556,11 +548,9 @@ chatty_manager_telegram_plugin_is_loaded (ChattyManager *self)
 ChattyProtocol
 chatty_manager_get_active_protocols (ChattyManager *self)
 {
-  ChattyProtocol protocols;
+  ChattyProtocol protocols = CHATTY_PROTOCOL_NONE;
 
   g_return_val_if_fail (CHATTY_IS_MANAGER (self), CHATTY_PROTOCOL_NONE);
-
-  protocols = self->active_protocols;
 
   if (chatty_account_get_status (CHATTY_ACCOUNT (self->mm_account)) == CHATTY_CONNECTED)
     protocols = protocols | CHATTY_PROTOCOL_MMS_SMS;
