@@ -36,6 +36,7 @@
 #include "matrix/matrix-utils.h"
 #include "matrix/chatty-ma-account.h"
 #include "chatty-manager.h"
+#include "chatty-purple.h"
 #include "chatty-fp-row.h"
 #include "chatty-avatar.h"
 #include "chatty-settings.h"
@@ -301,7 +302,7 @@ chatty_settings_add_clicked_cb (ChattySettingsDialog *self)
   } else {/* XMPP */
     gboolean has_encryption;
 
-    has_encryption = chatty_manager_lurch_plugin_is_loaded (chatty_manager_get_default ());
+    has_encryption = chatty_purple_has_encryption (chatty_purple_get_default ());
     account = (ChattyAccount *)chatty_pp_account_new (CHATTY_PROTOCOL_XMPP,
                                                       user_id, NULL, has_encryption);
   }
@@ -1105,6 +1106,7 @@ static void
 chatty_settings_dialog_init (ChattySettingsDialog *self)
 {
   ChattyManager *manager;
+  ChattyPurple *purple;
   g_autofree char *carrier_mmsc = NULL;
   g_autofree char *carrier_apn = NULL;
   g_autofree char *carrier_proxy = NULL;
@@ -1124,8 +1126,9 @@ chatty_settings_dialog_init (ChattySettingsDialog *self)
   gtk_widget_init_template (GTK_WIDGET (self));
   gtk_window_set_transient_for (GTK_WINDOW (self->matrix_homeserver_dialog), GTK_WINDOW (self));
 
+  purple = chatty_purple_get_default ();
   gtk_widget_set_visible (self->message_carbons_row,
-                          chatty_manager_has_carbons_plugin (manager));
+                          chatty_purple_has_carbon_plugin (purple));
 
   gtk_entry_set_text (GTK_ENTRY (self->carrier_mmsc_entry), carrier_mmsc);
   gtk_entry_set_text (GTK_ENTRY (self->mms_apn_entry), carrier_apn);
