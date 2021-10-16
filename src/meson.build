@@ -16,6 +16,7 @@ libsrc = [
   'dialogs/chatty-pp-account-details.c',
   'dialogs/chatty-ma-chat-info.c',
   'dialogs/chatty-pp-chat-info.c',
+  'dialogs/chatty-mm-chat-info.c',
   'matrix/matrix-api.c',
   'matrix/matrix-enc.c',
   'matrix/matrix-db.c',
@@ -72,6 +73,7 @@ ui_files = files (
   # 'ui/chatty-pp-account-details.ui',
   # 'ui/chatty-ma-chat-info.ui',
   # 'ui/chatty-pp-user-info.ui',
+  # 'ui/chatty-mm-chat-info.ui',
   'ui/chatty-settings-dialog.ui',
   # We can't test with GdTaggedEntry
   # 'ui/chatty-window.ui',
