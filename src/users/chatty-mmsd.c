@@ -1423,22 +1423,21 @@ chatty_mmsd_get_mmsd_service_settings_cb (GObject      *service,
         chatty_settings_set_mms_carrier_apn (settings, self->mms_apn);
         chatty_settings_set_mms_carrier_proxy (settings, self->carrier_proxy);
         g_object_thaw_notify (G_OBJECT (settings));
-      } else {
-        self->modemmanager_settings_changed_watch_id =
-          g_dbus_connection_signal_subscribe (self->connection,
-                                              MMSD_SERVICE,
-                                              MMSD_MODEMMANAGER_INTERFACE,
-                                              "SettingsChanged",
-                                              MMSD_PATH,
-                                              NULL,
-                                              G_DBUS_SIGNAL_FLAGS_NONE,
-                                              (GDBusSignalCallback)chatty_mmsd_settings_signal_changed_cb,
-                                              self,
-                                              NULL);
       }
     } else {
       chatty_mmsd_sync_settings (self);
     }
+    self->modemmanager_settings_changed_watch_id =
+      g_dbus_connection_signal_subscribe (self->connection,
+                                          MMSD_SERVICE,
+                                          MMSD_MODEMMANAGER_INTERFACE,
+                                          "SettingsChanged",
+                                          MMSD_PATH,
+                                          NULL,
+                                          G_DBUS_SIGNAL_FLAGS_NONE,
+                                          (GDBusSignalCallback)chatty_mmsd_settings_signal_changed_cb,
+                                          self,
+                                          NULL);
   }
 }
 
