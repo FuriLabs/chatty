@@ -283,9 +283,8 @@ chatty_window_open_item (ChattyWindow *self,
 
   g_assert (CHATTY_IS_WINDOW (self));
   g_assert (CHATTY_IS_ITEM (item));
-  g_debug ("opening item of type: %s, protocol: %d",
-           G_OBJECT_TYPE_NAME (item),
-           chatty_item_get_protocols (item));
+  CHATTY_INFO (chatty_item_get_name (item),
+               "Opening item of type: %s, name:", G_OBJECT_TYPE_NAME (item));
 
   if (CHATTY_IS_CONTACT (item)) {
     const char *number;
@@ -349,6 +348,7 @@ window_call_button_clicked_cb (ChattyWindow *self)
                      chatty_chat_get_chat_name (CHATTY_CHAT (self->selected_item)),
                      NULL);
 
+  CHATTY_INFO (uri, "Calling uri:");
   if (!gtk_show_uri_on_window (NULL, uri, GDK_CURRENT_TIME, &error))
     g_warning ("Failed to launch call: %s", error->message);
 }
@@ -1087,9 +1087,9 @@ chatty_window_open_chat (ChattyWindow *self,
 
   g_return_if_fail (CHATTY_IS_WINDOW (self));
   g_return_if_fail (CHATTY_IS_CHAT (chat));
-  g_debug ("opening item of type: %s, protocol: %d",
-           G_OBJECT_TYPE_NAME (chat),
-           chatty_item_get_protocols (CHATTY_ITEM (chat)));
+
+  CHATTY_INFO (chatty_chat_get_chat_name (chat),
+               "opening chat, type: %s, chat-name:", G_OBJECT_TYPE_NAME (chat));
 
   chatty_chat_view_set_chat (CHATTY_CHAT_VIEW (self->chat_view), chat);
   window_set_item (self, CHATTY_ITEM (chat));
