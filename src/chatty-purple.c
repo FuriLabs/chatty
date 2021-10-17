@@ -1956,6 +1956,7 @@ chatty_purple_load (ChattyPurple *self,
   if (self->is_loaded)
     return;
 
+  g_info ("Loading purple, auto login: %d", !disable_auto_login);
   purple_debug_set_enabled (enable_debug);
 
   if (chatty_log_get_verbosity () > 3)
