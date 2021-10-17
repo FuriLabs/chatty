@@ -145,6 +145,9 @@ manager_network_changed_cb (GNetworkMonitor *network_monitor,
   list = G_LIST_MODEL (self->account_list);
   n_items = g_list_model_get_n_items (list);
 
+  g_log (G_LOG_DOMAIN, CHATTY_LOG_LEVEL_TRACE,
+         "Network changed, network available: %d", network_available);
+
   for (guint i = 0; i < n_items; i++)
     {
       g_autoptr(ChattyAccount) account = NULL;
@@ -371,6 +374,8 @@ manager_secret_load_cb (GObject      *object,
 
   if (!accounts)
     return;
+
+  g_info ("Loaded %d matrix accounts", accounts->len);
 
   for (guint i = 0; i < accounts->len; i++) {
     g_signal_connect_object (accounts->pdata[i], "notify::status",
