@@ -589,6 +589,10 @@ chat_view_adjustment_value_changed_cb (ChattyChatView *self)
 
   gtk_widget_set_visible (self->scroll_down_button,
                           (upper - value) > page_size + 1.0);
+
+  /* page_size sometimes reports itself as zero */
+  if (page_size < 0.1)
+    gtk_widget_hide (self->scroll_down_button);
 }
 
 static void
