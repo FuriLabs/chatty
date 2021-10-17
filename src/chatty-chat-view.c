@@ -255,6 +255,7 @@ chat_view_scroll_down_clicked_cb (ChattyChatView *self)
 
   gtk_adjustment_set_value (self->vadjustment,
                             gtk_adjustment_get_upper (self->vadjustment));
+  gtk_widget_hide (self->scroll_down_button);
 }
 
 static void
