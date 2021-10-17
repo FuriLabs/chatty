@@ -266,6 +266,11 @@ chatty_mmsd_process_mms (ChattyMmsd  *self,
   sender = g_strdup (payload->sender);
   recipientlist = g_strdup (payload->chat);
 
+  chatty_mm_account_recieve_mms_cb (self->mm_account,
+                                    message,
+                                    sender,
+                                    recipientlist);
+
   /*
    * Message is still a draft in mmsd and hasn't been sent.
    * Monitor the status of the message until it is sent
@@ -299,11 +304,6 @@ chatty_mmsd_process_mms (ChattyMmsd  *self,
     chatty_mmsd_delete_mms (self, payload->objectpath);
     chatty_mmsd_delete_payload (self, payload);
   }
-  g_debug ("Finished processing MMS! Adding to chat...");
-  chatty_mm_account_recieve_mms_cb (self->mm_account,
-                                    message,
-                                    sender,
-                                    recipientlist);
 }
 
 static char **
