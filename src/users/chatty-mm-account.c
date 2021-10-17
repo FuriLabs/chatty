@@ -343,6 +343,7 @@ chatty_mm_account_recieve_mms_cb (ChattyMmAccount *self,
                                                       chatty_message_get_id(message));
   if (messagecheck != NULL) {
     chatty_message_set_status (messagecheck, chatty_message_get_status (message), 0);
+    chatty_history_add_message (self->history_db, chat, message);
     return;
   }
 
