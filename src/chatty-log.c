@@ -202,6 +202,7 @@ chatty_log_write (GLogLevelFlags   log_level,
   }
 
   can_color = g_log_writer_supports_color (fileno (stream));
+  
   log_str_append_log_domain (log_str, log_domain, can_color);
   g_string_append_printf (log_str, "[%5d]:", getpid ());
 
@@ -325,6 +326,35 @@ int
 chatty_log_get_verbosity (void)
 {
   return verbosity;
+}
+
+const char *
+chatty_log_bool_str (gboolean value,
+                     gboolean use_success)
+{
+  if (!g_log_writer_supports_color (fileno (stdout)) ||
+      stderr_is_journal)
+    {
+      if (value)
+        return use_success ? "succeeded" : "true";
+      else
+        return use_success ? "failed" : "false";
+    }
+
+  if (value)
+    {
+      if (use_success)
+        return "\033[1;32m" "succeeded" "\033[0m";
+      else
+        return "\033[1;32m" "true" "\033[0m";
+    }
+  else
+    {
+      if (use_success)
+        return "\033[1;31m" "failed" "\033[0m";
+      else
+        return "\033[1;31m" "false" "\033[0m";
+    }
 }
 
 void
