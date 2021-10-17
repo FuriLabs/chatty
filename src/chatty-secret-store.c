@@ -79,6 +79,11 @@ chatty_secret_store_save_async (ChattyAccount       *account,
   else
     username = chatty_item_get_username (CHATTY_ITEM (account));
 
+  CHATTY_TRACE (username, "Saving account, has password: %d, has access token: %d"
+                "has device-id: %d",
+                password && *password, token && *token,
+                device_id && *device_id);
+
   /* We don't use json APIs here so that we can manage memory better (and securely free them)  */
   /* TODO: Use a non-pageable memory */
   /* XXX: We use a dumb string search, so don't change the order or spacing of the format string */
@@ -129,7 +134,8 @@ secret_load_cb (GObject      *object,
   g_assert_true (G_IS_TASK (task));
 
   secrets = secret_password_search_finish (result, &error);
-  CHATTY_TRACE_MSG ("secret accounts loaded, has-error: %d", !!error);
+  CHATTY_DEBUG_MSG ("secret accounts loaded, success: %s",
+                    chatty_log_bool_str (!error));
 
   if (error) {
     g_task_return_error (task, error);
@@ -176,7 +182,7 @@ chatty_secret_load_async  (GCancellable        *cancellable,
                           cancellable, secret_load_cb, task,
                           CHATTY_PROTOCOL_ATTRIBUTE, PROTOCOL_MATRIX_STR,
                           NULL);
-  CHATTY_TRACE_MSG ("loading secret accounts");
+  g_debug ("loading secret accounts");
 }
 
 GPtrArray *
@@ -203,6 +209,8 @@ chatty_secret_delete_async (ChattyAccount       *account,
     username = chatty_ma_account_get_login_username (CHATTY_MA_ACCOUNT (account));
   else
     username = chatty_item_get_username (CHATTY_ITEM (account));
+
+  CHATTY_DEBUG (username, "Deleting account");
 
   schema = secret_store_get_schema ();
   server = chatty_ma_account_get_homeserver (CHATTY_MA_ACCOUNT (account));
