@@ -250,6 +250,7 @@ chatty_mmsd_delete_payload (ChattyMmsd  *self,
   g_free (payload->objectpath);
   g_free (payload->sender);
   g_free (payload->chat);
+  g_object_unref (payload->message);
   g_free (payload);
 }
 
