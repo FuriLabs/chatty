@@ -112,6 +112,8 @@ application_open_uri (ChattyApplication *self)
 {
   g_clear_handle_id (&self->open_uri_id, g_source_remove);
 
+  CHATTY_INFO (self->uri, "Opening uri:");
+
   if (self->main_window && self->uri)
     chatty_window_set_uri (CHATTY_WINDOW (self->main_window), self->uri);
 
@@ -139,7 +141,6 @@ chatty_application_open_chat (GSimpleAction *action,
                               gpointer       user_data)
 {
   ChattyApplication *self = user_data;
-  g_autoptr(GString) str = NULL;
   const char *room_id, *account_id;
   ChattyChat *chat;
 
@@ -151,12 +152,16 @@ chatty_application_open_chat (GSimpleAction *action,
   chat = chatty_manager_find_chat_with_name (self->manager, account_id, room_id);
   g_return_if_fail (chat);
 
-  str = g_string_new (NULL);
-  g_string_append (str, "Opening chat:");
-  chatty_log_anonymize_value (str, room_id);
-  g_string_append (str, ", account:");
-  chatty_log_anonymize_value (str, account_id);
-  CHATTY_DEBUG_MSG ("%s", str->str);
+  if (chatty_log_get_verbosity () > 1) {
+    g_autoptr(GString) str = NULL;
+
+    str = g_string_new (NULL);
+    g_string_append (str, "Opening chat:");
+    chatty_log_anonymize_value (str, room_id);
+    g_string_append (str, ", account:");
+    chatty_log_anonymize_value (str, account_id);
+    g_info ("%s", str->str);
+  }
 
   self->show_window = TRUE;
   g_application_activate (G_APPLICATION (self));
@@ -312,6 +317,8 @@ chatty_application_activate (GApplication *application)
 
   if (!self->main_window) {
     self->main_window = chatty_window_new (app);
+    g_info ("New main window created");
+
     g_signal_connect_object (self->main_window, "notify::has-toplevel-focus",
                              G_CALLBACK (main_window_focus_changed_cb),
                              self, G_CONNECT_SWAPPED);
