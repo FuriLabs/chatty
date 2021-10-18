@@ -66,6 +66,7 @@ enum {
   PROP_MMSD_CARRIER_APN,
   PROP_MMSD_CARRIER_PROXY,
   PROP_MAM_ENABLED,
+  PROP_PURPLE_ENABLED,
   N_PROPS
 };
 
@@ -135,6 +136,10 @@ chatty_settings_get_property (GObject    *object,
 
     case PROP_MMSD_CARRIER_PROXY:
       g_value_set_string (value, chatty_settings_get_mms_carrier_proxy (self));
+      break;
+
+    case PROP_PURPLE_ENABLED:
+      g_value_set_boolean (value, chatty_settings_get_purple_enabled (self));
       break;
 
     default:
@@ -224,6 +229,11 @@ chatty_settings_set_property (GObject      *object,
                              g_value_get_string (value));
       break;
 
+    case PROP_PURPLE_ENABLED:
+      g_settings_set_boolean (self->settings, "purple-enabled",
+                              g_value_get_boolean (value));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -243,6 +253,8 @@ chatty_settings_constructed (GObject *object)
                    self, "message-carbons", G_SETTINGS_BIND_DEFAULT);
   g_settings_bind (self->settings, "mam-enabled",
                    self, "mam-enabled", G_SETTINGS_BIND_DEFAULT);
+  g_settings_bind (self->settings, "purple-enabled",
+                   self, "purple-enabled", G_SETTINGS_BIND_DEFAULT);
   g_settings_bind (self->settings, "send-typing",
                    self, "send-typing", G_SETTINGS_BIND_DEFAULT);
   g_settings_bind (self->settings, "blur-idle-buddies",
@@ -311,6 +323,13 @@ chatty_settings_class_init (ChattySettingsClass *klass)
     g_param_spec_boolean ("mam-enabled",
                           "MAM is Enabled",
                           "Synchronize MAM Message Archive",
+                          FALSE,
+                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  properties[PROP_PURPLE_ENABLED] =
+    g_param_spec_boolean ("purple-enabled",
+                          "Enable purple",
+                          "Enable purple accounts",
                           FALSE,
                           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
@@ -483,6 +502,14 @@ chatty_settings_get_mam_enabled (ChattySettings *self)
   g_return_val_if_fail (CHATTY_IS_SETTINGS (self), FALSE);
 
   return g_settings_get_boolean (self->settings, "mam-enabled");
+}
+
+gboolean
+chatty_settings_get_purple_enabled (ChattySettings *self)
+{
+  g_return_val_if_fail (CHATTY_IS_SETTINGS (self), FALSE);
+
+  return g_settings_get_boolean (self->settings, "purple-enabled");
 }
 
 /**

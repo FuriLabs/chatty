@@ -41,6 +41,7 @@ gboolean        chatty_settings_get_indicate_unknown_contacts (ChattySettings *s
 gboolean        chatty_settings_get_convert_emoticons        (ChattySettings *self);
 gboolean        chatty_settings_get_return_sends_message     (ChattySettings *self);
 gboolean        chatty_settings_get_mam_enabled              (ChattySettings *self);
+gboolean        chatty_settings_get_purple_enabled           (ChattySettings *self);
 gboolean        chatty_settings_get_window_maximized         (ChattySettings *self);
 void            chatty_settings_set_window_maximized         (ChattySettings *self,
                                                               gboolean        maximized);

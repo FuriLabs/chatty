@@ -32,6 +32,12 @@
       <description>Enable MAM archive synchronization from the server</description>
     </key>
 
+    <key name="purple-enabled" type="b">
+      <default>true</default>
+      <summary>Enable purple</summary>
+      <description>Enable purple accounts</description>
+    </key>
+
     <key name="send-typing" type="b">
       <default>false</default>
       <summary>Send typing notifications</summary>
