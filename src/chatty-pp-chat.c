@@ -195,7 +195,7 @@ list_fingerprints_cb (int         error,
   g_assert (CHATTY_IS_PP_CHAT (self));
 
   if (error || !fp_table) {
-    CHATTY_DEBUG_MSG ("No fingerprints. has error: %d", !!error);
+    CHATTY_DEBUG_MSG ("No fingerprints. no error: %s", CHATTY_LOG_BOOL (!error));
     g_task_return_boolean (task, FALSE);
 
     return;
