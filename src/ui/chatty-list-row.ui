@@ -87,6 +87,17 @@
           </packing>
         </child>
 
+        <!-- Checkbox -->
+        <child>
+          <object class="GtkCheckButton" id="checkbox">
+            <property name="visible">0</property>
+            <property name="sensitive">0</property>
+          </object>
+          <packing>
+            <property name="height">2</property>
+          </packing>
+        </child>
+
       </object>
     </child>
   </template>

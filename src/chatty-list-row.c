@@ -33,6 +33,7 @@ struct _ChattyListRow
   GtkWidget     *subtitle;
   GtkWidget     *last_modified;
   GtkWidget     *unread_message_count;
+  GtkWidget     *checkbox;
 
   ChattyItem    *item;
   gboolean       hide_chat_details;
@@ -363,6 +364,7 @@ chatty_list_row_class_init (ChattyListRowClass *klass)
                                                "/sm/puri/Chatty/"
                                                "ui/chatty-list-row.ui");
   gtk_widget_class_bind_template_child (widget_class, ChattyListRow, avatar);
+  gtk_widget_class_bind_template_child (widget_class, ChattyListRow, checkbox);
   gtk_widget_class_bind_template_child (widget_class, ChattyListRow, title);
   gtk_widget_class_bind_template_child (widget_class, ChattyListRow, subtitle);
   gtk_widget_class_bind_template_child (widget_class, ChattyListRow, last_modified);
@@ -444,4 +446,21 @@ chatty_list_row_set_item (ChattyListRow *self,
                              G_CALLBACK (chatty_list_row_update),
                              self, G_CONNECT_SWAPPED);
   chatty_list_row_update (self);
+}
+
+void
+chatty_list_row_set_selectable (ChattyListRow *self, gboolean enable)
+{
+  g_return_if_fail (CHATTY_IS_LIST_ROW (self));
+
+  gtk_widget_set_visible (self->checkbox, enable);
+}
+
+void
+chatty_list_row_select (ChattyListRow *self, gboolean enable)
+{
+  g_return_if_fail (CHATTY_IS_LIST_ROW (self));
+
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (self->checkbox),
+                                enable);
 }
