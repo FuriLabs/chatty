@@ -245,6 +245,9 @@ handle_get_homeserver (ChattyMaAccount *self,
   if (error) {
     self->status = CHATTY_DISCONNECTED;
     g_object_notify (G_OBJECT (self), "status");
+    CHATTY_TRACE (matrix_api_get_username (self->matrix_api),
+                  "status changed, connected: %s, user:",
+                  CHATTY_LOG_BOOL (self->status == CHATTY_CONNECTED));
   }
 
   if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND)) {
@@ -263,6 +266,9 @@ handle_verify_homeserver (ChattyMaAccount *self,
   if (error) {
     self->status = CHATTY_DISCONNECTED;
     g_object_notify (G_OBJECT (self), "status");
+    CHATTY_TRACE (matrix_api_get_username (self->matrix_api),
+                  "status changed, connected: %s, user:",
+                  CHATTY_LOG_BOOL (self->status == CHATTY_CONNECTED));
   }
 }
 
@@ -333,6 +339,9 @@ handle_password_login (ChattyMaAccount *self,
 
     self->status = CHATTY_CONNECTED;
     g_object_notify (G_OBJECT (self), "status");
+    CHATTY_TRACE (matrix_api_get_username (self->matrix_api),
+                  "status changed, connected: %s, user:",
+                  CHATTY_LOG_BOOL (self->status == CHATTY_CONNECTED));
   }
 }
 
@@ -421,6 +430,9 @@ handle_red_pill (ChattyMaAccount *self,
   if (self->status != CHATTY_CONNECTED) {
     self->status = CHATTY_CONNECTED;
     g_object_notify (G_OBJECT (self), "status");
+    CHATTY_TRACE (matrix_api_get_username (self->matrix_api),
+                  "status changed, connected: %s, user:",
+                  CHATTY_LOG_BOOL (self->status == CHATTY_CONNECTED));
   }
 
   object = matrix_utils_json_object_get_object (root, "to_device");
@@ -463,12 +475,18 @@ matrix_account_sync_cb (ChattyMaAccount *self,
        error->domain == JSON_PARSER_ERROR)) {
     self->status = CHATTY_DISCONNECTED;
     g_object_notify (G_OBJECT (self), "status");
+    CHATTY_TRACE (matrix_api_get_username (self->matrix_api),
+                  "status changed, connected: %s, user:",
+                  CHATTY_LOG_BOOL (self->status == CHATTY_CONNECTED));
     return;
   }
 
   if (!error && !matrix_api_is_sync (self->matrix_api)) {
     self->status = CHATTY_DISCONNECTED;
     g_object_notify (G_OBJECT (self), "status");
+    CHATTY_TRACE (matrix_api_get_username (self->matrix_api),
+                  "status changed, connected: %s, user:",
+                  CHATTY_LOG_BOOL (self->status == CHATTY_CONNECTED));
     return;
   }
 
@@ -628,6 +646,9 @@ account_connect (gpointer user_data)
   self->status = CHATTY_CONNECTING;
   matrix_api_start_sync (self->matrix_api);
   g_object_notify (G_OBJECT (self), "status");
+  CHATTY_TRACE (matrix_api_get_username (self->matrix_api),
+                "status changed, connected: %s, user:",
+                CHATTY_LOG_BOOL (self->status == CHATTY_CONNECTED));
 
   return G_SOURCE_REMOVE;
 }
@@ -1048,6 +1069,7 @@ chatty_ma_account_new (const char *username,
 
   chatty_item_set_username (CHATTY_ITEM (self), username);
   chatty_account_set_password (CHATTY_ACCOUNT (self), password);
+  CHATTY_DEBUG_DETAILED (username, "New Matrix account");
 
   return self;
 }
