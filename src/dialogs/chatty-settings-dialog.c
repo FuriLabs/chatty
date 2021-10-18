@@ -68,6 +68,9 @@ struct _ChattySettingsDialog
   GtkWidget      *accounts_list_box;
   GtkWidget      *add_account_row;
 
+  GtkWidget      *enable_purple_row;
+  GtkWidget      *enable_purple_switch;
+
   GtkWidget      *account_details_stack;
   GtkWidget      *pp_account_details;
   GtkWidget      *ma_account_details;
@@ -489,6 +492,25 @@ settings_homeserver_entry_changed (ChattySettingsDialog *self,
   }
 
   gtk_widget_set_sensitive (self->matrix_accept_button, valid);
+}
+
+static void
+settings_dialog_purple_changed_cb (ChattySettingsDialog *self)
+{
+  ChattyPurple *purple;
+  HdyActionRow *row;
+  gboolean active;
+
+  g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
+
+  row = HDY_ACTION_ROW (self->enable_purple_row);
+  purple = chatty_purple_get_default ();
+  active = gtk_switch_get_active (GTK_SWITCH (self->enable_purple_switch));
+
+  if (!active && chatty_purple_is_loaded (purple))
+    hdy_action_row_set_subtitle (row, _("Restart chatty to disable purple"));
+  else
+    hdy_action_row_set_subtitle (row, _("Enable purple plugin"));
 }
 
 static void
@@ -964,6 +986,9 @@ chatty_settings_dialog_constructed (GObject *object)
   g_object_bind_property (settings, "message-carbons",
                           self->message_carbons_switch, "active",
                           G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
+  g_object_bind_property (settings, "purple-enabled",
+                          self->enable_purple_switch, "active",
+                          G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
 
   g_object_bind_property (settings, "send-receipts",
                           self->send_receipts_switch, "active",
@@ -1041,6 +1066,9 @@ chatty_settings_dialog_class_init (ChattySettingsDialogClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, accounts_list_box);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, add_account_row);
 
+  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, enable_purple_row);
+  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, enable_purple_switch);
+
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, account_details_stack);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, pp_account_details);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, ma_account_details);
@@ -1097,6 +1125,7 @@ chatty_settings_dialog_class_init (ChattySettingsDialogClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, settings_pw_entry_icon_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, settings_homeserver_entry_changed);
 
+  gtk_widget_class_bind_template_callback (widget_class, settings_dialog_purple_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, settings_dialog_page_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, settings_matrix_cancel_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, settings_matrix_accept_clicked_cb);
