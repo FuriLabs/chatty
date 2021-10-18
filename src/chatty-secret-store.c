@@ -134,8 +134,7 @@ secret_load_cb (GObject      *object,
   g_assert_true (G_IS_TASK (task));
 
   secrets = secret_password_search_finish (result, &error);
-  CHATTY_DEBUG_MSG ("secret accounts loaded, success: %s",
-                    chatty_log_bool_str (!error));
+  CHATTY_DEBUG_MSG ("secret accounts load %s", CHATTY_LOG_SUCESS (!error));
 
   if (error) {
     g_task_return_error (task, error);
@@ -182,7 +181,7 @@ chatty_secret_load_async  (GCancellable        *cancellable,
                           cancellable, secret_load_cb, task,
                           CHATTY_PROTOCOL_ATTRIBUTE, PROTOCOL_MATRIX_STR,
                           NULL);
-  g_debug ("loading secret accounts");
+  CHATTY_DEBUG_MSG ("loading secret accounts");
 }
 
 GPtrArray *
