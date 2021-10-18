@@ -1948,6 +1948,22 @@ chatty_purple_enable (ChattyPurple *self)
            purple_core_get_version ());
 }
 
+static void
+purple_enable_changed_cb (ChattyPurple *self)
+{
+  ChattySettings *settings;
+  gboolean enabled;
+
+  g_assert (CHATTY_IS_PURPLE (self));
+
+  settings = chatty_settings_get_default ();
+  enabled = chatty_settings_get_purple_enabled (settings);
+
+  /* We only enable, disabling requires chatty restart */
+  if (enabled)
+    chatty_purple_enable (self);
+}
+
 void
 chatty_purple_load (ChattyPurple *self,
                     gboolean      disable_auto_login)
@@ -1966,7 +1982,12 @@ chatty_purple_load (ChattyPurple *self,
 
   self->is_loaded = TRUE;
   self->disable_auto_login = !!disable_auto_login;
-  chatty_purple_enable (self);
+
+  g_signal_connect_object (chatty_settings_get_default (),
+                           "notify::purple-enabled",
+                           G_CALLBACK (purple_enable_changed_cb),
+                           self, G_CONNECT_SWAPPED);
+  purple_enable_changed_cb (self);
 }
 
 gboolean
