@@ -805,12 +805,12 @@ get_joined_rooms_cb (GObject      *obj,
   g_assert (MATRIX_IS_API (self));
   g_assert (G_IS_TASK (result));
 
+  root = g_task_propagate_pointer (G_TASK (result), &error);
+
   CHATTY_TRACE_MSG ("Getting joined rooms, success: %d", !error);
 
   if (handle_common_errors (self, error))
     return;
-
-  root = g_task_propagate_pointer (G_TASK (result), &error);
 
   self->callback (self->cb_object, self, MATRIX_GET_JOINED_ROOMS, root, error);
 
