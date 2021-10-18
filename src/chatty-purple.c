@@ -1650,7 +1650,8 @@ chatty_purple_load_plugin (PurplePlugin *plugin)
 
   loaded = purple_plugin_load (plugin);
   purple_plugins_save_loaded (CHATTY_PREFS_ROOT "/plugins/loaded");
-  g_debug ("plugin: %s, Loaded: %d", purple_plugin_get_name (plugin), loaded);
+  g_debug ("plugin: %s, Loading %s", purple_plugin_get_name (plugin),
+           CHATTY_LOG_SUCESS (loaded));
 
   return loaded;
 }
@@ -1667,7 +1668,8 @@ chatty_purple_unload_plugin (PurplePlugin *plugin)
   purple_plugin_disable (plugin);
   purple_plugins_save_loaded (CHATTY_PREFS_ROOT "/plugins/loaded");
   /* Failing to unload may mean that the application require restart to do so. */
-  g_debug ("plugin: %s, Unloaded: %d", purple_plugin_get_name (plugin), unloaded);
+  g_debug ("plugin: %s, Unloading %s", purple_plugin_get_name (plugin),
+           CHATTY_LOG_SUCESS (unloaded));
 }
 
 static void
