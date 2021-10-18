@@ -146,7 +146,7 @@ manager_network_changed_cb (GNetworkMonitor *network_monitor,
   n_items = g_list_model_get_n_items (list);
 
   g_log (G_LOG_DOMAIN, CHATTY_LOG_LEVEL_TRACE,
-         "Network changed, network available: %d", network_available);
+         "Network changed, has network: %s", CHATTY_LOG_BOOL (network_available));
 
   for (guint i = 0; i < n_items; i++)
     {
@@ -368,6 +368,7 @@ manager_secret_load_cb (GObject      *object,
   g_assert (CHATTY_IS_MANAGER (self));
 
   accounts = chatty_secret_load_finish (result, &error);
+  g_info ("Loading accounts from secrets %s", CHATTY_LOG_SUCESS (!error));
 
   if (error)
     g_warning ("Error loading secret accounts: %s", error->message);
@@ -375,7 +376,7 @@ manager_secret_load_cb (GObject      *object,
   if (!accounts)
     return;
 
-  g_info ("Loaded %d matrix accounts", accounts->len);
+  g_info ("Loaded %d matrix accounts", accounts ? accounts->len : 0);
 
   for (guint i = 0; i < accounts->len; i++) {
     g_signal_connect_object (accounts->pdata[i], "notify::status",
@@ -403,6 +404,8 @@ matrix_db_open_cb (GObject      *object,
     chatty_secret_load_async (NULL, manager_secret_load_cb, self);
   else if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
     g_warning ("Failed to open Matrix DB: %s", error->message);
+
+  g_info ("Opening matrix db %s", CHATTY_LOG_SUCESS (!error));
 }
 
 static void
@@ -456,6 +459,7 @@ chatty_manager_load (ChattyManager *self)
     db_path =  g_build_filename (purple_user_dir(), "chatty", "db", NULL);
     matrix_db_open_async (self->matrix_db, db_path, "matrix.db",
                           matrix_db_open_cb, self);
+    g_info ("Opening matrix db");
   }
 }
 
