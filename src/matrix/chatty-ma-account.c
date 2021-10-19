@@ -469,7 +469,8 @@ matrix_account_sync_cb (ChattyMaAccount *self,
     return;
   }
 
-  if (!error && !matrix_api_is_sync (self->matrix_api)) {
+  if (!error && !matrix_api_is_sync (self->matrix_api) &&
+      action != MATRIX_GET_JOINED_ROOMS) {
     ma_account_update_status (self, CHATTY_DISCONNECTED);
     return;
   }
