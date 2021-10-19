@@ -74,6 +74,18 @@ struct _ChattyMaAccount
 
 G_DEFINE_TYPE (ChattyMaAccount, chatty_ma_account, CHATTY_TYPE_ACCOUNT)
 
+/* We use macro here so that the debug logs has the right line info */
+#define ma_account_update_status(self, _status)                         \
+  do {                                                                  \
+    if (self->status != _status) {                                      \
+      self->status = _status;                                           \
+      g_object_notify (G_OBJECT (self), "status");                      \
+      CHATTY_TRACE (matrix_api_get_username (self->matrix_api),         \
+                    "status changed, connected: %s, user:",             \
+                    _status == CHATTY_CONNECTING ? "connecting" :       \
+                    CHATTY_LOG_BOOL (_status == CHATTY_CONNECTED));     \
+    }                                                                   \
+  } while (0)
 
 static void
 ma_account_get_avatar_pixbuf_cb (GObject      *object,
@@ -242,13 +254,8 @@ handle_get_homeserver (ChattyMaAccount *self,
 {
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
 
-  if (error) {
-    self->status = CHATTY_DISCONNECTED;
-    g_object_notify (G_OBJECT (self), "status");
-    CHATTY_TRACE (matrix_api_get_username (self->matrix_api),
-                  "status changed, connected: %s, user:",
-                  CHATTY_LOG_BOOL (self->status == CHATTY_CONNECTED));
-  }
+  if (error)
+    ma_account_update_status (self, CHATTY_DISCONNECTED);
 
   if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND)) {
     g_warning ("Couldn't connect to ‘/.well-known/matrix/client’ ");
@@ -263,13 +270,8 @@ handle_verify_homeserver (ChattyMaAccount *self,
 {
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
 
-  if (error) {
-    self->status = CHATTY_DISCONNECTED;
-    g_object_notify (G_OBJECT (self), "status");
-    CHATTY_TRACE (matrix_api_get_username (self->matrix_api),
-                  "status changed, connected: %s, user:",
-                  CHATTY_LOG_BOOL (self->status == CHATTY_CONNECTED));
-  }
+  if (error)
+    ma_account_update_status (self, CHATTY_DISCONNECTED);
 }
 
 static void
@@ -337,11 +339,7 @@ handle_password_login (ChattyMaAccount *self,
     self->save_password_pending = TRUE;
     chatty_account_save (CHATTY_ACCOUNT (self));
 
-    self->status = CHATTY_CONNECTED;
-    g_object_notify (G_OBJECT (self), "status");
-    CHATTY_TRACE (matrix_api_get_username (self->matrix_api),
-                  "status changed, connected: %s, user:",
-                  CHATTY_LOG_BOOL (self->status == CHATTY_CONNECTED));
+    ma_account_update_status (self, CHATTY_CONNECTED);
   }
 }
 
@@ -427,13 +425,7 @@ handle_red_pill (ChattyMaAccount *self,
   if (error)
     return;
 
-  if (self->status != CHATTY_CONNECTED) {
-    self->status = CHATTY_CONNECTED;
-    g_object_notify (G_OBJECT (self), "status");
-    CHATTY_TRACE (matrix_api_get_username (self->matrix_api),
-                  "status changed, connected: %s, user:",
-                  CHATTY_LOG_BOOL (self->status == CHATTY_CONNECTED));
-  }
+  ma_account_update_status (self, CHATTY_CONNECTED);
 
   object = matrix_utils_json_object_get_object (root, "to_device");
   if (object)
@@ -473,20 +465,12 @@ matrix_account_sync_cb (ChattyMaAccount *self,
        g_error_matches (error, G_IO_ERROR, G_IO_ERROR_TIMED_OUT) ||
        error->domain == G_RESOLVER_ERROR ||
        error->domain == JSON_PARSER_ERROR)) {
-    self->status = CHATTY_DISCONNECTED;
-    g_object_notify (G_OBJECT (self), "status");
-    CHATTY_TRACE (matrix_api_get_username (self->matrix_api),
-                  "status changed, connected: %s, user:",
-                  CHATTY_LOG_BOOL (self->status == CHATTY_CONNECTED));
+    ma_account_update_status (self, CHATTY_DISCONNECTED);
     return;
   }
 
   if (!error && !matrix_api_is_sync (self->matrix_api)) {
-    self->status = CHATTY_DISCONNECTED;
-    g_object_notify (G_OBJECT (self), "status");
-    CHATTY_TRACE (matrix_api_get_username (self->matrix_api),
-                  "status changed, connected: %s, user:",
-                  CHATTY_LOG_BOOL (self->status == CHATTY_CONNECTED));
+    ma_account_update_status (self, CHATTY_DISCONNECTED);
     return;
   }
 
@@ -643,12 +627,7 @@ account_connect (gpointer user_data)
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
 
   self->connect_id = 0;
-  self->status = CHATTY_CONNECTING;
-  matrix_api_start_sync (self->matrix_api);
-  g_object_notify (G_OBJECT (self), "status");
-  CHATTY_TRACE (matrix_api_get_username (self->matrix_api),
-                "status changed, connected: %s, user:",
-                CHATTY_LOG_BOOL (self->status == CHATTY_CONNECTED));
+  ma_account_update_status (self, CHATTY_CONNECTING);
 
   return G_SOURCE_REMOVE;
 }
