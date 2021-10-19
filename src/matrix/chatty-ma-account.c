@@ -569,10 +569,10 @@ chatty_ma_account_set_enabled (ChattyAccount *account,
 
   if (self->account_enabled &&
       g_network_monitor_get_connectivity (network_monitor) == G_NETWORK_CONNECTIVITY_FULL) {
-    self->status = CHATTY_CONNECTING;
+    ma_account_update_status (self, CHATTY_CONNECTING);
     matrix_api_start_sync (self->matrix_api);
   } else if (!self->account_enabled){
-    self->status = CHATTY_DISCONNECTED;
+    ma_account_update_status (self, CHATTY_DISCONNECTED);
     matrix_api_stop_sync (self->matrix_api);
   }
 
@@ -656,9 +656,8 @@ chatty_ma_account_disconnect (ChattyAccount *account)
 
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
 
-  self->status = CHATTY_DISCONNECTED;
   matrix_api_stop_sync (self->matrix_api);
-  g_object_notify (G_OBJECT (self), "status");
+  ma_account_update_status (self, CHATTY_DISCONNECTED);
 }
 
 static gboolean
@@ -1214,6 +1213,7 @@ db_load_account_cb (GObject      *object,
                 !!enabled, !!self->next_batch);
 
   self->is_loading = TRUE;
+
   matrix_api_set_next_batch (self->matrix_api, self->next_batch);
   chatty_account_set_enabled (CHATTY_ACCOUNT (self), enabled);
   self->is_loading = FALSE;
