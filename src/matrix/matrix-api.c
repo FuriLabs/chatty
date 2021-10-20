@@ -65,6 +65,7 @@ struct _MatrixApi
   gpointer        cb_object;
   GCancellable   *cancellable;
   char           *next_batch;
+  char           *filter_id;
   MatrixAction    action;
 
   /* for sending events, incremented for each event */
@@ -588,6 +589,89 @@ handle_one_time_keys (MatrixApi  *self,
 }
 
 static void
+api_upload_filter_cb (GObject      *object,
+                      GAsyncResult *result,
+                      gpointer      user_data)
+{
+  g_autoptr(MatrixApi) self = user_data;
+  g_autoptr(JsonObject) root = NULL;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (MATRIX_IS_API (self));
+  g_assert (G_IS_TASK (result));
+
+  root = g_task_propagate_pointer (G_TASK (result), &error);
+
+  CHATTY_DEBUG (self->username, "Uploading filter %s, user",
+                CHATTY_LOG_SUCESS (!error));
+
+  if (handle_common_errors (self, error))
+    return;
+
+  self->filter_id = g_strdup (matrix_utils_json_object_get_string (root, "filter_id"));
+
+  if (!self->filter_id)
+    self->filter_id = g_strdup ("");
+  matrix_start_sync (self);
+}
+
+static void
+matrix_upload_filter (MatrixApi *self)
+{
+  g_autoptr(GError) error = NULL;
+  g_autoptr(GBytes) data = NULL;
+  const char *data_str = NULL;
+  gsize size;
+
+  data = g_resources_lookup_data ("/sm/puri/Chatty/matrix-filter.json", 0, &error);
+
+  if (error)
+    g_warning ("Error getting filter file: %s", error->message);
+  else if (data)
+    data_str = g_bytes_get_data (data, &size);
+
+  if (!data || !data_str || !size) {
+    self->filter_id = g_strdup ("");
+    matrix_start_sync (self);
+  } else {
+    g_autofree char *uri = NULL;
+    g_autoptr(JsonParser) parser = NULL;
+    JsonObject *filter = NULL;
+    JsonNode *root = NULL;
+
+    CHATTY_DEBUG (self->username, "Uploading filter, user:");
+
+    parser = json_parser_new ();
+    json_parser_load_from_data (parser, data_str, size, &error);
+
+    if (error)
+      g_warning ("Error parsing filter file: %s", error->message);
+
+    if (!error)
+      root = json_parser_get_root (parser);
+
+    if (root)
+      filter = json_node_get_object (root);
+
+    if (error || !root || !filter) {
+      if (error)
+        g_warning ("Error getting filter file: %s", error->message);
+
+      self->filter_id = g_strdup ("");
+      matrix_start_sync (self);
+
+      return;
+    }
+
+    uri = g_strconcat ("/_matrix/client/r0/user/", self->username, "/filter", NULL);
+    matrix_net_send_json_async (self->matrix_net, 2, json_object_ref (filter),
+                                uri, SOUP_METHOD_POST,
+                                NULL, NULL, api_upload_filter_cb,
+                                g_object_ref (self));
+  }
+}
+
+static void
 matrix_login_cb (GObject      *obj,
                  GAsyncResult *result,
                  gpointer      user_data)
@@ -639,7 +723,7 @@ matrix_login_cb (GObject      *obj,
   self->key = matrix_enc_get_device_keys_json (self->matrix_enc);
 
   self->callback (self->cb_object, self, MATRIX_PASSWORD_LOGIN, NULL, NULL);
-  matrix_upload_key (self);
+  matrix_start_sync (self);
 }
 
 static void
@@ -863,6 +947,8 @@ matrix_start_sync (MatrixApi *self)
     matrix_verify_homeserver (self);
   } else if (!self->access_token) {
     matrix_login (self);
+  } else if (!self->filter_id){
+    matrix_upload_filter (self);
   } else if (!self->room_list_loaded) {
     matrix_get_joined_rooms (self);
   } else {
@@ -914,6 +1000,7 @@ matrix_api_finalize (GObject *object)
   g_free (self->login_username);
   g_free (self->homeserver);
   g_free (self->device_id);
+  g_free (self->filter_id);
   matrix_utils_free_buffer (self->password);
   matrix_utils_free_buffer (self->access_token);
 
