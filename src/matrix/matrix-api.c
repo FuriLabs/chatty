@@ -119,6 +119,9 @@ api_get_version_cb (GObject      *obj,
 
   root = matrix_utils_read_uri_finish (result, &error);
 
+  if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
+    return;
+
   if (!error)
     error = matrix_utils_json_node_get_error (root);
 
@@ -188,6 +191,9 @@ api_get_homeserver_cb (gpointer      object,
   g_assert (MATRIX_IS_API (self));
 
   homeserver = matrix_utils_get_homeserver_finish (result, &error);
+
+  if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
+    return;
 
   CHATTY_TRACE_MSG ("Get home server, has-error: %d, home server: %s",
                     !error, homeserver);
@@ -351,7 +357,9 @@ matrix_get_room_name_cb (GObject      *obj,
   object = g_task_propagate_pointer (G_TASK (result), &error);
 
   if (error) {
-    g_debug ("Error getting room state: %s", error->message);
+    if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
+      CHATTY_TRACE_MSG ("Error getting room name: %s", error->message);
+
     g_task_return_error (task, error);
   } else {
     g_task_return_pointer (task, object, (GDestroyNotify)json_object_unref);
@@ -602,6 +610,9 @@ api_upload_filter_cb (GObject      *object,
 
   root = g_task_propagate_pointer (G_TASK (result), &error);
 
+  if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
+    return;
+
   CHATTY_DEBUG (self->username, "Uploading filter %s, user",
                 CHATTY_LOG_SUCESS (!error));
 
@@ -666,7 +677,7 @@ matrix_upload_filter (MatrixApi *self)
     uri = g_strconcat ("/_matrix/client/r0/user/", self->username, "/filter", NULL);
     matrix_net_send_json_async (self->matrix_net, 2, json_object_ref (filter),
                                 uri, SOUP_METHOD_POST,
-                                NULL, NULL, api_upload_filter_cb,
+                                NULL, self->cancellable, api_upload_filter_cb,
                                 g_object_ref (self));
   }
 }
@@ -686,6 +697,9 @@ matrix_login_cb (GObject      *obj,
   g_assert (G_IS_TASK (result));
 
   root = g_task_propagate_pointer (G_TASK (result), &error);
+
+  if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
+    return;
 
   CHATTY_TRACE_MSG ("login %s", CHATTY_LOG_SUCESS (!error));
 
@@ -775,6 +789,9 @@ matrix_take_red_pill_cb (GObject      *obj,
 
   root = g_task_propagate_pointer (G_TASK (result), &error);
 
+  if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
+    return;
+
   if (!self->next_batch || error || !self->full_state_loaded)
     g_log (G_LOG_DOMAIN, CHATTY_LOG_LEVEL_TRACE, "sync %s, full-state: %d, next-batch: %s",
            CHATTY_LOG_SUCESS (!error), !self->full_state_loaded, self->next_batch);
@@ -859,7 +876,7 @@ matrix_login (MatrixApi *self)
 
   matrix_net_send_json_async (self->matrix_net, 2, object,
                               "/_matrix/client/r0/login", SOUP_METHOD_POST,
-                              NULL, NULL, matrix_login_cb,
+                              NULL, self->cancellable, matrix_login_cb,
                               g_object_ref (self));
 }
 
@@ -875,7 +892,7 @@ matrix_upload_key (MatrixApi *self)
 
   matrix_net_send_data_async (self->matrix_net, 2, key, strlen (key),
                               "/_matrix/client/r0/keys/upload", SOUP_METHOD_POST,
-                              NULL, NULL, matrix_upload_key_cb,
+                              NULL, self->cancellable, matrix_upload_key_cb,
                               g_object_ref (self));
 }
 
@@ -892,6 +909,9 @@ get_joined_rooms_cb (GObject      *obj,
   g_assert (G_IS_TASK (result));
 
   root = g_task_propagate_pointer (G_TASK (result), &error);
+
+  if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
+    return;
 
   CHATTY_TRACE_MSG ("Getting joined rooms %s", CHATTY_LOG_SUCESS (!error));
 
@@ -915,7 +935,7 @@ matrix_get_joined_rooms (MatrixApi *self)
   CHATTY_TRACE_MSG ("Getting joined rooms");
   matrix_net_send_json_async (self->matrix_net, 0, NULL,
                               "/_matrix/client/r0/joined_rooms", SOUP_METHOD_GET,
-                              NULL, NULL, get_joined_rooms_cb,
+                              NULL, self->cancellable, get_joined_rooms_cb,
                               g_object_ref (self));
 }
 
@@ -1350,6 +1370,11 @@ matrix_api_start_sync (MatrixApi *self)
   if (self->is_sync && !self->sync_failed)
     return;
 
+  if (g_cancellable_is_cancelled (self->cancellable)) {
+    g_object_unref (self->cancellable);
+    self->cancellable = g_cancellable_new ();
+  }
+
   matrix_start_sync (self);
 }
 
@@ -1370,11 +1395,6 @@ matrix_api_stop_sync (MatrixApi *self)
   g_cancellable_cancel (self->cancellable);
   self->is_sync = FALSE;
   self->sync_failed = FALSE;
-
-  /* Free the cancellable and create a new
-     one for further use */
-  g_object_unref (self->cancellable);
-  self->cancellable = g_cancellable_new ();
 }
 
 void
