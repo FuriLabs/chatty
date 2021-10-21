@@ -1053,7 +1053,8 @@ get_room_name_cb (GObject      *obj,
   object = matrix_api_get_room_name_finish (self->matrix_api, result, &error);
 
   if (error) {
-    if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
+    if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED) &&
+        !g_error_matches (error, MATRIX_ERROR, M_NOT_FOUND))
       g_warning ("error getting room name: %s", error->message);
     return;
   }
