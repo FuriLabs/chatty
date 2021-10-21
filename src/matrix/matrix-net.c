@@ -283,7 +283,8 @@ session_send_cb (GObject      *object,
   stream = soup_session_send_finish (self->soup_session, result, &error);
 
   if (error) {
-    CHATTY_TRACE_MSG ("Error session send: %s", error->message);
+    if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
+      CHATTY_TRACE_MSG ("Error session send: %s", error->message);
     g_task_return_error (task, error);
     return;
   }
