@@ -628,6 +628,7 @@ account_connect (gpointer user_data)
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
 
   self->connect_id = 0;
+  matrix_api_start_sync (self->matrix_api);
   ma_account_update_status (self, CHATTY_CONNECTING);
 
   return G_SOURCE_REMOVE;
