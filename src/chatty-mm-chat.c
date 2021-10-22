@@ -82,12 +82,14 @@ static void
 chatty_mm_chat_update_contact (ChattyMmChat *self)
 {
   guint n_items;
+  GString *title = NULL;
 
   g_assert (CHATTY_IS_MM_CHAT (self));
 
   if (!self->chatty_eds)
     return;
 
+  title = g_string_new (NULL);
   n_items = g_list_model_get_n_items (G_LIST_MODEL (self->chat_users));
 
   for (guint i = 0; i < n_items; i++) {
@@ -101,14 +103,25 @@ chatty_mm_chat_update_contact (ChattyMmChat *self)
     if (contact) {
       chatty_mm_buddy_set_contact (buddy, contact);
 
+      title = g_string_append (title, chatty_item_get_name (CHATTY_ITEM (contact)));
       if (n_items == 1) {
         g_free (self->name);
         self->name = g_strdup (chatty_item_get_name (CHATTY_ITEM (contact)));
         g_object_notify (G_OBJECT (self), "name");
         g_signal_emit_by_name (self, "avatar-changed");
       }
+    } else {
+      title = g_string_append (title, phone);
     }
+    if (i+1 < n_items)
+      title = g_string_append (title, ", ");
   }
+  if (n_items != 1) {
+    g_free (self->name);
+    self->name = g_strdup (title->str);
+    g_object_notify (G_OBJECT (self), "name");
+  }
+  g_string_free (title, TRUE);
 }
 
 static gboolean
