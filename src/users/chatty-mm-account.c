@@ -1224,7 +1224,7 @@ chatty_mm_account_start_chat (ChattyMmAccount *self,
       if (number == NULL) {
         number = g_strdup (send[j]);
       }
-      newbuddy = chatty_mm_buddy_new (number, NULL);
+      newbuddy = chatty_mm_buddy_new (number, number);
       chatty_mm_chat_add_user (CHATTY_MM_CHAT (chat), newbuddy);
       g_clear_pointer (&number, g_free);
     }
