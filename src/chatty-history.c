@@ -57,6 +57,10 @@
 #define PROTOCOL_SIP       6
 
 /* Chat thread type */
+/* For SMS/MMS, if it's THREAD_GROUP_CHAT it's always MMS,
+ * If it's THREAD_DIRECT_CHAT with 2+ members, it's always
+ * SMS.
+ */
 #define THREAD_DIRECT_CHAT 0
 #define THREAD_GROUP_CHAT  1
 
@@ -2373,7 +2377,8 @@ history_get_chats (ChattyHistory *self,
     protocol = PROTOCOL_MMS_SMS;
 
   sqlite3_prepare_v2 (self->db,
-                      "SELECT threads.id,threads.name,threads.alias,threads.encrypted,"
+                      /*           0           1             2              3                4  */
+                      "SELECT threads.id,threads.name,threads.alias,threads.encrypted,threads.type,"
                       "files.url,files.path "
                       "FROM threads "
                       "INNER JOIN accounts ON accounts.id=threads.account_id "
@@ -2400,14 +2405,16 @@ history_get_chats (ChattyHistory *self,
     alias = (const char *)sqlite3_column_text (stmt, 2);
     encrypted = sqlite3_column_int (stmt, 3);
 
-    if (sqlite3_column_text (stmt, 4)) {
+    if (sqlite3_column_text (stmt, 5)) {
       file = g_new0 (ChattyFileInfo, 1);
-      file->url = g_strdup ((const char *)sqlite3_column_text (stmt, 4));
-      file->path = g_strdup ((const char *)sqlite3_column_text (stmt, 5));
+      file->url = g_strdup ((const char *)sqlite3_column_text (stmt, 5));
+      file->path = g_strdup ((const char *)sqlite3_column_text (stmt, 6));
     }
 
     if (CHATTY_IS_MA_ACCOUNT (account)) {
       chat = (gpointer)chatty_ma_chat_new (name, alias, file, encrypted);
+    } else if (sqlite3_column_int (stmt, 4) == THREAD_GROUP_CHAT) {
+      chat = (gpointer)chatty_mm_chat_new (name, alias, CHATTY_PROTOCOL_MMS, FALSE);
     } else {
       chat = (gpointer)chatty_mm_chat_new (name, alias, CHATTY_PROTOCOL_MMS_SMS, TRUE);
     }
