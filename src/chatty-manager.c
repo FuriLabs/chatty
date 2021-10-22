@@ -640,6 +640,8 @@ chatty_manager_set_uri (ChattyManager *self,
   g_autofree char *who = NULL;
   ChattyAccount *account;
   const char *country_code;
+  g_auto(GStrv) recipients = NULL;
+  guint num;
 
   if (!uri || !*uri)
     return FALSE;
@@ -649,11 +651,18 @@ chatty_manager_set_uri (ChattyManager *self,
     return FALSE;
 
   country_code = chatty_settings_get_country_iso_code (chatty_settings_get_default ());
-  who = chatty_utils_check_phonenumber (uri, country_code);
-  if (!who)
-    return FALSE;
+  recipients = g_strsplit (uri, ",", -1);
+  num = g_strv_length (recipients);
+  for (int i = 0; i < num; i++) {
+    who = chatty_utils_check_phonenumber (recipients[i], country_code);
+    if (!who)
+      return FALSE;
+  }
+  if (num == 1)
+    chat = chatty_mm_account_start_chat (CHATTY_MM_ACCOUNT (account), who);
+  else
+    chat = chatty_mm_account_start_chat (CHATTY_MM_ACCOUNT (account), uri);
 
-  chat = chatty_mm_account_start_chat (CHATTY_MM_ACCOUNT (account), who);
   g_signal_emit (self, signals[OPEN_CHAT], 0, chat);
 
   return TRUE;
