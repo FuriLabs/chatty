@@ -13,9 +13,6 @@
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
-/* This is here to make strptime () work */
-#define _XOPEN_SOURCE 700
-
 #define G_LOG_DOMAIN "chatty-mmsd"
 
 #ifdef HAVE_CONFIG_H
@@ -753,6 +750,7 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
   g_autoptr(GFile) parent = NULL;
   g_autoptr(GVariant) recipients = NULL;
   g_autoptr(GVariant) attachments = NULL;
+  g_autoptr(GDateTime) date_time = NULL;
   ChattyMsgDirection direction = CHATTY_DIRECTION_UNKNOWN;
   ChattyMsgStatus mms_status = CHATTY_STATUS_UNKNOWN;
   ChattyMsgType chatty_msg_type = CHATTY_MESSAGE_TEXT;
@@ -767,7 +765,7 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
   GString *who;
   GVariantIter recipientiter;
   mms_payload *payload;
-  struct tm tm;
+  gint64 unix_time = 0;
   int delivery_report = FALSE;
   guint num_files;
 
@@ -1063,12 +1061,16 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
     mms_message = chatty_mmsd_process_mms_message_attachments (files, subject);
   }
 
-  strptime (date, "%Y-%m-%dT%H:%M:%S%z", &tm);
+  date_time = g_date_time_new_from_iso8601 (date, NULL);
+  if (date_time)
+    unix_time = g_date_time_to_unix (date_time);
+  if (!unix_time)
+    unix_time = time (NULL);
 
   payload->message = chatty_message_new (NULL,
                                          mms_message,
                                          g_path_get_basename (objectpath),
-                                         mktime (&tm),
+                                         unix_time,
                                          chatty_msg_type,
                                          direction,
                                          mms_status);
