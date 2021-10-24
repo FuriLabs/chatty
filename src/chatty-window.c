@@ -624,8 +624,10 @@ write_eds_contact_cb (GObject      *object,
 
   g_assert (CHATTY_IS_WINDOW (self));
 
-  if (chatty_eds_write_contact_finish (result, &error))
+  if (chatty_eds_write_contact_finish (result, &error)) {
+    gtk_widget_hide (self->menu_add_contact_button);
     return;
+  }
 
   dialog = gtk_message_dialog_new (GTK_WINDOW (self),
                                    GTK_DIALOG_MODAL,
@@ -653,8 +655,6 @@ window_add_contact_clicked_cb (ChattyWindow *self)
                                     write_eds_contact_cb,
                                     g_object_ref (self));
   }
-
-  gtk_widget_hide (self->menu_add_contact_button);
 }
 
 static void
