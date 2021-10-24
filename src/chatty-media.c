@@ -60,6 +60,8 @@ chatty_media_scale_image_to_size_sync (ChattyFileInfo *input_file,
   g_autofree char *basename = NULL;
   char *file_extension = NULL;
   int width = -1, height = -1;
+  const char *qualities[] = {"80", "70", "60", "40", NULL};
+  gsize new_size;
 
   if (!input_file->mime_type || !g_str_has_prefix (input_file->mime_type, "image")) {
     g_warning ("File is not an image! Cannot Resize");
@@ -92,7 +94,7 @@ chatty_media_scale_image_to_size_sync (ChattyFileInfo *input_file,
      * as we care only the largest of the width/height */
     width = gdk_pixbuf_get_width (src);
     height = gdk_pixbuf_get_height (src);
-    aspect_ratio = MAX (width, height) / MIN (width, height);
+    aspect_ratio = MAX (width, height) / (float)(MIN (width, height));
 
     /*
      * Image size scales about linearly with either width or height changes
@@ -138,62 +140,71 @@ chatty_media_scale_image_to_size_sync (ChattyFileInfo *input_file,
     g_debug ("New width: %d, New height: %d", width, height);
   }
 
-  g_clear_object (&src);
+  /* Try qualities in descending order until one works. If the last one isn't
+   * small enough, let it try anyway */
+  for (const char **quality = qualities; *quality != NULL; quality++) {
+    g_clear_object (&src);
 
-  src = gdk_pixbuf_new_from_file_at_size (input_file->path, width, height, &error);
+    src = gdk_pixbuf_new_from_file_at_size (input_file->path, width, height, &error);
 
-  /* Make sure the pixbuf is in the correct orientation */
-  dest = gdk_pixbuf_apply_embedded_orientation (src);
+    /* Make sure the pixbuf is in the correct orientation */
+    dest = gdk_pixbuf_apply_embedded_orientation (src);
 
-  new_attachment = g_try_new0 (ChattyFileInfo, 1);
-  if (new_attachment == NULL) {
-    g_warning ("Error in creating new attachment\n");
-    return NULL;
-  }
+    new_attachment = g_try_new0 (ChattyFileInfo, 1);
+    if (new_attachment == NULL) {
+      g_warning ("Error in creating new attachment\n");
+      return NULL;
+    }
 
-  if (use_temp_file) {
-    path = g_string_new (g_build_filename (g_get_tmp_dir (), "chatty/", NULL));
-  } else {
-    path = g_string_new (g_build_filename (g_get_user_cache_dir (), "chatty/", NULL));
-  }
+    if (use_temp_file) {
+      path = g_string_new (g_build_filename (g_get_tmp_dir (), "chatty/", NULL));
+    } else {
+      path = g_string_new (g_build_filename (g_get_user_cache_dir (), "chatty/", NULL));
+    }
 
-  CHATTY_TRACE_MSG ("New Directory Path: %s", path->str);
+    CHATTY_TRACE_MSG ("New Directory Path: %s", path->str);
 
-  if (g_mkdir_with_parents (path->str, S_IRWXU | S_IRWXG | S_IRWXO) == -1) {
-    g_warning ("Error creating directory: %s", strerror (errno));
-    return NULL;
-  }
+    if (g_mkdir_with_parents (path->str, S_IRWXU | S_IRWXG | S_IRWXO) == -1) {
+      g_warning ("Error creating directory: %s", strerror (errno));
+      return NULL;
+    }
 
-  basename = g_path_get_basename (input_file->path);
-  file_extension = strrchr (basename, '.');
-  if (file_extension) {
-    g_string_append_len (path, basename, file_extension - basename);
-    g_string_append (path, "-resized.jpg");
-  } else {
-    g_string_append_printf (path, "%s-resized.jpg", basename);
-  }
+    basename = g_path_get_basename (input_file->path);
+    file_extension = strrchr (basename, '.');
+    if (file_extension) {
+      g_string_append_len (path, basename, file_extension - basename);
+      g_string_append (path, "-resized.jpg");
+    } else {
+      g_string_append_printf (path, "%s-resized.jpg", basename);
+    }
 
-  CHATTY_TRACE_MSG ("New File Path: %s", path->str);
-  resized_file = g_file_new_for_path (path->str);
+    CHATTY_TRACE_MSG ("New File Path: %s", path->str);
+    resized_file = g_file_new_for_path (path->str);
 
-  /* Putting the quality at 80 seems to work well experimentally */
-  gdk_pixbuf_save (dest, path->str, "jpeg", &error, "quality", "80", NULL);
+    /* Putting the quality at 80 seems to work well experimentally */
+    gdk_pixbuf_save (dest, path->str, "jpeg", &error, "quality", *quality, NULL);
 
-  if (error) {
-    g_warning ("Error in saving: %s\n", error->message);
-    return NULL;
-  }
+    if (error) {
+      g_warning ("Error in saving: %s\n", error->message);
+      return NULL;
+    }
 
-  /* Debug: Figure out size of images */
-  file_info = g_file_query_info (resized_file,
-                                 G_FILE_ATTRIBUTE_STANDARD_SIZE,
-                                 G_FILE_QUERY_INFO_NONE,
-                                 NULL,
-                                 &error);
+    /* Debug: Figure out size of images */
+    file_info = g_file_query_info (resized_file,
+                                   G_FILE_ATTRIBUTE_STANDARD_SIZE,
+                                   G_FILE_QUERY_INFO_NONE,
+                                   NULL,
+                                   &error);
 
-  if (error) {
-    g_warning ("Error getting file info: %s", error->message);
-    return NULL;
+    if (error) {
+      g_warning ("Error getting file info: %s", error->message);
+      return NULL;
+    }
+    new_size = g_file_info_get_size (file_info);
+    if (new_size <= desired_size) {
+      g_debug ("Resized at quality %s to size %lu", *quality, new_size);
+      break;
+    }
   }
 
   /*
