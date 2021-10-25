@@ -255,6 +255,7 @@ contact_search_entry_changed_cb (ChattyNewChatDialog *self,
   GtkFilterChange change;
   ChattyProtocol protocol;
   gboolean valid;
+  guint len;
 
   g_assert (CHATTY_IS_NEW_CHAT_DIALOG (self));
   g_assert (GTK_IS_ENTRY (entry));
@@ -266,6 +267,7 @@ contact_search_entry_changed_cb (ChattyNewChatDialog *self,
 
   old_needle = self->search_str;
   self->search_str = g_utf8_casefold (str, -1);
+  len = strlen (self->search_str);
 
   if (!old_needle)
     old_needle = g_strdup ("");
@@ -286,6 +288,14 @@ contact_search_entry_changed_cb (ChattyNewChatDialog *self,
 
   protocol = CHATTY_PROTOCOL_MMS_SMS;
   valid = protocol == chatty_utils_username_is_valid (self->search_str, protocol);
+  /* It is confusing for the dummy contact to disappear if the length is less than 3 */
+  if (!valid && len < 3 && len > 0) {
+    guint end_len;
+    end_len = strspn (self->search_str, "0123456789");
+
+    if (end_len == len)
+      valid = TRUE;
+  }
   account = chatty_manager_get_mm_account (self->manager);
   valid = valid && chatty_account_get_status (account) == CHATTY_CONNECTED;
   gtk_widget_set_visible (self->new_contact_row, valid);
