@@ -64,6 +64,13 @@ struct _ChattyPurple
 
 G_DEFINE_TYPE (ChattyPurple, chatty_purple, G_TYPE_OBJECT)
 
+enum {
+  PROP_0,
+  PROP_ENABLED,
+  N_PROPS
+};
+
+static GParamSpec *properties[N_PROPS];
 static GHashTable *ui_info = NULL;
 static gboolean enable_debug;
 
@@ -1738,6 +1745,25 @@ chatty_purple_load_plugins (ChattyPurple *self)
 }
 
 static void
+chatty_purple_get_property (GObject    *object,
+                            guint       prop_id,
+                            GValue     *value,
+                            GParamSpec *pspec)
+{
+  ChattyPurple *self = (ChattyPurple *)object;
+
+  switch (prop_id)
+    {
+    case PROP_ENABLED:
+      g_value_set_boolean (value, self->enabled);
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
+}
+
+static void
 chatty_purple_finalize (GObject *object)
 {
   ChattyPurple *self = (ChattyPurple *)object;
@@ -1756,6 +1782,21 @@ chatty_purple_class_init (ChattyPurpleClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
   object_class->finalize = chatty_purple_finalize;
+  object_class->get_property = chatty_purple_get_property;
+
+  /**
+   * ChattyPurple:enabled:
+   *
+   * Whether purple is enabled/disabled
+   */
+  properties[PROP_ENABLED] =
+    g_param_spec_boolean ("enabled",
+                          "purple enabled",
+                          "Purple enabled",
+                          FALSE,
+                          G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+
+  g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
 static void
@@ -1890,6 +1931,7 @@ chatty_purple_disable (ChattyPurple *self)
 
   CHATTY_DEBUG_MSG ("Disabling purple");
   self->enabled = FALSE;
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ENABLED]);
 
   g_list_store_remove_all (self->accounts);
   g_list_store_remove_all (self->list_of_user_list);
@@ -1915,6 +1957,7 @@ chatty_purple_enable (ChattyPurple *self)
 
   self->enabled = TRUE;
   CHATTY_DEBUG_MSG ("Enabling purple");
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ENABLED]);
 
   if (!purple_core_init (CHATTY_UI)) {
     g_warning ("libpurple initialization failed");
