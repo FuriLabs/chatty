@@ -198,5 +198,8 @@ chatty_mm_buddy_set_contact (ChattyMmBuddy *self,
   g_return_if_fail (CHATTY_IS_MM_BUDDY (self));
   g_return_if_fail (!contact || CHATTY_IS_CONTACT (contact));
 
-  g_set_object (&self->contact, contact);
+  if (g_set_object (&self->contact, contact)) {
+    g_object_notify (G_OBJECT (self), "name");
+    g_signal_emit_by_name (self, "avatar-changed");
+  }
 }
