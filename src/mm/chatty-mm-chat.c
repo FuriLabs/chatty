@@ -674,6 +674,38 @@ chatty_mm_chat_get_user (ChattyMmChat *self)
   return buddy;
 }
 
+ChattyMmBuddy *
+chatty_mm_chat_find_user (ChattyMmChat *self,
+                          const char   *phone)
+{
+  g_autofree char *number = NULL;
+  const char *country;
+  guint n_items;
+
+  g_return_val_if_fail (CHATTY_IS_MM_CHAT (self), NULL);
+
+  if (!phone || !*phone)
+    return NULL;
+
+  n_items = g_list_model_get_n_items (G_LIST_MODEL (self->chat_users));
+  country = chatty_settings_get_country_iso_code (chatty_settings_get_default ());
+  number = chatty_utils_check_phonenumber (phone, country);
+
+  if (!number)
+    number = g_strdup (phone);
+
+  for (guint i = 0; i < n_items; i++) {
+    g_autoptr(ChattyMmBuddy) buddy = NULL;
+
+    buddy = g_list_model_get_item (G_LIST_MODEL (self->chat_users), i);
+
+    if (g_strcmp0 (number, chatty_mm_buddy_get_number (buddy)) == 0)
+      return buddy;
+  }
+
+  return NULL;
+}
+
 void
 chatty_mm_chat_append_message (ChattyMmChat  *self,
                                ChattyMessage *message)
