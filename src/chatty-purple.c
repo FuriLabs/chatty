@@ -1842,7 +1842,7 @@ chatty_purple_is_loaded (ChattyPurple *self)
 {
   g_return_val_if_fail (CHATTY_IS_PURPLE (self), FALSE);
 
-  return self->is_loaded;
+  return self->enabled;
 }
 
 ChattyChat *
