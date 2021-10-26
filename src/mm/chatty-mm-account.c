@@ -487,8 +487,9 @@ mm_account_add_sms (ChattyMmAccount *self,
 
   if (state == MM_SMS_STATE_RECEIVED) {
     direction = CHATTY_DIRECTION_IN;
-    senderbuddy = chatty_mm_chat_get_user (CHATTY_MM_CHAT (chat));
-    g_object_ref (senderbuddy);
+    senderbuddy = chatty_mm_chat_find_user (CHATTY_MM_CHAT (chat), phone);
+    if (senderbuddy)
+      g_object_ref (senderbuddy);
   } else if (state == MM_SMS_STATE_SENT) {
     direction = CHATTY_DIRECTION_OUT;
     senderbuddy = chatty_mm_buddy_new (phone, phone);
