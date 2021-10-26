@@ -78,6 +78,15 @@ chatty_mm_buddy_get_name (ChattyItem *item)
 
   g_assert (CHATTY_IS_MM_BUDDY (self));
 
+  if (self->contact) {
+    const char *name;
+
+    name = chatty_item_get_name (CHATTY_ITEM (self->contact));
+
+    if (name && *name)
+      return name;
+  }
+
   if (self->name)
     return self->name;
 
