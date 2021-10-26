@@ -475,6 +475,40 @@ chatty_mm_chat_get_name (ChattyItem *item)
   return "";
 }
 
+static void
+chatty_mm_chat_set_name (ChattyItem *item,
+                         const char *name)
+{
+  ChattyMmChat *self = (ChattyMmChat *)item;
+  GListModel *users, *messages;
+
+  g_assert (CHATTY_IS_MM_CHAT (self));
+
+  if (g_strcmp0 (name, self->name) == 0)
+    return;
+
+  users = chatty_chat_get_users (CHATTY_CHAT (item));
+
+  /* Custom name can be set only for multi user chats */
+  if (g_list_model_get_n_items (users) <= 1)
+    return;
+
+  g_free (self->name);
+  self->name = g_strdup (name);
+
+  if (!name || !*name)
+    chatty_mm_chat_update_contact (self);
+
+  messages = chatty_chat_get_messages (CHATTY_CHAT (item));
+
+  /* We add the item to db only if we have at least one message */
+  if (g_list_model_get_n_items (messages))
+    chatty_history_update_chat (self->history_db, CHATTY_CHAT (item));
+
+  g_object_notify (G_OBJECT (self), "name");
+  g_signal_emit_by_name (self, "avatar-changed");
+}
+
 static const char *
 chatty_mm_chat_get_username (ChattyItem *item)
 {
@@ -538,6 +572,7 @@ chatty_mm_chat_class_init (ChattyMmChatClass *klass)
   object_class->finalize = chatty_mm_chat_finalize;
 
   item_class->get_name = chatty_mm_chat_get_name;
+  item_class->set_name = chatty_mm_chat_set_name;
   item_class->get_username = chatty_mm_chat_get_username;
   item_class->get_protocols = chatty_mm_chat_get_protocols;
   item_class->get_avatar = chatty_mm_chat_get_avatar;
