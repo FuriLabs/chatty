@@ -93,34 +93,35 @@ chatty_mm_chat_update_contact (ChattyMmChat *self)
   for (guint i = 0; i < n_items; i++) {
     g_autoptr(ChattyMmBuddy) buddy = NULL;
     ChattyContact *contact;
-    const char *phone;
+    const char *phone, *name;
 
     buddy = g_list_model_get_item (G_LIST_MODEL (self->chat_users), i);
     phone = chatty_mm_buddy_get_number (buddy);
     contact = chatty_eds_find_by_number (self->chatty_eds, phone);
     if (contact) {
       chatty_mm_buddy_set_contact (buddy, contact);
-
-      title = g_string_append (title, chatty_item_get_name (CHATTY_ITEM (contact)));
-      if (n_items == 1) {
-        g_free (self->name);
-        self->name = g_strdup (chatty_item_get_name (CHATTY_ITEM (contact)));
-        g_object_notify (G_OBJECT (self), "name");
-        g_signal_emit_by_name (self, "avatar-changed");
-      }
+      name = chatty_item_get_name (CHATTY_ITEM (contact));
     } else {
-      title = g_string_append (title, phone);
+      name = phone;
     }
-    if (i+1 < n_items)
-      title = g_string_append (title, ", ");
+
+    g_string_append (title, name);
+    /* TODO: Improve so that this is translatable */
+    g_string_append (title, ", ");
   }
-  if (n_items != 1 && (!self->name || !*self->name || !self->has_custom_name)) {
+
+  /* Delete the trailing ", " */
+  if (title->len > 2)
+    g_string_truncate (title, title->len - 2);
+
+  if (title->len && (!self->name || !*self->name || !self->has_custom_name)) {
     g_free (self->name);
-    self->name = g_strdup (title->str);
-    g_object_notify (G_OBJECT (self), "name");
+    self->name = g_string_free (title, FALSE);
     self->has_custom_name = FALSE;
+
+    g_object_notify (G_OBJECT (self), "name");
+    g_signal_emit_by_name (self, "avatar-changed");
   }
-  g_string_free (title, TRUE);
 }
 
 static gboolean
