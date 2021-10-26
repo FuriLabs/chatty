@@ -1158,6 +1158,9 @@ chatty_settings_dialog_init (ChattySettingsDialog *self)
   purple = chatty_purple_get_default ();
   gtk_widget_set_visible (self->message_carbons_row,
                           chatty_purple_has_carbon_plugin (purple));
+  g_object_bind_property (purple, "enabled",
+                          self->xmpp_radio_button, "visible",
+                          G_BINDING_SYNC_CREATE);
 
   gtk_entry_set_text (GTK_ENTRY (self->carrier_mmsc_entry), carrier_mmsc);
   gtk_entry_set_text (GTK_ENTRY (self->mms_apn_entry), carrier_apn);

@@ -506,9 +506,9 @@
                         </style>
                         <child>
                           <object class="HdyActionRow">
+                            <property name="visible" bind-source="xmpp_radio_button" bind-property="visible"/>
                             <property name="activatable_widget">xmpp_radio_button</property>
                             <property name="title" translatable="yes">XMPP</property>
-                            <property name="visible">True</property>
                             <child type="prefix">
                               <object class="GtkRadioButton" id="xmpp_radio_button">
                                 <property name="visible">True</property>
