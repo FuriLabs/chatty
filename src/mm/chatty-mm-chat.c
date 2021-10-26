@@ -661,21 +661,6 @@ chatty_mm_chat_find_message_with_id (ChattyMmChat *self,
 }
 
 ChattyMmBuddy *
-chatty_mm_chat_get_user (ChattyMmChat *self)
-{
-  g_autoptr(ChattyMmBuddy) buddy = NULL;
-
-  g_return_val_if_fail (CHATTY_IS_MM_CHAT (self), NULL);
-
-  if (g_list_model_get_n_items (G_LIST_MODEL (self->chat_users)) != 1)
-    return NULL;
-
-  buddy = g_list_model_get_item (G_LIST_MODEL (self->chat_users), 0);
-
-  return buddy;
-}
-
-ChattyMmBuddy *
 chatty_mm_chat_find_user (ChattyMmChat *self,
                           const char   *phone)
 {
