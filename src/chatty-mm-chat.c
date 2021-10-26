@@ -628,7 +628,8 @@ chatty_mm_chat_set_eds (ChattyMmChat *self,
   if (!g_set_object (&self->chatty_eds, chatty_eds))
     return;
 
-  chatty_mm_chat_update_contact (self);
+  if (!self->name || !*self->name)
+    chatty_mm_chat_update_contact (self);
 }
 
 ChattyMessage *
