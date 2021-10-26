@@ -755,6 +755,16 @@ chatty_mm_chat_add_user (ChattyMmChat  *self,
   g_return_if_fail (CHATTY_IS_MM_BUDDY (buddy));
 
   g_list_store_append (self->chat_users, buddy);
+
+  if (self->chatty_eds && !chatty_mm_buddy_get_contact (buddy)) {
+    ChattyContact *contact;
+    const char *phone;
+
+    phone = chatty_mm_buddy_get_number (buddy);
+    contact = chatty_eds_find_by_number (self->chatty_eds, phone);
+    if (contact)
+      chatty_mm_buddy_set_contact (buddy, contact);
+  }
 }
 
 void
