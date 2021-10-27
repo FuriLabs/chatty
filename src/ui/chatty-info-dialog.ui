@@ -10,7 +10,7 @@
       <object class="HdyTitleBar">
         <property name="visible">1</property>
         <child>
-          <object class="GtkHeaderBar">
+          <object class="GtkHeaderBar" id="header_bar">
             <property name="visible">1</property>
             <property name="show-close-button" bind-source="invite_button" bind-property="visible"
                       bind-flags="invert-boolean|sync-create"/>
@@ -44,6 +44,32 @@
                 <property name="label" translatable="yes">Cancel</property>
                 <signal name="clicked" handler="info_dialog_cancel_clicked_cb" swapped="yes"/>
               </object>
+            </child>
+
+            <!--MMS Cancel button -->
+            <child>
+              <object class="GtkButton" id="cancel_button">
+                <property name="visible">0</property>
+                <property name="sensitive">1</property>
+                <property name="label" translatable="yes">Cancel</property>
+                <signal name="clicked" handler="cancel_button_clicked_cb" swapped="yes"/>
+              </object>
+            </child>
+
+            <!--MMS Apply button -->
+            <child>
+              <object class="GtkButton" id="apply_button">
+                <property name="visible">0</property>
+                <property name="sensitive">1</property>
+                <property name="label" translatable="yes">Apply</property>
+                <signal name="clicked" handler="apply_button_clicked_cb" swapped="yes"/>
+                <style>
+                  <class name="suggested-action"/>
+                </style>
+              </object>
+              <packing>
+                <property name="pack-type">end</property>
+              </packing>
             </child>
 
             <!-- Invite button -->
@@ -90,6 +116,11 @@
                 </child>
                 <child>
                   <object class="ChattyMaChatInfo" id="ma_chat_info">
+                    <property name="visible">1</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="ChattyMmChatInfo" id="mm_chat_info">
                     <property name="visible">1</property>
                   </object>
                 </child>
