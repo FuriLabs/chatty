@@ -59,9 +59,11 @@ src/matrix/chatty-ma-chat.c
 src/matrix/chatty-ma-chat.h
 src/matrix/matrix-utils.c
 src/matrix/matrix-utils.h
+src/ui/chatty-chat-view.ui
 src/ui/chatty-contact-row.ui
 src/ui/chatty-dialog-join-muc.ui
 src/ui/chatty-dialog-new-chat.ui
+src/ui/chatty-file-item.ui
 src/ui/chatty-info-dialog.ui
 src/ui/chatty-ma-chat-info.ui
 src/ui/chatty-pp-chat-info.ui
