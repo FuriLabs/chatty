@@ -61,9 +61,6 @@ struct _ChattyApplication
   char *uri;
   guint open_uri_id;
 
-  gulong   delete_id;
-  gulong   open_chat_id;
-
   gboolean daemon;
   gboolean show_window;
 };
@@ -196,9 +193,6 @@ chatty_application_finalize (GObject *object)
 {
   ChattyApplication *self = (ChattyApplication *)object;
 
-  g_clear_signal_handler (&self->open_chat_id, self->manager);
-  g_clear_signal_handler (&self->delete_id, self->main_window);
-
   g_clear_handle_id (&self->open_uri_id, g_source_remove);
   g_clear_object (&self->manager);
 
@@ -295,6 +289,11 @@ chatty_application_startup (GApplication *application)
   if (chatty_settings_get_experimental_features (self->settings))
     g_warning ("Experimental features enabled");
 
+  g_signal_connect_object (self->manager, "open-chat",
+                           G_CALLBACK (application_open_chat),
+                           self, G_CONNECT_SWAPPED);
+  chatty_manager_load (self->manager);
+
   provider = gtk_css_provider_new ();
   gtk_css_provider_load_from_resource (provider,
                                        "/sm/puri/Chatty/css/style.css");
@@ -315,27 +314,14 @@ chatty_application_activate (GApplication *application)
 
   g_assert (GTK_IS_APPLICATION (app));
 
-  if (!self->main_window) {
-    self->main_window = chatty_window_new (app);
+  if (!self->main_window && self->show_window) {
+    g_set_weak_pointer (&self->main_window, chatty_window_new (app));
     g_info ("New main window created");
 
     g_signal_connect_object (self->main_window, "notify::has-toplevel-focus",
                              G_CALLBACK (main_window_focus_changed_cb),
                              self, G_CONNECT_SWAPPED);
-
-    chatty_manager_load (self->manager);
-    g_object_add_weak_pointer (G_OBJECT (self->main_window), (gpointer *)&self->main_window);
   }
-
-  if (self->daemon && !self->delete_id)
-    self->delete_id = g_signal_connect (self->main_window, "delete-event",
-                                        G_CALLBACK (gtk_widget_hide_on_delete),
-                                        NULL);
-
-  if (!self->open_chat_id)
-    self->open_chat_id = g_signal_connect_swapped (self->manager, "open-chat",
-                                                   G_CALLBACK (application_open_chat),
-                                                   self);
 
   if (self->show_window)
     gtk_window_present (GTK_WINDOW (self->main_window));
