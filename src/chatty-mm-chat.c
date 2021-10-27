@@ -622,6 +622,7 @@ void
 chatty_mm_chat_set_eds (ChattyMmChat *self,
                         ChattyEds    *chatty_eds)
 {
+  GListModel *contacts;
   g_return_if_fail (CHATTY_IS_MM_CHAT (self));
   g_return_if_fail (!chatty_eds || CHATTY_IS_EDS (chatty_eds));
 
@@ -630,6 +631,12 @@ chatty_mm_chat_set_eds (ChattyMmChat *self,
 
   if (!self->name || !*self->name)
     chatty_mm_chat_update_contact (self);
+
+  contacts = chatty_eds_get_model (self->chatty_eds);
+  g_signal_connect_object (contacts,
+                           "items-changed",
+                           G_CALLBACK (chatty_mm_chat_update_contact), self,
+                           G_CONNECT_SWAPPED);
 }
 
 ChattyMessage *
