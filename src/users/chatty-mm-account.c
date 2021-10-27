@@ -311,7 +311,8 @@ chatty_mm_account_append_message (ChattyMmAccount *self,
   chatty_history_add_message (self->history_db, chat, message);
   g_signal_emit_by_name (chat, "changed", 0);
   if (chatty_message_get_msg_direction (message) == CHATTY_DIRECTION_IN) {
-    chatty_chat_show_notification (CHATTY_CHAT (chat), NULL);
+    chatty_chat_show_notification (CHATTY_CHAT (chat),
+                                   chatty_item_get_name (CHATTY_ITEM (chat)));
   }
 
   if (chatty_utils_get_item_position (G_LIST_MODEL (self->chat_list), chat, &position))
