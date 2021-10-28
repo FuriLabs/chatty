@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://source.puri.sm/Librem5/chatty/issues\n"
-"POT-Creation-Date: 2021-10-18 15:25+0000\n"
-"PO-Revision-Date: 2021-10-21 12:40+0300\n"
+"POT-Creation-Date: 2021-10-27 15:25+0000\n"
+"PO-Revision-Date: 2021-10-28 10:50+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -75,11 +75,9 @@ msgstr "Увімкнути синхронізацію архіву MAM з сер
 
 #: data/sm.puri.Chatty.gschema.xml:37
 msgid "Enable purple"
-msgstr ""
-"Увімкнути purple"
+msgstr "Увімкнути purple"
 
 #: data/sm.puri.Chatty.gschema.xml:38 src/ui/chatty-settings-dialog.ui:181
-#| msgid "Disable all accounts"
 msgid "Enable purple accounts"
 msgstr "Вимкнути облікові записи purple"
 
@@ -381,38 +379,38 @@ msgstr "Відкрити файл…"
 msgid "Save"
 msgstr "Зберегти"
 
-#: src/chatty-purple.c:232
+#: src/chatty-purple.c:239
 msgid "Contact added"
 msgstr "Контакт додано"
 
-#: src/chatty-purple.c:234
+#: src/chatty-purple.c:241
 #, c-format
 msgid "User %s has added %s to the contacts"
 msgstr "Користувач %s додав %s до контактів"
 
-#: src/chatty-purple.c:254
+#: src/chatty-purple.c:261
 #, c-format
 msgid "Authorize %s?"
 msgstr "Уповноважити %s?"
 
-#: src/chatty-purple.c:256 src/matrix/matrix-utils.c:507
+#: src/chatty-purple.c:263 src/matrix/matrix-utils.c:507
 msgid "Reject"
 msgstr "Відмовити"
 
-#: src/chatty-purple.c:257 src/matrix/matrix-utils.c:508
+#: src/chatty-purple.c:264 src/matrix/matrix-utils.c:508
 msgid "Accept"
 msgstr "Прийняти"
 
-#: src/chatty-purple.c:260
+#: src/chatty-purple.c:267
 #, c-format
 msgid "Add %s to contact list"
 msgstr "Додати %s до списку контактів"
 
-#: src/chatty-purple.c:579
+#: src/chatty-purple.c:586
 msgid "Login failed"
 msgstr "Невдала спроба увійти"
 
-#: src/chatty-purple.c:584
+#: src/chatty-purple.c:591
 msgid "Please check ID and password"
 msgstr "Будь ласка, перевірте ідентифікатор і пароль"
 
@@ -486,7 +484,7 @@ msgstr "У результаті спілкування буде вилучено
 msgid "Delete"
 msgstr "Вилучити"
 
-#: src/chatty-window.c:611 src/chatty-window.c:634
+#: src/chatty-window.c:611 src/chatty-window.c:636
 #, c-format
 msgid "Error saving contact: %s"
 msgstr "Помилка під час спроби зберегти контакт: %s"
@@ -511,7 +509,7 @@ msgstr "Matrix"
 msgid "SMS/MMS"
 msgstr "SMS/MMS"
 
-#: src/chatty-window.c:1016 src/ui/chatty-settings-dialog.ui:510
+#: src/chatty-window.c:1016 src/ui/chatty-settings-dialog.ui:511
 msgid "XMPP"
 msgstr "XMPP"
 
@@ -613,12 +611,10 @@ msgstr "Вилучити запис %s?"
 
 #: src/dialogs/chatty-settings-dialog.c:511
 msgid "Restart chatty to disable purple"
-msgstr ""
-"Перезапустіть chatty, щоб вимкнути purple"
+msgstr "Перезапустіть chatty, щоб вимкнути purple"
 
 #: src/dialogs/chatty-settings-dialog.c:513
 #: src/ui/chatty-settings-dialog.ui:182
-#| msgid "Enable libpurple debug messages"
 msgid "Enable purple plugin"
 msgstr "Увімкнути додаток purple"
 
@@ -643,20 +639,20 @@ msgstr ""
 msgid "Select Protocol"
 msgstr "Виберіть протокол"
 
-#: src/matrix/chatty-ma-account.c:285
+#: src/matrix/chatty-ma-account.c:293
 msgid "Incorrect password"
 msgstr "Помилковий пароль"
 
-#: src/matrix/chatty-ma-account.c:288
+#: src/matrix/chatty-ma-account.c:296
 msgid "_OK"
 msgstr "_Гаразд"
 
-#: src/matrix/chatty-ma-account.c:289 src/ui/chatty-settings-dialog.ui:41
+#: src/matrix/chatty-ma-account.c:297 src/ui/chatty-settings-dialog.ui:41
 #: src/ui/chatty-settings-dialog.ui:102 src/ui/chatty-settings-dialog.ui:660
 msgid "_Cancel"
 msgstr "_Скасувати"
 
-#: src/matrix/chatty-ma-account.c:295
+#: src/matrix/chatty-ma-account.c:303
 #, c-format
 msgid "Please enter password for “%s”"
 msgstr "Будь ласка, введіть пароль до «%s»"
@@ -703,6 +699,11 @@ msgstr "Сертифікат «%s» було відкликано"
 msgid "Error validating certificate for ‘%s’"
 msgstr "Помилка під час спроби перевірити чинність сертифіката «%s»"
 
+#: src/ui/chatty-chat-view.ui:234
+#| msgid "This chat is encrypted"
+msgid "No chat selected"
+msgstr "Не вибрано спілкування"
+
 #: src/ui/chatty-dialog-join-muc.ui:12
 msgid "New Group Chat"
 msgstr "Нове групове спілкування"
@@ -748,6 +749,11 @@ msgstr "Назва (необов’язково):"
 #: src/ui/chatty-dialog-new-chat.ui:362
 msgid "Add to Contacts"
 msgstr "Додати до контактів"
+
+#: src/ui/chatty-file-item.ui:28
+msgid "Remove Attachment"
+msgstr ""
+"Вилучити долучення"
 
 #: src/ui/chatty-info-dialog.ui:17 src/ui/chatty-window.ui:99
 msgid "Chat Details"
