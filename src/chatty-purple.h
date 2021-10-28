@@ -31,6 +31,10 @@ ChattyChat     *chatty_purple_start_buddy_chat     (ChattyPurple   *self,
 GListModel     *chatty_purple_get_accounts         (ChattyPurple   *self);
 GListModel     *chatty_purple_get_chat_list        (ChattyPurple   *self);
 GListModel     *chatty_purple_get_user_list        (ChattyPurple   *self);
+ChattyChat     *chatty_purple_find_chat_with_name  (ChattyPurple   *self,
+                                                    ChattyProtocol  protocol,
+                                                    const char     *account_id,
+                                                    const char     *chat_id);
 ChattyProtocol  chatty_purple_get_protocols        (ChattyPurple   *self);
 void            chatty_purple_set_history_db       (ChattyPurple   *self,
                                                     ChattyHistory  *db);
