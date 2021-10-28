@@ -1340,6 +1340,7 @@ chatty_pp_chat_append_message (ChattyPpChat  *self,
 
   g_list_store_append (self->message_store, message);
   g_signal_emit_by_name (self, "changed", 0);
+  g_signal_emit_by_name (self, "message-added");
 }
 
 void
@@ -1355,6 +1356,7 @@ chatty_pp_chat_prepend_messages (ChattyPpChat *self,
 
   g_list_store_splice (self->message_store, 0, 0, messages->pdata, messages->len);
   g_signal_emit_by_name (self, "changed", 0);
+  g_signal_emit_by_name (self, "message-added");
 }
 
 /**
