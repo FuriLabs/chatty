@@ -277,6 +277,48 @@ manager_mm_account_changed_cb (ChattyManager *self)
 }
 
 static void
+manager_chat_message_added_cb (ChattyManager *self,
+                               ChattyChat    *chat)
+{
+  GListModel *model;
+  guint position;
+
+  g_assert (CHATTY_IS_MANAGER (self));
+
+  model = gtk_sort_list_model_get_model (self->sorted_chat_list);
+
+  if (chatty_utils_get_item_position (model, chat, &position))
+    g_list_model_items_changed (model, position, 1, 1);
+}
+
+static void
+manager_chat_list_items_changed (ChattyManager *self,
+                                 guint          position,
+                                 guint          removed,
+                                 guint          added,
+                                 GListModel    *model)
+{
+  if (!added)
+    return;
+
+  g_assert (CHATTY_IS_MANAGER (self));
+
+  for (guint i = position; i < position + added; i++) {
+    g_autoptr(ChattyChat) chat = NULL;
+    gulong signal;
+
+    chat = g_list_model_get_item (model, i);
+    if (g_object_get_data (G_OBJECT (chat), "message-added-id"))
+      continue;
+
+    signal = g_signal_connect_object (chat, "message-added",
+                                      G_CALLBACK (manager_chat_message_added_cb),
+                                      self, G_CONNECT_SWAPPED);
+    g_object_set_data (G_OBJECT (chat), "message-added-id", GINT_TO_POINTER (signal));
+  }
+}
+
+static void
 chatty_manager_init (ChattyManager *self)
 {
   g_autoptr(GtkFlattenListModel) flatten_list = NULL;
@@ -309,6 +351,9 @@ chatty_manager_init (ChattyManager *self)
                                              G_LIST_MODEL (self->list_of_chat_list));
   self->sorted_chat_list = gtk_sort_list_model_new (G_LIST_MODEL (flatten_list),
                                                     self->chat_sorter);
+  g_signal_connect_object (flatten_list, "items-changed",
+                           G_CALLBACK (manager_chat_list_items_changed),
+                           self, G_CONNECT_SWAPPED);
 
   g_signal_connect_object (self->chatty_eds, "notify::is-ready",
                            G_CALLBACK (manager_eds_is_ready), self,
