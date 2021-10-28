@@ -341,19 +341,16 @@ static void
 manager_ma_account_changed_cb (ChattyMaAccount *account)
 {
   ChattyManager *self;
-  GListModel *chat_list;
-  ChattyStatus status;
+  guint position;
 
   g_assert (CHATTY_IS_MA_ACCOUNT (account));
 
   self = chatty_manager_get_default ();
-  status = chatty_account_get_status (CHATTY_ACCOUNT (account));
-  chat_list = chatty_ma_account_get_chat_list (account);
 
-  if (status == CHATTY_CONNECTED)
-    g_list_store_append (self->list_of_chat_list, chat_list);
-  else
-    chatty_utils_remove_list_item (self->list_of_chat_list, chat_list);
+  if (chatty_utils_get_item_position (G_LIST_MODEL (self->list_of_chat_list),
+                                      chatty_ma_account_get_chat_list (account),
+                                      &position))
+    g_list_model_items_changed (G_LIST_MODEL (self->list_of_chat_list), position, 1, 1);
 }
 
 static void
@@ -385,6 +382,8 @@ manager_secret_load_cb (GObject      *object,
 
     chatty_ma_account_set_history_db (accounts->pdata[i], self->history);
     chatty_ma_account_set_db (accounts->pdata[i], self->matrix_db);
+    g_list_store_append (self->list_of_chat_list,
+                         chatty_ma_account_get_chat_list (accounts->pdata[i]));
   }
 
   g_list_store_splice (self->account_list, 0, 0, accounts->pdata, accounts->len);
@@ -406,20 +405,6 @@ matrix_db_open_cb (GObject      *object,
     g_warning ("Failed to open Matrix DB: %s", error->message);
 
   g_info ("Opening matrix db %s", CHATTY_LOG_SUCESS (!error));
-}
-
-static void
-manager_mm_account_load_cb (GObject      *object,
-                            GAsyncResult *result,
-                            gpointer      user_data)
-{
-  g_autoptr(ChattyManager) self = user_data;
-  GListModel *chat_list;
-
-  g_assert (CHATTY_IS_MANAGER (self));
-
-  chat_list = chatty_mm_account_get_chat_list (self->mm_account);
-  g_list_store_append (self->list_of_chat_list, chat_list);
 }
 
 void
@@ -448,9 +433,10 @@ chatty_manager_load (ChattyManager *self)
 
   chatty_mm_account_set_history_db (self->mm_account,
                                     chatty_manager_get_history (self));
-  chatty_mm_account_load_async (self->mm_account,
-                                manager_mm_account_load_cb,
-                                g_object_ref (self));
+  g_list_store_append (self->list_of_chat_list,
+                       chatty_mm_account_get_chat_list (self->mm_account));
+
+  chatty_mm_account_load_async (self->mm_account, NULL, NULL);
 
   if (chatty_settings_get_experimental_features (chatty_settings_get_default ())) {
     char *db_path;
