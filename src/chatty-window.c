@@ -970,12 +970,26 @@ chatty_window_class_init (ChattyWindowClass *klass)
   g_type_ensure (CHATTY_TYPE_SELECTABLE_ROW);
 }
 
+static void
+window_add_selectable_row (ChattyWindow   *self,
+                           const char     *name,
+                           ChattyProtocol  protocol,
+                           gboolean        selected)
+{
+  GtkWidget *row;
+
+  row = chatty_selectable_row_new (name);
+  g_object_set_data (G_OBJECT (row), "protocol", GINT_TO_POINTER (protocol));
+  chatty_selectable_row_set_selected (CHATTY_SELECTABLE_ROW (row), selected);
+  gtk_container_add (GTK_CONTAINER (self->protocol_list), row);
+
+  if (protocol == CHATTY_PROTOCOL_ANY)
+    self->protocol_any_row = self->selected_protocol_row = row;
+}
 
 static void
 chatty_window_init (ChattyWindow *self)
 {
-  GtkWidget *row;
-
   gtk_widget_init_template (GTK_WIDGET (self));
 
   self->protocol_filter = CHATTY_PROTOCOL_ANY;
@@ -997,34 +1011,13 @@ chatty_window_init (ChattyWindow *self)
   self->protocol_tag = gd_tagged_entry_tag_new ("");
   gd_tagged_entry_tag_set_style (self->protocol_tag, "protocol-tag");
 
-  row = chatty_selectable_row_new (_("Any Protocol"));
-  g_object_set_data (G_OBJECT (row), "protocol",
-                     GINT_TO_POINTER (CHATTY_PROTOCOL_ANY));
-  chatty_selectable_row_set_selected (CHATTY_SELECTABLE_ROW (row), TRUE);
-  gtk_container_add (GTK_CONTAINER (self->protocol_list), row);
-  self->protocol_any_row = self->selected_protocol_row = row;
+  window_add_selectable_row (self, _("Any Protocol"), CHATTY_PROTOCOL_ANY, TRUE);
+  window_add_selectable_row (self, _("Matrix"), CHATTY_PROTOCOL_MATRIX, FALSE);
+  window_add_selectable_row (self, _("SMS/MMS"), CHATTY_PROTOCOL_MMS_SMS, FALSE);
+  window_add_selectable_row (self, _("XMPP"), CHATTY_PROTOCOL_XMPP, FALSE);
 
-  row = chatty_selectable_row_new (_("Matrix"));
-  g_object_set_data (G_OBJECT (row), "protocol",
-                     GINT_TO_POINTER (CHATTY_PROTOCOL_MATRIX));
-  gtk_container_add (GTK_CONTAINER (self->protocol_list), row);
-
-  row = chatty_selectable_row_new (_("SMS/MMS"));
-  g_object_set_data (G_OBJECT (row), "protocol",
-                     GINT_TO_POINTER (CHATTY_PROTOCOL_MMS_SMS));
-  gtk_container_add (GTK_CONTAINER (self->protocol_list), row);
-
-  row = chatty_selectable_row_new (_("XMPP"));
-  g_object_set_data (G_OBJECT (row), "protocol",
-                     GINT_TO_POINTER (CHATTY_PROTOCOL_XMPP));
-  gtk_container_add (GTK_CONTAINER (self->protocol_list), row);
-
-  if (chatty_purple_has_telegram_loaded (chatty_purple_get_default ())) {
-    row = chatty_selectable_row_new (_("Telegram"));
-    g_object_set_data (G_OBJECT (row), "protocol",
-                       GINT_TO_POINTER (CHATTY_PROTOCOL_TELEGRAM));
-    gtk_container_add (GTK_CONTAINER (self->protocol_list), row);
-  }
+  if (chatty_purple_has_telegram_loaded (chatty_purple_get_default ()))
+    window_add_selectable_row (self, _("Telegram"), CHATTY_PROTOCOL_TELEGRAM, FALSE);
 
   gtk_widget_show_all (self->protocol_list);
 }
