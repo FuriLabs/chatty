@@ -232,8 +232,7 @@ window_chat_name_matches (ChattyItem   *item,
 
   protocol = chatty_item_get_protocols (item);
 
-  if (self->protocol_filter != CHATTY_PROTOCOL_ANY &&
-      protocol != self->protocol_filter)
+  if (!(self->protocol_filter & protocol))
     return FALSE;
 
   if ((!self->chat_needle || !*self->chat_needle) &&
