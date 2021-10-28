@@ -652,27 +652,6 @@ chatty_pp_chat_set_unread_count (ChattyChat *chat,
   g_signal_emit_by_name (self, "changed", 0);
 }
 
-static time_t
-chatty_pp_chat_get_last_msg_time (ChattyChat *chat)
-{
-  ChattyPpChat *self = (ChattyPpChat *)chat;
-  g_autoptr(ChattyMessage) message = NULL;
-  GListModel *model;
-  guint n_items;
-
-  g_assert (CHATTY_IS_PP_CHAT (self));
-
-  model = G_LIST_MODEL (self->message_store);
-  n_items = g_list_model_get_n_items (model);
-
-  if (n_items == 0)
-    return 0;
-
-  message = g_list_model_get_item (model, n_items - 1);
-
-  return chatty_message_get_time (message);
-}
-
 static void
 chatty_pp_chat_send_message_async (ChattyChat          *chat,
                                    ChattyMessage       *message,
@@ -1031,7 +1010,6 @@ chatty_pp_chat_class_init (ChattyPpChatClass *klass)
   chat_class->get_last_message = chatty_pp_chat_get_last_message;
   chat_class->get_unread_count = chatty_pp_chat_get_unread_count;
   chat_class->set_unread_count = chatty_pp_chat_set_unread_count;
-  chat_class->get_last_msg_time = chatty_pp_chat_get_last_msg_time;
   chat_class->send_message_async = chatty_pp_chat_send_message_async;
   chat_class->get_encryption = chatty_pp_chat_get_encryption;
   chat_class->set_encryption = chatty_pp_chat_set_encryption;

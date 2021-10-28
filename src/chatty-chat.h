@@ -47,7 +47,6 @@ struct _ChattyChatClass
   guint             (*get_unread_count)   (ChattyChat *self);
   void              (*set_unread_count)   (ChattyChat *self,
                                            guint       unread_count);
-  time_t            (*get_last_msg_time)  (ChattyChat *self);
   void              (*send_message_async) (ChattyChat    *chat,
                                            ChattyMessage *message,
                                            GAsyncReadyCallback callback,

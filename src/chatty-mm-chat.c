@@ -53,7 +53,6 @@ struct _ChattyMmChat
   char            *chat_id;
   char            *name;
   guint            unread_count;
-  guint            last_msg_time;
   ChattyProtocol   protocol;
   gboolean         is_im;
   gboolean         history_is_loading;
@@ -291,27 +290,6 @@ chatty_mm_chat_set_unread_count (ChattyChat *chat,
 
   self->unread_count = unread_count;
   g_signal_emit_by_name (self, "changed", 0);
-}
-
-static time_t
-chatty_mm_chat_get_last_msg_time (ChattyChat *chat)
-{
-  ChattyMmChat *self = (ChattyMmChat *)chat;
-  g_autoptr(ChattyMessage) message = NULL;
-  GListModel *model;
-  guint n_items;
-
-  g_assert (CHATTY_IS_MM_CHAT (self));
-
-  model = G_LIST_MODEL (self->message_store);
-  n_items = g_list_model_get_n_items (model);
-
-  if (n_items == 0)
-    return 0;
-
-  message = g_list_model_get_item (model, n_items - 1);
-
-  return chatty_message_get_time (message);
 }
 
 static void mm_chat_send_message_from_queue (ChattyMmChat *self);
@@ -592,7 +570,6 @@ chatty_mm_chat_class_init (ChattyMmChatClass *klass)
   chat_class->get_last_message = chatty_mm_chat_get_last_message;
   chat_class->get_unread_count = chatty_mm_chat_get_unread_count;
   chat_class->set_unread_count = chatty_mm_chat_set_unread_count;
-  chat_class->get_last_msg_time = chatty_mm_chat_get_last_msg_time;
   chat_class->send_message_async = chatty_mm_chat_send_message_async;
 }
 

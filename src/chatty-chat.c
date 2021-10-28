@@ -172,12 +172,6 @@ chatty_chat_real_set_unread_count (ChattyChat *self,
   /* Do nothing */
 }
 
-static time_t
-chatty_chat_real_get_last_msg_time (ChattyChat *self)
-{
-  return 0;
-}
-
 static void
 chatty_chat_real_send_message_async (ChattyChat          *self,
                                      ChattyMessage       *message,
@@ -465,7 +459,6 @@ chatty_chat_class_init (ChattyChatClass *klass)
   klass->get_last_message = chatty_chat_real_get_last_message;
   klass->get_unread_count = chatty_chat_real_get_unread_count;
   klass->set_unread_count = chatty_chat_real_set_unread_count;
-  klass->get_last_msg_time = chatty_chat_real_get_last_msg_time;
   klass->send_message_async = chatty_chat_real_send_message_async;
   klass->send_message_finish = chatty_chat_real_send_message_finish;
   klass->get_files_async = chatty_chat_real_get_files_async;
