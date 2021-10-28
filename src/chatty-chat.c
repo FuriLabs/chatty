@@ -697,9 +697,21 @@ chatty_chat_set_unread_count (ChattyChat *self,
 time_t
 chatty_chat_get_last_msg_time (ChattyChat *self)
 {
+  g_autoptr(ChattyMessage) message = NULL;
+  GListModel *model;
+  guint n_items;
+
   g_return_val_if_fail (CHATTY_IS_CHAT (self), 0);
 
-  return CHATTY_CHAT_GET_CLASS (self)->get_last_msg_time (self);
+  model = chatty_chat_get_messages (self);
+  n_items = g_list_model_get_n_items (model);
+
+  if (n_items == 0)
+    return 0;
+
+  message = g_list_model_get_item (model, n_items - 1);
+
+  return chatty_message_get_time (message);
 }
 
 void
