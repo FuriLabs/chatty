@@ -179,8 +179,9 @@ chatty_notification_new (ChattyChat *chat)
                            self, G_CONNECT_SWAPPED);
 
   g_notification_add_button_with_target (self->notification, _("Open Message"), "app.open-chat",
-                                         "(ss)", self->chat_name,
-                                         chatty_item_get_username (CHATTY_ITEM (chat)));
+                                         "(ssi)", self->chat_name,
+                                         chatty_item_get_username (CHATTY_ITEM (chat)),
+                                         chatty_item_get_protocols (CHATTY_ITEM (chat)));
 
   if (chatty_item_get_avatar (CHATTY_ITEM (chat))) {
     g_autoptr(GdkPixbuf) image = NULL;

@@ -140,13 +140,14 @@ chatty_application_open_chat (GSimpleAction *action,
   ChattyApplication *self = user_data;
   const char *room_id, *account_id;
   ChattyChat *chat;
+  ChattyProtocol protocol;
 
   g_assert (CHATTY_IS_APPLICATION (self));
 
-  g_variant_get (parameter, "(ss)", &room_id, &account_id);
+  g_variant_get (parameter, "(ssi)", &room_id, &account_id, &protocol);
   g_return_if_fail (room_id && account_id);
 
-  chat = chatty_manager_find_chat_with_name (self->manager, account_id, room_id);
+  chat = chatty_manager_find_chat_with_name (self->manager, protocol, account_id, room_id);
   g_return_if_fail (chat);
 
   if (chatty_log_get_verbosity () > 1) {
@@ -262,7 +263,7 @@ chatty_application_startup (GApplication *application)
   g_autofree char *db_path = NULL;
   g_autofree char *dir = NULL;
   static const GActionEntry app_entries[] = {
-    { "open-chat", chatty_application_open_chat, "(ss)" },
+    { "open-chat", chatty_application_open_chat, "(ssi)" },
     { "show-window", chatty_application_show_window },
   };
 

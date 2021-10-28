@@ -54,6 +54,7 @@ gboolean        chatty_manager_save_account_finish    (ChattyManager      *self,
                                                        GAsyncResult       *result,
                                                        GError            **error);
 ChattyChat     *chatty_manager_find_chat_with_name    (ChattyManager      *self,
+                                                       ChattyProtocol      protocol,
                                                        const char         *account_id,
                                                        const char         *chat_id);
 ChattyAccount  *chatty_manager_get_mm_account         (ChattyManager      *self);

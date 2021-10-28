@@ -702,31 +702,25 @@ chatty_manager_get_mm_account (ChattyManager *self)
 }
 
 ChattyChat *
-chatty_manager_find_chat_with_name (ChattyManager *self,
-                                    const char    *account_id,
-                                    const char    *chat_id)
+chatty_manager_find_chat_with_name (ChattyManager  *self,
+                                    ChattyProtocol  protocol,
+                                    const char     *account_id,
+                                    const char     *chat_id)
 {
-  ChattyAccount *mm_account;
   GListModel *accounts, *chat_list;
-  const char *id;
   guint n_accounts, n_items;
 
   g_return_val_if_fail (CHATTY_IS_MANAGER (self), NULL);
   g_return_val_if_fail (chat_id && *chat_id, NULL);
 
-  mm_account = chatty_manager_get_mm_account (self);
-  chat_list = chatty_mm_account_get_chat_list (CHATTY_MM_ACCOUNT (mm_account));
-  n_items = g_list_model_get_n_items (chat_list);
+  if (protocol & (CHATTY_PROTOCOL_MMS | CHATTY_PROTOCOL_MMS_SMS))
+    return chatty_mm_account_find_chat (self->mm_account, chat_id);
 
-  for (guint i = 0; i < n_items; i++) {
-    g_autoptr(ChattyChat) chat = NULL;
-
-    chat = g_list_model_get_item (chat_list, i);
-    id = chatty_chat_get_chat_name (chat);
-
-    if (g_strcmp0 (id, chat_id) == 0)
-      return chat;
-  }
+  if (protocol & (CHATTY_PROTOCOL_XMPP | CHATTY_PROTOCOL_TELEGRAM) ||
+      (!chatty_settings_get_experimental_features (chatty_settings_get_default ()) &&
+       protocol & CHATTY_PROTOCOL_MATRIX))
+    return chatty_purple_find_chat_with_name (chatty_purple_get_default (),
+                                              protocol, account_id, chat_id);
 
   accounts = G_LIST_MODEL (self->account_list);
   n_accounts = g_list_model_get_n_items (accounts);
@@ -735,6 +729,9 @@ chatty_manager_find_chat_with_name (ChattyManager *self,
     g_autoptr(ChattyAccount) account = NULL;
 
     account = g_list_model_get_item (accounts, i);
+
+    if (!(protocol & chatty_item_get_protocols (CHATTY_ITEM (account))))
+      continue;
 
     if (!CHATTY_IS_MA_ACCOUNT (account) ||
         g_strcmp0 (chatty_item_get_username (CHATTY_ITEM (account)), account_id) != 0)
