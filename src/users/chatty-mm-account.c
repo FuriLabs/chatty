@@ -1213,7 +1213,7 @@ chatty_mm_account_start_chat (ChattyMmAccount *self,
     if (recipients == 1)
       chat = (ChattyChat *)chatty_mm_chat_new (recipientlist, NULL, CHATTY_PROTOCOL_MMS_SMS, TRUE);
     else /* Only MMS has multiple recipients */
-      chat = (ChattyChat *)chatty_mm_chat_new (recipientlist, recipientlist, CHATTY_PROTOCOL_MMS, FALSE);
+      chat = (ChattyChat *)chatty_mm_chat_new (recipientlist, NULL, CHATTY_PROTOCOL_MMS, FALSE);
 
     chatty_chat_set_data (chat, self, self->history_db);
 
