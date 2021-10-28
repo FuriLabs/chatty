@@ -56,6 +56,7 @@ enum {
 
 enum {
   CHANGED,
+  MESSAGE_ADDED,
   N_SIGNALS
 };
 
@@ -504,6 +505,19 @@ chatty_chat_class_init (ChattyChatClass *klass)
    */
   signals [CHANGED] =
     g_signal_new ("changed",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST,
+                  0, NULL, NULL, NULL,
+                  G_TYPE_NONE, 0);
+
+  /**
+   * ChattyChat::message-added:
+   * @self: a #ChattyChat
+   *
+   * Emitted when new message is added
+   */
+  signals [MESSAGE_ADDED] =
+    g_signal_new ("message-added",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST,
                   0, NULL, NULL, NULL,
