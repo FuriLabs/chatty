@@ -58,6 +58,7 @@ struct _ChattyMmChat
   gboolean         is_im;
   gboolean         history_is_loading;
   gboolean         is_sending_message;
+  gboolean         has_custom_name;
 };
 
 G_DEFINE_TYPE (ChattyMmChat, chatty_mm_chat, CHATTY_TYPE_CHAT)
@@ -116,10 +117,11 @@ chatty_mm_chat_update_contact (ChattyMmChat *self)
     if (i+1 < n_items)
       title = g_string_append (title, ", ");
   }
-  if (n_items != 1) {
+  if (n_items != 1 && (!self->name || !*self->name || !self->has_custom_name)) {
     g_free (self->name);
     self->name = g_strdup (title->str);
     g_object_notify (G_OBJECT (self), "name");
+    self->has_custom_name = FALSE;
   }
   g_string_free (title, TRUE);
 }
@@ -495,6 +497,7 @@ chatty_mm_chat_set_name (ChattyItem *item,
 
   g_free (self->name);
   self->name = g_strdup (name);
+  self->has_custom_name = TRUE;
 
   if (!name || !*name)
     chatty_mm_chat_update_contact (self);
@@ -599,6 +602,12 @@ chatty_mm_chat_init (ChattyMmChat *self)
   self->chat_users = g_list_store_new (CHATTY_TYPE_MM_BUDDY);
   self->message_store = g_list_store_new (CHATTY_TYPE_MESSAGE);
   self->message_queue = g_queue_new ();
+  /* We do not know if there is a custom name or not.
+   * If there is not a custom name, self->name will be NULL or "",
+   * and chatty_mm_chat_update_contact() will update the
+   * name and set self->has_custom_name to FALSE
+   */
+  self->has_custom_name = TRUE;
 }
 
 ChattyMmChat *
@@ -629,8 +638,7 @@ chatty_mm_chat_set_eds (ChattyMmChat *self,
   if (!g_set_object (&self->chatty_eds, chatty_eds))
     return;
 
-  if (!self->name || !*self->name)
-    chatty_mm_chat_update_contact (self);
+  chatty_mm_chat_update_contact (self);
 
   contacts = chatty_eds_get_model (self->chatty_eds);
   g_signal_connect_object (contacts,
