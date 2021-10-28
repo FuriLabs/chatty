@@ -18,23 +18,17 @@
 #define LIBFEEDBACK_USE_UNSTABLE_API
 #include <libfeedback.h>
 #include <glib/gi18n.h>
+#include "contrib/gtk.h"
 
 #include "chatty-settings.h"
-#include "contrib/gtk.h"
 #include "chatty-contact-provider.h"
 #include "chatty-utils.h"
-#include "chatty-application.h"
-#include "chatty-window.h"
-#include "chatty-chat-view.h"
 #include "users/chatty-mm-account.h"
-#include "users/chatty-pp-account.h"
 #include "matrix/chatty-ma-account.h"
 #include "matrix/chatty-ma-chat.h"
 #include "matrix/matrix-db.h"
 #include "chatty-secret-store.h"
 #include "chatty-chat.h"
-#include "chatty-mm-chat.h"
-#include "chatty-pp-chat.h"
 #include "chatty-history.h"
 #include "chatty-purple.h"
 #include "chatty-manager.h"

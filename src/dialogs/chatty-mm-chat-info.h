@@ -10,7 +10,7 @@
 
 #include <handy.h>
 
-#include "users/chatty-item.h"
+#include "chatty-chat.h"
 
 G_BEGIN_DECLS
 

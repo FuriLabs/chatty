@@ -31,8 +31,6 @@
 #include <handy.h>
 
 #include "chatty-window.h"
-#include "chatty-utils.h"
-#include "users/chatty-pp-account.h"
 #include "chatty-manager.h"
 #include "chatty-purple.h"
 #include "chatty-application.h"

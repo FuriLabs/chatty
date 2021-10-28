@@ -16,7 +16,6 @@
 #include "users/chatty-contact.h"
 #include "chatty-chat.h"
 #include "chatty-avatar.h"
-#include "chatty-utils.h"
 #include "chatty-list-row.h"
 
 #define SECONDS_PER_MINUTE 60.0

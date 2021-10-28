@@ -18,9 +18,9 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 #include <purple.h>
-
 #include "contrib/gtk.h"
 #include "xeps/xeps.h"
+
 #include "chatty-settings.h"
 #include "users/chatty-pp-buddy.h"
 #include "users/chatty-pp-account.h"

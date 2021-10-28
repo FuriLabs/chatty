@@ -31,8 +31,6 @@
 #include "chatty-manager.h"
 #include "chatty-utils.h"
 #include "chatty-selectable-row.h"
-#include "matrix/chatty-ma-account.h"
-#include "matrix/chatty-ma-chat.h"
 #include "dialogs/chatty-info-dialog.h"
 #include "dialogs/chatty-settings-dialog.h"
 #include "dialogs/chatty-new-chat-dialog.h"

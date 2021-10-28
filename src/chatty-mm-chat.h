@@ -15,7 +15,6 @@
 #include <purple.h>
 
 #include "chatty-chat.h"
-#include "users/chatty-account.h"
 #include "users/chatty-mm-buddy.h"
 #include "chatty-message.h"
 #include "chatty-contact-provider.h"

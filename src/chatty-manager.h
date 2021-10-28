@@ -13,7 +13,6 @@
 
 #include <glib-object.h>
 
-#include "users/chatty-pp-account.h"
 #include "chatty-contact-provider.h"
 #include "chatty-history.h"
 #include "chatty-chat.h"

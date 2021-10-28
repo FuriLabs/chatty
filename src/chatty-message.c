@@ -15,9 +15,6 @@
 # include "config.h"
 #endif
 
-#include "matrix/chatty-ma-buddy.h"
-#include "users/chatty-contact.h"
-#include "users/chatty-pp-buddy.h"
 #include "chatty-message.h"
 #include "chatty-utils.h"
 

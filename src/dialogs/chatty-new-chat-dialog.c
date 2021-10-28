@@ -13,18 +13,17 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 #include <glib-object.h>
-#include "chatty-window.h"
+#include "contrib/gtk.h"
+
 #include "chatty-manager.h"
 #include "chatty-chat.h"
 #include "chatty-pp-chat.h"
 #include "users/chatty-contact.h"
-#include "contrib/gtk.h"
 #include "users/chatty-mm-account.h"
 #include "users/chatty-pp-account.h"
 #include "matrix/chatty-ma-account.h"
 #include "chatty-list-row.h"
 #include "chatty-utils.h"
-#include "chatty-phone-utils.h"
 #include "chatty-new-chat-dialog.h"
 
 

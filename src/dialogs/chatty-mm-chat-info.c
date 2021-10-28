@@ -13,14 +13,13 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 #include <glib-object.h>
+#include "contrib/gtk.h"
+
 #include "chatty-avatar.h"
-#include "chatty-window.h"
 #include "chatty-chat.h"
 #include "users/chatty-contact.h"
-#include "contrib/gtk.h"
-#include "users/chatty-mm-account.h"
+#include "users/chatty-mm-buddy.h"
 #include "chatty-list-row.h"
-#include "chatty-utils.h"
 #include "dialogs/chatty-mm-chat-info.h"
 
 struct _ChattyMmChatInfo

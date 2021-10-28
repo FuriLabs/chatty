@@ -16,8 +16,6 @@
 #endif
 
 #include "chatty-settings.h"
-#include "chatty-account.h"
-#include "chatty-window.h"
 #include "chatty-history.h"
 #include "chatty-mm-chat.h"
 #include "chatty-utils.h"

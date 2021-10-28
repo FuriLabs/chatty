@@ -32,7 +32,6 @@
 
 #include "chatty-avatar.h"
 #include "chatty-fp-row.h"
-#include "matrix/chatty-ma-account.h"
 #include "chatty-pp-account-details.h"
 #include "chatty-log.h"
 

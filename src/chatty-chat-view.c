@@ -12,17 +12,10 @@
 #include <glib/gi18n.h>
 #include <gspell/gspell.h>
 
-#include "chatty-avatar.h"
-#include "chatty-chat.h"
 #include "chatty-mm-chat.h"
 #include "chatty-pp-chat.h"
-#include "chatty-history.h"
-#include "chatty-utils.h"
-#include "chatty-enums.h"
-#include "chatty-window.h"
+#include "chatty-settings.h"
 #include "matrix/chatty-ma-chat.h"
-#include "users/chatty-contact.h"
-#include "users/chatty-pp-buddy.h"
 #include "chatty-message-row.h"
 #include "chatty-attachments-view.h"
 #include "chatty-chat-view.h"

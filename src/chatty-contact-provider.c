@@ -17,7 +17,6 @@
 
 #include <libebook/libebook.h>
 
-#include "users/chatty-contact.h"
 #include "users/chatty-contact-private.h"
 #include "chatty-contact-provider.h"
 #include "chatty-log.h"

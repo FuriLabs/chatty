@@ -15,7 +15,6 @@
 #include <math.h>
 #include <glib-object.h>
 #include "chatty-utils.h"
-#include "chatty-message.h"
 
 G_BEGIN_DECLS
 

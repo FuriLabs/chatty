@@ -15,13 +15,8 @@
 
 #include <glib/gi18n.h>
 
-#include "chatty-avatar.h"
-#include "chatty-list-row.h"
-#include "chatty-fp-row.h"
-#include "chatty-pp-chat.h"
 #include "chatty-mm-chat.h"
 #include "matrix/chatty-ma-chat.h"
-#include "chatty-manager.h"
 #include "chatty-utils.h"
 #include "chatty-ma-chat-info.h"
 #include "chatty-pp-chat-info.h"

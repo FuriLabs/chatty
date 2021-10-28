@@ -11,18 +11,16 @@
 
 #define G_LOG_DOMAIN "chatty-mm-chat"
 
-#include <purple.h>
-
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
 
+#include <purple.h>
 #include "contrib/gtk.h"
+
 #include "chatty-settings.h"
 #include "chatty-utils.h"
-#include "users/chatty-mm-buddy.h"
 #include "users/chatty-mm-account.h"
-/* #include "chatty-notification.h" */
 #include "chatty-history.h"
 #include "chatty-mm-chat.h"
 #include "chatty-log.h"
