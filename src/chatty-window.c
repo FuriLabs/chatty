@@ -871,8 +871,13 @@ chatty_window_constructed (GObject *object)
                            "items-changed",
                            G_CALLBACK (window_chat_changed_cb), self,
                            G_CONNECT_SWAPPED);
+  g_signal_connect_object (self->manager, "notify::active-protocols",
+                           G_CALLBACK (window_active_protocols_changed_cb), self,
+                           G_CONNECT_SWAPPED);
+
   window_filter_changed_cb (self);
   window_chat_changed_cb (self);
+  window_active_protocols_changed_cb (self);
 
   G_OBJECT_CLASS (chatty_window_parent_class)->constructed (object);
 }
@@ -995,9 +1000,6 @@ chatty_window_init (ChattyWindow *self)
   hdy_search_bar_connect_entry (HDY_SEARCH_BAR (self->chats_search_bar),
                                 GTK_ENTRY (self->chats_search_entry));
   self->manager = g_object_ref (chatty_manager_get_default ());
-  g_signal_connect_object (self->manager, "notify::active-protocols",
-                           G_CALLBACK (window_active_protocols_changed_cb), self,
-                           G_CONNECT_SWAPPED);
   g_signal_connect_object (self->manager, "chat-deleted",
                            G_CALLBACK (window_chat_deleted_cb), self,
                            G_CONNECT_SWAPPED);
