@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://source.puri.sm/Librem5/chatty/issues\n"
-"POT-Creation-Date: 2021-10-27 15:25+0000\n"
-"PO-Revision-Date: 2021-10-28 10:50+0300\n"
+"POT-Creation-Date: 2021-10-29 03:24+0000\n"
+"PO-Revision-Date: 2021-10-29 18:52+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 
 #: data/sm.puri.Chatty.desktop.in:3 data/sm.puri.Chatty.metainfo.xml.in:6
-#: src/chatty-application.c:284 src/ui/chatty-window.ui:183
+#: src/chatty-application.c:279 src/ui/chatty-window.ui:183
 msgid "Chats"
 msgstr "Спілкування"
 
@@ -191,23 +191,23 @@ msgstr ""
 msgid "Chats message window"
 msgstr "Вікно повідомлень спілкування"
 
-#: src/chatty-application.c:79
+#: src/chatty-application.c:76
 msgid "Show release version"
 msgstr "Показати версію випуску"
 
-#: src/chatty-application.c:80
+#: src/chatty-application.c:77
 msgid "Start in daemon mode"
 msgstr "Запускати у режимі служби"
 
-#: src/chatty-application.c:81
+#: src/chatty-application.c:78
 msgid "Disable all accounts"
 msgstr "Вимкнути усі облікові записи"
 
-#: src/chatty-application.c:82
+#: src/chatty-application.c:79
 msgid "Enable libpurple debug messages"
 msgstr "Увімкнути діагностичні повідомлення libpurple"
 
-#: src/chatty-application.c:84
+#: src/chatty-application.c:81
 msgid "Enable verbose libpurple debug messages"
 msgstr "Увімкнути докладні діагностичні повідомлення libpurple"
 
@@ -242,6 +242,7 @@ msgstr "Вибір файла…"
 #: src/dialogs/chatty-ma-account-details.c:120
 #: src/dialogs/chatty-pp-account-details.c:92
 #: src/ui/chatty-dialog-join-muc.ui:16 src/ui/chatty-info-dialog.ui:44
+#: src/ui/chatty-info-dialog.ui:54
 msgid "Cancel"
 msgstr "Скасувати"
 
@@ -354,12 +355,12 @@ msgstr "Копіювати"
 msgid "Open Message"
 msgstr "Відкрити повідомлення"
 
-#: src/chatty-notification.c:212
+#: src/chatty-notification.c:213
 #, c-format
 msgid "New message from %s"
 msgstr "Нове повідомлення від %s"
 
-#: src/chatty-notification.c:214
+#: src/chatty-notification.c:215
 msgid "Message Received"
 msgstr "Надійшло повідомлення"
 
@@ -497,30 +498,41 @@ msgstr "Клієнт обміну повідомленнями SMS і XMPP"
 msgid "translator-credits"
 msgstr "Юрій Чорноіван <yurchor@ukr.net>, 2020"
 
-#: src/chatty-window.c:999
+#: src/chatty-window.c:1000
 msgid "Any Protocol"
 msgstr "Будь-який протокол"
 
-#: src/chatty-window.c:1006 src/ui/chatty-settings-dialog.ui:524
+#: src/chatty-window.c:1007 src/ui/chatty-settings-dialog.ui:524
 msgid "Matrix"
 msgstr "Matrix"
 
-#: src/chatty-window.c:1011
+#: src/chatty-window.c:1012
 msgid "SMS/MMS"
 msgstr "SMS/MMS"
 
-#: src/chatty-window.c:1016 src/ui/chatty-settings-dialog.ui:511
+#: src/chatty-window.c:1017 src/ui/chatty-settings-dialog.ui:511
 msgid "XMPP"
 msgstr "XMPP"
 
-#: src/chatty-window.c:1022 src/ui/chatty-settings-dialog.ui:539
+#: src/chatty-window.c:1023 src/ui/chatty-settings-dialog.ui:539
 msgid "Telegram"
 msgstr "Telegram"
 
-#: src/chatty-window.c:1058
+#: src/chatty-window.c:1059
 #, c-format
 msgid "“%s” is not a valid phone number"
 msgstr "«%s» не є коректним номером телефону"
+
+#: src/dialogs/chatty-mm-chat-info.c:116
+#| msgid "Indicate Unknown Contacts"
+msgid "Unknown Contact"
+msgstr "Невідомий контакт"
+
+#: src/dialogs/chatty-mm-chat-info.c:125
+msgctxt "Refer to self in contact list"
+msgid "You"
+msgstr ""
+"Ви"
 
 #: src/dialogs/chatty-pp-chat-info.c:86
 #: src/dialogs/chatty-ma-account-details.c:116
@@ -700,7 +712,6 @@ msgid "Error validating certificate for ‘%s’"
 msgstr "Помилка під час спроби перевірити чинність сертифіката «%s»"
 
 #: src/ui/chatty-chat-view.ui:234
-#| msgid "This chat is encrypted"
 msgid "No chat selected"
 msgstr "Не вибрано спілкування"
 
@@ -752,14 +763,18 @@ msgstr "Додати до контактів"
 
 #: src/ui/chatty-file-item.ui:28
 msgid "Remove Attachment"
-msgstr ""
-"Вилучити долучення"
+msgstr "Вилучити долучення"
 
 #: src/ui/chatty-info-dialog.ui:17 src/ui/chatty-window.ui:99
 msgid "Chat Details"
 msgstr "Подробиці спілкування"
 
-#: src/ui/chatty-info-dialog.ui:56
+#: src/ui/chatty-info-dialog.ui:64
+#| msgid "_Apply"
+msgid "Apply"
+msgstr "Застосувати"
+
+#: src/ui/chatty-info-dialog.ui:82
 msgid "Invite"
 msgstr "Запросити"
 
@@ -816,6 +831,22 @@ msgstr "Показувати повідомлення стану у спілку
 #: src/ui/chatty-pp-chat-info.ui:367
 msgid "Fingerprints"
 msgstr "Відбитки"
+
+#: src/ui/chatty-mm-chat-info.ui:29
+msgid "Title"
+msgstr ""
+"Заголовок"
+
+#: src/ui/chatty-mm-chat-info.ui:33
+msgid "Blank for default"
+msgstr ""
+"Типово порожній"
+
+#: src/ui/chatty-mm-chat-info.ui:43
+#| msgid "%u Member"
+#| msgid_plural "%u Members"
+msgid "Group Members"
+msgstr "Учасники групи"
 
 #: src/ui/chatty-ma-account-details.ui:93
 msgid "Name"
