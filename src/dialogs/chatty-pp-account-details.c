@@ -408,8 +408,7 @@ chatty_pp_account_details_set_item (ChattyPpAccountDetails *self,
   pp_details_status_changed_cb (self);
   pp_details_avatar_changed_cb (self);
 
-  if (chatty_item_get_protocols (CHATTY_ITEM (self->account)) == CHATTY_PROTOCOL_XMPP ||
-      CHATTY_IS_MA_ACCOUNT (self->account))
+  if (chatty_item_get_protocols (CHATTY_ITEM (self->account)) == CHATTY_PROTOCOL_XMPP)
     chatty_account_load_fp_async (self->account,
                                   pp_details_get_fingerprints_cb,
                                   g_object_ref (self));
