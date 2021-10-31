@@ -23,6 +23,7 @@
 #include "users/chatty-pp-account.h"
 #include "matrix/chatty-ma-account.h"
 #include "chatty-list-row.h"
+#include "chatty-log.h"
 #include "chatty-utils.h"
 #include "chatty-new-chat-dialog.h"
 
@@ -41,6 +42,7 @@ struct _ChattyNewChatDialog
   GtkDialog  parent_instance;
 
   GtkWidget *chats_listbox;
+  GtkWidget *contacts_listbox;
   GtkWidget *new_contact_row;
   GtkWidget *contacts_search_entry;
   GtkWidget *contact_edit_grid;
@@ -51,9 +53,12 @@ struct _ChattyNewChatDialog
   GtkWidget *back_button;
   GtkWidget *add_contact_button;
   GtkWidget *edit_contact_button;
+  GtkWidget *start_button;
+  GtkWidget *cancel_button;
   GtkWidget *add_in_contacts_button;
   GtkWidget *dummy_prefix_radio;
 
+  GtkWidget *header_view_new_chat;
   GtkWidget *contact_list_stack;
   GtkWidget *contact_list_view;
   GtkWidget *empty_search_view;
@@ -71,6 +76,9 @@ struct _ChattyNewChatDialog
 
   ChattyContact *dummy_contact;
   GCancellable  *cancellable;
+
+  gboolean multi_selection;
+  GList *selected_items;
 };
 
 
@@ -101,12 +109,33 @@ dialog_active_protocols_changed_cb (ChattyNewChatDialog *self)
     gtk_stack_set_visible_child (GTK_STACK (self->contact_list_stack), self->empty_search_view);
 }
 
+static gboolean
+new_chat_dialog_contact_is_selected (ChattyContact *contact)
+{
+  g_return_val_if_fail (CHATTY_IS_CONTACT (contact), FALSE);
+
+  return !!g_object_get_data (G_OBJECT (contact), "selected");
+}
 
 static gboolean
 dialog_filter_item_cb (ChattyItem          *item,
                        ChattyNewChatDialog *self)
 {
   g_return_val_if_fail (CHATTY_IS_NEW_CHAT_DIALOG (self), FALSE);
+
+  if (self->multi_selection) {
+    ChattyAccount *mm_account;
+
+    mm_account  = chatty_manager_get_mm_account (self->manager);
+    if (chatty_account_get_status (mm_account) == CHATTY_CONNECTED) {
+      if (chatty_item_matches (item, self->search_str, CHATTY_PROTOCOL_MMS_SMS, TRUE) &&
+          !new_chat_dialog_contact_is_selected (CHATTY_CONTACT (item)))
+        return TRUE;
+      else
+        return FALSE;
+    } else
+      return FALSE;
+  }
 
   if (CHATTY_IS_PP_BUDDY (item)) {
     ChattyAccount *account;
@@ -132,6 +161,60 @@ dialog_filter_item_cb (ChattyItem          *item,
   }
 
   return chatty_item_matches (item, self->search_str, self->active_protocols, TRUE);
+}
+
+static void
+start_button_clicked_cb (ChattyNewChatDialog *self)
+{
+  g_assert (CHATTY_IS_NEW_CHAT_DIALOG (self));
+
+  gtk_dialog_response (GTK_DIALOG (self), GTK_RESPONSE_OK);
+}
+
+static void
+cancel_button_clicked_cb (ChattyNewChatDialog *self)
+{
+  g_assert (CHATTY_IS_NEW_CHAT_DIALOG (self));
+
+  gtk_dialog_response (GTK_DIALOG (self), GTK_RESPONSE_CANCEL);
+}
+
+static void
+chatty_new_chat_dialog_update_selectable (GtkWidget *widget,
+                                          gpointer   callback_data)
+{
+  ChattyNewChatDialog *self = callback_data;
+
+  g_assert (CHATTY_IS_NEW_CHAT_DIALOG (self));
+
+  chatty_list_row_set_selectable ((ChattyListRow *)widget, self->multi_selection);
+}
+
+void
+chatty_new_chat_dialog_set_multi_selection (ChattyNewChatDialog *self,
+                                            gboolean             enable)
+{
+  g_assert (CHATTY_IS_NEW_CHAT_DIALOG (self));
+
+  self->multi_selection = enable;
+  gtk_header_bar_set_show_close_button (GTK_HEADER_BAR (self->header_view_new_chat), !enable);
+
+  chatty_list_row_set_selectable (CHATTY_LIST_ROW (self->new_contact_row), enable);
+  gtk_container_foreach (GTK_CONTAINER (self->chats_listbox),
+                         (GtkCallback)chatty_new_chat_dialog_update_selectable, self);
+
+  if (enable) {
+    gtk_widget_show (self->start_button);
+    gtk_widget_show (self->contacts_listbox);
+    gtk_widget_show (self->cancel_button);
+    gtk_widget_hide (self->edit_contact_button);
+    gtk_widget_set_sensitive (self->start_button, FALSE);
+  } else {
+    gtk_widget_show (self->edit_contact_button);
+    gtk_widget_hide (self->contacts_listbox);
+    gtk_widget_hide (self->start_button);
+    gtk_widget_hide (self->cancel_button);
+  }
 }
 
 static void
@@ -321,10 +404,86 @@ contact_search_entry_changed_cb (ChattyNewChatDialog *self,
   valid = valid && chatty_account_get_status (account) == CHATTY_CONNECTED;
   gtk_widget_set_visible (self->new_contact_row, valid);
 
-  if (valid || g_list_model_get_n_items (G_LIST_MODEL (self->slice_model)) > 0)
+  if (valid || g_list_model_get_n_items (G_LIST_MODEL (self->slice_model)) > 0) {
     gtk_stack_set_visible_child (GTK_STACK (self->contact_list_stack), self->contact_list_view);
-  else
+    if (self->multi_selection) {
+      GList *l;
+      ChattyItem *item;
+      const char *item_number;
+      ChattyItem *selected_item;
+      const char *phone_number;
+
+      selected_item = chatty_list_row_get_item (CHATTY_LIST_ROW (self->new_contact_row));
+      phone_number = chatty_item_get_username (selected_item);
+      /* If the search string matches the dummy contact row, mark it as true */
+      for (l = self->selected_items; l != NULL; l = l->next) {
+        item = (ChattyItem *) l->data;
+        item_number = chatty_item_get_username (item);
+        if (g_strcmp0 (item_number, phone_number) == 0) {
+            chatty_list_row_select (CHATTY_LIST_ROW (self->new_contact_row), TRUE);
+          break;
+        }
+      }
+      if (l == NULL)
+        chatty_list_row_select (CHATTY_LIST_ROW (self->new_contact_row), FALSE);
+
+      gtk_container_foreach (GTK_CONTAINER (self->chats_listbox),
+                             (GtkCallback)chatty_new_chat_dialog_update_selectable,
+                             self);
+    }
+  } else
     gtk_stack_set_visible_child (GTK_STACK (self->contact_list_stack), self->empty_search_view);
+}
+
+static void
+selected_contact_row_activated_cb (ChattyNewChatDialog *self,
+                                   ChattyListRow       *row)
+{
+  GList *l;
+  const char *phone_number = NULL;
+  ChattyItem *selected_item;
+
+  g_assert (CHATTY_IS_NEW_CHAT_DIALOG (self));
+  g_assert (CHATTY_IS_LIST_ROW (row));
+
+  selected_item = chatty_list_row_get_item (row);
+  phone_number = chatty_item_get_username (selected_item);
+
+  for (l = self->selected_items; l != NULL; l = l->next) {
+    ChattyItem *item = (ChattyItem *) l->data;
+    const char *item_number = chatty_item_get_username (item);
+    if (g_strcmp0 (item_number, phone_number) == 0) {
+      CHATTY_DEBUG_MSG ("Removing %s to list", phone_number);
+      self->selected_items = g_list_delete_link (self->selected_items, l);
+      if (!self->selected_items)
+        gtk_widget_set_sensitive (self->start_button, FALSE);
+
+      break;
+    }
+  }
+  if (chatty_contact_is_dummy (CHATTY_CONTACT (selected_item))) {
+    ChattyItem *dummy_item;
+    const char *dummy_number;
+
+    dummy_item = chatty_list_row_get_item (CHATTY_LIST_ROW (self->new_contact_row));
+    dummy_number = chatty_item_get_username (dummy_item);
+    if (g_strcmp0 (dummy_number, phone_number) == 0)
+      chatty_list_row_select (CHATTY_LIST_ROW (self->new_contact_row), FALSE);
+
+  } else {
+    g_autofree char *contacts_search_entry = NULL;
+
+    contacts_search_entry = g_strdup(gtk_entry_get_text (GTK_ENTRY (self->contacts_search_entry)));
+    g_object_set_data (G_OBJECT (selected_item), "selected", GINT_TO_POINTER (FALSE));
+    if (!*contacts_search_entry)
+      gtk_entry_set_text (GTK_ENTRY (self->contacts_search_entry), "reset");
+    else
+      gtk_entry_set_text (GTK_ENTRY (self->contacts_search_entry), "");
+
+    contact_search_entry_changed_cb (self, GTK_ENTRY (self->contacts_search_entry));
+    gtk_entry_set_text (GTK_ENTRY (self->contacts_search_entry), contacts_search_entry);
+  }
+  gtk_widget_destroy (GTK_WIDGET (row));
 }
 
 static void
@@ -334,9 +493,68 @@ contact_row_activated_cb (ChattyNewChatDialog *self,
   g_assert (CHATTY_IS_NEW_CHAT_DIALOG (self));
   g_assert (CHATTY_IS_LIST_ROW (row));
 
-  self->selected_item = chatty_list_row_get_item (row);
+  if (self->multi_selection) {
+    GtkListBoxRow *chats_listbox_row;
+    GtkWidget *new_row = NULL;
+    ChattyItem *selected_item;
+    const char *phone_number;
 
-  gtk_dialog_response (GTK_DIALOG (self), GTK_RESPONSE_OK);
+    selected_item = chatty_list_row_get_item (row);
+    phone_number = chatty_item_get_username (selected_item);
+    /* If there is a dummy contact, make sure it is not already selected */
+    if (chatty_contact_is_dummy (CHATTY_CONTACT (selected_item))) {
+      guint i = 0;
+
+      chatty_list_row_select (CHATTY_LIST_ROW (self->new_contact_row), TRUE);
+      chats_listbox_row = gtk_list_box_get_row_at_index (GTK_LIST_BOX (self->contacts_listbox), 0);
+      while (chats_listbox_row != NULL) {
+        ChattyItem *item = chatty_list_row_get_item (CHATTY_LIST_ROW (chats_listbox_row));
+        const char *item_number = chatty_item_get_username (item);
+        if (g_strcmp0 (item_number, phone_number) == 0) {
+          selected_contact_row_activated_cb (self, (CHATTY_LIST_ROW (chats_listbox_row)));
+          return;
+        }
+        i++;
+        chats_listbox_row = gtk_list_box_get_row_at_index (GTK_LIST_BOX (self->contacts_listbox), i);
+      }
+    }
+
+    CHATTY_DEBUG_MSG ("Adding %s to list", phone_number);
+    if (chatty_contact_is_dummy (CHATTY_CONTACT (selected_item))) {
+      ChattyContact *dummy_contact = NULL;
+
+      dummy_contact = g_object_new (CHATTY_TYPE_CONTACT, NULL);
+      chatty_contact_set_name (dummy_contact, _("Unknown Contact"));
+      chatty_contact_set_value (dummy_contact,
+                                gtk_entry_get_text (GTK_ENTRY (self->contacts_search_entry)));
+      g_object_set_data (G_OBJECT (dummy_contact), "dummy", GINT_TO_POINTER (TRUE));
+      new_row = chatty_list_row_new (CHATTY_ITEM (dummy_contact));
+      self->selected_items = g_list_prepend (self->selected_items, CHATTY_ITEM (dummy_contact));
+    } else {
+      ChattyItem *dummy_item;
+      const char *dummy_number;
+
+      dummy_item = chatty_list_row_get_item (CHATTY_LIST_ROW (self->new_contact_row));
+      dummy_number = chatty_item_get_username (dummy_item);
+      new_row = chatty_list_row_new (chatty_list_row_get_item (row));
+      self->selected_items = g_list_prepend (self->selected_items, selected_item);
+      g_object_set_data (G_OBJECT (selected_item), "selected", GINT_TO_POINTER (TRUE));
+      gtk_widget_hide (GTK_WIDGET (row));
+      if (g_strcmp0 (dummy_number, phone_number) == 0) {
+        chatty_list_row_select (CHATTY_LIST_ROW (self->new_contact_row), TRUE);
+      }
+    }
+
+    chatty_list_row_set_selectable (CHATTY_LIST_ROW (new_row), TRUE);
+    chatty_list_row_select (CHATTY_LIST_ROW (new_row), TRUE);
+    gtk_list_box_prepend (GTK_LIST_BOX (self->contacts_listbox),
+                          GTK_WIDGET (new_row));
+    gtk_widget_set_sensitive (self->start_button, TRUE);
+  } else {
+     self->selected_item = chatty_list_row_get_item (row);
+
+     gtk_dialog_response (GTK_DIALOG (self), GTK_RESPONSE_OK);
+  }
 }
 
 static void
@@ -564,15 +782,42 @@ chatty_new_chat_dialog_update (ChattyNewChatDialog *self)
   chatty_new_chat_populate_account_list (self);
 }
 
+static void
+chatty_new_chat_unset_items (gpointer data)
+{
+  ChattyItem *item = (ChattyItem *)data;
+
+  g_object_set_data (G_OBJECT (item), "selected", GINT_TO_POINTER (FALSE));
+}
 
 static void
 chatty_new_chat_dialog_show (GtkWidget *widget)
 {
   ChattyNewChatDialog *self = (ChattyNewChatDialog *)widget;
+  const char *contacts_search_entry;
+
+  g_return_if_fail (CHATTY_IS_NEW_CHAT_DIALOG (self));
+
+  /* ChattyNewChatDialog did not add references to the item */
+  if (self->selected_items)
+    g_clear_list (&self->selected_items, chatty_new_chat_unset_items);
+
+  chatty_list_row_select (CHATTY_LIST_ROW (self->new_contact_row), FALSE);
+
+  gtk_widget_set_sensitive (self->start_button, FALSE);
+
+  gtk_container_foreach (GTK_CONTAINER (self->contacts_listbox),
+                         (GtkCallback)gtk_widget_destroy, NULL);
 
   /* Reset selection list */
   g_clear_pointer (&self->phone_number, g_free);
   self->selected_item = NULL;
+
+  contacts_search_entry = gtk_entry_get_text (GTK_ENTRY (self->contacts_search_entry));
+  if (!*contacts_search_entry) {
+    gtk_entry_set_text (GTK_ENTRY (self->contacts_search_entry), "reset");
+    contact_search_entry_changed_cb (self, GTK_ENTRY (self->contacts_search_entry));
+  }
   gtk_entry_set_text (GTK_ENTRY (self->contacts_search_entry), "");
 
   GTK_WIDGET_CLASS (chatty_new_chat_dialog_parent_class)->show (widget);
@@ -610,8 +855,10 @@ chatty_new_chat_dialog_class_init (ChattyNewChatDialogClass *klass)
                                                "ui/chatty-dialog-new-chat.ui");
 
   gtk_widget_class_bind_template_child (widget_class, ChattyNewChatDialog, new_chat_stack);
+  gtk_widget_class_bind_template_child (widget_class, ChattyNewChatDialog, header_view_new_chat);
   gtk_widget_class_bind_template_child (widget_class, ChattyNewChatDialog, contacts_search_entry);
   gtk_widget_class_bind_template_child (widget_class, ChattyNewChatDialog, new_contact_row);
+  gtk_widget_class_bind_template_child (widget_class, ChattyNewChatDialog, contacts_listbox);
   gtk_widget_class_bind_template_child (widget_class, ChattyNewChatDialog, chats_listbox);
   gtk_widget_class_bind_template_child (widget_class, ChattyNewChatDialog, contact_edit_grid);
   gtk_widget_class_bind_template_child (widget_class, ChattyNewChatDialog, contact_name_entry);
@@ -621,6 +868,8 @@ chatty_new_chat_dialog_class_init (ChattyNewChatDialogClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyNewChatDialog, edit_contact_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyNewChatDialog, add_contact_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyNewChatDialog, add_in_contacts_button);
+  gtk_widget_class_bind_template_child (widget_class, ChattyNewChatDialog, start_button);
+  gtk_widget_class_bind_template_child (widget_class, ChattyNewChatDialog, cancel_button);
 
   gtk_widget_class_bind_template_child (widget_class, ChattyNewChatDialog, contact_list_stack);
   gtk_widget_class_bind_template_child (widget_class, ChattyNewChatDialog, contact_list_view);
@@ -631,11 +880,14 @@ chatty_new_chat_dialog_class_init (ChattyNewChatDialogClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, contact_stroll_edge_reached_cb);
   gtk_widget_class_bind_template_callback (widget_class, contact_search_entry_activated_cb);
   gtk_widget_class_bind_template_callback (widget_class, contact_search_entry_changed_cb);
+  gtk_widget_class_bind_template_callback (widget_class, selected_contact_row_activated_cb);
   gtk_widget_class_bind_template_callback (widget_class, contact_row_activated_cb);
   gtk_widget_class_bind_template_callback (widget_class, add_contact_button_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, add_in_contacts_button_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, contact_name_text_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, account_list_row_activated_cb);
+  gtk_widget_class_bind_template_callback (widget_class, start_button_clicked_cb);
+  gtk_widget_class_bind_template_callback (widget_class, cancel_button_clicked_cb);
 }
 
 
@@ -649,6 +901,7 @@ chatty_new_chat_dialog_init (ChattyNewChatDialog *self)
   gtk_widget_init_template (GTK_WIDGET (self));
   self->cancellable = g_cancellable_new ();
 
+  self->multi_selection = FALSE;
   self->dummy_prefix_radio = gtk_radio_button_new_from_widget (GTK_RADIO_BUTTON (NULL));
 
   self->manager = g_object_ref (chatty_manager_get_default ());
@@ -694,4 +947,12 @@ chatty_new_chat_dialog_get_selected_item (ChattyNewChatDialog *self)
   g_return_val_if_fail (CHATTY_IS_NEW_CHAT_DIALOG (self), NULL);
 
   return self->selected_item;
+}
+
+GList *
+chatty_new_chat_dialog_get_selected_items (ChattyNewChatDialog *self)
+{
+  g_return_val_if_fail (CHATTY_IS_NEW_CHAT_DIALOG (self), NULL);
+
+  return self->selected_items;
 }
