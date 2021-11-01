@@ -80,7 +80,6 @@ struct _ChattyWindow
 
   GdTaggedEntryTag *protocol_tag;
 
-  ChattyItem    *selected_item;
   ChattyManager *manager;
 
   char          *chat_needle;
@@ -106,7 +105,6 @@ window_set_item (ChattyWindow *self,
   if (CHATTY_IS_ITEM (item))
     header_label = chatty_item_get_name (item);
 
-  self->selected_item = item;
   chatty_avatar_set_item (CHATTY_AVATAR (self->sub_header_icon), item);
   gtk_label_set_label (GTK_LABEL (self->sub_header_label), header_label);
 
@@ -174,14 +172,16 @@ static void
 window_chat_changed_cb (ChattyWindow *self)
 {
   GListModel *model;
+  ChattyChat *chat;
   gboolean has_child;
 
   g_assert (CHATTY_IS_WINDOW (self));
 
+  chat = chatty_chat_view_get_chat (CHATTY_CHAT_VIEW (self->chat_view));
   model = G_LIST_MODEL (self->filter_model);
   has_child = g_list_model_get_n_items (model) > 0;
 
-  gtk_widget_set_sensitive (self->header_sub_menu_button, !!self->selected_item);
+  gtk_widget_set_sensitive (self->header_sub_menu_button, !!chat);
   chatty_window_chat_list_select_first (self);
 
   /*
@@ -189,10 +189,10 @@ window_chat_changed_cb (ChattyWindow *self)
    * Re-select it.  In GTK4, A #GtkListView with #GtkSingleSelection
    * would suite here better.
    */
-  if (self->selected_item && has_child) {
+  if (chat && has_child) {
     guint position;
 
-    if (chatty_utils_get_item_position (G_LIST_MODEL (self->filter_model), self->selected_item, &position)) {
+    if (chatty_utils_get_item_position (G_LIST_MODEL (self->filter_model), chat, &position)) {
       GtkListBoxRow *row;
 
       row = gtk_list_box_get_row_at_index (GTK_LIST_BOX (self->chats_listbox), position);
@@ -316,16 +316,19 @@ window_chat_row_activated_cb (GtkListBox    *box,
                               GtkListBoxRow *row,
                               ChattyWindow  *self)
 {
+  ChattyChat *chat;
+
   g_assert (CHATTY_WINDOW (self));
 
-  window_set_item (self, chatty_list_row_get_item (CHATTY_LIST_ROW (row)));
+  chat = (ChattyChat *)chatty_list_row_get_item (CHATTY_LIST_ROW (row));
+  window_set_item (self, CHATTY_ITEM (chat));
 
-  g_return_if_fail (CHATTY_IS_CHAT (self->selected_item));
+  g_return_if_fail (CHATTY_IS_CHAT (chat));
 
-  if (CHATTY_IS_PP_CHAT (self->selected_item))
-    chatty_window_open_item (self, self->selected_item);
+  if (CHATTY_IS_PP_CHAT (chat))
+    chatty_window_open_item (self, CHATTY_ITEM (chat));
   else
-    chatty_window_open_chat (self, CHATTY_CHAT (self->selected_item));
+    chatty_window_open_chat (self, chat);
 }
 
 static void
@@ -333,13 +336,14 @@ window_call_button_clicked_cb (ChattyWindow *self)
 {
   g_autoptr(GError) error = NULL;
   g_autofree char *uri = NULL;
+  ChattyChat *chat;
 
   g_assert (CHATTY_IS_WINDOW (self));
-  g_return_if_fail (CHATTY_IS_MM_CHAT (self->selected_item));
 
-  uri = g_strconcat ("tel://",
-                     chatty_chat_get_chat_name (CHATTY_CHAT (self->selected_item)),
-                     NULL);
+  chat = chatty_chat_view_get_chat (CHATTY_CHAT_VIEW (self->chat_view));
+  g_return_if_fail (CHATTY_IS_MM_CHAT (chat));
+
+  uri = g_strconcat ("tel://", chatty_chat_get_chat_name (chat), NULL);
 
   CHATTY_INFO (uri, "Calling uri:");
   if (!gtk_show_uri_on_window (NULL, uri, GDK_CURRENT_TIME, &error))
@@ -392,7 +396,7 @@ notify_fold_cb (ChattyWindow *self)
 
   if (folded) {
     window_set_item (self, NULL);
-  } else if (self->selected_item) {
+  } else if (chatty_chat_view_get_chat (CHATTY_CHAT_VIEW (self->chat_view))) {
     window_chat_changed_cb (self);
   } else {
     chatty_window_chat_list_select_first (self);
@@ -501,17 +505,20 @@ static void
 window_delete_buddy_clicked_cb (ChattyWindow *self)
 {
   GtkWidget *dialog;
+  ChattyChat *chat;
   const char *name;
   const char *text;
   const char *sub_text;
   int response;
 
   g_assert (CHATTY_IS_WINDOW (self));
-  g_return_if_fail (self->selected_item);
 
-  name = chatty_item_get_name (CHATTY_ITEM (self->selected_item));
+  chat = chatty_chat_view_get_chat (CHATTY_CHAT_VIEW (self->chat_view));
+  g_return_if_fail (chat);
 
-  if (chatty_chat_is_im (CHATTY_CHAT (self->selected_item))) {
+  name = chatty_item_get_name (CHATTY_ITEM (chat));
+
+  if (chatty_chat_is_im (chat)) {
     text = _("Delete chat with");
     sub_text = _("This deletes the conversation history");
   } else {
@@ -544,11 +551,11 @@ window_delete_buddy_clicked_cb (ChattyWindow *self)
 
   if (response == GTK_RESPONSE_OK) {
     chatty_history_delete_chat (chatty_manager_get_history (self->manager),
-                                CHATTY_CHAT (self->selected_item));
-    if (CHATTY_IS_PP_CHAT (self->selected_item)) {
-      chatty_pp_chat_delete (CHATTY_PP_CHAT (self->selected_item));
-    } else if (CHATTY_IS_MM_CHAT (self->selected_item)) {
-      chatty_mm_chat_delete (CHATTY_MM_CHAT (self->selected_item));
+                                chat);
+    if (CHATTY_IS_PP_CHAT (chat)) {
+      chatty_pp_chat_delete (CHATTY_PP_CHAT (chat));
+    } else if (CHATTY_IS_MM_CHAT (chat)) {
+      chatty_mm_chat_delete (CHATTY_MM_CHAT (chat));
     } else {
       g_return_if_reached ();
     }
@@ -567,15 +574,18 @@ window_delete_buddy_clicked_cb (ChattyWindow *self)
 static void
 window_leave_chat_clicked_cb (ChattyWindow *self)
 {
+  ChattyChat *chat;
+
   g_assert (CHATTY_IS_WINDOW (self));
 
-  if (self->selected_item) {
+  chat = chatty_chat_view_get_chat (CHATTY_CHAT_VIEW (self->chat_view));
+  g_warn_if_fail (chat);
+
+  if (chat) {
     ChattyAccount *account;
 
-    account = chatty_chat_get_account (CHATTY_CHAT (self->selected_item));
-    chatty_account_leave_chat_async (account,
-                                     CHATTY_CHAT (self->selected_item),
-                                     NULL, NULL);
+    account = chatty_chat_get_account (chat);
+    chatty_account_leave_chat_async (account, chat, NULL, NULL);
   }
 
   window_set_item (self, NULL);
@@ -635,16 +645,20 @@ write_eds_contact_cb (GObject      *object,
 static void
 window_add_contact_clicked_cb (ChattyWindow *self)
 {
-  g_assert (CHATTY_IS_WINDOW (self));
-  g_return_if_fail (self->selected_item);
+  ChattyChat *chat;
 
-  if (CHATTY_IS_PP_CHAT (self->selected_item)) {
-    chatty_pp_chat_save_to_contacts_async (CHATTY_PP_CHAT (self->selected_item),
+  g_assert (CHATTY_IS_WINDOW (self));
+
+  chat = chatty_chat_view_get_chat (CHATTY_CHAT_VIEW (self->chat_view));
+  g_return_if_fail (chat);
+
+  if (CHATTY_IS_PP_CHAT (chat)) {
+    chatty_pp_chat_save_to_contacts_async (CHATTY_PP_CHAT (chat),
                                            write_contact_cb, g_object_ref (self));
-  } else if (CHATTY_IS_MM_CHAT (self->selected_item)) {
+  } else if (CHATTY_IS_MM_CHAT (chat)) {
     const char *phone;
 
-    phone = chatty_chat_get_chat_name (CHATTY_CHAT (self->selected_item));
+    phone = chatty_chat_get_chat_name (chat);
     chatty_eds_write_contact_async ("", phone,
                                     write_eds_contact_cb,
                                     g_object_ref (self));
@@ -655,13 +669,16 @@ static void
 window_show_chat_info_clicked_cb (ChattyWindow *self)
 {
   ChattyInfoDialog *dialog;
+  ChattyChat *chat;
 
   g_assert (CHATTY_IS_WINDOW (self));
-  g_return_if_fail (CHATTY_IS_CHAT (self->selected_item));
+
+  chat = chatty_chat_view_get_chat (CHATTY_CHAT_VIEW (self->chat_view));
+  g_return_if_fail (CHATTY_IS_CHAT (chat));
 
   dialog = CHATTY_INFO_DIALOG (self->chat_info_dialog);
 
-  chatty_info_dialog_set_chat (dialog, CHATTY_CHAT (self->selected_item));
+  chatty_info_dialog_set_chat (dialog, chat);
   gtk_dialog_run (GTK_DIALOG (dialog));
 }
 
@@ -786,7 +803,7 @@ window_chat_deleted_cb (ChattyWindow *self,
   g_assert (CHATTY_IS_WINDOW (self));
   g_assert (CHATTY_IS_CHAT (chat));
 
-  if (self->selected_item != (gpointer)chat)
+  if (chatty_chat_view_get_chat (CHATTY_CHAT_VIEW (self->chat_view)) != chat)
     return;
 
   window_set_item (self, NULL);
