@@ -96,19 +96,19 @@ static void chatty_window_chat_list_select_first (ChattyWindow *self);
 
 static void
 window_set_item (ChattyWindow *self,
-                 ChattyItem   *item)
+                 ChattyChat   *chat)
 {
   const char *header_label = "";
 
   g_assert (CHATTY_IS_WINDOW (self));
 
-  if (CHATTY_IS_ITEM (item))
-    header_label = chatty_item_get_name (item);
+  if (CHATTY_IS_CHAT (chat))
+    header_label = chatty_item_get_name (CHATTY_ITEM (chat));
 
-  chatty_avatar_set_item (CHATTY_AVATAR (self->sub_header_icon), item);
+  chatty_avatar_set_item (CHATTY_AVATAR (self->sub_header_icon), CHATTY_ITEM (chat));
   gtk_label_set_label (GTK_LABEL (self->sub_header_label), header_label);
 
-  if (!item)
+  if (!chat)
     hdy_leaflet_set_visible_child_name (HDY_LEAFLET (self->content_box), "sidebar");
 }
 
@@ -321,7 +321,7 @@ window_chat_row_activated_cb (GtkListBox    *box,
   g_assert (CHATTY_WINDOW (self));
 
   chat = (ChattyChat *)chatty_list_row_get_item (CHATTY_LIST_ROW (row));
-  window_set_item (self, CHATTY_ITEM (chat));
+  window_set_item (self, chat);
 
   g_return_if_fail (CHATTY_IS_CHAT (chat));
 
@@ -427,7 +427,7 @@ window_new_message_clicked_cb (ChattyWindow *self)
   item = chatty_new_chat_dialog_get_selected_item (dialog);
 
   if (CHATTY_IS_CHAT (item))
-    window_set_item (self, item);
+    window_set_item (self, CHATTY_CHAT (item));
 
   if (CHATTY_IS_CONTACT (item) &&
       chatty_contact_is_dummy (CHATTY_CONTACT (item)))
@@ -1090,7 +1090,7 @@ chatty_window_open_chat (ChattyWindow *self,
                "opening chat, type: %s, chat-name:", G_OBJECT_TYPE_NAME (chat));
 
   chatty_chat_view_set_chat (CHATTY_CHAT_VIEW (self->chat_view), chat);
-  window_set_item (self, CHATTY_ITEM (chat));
+  window_set_item (self, chat);
   window_chat_changed_cb (self);
 
   gtk_widget_set_visible (self->leave_button, !CHATTY_IS_MM_CHAT (chat));
