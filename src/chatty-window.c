@@ -504,10 +504,10 @@ chatty_window_chat_list_select_first (ChattyWindow *self)
 static void
 window_delete_buddy_clicked_cb (ChattyWindow *self)
 {
+  g_autofree char *text = NULL;
   GtkWidget *dialog;
   ChattyChat *chat;
   const char *name;
-  const char *text;
   const char *sub_text;
   int response;
 
@@ -519,10 +519,10 @@ window_delete_buddy_clicked_cb (ChattyWindow *self)
   name = chatty_item_get_name (CHATTY_ITEM (chat));
 
   if (chatty_chat_is_im (chat)) {
-    text = _("Delete chat with");
+    text = g_strdup_printf (_("Delete chat with “%s”"), name);
     sub_text = _("This deletes the conversation history");
   } else {
-    text = _("Disconnect group chat");
+    text = g_strdup_printf (_("Disconnect group chat “%s”"), name);
     sub_text = _("This removes chat from chats list");
   }
 
@@ -530,8 +530,7 @@ window_delete_buddy_clicked_cb (ChattyWindow *self)
                                    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
                                    GTK_MESSAGE_QUESTION,
                                    GTK_BUTTONS_NONE,
-                                   "%s %s",
-                                   text, name);
+                                   "%s", text);
 
   gtk_dialog_add_buttons (GTK_DIALOG (dialog),
                           _("Cancel"),
