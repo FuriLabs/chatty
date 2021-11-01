@@ -1001,7 +1001,6 @@ chatty_window_init (ChattyWindow *self)
   g_signal_connect_object (self->manager, "chat-deleted",
                            G_CALLBACK (window_chat_deleted_cb), self,
                            G_CONNECT_SWAPPED);
-  window_active_protocols_changed_cb (self);
 
   gtk_list_box_set_header_func (GTK_LIST_BOX (self->protocol_list),
                                 protocol_list_header_func,
