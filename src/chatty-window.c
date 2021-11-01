@@ -182,11 +182,7 @@ window_chat_changed_cb (ChattyWindow *self)
   has_child = g_list_model_get_n_items (model) > 0;
 
   gtk_widget_set_sensitive (self->header_sub_menu_button, !!self->selected_item);
-
-  /* Select the first item if none selected and we are in expanded mode */
-  if (!self->selected_item &&
-      gtk_list_box_get_selection_mode (GTK_LIST_BOX (self->chats_listbox)) == GTK_SELECTION_SINGLE)
-    chatty_window_chat_list_select_first (self);
+  chatty_window_chat_list_select_first (self);
 
   /*
    * When the items are re-arranged, the selection will be lost.
@@ -488,9 +484,12 @@ chatty_window_chat_list_select_first (ChattyWindow *self)
 {
   GtkListBoxRow *row;
 
+  if (chatty_chat_view_get_chat (CHATTY_CHAT_VIEW (self->chat_view)))
+    return;
+
   row = gtk_list_box_get_row_at_index (GTK_LIST_BOX(self->chats_listbox), 0);
 
-  if (row != NULL) {
+  if (row && !hdy_leaflet_get_folded (HDY_LEAFLET (self->header_box))) {
     gtk_list_box_select_row (GTK_LIST_BOX(self->chats_listbox), row);
     window_chat_row_activated_cb (GTK_LIST_BOX(self->chats_listbox), row, self);
   } else {
@@ -558,9 +557,7 @@ window_delete_buddy_clicked_cb (ChattyWindow *self)
     gtk_widget_hide (self->call_button);
     gtk_widget_set_sensitive (self->header_sub_menu_button, FALSE);
     chatty_chat_view_set_chat (CHATTY_CHAT_VIEW (self->chat_view), NULL);
-
-    if (!hdy_leaflet_get_folded (HDY_LEAFLET (self->content_box)))
-      chatty_window_chat_list_select_first (self);
+    chatty_window_chat_list_select_first (self);
   }
 
   gtk_widget_destroy (dialog);
