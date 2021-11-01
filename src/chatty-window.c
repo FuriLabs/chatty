@@ -474,13 +474,6 @@ window_back_clicked_cb (ChattyWindow *self)
   g_assert (CHATTY_IS_WINDOW (self));
 
   window_set_item (self, NULL);
-
-  /*
-   * Clears 'selected_node' which is evaluated to
-   * block the counting of pending messages
-   * while chatting with this node
-   */
-  gtk_list_box_unselect_all (GTK_LIST_BOX (self->chats_listbox));
 }
 
 static void
