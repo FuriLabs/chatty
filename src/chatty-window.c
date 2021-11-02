@@ -132,6 +132,34 @@ chatty_window_update_sidebar_view (ChattyWindow *self)
 }
 
 static void
+window_update_chat_list_selection (ChattyWindow *self)
+{
+  ChattyChat *chat;
+  guint position;
+  gboolean has_child;
+
+  g_assert (CHATTY_IS_WINDOW (self));
+
+  chat = chatty_chat_view_get_chat (CHATTY_CHAT_VIEW (self->chat_view));
+  has_child = g_list_model_get_n_items (G_LIST_MODEL (self->filter_model)) > 0;
+
+  if (!chat || !has_child)
+    return;
+
+  /*
+   * When the items are re-arranged, the selection will be lost.
+   * Re-select it.  In GTK4, A #GtkListView with #GtkSingleSelection
+   * would suite here better.
+   */
+  if (chatty_utils_get_item_position (G_LIST_MODEL (self->filter_model), chat, &position)) {
+    GtkListBoxRow *row;
+
+    row = gtk_list_box_get_row_at_index (GTK_LIST_BOX (self->chats_listbox), position);
+    gtk_list_box_select_row (GTK_LIST_BOX (self->chats_listbox), row);
+  }
+}
+
+static void
 window_filter_changed_cb (ChattyWindow *self)
 {
   GtkWidget *current_view;
@@ -146,6 +174,9 @@ window_filter_changed_cb (ChattyWindow *self)
 
   model = G_LIST_MODEL (self->filter_model);
   has_child = g_list_model_get_n_items (model) > 0;
+
+  if (has_child)
+    window_update_chat_list_selection (self);
 
   if (has_child)
     current_view = self->chat_list_view;
@@ -186,21 +217,8 @@ window_chat_changed_cb (ChattyWindow *self)
   gtk_widget_set_sensitive (self->header_sub_menu_button, !!chat);
   chatty_window_chat_list_select_first (self);
 
-  /*
-   * When the items are re-arranged, the selection will be lost.
-   * Re-select it.  In GTK4, A #GtkListView with #GtkSingleSelection
-   * would suite here better.
-   */
-  if (chat && has_child) {
-    guint position;
-
-    if (chatty_utils_get_item_position (G_LIST_MODEL (self->filter_model), chat, &position)) {
-      GtkListBoxRow *row;
-
-      row = gtk_list_box_get_row_at_index (GTK_LIST_BOX (self->chats_listbox), position);
-      gtk_list_box_select_row (GTK_LIST_BOX (self->chats_listbox), row);
-    }
-  }
+  if (has_child)
+    window_update_chat_list_selection (self);
 
   chatty_window_update_sidebar_view (self);
 
