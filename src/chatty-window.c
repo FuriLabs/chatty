@@ -115,7 +115,7 @@ window_set_item (ChattyWindow *self,
 }
 
 static void
-chatty_window_update_sidebar_view (ChattyWindow *self)
+chatty_window_update_search_mode (ChattyWindow *self)
 {
   GListModel *model;
   gboolean has_child;
@@ -220,7 +220,7 @@ window_chat_changed_cb (ChattyWindow *self)
   if (has_child)
     window_update_chat_list_selection (self);
 
-  chatty_window_update_sidebar_view (self);
+  chatty_window_update_search_mode (self);
 
   if (has_child)
     return;
