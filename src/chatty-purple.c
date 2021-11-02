@@ -1849,7 +1849,7 @@ chatty_purple_is_loaded (ChattyPurple *self)
   return self->enabled;
 }
 
-ChattyChat *
+static ChattyChat *
 chatty_purple_start_buddy_chat (ChattyPurple  *self,
                                 ChattyPpBuddy *buddy)
 {
