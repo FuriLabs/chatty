@@ -272,8 +272,6 @@ static void
 chatty_window_open_item (ChattyWindow *self,
                          ChattyItem   *item)
 {
-  ChattyChat *chat = NULL;
-
   g_assert (CHATTY_IS_WINDOW (self));
   g_assert (CHATTY_IS_ITEM (item));
   CHATTY_INFO (chatty_item_get_name (item),
@@ -288,23 +286,9 @@ chatty_window_open_item (ChattyWindow *self,
     return;
   }
 
-  if (CHATTY_IS_PP_BUDDY (item)) {
-    chat = g_object_get_data (G_OBJECT (item), "chat");
-
-    if (!chat)
-      chat = chatty_purple_start_buddy_chat (chatty_purple_get_default (),
-                                             CHATTY_PP_BUDDY (item));
-  }
-
-  if (CHATTY_IS_PP_CHAT (item))
-    chat = CHATTY_CHAT (item);
-
-  if (CHATTY_IS_PP_CHAT (chat)) {
-    chatty_pp_chat_join (CHATTY_PP_CHAT (chat));
-
-    gtk_filter_changed (self->chat_filter, GTK_FILTER_CHANGE_DIFFERENT);
-    window_chat_changed_cb (self);
-  }
+  if (CHATTY_IS_PP_BUDDY (item) ||
+      CHATTY_IS_PP_CHAT (item))
+    chatty_purple_start_chat (chatty_purple_get_default (), item);
 
   if (CHATTY_IS_MM_CHAT (item)) {
     chatty_window_open_chat (CHATTY_WINDOW (self), CHATTY_CHAT (item));
