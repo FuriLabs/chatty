@@ -3457,6 +3457,7 @@ chatty_history_get_im_timestamp (ChattyHistory *self,
   g_autoptr(GTask) task = NULL;
   int time_stamp;
 
+  g_return_val_if_fail (CHATTY_IS_HISTORY (self), 0);
   g_return_val_if_fail (uuid, 0);
   g_return_val_if_fail (account, 0);
 
@@ -3507,6 +3508,7 @@ chatty_history_get_last_message_time (ChattyHistory *self,
   g_autoptr(GTask) task = NULL;
   int time_stamp;
 
+  g_return_val_if_fail (CHATTY_IS_HISTORY (self), 0);
   g_return_val_if_fail (account, 0);
   g_return_val_if_fail (room, 0);
   g_return_val_if_fail (self->db, 0);
