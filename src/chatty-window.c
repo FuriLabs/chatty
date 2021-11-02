@@ -879,6 +879,7 @@ chatty_window_constructed (GObject *object)
   window_filter_changed_cb (self);
   window_chat_changed_cb (self);
   window_active_protocols_changed_cb (self);
+  notify_fold_cb (self);
 
   G_OBJECT_CLASS (chatty_window_parent_class)->constructed (object);
 }
