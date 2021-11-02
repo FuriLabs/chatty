@@ -317,12 +317,7 @@ chatty_manager_init (ChattyManager *self)
   g_autoptr(GtkFlattenListModel) flatten_list = NULL;
   g_autoptr(GtkSorter) sorter = NULL;
   GNetworkMonitor *network_monitor;
-
-  self->list_of_account_list = g_list_store_new (G_TYPE_LIST_MODEL);
-  self->accounts = gtk_flatten_list_model_new (CHATTY_TYPE_ACCOUNT,
-                                               G_LIST_MODEL (self->list_of_account_list));
-  self->account_list = g_list_store_new (CHATTY_TYPE_ACCOUNT);
-  g_list_store_append (self->list_of_account_list, self->account_list);
+  GListModel *model;
 
   self->chatty_eds = chatty_eds_new (CHATTY_PROTOCOL_MMS_SMS);
   self->mm_account = chatty_mm_account_new ();
@@ -331,26 +326,35 @@ chatty_manager_init (ChattyManager *self)
                            G_CALLBACK (manager_mm_account_changed_cb), self,
                            G_CONNECT_SWAPPED);
 
+  g_signal_connect_object (self->chatty_eds, "notify::is-ready",
+                           G_CALLBACK (manager_eds_is_ready), self,
+                           G_CONNECT_SWAPPED);
+
+  /* List of lists */
+  self->list_of_account_list = g_list_store_new (G_TYPE_LIST_MODEL);
   self->list_of_chat_list = g_list_store_new (G_TYPE_LIST_MODEL);
   self->list_of_user_list = g_list_store_new (G_TYPE_LIST_MODEL);
 
-  self->contact_list = gtk_flatten_list_model_new (G_TYPE_OBJECT,
-                                                   G_LIST_MODEL (self->list_of_user_list));
-  g_list_store_append (self->list_of_user_list,
-                       chatty_eds_get_model (self->chatty_eds));
+  model = G_LIST_MODEL (self->list_of_account_list);
+  self->accounts = gtk_flatten_list_model_new (CHATTY_TYPE_ACCOUNT, model);
 
-  flatten_list = gtk_flatten_list_model_new (G_TYPE_OBJECT,
-                                             G_LIST_MODEL (self->list_of_chat_list));
+  self->account_list = g_list_store_new (CHATTY_TYPE_ACCOUNT);
+  g_list_store_append (self->list_of_account_list, self->account_list);
+
+  model = G_LIST_MODEL (self->list_of_user_list);
+  self->contact_list = gtk_flatten_list_model_new (G_TYPE_OBJECT, model);
+
+  model = chatty_eds_get_model (self->chatty_eds);
+  g_list_store_append (self->list_of_user_list, model);
+
+  model = G_LIST_MODEL (self->list_of_chat_list);
   sorter = gtk_custom_sorter_new ((GCompareDataFunc)manager_sort_chat_item, NULL, NULL);
+  flatten_list = gtk_flatten_list_model_new (G_TYPE_OBJECT, model);
   self->sorted_chat_list = gtk_sort_list_model_new (G_LIST_MODEL (flatten_list), sorter);
 
   g_signal_connect_object (flatten_list, "items-changed",
                            G_CALLBACK (manager_chat_list_items_changed),
                            self, G_CONNECT_SWAPPED);
-
-  g_signal_connect_object (self->chatty_eds, "notify::is-ready",
-                           G_CALLBACK (manager_eds_is_ready), self,
-                           G_CONNECT_SWAPPED);
 
   network_monitor = g_network_monitor_get_default ();
   self->network_available = g_network_monitor_get_network_available (network_monitor);
