@@ -1879,6 +1879,27 @@ chatty_purple_start_buddy_chat (ChattyPurple  *self,
   return CHATTY_CHAT (item);
 }
 
+void
+chatty_purple_start_chat (ChattyPurple *self,
+                          ChattyItem   *item)
+{
+  ChattyChat *chat;
+
+  g_return_if_fail (CHATTY_IS_PURPLE (self));
+  g_return_if_fail (CHATTY_IS_PP_CHAT (item) || CHATTY_IS_PP_BUDDY (item));
+
+  if (CHATTY_IS_PP_BUDDY (item)) {
+    chat = g_object_get_data (G_OBJECT (item), "chat");
+
+    if (!chat)
+      chat = chatty_purple_start_buddy_chat (self, CHATTY_PP_BUDDY (item));
+  } else {
+    chat = CHATTY_CHAT (item);
+  }
+
+  chatty_pp_chat_join (CHATTY_PP_CHAT (chat));
+}
+
 GListModel *
 chatty_purple_get_accounts (ChattyPurple *self)
 {

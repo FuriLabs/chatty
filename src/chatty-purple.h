@@ -28,6 +28,8 @@ void            chatty_purple_enable_debug         (void);
 gboolean        chatty_purple_is_loaded            (ChattyPurple   *self);
 ChattyChat     *chatty_purple_start_buddy_chat     (ChattyPurple   *self,
                                                     ChattyPpBuddy  *buddy);
+void            chatty_purple_start_chat           (ChattyPurple   *self,
+                                                    ChattyItem     *item);
 GListModel     *chatty_purple_get_accounts         (ChattyPurple   *self);
 GListModel     *chatty_purple_get_chat_list        (ChattyPurple   *self);
 GListModel     *chatty_purple_get_user_list        (ChattyPurple   *self);
