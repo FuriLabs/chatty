@@ -321,7 +321,6 @@ window_chat_row_activated_cb (GtkListBox    *box,
   g_assert (CHATTY_WINDOW (self));
 
   chat = (ChattyChat *)chatty_list_row_get_item (CHATTY_LIST_ROW (row));
-  window_set_item (self, chat);
 
   g_return_if_fail (CHATTY_IS_CHAT (chat));
 
