@@ -213,8 +213,7 @@ window_chat_changed_cb (ChattyWindow *self)
                                        "<b>“+”</b> button in the titlebar."));
   else
     hdy_status_page_set_description (HDY_STATUS_PAGE (self->empty_view),
-                                     _("For <b>Instant Messaging</b> add or activate "
-                                       "an account in <i>\"preferences\"</i>."));
+                                     _("Add instant messaging accounts in Preferences."));
 }
 
 static gboolean
