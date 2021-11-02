@@ -110,6 +110,8 @@ window_set_item (ChattyWindow *self,
 
   if (!chat)
     hdy_leaflet_set_visible_child_name (HDY_LEAFLET (self->content_box), "sidebar");
+
+  chatty_chat_view_set_chat (CHATTY_CHAT_VIEW (self->chat_view), chat);
 }
 
 static void
@@ -535,7 +537,6 @@ window_delete_buddy_clicked_cb (ChattyWindow *self)
     window_set_item (self, NULL);
     gtk_widget_hide (self->call_button);
     gtk_widget_set_sensitive (self->header_sub_menu_button, FALSE);
-    chatty_chat_view_set_chat (CHATTY_CHAT_VIEW (self->chat_view), NULL);
     chatty_window_chat_list_select_first (self);
   }
 
@@ -779,7 +780,6 @@ window_chat_deleted_cb (ChattyWindow *self,
     return;
 
   window_set_item (self, NULL);
-  chatty_chat_view_set_chat (CHATTY_CHAT_VIEW (self->chat_view), NULL);
 }
 
 static void
@@ -1069,7 +1069,6 @@ chatty_window_open_chat (ChattyWindow *self,
   CHATTY_INFO (chatty_chat_get_chat_name (chat),
                "opening chat, type: %s, chat-name:", G_OBJECT_TYPE_NAME (chat));
 
-  chatty_chat_view_set_chat (CHATTY_CHAT_VIEW (self->chat_view), chat);
   window_set_item (self, chat);
   window_chat_changed_cb (self);
 
