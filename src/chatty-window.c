@@ -425,9 +425,6 @@ window_new_message_clicked_cb (ChattyWindow *self)
   dialog = CHATTY_NEW_CHAT_DIALOG (self->new_chat_dialog);
   item = chatty_new_chat_dialog_get_selected_item (dialog);
 
-  if (CHATTY_IS_CHAT (item))
-    window_set_item (self, CHATTY_CHAT (item));
-
   if (CHATTY_IS_CONTACT (item) &&
       chatty_contact_is_dummy (CHATTY_CONTACT (item)))
     phone_number = chatty_item_get_username (item);
