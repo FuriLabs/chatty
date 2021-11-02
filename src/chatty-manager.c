@@ -56,7 +56,6 @@ struct _ChattyManager
   GListStore      *list_of_user_list;
   GtkFlattenListModel *contact_list;
   GtkSortListModel    *sorted_chat_list;
-  GtkSorter           *chat_sorter;
 
   ChattyPurple    *purple;
   MatrixDb        *matrix_db;
@@ -316,6 +315,7 @@ static void
 chatty_manager_init (ChattyManager *self)
 {
   g_autoptr(GtkFlattenListModel) flatten_list = NULL;
+  g_autoptr(GtkSorter) sorter = NULL;
   GNetworkMonitor *network_monitor;
 
   self->list_of_account_list = g_list_store_new (G_TYPE_LIST_MODEL);
@@ -339,12 +339,11 @@ chatty_manager_init (ChattyManager *self)
   g_list_store_append (self->list_of_user_list,
                        chatty_eds_get_model (self->chatty_eds));
 
-  self->chat_sorter = gtk_custom_sorter_new ((GCompareDataFunc)manager_sort_chat_item,
-                                             NULL, NULL);
   flatten_list = gtk_flatten_list_model_new (G_TYPE_OBJECT,
                                              G_LIST_MODEL (self->list_of_chat_list));
-  self->sorted_chat_list = gtk_sort_list_model_new (G_LIST_MODEL (flatten_list),
-                                                    self->chat_sorter);
+  sorter = gtk_custom_sorter_new ((GCompareDataFunc)manager_sort_chat_item, NULL, NULL);
+  self->sorted_chat_list = gtk_sort_list_model_new (G_LIST_MODEL (flatten_list), sorter);
+
   g_signal_connect_object (flatten_list, "items-changed",
                            G_CALLBACK (manager_chat_list_items_changed),
                            self, G_CONNECT_SWAPPED);
