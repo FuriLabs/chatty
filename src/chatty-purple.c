@@ -371,8 +371,8 @@ chatty_purple_add_chat (ChattyPurple *self,
 
   if (!item) {
     CHATTY_DEBUG (chatty_chat_get_chat_name (CHATTY_CHAT (chat)), "Added chat:");
-    g_list_store_append (self->chat_list, chat);
     chatty_chat_set_data (CHATTY_CHAT (chat), NULL, self->history);
+    g_list_store_append (self->chat_list, chat);
   }
 
   /* gtk_sorter_changed (self->chat_sorter, GTK_SORTER_CHANGE_DIFFERENT); */
@@ -1872,8 +1872,8 @@ chatty_purple_start_buddy_chat (ChattyPurple  *self,
 
   if (!item) {
     item = chat;
-    g_list_store_append (self->chat_list, chat);
     chatty_chat_set_data (CHATTY_CHAT (chat), NULL, self->history);
+    g_list_store_append (self->chat_list, chat);
   }
 
   return CHATTY_CHAT (item);
