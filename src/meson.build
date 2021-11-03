@@ -17,6 +17,7 @@ libsrc = [
   'dialogs/chatty-ma-chat-info.c',
   'dialogs/chatty-pp-chat-info.c',
   'dialogs/chatty-mm-chat-info.c',
+  'matrix/chatty-matrix.c',
   'matrix/matrix-api.c',
   'matrix/matrix-enc.c',
   'matrix/matrix-db.c',
