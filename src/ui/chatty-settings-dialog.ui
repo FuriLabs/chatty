@@ -196,7 +196,6 @@
                     <child>
                       <object class="GtkListBox" id="accounts_list_box">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
                         <property name="expand">True</property>
                         <property name="selection-mode">none</property>
                         <signal name="row-activated" handler="account_list_row_activated_cb" swapped="yes"/>
@@ -406,17 +405,14 @@
                 <child>
                   <object class="HdyPreferencesGroup">
                     <property name="visible">True</property>
-                    <property name="can-focus">False</property>
                     <property name="title" translatable="yes">MMS Carrier Settings</property>
                       <child>
                         <object class="HdyActionRow">
                           <property name="visible">True</property>
-                          <property name="can-focus">False</property>
                           <property name="title" translatable="yes">MMSC</property>
                           <child>
                             <object class="GtkEntry" id="carrier_mmsc_entry">
                               <property name="visible">True</property>
-                              <property name="can-focus">True</property>
                               <property name="valign">center</property>
                               <property name="width-chars">25</property>
                               <property name="placeholder-text">http://carriermmsc.invalid/</property>
@@ -428,12 +424,10 @@
                       <child>
                         <object class="HdyActionRow">
                           <property name="visible">True</property>
-                          <property name="can-focus">False</property>
                           <property name="title" translatable="yes">APN</property>
                           <child>
                             <object class="GtkEntry" id="mms_apn_entry">
                               <property name="visible">True</property>
-                              <property name="can-focus">True</property>
                               <property name="valign">center</property>
                               <property name="width-chars">25</property>
                               <property name="placeholder-text">apn.invalid</property>
@@ -445,12 +439,10 @@
                       <child>
                         <object class="HdyActionRow">
                           <property name="visible">True</property>
-                          <property name="can-focus">False</property>
                           <property name="title" translatable="yes">Proxy</property>
                           <child>
                             <object class="GtkEntry" id="mms_proxy_entry">
                               <property name="visible">True</property>
-                              <property name="can-focus">True</property>
                               <property name="width-chars">25</property>
                               <property name="valign">center</property>
                             </object>
@@ -498,7 +490,6 @@
                     <child>
                       <object class="GtkListBox" id="protocol_list">
                         <property name="visible">False</property>
-                        <property name="can_focus">False</property>
                         <property name="selection-mode">none</property>
                         <property name="margin-bottom">24</property>
                         <style>
@@ -512,7 +503,6 @@
                             <child type="prefix">
                               <object class="GtkRadioButton" id="xmpp_radio_button">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
                                 <signal name="toggled" handler="settings_protocol_changed_cb" swapped="yes"/>
                               </object>
                             </child>
@@ -526,7 +516,6 @@
                             <child type="prefix">
                               <object class="GtkRadioButton" id="matrix_radio_button">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
                                 <property name="group">xmpp_radio_button</property>
                                 <signal name="toggled" handler="settings_protocol_changed_cb" swapped="yes"/>
                               </object>
@@ -541,7 +530,6 @@
                             <child type="prefix">
                               <object class="GtkRadioButton" id="telegram_radio_button">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
                                 <property name="group">xmpp_radio_button</property>
                                 <signal name="toggled" handler="settings_protocol_changed_cb" swapped="yes"/>
                               </object>
@@ -558,7 +546,6 @@
                     <child>
                       <object class="GtkListBox" id="new_account_settings_list">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
                         <property name="expand">True</property>
                         <property name="selection-mode">none</property>
                         <property name="margin-bottom">24</property>
@@ -570,7 +557,6 @@
                             <property name="selectable">False</property>
                             <property name="activatable">False</property>
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
                             <child type="prefix">
                               <object class="GtkLabel">
                                 <property name="label" translatable="no">User ID</property>
@@ -596,7 +582,6 @@
                             <property name="selectable">False</property>
                             <property name="activatable">False</property>
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
                             <child type="prefix">
                               <object class="GtkLabel">
                                 <property name="label" translatable="yes">Password</property>
