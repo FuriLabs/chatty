@@ -24,6 +24,13 @@
         </child>
         <child>
           <object class="GtkModelButton">
+            <property name="visible">1</property>
+            <property name="text" translatable="yes">Keyboard _Shortcuts</property>
+            <property name="action-name">win.show-help-overlay</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkModelButton">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">False</property>
