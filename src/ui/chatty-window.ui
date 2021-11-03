@@ -397,6 +397,7 @@
                         <property name="hexpand">True</property>
                         <signal name="search-changed" handler="window_search_changed_cb" swapped="yes"/>
                         <signal name="tag-button-clicked" handler="search_tag_button_clicked_cb" swapped="yes"/>
+                        <signal name="activate" handler="window_search_entry_activated_cb" swapped="yes"/>
                       </object>
                     </child>
                     <child>

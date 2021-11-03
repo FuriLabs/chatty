@@ -387,6 +387,19 @@ window_search_toggled_cb (ChattyWindow    *self,
 }
 
 static void
+window_search_entry_activated_cb (ChattyWindow *self)
+{
+  GtkListBoxRow *row;
+
+  g_assert (CHATTY_IS_WINDOW (self));
+
+  row = gtk_list_box_get_row_at_index (GTK_LIST_BOX (self->chats_listbox), 0);
+
+  if (row)
+    window_chat_row_activated_cb (GTK_LIST_BOX (self->chats_listbox), row, self);
+}
+
+static void
 notify_fold_cb (ChattyWindow *self)
 {
   gboolean folded = hdy_leaflet_get_folded (HDY_LEAFLET (self->header_box));
@@ -968,6 +981,7 @@ chatty_window_class_init (ChattyWindowClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, window_search_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, search_tag_button_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, window_search_toggled_cb);
+  gtk_widget_class_bind_template_callback (widget_class, window_search_entry_activated_cb);
   gtk_widget_class_bind_template_callback (widget_class, window_chat_row_activated_cb);
   gtk_widget_class_bind_template_callback (widget_class, chatty_window_show_settings_dialog);
   gtk_widget_class_bind_template_callback (widget_class, chatty_window_show_about_dialog);
