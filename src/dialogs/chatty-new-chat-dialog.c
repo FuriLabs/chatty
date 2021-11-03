@@ -245,6 +245,28 @@ contact_stroll_edge_reached_cb (ChattyNewChatDialog *self,
 }
 
 static void
+contact_search_entry_activated_cb (ChattyNewChatDialog *self)
+{
+  GtkListBox *box;
+  GtkWidget *row;
+
+  g_assert (CHATTY_IS_NEW_CHAT_DIALOG (self));
+
+  box = GTK_LIST_BOX (self->chats_listbox);
+
+  if (gtk_widget_is_visible (self->new_contact_row))
+    row = self->new_contact_row;
+  else
+    row = (GtkWidget *)gtk_list_box_get_row_at_index (box, 0);
+
+  if (row) {
+    self->selected_item = chatty_list_row_get_item (CHATTY_LIST_ROW (row));
+
+    gtk_dialog_response (GTK_DIALOG (self), GTK_RESPONSE_OK);
+  }
+}
+
+static void
 contact_search_entry_changed_cb (ChattyNewChatDialog *self,
                                  GtkEntry            *entry)
 {
@@ -607,6 +629,7 @@ chatty_new_chat_dialog_class_init (ChattyNewChatDialogClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, back_button_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, edit_contact_button_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, contact_stroll_edge_reached_cb);
+  gtk_widget_class_bind_template_callback (widget_class, contact_search_entry_activated_cb);
   gtk_widget_class_bind_template_callback (widget_class, contact_search_entry_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, contact_row_activated_cb);
   gtk_widget_class_bind_template_callback (widget_class, add_contact_button_clicked_cb);

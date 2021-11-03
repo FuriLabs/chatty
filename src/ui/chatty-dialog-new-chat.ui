@@ -156,6 +156,7 @@
                                 <property name="has_focus">True</property>
                                 <property name="receives_default">False</property>
                                 <property name="placeholder-text" translatable="yes">Send To:</property>
+                                <signal name="activate" handler="contact_search_entry_activated_cb" swapped="yes"/>
                                 <signal name="search-changed" handler="contact_search_entry_changed_cb" swapped="yes"/>
                               </object>
                             </child>
