@@ -25,11 +25,9 @@
 #include "chatty-utils.h"
 #include "users/chatty-mm-account.h"
 #include "matrix/chatty-ma-account.h"
-#include "matrix/chatty-ma-chat.h"
-#include "matrix/matrix-db.h"
-#include "chatty-secret-store.h"
 #include "chatty-chat.h"
 #include "chatty-history.h"
+#include "matrix/chatty-matrix.h"
 #include "chatty-purple.h"
 #include "chatty-manager.h"
 #include "chatty-log.h"
@@ -57,8 +55,8 @@ struct _ChattyManager
   GtkFlattenListModel *contact_list;
   GtkSortListModel    *sorted_chat_list;
 
+  ChattyMatrix    *matrix;
   ChattyPurple    *purple;
-  MatrixDb        *matrix_db;
   /* We have exactly one MM account */
   ChattyMmAccount *mm_account;
 
@@ -120,41 +118,6 @@ manager_eds_is_ready (ChattyManager *self)
 }
 
 static void
-manager_network_changed_cb (GNetworkMonitor *network_monitor,
-                            gboolean         network_available,
-                            ChattyManager   *self)
-{
-  GListModel *list;
-  guint n_items;
-
-  g_assert (G_IS_NETWORK_MONITOR (network_monitor));
-  g_assert (CHATTY_IS_MANAGER (self));
-
-  if (network_available == self->network_available ||
-      !self->has_loaded)
-    return;
-
-  self->network_available = network_available;
-  list = G_LIST_MODEL (self->account_list);
-  n_items = g_list_model_get_n_items (list);
-
-  g_log (G_LOG_DOMAIN, CHATTY_LOG_LEVEL_TRACE,
-         "Network changed, has network: %s", CHATTY_LOG_BOOL (network_available));
-
-  for (guint i = 0; i < n_items; i++)
-    {
-      g_autoptr(ChattyAccount) account = NULL;
-
-      account = g_list_model_get_item (list, i);
-
-      if (network_available)
-        chatty_account_connect (account, FALSE);
-      else
-        chatty_account_disconnect (account);
-    }
-}
-
-static void
 chatty_manager_get_property (GObject    *object,
                              guint       prop_id,
                              GValue     *value,
@@ -196,6 +159,7 @@ chatty_manager_finalize (GObject *object)
   ChattyManager *self = (ChattyManager *)object;
 
   g_clear_object (&self->history);
+  g_clear_object (&self->matrix);
 
   G_OBJECT_CLASS (chatty_manager_parent_class)->finalize (object);
 }
@@ -316,7 +280,6 @@ chatty_manager_init (ChattyManager *self)
 {
   g_autoptr(GtkFlattenListModel) flatten_list = NULL;
   g_autoptr(GtkSorter) sorter = NULL;
-  GNetworkMonitor *network_monitor;
   GListModel *model;
 
   self->chatty_eds = chatty_eds_new (CHATTY_PROTOCOL_MMS_SMS);
@@ -355,14 +318,6 @@ chatty_manager_init (ChattyManager *self)
   g_signal_connect_object (flatten_list, "items-changed",
                            G_CALLBACK (manager_chat_list_items_changed),
                            self, G_CONNECT_SWAPPED);
-
-  network_monitor = g_network_monitor_get_default ();
-  self->network_available = g_network_monitor_get_network_available (network_monitor);
-
-  /* Required for matrix */
-  g_signal_connect_object (network_monitor, "network-changed",
-                           G_CALLBACK (manager_network_changed_cb), self,
-                           G_CONNECT_AFTER);
 }
 
 ChattyManager *
@@ -377,76 +332,6 @@ chatty_manager_get_default (void)
     }
 
   return self;
-}
-
-static void
-manager_ma_account_changed_cb (ChattyMaAccount *account)
-{
-  ChattyManager *self;
-  guint position;
-
-  g_assert (CHATTY_IS_MA_ACCOUNT (account));
-
-  self = chatty_manager_get_default ();
-
-  if (chatty_utils_get_item_position (G_LIST_MODEL (self->list_of_chat_list),
-                                      chatty_ma_account_get_chat_list (account),
-                                      &position))
-    g_list_model_items_changed (G_LIST_MODEL (self->list_of_chat_list), position, 1, 1);
-}
-
-static void
-manager_secret_load_cb (GObject      *object,
-                        GAsyncResult *result,
-                        gpointer      user_data)
-{
-  ChattyManager *self = user_data;
-  g_autoptr(GPtrArray) accounts = NULL;
-  g_autoptr(GError) error = NULL;
-
-  g_assert (CHATTY_IS_MANAGER (self));
-
-  accounts = chatty_secret_load_finish (result, &error);
-  g_info ("Loading accounts from secrets %s", CHATTY_LOG_SUCESS (!error));
-
-  if (error)
-    g_warning ("Error loading secret accounts: %s", error->message);
-
-  if (!accounts)
-    return;
-
-  g_info ("Loaded %d matrix accounts", accounts ? accounts->len : 0);
-
-  for (guint i = 0; i < accounts->len; i++) {
-    g_signal_connect_object (accounts->pdata[i], "notify::status",
-                             G_CALLBACK (manager_ma_account_changed_cb),
-                             accounts->pdata[i], 0);
-
-    chatty_ma_account_set_history_db (accounts->pdata[i], self->history);
-    chatty_ma_account_set_db (accounts->pdata[i], self->matrix_db);
-    g_list_store_append (self->list_of_chat_list,
-                         chatty_ma_account_get_chat_list (accounts->pdata[i]));
-  }
-
-  g_list_store_splice (self->account_list, 0, 0, accounts->pdata, accounts->len);
-}
-
-static void
-matrix_db_open_cb (GObject      *object,
-                   GAsyncResult *result,
-                   gpointer      user_data)
-{
-  ChattyManager *self = user_data;
-  g_autoptr(GError) error = NULL;
-
-  g_assert (CHATTY_IS_MANAGER (self));
-
-  if (matrix_db_open_finish (self->matrix_db, result, &error))
-    chatty_secret_load_async (NULL, manager_secret_load_cb, self);
-  else if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
-    g_warning ("Failed to open Matrix DB: %s", error->message);
-
-  g_info ("Opening matrix db %s", CHATTY_LOG_SUCESS (!error));
 }
 
 void
@@ -480,15 +365,14 @@ chatty_manager_load (ChattyManager *self)
 
   chatty_mm_account_load_async (self->mm_account, NULL, NULL);
 
-  if (chatty_settings_get_experimental_features (chatty_settings_get_default ())) {
-    char *db_path;
-
-    self->matrix_db = matrix_db_new ();
-    db_path =  g_build_filename (purple_user_dir(), "chatty", "db", NULL);
-    matrix_db_open_async (self->matrix_db, db_path, "matrix.db",
-                          matrix_db_open_cb, self);
-    g_info ("Opening matrix db");
-  }
+  /* Matrix Setup */
+  self->matrix = chatty_matrix_new (chatty_manager_get_history (self),
+                                    self->disable_auto_login);
+  g_list_store_append (self->list_of_account_list,
+                       chatty_matrix_get_account_list (self->matrix));
+  g_list_store_append (self->list_of_chat_list,
+                       chatty_matrix_get_chat_list (self->matrix));
+  chatty_matrix_load (self->matrix);
 }
 
 GListModel *
@@ -570,27 +454,7 @@ chatty_manager_get_eds (ChattyManager *self)
 }
 
 static void
-matrix_db_account_delete_cb (GObject      *object,
-                             GAsyncResult *result,
-                             gpointer      user_data)
-{
-  g_autoptr(GTask) task = user_data;
-  GError *error = NULL;
-  gboolean status;
-
-  g_assert (G_IS_TASK (task));
-
-  status = matrix_db_delete_account_finish (MATRIX_DB (object),
-                                            result, &error);
-
-  if (error)
-    g_task_return_error (task, error);
-  else
-    g_task_return_boolean (task, status);
-}
-
-static void
-manager_account_delete_cb (GObject      *object,
+manager_delete_account_cb (GObject      *object,
                            GAsyncResult *result,
                            gpointer      user_data)
 {
@@ -598,6 +462,7 @@ manager_account_delete_cb (GObject      *object,
   ChattyMaAccount *account;
   g_autoptr(GTask) task = user_data;
   GError *error = NULL;
+  gboolean success = FALSE;
 
   g_assert (G_IS_TASK (task));
 
@@ -605,16 +470,15 @@ manager_account_delete_cb (GObject      *object,
   account = g_task_get_task_data (task);
 
   g_assert (CHATTY_IS_MANAGER (self));
-  g_assert (CHATTY_IS_MA_ACCOUNT (account));
+  g_assert (CHATTY_IS_ACCOUNT (account));
 
-  if (!chatty_secret_delete_finish (result, &error)) {
+  if (CHATTY_IS_MA_ACCOUNT (account))
+    success = chatty_matrix_delete_account_finish (self->matrix, result, &error);
+
+  if (error)
     g_task_return_error (task, error);
-    return;
-  }
-
-  matrix_db_delete_account_async (self->matrix_db, CHATTY_ACCOUNT (account),
-                                  matrix_db_account_delete_cb,
-                                  g_steal_pointer (&task));
+  else
+    g_task_return_boolean (task, success);
 }
 
 void
@@ -624,21 +488,20 @@ chatty_manager_delete_account_async (ChattyManager       *self,
                                      GAsyncReadyCallback  callback,
                                      gpointer             user_data)
 {
-  GListModel *chat_list;
-  GTask *task;
+  g_autoptr(GTask) task = NULL;
 
   g_return_if_fail (CHATTY_IS_MANAGER (self));
-  /* We now handle only matrix accounts */
-  g_return_if_fail (CHATTY_IS_MA_ACCOUNT (account));
+  g_return_if_fail (CHATTY_IS_ACCOUNT (account));
 
   task = g_task_new (self, cancellable, callback, user_data);
   g_task_set_task_data (task, g_object_ref (account), g_object_unref);
 
-  chat_list = chatty_ma_account_get_chat_list (CHATTY_MA_ACCOUNT (account));
-  chatty_utils_remove_list_item (self->list_of_chat_list, chat_list);
-  chatty_utils_remove_list_item (self->account_list, account);
-
-  chatty_secret_delete_async (account, NULL, manager_account_delete_cb, task);
+  if (CHATTY_IS_MA_ACCOUNT (account))
+    chatty_matrix_delete_account_async (self->matrix, account, cancellable,
+                                        manager_delete_account_cb,
+                                        g_steal_pointer (&task));
+  else
+    g_return_if_reached ();
 }
 
 gboolean
@@ -658,36 +521,26 @@ manager_save_account_cb (GObject      *object,
                          gpointer      user_data)
 {
   ChattyManager *self;
-  ChattyMaAccount *account = (gpointer)object;
+  ChattyAccount *account;
   g_autoptr(GTask) task = user_data;
-  g_autoptr(GError) error = NULL;
-  gboolean saved;
+  GError *error = NULL;
+  gboolean saved = FALSE;
 
   g_assert (G_IS_TASK (task));
-  g_assert (CHATTY_IS_MA_ACCOUNT (account));
 
   self = g_task_get_source_object (task);
+  account = g_task_get_task_data (task);
+
   g_assert (CHATTY_IS_MANAGER (self));
+  g_assert (CHATTY_IS_ACCOUNT (account));
 
-  saved = chatty_ma_account_save_finish (account, result, &error);
+  if (CHATTY_IS_MA_ACCOUNT (account))
+    saved = chatty_matrix_save_account_finish (self->matrix, result, &error);
 
-  if (error) {
+  if (error)
     g_task_return_error (task, error);
-    return;
-  }
-
-  if (saved) {
-    g_list_store_append (self->account_list, account);
-
-    g_signal_connect_object (account, "notify::status",
-                             G_CALLBACK (manager_ma_account_changed_cb),
-                             account, 0);
-
-    if (!chatty_manager_get_disable_auto_login (self))
-      chatty_account_set_enabled (CHATTY_ACCOUNT (account), TRUE);
-  }
-
-  g_task_return_boolean (task, saved);
+  else
+    g_task_return_boolean (task, saved);
 }
 
 void
@@ -697,17 +550,20 @@ chatty_manager_save_account_async (ChattyManager       *self,
                                    GAsyncReadyCallback  callback,
                                    gpointer             user_data)
 {
-  GTask *task;
+  g_autoptr(GTask) task = NULL;
 
   g_return_if_fail (CHATTY_IS_MANAGER (self));
-  /* We now handle only matrix accounts */
-  g_return_if_fail (CHATTY_IS_MA_ACCOUNT (account));
+  g_return_if_fail (CHATTY_IS_ACCOUNT (account));
 
   task = g_task_new (self, cancellable, callback, user_data);
-  chatty_ma_account_set_history_db (CHATTY_MA_ACCOUNT (account), self->history);
-  chatty_ma_account_set_db (CHATTY_MA_ACCOUNT (account), self->matrix_db);
-  chatty_ma_account_save_async (CHATTY_MA_ACCOUNT (account), TRUE, NULL,
-                                manager_save_account_cb, task);
+  g_task_set_task_data (task, g_object_ref (account), g_object_unref);
+
+  if (CHATTY_IS_MA_ACCOUNT (account))
+    chatty_matrix_save_account_async (self->matrix, account, cancellable,
+                                      manager_save_account_cb,
+                                      g_steal_pointer (&task));
+  else
+    g_return_if_reached ();
 }
 
 gboolean
@@ -735,9 +591,6 @@ chatty_manager_find_chat_with_name (ChattyManager  *self,
                                     const char     *account_id,
                                     const char     *chat_id)
 {
-  GListModel *accounts, *chat_list;
-  guint n_accounts, n_items;
-
   g_return_val_if_fail (CHATTY_IS_MANAGER (self), NULL);
   g_return_val_if_fail (chat_id && *chat_id, NULL);
 
@@ -750,33 +603,9 @@ chatty_manager_find_chat_with_name (ChattyManager  *self,
     return chatty_purple_find_chat_with_name (chatty_purple_get_default (),
                                               protocol, account_id, chat_id);
 
-  accounts = G_LIST_MODEL (self->account_list);
-  n_accounts = g_list_model_get_n_items (accounts);
-
-  for (guint i = 0; i < n_accounts; i++) {
-    g_autoptr(ChattyAccount) account = NULL;
-
-    account = g_list_model_get_item (accounts, i);
-
-    if (!(protocol & chatty_item_get_protocols (CHATTY_ITEM (account))))
-      continue;
-
-    if (!CHATTY_IS_MA_ACCOUNT (account) ||
-        g_strcmp0 (chatty_item_get_username (CHATTY_ITEM (account)), account_id) != 0)
-      continue;
-
-    chat_list = chatty_ma_account_get_chat_list (CHATTY_MA_ACCOUNT (account));
-    n_items = g_list_model_get_n_items (chat_list);
-
-    for (guint j = 0; j < n_items; j++) {
-      g_autoptr(ChattyMaChat) chat = NULL;
-
-      chat = g_list_model_get_item (chat_list, j);
-
-      if (chatty_ma_chat_matches_id (chat, chat_id))
-        return CHATTY_CHAT (chat);
-    }
-  }
+  if (chatty_settings_get_experimental_features (chatty_settings_get_default ())
+      && protocol == CHATTY_PROTOCOL_MATRIX)
+    return chatty_matrix_find_chat_with_name (self->matrix, protocol, account_id, chat_id);
 
   return NULL;
 }
