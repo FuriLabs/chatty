@@ -35,6 +35,7 @@
 #include "dialogs/chatty-settings-dialog.h"
 #include "dialogs/chatty-new-chat-dialog.h"
 #include "dialogs/chatty-new-muc-dialog.h"
+#include "users/chatty-mm-account.h"
 #include "chatty-log.h"
 
 struct _ChattyWindow
@@ -66,6 +67,7 @@ struct _ChattyWindow
 
   GtkWidget *menu_add_contact_button;
   GtkWidget *menu_new_message_button;
+  GtkWidget *menu_new_sms_mms_message_button;
   GtkWidget *menu_new_group_message_button;
   GtkWidget *header_add_chat_button;
   GtkWidget *call_button;
@@ -420,7 +422,6 @@ notify_fold_cb (ChattyWindow *self)
   gtk_filter_changed (self->chat_filter, GTK_FILTER_CHANGE_DIFFERENT);
 }
 
-
 static void
 window_new_message_clicked_cb (ChattyWindow *self)
 {
@@ -431,14 +432,15 @@ window_new_message_clicked_cb (ChattyWindow *self)
 
   g_assert (CHATTY_IS_WINDOW (self));
 
+  dialog = CHATTY_NEW_CHAT_DIALOG (self->new_chat_dialog);
+  chatty_new_chat_dialog_set_multi_selection (dialog, FALSE);
+
   response = gtk_dialog_run (GTK_DIALOG (self->new_chat_dialog));
   gtk_widget_hide (self->new_chat_dialog);
 
   if (response != GTK_RESPONSE_OK)
     return;
 
-
-  dialog = CHATTY_NEW_CHAT_DIALOG (self->new_chat_dialog);
   item = chatty_new_chat_dialog_get_selected_item (dialog);
 
   if (CHATTY_IS_CONTACT (item) &&
@@ -453,6 +455,39 @@ window_new_message_clicked_cb (ChattyWindow *self)
     g_return_if_reached ();
 }
 
+static void
+window_new_sms_mms_message_clicked_cb (ChattyWindow *self)
+{
+  g_autoptr(GString) sendlist = g_string_new (NULL);
+  ChattyNewChatDialog *dialog;
+  ChattyItem *item;
+  GList *items, *l;
+  const char *phone_number = NULL;
+  gint response;
+
+  g_assert (CHATTY_IS_WINDOW (self));
+
+  dialog = CHATTY_NEW_CHAT_DIALOG (self->new_chat_dialog);
+  chatty_new_chat_dialog_set_multi_selection (dialog, TRUE);
+
+  response = gtk_dialog_run (GTK_DIALOG (self->new_chat_dialog));
+  gtk_widget_hide (self->new_chat_dialog);
+
+  if (response != GTK_RESPONSE_OK)
+    return;
+
+  items = chatty_new_chat_dialog_get_selected_items (dialog);
+  for (l = items; l != NULL; l = l->next) {
+    item = (ChattyItem *) l->data;
+    if (CHATTY_IS_CONTACT (item)) {
+      phone_number = chatty_item_get_username (item);
+      sendlist = g_string_append (sendlist, phone_number);
+      if (l->next != NULL)
+        sendlist = g_string_append (sendlist, ",");
+    }
+  }
+  chatty_window_set_uri (self, sendlist->str);
+}
 
 static void
 window_new_muc_clicked_cb (ChattyWindow *self)
@@ -471,12 +506,19 @@ window_new_muc_clicked_cb (ChattyWindow *self)
 static void
 window_add_chat_button_clicked_cb (ChattyWindow *self)
 {
+  ChattyAccount *mm_account;
+  gboolean has_mms, sms_connected;
+
   g_assert (CHATTY_IS_WINDOW (self));
 
-  if (chatty_manager_get_active_protocols (self->manager) == CHATTY_PROTOCOL_MMS_SMS)
-    window_new_message_clicked_cb (self);
-  else
-    gtk_popover_popup (GTK_POPOVER (self->header_chat_list_new_msg_popover));
+  mm_account  = chatty_manager_get_mm_account (self->manager);
+  has_mms = chatty_mm_account_has_mms_feature (CHATTY_MM_ACCOUNT (mm_account));
+  sms_connected = chatty_manager_get_active_protocols (self->manager) & CHATTY_PROTOCOL_MMS_SMS;
+
+  gtk_widget_set_visible (GTK_WIDGET (self->menu_new_sms_mms_message_button),
+                          has_mms && sms_connected);
+
+  gtk_popover_popup (GTK_POPOVER (self->header_chat_list_new_msg_popover));
 }
 
 
@@ -951,6 +993,7 @@ chatty_window_class_init (ChattyWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyWindow, sub_header_icon);
   gtk_widget_class_bind_template_child (widget_class, ChattyWindow, menu_add_contact_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyWindow, menu_new_message_button);
+  gtk_widget_class_bind_template_child (widget_class, ChattyWindow, menu_new_sms_mms_message_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyWindow, menu_new_group_message_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyWindow, header_add_chat_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyWindow, call_button);
@@ -978,6 +1021,7 @@ chatty_window_class_init (ChattyWindowClass *klass)
 
   gtk_widget_class_bind_template_callback (widget_class, notify_fold_cb);
   gtk_widget_class_bind_template_callback (widget_class, window_new_message_clicked_cb);
+  gtk_widget_class_bind_template_callback (widget_class, window_new_sms_mms_message_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, window_new_muc_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, window_add_chat_button_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, window_back_clicked_cb);
@@ -1063,21 +1107,26 @@ chatty_window_set_uri (ChattyWindow *self,
                        const char   *uri)
 {
   g_autofree char *who = NULL;
+  g_auto(GStrv) recipients = NULL;
+  guint num;
 
-  who = chatty_utils_check_phonenumber (uri, chatty_settings_get_country_iso_code (self->settings));
+  recipients = g_strsplit (uri, ",", -1);
+  num = g_strv_length (recipients);
+  for (int i = 0; i < num; i++) {
+    who = chatty_utils_check_phonenumber (recipients[i], chatty_settings_get_country_iso_code (self->settings));
+    if (!who) {
+      GtkWidget *dialog;
 
-  if (!who) {
-    GtkWidget *dialog;
-
-    dialog = gtk_message_dialog_new (GTK_WINDOW (self),
-                                     GTK_DIALOG_MODAL,
-                                     GTK_MESSAGE_WARNING,
-                                     GTK_BUTTONS_CLOSE,
+      dialog = gtk_message_dialog_new (GTK_WINDOW (self),
+                                       GTK_DIALOG_MODAL,
+                                       GTK_MESSAGE_WARNING,
+                                       GTK_BUTTONS_CLOSE,
                                      _("“%s” is not a valid phone number"), uri);
-    gtk_dialog_run (GTK_DIALOG (dialog));
-    gtk_widget_destroy (dialog);
+      gtk_dialog_run (GTK_DIALOG (dialog));
+      gtk_widget_destroy (dialog);
 
-    return;
+      return;
+    }
   }
 
   if (!chatty_manager_set_uri (self->manager, uri))

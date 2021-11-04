@@ -71,6 +71,19 @@
           </packing>
         </child>
         <child>
+          <object class="GtkModelButton" id="menu_new_sms_mms_message_button">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">False</property>
+            <property name="text" translatable="yes">New SMS/MMS Message…</property>
+            <signal name="clicked" handler="window_new_sms_mms_message_clicked_cb" swapped="yes"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+          </packing>
+        </child>
+        <child>
           <object class="GtkModelButton" id="menu_new_group_message_button">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
