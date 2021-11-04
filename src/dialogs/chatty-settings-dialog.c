@@ -1168,9 +1168,7 @@ chatty_settings_dialog_init (ChattySettingsDialog *self)
                           G_BINDING_SYNC_CREATE);
 
   if (chatty_purple_is_loaded (purple) ||
-      chatty_settings_get_experimental_features (chatty_settings_get_default ()) ||
-      (chatty_purple_is_loaded (purple) &&
-       (purple_find_prpl ("prpl-matrix") || purple_find_prpl ("prpl-telegram"))))
+      chatty_settings_get_experimental_features (chatty_settings_get_default ()))
     gtk_widget_show (self->accounts_list_box);
   else
     gtk_widget_hide (self->accounts_list_box);
