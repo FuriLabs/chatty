@@ -474,7 +474,7 @@ settings_homeserver_entry_changed (ChattySettingsDialog *self,
                                    GtkEntry             *entry)
 {
   const char *server;
-  gboolean valid = TRUE;
+  gboolean valid = FALSE;
 
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
   g_assert (GTK_IS_ENTRY (entry));
@@ -482,13 +482,15 @@ settings_homeserver_entry_changed (ChattySettingsDialog *self,
   gtk_label_set_text (GTK_LABEL (self->matrix_error_label), "");
 
   server = gtk_entry_get_text (entry);
-  valid = server && g_str_has_prefix (server, "https://");
 
-  if (valid) {
+  if (server && *server) {
     g_autoptr(SoupURI) uri = NULL;
 
     uri = soup_uri_new (gtk_entry_get_text (entry));
-    valid = uri && uri->host && *uri->host && g_str_equal (soup_uri_get_path (uri), "/");
+
+    valid = SOUP_URI_VALID_FOR_HTTP (uri);
+    /* We need an absolute path URI */
+    valid = valid && *uri->host && g_str_equal (soup_uri_get_path (uri), "/");
   }
 
   gtk_widget_set_sensitive (self->matrix_accept_button, valid);
