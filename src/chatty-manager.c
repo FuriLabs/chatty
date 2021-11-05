@@ -24,6 +24,7 @@
 #include "chatty-contact-provider.h"
 #include "chatty-utils.h"
 #include "users/chatty-mm-account.h"
+#include "users/chatty-pp-account.h"
 #include "matrix/chatty-ma-account.h"
 #include "chatty-chat.h"
 #include "chatty-history.h"
@@ -474,6 +475,8 @@ manager_delete_account_cb (GObject      *object,
 
   if (CHATTY_IS_MA_ACCOUNT (account))
     success = chatty_matrix_delete_account_finish (self->matrix, result, &error);
+  else if (CHATTY_IS_PP_ACCOUNT (account))
+    success = chatty_purple_delete_account_finish (self->purple, result, &error);
 
   if (error)
     g_task_return_error (task, error);
@@ -498,6 +501,10 @@ chatty_manager_delete_account_async (ChattyManager       *self,
 
   if (CHATTY_IS_MA_ACCOUNT (account))
     chatty_matrix_delete_account_async (self->matrix, account, cancellable,
+                                        manager_delete_account_cb,
+                                        g_steal_pointer (&task));
+  else if (CHATTY_IS_PP_ACCOUNT (account))
+    chatty_purple_delete_account_async (self->purple, account, cancellable,
                                         manager_delete_account_cb,
                                         g_steal_pointer (&task));
   else
