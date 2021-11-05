@@ -40,6 +40,7 @@ void                chatty_pp_chat_set_purple_conv        (ChattyPpChat       *s
                                                            PurpleConversation *conv);
 PurpleChat         *chatty_pp_chat_get_purple_chat        (ChattyPpChat       *self);
 PurpleBuddy        *chatty_pp_chat_get_purple_buddy       (ChattyPpChat       *self);
+void                chatty_pp_chat_remove_purple_buddy    (ChattyPpChat       *self);
 PurpleConversation *chatty_pp_chat_get_purple_conv        (ChattyPpChat       *self);
 void                chatty_pp_chat_show_file_upload       (ChattyPpChat       *self);
 gboolean            chatty_pp_chat_are_same               (ChattyPpChat       *a,

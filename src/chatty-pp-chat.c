@@ -1153,6 +1153,25 @@ chatty_pp_chat_get_purple_buddy (ChattyPpChat *self)
   return self->buddy;
 }
 
+void
+chatty_pp_chat_remove_purple_buddy (ChattyPpChat *self)
+{
+  PurpleBlistNode *node;
+
+  g_return_if_fail (CHATTY_IS_PP_CHAT (self));
+
+  if (!self->buddy)
+    return;
+
+  node = PURPLE_BLIST_NODE (self->buddy);
+
+  g_object_set_data (node->ui_data, "chat", NULL);
+  g_signal_handlers_disconnect_by_func (node->ui_data,
+                                        emit_avatar_changed,
+                                        self);
+  self->buddy = NULL;
+}
+
 PurpleConversation *
 chatty_pp_chat_get_purple_conv (ChattyPpChat *self)
 {
