@@ -1575,6 +1575,9 @@ purple_buddy_removed_cb (PurpleBuddy  *pp_buddy,
   buddy = chatty_purple_find_buddy (model, pp_buddy);
   g_return_if_fail (buddy);
 
+  if (g_object_get_data (G_OBJECT (buddy), "chat"))
+    chatty_pp_chat_remove_purple_buddy (g_object_get_data (G_OBJECT (buddy), "chat"));
+
   g_signal_emit_by_name (buddy, "deleted");
   chatty_utils_remove_list_item (G_LIST_STORE (model), buddy);
 }
