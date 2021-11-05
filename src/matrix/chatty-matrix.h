@@ -42,6 +42,8 @@ void            chatty_matrix_save_account_async     (ChattyMatrix   *self,
 gboolean        chatty_matrix_save_account_finish    (ChattyMatrix   *self,
                                                       GAsyncResult   *result,
                                                       GError        **error);
+ChattyAccount  *chatty_matrix_find_account_with_name (ChattyMatrix   *self,
+                                                      const char     *account_id);
 ChattyChat     *chatty_matrix_find_chat_with_name    (ChattyMatrix   *self,
                                                       ChattyProtocol  protocol,
                                                       const char     *account_id,

@@ -424,6 +424,34 @@ chatty_matrix_save_account_finish (ChattyMatrix  *self,
   return g_task_propagate_boolean (G_TASK (result), error);
 }
 
+ChattyAccount *
+chatty_matrix_find_account_with_name  (ChattyMatrix *self,
+                                       const char   *account_id)
+{
+  GListModel *account_list;
+  guint n_items;
+
+  g_return_val_if_fail (CHATTY_IS_MATRIX (self), NULL);
+  g_return_val_if_fail (account_id && *account_id, NULL);
+
+  account_list = G_LIST_MODEL (self->account_list);
+  n_items = g_list_model_get_n_items (account_list);
+
+  g_warning ("account id: %s", account_id);
+  for (guint i = 0; i < n_items; i++) {
+    g_autoptr(ChattyMaAccount) account = NULL;
+
+    account = g_list_model_get_item (account_list, i);
+
+    /* The account matches if either login name or username matches */
+    if (g_strcmp0 (chatty_ma_account_get_login_username (account), account_id) == 0 ||
+        g_strcmp0 (chatty_item_get_username (CHATTY_ITEM (account)), account_id) == 0)
+      return CHATTY_ACCOUNT (account);
+  }
+
+  return NULL;
+}
+
 ChattyChat *
 chatty_matrix_find_chat_with_name (ChattyMatrix   *self,
                                    ChattyProtocol  protocol,
