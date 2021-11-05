@@ -38,6 +38,14 @@ ChattyChat     *chatty_purple_find_chat_with_name  (ChattyPurple   *self,
                                                     ChattyProtocol  protocol,
                                                     const char     *account_id,
                                                     const char     *chat_id);
+void            chatty_purple_delete_account_async (ChattyPurple   *self,
+                                                    ChattyAccount  *account,
+                                                    GCancellable   *cancellable,
+                                                    GAsyncReadyCallback callback,
+                                                    gpointer       user_data);
+gboolean        chatty_purple_delete_account_finish(ChattyPurple   *self,
+                                                    GAsyncResult   *result,
+                                                    GError        **error);
 ChattyProtocol  chatty_purple_get_protocols        (ChattyPurple   *self);
 void            chatty_purple_set_history_db       (ChattyPurple   *self,
                                                     ChattyHistory  *db);

@@ -1982,6 +1982,38 @@ chatty_purple_find_chat_with_name (ChattyPurple   *self,
   return NULL;
 }
 
+void
+chatty_purple_delete_account_async (ChattyPurple        *self,
+                                    ChattyAccount       *account,
+                                    GCancellable        *cancellable,
+                                    GAsyncReadyCallback  callback,
+                                    gpointer             user_data)
+{
+  g_autoptr(GTask) task = NULL;
+
+  g_return_if_fail (CHATTY_IS_PURPLE (self));
+  g_return_if_fail (CHATTY_IS_PP_ACCOUNT (account));
+
+  task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_task_data (task, g_object_ref (account), g_object_unref);
+
+  chatty_utils_remove_list_item (self->accounts, account);
+  chatty_account_delete (account);
+
+  g_task_return_boolean (task, TRUE);
+}
+
+gboolean
+chatty_purple_delete_account_finish (ChattyPurple  *self,
+                                     GAsyncResult  *result,
+                                     GError       **error)
+{
+  g_return_val_if_fail (CHATTY_IS_PURPLE (self), FALSE);
+  g_return_val_if_fail (G_IS_TASK (result), FALSE);
+
+  return g_task_propagate_boolean (G_TASK (result), error);
+}
+
 ChattyProtocol
 chatty_purple_get_protocols (ChattyPurple *self)
 {
