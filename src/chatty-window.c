@@ -849,6 +849,30 @@ chatty_window_unmap (GtkWidget *widget)
   GTK_WIDGET_CLASS (chatty_window_parent_class)->unmap (widget);
 }
 
+static void
+chatty_window_map (GtkWidget *widget)
+{
+  ChattyWindow *self = (ChattyWindow *)widget;
+
+  g_signal_connect_object (self->filter_model,
+                           "items-changed",
+                           G_CALLBACK (window_filter_changed_cb), self,
+                           G_CONNECT_SWAPPED);
+  g_signal_connect_object (gtk_filter_list_model_get_model (self->filter_model),
+                           "items-changed",
+                           G_CALLBACK (window_chat_changed_cb), self,
+                           G_CONNECT_SWAPPED);
+  g_signal_connect_object (self->manager, "notify::active-protocols",
+                           G_CALLBACK (window_active_protocols_changed_cb), self,
+                           G_CONNECT_SWAPPED);
+
+  notify_fold_cb (self);
+  window_chat_changed_cb (self);
+  window_filter_changed_cb (self);
+  window_active_protocols_changed_cb (self);
+
+  GTK_WIDGET_CLASS (chatty_window_parent_class)->map (widget);
+}
 
 static void
 chatty_window_constructed (GObject *object)
@@ -876,23 +900,6 @@ chatty_window_constructed (GObject *object)
                            G_LIST_MODEL (self->filter_model),
                            (GtkListBoxCreateWidgetFunc)chatty_list_row_new,
                            g_object_ref(self), g_object_unref);
-
-  g_signal_connect_object (self->filter_model,
-                           "items-changed",
-                           G_CALLBACK (window_filter_changed_cb), self,
-                           G_CONNECT_SWAPPED);
-  g_signal_connect_object (gtk_filter_list_model_get_model (self->filter_model),
-                           "items-changed",
-                           G_CALLBACK (window_chat_changed_cb), self,
-                           G_CONNECT_SWAPPED);
-  g_signal_connect_object (self->manager, "notify::active-protocols",
-                           G_CALLBACK (window_active_protocols_changed_cb), self,
-                           G_CONNECT_SWAPPED);
-
-  window_filter_changed_cb (self);
-  window_chat_changed_cb (self);
-  window_active_protocols_changed_cb (self);
-  notify_fold_cb (self);
 
   G_OBJECT_CLASS (chatty_window_parent_class)->constructed (object);
 }
@@ -933,6 +940,7 @@ chatty_window_class_init (ChattyWindowClass *klass)
   object_class->finalize     = chatty_window_finalize;
   object_class->dispose      = chatty_window_dispose;
 
+  widget_class->map = chatty_window_map;
   widget_class->unmap = chatty_window_unmap;
 
   gtk_widget_class_set_template_from_resource (widget_class,
