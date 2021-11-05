@@ -906,9 +906,9 @@ chatty_chat_view_set_chat (ChattyChatView *self,
   messages = chatty_chat_get_messages (chat);
   account = chatty_chat_get_account (chat);
 
-  g_signal_connect_swapped (messages, "items-changed",
-                            G_CALLBACK (chat_view_message_items_changed),
-                            self);
+  g_signal_connect_object (messages, "items-changed",
+                           G_CALLBACK (chat_view_message_items_changed),
+                           self, G_CONNECT_SWAPPED);
   chat_view_message_items_changed (self);
 
   if (g_list_model_get_n_items (messages) <= 3)
@@ -927,15 +927,15 @@ chatty_chat_view_set_chat (ChattyChatView *self,
                            chatty_chat_get_messages (self->chat),
                            (GtkListBoxCreateWidgetFunc)chat_view_message_row_new,
                            self, NULL);
-  g_signal_connect_swapped (self->chat, "notify::encrypt",
-                            G_CALLBACK (chat_encrypt_changed_cb),
-                            self);
-  g_signal_connect_swapped (self->chat, "notify::buddy-typing",
-                            G_CALLBACK (chat_buddy_typing_changed_cb),
-                            self);
-  g_signal_connect_swapped (self->chat, "notify::loading-history",
-                            G_CALLBACK (chat_view_loading_history_cb),
-                            self);
+  g_signal_connect_object (self->chat, "notify::encrypt",
+                           G_CALLBACK (chat_encrypt_changed_cb),
+                           self, G_CONNECT_SWAPPED);
+  g_signal_connect_object (self->chat, "notify::buddy-typing",
+                           G_CALLBACK (chat_buddy_typing_changed_cb),
+                           self, G_CONNECT_SWAPPED);
+  g_signal_connect_object (self->chat, "notify::loading-history",
+                           G_CALLBACK (chat_view_loading_history_cb),
+                           self, G_CONNECT_SWAPPED);
 
   chat_encrypt_changed_cb (self);
   chat_buddy_typing_changed_cb (self);
