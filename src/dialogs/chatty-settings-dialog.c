@@ -866,6 +866,11 @@ settings_new_detail_changed_cb (ChattySettingsDialog *self)
 
   valid = valid && chatty_utils_username_is_valid (id, protocol);
 
+  /* Don’t allow adding if an account with same id exists */
+  if (valid &&
+      chatty_manager_find_account_with_name (chatty_manager_get_default (), protocol, id))
+    valid = FALSE;
+
   gtk_widget_set_sensitive (self->add_button, valid);
 }
 
