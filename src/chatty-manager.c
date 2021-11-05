@@ -585,6 +585,21 @@ chatty_manager_get_mm_account (ChattyManager *self)
   return CHATTY_ACCOUNT (self->mm_account);
 }
 
+ChattyAccount *
+chatty_manager_find_account_with_name (ChattyManager  *self,
+                                       ChattyProtocol  protocol,
+                                       const char     *account_id)
+{
+  g_return_val_if_fail (CHATTY_IS_MANAGER (self), NULL);
+  g_return_val_if_fail (account_id && *account_id, NULL);
+
+  if (protocol & CHATTY_PROTOCOL_MATRIX &&
+      chatty_settings_get_experimental_features (chatty_settings_get_default ()))
+    return chatty_matrix_find_account_with_name (self->matrix, account_id);
+
+  return chatty_purple_find_account_with_name (self->purple, protocol, account_id);
+}
+
 ChattyChat *
 chatty_manager_find_chat_with_name (ChattyManager  *self,
                                     ChattyProtocol  protocol,

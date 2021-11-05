@@ -52,6 +52,9 @@ void            chatty_manager_save_account_async     (ChattyManager      *self,
 gboolean        chatty_manager_save_account_finish    (ChattyManager      *self,
                                                        GAsyncResult       *result,
                                                        GError            **error);
+ChattyAccount  *chatty_manager_find_account_with_name (ChattyManager      *self,
+                                                       ChattyProtocol      protocol,
+                                                       const char         *account_id);
 ChattyChat     *chatty_manager_find_chat_with_name    (ChattyManager      *self,
                                                        ChattyProtocol      protocol,
                                                        const char         *account_id,
