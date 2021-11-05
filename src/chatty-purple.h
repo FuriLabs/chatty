@@ -31,6 +31,9 @@ void            chatty_purple_start_chat           (ChattyPurple   *self,
 GListModel     *chatty_purple_get_accounts         (ChattyPurple   *self);
 GListModel     *chatty_purple_get_chat_list        (ChattyPurple   *self);
 GListModel     *chatty_purple_get_user_list        (ChattyPurple   *self);
+ChattyAccount  *chatty_purple_find_account_with_name(ChattyPurple  *self,
+                                                     ChattyProtocol protocol,
+                                                     const char    *account_id);
 ChattyChat     *chatty_purple_find_chat_with_name  (ChattyPurple   *self,
                                                     ChattyProtocol  protocol,
                                                     const char     *account_id,

@@ -1924,6 +1924,32 @@ chatty_purple_get_user_list (ChattyPurple *self)
   return G_LIST_MODEL (self->users_list);
 }
 
+ChattyAccount *
+chatty_purple_find_account_with_name (ChattyPurple   *self,
+                                      ChattyProtocol  protocol,
+                                      const char     *account_id)
+{
+  GListModel *account_list;
+  guint n_items;
+
+  g_return_val_if_fail (CHATTY_IS_PURPLE (self), NULL);
+
+  account_list = G_LIST_MODEL (self->accounts);
+  n_items = g_list_model_get_n_items (account_list);
+
+  for (guint i = 0; i < n_items; i++) {
+    g_autoptr(ChattyAccount) account = NULL;
+
+    account = g_list_model_get_item (account_list, i);
+
+    if (protocol & chatty_item_get_protocols (CHATTY_ITEM (account)) &&
+        g_strcmp0 (account_id, chatty_item_get_username (CHATTY_ITEM (account))) == 0)
+      return account;
+  }
+
+  return NULL;
+}
+
 ChattyChat *
 chatty_purple_find_chat_with_name (ChattyPurple   *self,
                                    ChattyProtocol  protocol,
