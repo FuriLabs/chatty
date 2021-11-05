@@ -409,12 +409,9 @@ settings_delete_account_clicked_cb (ChattySettingsDialog *self)
 
   if (response == GTK_RESPONSE_OK)
     {
-      ChattyAccount *account;
-
-      account = g_steal_pointer (&self->selected_account);
-      chatty_account_delete (account);
-      if (CHATTY_IS_MA_ACCOUNT (account))
-        chatty_manager_delete_account_async (chatty_manager_get_default (), account, NULL, NULL, NULL);
+      chatty_manager_delete_account_async (chatty_manager_get_default (),
+                                           g_steal_pointer (&self->selected_account),
+                                           NULL, NULL, NULL);
 
       chatty_settings_dialog_populate_account_list (self);
       gtk_widget_hide (self->save_button);
