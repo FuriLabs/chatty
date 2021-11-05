@@ -499,7 +499,7 @@
                         </style>
                         <child>
                           <object class="HdyActionRow">
-                            <property name="visible" bind-source="xmpp_radio_button" bind-property="visible"/>
+                            <property name="visible" bind-source="xmpp_radio_button" bind-property="visible" bind-flags="sync-create"/>
                             <property name="activatable_widget">xmpp_radio_button</property>
                             <property name="title" translatable="yes">XMPP</property>
                             <child type="prefix">
