@@ -65,7 +65,6 @@ struct _ChattyWindow
 
   GtkWidget *header_chat_list_new_msg_popover;
 
-  GtkWidget *menu_add_contact_button;
   GtkWidget *menu_new_message_button;
   GtkWidget *menu_new_sms_mms_message_button;
   GtkWidget *menu_new_group_message_button;
@@ -638,79 +637,6 @@ window_leave_chat_clicked_cb (ChattyWindow *self)
 }
 
 static void
-write_contact_cb (GObject      *object,
-                  GAsyncResult *result,
-                  gpointer      user_data)
-{
-  g_autoptr(ChattyWindow) self = user_data;
-  ChattyPpChat *chat = CHATTY_PP_CHAT (object);
-  g_autoptr(GError) error = NULL;
-  GtkWidget *dialog;
-
-  g_assert (CHATTY_IS_WINDOW (self));
-  g_assert (CHATTY_IS_PP_CHAT (chat));
-
-  if (chatty_pp_chat_save_to_contacts_finish (chat, result, &error))
-    return;
-
-  dialog = gtk_message_dialog_new (GTK_WINDOW (self),
-                                   GTK_DIALOG_MODAL,
-                                   GTK_MESSAGE_WARNING,
-                                   GTK_BUTTONS_CLOSE,
-                                   _("Error saving contact: %s"), error->message);
-  gtk_dialog_run (GTK_DIALOG (dialog));
-  gtk_widget_destroy (dialog);
-}
-
-static void
-write_eds_contact_cb (GObject      *object,
-                      GAsyncResult *result,
-                      gpointer      user_data)
-{
-  g_autoptr(ChattyWindow) self = user_data;
-  g_autoptr(GError) error = NULL;
-  GtkWidget *dialog;
-
-  g_assert (CHATTY_IS_WINDOW (self));
-
-  if (chatty_eds_write_contact_finish (result, &error)) {
-    gtk_widget_hide (self->menu_add_contact_button);
-    return;
-  }
-
-  dialog = gtk_message_dialog_new (GTK_WINDOW (self),
-                                   GTK_DIALOG_MODAL,
-                                   GTK_MESSAGE_WARNING,
-                                   GTK_BUTTONS_CLOSE,
-                                   _("Error saving contact: %s"), error->message);
-  gtk_dialog_run (GTK_DIALOG (dialog));
-  gtk_widget_destroy (dialog);
-}
-
-static void
-window_add_contact_clicked_cb (ChattyWindow *self)
-{
-  ChattyChat *chat;
-
-  g_assert (CHATTY_IS_WINDOW (self));
-
-  chat = chatty_chat_view_get_chat (CHATTY_CHAT_VIEW (self->chat_view));
-  g_return_if_fail (chat);
-
-  if (CHATTY_IS_PP_CHAT (chat)) {
-    chatty_pp_chat_save_to_contacts_async (CHATTY_PP_CHAT (chat),
-                                           write_contact_cb, g_object_ref (self));
-  } else if (CHATTY_IS_MM_CHAT (chat)) {
-    const char *phone;
-
-    phone = chatty_chat_get_chat_name (chat);
-    chatty_eds_write_contact_async ("", phone,
-                                    write_eds_contact_cb,
-                                    g_object_ref (self));
-  }
-}
-
-static void
 window_show_chat_info_clicked_cb (ChattyWindow *self)
 {
   ChattyInfoDialog *dialog;
@@ -991,7 +917,6 @@ chatty_window_class_init (ChattyWindowClass *klass)
 
   gtk_widget_class_bind_template_child (widget_class, ChattyWindow, sub_header_label);
   gtk_widget_class_bind_template_child (widget_class, ChattyWindow, sub_header_icon);
-  gtk_widget_class_bind_template_child (widget_class, ChattyWindow, menu_add_contact_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyWindow, menu_new_message_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyWindow, menu_new_sms_mms_message_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyWindow, menu_new_group_message_button);
@@ -1026,7 +951,6 @@ chatty_window_class_init (ChattyWindowClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, window_add_chat_button_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, window_back_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, window_show_chat_info_clicked_cb);
-  gtk_widget_class_bind_template_callback (widget_class, window_add_contact_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, window_leave_chat_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, window_delete_buddy_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, window_call_button_clicked_cb);
@@ -1165,7 +1089,6 @@ chatty_window_open_chat (ChattyWindow *self,
   can_delete = CHATTY_IS_PP_CHAT (chat) || CHATTY_IS_MM_CHAT (chat);
   gtk_widget_set_visible (self->delete_button, can_delete);
   hdy_leaflet_set_visible_child (HDY_LEAFLET (self->content_box), self->chat_view);
-  gtk_widget_hide (self->menu_add_contact_button);
   gtk_widget_hide (self->call_button);
 
   if (chatty_window_get_active_chat (self))
@@ -1188,9 +1111,6 @@ chatty_window_open_chat (ChattyWindow *self,
 
       if (app_info)
         gtk_widget_show (self->call_button);
-
-      if (!chatty_mm_buddy_get_contact (buddy))
-        gtk_widget_show (self->menu_add_contact_button);
     }
   }
 }
