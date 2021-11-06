@@ -116,6 +116,7 @@ chatty_mm_chat_info_set_item (ChattyMmChatInfo *self,
       chatty_contact_set_value (new_contact, phone);
 
       contact_row = chatty_list_row_new (CHATTY_ITEM (new_contact));
+      chatty_list_row_set_contact ((ChattyListRow *)contact_row, TRUE);
       gtk_list_box_prepend (GTK_LIST_BOX (self->contacts_list_box),
                              GTK_WIDGET (contact_row));
     }
