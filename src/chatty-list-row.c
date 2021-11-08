@@ -17,6 +17,7 @@
 #include "chatty-chat.h"
 #include "chatty-avatar.h"
 #include "chatty-list-row.h"
+#include "chatty-contact-provider.h"
 
 #define SECONDS_PER_MINUTE 60.0
 #define SECONDS_PER_HOUR   3600.0
@@ -34,6 +35,7 @@ struct _ChattyListRow
   GtkWidget     *last_modified;
   GtkWidget     *unread_message_count;
   GtkWidget     *checkbox;
+  GtkWidget     *add_contact_button;
 
   ChattyItem    *item;
   gboolean       hide_chat_details;
@@ -342,6 +344,33 @@ chatty_list_row_update (ChattyListRow *self)
 }
 
 static void
+write_eds_contact_cb (GObject      *object,
+                      GAsyncResult *result,
+                      gpointer      user_data)
+{
+  ChattyListRow *self = user_data;
+  g_autoptr(GError) error = NULL;
+
+  if (chatty_eds_write_contact_finish (result, &error)) {
+    gtk_widget_hide (self->add_contact_button);
+    return;
+  }
+}
+
+static void
+chatty_list_row_add_contact_clicked_cb (ChattyListRow *self)
+{
+  const char *phone;
+
+  g_return_if_fail (CHATTY_IS_CONTACT (self->item));
+
+  phone = gtk_label_get_text (GTK_LABEL (self->subtitle));
+  chatty_eds_write_contact_async ("", phone,
+                                  write_eds_contact_cb,
+                                  g_object_ref (self));
+}
+
+static void
 chatty_list_row_finalize (GObject *object)
 {
   ChattyListRow *self = (ChattyListRow *)object;
@@ -369,6 +398,9 @@ chatty_list_row_class_init (ChattyListRowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyListRow, subtitle);
   gtk_widget_class_bind_template_child (widget_class, ChattyListRow, last_modified);
   gtk_widget_class_bind_template_child (widget_class, ChattyListRow, unread_message_count);
+  gtk_widget_class_bind_template_child (widget_class, ChattyListRow, add_contact_button);
+
+  gtk_widget_class_bind_template_callback (widget_class, chatty_list_row_add_contact_clicked_cb);
 }
 
 static void
@@ -463,4 +495,12 @@ chatty_list_row_select (ChattyListRow *self, gboolean enable)
 
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (self->checkbox),
                                 enable);
+}
+
+void
+chatty_list_row_set_contact (ChattyListRow *self, gboolean enable)
+{
+  g_return_if_fail (CHATTY_IS_LIST_ROW (self));
+
+  gtk_widget_set_visible (self->add_contact_button, enable);
 }

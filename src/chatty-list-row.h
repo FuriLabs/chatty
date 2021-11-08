@@ -28,5 +28,7 @@ void        chatty_list_row_set_item (ChattyListRow *self,
 GtkWidget  *chatty_list_contact_row_new (ChattyItem *item);
 void        chatty_list_row_set_selectable (ChattyListRow *self, gboolean enable);
 void        chatty_list_row_select         (ChattyListRow *self, gboolean enable);
+void        chatty_list_row_set_contact (ChattyListRow *self,
+                                         gboolean enable);
 
 G_END_DECLS
