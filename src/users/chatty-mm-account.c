@@ -1156,9 +1156,8 @@ ChattyChat *
 chatty_mm_account_find_chat (ChattyMmAccount *self,
                              const char      *recipientlist)
 {
+  g_autofree char *sorted_name = NULL;
   gulong n_items;
-  int mms_recipient_number;
-  g_auto (GStrv) send = NULL;
 
   g_return_val_if_fail (CHATTY_MM_ACCOUNT (self), NULL);
 
@@ -1167,7 +1166,6 @@ chatty_mm_account_find_chat (ChattyMmAccount *self,
   if (!recipientlist || !*recipientlist)
     return NULL;
 
-  /* Figure out how many recipients there are */
   /*
    * chatty-mmsd will return a comma seperated list of
    * the sender and recipients. chatty-mmsd will remove the modem number,
@@ -1175,66 +1173,16 @@ chatty_mm_account_find_chat (ChattyMmAccount *self,
    * If there is only one recipient, then this will behave the exact
    * same way as the old chatty_mm_account_find_chat ()
    */
-  send = g_strsplit (recipientlist, ",", -1);
-
-  mms_recipient_number = g_strv_length (send);
+  sorted_name = create_sorted_numbers (recipientlist, NULL);
   n_items = g_list_model_get_n_items (G_LIST_MODEL (self->chat_list));
 
   for (guint i = 0; i < n_items; i++) {
     g_autoptr (ChattyChat) chat = NULL;
-    GListModel *user_list;
-    int chat_user_number;
-    int recipient_matches;
 
     chat = g_list_model_get_item (G_LIST_MODEL (self->chat_list), i);
-    user_list = chatty_chat_get_users (chat);
-    chat_user_number = g_list_model_get_n_items (user_list);
 
-    /*
-     * Compare number of people in chat to number of recipients. If they
-     * don't match, then not worth checking
-     */
-    if (chat_user_number != mms_recipient_number)
-      continue;
-
-    recipient_matches = 0;
-    for (guint j = 0; j < mms_recipient_number; j++) {
-      for (guint k = 0; k < chat_user_number; k++) {
-        g_autoptr (ChattyItem) item = NULL;
-        g_autofree char *number1 = NULL;
-        g_autofree char *number2 = NULL;
-        const char *user_id, *country_code;
-
-        item = g_list_model_get_item (user_list, k);
-
-        if (item)
-          user_id = chatty_mm_buddy_get_number (CHATTY_MM_BUDDY (item));
-        else {
-          if (chatty_chat_is_im (chat)) {
-            user_id = chatty_chat_get_chat_name (CHATTY_CHAT (chat));
-          } else {
-            continue;
-          }
-        }
-
-        country_code = chatty_settings_get_country_iso_code (chatty_settings_get_default ());
-        number1 = chatty_utils_check_phonenumber (user_id, country_code);
-        if (number1 == NULL)
-          number1 = g_strdup (user_id);
-
-        number2 = chatty_utils_check_phonenumber (send[j], country_code);
-        if (number2 == NULL)
-          number2 = g_strdup (send[j]);
-
-        if (g_strcmp0 (number1, number2) == 0) {
-          recipient_matches++;
-          break;
-        }
-      }
-    }
-    if (recipient_matches == mms_recipient_number) {
+    if (g_strcmp0 (chatty_chat_get_chat_name (chat), sorted_name) == 0)
       return chat;
-    }
   }
 
   return NULL;
