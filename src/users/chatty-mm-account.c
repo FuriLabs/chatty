@@ -108,6 +108,57 @@ typedef struct _MessagingData {
 
 G_DEFINE_TYPE (ChattyMmAccount, chatty_mm_account, CHATTY_TYPE_ACCOUNT)
 
+static int
+sort_strv (gconstpointer a,
+           gconstpointer b)
+{
+  char **str_a = (gpointer) a;
+  char **str_b = (gpointer) b;
+
+  return g_strcmp0 (*str_a, *str_b);
+}
+
+/* numbers:  A comma separated string of numbers */
+static char *
+create_sorted_numbers (const char *numbers,
+                       GPtrArray  *members)
+{
+  g_autoptr(GPtrArray) sorted = NULL;
+  g_autoptr(GString) str = NULL;
+  g_auto(GStrv) strv = NULL;
+  const char *country_code;
+
+  g_assert (numbers && *numbers);
+
+  strv = g_strsplit (numbers, ",", -1);
+  sorted = g_ptr_array_new ();
+  country_code = chatty_settings_get_country_iso_code (chatty_settings_get_default ());
+
+  for (guint i = 0; strv[i]; i++) {
+    g_autofree char *number = NULL;
+
+    number = chatty_utils_check_phonenumber (strv[i], country_code);
+    if (!number)
+      number = g_strdup (strv[i]);
+
+    if (members)
+      g_ptr_array_add (members, chatty_mm_buddy_new (number, number));
+    g_ptr_array_add (sorted, g_strdup (number));
+  }
+
+  g_ptr_array_sort (sorted, sort_strv);
+
+  /* Make the array bigger so that we can assure it's NULL terminated */
+  g_ptr_array_set_size (sorted, sorted->len + 1);
+
+  for (guint i = 0; i < sorted->len - 1; i++) {
+    if (g_strcmp0 (sorted->pdata[i], sorted->pdata[i + 1]) == 0)
+      g_ptr_array_remove_index (sorted, i);
+  }
+
+  return g_strjoinv (",", (char **)sorted->pdata);
+}
+
 static char *
 strip_phone_number (const char *number)
 {
@@ -1202,31 +1253,19 @@ chatty_mm_account_start_chat (ChattyMmAccount *self,
 
   chat = chatty_mm_account_find_chat (self, recipientlist);
   if (!chat) {
-    g_auto(GStrv) send = NULL;
-    const char *country_code = chatty_settings_get_country_iso_code (chatty_settings_get_default ());
-    int recipients;
+    g_autoptr(GPtrArray) members = NULL;
+    g_autofree char *sorted_name = NULL;
 
-    send = g_strsplit (recipientlist, ",", -1);
-    recipients = g_strv_length (send);
-    if (recipients == 1)
-      chat = (ChattyChat *)chatty_mm_chat_new (recipientlist, NULL, CHATTY_PROTOCOL_MMS_SMS, TRUE);
+    members = g_ptr_array_new_full (1, g_object_unref);
+    sorted_name = create_sorted_numbers (recipientlist, members);
+
+    if (members->len == 1)
+      chat = (ChattyChat *)chatty_mm_chat_new (sorted_name, NULL, CHATTY_PROTOCOL_MMS_SMS, TRUE);
     else /* Only MMS has multiple recipients */
-      chat = (ChattyChat *)chatty_mm_chat_new (recipientlist, NULL, CHATTY_PROTOCOL_MMS, FALSE);
+      chat = (ChattyChat *)chatty_mm_chat_new (sorted_name, NULL, CHATTY_PROTOCOL_MMS, FALSE);
 
+    chatty_mm_chat_add_users (CHATTY_MM_CHAT (chat), members);
     chatty_chat_set_data (chat, self, self->history_db);
-
-    for (guint j = 0; j < recipients; j++) {
-      char *number = NULL;
-      g_autoptr(ChattyMmBuddy) newbuddy = NULL;
-
-      number = chatty_utils_check_phonenumber (send[j], country_code);
-      if (number == NULL) {
-        number = g_strdup (send[j]);
-      }
-      newbuddy = chatty_mm_buddy_new (number, number);
-      chatty_mm_chat_add_user (CHATTY_MM_CHAT (chat), newbuddy);
-      g_clear_pointer (&number, g_free);
-    }
     chatty_mm_chat_set_eds (CHATTY_MM_CHAT (chat), self->chatty_eds);
 
     g_list_store_append (self->chat_list, chat);
