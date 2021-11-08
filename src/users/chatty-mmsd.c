@@ -1459,6 +1459,7 @@ chatty_mmsd_get_service_cb (GObject      *service,
     g_debug ("Got MMSD Service");
 
     self->is_ready = TRUE;
+    g_object_notify (G_OBJECT (self->mm_account), "status");
     self->mmsd_service_proxy_watch_id =
       g_dbus_connection_signal_subscribe (self->connection,
                                           MMSD_SERVICE,
@@ -1895,6 +1896,9 @@ mmsd_vanished_cb (GDBusConnection *connection,
   ChattyMmsd *self = user_data;
   g_assert (G_IS_DBUS_CONNECTION (connection));
   g_debug ("MMSD vanished");
+  self->is_ready = FALSE;
+  g_object_notify (G_OBJECT (self->mm_account), "status");
+
   if (G_IS_OBJECT (self->service_proxy)) {
     ChattySettings *settings;
     settings = chatty_settings_get_default ();
