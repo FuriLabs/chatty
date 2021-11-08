@@ -85,6 +85,18 @@ struct _ChattyNewChatDialog
 G_DEFINE_TYPE (ChattyNewChatDialog, chatty_new_chat_dialog, GTK_TYPE_DIALOG)
 
 
+static GtkWidget *
+new_chat_contact_row_new (ChattyItem          *item,
+                          ChattyNewChatDialog *self)
+{
+  GtkWidget *row;
+
+  row = chatty_list_contact_row_new (item);
+  chatty_list_row_set_selectable (CHATTY_LIST_ROW (row), self->multi_selection);
+
+  return row;
+}
+
 static void
 dialog_active_protocols_changed_cb (ChattyNewChatDialog *self)
 {
@@ -918,8 +930,8 @@ chatty_new_chat_dialog_init (ChattyNewChatDialog *self)
                            G_CONNECT_SWAPPED);
   gtk_list_box_bind_model (GTK_LIST_BOX (self->chats_listbox),
                            G_LIST_MODEL (self->slice_model),
-                           (GtkListBoxCreateWidgetFunc)chatty_list_contact_row_new,
-                           NULL, NULL);
+                           (GtkListBoxCreateWidgetFunc)new_chat_contact_row_new,
+                           g_object_ref (self), g_object_unref);
 
   g_signal_connect_object (self->manager, "notify::active-protocols",
                            G_CALLBACK (dialog_active_protocols_changed_cb), self, G_CONNECT_SWAPPED);
