@@ -501,26 +501,6 @@ window_new_muc_clicked_cb (ChattyWindow *self)
   gtk_widget_destroy (dialog);
 }
 
-
-static void
-window_add_chat_button_clicked_cb (ChattyWindow *self)
-{
-  ChattyAccount *mm_account;
-  gboolean has_mms, sms_connected;
-
-  g_assert (CHATTY_IS_WINDOW (self));
-
-  mm_account  = chatty_manager_get_mm_account (self->manager);
-  has_mms = chatty_mm_account_has_mms_feature (CHATTY_MM_ACCOUNT (mm_account));
-  sms_connected = chatty_manager_get_active_protocols (self->manager) & CHATTY_PROTOCOL_MMS_SMS;
-
-  gtk_widget_set_visible (GTK_WIDGET (self->menu_new_sms_mms_message_button),
-                          has_mms && sms_connected);
-
-  gtk_popover_popup (GTK_POPOVER (self->header_chat_list_new_msg_popover));
-}
-
-
 static void
 window_back_clicked_cb (ChattyWindow *self)
 {
@@ -751,17 +731,23 @@ window_search_protocol_changed_cb (ChattyWindow *self,
 static void
 window_active_protocols_changed_cb (ChattyWindow *self)
 {
+  ChattyAccount *mm_account;
   ChattyProtocol protocols;
-  gboolean has_sms, has_im;
+  gboolean has_mms, has_sms, has_im;
 
   g_assert (CHATTY_IS_WINDOW (self));
 
+  mm_account = chatty_manager_get_mm_account (self->manager);
   protocols = chatty_manager_get_active_protocols (self->manager);
+  has_mms = chatty_mm_account_has_mms_feature (CHATTY_MM_ACCOUNT (mm_account));
   has_sms = !!(protocols & CHATTY_PROTOCOL_MMS_SMS);
   has_im  = !!(protocols & ~CHATTY_PROTOCOL_MMS_SMS);
 
   gtk_widget_set_sensitive (self->header_add_chat_button, has_sms || has_im);
   gtk_widget_set_sensitive (self->menu_new_group_message_button, has_im);
+
+  gtk_widget_set_visible (self->menu_new_sms_mms_message_button,
+                          has_mms && has_sms);
 
   gtk_filter_changed (self->chat_filter, GTK_FILTER_CHANGE_DIFFERENT);
   window_chat_changed_cb (self);
@@ -948,7 +934,6 @@ chatty_window_class_init (ChattyWindowClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, window_new_message_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, window_new_sms_mms_message_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, window_new_muc_clicked_cb);
-  gtk_widget_class_bind_template_callback (widget_class, window_add_chat_button_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, window_back_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, window_show_chat_info_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, window_leave_chat_clicked_cb);
