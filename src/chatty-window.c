@@ -459,9 +459,7 @@ window_new_sms_mms_message_clicked_cb (ChattyWindow *self)
 {
   g_autoptr(GString) sendlist = g_string_new (NULL);
   ChattyNewChatDialog *dialog;
-  ChattyItem *item;
-  GList *items, *l;
-  const char *phone_number = NULL;
+  GPtrArray *items;
   gint response;
 
   g_assert (CHATTY_IS_WINDOW (self));
@@ -476,15 +474,24 @@ window_new_sms_mms_message_clicked_cb (ChattyWindow *self)
     return;
 
   items = chatty_new_chat_dialog_get_selected_items (dialog);
-  for (l = items; l != NULL; l = l->next) {
-    item = (ChattyItem *) l->data;
+
+  for (guint i = 0; i < items->len; i++) {
+    const char *phone_number;
+    ChattyItem *item;
+
+    item = items->pdata[i];
+
     if (CHATTY_IS_CONTACT (item)) {
       phone_number = chatty_item_get_username (item);
       sendlist = g_string_append (sendlist, phone_number);
-      if (l->next != NULL)
-        sendlist = g_string_append (sendlist, ",");
+      g_string_append (sendlist, ",");
     }
   }
+
+  /* Remove the trailing "," */
+  if (sendlist->len >= 1)
+    g_string_truncate (sendlist, sendlist->len - 1);
+
   chatty_window_set_uri (self, sendlist->str);
 }
 

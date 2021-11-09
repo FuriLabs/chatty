@@ -22,6 +22,6 @@ void chatty_new_chat_set_edit_mode (ChattyNewChatDialog *self, gboolean edit);
 ChattyItem *chatty_new_chat_dialog_get_selected_item (ChattyNewChatDialog *self);
 void chatty_new_chat_dialog_set_multi_selection (ChattyNewChatDialog *self,
                                                  gboolean             enable);
-GList *chatty_new_chat_dialog_get_selected_items (ChattyNewChatDialog *self);
+GPtrArray *chatty_new_chat_dialog_get_selected_items (ChattyNewChatDialog *self);
 
 G_END_DECLS
