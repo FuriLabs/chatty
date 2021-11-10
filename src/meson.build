@@ -1,3 +1,7 @@
+libsrc = []
+chatty_sources = []
+chatty_deps = []
+
 version_h = vcs_tag(input: 'version.h.in',
 		    output: 'version.h')
 
@@ -5,7 +9,9 @@ src_inc += include_directories('.')
 src_inc += include_directories('matrix')
 src_inc += include_directories('users')
 
-libsrc = [
+subdir('purple')
+
+libsrc += [
   'contrib/gtktypebuiltins.c',
   'contrib/gtkflattenlistmodel.c',
   'contrib/gtkrbtree.c',
@@ -33,11 +39,9 @@ libsrc = [
   'users/chatty-item.c',
   'users/chatty-contact.c',
   'users/chatty-mm-buddy.c',
-  'users/chatty-pp-buddy.c',
   'users/chatty-account.c',
   'users/chatty-mm-account.c',
   'users/chatty-mmsd.c',
-  'users/chatty-pp-account.c',
   'chatty-selectable-row.c',
   'chatty-fp-row.c',
   'chatty-file-item.c',
@@ -52,7 +56,6 @@ libsrc = [
   'chatty-chat.c',
   'chatty-mm-chat.c',
   'chatty-media.c',
-  'chatty-pp-chat.c',
   'chatty-contact-provider.c',
   'chatty-message.c',
   'chatty-settings.c',
@@ -84,37 +87,24 @@ ui_files = files (
   # 'ui/chatty-window.ui',
 )
 
-chatty_sources = [
+chatty_sources += [
   'main.c',
   'chatty-manager.c',
-  'chatty-purple.c',
   'chatty-application.c',
   'chatty-window.c',
   'dialogs/chatty-info-dialog.c',
   'dialogs/chatty-settings-dialog.c',
   'dialogs/chatty-new-chat-dialog.c',
   'dialogs/chatty-new-muc-dialog.c',
-  './xeps/xeps.c',
-  './xeps/chatty-xep-0184.c',
-  './xeps/chatty-xep-0313.c',
-  './xeps/chatty-xep-0352.c',
-  'chatty-purple-request.c',
-  'chatty-purple-notify.c',
   version_h,
 ]
 
 libphonenumber_dep = cc.find_library('phonenumber', required: true)
-purple = dependency('purple')
-purple_plugdir = purple.get_pkgconfig_variable('plugindir')
-jabber = meson.get_compiler('c').find_library('jabber', dirs: purple_plugdir)
-jabber_incdir = include_directories('xeps/prpl/jabber')
-src_inc += jabber_incdir
 
-chatty_deps = [
+chatty_deps += [
   dependency('gio-2.0', version: '>= 2.50'),
   dependency('gtk+-3.0', version: '>= 3.22'),
   libgd_dep,
-  purple, jabber,
   dependency('libsecret-1'),
   dependency('libhandy-1', version: '>= 1.1.90'),
   dependency('sqlite3', version: '>=3.0.0'),
