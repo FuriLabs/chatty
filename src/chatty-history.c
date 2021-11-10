@@ -9,7 +9,9 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+#ifndef G_LOG_DOMAIN
 #define G_LOG_DOMAIN "chatty-history"
+#endif
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
