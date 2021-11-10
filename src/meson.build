@@ -9,6 +9,7 @@ src_inc += include_directories('.')
 src_inc += include_directories('users')
 
 subdir('matrix')
+subdir('mm')
 subdir('purple')
 
 libsrc += [
@@ -29,10 +30,7 @@ libsrc += [
   'dialogs/chatty-mm-chat-info.c',
   'users/chatty-item.c',
   'users/chatty-contact.c',
-  'users/chatty-mm-buddy.c',
   'users/chatty-account.c',
-  'users/chatty-mm-account.c',
-  'users/chatty-mmsd.c',
   'chatty-selectable-row.c',
   'chatty-fp-row.c',
   'chatty-file-item.c',
@@ -45,7 +43,6 @@ libsrc += [
   'chatty-log.c',
   'chatty-avatar.c',
   'chatty-chat.c',
-  'chatty-mm-chat.c',
   'chatty-media.c',
   'chatty-contact-provider.c',
   'chatty-message.c',
@@ -102,7 +99,6 @@ chatty_deps += [
   dependency('libebook-contacts-1.2'),
   dependency('libebook-1.2'),
   dependency('gsettings-desktop-schemas'),
-  dependency('mm-glib', version: '>= 1.12.0'),
   dependency('gspell-1'),
   dependency('gnome-desktop-3.0', version: '>= 3.0.0'),
   libebook_dep,
