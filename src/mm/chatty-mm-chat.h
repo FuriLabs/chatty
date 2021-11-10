@@ -12,7 +12,6 @@
 #pragma once
 
 #include <glib-object.h>
-#include <purple.h>
 
 #include "chatty-chat.h"
 #include "chatty-mm-buddy.h"

@@ -13,7 +13,6 @@
 
 #define _GNU_SOURCE
 #include <string.h>
-#include <purple.h>
 #include <glib/gi18n.h>
 
 #include "chatty-settings.h"

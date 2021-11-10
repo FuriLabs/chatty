@@ -15,7 +15,6 @@
 # include "config.h"
 #endif
 
-#include <purple.h>
 #include "contrib/gtk.h"
 
 #include "chatty-settings.h"
