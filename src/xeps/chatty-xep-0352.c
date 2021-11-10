@@ -9,7 +9,7 @@
 #define G_LOG_DOMAIN "chatty-xep-0352"
 
 #include "chatty-manager.h"
-#include "users/chatty-pp-account.h"
+#include "chatty-pp-account.h"
 #include "chatty-xep-0352.h"
 #include "xeps.h"
 #include "chatty-log.h"

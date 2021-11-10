@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include "users/chatty-mm-account.c"
+#include "chatty-mm-account.c"
 
 static void
 test_mm_account_find_chat (void)

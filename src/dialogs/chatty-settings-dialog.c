@@ -32,9 +32,9 @@
 #include <glib/gi18n.h>
 
 #include "chatty-utils.h"
-#include "users/chatty-pp-account.h"
-#include "matrix/matrix-utils.h"
-#include "matrix/chatty-ma-account.h"
+#include "chatty-pp-account.h"
+#include "matrix-utils.h"
+#include "chatty-ma-account.h"
 #include "chatty-manager.h"
 #include "chatty-purple.h"
 #include "chatty-fp-row.h"

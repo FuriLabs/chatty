@@ -15,7 +15,7 @@
 
 #include "chatty-chat.h"
 #include "chatty-enums.h"
-#include "users/chatty-account.h"
+#include "chatty-account.h"
 
 G_BEGIN_DECLS
 

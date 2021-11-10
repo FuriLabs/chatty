@@ -31,7 +31,7 @@
 #include <glib/gi18n.h>
 
 #include "chatty-avatar.h"
-#include "matrix/chatty-ma-account.h"
+#include "chatty-ma-account.h"
 #include "chatty-ma-account-details.h"
 #include "chatty-log.h"
 

@@ -15,7 +15,7 @@
 #include "chatty-mm-chat.h"
 #include "chatty-pp-chat.h"
 #include "chatty-settings.h"
-#include "matrix/chatty-ma-chat.h"
+#include "chatty-ma-chat.h"
 #include "chatty-message-row.h"
 #include "chatty-attachments-view.h"
 #include "chatty-chat-view.h"

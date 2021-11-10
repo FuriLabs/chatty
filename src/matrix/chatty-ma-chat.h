@@ -13,9 +13,9 @@
 
 #include <glib-object.h>
 
-#include "users/chatty-item.h"
-#include "users/chatty-account.h"
-#include "users/chatty-pp-buddy.h"
+#include "chatty-item.h"
+#include "chatty-account.h"
+#include "chatty-pp-buddy.h"
 #include "chatty-message.h"
 #include "chatty-chat.h"
 #include "chatty-enums.h"

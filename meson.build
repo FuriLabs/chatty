@@ -9,7 +9,7 @@ gnome = import('gnome')
 cc = meson.get_compiler('c')
 
 top_inc = include_directories('.')
-src_inc = include_directories('src')
+src_inc = []
 
 config_h = configuration_data()
 config_h.set10('HAVE_EXPLICIT_BZERO', cc.has_function('explicit_bzero'))

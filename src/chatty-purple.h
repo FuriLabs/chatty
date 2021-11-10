@@ -14,7 +14,7 @@
 #include <glib-object.h>
 #include <gio/gio.h>
 
-#include "users/chatty-pp-buddy.h"
+#include "chatty-pp-buddy.h"
 #include "chatty-history.h"
 
 G_BEGIN_DECLS

@@ -17,13 +17,13 @@
 
 #include <sqlite3.h>
 
-#include "matrix/chatty-ma-account.h"
-#include "matrix/chatty-ma-chat.h"
+#include "chatty-ma-account.h"
+#include "chatty-ma-chat.h"
 
 #include "chatty-utils.h"
 #include "chatty-settings.h"
-#include "users/chatty-mm-account.h"
-#include "users/chatty-mm-buddy.h"
+#include "chatty-mm-account.h"
+#include "chatty-mm-buddy.h"
 #include "chatty-mm-chat.h"
 #include "chatty-history.h"
 

@@ -17,8 +17,8 @@
 
 #include "chatty-avatar.h"
 #include "chatty-chat.h"
-#include "users/chatty-contact.h"
-#include "users/chatty-mm-buddy.h"
+#include "chatty-contact.h"
+#include "chatty-mm-buddy.h"
 #include "chatty-list-row.h"
 #include "dialogs/chatty-mm-chat-info.h"
 

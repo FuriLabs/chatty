@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include "matrix/matrix-api.h"
+#include "matrix-api.h"
 
 static void
 test_matrix_api_new (void)

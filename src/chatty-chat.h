@@ -13,8 +13,8 @@
 
 #include <glib-object.h>
 
-#include "users/chatty-item.h"
-#include "users/chatty-account.h"
+#include "chatty-item.h"
+#include "chatty-account.h"
 #include "chatty-message.h"
 #include "chatty-enums.h"
 

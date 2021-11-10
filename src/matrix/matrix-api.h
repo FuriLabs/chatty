@@ -14,7 +14,7 @@
 #include <glib-object.h>
 
 #include "chatty-chat.h"
-#include "users/chatty-account.h"
+#include "chatty-account.h"
 #include "chatty-message.h"
 #include "matrix-enc.h"
 #include "matrix-enums.h"

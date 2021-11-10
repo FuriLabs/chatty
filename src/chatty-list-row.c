@@ -12,8 +12,8 @@
 
 #include <glib/gi18n.h>
 
-#include "users/chatty-pp-buddy.h"
-#include "users/chatty-contact.h"
+#include "chatty-pp-buddy.h"
+#include "chatty-contact.h"
 #include "chatty-chat.h"
 #include "chatty-avatar.h"
 #include "chatty-list-row.h"

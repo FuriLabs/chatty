@@ -18,8 +18,8 @@
 #include <glib/gstdio.h>
 #include <sqlite3.h>
 
-#include "matrix/chatty-ma-account.h"
-#include "matrix/matrix-db.h"
+#include "chatty-ma-account.h"
+#include "matrix-db.h"
 
 static void
 finish_bool_cb (GObject      *object,

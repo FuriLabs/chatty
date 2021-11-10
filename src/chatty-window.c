@@ -35,7 +35,7 @@
 #include "dialogs/chatty-settings-dialog.h"
 #include "dialogs/chatty-new-chat-dialog.h"
 #include "dialogs/chatty-new-muc-dialog.h"
-#include "users/chatty-mm-account.h"
+#include "chatty-mm-account.h"
 #include "chatty-log.h"
 
 struct _ChattyWindow

@@ -18,7 +18,7 @@
 #include <glib.h>
 
 #include "purple-init.h"
-#include "users/chatty-pp-account.h"
+#include "chatty-pp-account.h"
 
 static void
 test_account (ChattyAccount *ac,

@@ -20,7 +20,7 @@
 
 #include "chatty-settings.h"
 #include "chatty-utils.h"
-#include "users/chatty-mm-account.h"
+#include "chatty-mm-account.h"
 #include "chatty-history.h"
 #include "chatty-mm-chat.h"
 #include "chatty-log.h"

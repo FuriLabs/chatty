@@ -20,11 +20,11 @@
 #include <glib/gstdio.h>
 #include <sqlite3.h>
 
-#include "matrix/chatty-ma-account.h"
-#include "matrix/chatty-ma-chat.h"
+#include "chatty-ma-account.h"
+#include "chatty-ma-chat.h"
 
 #include "purple-init.h"
-#include "users/chatty-contact.h"
+#include "chatty-contact.h"
 #include "chatty-settings.h"
 #include "chatty-utils.h"
 #include "chatty-history.h"

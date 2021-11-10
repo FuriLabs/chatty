@@ -15,8 +15,8 @@
 #include <purple.h>
 
 #include "chatty-chat.h"
-#include "users/chatty-account.h"
-#include "users/chatty-pp-buddy.h"
+#include "chatty-account.h"
+#include "chatty-pp-buddy.h"
 #include "chatty-message.h"
 #include "chatty-enums.h"
 

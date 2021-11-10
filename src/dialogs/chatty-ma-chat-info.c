@@ -33,7 +33,7 @@
 #include "chatty-avatar.h"
 #include "chatty-list-row.h"
 #include "chatty-fp-row.h"
-#include "matrix/chatty-ma-chat.h"
+#include "chatty-ma-chat.h"
 #include "chatty-ma-chat-info.h"
 #include "chatty-log.h"
 

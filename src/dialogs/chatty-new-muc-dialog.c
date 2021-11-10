@@ -12,7 +12,7 @@
 #include <glib/gi18n.h>
 #include <glib-object.h>
 #include "chatty-window.h"
-#include "users/chatty-pp-account.h"
+#include "chatty-pp-account.h"
 #include "chatty-utils.h"
 #include "chatty-manager.h"
 #include "chatty-new-muc-dialog.h"

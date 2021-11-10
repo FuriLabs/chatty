@@ -16,7 +16,7 @@
 #include <glib/gi18n.h>
 
 #include "chatty-mm-chat.h"
-#include "matrix/chatty-ma-chat.h"
+#include "chatty-ma-chat.h"
 #include "chatty-utils.h"
 #include "chatty-ma-chat-info.h"
 #include "chatty-pp-chat-info.h"

@@ -1,6 +1,10 @@
 version_h = vcs_tag(input: 'version.h.in',
 		    output: 'version.h')
 
+src_inc += include_directories('.')
+src_inc += include_directories('matrix')
+src_inc += include_directories('users')
+
 libsrc = [
   'contrib/gtktypebuiltins.c',
   'contrib/gtkflattenlistmodel.c',
@@ -104,6 +108,7 @@ purple = dependency('purple')
 purple_plugdir = purple.get_pkgconfig_variable('plugindir')
 jabber = meson.get_compiler('c').find_library('jabber', dirs: purple_plugdir)
 jabber_incdir = include_directories('xeps/prpl/jabber')
+src_inc += jabber_incdir
 
 chatty_deps = [
   dependency('gio-2.0', version: '>= 2.50'),
@@ -138,6 +143,7 @@ resources = gnome.compile_resources('chatty-resources',
 
 libchatty = both_libraries(
   'chatty', libsrc, resources,
+  include_directories: src_inc,
   install: false,
   dependencies: chatty_deps,
 )
@@ -153,7 +159,7 @@ if gtk_builder_tool.found()
 endif
 
 executable('chatty', chatty_sources, resources,
-  include_directories: jabber_incdir,
+  include_directories: src_inc,
   dependencies: chatty_deps,
   link_with: libchatty.get_static_lib(),
   install: true,
