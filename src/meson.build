@@ -6,9 +6,9 @@ version_h = vcs_tag(input: 'version.h.in',
 		    output: 'version.h')
 
 src_inc += include_directories('.')
-src_inc += include_directories('matrix')
 src_inc += include_directories('users')
 
+subdir('matrix')
 subdir('purple')
 
 libsrc += [
@@ -27,15 +27,6 @@ libsrc += [
   'dialogs/chatty-ma-chat-info.c',
   'dialogs/chatty-pp-chat-info.c',
   'dialogs/chatty-mm-chat-info.c',
-  'matrix/chatty-matrix.c',
-  'matrix/matrix-api.c',
-  'matrix/matrix-enc.c',
-  'matrix/matrix-db.c',
-  'matrix/matrix-net.c',
-  'matrix/matrix-utils.c',
-  'matrix/chatty-ma-account.c',
-  'matrix/chatty-ma-buddy.c',
-  'matrix/chatty-ma-chat.c',
   'users/chatty-item.c',
   'users/chatty-contact.c',
   'users/chatty-mm-buddy.c',
@@ -111,10 +102,6 @@ chatty_deps += [
   dependency('libebook-contacts-1.2'),
   dependency('libebook-1.2'),
   dependency('gsettings-desktop-schemas'),
-  dependency('libgcrypt'),
-  dependency('libsoup-2.4'),
-  dependency('json-glib-1.0'),
-  libolm_dep,
   dependency('mm-glib', version: '>= 1.12.0'),
   dependency('gspell-1'),
   dependency('gnome-desktop-3.0', version: '>= 3.0.0'),
