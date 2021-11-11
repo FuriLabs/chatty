@@ -25,6 +25,7 @@ libsrc += [
   'contrib/gtkslicelistmodel.c',
   'dialogs/chatty-ma-account-details.c',
   'dialogs/chatty-pp-account-details.c',
+  'dialogs/chatty-chat-info.c',
   'dialogs/chatty-ma-chat-info.c',
   'dialogs/chatty-pp-chat-info.c',
   'dialogs/chatty-mm-chat-info.c',
