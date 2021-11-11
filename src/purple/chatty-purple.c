@@ -1842,6 +1842,11 @@ void
 chatty_purple_enable_debug (void)
 {
   enable_debug = TRUE;
+
+  purple_debug_set_enabled (enable_debug);
+
+  if (chatty_log_get_verbosity () > 3)
+    purple_debug_set_verbose (TRUE);
 }
 
 gboolean
