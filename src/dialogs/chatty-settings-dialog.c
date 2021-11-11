@@ -1139,11 +1139,11 @@ static void
 chatty_settings_dialog_init (ChattySettingsDialog *self)
 {
   ChattyManager *manager;
-  ChattyPurple *purple;
   g_autofree char *carrier_mmsc = NULL;
   g_autofree char *carrier_apn = NULL;
   g_autofree char *carrier_proxy = NULL;
   ChattySettings *settings;
+  gboolean show_account_box = FALSE;
 
   manager = chatty_manager_get_default ();
   settings = chatty_settings_get_default ();
@@ -1159,21 +1159,26 @@ chatty_settings_dialog_init (ChattySettingsDialog *self)
   gtk_widget_init_template (GTK_WIDGET (self));
   gtk_window_set_transient_for (GTK_WINDOW (self->matrix_homeserver_dialog), GTK_WINDOW (self));
 
-  purple = chatty_purple_get_default ();
-  gtk_widget_set_visible (self->message_carbons_row,
-                          chatty_purple_has_carbon_plugin (purple));
-  g_object_bind_property (purple, "enabled",
-                          self->xmpp_radio_button, "visible",
-                          G_BINDING_SYNC_CREATE);
-  g_object_bind_property (purple, "enabled",
-                          self->accounts_list_box, "visible",
-                          G_BINDING_SYNC_CREATE);
+  {
+    ChattyPurple *purple;
 
-  if (chatty_purple_is_loaded (purple) ||
-      chatty_settings_get_experimental_features (chatty_settings_get_default ()))
-    gtk_widget_show (self->accounts_list_box);
-  else
-    gtk_widget_hide (self->accounts_list_box);
+    purple = chatty_purple_get_default ();
+    gtk_widget_set_visible (self->message_carbons_row,
+                            chatty_purple_has_carbon_plugin (purple));
+    g_object_bind_property (purple, "enabled",
+                            self->xmpp_radio_button, "visible",
+                            G_BINDING_SYNC_CREATE);
+    g_object_bind_property (purple, "enabled",
+                            self->accounts_list_box, "visible",
+                            G_BINDING_SYNC_CREATE);
+    if (chatty_purple_is_loaded (purple))
+      show_account_box = TRUE;
+  }
+
+  if (chatty_settings_get_experimental_features (chatty_settings_get_default ()))
+    show_account_box = TRUE;
+
+  gtk_widget_set_visible (self->accounts_list_box, show_account_box);
 
   gtk_entry_set_text (GTK_ENTRY (self->carrier_mmsc_entry), carrier_mmsc);
   gtk_entry_set_text (GTK_ENTRY (self->mms_apn_entry), carrier_apn);
