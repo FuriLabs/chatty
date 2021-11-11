@@ -36,6 +36,7 @@
 #include "dialogs/chatty-new-chat-dialog.h"
 #include "dialogs/chatty-new-muc-dialog.h"
 #include "chatty-mm-account.h"
+#include "chatty-ma-chat.h"
 #include "chatty-log.h"
 
 struct _ChattyWindow
@@ -1078,7 +1079,8 @@ chatty_window_open_chat (ChattyWindow *self,
   window_chat_changed_cb (self);
 
   gtk_widget_set_visible (self->leave_button, !CHATTY_IS_MM_CHAT (chat));
-  can_delete = CHATTY_IS_PP_CHAT (chat) || CHATTY_IS_MM_CHAT (chat);
+  /* We can't delete MaChat */
+  can_delete = !CHATTY_IS_MA_CHAT (chat);
   gtk_widget_set_visible (self->delete_button, can_delete);
   hdy_leaflet_set_visible_child (HDY_LEAFLET (self->content_box), self->chat_view);
   gtk_widget_hide (self->call_button);
