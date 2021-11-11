@@ -470,13 +470,8 @@ chat_view_send_message_button_clicked_cb (ChattyChatView *self)
 
   if (gtk_text_buffer_get_char_count (self->message_input_buffer) || files) {
     g_autofree char *escaped = NULL;
-    ChattyProtocol protocol;
 
-    protocol = chatty_item_get_protocols (CHATTY_ITEM (self->chat));
-
-    if (protocol == CHATTY_PROTOCOL_MATRIX ||
-        protocol == CHATTY_PROTOCOL_XMPP ||
-        protocol == CHATTY_PROTOCOL_TELEGRAM)
+    if (CHATTY_IS_PP_CHAT (self->chat))
       escaped = purple_markup_escape_text (message, -1);
 
     msg = chatty_message_new (NULL, escaped ? escaped : message,
