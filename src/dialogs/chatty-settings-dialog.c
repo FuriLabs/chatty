@@ -32,7 +32,6 @@
 #include <glib/gi18n.h>
 
 #include "chatty-utils.h"
-#include "chatty-pp-account.h"
 #include "matrix-utils.h"
 #include "chatty-ma-account.h"
 #include "chatty-manager.h"
@@ -278,6 +277,7 @@ chatty_settings_add_clicked_cb (ChattySettingsDialog *self)
     return;
   }
 
+#ifdef PURPLE_ENABLED
   if (is_matrix) {
     GtkEntry *entry;
     const char *server_url;
@@ -309,6 +309,9 @@ chatty_settings_add_clicked_cb (ChattySettingsDialog *self)
     account = (ChattyAccount *)chatty_pp_account_new (CHATTY_PROTOCOL_XMPP,
                                                       user_id, NULL, has_encryption);
   }
+#endif
+
+  g_return_if_fail (account);
 
   if (password)
     {
@@ -496,6 +499,7 @@ settings_homeserver_entry_changed (ChattySettingsDialog *self,
 static void
 settings_dialog_purple_changed_cb (ChattySettingsDialog *self)
 {
+#ifdef PURPLE_ENABLED
   ChattyPurple *purple;
   HdyActionRow *row;
   gboolean active;
@@ -510,6 +514,7 @@ settings_dialog_purple_changed_cb (ChattySettingsDialog *self)
     hdy_action_row_set_subtitle (row, _("Restart chatty to disable purple"));
   else
     hdy_action_row_set_subtitle (row, _("Enable purple plugin"));
+#endif
 }
 
 static void
@@ -642,8 +647,6 @@ settings_matrix_accept_clicked_cb (ChattySettingsDialog *self)
 static void
 settings_update_new_account_view (ChattySettingsDialog *self)
 {
-  PurplePlugin *protocol;
-
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
 
   gtk_entry_set_text (GTK_ENTRY (self->new_account_id_entry), "");
@@ -653,12 +656,15 @@ settings_update_new_account_view (ChattySettingsDialog *self)
   gtk_widget_grab_focus (self->new_account_id_entry);
   gtk_widget_show (self->add_button);
 
-  if (chatty_settings_get_experimental_features (chatty_settings_get_default ()) ||
-      purple_find_prpl ("prpl-matrix"))
+  if (chatty_settings_get_experimental_features (chatty_settings_get_default ()))
     gtk_widget_set_visible (self->matrix_row, TRUE);
 
-  protocol = purple_find_prpl ("prpl-telegram");
-  gtk_widget_set_visible (self->telegram_row, protocol != NULL);
+#ifdef PURPLE_ENABLED
+  if (purple_find_prpl ("prpl-matrix"))
+    gtk_widget_set_visible (self->matrix_row, TRUE);
+
+  gtk_widget_set_visible (self->telegram_row, purple_find_prpl ("prpl-telegram") != NULL);
+#endif
 
   hdy_preferences_group_set_title (HDY_PREFERENCES_GROUP (self->protocol_list_group),
                                    _("Select Protocol"));
@@ -1159,6 +1165,7 @@ chatty_settings_dialog_init (ChattySettingsDialog *self)
   gtk_widget_init_template (GTK_WIDGET (self));
   gtk_window_set_transient_for (GTK_WINDOW (self->matrix_homeserver_dialog), GTK_WINDOW (self));
 
+#ifdef PURPLE_ENABLED
   {
     ChattyPurple *purple;
 
@@ -1174,6 +1181,12 @@ chatty_settings_dialog_init (ChattySettingsDialog *self)
     if (chatty_purple_is_loaded (purple))
       show_account_box = TRUE;
   }
+#else
+  gtk_widget_hide (self->xmpp_radio_button);
+  gtk_widget_hide (self->enable_purple_row);
+  gtk_widget_hide (self->message_archive_switch);
+  gtk_widget_hide (self->message_carbons_switch);
+#endif
 
   if (chatty_settings_get_experimental_features (chatty_settings_get_default ()))
     show_account_box = TRUE;

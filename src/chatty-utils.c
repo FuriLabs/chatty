@@ -265,7 +265,10 @@ chatty_utils_groupname_is_valid (const char     *name,
 const char *
 chatty_utils_get_purple_dir (void)
 {
+#ifdef PURPLE_ENABLED
   return purple_user_dir ();
+#endif
+  return g_build_filename (g_get_home_dir (), ".purple", NULL);
 }
 
 char *

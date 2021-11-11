@@ -8,6 +8,7 @@
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
+# include "version.h"
 #endif
 
 #define _GNU_SOURCE
@@ -26,7 +27,6 @@
 #include "chatty-list-row.h"
 #include "chatty-settings.h"
 #include "chatty-mm-chat.h"
-#include "chatty-pp-chat.h"
 #include "chatty-chat-view.h"
 #include "chatty-manager.h"
 #include "chatty-utils.h"
@@ -258,9 +258,11 @@ window_chat_name_matches (ChattyItem   *item,
   if (chatty_item_get_protocols (item) != CHATTY_PROTOCOL_MMS_SMS) {
     ChattyAccount *account;
 
+#ifdef PURPLE_ENABLED
     if (CHATTY_IS_PP_CHAT (item) &&
         !chatty_pp_chat_get_auto_join (CHATTY_PP_CHAT (item)))
       return FALSE;
+#endif
 
     account = chatty_chat_get_account (CHATTY_CHAT (item));
 
@@ -307,9 +309,11 @@ chatty_window_open_item (ChattyWindow *self,
     return;
   }
 
+#ifdef PURPLE_ENABLED
   if (CHATTY_IS_PP_BUDDY (item) ||
       CHATTY_IS_PP_CHAT (item))
     chatty_purple_start_chat (chatty_purple_get_default (), item);
+#endif
 
   if (CHATTY_IS_MM_CHAT (item)) {
     chatty_window_open_chat (CHATTY_WINDOW (self), CHATTY_CHAT (item));
@@ -329,9 +333,11 @@ window_chat_row_activated_cb (GtkListBox    *box,
 
   g_return_if_fail (CHATTY_IS_CHAT (chat));
 
+#ifdef PURPLE_ENABLED
   if (CHATTY_IS_PP_CHAT (chat))
     chatty_window_open_item (self, CHATTY_ITEM (chat));
   else
+#endif
     chatty_window_open_chat (self, chat);
 }
 
@@ -585,9 +591,12 @@ window_delete_buddy_clicked_cb (ChattyWindow *self)
   if (response == GTK_RESPONSE_OK) {
     chatty_history_delete_chat (chatty_manager_get_history (self->manager),
                                 chat);
+#ifdef PURPLE_ENABLED
     if (CHATTY_IS_PP_CHAT (chat)) {
       chatty_pp_chat_delete (CHATTY_PP_CHAT (chat));
-    } else if (CHATTY_IS_MM_CHAT (chat)) {
+    } else
+#endif
+    if (CHATTY_IS_MM_CHAT (chat)) {
       chatty_mm_chat_delete (CHATTY_MM_CHAT (chat));
     } else {
       g_return_if_reached ();
@@ -999,10 +1008,13 @@ chatty_window_init (ChattyWindow *self)
   window_add_selectable_row (self, _("Any Protocol"), CHATTY_PROTOCOL_ANY, TRUE);
   window_add_selectable_row (self, _("Matrix"), CHATTY_PROTOCOL_MATRIX, FALSE);
   window_add_selectable_row (self, _("SMS/MMS"), CHATTY_PROTOCOL_MMS_SMS, FALSE);
+
+#ifdef PURPLE_ENABLED
   window_add_selectable_row (self, _("XMPP"), CHATTY_PROTOCOL_XMPP, FALSE);
 
   if (chatty_purple_has_telegram_loaded (chatty_purple_get_default ()))
     window_add_selectable_row (self, _("Telegram"), CHATTY_PROTOCOL_TELEGRAM, FALSE);
+#endif
 
   gtk_widget_show_all (self->protocol_list);
 }

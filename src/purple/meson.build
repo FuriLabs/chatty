@@ -1,13 +1,16 @@
 src_inc += include_directories('.')
 
-purple = dependency('purple')
-purple_plugdir = purple.get_pkgconfig_variable('plugindir')
+if (not purple_dep.found())
+  subdir_done()
+endif
+
+purple_plugdir = purple_dep.get_pkgconfig_variable('plugindir')
 jabber = meson.get_compiler('c').find_library('jabber', dirs: purple_plugdir)
 jabber_incdir = include_directories('xeps/prpl/jabber')
 src_inc += jabber_incdir
 
 chatty_deps += [
-  purple,
+  purple_dep,
   jabber,
 ]
 

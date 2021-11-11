@@ -10,9 +10,13 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <glib/gi18n.h>
 
-#include "chatty-pp-buddy.h"
+#include "chatty-purple.h"
 #include "chatty-contact.h"
 #include "chatty-chat.h"
 #include "chatty-avatar.h"
@@ -210,6 +214,16 @@ chatty_time_ago_in_words (time_t time_stamp)
 }
 
 static gboolean
+chatty_list_row_item_is_valid (ChattyItem *item)
+{
+  return CHATTY_IS_CONTACT (item) ||
+#ifdef PURPLE_ENABLED
+    CHATTY_IS_PP_BUDDY (item) ||
+#endif
+    CHATTY_IS_CHAT (item);
+}
+
+static gboolean
 chatty_list_row_update_last_modified (ChattyListRow *self)
 {
   ChattyChat *item;
@@ -245,6 +259,7 @@ chatty_list_row_update_last_modified (ChattyListRow *self)
   return G_SOURCE_REMOVE;
 }
 
+#ifdef PURPLE_ENABLED
 static char *
 list_row_user_flag_to_str (ChattyUserFlag flags)
 {
@@ -267,6 +282,7 @@ list_row_user_flag_to_str (ChattyUserFlag flags)
 
   return g_strconcat (color_tag, status, "</span>", NULL);
 }
+#endif
 
 static void
 chatty_list_row_update (ChattyListRow *self)
@@ -278,6 +294,7 @@ chatty_list_row_update (ChattyListRow *self)
 
   g_clear_handle_id (&self->last_modified_timeout, g_source_remove);
 
+#ifdef PURPLE_ENABLED
   if (CHATTY_IS_PP_BUDDY (self->item)) {
     if (chatty_pp_buddy_get_buddy (CHATTY_PP_BUDDY (self->item))) { /* Buddy in contact list */
       ChattyAccount *account;
@@ -293,7 +310,10 @@ chatty_list_row_update (ChattyListRow *self)
       gtk_label_set_markup (GTK_LABEL (self->subtitle), markup);
       gtk_widget_show (self->subtitle);
     }
-  } else if (CHATTY_IS_CONTACT (self->item)) {
+  } else
+#endif
+
+  if (CHATTY_IS_CONTACT (self->item)) {
     g_autofree gchar *type = NULL;
     const gchar *number;
 
@@ -319,7 +339,11 @@ chatty_list_row_update (ChattyListRow *self)
     if (last_message && *last_message) {
       g_autofree char *message_stripped = NULL;
 
+#ifdef PURPLE_ENABLED
       message_stripped = purple_markup_strip_html (last_message);
+#else
+      message_stripped = g_strdup (last_message);
+#endif
       g_strstrip (message_stripped);
 
       gtk_label_set_label (GTK_LABEL (self->subtitle), message_stripped);
@@ -414,9 +438,7 @@ chatty_list_row_new (ChattyItem *item)
 {
   ChattyListRow *self;
 
-  g_return_val_if_fail (CHATTY_IS_CONTACT (item) ||
-                        CHATTY_IS_PP_BUDDY (item) ||
-                        CHATTY_IS_CHAT (item), NULL);
+  g_return_val_if_fail (chatty_list_row_item_is_valid (item), NULL);
 
   self = g_object_new (CHATTY_TYPE_LIST_ROW, NULL);
   chatty_list_row_set_item (self, item);
@@ -439,9 +461,7 @@ chatty_list_contact_row_new (ChattyItem *item)
 {
   ChattyListRow *self;
 
-  g_return_val_if_fail (CHATTY_IS_CONTACT (item) ||
-                        CHATTY_IS_PP_BUDDY (item) ||
-                        CHATTY_IS_CHAT (item), NULL);
+  g_return_val_if_fail (chatty_list_row_item_is_valid (item), NULL);
 
   self = g_object_new (CHATTY_TYPE_LIST_ROW, NULL);
   self->hide_chat_details = TRUE;
@@ -463,9 +483,7 @@ chatty_list_row_set_item (ChattyListRow *self,
                           ChattyItem    *item)
 {
   g_return_if_fail (CHATTY_IS_LIST_ROW (self));
-  g_return_if_fail (CHATTY_IS_CONTACT (item) ||
-                    CHATTY_IS_PP_BUDDY (item) ||
-                    CHATTY_IS_CHAT (item));
+  g_return_if_fail (chatty_list_row_item_is_valid (item));
 
   g_set_object (&self->item, item);
   chatty_avatar_set_item (CHATTY_AVATAR (self->avatar), item);

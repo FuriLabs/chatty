@@ -11,6 +11,12 @@
 
 #include <glib/gi18n.h>
 
+#include "config.h"
+
+#ifdef PURPLE_ENABLED
+# include <purple.h>
+#endif
+
 #include "chatty-settings.h"
 #include "chatty-text-item.h"
 
@@ -35,6 +41,7 @@ static gchar *
 chatty_msg_list_escape_message (ChattyTextItem *self,
                                 const char       *message)
 {
+#ifdef PURPLE_ENABLED
   g_autofree char *nl_2_br = NULL;
   g_autofree char *striped = NULL;
   g_autofree char *escaped = NULL;
@@ -49,6 +56,9 @@ chatty_msg_list_escape_message (ChattyTextItem *self,
   purple_markup_html_to_xhtml (linkified, &result, NULL);
 
   return result;
+#endif
+
+  return g_strdup ("");
 }
 
 static void
@@ -115,6 +125,7 @@ text_item_update_message (ChattyTextItem *self)
       self->protocol & (CHATTY_PROTOCOL_MMS_SMS | CHATTY_PROTOCOL_MMS)) {
     gtk_label_set_text (GTK_LABEL (self->content_label), text);
   } else {
+    /* This happens only for purple messages */
     g_autofree char *message = NULL;
 
     message = chatty_msg_list_escape_message (self, text);

@@ -238,7 +238,7 @@
                     </child>
                     <child>
                       <object class="HdyActionRow">
-                        <property name="visible">True</property>
+                        <property name="visible" bind-source="message_archive_switch" bind-property="visible" bind-flags="sync-create"/>
                         <property name="selectable">False</property>
                         <property name="title" translatable="yes">Message Archive Management</property>
                         <property name="subtitle" translatable="yes">Sync conversations with chat server</property>
@@ -253,7 +253,7 @@
                     </child>
                     <child>
                       <object class="HdyActionRow" id="message_carbons_row">
-                        <property name="visible">True</property>
+                        <property name="visible" bind-source="message_carbons_switch" bind-property="visible" bind-flags="sync-create"/>
                         <property name="selectable">False</property>
                         <property name="title" translatable="yes">Message Carbon Copies</property>
                         <property name="subtitle" translatable="yes">Share chat history among devices</property>

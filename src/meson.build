@@ -8,9 +8,17 @@ version_h = vcs_tag(input: 'version.h.in',
 src_inc += include_directories('.')
 src_inc += include_directories('users')
 
+purple_plugdir = ''
+
 subdir('matrix')
 subdir('mm')
 subdir('purple')
+
+if purple_dep.found()
+  libsrc += files([
+    'dialogs/chatty-pp-chat-info.c',
+  ])
+endif
 
 libsrc += [
   'contrib/gtktypebuiltins.c',
@@ -27,7 +35,6 @@ libsrc += [
   'dialogs/chatty-pp-account-details.c',
   'dialogs/chatty-chat-info.c',
   'dialogs/chatty-ma-chat-info.c',
-  'dialogs/chatty-pp-chat-info.c',
   'dialogs/chatty-mm-chat-info.c',
   'users/chatty-item.c',
   'users/chatty-contact.c',

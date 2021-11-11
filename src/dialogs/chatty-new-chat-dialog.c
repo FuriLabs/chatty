@@ -8,6 +8,8 @@
 
 #define G_LOG_DOMAIN "chatty-new-chat-dialog"
 
+#include "config.h"
+
 #define _GNU_SOURCE
 #include <string.h>
 #include <glib.h>
@@ -17,10 +19,9 @@
 
 #include "chatty-manager.h"
 #include "chatty-chat.h"
-#include "chatty-pp-chat.h"
+#include "chatty-purple.h"
 #include "chatty-contact.h"
 #include "chatty-mm-account.h"
-#include "chatty-pp-account.h"
 #include "chatty-ma-account.h"
 #include "chatty-list-row.h"
 #include "chatty-log.h"
@@ -149,6 +150,7 @@ dialog_filter_item_cb (ChattyItem          *item,
       return FALSE;
   }
 
+#ifdef PURPLE_ENABLED
   if (CHATTY_IS_PP_BUDDY (item)) {
     ChattyAccount *account;
 
@@ -157,14 +159,17 @@ dialog_filter_item_cb (ChattyItem          *item,
     if (chatty_account_get_status (account) != CHATTY_CONNECTED)
       return FALSE;
   }
+#endif
 
   if (CHATTY_IS_CHAT (item)) {
     ChattyAccount *account;
 
+#ifdef PURPLE_ENABLED
     /* Hide chat if it's buddy chat as the buddy is shown separately */
     if (CHATTY_IS_PP_CHAT (item) &&
         chatty_pp_chat_get_purple_buddy (CHATTY_PP_CHAT (item)))
       return FALSE;
+#endif
 
     account = chatty_chat_get_account (CHATTY_CHAT (item));
 
@@ -582,6 +587,7 @@ contact_row_activated_cb (ChattyNewChatDialog *self,
 static void
 add_contact_button_clicked_cb (ChattyNewChatDialog *self)
 {
+#ifdef PURPLE_ENABLED
   GPtrArray *buddies;
   const char *who, *alias;
 
@@ -598,6 +604,7 @@ add_contact_button_clicked_cb (ChattyNewChatDialog *self)
 
   g_ptr_array_add (buddies, g_strdup (who));
   chatty_account_start_direct_chat_async (self->selected_account, buddies, NULL, NULL);
+#endif
 
   gtk_widget_hide (GTK_WIDGET (self));
 

@@ -25,6 +25,7 @@
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
+# include "version.h"
 #endif
 
 #include <glib/gi18n.h>
@@ -236,8 +237,10 @@ chatty_application_command_line (GApplication            *application,
   if (g_variant_dict_contains (options, "nologin"))
     chatty_manager_disable_auto_login (chatty_manager_get_default (), TRUE);
 
+#ifdef PURPLE_ENABLED
   if (g_variant_dict_contains (options, "debug"))
     chatty_purple_enable_debug ();
+#endif
 
   arguments = g_application_command_line_get_arguments (command_line, &argc);
 

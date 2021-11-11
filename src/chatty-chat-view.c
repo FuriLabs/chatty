@@ -9,11 +9,13 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+#include "config.h"
+
 #include <glib/gi18n.h>
 #include <gspell/gspell.h>
 
 #include "chatty-mm-chat.h"
-#include "chatty-pp-chat.h"
+#include "chatty-purple.h"
 #include "chatty-settings.h"
 #include "chatty-ma-chat.h"
 #include "chatty-message-row.h"
@@ -189,8 +191,10 @@ chatty_chat_view_update (ChattyChatView *self)
 
   protocol = chatty_item_get_protocols (CHATTY_ITEM (self->chat));
 
+#ifdef PURPLE_ENABLED
   if (chatty_chat_is_im (self->chat) && CHATTY_IS_PP_CHAT (self->chat))
     chatty_pp_chat_load_encryption_status (CHATTY_PP_CHAT (self->chat));
+#endif
 
   gtk_widget_set_visible (self->send_file_button, chatty_chat_has_file_upload (self->chat));
 
@@ -423,8 +427,10 @@ chat_view_send_file_button_clicked_cb (ChattyChatView *self,
   } if (CHATTY_IS_MA_CHAT (self->chat)) {
     /* TODO */
 
-  } else if (CHATTY_IS_PP_CHAT (self->chat)) {
+  } else {
+#ifdef PURPLE_ENABLED
     chatty_pp_chat_show_file_upload (CHATTY_PP_CHAT (self->chat));
+#endif
   }
 }
 
@@ -454,6 +460,7 @@ chat_view_send_message_button_clicked_cb (ChattyChatView *self)
   gtk_text_buffer_get_bounds (self->message_input_buffer, &start, &end);
   message = gtk_text_buffer_get_text (self->message_input_buffer, &start, &end, FALSE);
 
+#ifdef PURPLE_ENABLED
   if (CHATTY_IS_PP_CHAT (self->chat) &&
       chatty_pp_chat_run_command (CHATTY_PP_CHAT (self->chat), message)) {
     gtk_widget_hide (self->send_message_button);
@@ -461,6 +468,7 @@ chat_view_send_message_button_clicked_cb (ChattyChatView *self)
 
     return;
   }
+#endif
 
   account = chatty_chat_get_account (self->chat);
   if (chatty_account_get_status (account) != CHATTY_CONNECTED)
@@ -471,8 +479,10 @@ chat_view_send_message_button_clicked_cb (ChattyChatView *self)
   if (gtk_text_buffer_get_char_count (self->message_input_buffer) || files) {
     g_autofree char *escaped = NULL;
 
+#ifdef PURPLE_ENABLED
     if (CHATTY_IS_PP_CHAT (self->chat))
       escaped = purple_markup_escape_text (message, -1);
+#endif
 
     msg = chatty_message_new (NULL, escaped ? escaped : message,
                               NULL, time (NULL),

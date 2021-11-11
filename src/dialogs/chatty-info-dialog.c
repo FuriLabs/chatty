@@ -15,11 +15,14 @@
 
 #include <glib/gi18n.h>
 
+#ifdef PURPLE_ENABLED
+# include "chatty-pp-chat-info.h"
+#endif
+
 #include "chatty-mm-chat.h"
 #include "chatty-ma-chat.h"
 #include "chatty-utils.h"
 #include "chatty-ma-chat-info.h"
-#include "chatty-pp-chat-info.h"
 #include "chatty-mm-chat-info.h"
 #include "chatty-info-dialog.h"
 
@@ -167,7 +170,6 @@ chatty_info_dialog_class_init (ChattyInfoDialogClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyInfoDialog, header_bar);
   gtk_widget_class_bind_template_child (widget_class, ChattyInfoDialog, ma_chat_info);
   gtk_widget_class_bind_template_child (widget_class, ChattyInfoDialog, mm_chat_info);
-  gtk_widget_class_bind_template_child (widget_class, ChattyInfoDialog, pp_chat_info);
   gtk_widget_class_bind_template_child (widget_class, ChattyInfoDialog, invite_page);
 
   gtk_widget_class_bind_template_child (widget_class, ChattyInfoDialog, cancel_button);
@@ -186,7 +188,6 @@ chatty_info_dialog_class_init (ChattyInfoDialogClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, apply_button_clicked_cb);
 
   g_type_ensure (CHATTY_TYPE_MA_CHAT_INFO);
-  g_type_ensure (CHATTY_TYPE_PP_CHAT_INFO);
   g_type_ensure (CHATTY_TYPE_MM_CHAT_INFO);
 }
 
@@ -194,6 +195,11 @@ static void
 chatty_info_dialog_init (ChattyInfoDialog *self)
 {
   gtk_widget_init_template (GTK_WIDGET(self));
+
+#ifdef PURPLE_ENABLED
+  self->pp_chat_info = chatty_pp_chat_info_new ();
+  gtk_container_add (GTK_CONTAINER (self->chat_type_stack), self->pp_chat_info);
+#endif
 }
 
 GtkWidget *

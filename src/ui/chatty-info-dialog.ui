@@ -110,11 +110,6 @@
               <object class="GtkStack" id="chat_type_stack">
                 <property name="visible">1</property>
                 <child>
-                  <object class="ChattyPpChatInfo" id="pp_chat_info">
-                    <property name="visible">1</property>
-                  </object>
-                </child>
-                <child>
                   <object class="ChattyMaChatInfo" id="ma_chat_info">
                     <property name="visible">1</property>
                   </object>

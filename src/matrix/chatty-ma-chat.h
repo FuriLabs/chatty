@@ -15,7 +15,6 @@
 
 #include "chatty-item.h"
 #include "chatty-account.h"
-#include "chatty-pp-buddy.h"
 #include "chatty-message.h"
 #include "chatty-chat.h"
 #include "chatty-enums.h"

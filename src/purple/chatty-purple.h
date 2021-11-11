@@ -14,7 +14,12 @@
 #include <glib-object.h>
 #include <gio/gio.h>
 
+#include "config.h"
+
+#ifdef PURPLE_ENABLED
+#include "chatty-pp-account.h"
 #include "chatty-pp-buddy.h"
+#include "chatty-pp-chat.h"
 #include "chatty-history.h"
 
 G_BEGIN_DECLS
@@ -56,3 +61,5 @@ gboolean        chatty_purple_has_carbon_plugin    (ChattyPurple   *self);
 gboolean        chatty_purple_has_telegram_loaded  (ChattyPurple   *self);
 
 G_END_DECLS
+
+#endif  /* PURPLE_ENABLED */

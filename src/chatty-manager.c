@@ -24,7 +24,6 @@
 #include "chatty-contact-provider.h"
 #include "chatty-utils.h"
 #include "chatty-mm-account.h"
-#include "chatty-pp-account.h"
 #include "chatty-ma-account.h"
 #include "chatty-chat.h"
 #include "chatty-history.h"
@@ -57,7 +56,9 @@ struct _ChattyManager
   GtkSortListModel    *sorted_chat_list;
 
   ChattyMatrix    *matrix;
+#ifdef PURPLE_ENABLED
   ChattyPurple    *purple;
+#endif
   /* We have exactly one MM account */
   ChattyMmAccount *mm_account;
 
@@ -345,6 +346,7 @@ chatty_manager_load (ChattyManager *self)
 
   self->has_loaded = TRUE;
 
+#ifdef PURPLE_ENABLED
   if (!self->purple) {
     self->purple = chatty_purple_get_default ();
     g_list_store_append (self->list_of_account_list,
@@ -358,6 +360,7 @@ chatty_manager_load (ChattyManager *self)
     chatty_purple_set_history_db (self->purple, self->history);
     chatty_purple_load (self->purple, self->disable_auto_login);
   }
+#endif
 
   chatty_mm_account_set_history_db (self->mm_account,
                                     chatty_manager_get_history (self));
@@ -439,8 +442,10 @@ chatty_manager_get_active_protocols (ChattyManager *self)
   if (chatty_account_get_status (CHATTY_ACCOUNT (self->mm_account)) == CHATTY_CONNECTED)
     protocols = protocols | CHATTY_PROTOCOL_MMS_SMS;
 
+#ifdef PURPLE_ENABLED
   if (self->purple)
     protocols |= chatty_purple_get_protocols (self->purple);
+#endif
 
   return protocols;
 }
@@ -475,8 +480,10 @@ manager_delete_account_cb (GObject      *object,
 
   if (CHATTY_IS_MA_ACCOUNT (account))
     success = chatty_matrix_delete_account_finish (self->matrix, result, &error);
+#ifdef PURPLE_ENABLED
   else if (CHATTY_IS_PP_ACCOUNT (account))
     success = chatty_purple_delete_account_finish (self->purple, result, &error);
+#endif
 
   if (error)
     g_task_return_error (task, error);
@@ -503,10 +510,12 @@ chatty_manager_delete_account_async (ChattyManager       *self,
     chatty_matrix_delete_account_async (self->matrix, account, cancellable,
                                         manager_delete_account_cb,
                                         g_steal_pointer (&task));
+#ifdef PURPLE_ENABLED
   else if (CHATTY_IS_PP_ACCOUNT (account))
     chatty_purple_delete_account_async (self->purple, account, cancellable,
                                         manager_delete_account_cb,
                                         g_steal_pointer (&task));
+#endif
   else
     g_return_if_reached ();
 }
@@ -604,7 +613,11 @@ chatty_manager_find_account_with_name (ChattyManager  *self,
       chatty_settings_get_experimental_features (chatty_settings_get_default ()))
     return chatty_matrix_find_account_with_name (self->matrix, account_id);
 
+#ifdef PURPLE_ENABLED
   return chatty_purple_find_account_with_name (self->purple, protocol, account_id);
+#else
+  return NULL;
+#endif
 }
 
 ChattyChat *
@@ -619,11 +632,13 @@ chatty_manager_find_chat_with_name (ChattyManager  *self,
   if (protocol & (CHATTY_PROTOCOL_MMS | CHATTY_PROTOCOL_MMS_SMS))
     return chatty_mm_account_find_chat (self->mm_account, chat_id);
 
+#ifdef PURPLE_ENABLED
   if (protocol & (CHATTY_PROTOCOL_XMPP | CHATTY_PROTOCOL_TELEGRAM) ||
       (!chatty_settings_get_experimental_features (chatty_settings_get_default ()) &&
        protocol & CHATTY_PROTOCOL_MATRIX))
     return chatty_purple_find_chat_with_name (chatty_purple_get_default (),
                                               protocol, account_id, chat_id);
+#endif
 
   if (chatty_settings_get_experimental_features (chatty_settings_get_default ())
       && protocol == CHATTY_PROTOCOL_MATRIX)
