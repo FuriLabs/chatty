@@ -6,8 +6,16 @@
 
 #define G_LOG_DOMAIN "chatty-utils"
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <glib.h>
 #include <glib/gi18n.h>
+#ifdef PURPLE_ENABLED
+# include <purple.h>
+#endif
+
 #include "chatty-manager.h"
 #include "chatty-settings.h"
 #include "chatty-phone-utils.h"
@@ -252,6 +260,12 @@ chatty_utils_groupname_is_valid (const char     *name,
   }
 
   return valid;
+}
+
+const char *
+chatty_utils_get_purple_dir (void)
+{
+  return purple_user_dir ();
 }
 
 char *

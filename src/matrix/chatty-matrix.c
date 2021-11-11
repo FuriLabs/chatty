@@ -225,7 +225,7 @@ chatty_matrix_load (ChattyMatrix *self)
     return;
 
   self->matrix_db = matrix_db_new ();
-  db_path =  g_build_filename (purple_user_dir (), "chatty", "db", NULL);
+  db_path =  g_build_filename (chatty_utils_get_purple_dir (), "chatty", "db", NULL);
   matrix_db_open_async (self->matrix_db, db_path, "matrix.db",
                         matrix_db_open_cb, self);
   g_info ("Opening matrix db");

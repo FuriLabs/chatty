@@ -280,7 +280,7 @@ chatty_application_startup (GApplication *application)
   g_mkdir_with_parents (dir, S_IRWXU);
 
   lfb_init (CHATTY_APP_ID, NULL);
-  db_path =  g_build_filename (purple_user_dir(), "chatty", "db", NULL);
+  db_path =  g_build_filename (chatty_utils_get_purple_dir (), "chatty", "db", NULL);
   chatty_history_open (chatty_manager_get_history (self->manager),
                        db_path, "chatty-history.db");
 
