@@ -110,8 +110,9 @@ text_item_update_message (ChattyTextItem *self)
   settings = chatty_settings_get_default ();
   text = chatty_message_get_text (self->message);
 
-  if (self->protocol == CHATTY_PROTOCOL_MATRIX &&
-      chatty_settings_get_experimental_features (settings)) {
+  if ((self->protocol == CHATTY_PROTOCOL_MATRIX &&
+       chatty_settings_get_experimental_features (settings)) ||
+      self->protocol & (CHATTY_PROTOCOL_MMS_SMS | CHATTY_PROTOCOL_MMS)) {
     gtk_label_set_text (GTK_LABEL (self->content_label), text);
   } else {
     g_autofree char *message = NULL;
