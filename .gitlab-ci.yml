@@ -19,6 +19,16 @@ before_script:
   - export DEBIAN_FRONTEND=noninteractive
   - apt-get -y update
 
+build-pureos-gcc-byzantium-no-purple:
+  <<: *tags
+  image: pureos/byzantium
+  stage: build
+  script:
+    - apt-get -y build-dep .
+    - export LC_ALL=C.UTF-8
+    - meson . _build -Dpurple=disabled
+    - ninja -C _build
+
 build-pureos-gcc-byzantium:
   <<: *tags
   image: pureos/byzantium
