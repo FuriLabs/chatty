@@ -24,7 +24,7 @@
 
 struct _ChattyMmChatInfo
 {
-  HdyPreferencesPage  parent_instance;
+  ChattyChatInfo parent_instance;
 
   GtkWidget *contacts_list_box;
   GtkWidget *title_group;
@@ -34,7 +34,7 @@ struct _ChattyMmChatInfo
   ChattyChat *chat;
 };
 
-G_DEFINE_TYPE (ChattyMmChatInfo, chatty_mm_chat_info, HDY_TYPE_PREFERENCES_PAGE)
+G_DEFINE_TYPE (ChattyMmChatInfo, chatty_mm_chat_info, CHATTY_TYPE_CHAT_INFO)
 
 void
 chatty_mm_chat_info_cancel_changes (ChattyMmChatInfo *self,
@@ -66,10 +66,11 @@ chatty_mm_chat_info_apply_changes (ChattyMmChatInfo *self,
                         chatty_item_get_name (CHATTY_ITEM (chat)));
 }
 
-void
-chatty_mm_chat_info_set_item (ChattyMmChatInfo *self,
-                              ChattyChat       *chat)
+static void
+chatty_mm_chat_info_set_item (ChattyChatInfo *info,
+                              ChattyChat     *chat)
 {
+  ChattyMmChatInfo *self = (ChattyMmChatInfo *)info;
   g_autoptr (ChattyContact) self_contact;
   GListModel *users;
   GtkWidget *contact_row;
@@ -141,6 +142,9 @@ static void
 chatty_mm_chat_info_class_init (ChattyMmChatInfoClass *klass)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
+  ChattyChatInfoClass *info_class = CHATTY_CHAT_INFO_CLASS (klass);
+
+  info_class->set_item = chatty_mm_chat_info_set_item;
 
   gtk_widget_class_set_template_from_resource (widget_class,
                                                "/sm/puri/Chatty/"

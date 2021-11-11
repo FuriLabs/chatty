@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="ChattyMaChatInfo" parent="HdyPreferencesPage">
+  <template class="ChattyMaChatInfo" parent="ChattyChatInfo">
     <property name="visible">1</property>
 
     <child>

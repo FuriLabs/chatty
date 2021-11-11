@@ -226,14 +226,16 @@ chatty_info_dialog_set_chat (ChattyInfoDialog *self,
   gtk_header_bar_set_show_close_button (GTK_HEADER_BAR (self->header_bar), TRUE);
 
   if (CHATTY_IS_MA_CHAT (chat)) {
-    chatty_ma_chat_info_set_item (CHATTY_MA_CHAT_INFO (self->ma_chat_info), chat);
-    chatty_mm_chat_info_set_item (CHATTY_MM_CHAT_INFO (self->mm_chat_info), NULL);
-    chatty_pp_chat_info_set_item (CHATTY_PP_CHAT_INFO (self->pp_chat_info), NULL);
+    chatty_chat_info_set_item (CHATTY_CHAT_INFO (self->ma_chat_info), chat);
+    if (self->pp_chat_info)
+      chatty_chat_info_set_item (CHATTY_CHAT_INFO (self->mm_chat_info), NULL);
+    chatty_chat_info_set_item (CHATTY_CHAT_INFO (self->pp_chat_info), NULL);
     gtk_stack_set_visible_child (GTK_STACK (self->chat_type_stack), self->ma_chat_info);
   } else if (CHATTY_IS_MM_CHAT (chat)) {
-    chatty_ma_chat_info_set_item (CHATTY_MA_CHAT_INFO (self->ma_chat_info), NULL);
-    chatty_pp_chat_info_set_item (CHATTY_PP_CHAT_INFO (self->pp_chat_info), NULL);
-    chatty_mm_chat_info_set_item (CHATTY_MM_CHAT_INFO (self->mm_chat_info), chat);
+    chatty_chat_info_set_item (CHATTY_CHAT_INFO (self->ma_chat_info), NULL);
+    if (self->pp_chat_info)
+      chatty_chat_info_set_item (CHATTY_CHAT_INFO (self->pp_chat_info), NULL);
+    chatty_chat_info_set_item (CHATTY_CHAT_INFO (self->mm_chat_info), chat);
     if (!chatty_chat_is_im (chat)) {
       gtk_widget_show (self->cancel_button);
       gtk_widget_show (self->apply_button);
@@ -241,9 +243,10 @@ chatty_info_dialog_set_chat (ChattyInfoDialog *self,
     }
     gtk_stack_set_visible_child (GTK_STACK (self->chat_type_stack), self->mm_chat_info);
   } else {
-    chatty_ma_chat_info_set_item (CHATTY_MA_CHAT_INFO (self->ma_chat_info), NULL);
-    chatty_pp_chat_info_set_item (CHATTY_PP_CHAT_INFO (self->pp_chat_info), chat);
-    chatty_mm_chat_info_set_item (CHATTY_MM_CHAT_INFO (self->mm_chat_info), NULL);
+    chatty_chat_info_set_item (CHATTY_CHAT_INFO (self->ma_chat_info), NULL);
+    if (self->pp_chat_info)
+      chatty_chat_info_set_item (CHATTY_CHAT_INFO (self->pp_chat_info), chat);
+    chatty_chat_info_set_item (CHATTY_CHAT_INFO (self->mm_chat_info), NULL);
     gtk_stack_set_visible_child (GTK_STACK (self->chat_type_stack), self->pp_chat_info);
   }
 
