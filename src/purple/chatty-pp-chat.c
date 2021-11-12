@@ -21,6 +21,7 @@
 #include "chatty-history.h"
 #include "chatty-settings.h"
 #include "chatty-utils.h"
+#include "chatty-pp-utils.h"
 #include "chatty-pp-buddy.h"
 #include "chatty-pp-account.h"
 #include "chatty-manager.h"
@@ -155,7 +156,7 @@ pp_chat_setup_file_upload (ChattyPpChat *self)
 
   gc = purple_conversation_get_gc (self->conv);
   if (gc)
-    node = chatty_utils_get_conv_blist_node (self->conv);
+    node = chatty_pp_utils_get_conv_blist_node (self->conv);
   if (node)
     prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO (gc->prpl);
 
@@ -1129,7 +1130,7 @@ chatty_pp_chat_set_purple_conv (ChattyPpChat       *self,
   if (self->pp_chat || self->buddy)
     return;
 
-  node = chatty_utils_get_conv_blist_node (conv);
+  node = chatty_pp_utils_get_conv_blist_node (conv);
 
   if (node && PURPLE_BLIST_NODE_IS_CHAT (node))
     chatty_pp_chat_set_purple_chat (self, PURPLE_CHAT (node));
@@ -1187,7 +1188,7 @@ chatty_pp_chat_show_file_upload (ChattyPpChat *self)
 
   g_return_if_fail (CHATTY_IS_PP_CHAT (self));
 
-  node = chatty_utils_get_conv_blist_node (self->conv);
+  node = chatty_pp_utils_get_conv_blist_node (self->conv);
 
   if (self->upload_file_callback)
     self->upload_file_callback (node, self->callback_userdata);
@@ -1335,7 +1336,7 @@ chatty_pp_chat_match_purple_conv (ChattyPpChat       *self,
   if (self->account && self->account != conv->account)
     return FALSE;
 
-  node = chatty_utils_get_conv_blist_node (conv);
+  node = chatty_pp_utils_get_conv_blist_node (conv);
 
   if (!node)
     return FALSE;

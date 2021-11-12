@@ -15,6 +15,7 @@ libsrc += files([
   'chatty-pp-buddy.c',
   'chatty-pp-account.c',
   'chatty-pp-chat.c',
+  'chatty-pp-utils.c',
 ])
 
 chatty_sources += files([

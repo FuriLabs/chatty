@@ -16,6 +16,7 @@
 #include "message.h"
 #include "xeps.h"
 #include "chatty-xep-0313.h"
+#include "chatty-pp-utils.h"
 #include "chatty-utils.h"
 #include "chatty-history.h"
 #include "chatty-pp-chat.h"
@@ -813,7 +814,7 @@ cb_chatty_mam_msg_received (PurpleConnection *pc,
       chatty_contact_set_value (contact, who);
       chat_message = chatty_message_new (CHATTY_ITEM (contact), pcm->what, stanza_id,
                                          pcm->when, CHATTY_MESSAGE_HTML_ESCAPED,
-                                         chatty_utils_direction_from_flag (pcm->flags), 0);
+                                         chatty_pp_utils_direction_from_flag (pcm->flags), 0);
     }
 
     if (conv)

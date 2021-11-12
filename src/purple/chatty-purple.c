@@ -27,6 +27,7 @@
 #include "chatty-purple-request.h"
 #include "chatty-purple-notify.h"
 #include "chatty-pp-chat.h"
+#include "chatty-pp-utils.h"
 #include "chatty-application.h"
 #include "chatty-manager.h"
 #include "chatty-purple.h"
@@ -907,7 +908,7 @@ chatty_conv_new (PurpleConversation *conv)
   }
 
   self = chatty_purple_get_default ();
-  conv_node = chatty_utils_get_conv_blist_node (conv);
+  conv_node = chatty_pp_utils_get_conv_blist_node (conv);
 
   if (conv_node && conv_node->ui_data) {
     if (conv_type == PURPLE_CONV_TYPE_CHAT)
@@ -1015,7 +1016,7 @@ chatty_conv_write_conversation (PurpleConversation *conv,
     flags &= ~(PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_RECV);
   }
 
-  node = chatty_utils_get_conv_blist_node (conv);
+  node = chatty_pp_utils_get_conv_blist_node (conv);
   chat = conv->ui_data;
   self = chatty_purple_get_default ();
   protocol = chatty_item_get_protocols (CHATTY_ITEM (chat));
