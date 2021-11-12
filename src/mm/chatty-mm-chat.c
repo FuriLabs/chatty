@@ -604,6 +604,14 @@ chatty_mm_chat_new (const char     *name,
   return self;
 }
 
+gboolean
+chatty_mm_chat_has_custom_name (ChattyMmChat *self)
+{
+  g_return_val_if_fail (CHATTY_IS_MM_CHAT (self), FALSE);
+
+  return self->has_custom_name;
+}
+
 void
 chatty_mm_chat_set_eds (ChattyMmChat *self,
                         ChattyEds    *chatty_eds)
