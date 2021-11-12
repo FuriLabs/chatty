@@ -865,7 +865,9 @@ insert_or_ignore_thread (ChattyHistory *self,
                       "DO UPDATE SET alias=?2, visibility=?5, encrypted=?6, avatar_id=?7",
                       -1, &stmt, NULL);
   history_bind_text (stmt, 1, chatty_chat_get_chat_name (chat), "binding when adding thread");
-  history_bind_text (stmt, 2, chatty_item_get_name (CHATTY_ITEM (chat)), "binding when adding thread");
+
+  if (CHATTY_IS_MM_CHAT (chat) && chatty_mm_chat_has_custom_name (CHATTY_MM_CHAT (chat)))
+    history_bind_text (stmt, 2, chatty_item_get_name (CHATTY_ITEM (chat)), "binding when adding thread");
   history_bind_int (stmt, 3, account_id, "binding when adding thread");
   history_bind_int (stmt, 4, chatty_chat_is_im (chat) ? THREAD_DIRECT_CHAT : THREAD_GROUP_CHAT,
                     "binding when adding thread");
