@@ -407,32 +407,6 @@ chatty_utils_get_human_time (time_t unix_time)
   return g_date_time_format (local_time, _("%Y-%m-%d"));
 }
 
-
-PurpleBlistNode *
-chatty_utils_get_conv_blist_node (PurpleConversation *conv)
-{
-  PurpleBlistNode *node = NULL;
-
-  switch (purple_conversation_get_type (conv)) {
-  case PURPLE_CONV_TYPE_IM:
-    node = PURPLE_BLIST_NODE (purple_find_buddy (conv->account,
-                                                 conv->name));
-    break;
-  case PURPLE_CONV_TYPE_CHAT:
-    node = PURPLE_BLIST_NODE (purple_blist_find_chat (conv->account,
-                                                      conv->name));
-    break;
-  case PURPLE_CONV_TYPE_UNKNOWN:
-  case PURPLE_CONV_TYPE_MISC:
-  case PURPLE_CONV_TYPE_ANY:
-  default:
-    g_warning ("Unhandled conversation type %d",
-               purple_conversation_get_type (conv));
-    break;
-  }
-  return node;
-}
-
 GdkPixbuf *
 chatty_utils_get_pixbuf_from_data (const guchar *buf,
                                    gsize         count)
@@ -463,22 +437,6 @@ chatty_utils_get_pixbuf_from_data (const guchar *buf,
   }
 
   return g_object_ref (pixbuf);
-}
-
-
-ChattyMsgDirection
-chatty_utils_direction_from_flag (PurpleMessageFlags flag)
-{
-  if (flag & PURPLE_MESSAGE_SYSTEM)
-    return CHATTY_DIRECTION_SYSTEM;
-
-  if (flag & PURPLE_MESSAGE_SEND)
-    return CHATTY_DIRECTION_OUT;
-
-  if (flag & PURPLE_MESSAGE_RECV)
-    return CHATTY_DIRECTION_IN;
-
-  g_return_val_if_reached (CHATTY_DIRECTION_UNKNOWN);
 }
 
 void
