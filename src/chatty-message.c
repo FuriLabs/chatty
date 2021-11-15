@@ -15,6 +15,8 @@
 # include "config.h"
 #endif
 
+#include "chatty-mm-buddy.h"
+#include "chatty-pp-buddy.h"
 #include "chatty-message.h"
 #include "chatty-utils.h"
 
@@ -319,14 +321,22 @@ chatty_message_get_user_name (ChattyMessage *self)
   g_return_val_if_fail (CHATTY_IS_MESSAGE (self), "");
 
   if (!self->user_name && self->user) {
-    user_name = chatty_item_get_username (self->user);
+    /* TODO: chatty_item_get_username() is supposed to return phone number,
+       but it's not implemented.  Check if doing so would break something.
+     */
+    if (CHATTY_IS_MM_BUDDY (self->user))
+      user_name = chatty_mm_buddy_get_number (CHATTY_MM_BUDDY (self->user));
+    else
+      user_name = chatty_item_get_username (self->user);
 
     if (!user_name || !*user_name)
       user_name = chatty_item_get_name (self->user);
   }
 
-  if (user_name)
+  if (user_name && CHATTY_IS_PP_BUDDY (self->user))
     self->user_name = chatty_utils_jabber_id_strip (user_name);
+  else if (user_name)
+    self->user_name = g_strdup (user_name);
 
   if (self->user_name)
     return self->user_name;
