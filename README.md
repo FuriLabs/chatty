@@ -57,8 +57,8 @@ meson build
 ninja -C build
 ```
 
-### Enabling Matrix and MMS support (optional)
-To enable matrix and MMS support, run the following:
+### Enabling Matrix support (optional)
+To enable matrix support, run the following:
 ```bash
 gsettings set sm.puri.Chatty experimental-features true
 ```
