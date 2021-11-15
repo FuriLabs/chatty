@@ -473,12 +473,15 @@ chatty_mm_chat_set_name (ChattyItem *item,
   if (g_list_model_get_n_items (users) <= 1)
     return;
 
-  g_free (self->name);
-  self->name = g_strdup (name);
-  self->has_custom_name = TRUE;
+  g_clear_pointer (&self->name, g_free);
 
-  if (!name || !*name)
+  if (name && *name) {
+    self->has_custom_name = TRUE;
+    self->name = g_strdup (name);
+  } else {
+    self->has_custom_name = FALSE;
     chatty_mm_chat_update_contact (self);
+  }
 
   messages = chatty_chat_get_messages (CHATTY_CHAT (item));
 
