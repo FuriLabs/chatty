@@ -117,6 +117,14 @@ chatty_mm_chat_info_set_item (ChattyMmChatInfo *self,
 
       contact_row = chatty_list_row_new (CHATTY_ITEM (new_contact));
       chatty_list_row_set_contact ((ChattyListRow *)contact_row, TRUE);
+
+      /* We validate all multi-user chat users on creation. If there is
+       * only one contact, it's possible that it's not a phone number,
+       * check and disable add contact button if that's the case */
+      if (n_items == 1 &&
+          !chatty_utils_username_is_valid (phone, CHATTY_PROTOCOL_MMS_SMS))
+        chatty_list_row_set_contact ((ChattyListRow *)contact_row, FALSE);
+
       gtk_list_box_prepend (GTK_LIST_BOX (self->contacts_list_box),
                              GTK_WIDGET (contact_row));
     }
