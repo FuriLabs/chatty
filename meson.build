@@ -114,6 +114,7 @@ libgd_dep = libgd.get_variable('libgd_dep')
 
 subdir('completion')
 subdir('data')
+subdir('help')
 subdir('src')
 subdir('tests')
 subdir('po')
