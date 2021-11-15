@@ -290,6 +290,7 @@ chatty_application_command_line (GApplication            *application,
 static const GActionEntry app_entries[] = {
   { "help", chatty_application_show_help, },
   { "open-chat", chatty_application_open_chat, "(ssi)" },
+  { "show-window", chatty_application_show_window } };
 
 static void
 chatty_application_startup (GApplication *application)
@@ -298,6 +299,7 @@ chatty_application_startup (GApplication *application)
   g_autoptr(GtkCssProvider) provider = NULL;
   g_autofree char *db_path = NULL;
   g_autofree char *dir = NULL;
+  const char *help_accels[] = { "F1", NULL };
 
   self->daemon = FALSE;
   self->manager = chatty_manager_get_default ();
@@ -336,6 +338,7 @@ chatty_application_startup (GApplication *application)
 
   g_action_map_add_action_entries (G_ACTION_MAP (self), app_entries,
                                    G_N_ELEMENTS (app_entries), self);
+  gtk_application_set_accels_for_action (GTK_APPLICATION (self), "app.help", help_accels);
 }
 
 
