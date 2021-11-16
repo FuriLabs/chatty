@@ -380,6 +380,8 @@ chatty_mm_account_recieve_mms_cb (ChattyMmAccount *self,
   ChattyMessage  *messagecheck;
 
   chat = chatty_mm_account_start_chat (self, recipientlist);
+  g_return_if_fail (CHATTY_IS_MM_CHAT (chat));
+
   /*
    * Check to see if this message exists (e.g. draft MMS sent)
    */
