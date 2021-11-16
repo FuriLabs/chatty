@@ -481,8 +481,9 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
      */
 
     /* Figure out the average attachment size needed for the image */
-    image_attachments_size = (self->max_attach_size - other_attachments_size) / image_attachments;
-    for (GList *l = files; l != NULL; l = l->next) {
+    if (image_attachments)
+      image_attachments_size = (self->max_attach_size - other_attachments_size) / image_attachments;
+    for (GList *l = files; l != NULL && image_attachments; l = l->next) {
       ChattyFileInfo *attachment = l->data;
 
       if (g_str_match_string ("image", attachment->mime_type, FALSE)) {
