@@ -16,7 +16,6 @@
 #endif
 
 #include "chatty-mm-buddy.h"
-#include "chatty-pp-buddy.h"
 #include "chatty-message.h"
 #include "chatty-utils.h"
 
@@ -333,7 +332,8 @@ chatty_message_get_user_name (ChattyMessage *self)
       user_name = chatty_item_get_name (self->user);
   }
 
-  if (user_name && CHATTY_IS_PP_BUDDY (self->user))
+  if (user_name &&
+      chatty_item_get_protocols (self->user) == CHATTY_PROTOCOL_XMPP)
     self->user_name = chatty_utils_jabber_id_strip (user_name);
   else if (user_name)
     self->user_name = g_strdup (user_name);
