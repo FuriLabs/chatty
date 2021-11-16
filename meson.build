@@ -1,6 +1,6 @@
 project(
   'chatty', 'c', 'cpp',
-  version: '0.4.0',
+  version: '0.5.0.beta',
   meson_version: '>= 0.53.0',
 )
 
