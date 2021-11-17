@@ -510,9 +510,7 @@ window_new_muc_clicked_cb (ChattyWindow *self)
   g_assert (CHATTY_IS_WINDOW (self));
 
   dialog = chatty_new_muc_dialog_new (GTK_WINDOW (self));
-  gtk_dialog_run (GTK_DIALOG (dialog));
-
-  gtk_widget_destroy (dialog);
+  gtk_window_present (GTK_WINDOW (dialog));
 }
 
 static void
