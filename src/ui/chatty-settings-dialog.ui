@@ -4,6 +4,7 @@
     <property name="default-height">480</property>
     <property name="default-width">360</property>
     <property name="type-hint">dialog</property>
+    <property name="title" translatable="yes">Preferences</property>
 
     <child>
       <object class="GtkBox">
@@ -13,7 +14,7 @@
           <object class="HdyHeaderBar">
             <property name="visible">1</property>
             <property name="show-close-button">0</property>
-            <property name="title" translatable="yes">Preferences</property>
+            <property name="title" bind-source="ChattySettingsDialog" bind-property="title" bind-flags="sync-create"/>
 
             <!-- Back button -->
             <child>
@@ -147,8 +148,7 @@
                             <property name="visible">True</property>
                             <property name="activatable">True</property>
                             <property name="selectable">False</property>
-                            <property name="title" translatable="yes">_Message Settings</property>
-                            <property name="subtitle" translatable="yes">SMS/MMS Settings</property>
+                            <property name="title" translatable="yes">SMS and MMS Settings</property>
                             <property name="use-underline">True</property>
                             <signal name="activated" handler="sms_mms_settings_row_activated_cb" swapped="yes"/>
                           </object>
@@ -367,13 +367,11 @@
                 <child>
                   <object class="HdyPreferencesGroup">
                     <property name="visible">True</property>
-                    <property name="title" translatable="yes">SMS/MMS Settings</property>
                     <child>
                       <object class="HdyActionRow">
                         <property name="visible">True</property>
                         <property name="selectable">False</property>
-                        <property name="title" translatable="yes">Delivery Reports</property>
-                        <property name="subtitle" translatable="yes">Request delivery reports for SMS and MMS</property>
+                        <property name="title" translatable="yes">Request Delivery Reports</property>
                         <property name="activatable-widget">delivery_reports_switch</property>
                         <child>
                           <object class="GtkSwitch" id="delivery_reports_switch">

@@ -527,7 +527,7 @@ settings_dialog_page_changed_cb (ChattySettingsDialog *self)
   name = gtk_stack_get_visible_child_name (GTK_STACK (self->main_stack));
 
   if (g_strcmp0 (name, "message-settings-view") == 0)
-    gtk_window_set_title (GTK_WINDOW (self), _("SMS/MMS Settings"));
+    gtk_window_set_title (GTK_WINDOW (self), _("SMS and MMS Settings"));
   else
     gtk_window_set_title (GTK_WINDOW (self), _("Preferences"));
 }
