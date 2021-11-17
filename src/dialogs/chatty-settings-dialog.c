@@ -53,7 +53,7 @@
  * which was written by Andrea Schäfer. */
 struct _ChattySettingsDialog
 {
-  GtkDialog       parent_instance;
+  HdyWindow      parent_instance;
 
   GtkWidget      *back_button;
   GtkWidget      *cancel_button;
@@ -120,7 +120,7 @@ struct _ChattySettingsDialog
   gboolean visible;
 };
 
-G_DEFINE_TYPE (ChattySettingsDialog, chatty_settings_dialog, GTK_TYPE_DIALOG)
+G_DEFINE_TYPE (ChattySettingsDialog, chatty_settings_dialog, HDY_TYPE_WINDOW)
 
 
 static void
@@ -1205,6 +1205,6 @@ chatty_settings_dialog_new (GtkWindow *parent_window)
 
   return g_object_new (CHATTY_TYPE_SETTINGS_DIALOG,
                        "transient-for", parent_window,
-                       "use-header-bar", 1,
+                       "modal", TRUE,
                        NULL);
 }
