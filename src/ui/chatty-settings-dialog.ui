@@ -336,7 +336,7 @@
                         <property name="visible">True</property>
                         <property name="selectable">False</property>
                         <property name="title" translatable="yes">Graphical Emoticons</property>
-                        <property name="subtitle" translatable="yes">Convert ASCII emoticons</property>
+                        <property name="subtitle" translatable="yes">if you type :) it will be changed to 😃</property>
                         <property name="activatable-widget">convert_smileys_switch</property>
                         <child>
                           <object class="GtkSwitch" id="convert_smileys_switch">
@@ -350,8 +350,8 @@
                       <object class="HdyActionRow">
                         <property name="visible">True</property>
                         <property name="selectable">False</property>
-                        <property name="title" translatable="yes">Return = Send Message</property>
-                        <property name="subtitle" translatable="yes">Send message with return key</property>
+                        <!-- TRANSLATORS: Return is the Enter key. -->
+                        <property name="title" translatable="yes">Send Messages with Return</property>
                         <property name="activatable-widget">return_sends_switch</property>
                         <child>
                           <object class="GtkSwitch" id="return_sends_switch">
@@ -394,6 +394,7 @@
                         <property name="visible">True</property>
                         <property name="selectable">False</property>
                         <property name="title" translatable="yes">SMIL for MMS</property>
+                        <property name="subtitle">Enable rich media embedding</property>
                         <property name="activatable-widget">handle_smil_switch</property>
                         <child>
                           <object class="GtkSwitch" id="handle_smil_switch">
