@@ -151,6 +151,15 @@
                             <property name="title" translatable="yes">SMS and MMS Settings</property>
                             <property name="use-underline">True</property>
                             <signal name="activated" handler="sms_mms_settings_row_activated_cb" swapped="yes"/>
+                            <child>
+                              <object class="GtkImage">
+                                <property name="visible">1</property>
+                                <property name="icon-name">go-next-symbolic</property>
+                                <style>
+                                  <class name="dim-label"/>
+                                </style>
+                              </object>
+                            </child>
                           </object>
                         </child>
                       </object>
