@@ -41,7 +41,7 @@
 
 struct _ChattyWindow
 {
-  GtkApplicationWindow parent_instance;
+  HdyApplicationWindow parent_instance;
 
   ChattySettings *settings;
 
@@ -92,7 +92,7 @@ struct _ChattyWindow
 };
 
 
-G_DEFINE_TYPE (ChattyWindow, chatty_window, GTK_TYPE_APPLICATION_WINDOW)
+G_DEFINE_TYPE (ChattyWindow, chatty_window, HDY_TYPE_APPLICATION_WINDOW)
 
 static void chatty_window_chat_list_select_first (ChattyWindow *self);
 
