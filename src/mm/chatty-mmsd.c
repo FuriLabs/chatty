@@ -881,6 +881,9 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
       g_variant_unref (reciever);
     }
   }
+  if (!who->len)
+    who = g_string_append (who, self->modem_number);
+
   payload->chat = g_string_free (who, FALSE);
 
   /* Go through the attachments */
