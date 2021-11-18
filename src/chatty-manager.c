@@ -47,7 +47,6 @@ struct _ChattyManager
   ChattyEds       *chatty_eds;
 
   GtkFlattenListModel *accounts;
-  GListStore          *account_list;
   GListStore          *list_of_account_list;
 
   GListStore      *list_of_chat_list;
@@ -149,7 +148,6 @@ chatty_manager_dispose (GObject *object)
   g_clear_object (&self->list_of_user_list);
   g_clear_object (&self->contact_list);
   g_clear_object (&self->list_of_user_list);
-  g_clear_object (&self->account_list);
   g_clear_object (&self->accounts);
 
   G_OBJECT_CLASS (chatty_manager_parent_class)->dispose (object);
@@ -302,9 +300,6 @@ chatty_manager_init (ChattyManager *self)
 
   model = G_LIST_MODEL (self->list_of_account_list);
   self->accounts = gtk_flatten_list_model_new (CHATTY_TYPE_ACCOUNT, model);
-
-  self->account_list = g_list_store_new (CHATTY_TYPE_ACCOUNT);
-  g_list_store_append (self->list_of_account_list, self->account_list);
 
   model = G_LIST_MODEL (self->list_of_user_list);
   self->contact_list = gtk_flatten_list_model_new (G_TYPE_OBJECT, model);
