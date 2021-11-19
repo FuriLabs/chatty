@@ -414,10 +414,10 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
     int total_files_count = 0;
     int image_attachments = 0;
     int video_attachments = 0;
-    gulong attachments_size = size;
-    gulong image_attachments_size = 0;
-    gulong video_attachments_size = 0;
-    gulong other_attachments_size = 0;
+    gsize attachments_size = size;
+    gsize image_attachments_size = 0;
+    gsize video_attachments_size = 0;
+    gsize other_attachments_size = 0;
 
     if (size > 0) {
       files_count = 1;
@@ -495,7 +495,7 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
         if (!g_str_match_string ("gif", attachment->mime_type, FALSE)) {
           if (attachment->size > image_attachments_size) {
             ChattyFileInfo *new_attachment;
-            g_debug ("Total Attachment Size %ld, Image size reduction needed: %ld",
+            g_debug ("Total Attachment Size %" G_GSIZE_FORMAT ", Image size reduction needed: %" G_GSIZE_FORMAT,
                      attachment->size,
                      attachment->size - image_attachments_size);
 
@@ -649,7 +649,7 @@ chatty_mmsd_process_mms_message_attachments (GList *files, char *subject)
       if (text_file == NULL) {
         g_autoptr(GError) error = NULL;
         char *contents;
-        gulong length;
+        gsize length;
 
         text_file = g_file_new_build_filename (g_get_user_data_dir (),
                                                "chatty", attachment->path, NULL);
@@ -712,7 +712,7 @@ chatty_mmsd_process_mms_message_text (GList *files, char *subject)
       if (text_file == NULL) {
         g_autoptr(GError) error = NULL;
         char *contents;
-        gulong length;
+        gsize length;
 
         g_debug ("Found Text file!");
         text_file = g_file_new_build_filename (g_get_user_data_dir (),
@@ -897,7 +897,7 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
     GFileOutputStream *out;
     char *filenode, *containerpath, *mimetype, *filename, *contents;
     gulong size, data;
-    gulong length, written = 0;
+    gsize length, written = 0;
     g_autoptr(GError) error = NULL;
 
     attachment = g_try_new0 (ChattyFileInfo, 1);
@@ -944,7 +944,7 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
       }
       /* create a file containing the smil */
       if (smil != NULL) {
-        int smil_size = strlen (smil);
+        size_t smil_size = strlen (smil);
 
         new = g_file_get_child (savepath, "mms.smil");
         out = g_file_create (new, G_FILE_CREATE_PRIVATE, NULL, &error);
