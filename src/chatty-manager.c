@@ -49,6 +49,9 @@ struct _ChattyManager
   GtkFlattenListModel *accounts;
   GtkFlattenListModel *contact_list;
   GtkFlattenListModel *chat_list;
+
+  GtkFilter           *chat_filter;
+  GtkFilterListModel  *filtered_chat_list;
   GtkSortListModel    *sorted_chat_list;
 
   ChattyMatrix    *matrix;
@@ -117,6 +120,43 @@ manager_sort_chat_item (ChattyChat *a,
 }
 
 static gboolean
+manager_filter_chat_item (ChattyItem *item)
+{
+  ChattyProtocol protocol;
+
+  protocol = chatty_item_get_protocols (item);
+
+  /* We always show SMS/MMS chats regardless of the modem status */
+  if (protocol & (CHATTY_PROTOCOL_MMS_SMS | CHATTY_PROTOCOL_MMS))
+    return TRUE;
+
+#ifdef PURPLE_ENABLED
+  if (CHATTY_IS_PP_CHAT (item) &&
+      !chatty_pp_chat_get_auto_join (CHATTY_PP_CHAT (item)))
+    return FALSE;
+#endif
+
+  if (CHATTY_IS_CHAT (item)) {
+    ChattyAccount *account;
+
+    account = chatty_chat_get_account (CHATTY_CHAT (item));
+
+    if (!account || chatty_account_get_status (account) != CHATTY_CONNECTED)
+      return FALSE;
+  }
+
+  return TRUE;
+}
+
+static void
+manager_active_protocols_changed_cb (ChattyManager *self)
+{
+  g_assert (CHATTY_IS_MANAGER (self));
+
+  gtk_filter_changed (self->chat_filter, GTK_FILTER_CHANGE_DIFFERENT);
+}
+
+static gboolean
 manager_mm_set_eds (gpointer user_data)
 {
   g_autoptr(ChattyManager) self = user_data;
@@ -162,6 +202,9 @@ chatty_manager_dispose (GObject *object)
 
   g_clear_object (&self->chatty_eds);
   g_clear_object (&self->chat_list);
+  g_clear_object (&self->filtered_chat_list);
+  g_clear_object (&self->sorted_chat_list);
+
   g_clear_object (&self->contact_list);
   g_clear_object (&self->accounts);
 
@@ -314,8 +357,15 @@ chatty_manager_init (ChattyManager *self)
   sorter = gtk_custom_sorter_new ((GCompareDataFunc)manager_sort_chat_item, NULL, NULL);
   self->sorted_chat_list = gtk_sort_list_model_new (G_LIST_MODEL (self->chat_list), sorter);
 
+  self->chat_filter = gtk_custom_filter_new ((GtkCustomFilterFunc)manager_filter_chat_item, NULL, NULL);
+  self->filtered_chat_list = gtk_filter_list_model_new (G_LIST_MODEL(self->sorted_chat_list),
+                                                        self->chat_filter);
+
   g_signal_connect_object (self->chat_list, "items-changed",
                            G_CALLBACK (manager_chat_list_items_changed),
+                           self, G_CONNECT_SWAPPED);
+  g_signal_connect_object (self, "notify::active-protocols",
+                           G_CALLBACK (manager_active_protocols_changed_cb),
                            self, G_CONNECT_SWAPPED);
 }
 
@@ -398,7 +448,7 @@ chatty_manager_get_chat_list (ChattyManager *self)
 {
   g_return_val_if_fail (CHATTY_IS_MANAGER (self), NULL);
 
-  return G_LIST_MODEL (self->sorted_chat_list);
+  return G_LIST_MODEL (self->filtered_chat_list);
 }
 
 /**
