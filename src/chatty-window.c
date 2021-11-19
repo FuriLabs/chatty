@@ -250,26 +250,6 @@ window_chat_name_matches (ChattyItem   *item,
   if (!(self->protocol_filter & protocol))
     return FALSE;
 
-  if ((!self->chat_needle || !*self->chat_needle) &&
-      CHATTY_IS_MM_CHAT (item))
-    return TRUE;
-
-  /* FIXME: Not a good idea */
-  if (chatty_item_get_protocols (item) != CHATTY_PROTOCOL_MMS_SMS) {
-    ChattyAccount *account;
-
-#ifdef PURPLE_ENABLED
-    if (CHATTY_IS_PP_CHAT (item) &&
-        !chatty_pp_chat_get_auto_join (CHATTY_PP_CHAT (item)))
-      return FALSE;
-#endif
-
-    account = chatty_chat_get_account (CHATTY_CHAT (item));
-
-    if (!account || chatty_account_get_status (account) != CHATTY_CONNECTED)
-      return FALSE;
-  }
-
   if (protocol != CHATTY_PROTOCOL_MATRIX &&
       hdy_leaflet_get_folded (HDY_LEAFLET (self->header_box))) {
     GListModel *message_list;
@@ -282,12 +262,8 @@ window_chat_name_matches (ChattyItem   *item,
       return FALSE;
   }
 
-
-  if (!self->chat_needle || !*self->chat_needle)
-    return TRUE;
-
   return chatty_item_matches (item, self->chat_needle,
-                              CHATTY_PROTOCOL_ANY, TRUE);
+                              self->protocol_filter, TRUE);
 }
 
 
