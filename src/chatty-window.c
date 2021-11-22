@@ -107,7 +107,7 @@ window_set_item (ChattyWindow *self,
     hdy_leaflet_set_visible_child_name (HDY_LEAFLET (self->content_box), "sidebar");
 
   chatty_chat_view_set_chat (CHATTY_CHAT_VIEW (self->chat_view), chat);
-  gtk_widget_set_sensitive (self->header_sub_menu_button, !!chat);
+  gtk_widget_set_visible (self->header_sub_menu_button, !!chat);
 }
 
 static void
@@ -121,7 +121,7 @@ chatty_window_update_search_mode (ChattyWindow *self)
   model = chatty_manager_get_chat_list (self->manager);
   has_child = g_list_model_get_n_items (model) > 0;
 
-  gtk_widget_set_sensitive (self->search_button, TRUE);
+  gtk_widget_set_visible (self->search_button, has_child);
 
   if (!has_child)
     hdy_search_bar_set_search_mode (HDY_SEARCH_BAR (self->chats_search_bar), FALSE);
@@ -226,7 +226,7 @@ window_chat_list_selection_changed (ChattyWindow   *self,
     model = chatty_manager_get_chat_list (self->manager);
     if (g_list_model_get_n_items (model) == 0) {
       chatty_chat_view_set_chat (CHATTY_CHAT_VIEW (self->chat_view), NULL);
-      gtk_widget_set_sensitive (self->header_sub_menu_button, FALSE);
+      gtk_widget_hide (self->header_sub_menu_button);
     }
 
     return;
@@ -651,6 +651,7 @@ chatty_window_map (GtkWidget *widget)
 
   notify_fold_cb (self);
   window_active_protocols_changed_cb (self);
+  chatty_window_update_search_mode (self);
 
   GTK_WIDGET_CLASS (chatty_window_parent_class)->map (widget);
 }
@@ -783,7 +784,6 @@ static void
 chatty_window_init (ChattyWindow *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
-  gtk_widget_set_sensitive (self->header_sub_menu_button, FALSE);
 
   self->protocol_filter = CHATTY_PROTOCOL_ANY;
   hdy_search_bar_connect_entry (HDY_SEARCH_BAR (self->chats_search_bar),
