@@ -411,6 +411,8 @@
                 <child>
                   <object class="ChattyChatList" id="chat_list">
                     <property name="visible">1</property>
+                    <property name="hexpand">0</property>
+                    <property name="width_request">300</property>
                     <signal name="selection-changed" handler="window_chat_list_selection_changed" swapped="yes"/>
                   </object>
                 </child>
