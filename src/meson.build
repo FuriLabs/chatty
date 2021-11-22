@@ -87,6 +87,7 @@ chatty_sources += [
   'main.c',
   'chatty-manager.c',
   'chatty-application.c',
+  'chatty-chat-list.c',
   'chatty-window.c',
   'dialogs/chatty-info-dialog.c',
   'dialogs/chatty-settings-dialog.c',
