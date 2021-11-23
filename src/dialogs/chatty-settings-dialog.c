@@ -443,6 +443,14 @@ sms_mms_settings_row_activated_cb (ChattySettingsDialog *self)
 }
 
 static void
+purple_settings_row_activated_cb (ChattySettingsDialog *self)
+{
+  g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
+
+  gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "purple-settings-view");
+}
+
+static void
 settings_pw_entry_icon_clicked_cb (ChattySettingsDialog *self,
                                    GtkEntryIconPosition  icon_pos,
                                    GdkEvent             *event,
@@ -525,6 +533,8 @@ settings_dialog_page_changed_cb (ChattySettingsDialog *self)
 
   if (g_strcmp0 (name, "message-settings-view") == 0)
     gtk_window_set_title (GTK_WINDOW (self), _("SMS and MMS Settings"));
+  else if (g_strcmp0 (name, "purple-settings-view") == 0)
+    gtk_window_set_title (GTK_WINDOW (self), _("Purple Settings"));
   else
     gtk_window_set_title (GTK_WINDOW (self), _("Preferences"));
 }
@@ -1111,6 +1121,7 @@ chatty_settings_dialog_class_init (ChattySettingsDialogClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, settings_pp_details_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, settings_pp_details_delete_cb);
   gtk_widget_class_bind_template_callback (widget_class, sms_mms_settings_row_activated_cb);
+  gtk_widget_class_bind_template_callback (widget_class, purple_settings_row_activated_cb);
   gtk_widget_class_bind_template_callback (widget_class, mms_carrier_settings_cancel_button_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, mms_carrier_settings_apply_button_clicked_cb);
 

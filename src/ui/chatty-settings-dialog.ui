@@ -162,6 +162,25 @@
                             </child>
                           </object>
                         </child>
+                        <child>
+                          <object class="HdyActionRow">
+                            <property name="visible">True</property>
+                            <property name="activatable">True</property>
+                            <property name="selectable">False</property>
+                            <property name="title" translatable="yes">Purple Settings</property>
+                            <property name="use-underline">True</property>
+                            <signal name="activated" handler="purple_settings_row_activated_cb" swapped="yes"/>
+                            <child>
+                              <object class="GtkImage">
+                                <property name="visible">1</property>
+                                <property name="icon-name">go-next-symbolic</property>
+                                <style>
+                                 <class name="dim-label"/>
+                                </style>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
                       </object>
                     </child>
                   </object>
@@ -172,32 +191,6 @@
                   <object class="HdyPreferencesGroup">
                     <property name="visible">True</property>
                     <property name="title" translatable="yes">Accounts</property>
-                    <child>
-                      <object class="GtkListBox">
-                        <property name="visible">True</property>
-                        <property name="margin-bottom">12</property>
-                        <style>
-                          <class name="content"/>
-                        </style>
-                        <child>
-                          <object class="HdyActionRow" id="enable_purple_row">
-                            <property name="visible">True</property>
-                            <property name="activatable">True</property>
-                            <property name="selectable">False</property>
-                            <property name="title" translatable="yes">Enable purple accounts</property>
-                            <property name="subtitle" translatable="yes">Enable purple plugin</property>
-                            <property name="activatable-widget">enable_purple_switch</property>
-                            <child>
-                              <object class="GtkSwitch" id="enable_purple_switch">
-                                <property name="visible">True</property>
-                                <property name="valign">center</property>
-                                <signal name="notify::active" handler="settings_dialog_purple_changed_cb" swapped="yes"/>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
 
                     <child>
                       <object class="GtkListBox" id="accounts_list_box">
@@ -225,6 +218,7 @@
                   <object class="HdyPreferencesGroup">
                     <property name="visible">True</property>
                     <property name="title" translatable="yes">Privacy</property>
+
                     <child>
                       <object class="HdyActionRow">
                         <property name="visible">True</property>
@@ -240,36 +234,7 @@
                         </child>
                       </object>
                     </child>
-                    <child>
-                      <object class="HdyActionRow">
-                        <property name="visible" bind-source="message_archive_switch" bind-property="visible" bind-flags="sync-create"/>
-                        <property name="selectable">False</property>
-                        <property name="title" translatable="yes">Message Archive Management</property>
-                        <property name="subtitle" translatable="yes">Sync conversations with chat server</property>
-                        <property name="activatable-widget">message_archive_switch</property>
-                        <child>
-                          <object class="GtkSwitch" id="message_archive_switch">
-                            <property name="visible">True</property>
-                            <property name="valign">center</property>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="HdyActionRow" id="message_carbons_row">
-                        <property name="visible" bind-source="message_carbons_switch" bind-property="visible" bind-flags="sync-create"/>
-                        <property name="selectable">False</property>
-                        <property name="title" translatable="yes">Message Carbon Copies</property>
-                        <property name="subtitle" translatable="yes">Share chat history among devices</property>
-                        <property name="activatable-widget">message_carbons_switch</property>
-                        <child>
-                          <object class="GtkSwitch" id="message_carbons_switch">
-                            <property name="visible">True</property>
-                            <property name="valign">center</property>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
+
                     <child>
                       <object class="HdyActionRow">
                         <property name="visible">True</property>
@@ -285,6 +250,7 @@
                         </child>
                       </object>
                     </child>
+
                   </object>
                 </child>
 
@@ -422,6 +388,86 @@
               </object>
               <packing>
                 <property name="name">message-settings-view</property>
+              </packing>
+            </child>
+
+            <child>
+              <object class="HdyPreferencesPage">
+                <property name="visible">True</property>
+                <child>
+                  <object class="HdyPreferencesGroup">
+                    <property name="visible">True</property>
+                    <child>
+                      <object class="GtkListBox">
+                        <property name="visible">True</property>
+                        <style>
+                          <class name="content"/>
+                        </style>
+                        <child>
+                          <object class="HdyActionRow" id="enable_purple_row">
+                            <property name="visible">True</property>
+                            <property name="activatable">True</property>
+                            <property name="selectable">False</property>
+                            <property name="title" translatable="yes">Enable purple accounts</property>
+                            <property name="subtitle" translatable="yes">Enable purple plugin</property>
+                            <property name="activatable-widget">enable_purple_switch</property>
+                            <child>
+                              <object class="GtkSwitch" id="enable_purple_switch">
+                                <property name="visible">True</property>
+                                <property name="valign">center</property>
+                                <signal name="notify::active" handler="settings_dialog_purple_changed_cb" swapped="yes"/>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+
+                <child>
+                  <object class="HdyPreferencesGroup">
+                    <property name="visible">True</property>
+                    <property name="title" translatable="yes">Privacy</property>
+
+                    <child>
+                      <object class="HdyActionRow">
+                        <property name="visible" bind-source="message_archive_switch" bind-property="visible" bind-flags="sync-create"/>
+                        <property name="selectable">False</property>
+                        <property name="title" translatable="yes">Message Archive Management</property>
+                        <property name="subtitle" translatable="yes">Sync conversations with chat server</property>
+                        <property name="activatable-widget">message_archive_switch</property>
+                        <child>
+                          <object class="GtkSwitch" id="message_archive_switch">
+                            <property name="visible">True</property>
+                            <property name="valign">center</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+
+                    <child>
+                      <object class="HdyActionRow" id="message_carbons_row">
+                        <property name="visible" bind-source="message_carbons_switch" bind-property="visible" bind-flags="sync-create"/>
+                        <property name="selectable">False</property>
+                        <property name="title" translatable="yes">Message Carbon Copies</property>
+                        <property name="subtitle" translatable="yes">Share chat history among devices</property>
+                        <property name="activatable-widget">message_carbons_switch</property>
+                        <child>
+                          <object class="GtkSwitch" id="message_carbons_switch">
+                            <property name="visible">True</property>
+                            <property name="valign">center</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+
+                  </object>
+                </child>
+
+              </object>
+              <packing>
+                <property name="name">purple-settings-view</property>
               </packing>
             </child>
 
