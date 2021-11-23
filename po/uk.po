@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://source.puri.sm/Librem5/chatty/issues\n"
-"POT-Creation-Date: 2021-11-18 15:25+0000\n"
-"PO-Revision-Date: 2021-11-19 16:56+0200\n"
+"POT-Creation-Date: 2021-11-22 15:25+0000\n"
+"PO-Revision-Date: 2021-11-23 09:50+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -215,6 +215,27 @@ msgstr "Увімкнути докладні діагностичні повід�
 msgid "Send To"
 msgstr "Надіслати"
 
+#: src/chatty-chat-list.c:152
+msgid "Select a contact with the <b>“+”</b> button in the titlebar."
+msgstr "Виберіть контакт за допомогою кнопки <b>«+»</b> на смужці заголовка."
+
+#: src/chatty-chat-list.c:156
+msgid "Add instant messaging accounts in Preferences."
+msgstr ""
+"Додайте облікові записи миттєвого обміну повідомленнями у «Параметрах»."
+
+#: src/chatty-chat-list.c:192 src/ui/chatty-dialog-new-chat.ui:258
+msgid "No Search Results"
+msgstr "Нічого не знайдено"
+
+#: src/chatty-chat-list.c:193
+msgid "Try different search"
+msgstr "Спробувати інші критерії пошуку"
+
+#: src/chatty-chat-list.c:196
+msgid "Start Chatting"
+msgstr "Почати спілкування"
+
 #: src/chatty-chat-view.c:203
 msgid "This is an SMS conversation"
 msgstr "Це обмін повідомленнями SMS"
@@ -242,7 +263,7 @@ msgid "Select File..."
 msgstr "Вибір файла…"
 
 #: src/chatty-chat-view.c:397 src/purple/chatty-purple-request.c:175
-#: src/chatty-window.c:574 src/dialogs/chatty-pp-chat-info.c:90
+#: src/chatty-window.c:395 src/dialogs/chatty-pp-chat-info.c:90
 #: src/dialogs/chatty-ma-account-details.c:119
 #: src/dialogs/chatty-pp-account-details.c:91
 #: src/ui/chatty-dialog-join-muc.ui:21 src/ui/chatty-info-dialog.ui:44
@@ -445,78 +466,57 @@ msgstr "%a %I∶%M %p"
 msgid "%Y-%m-%d"
 msgstr "%d-%m-%Y"
 
-#: src/chatty-window.c:197 src/ui/chatty-dialog-new-chat.ui:258
-msgid "No Search Results"
-msgstr "Нічого не знайдено"
-
-#: src/chatty-window.c:198
-msgid "Try different search"
-msgstr "Спробувати інші критерії пошуку"
-
-#: src/chatty-window.c:201
-msgid "Start Chatting"
-msgstr "Почати спілкування"
-
-#: src/chatty-window.c:232
-msgid "Select a contact with the <b>“+”</b> button in the titlebar."
-msgstr "Виберіть контакт за допомогою кнопки <b>«+»</b> на смужці заголовка."
-
-#: src/chatty-window.c:236
-msgid "Add instant messaging accounts in Preferences."
-msgstr ""
-"Додайте облікові записи миттєвого обміну повідомленнями у «Параметрах»."
-
-#: src/chatty-window.c:560
+#: src/chatty-window.c:381
 #, c-format
 msgid "Delete chat with “%s”"
 msgstr "Вилучити спілкування з «%s»"
 
-#: src/chatty-window.c:561
+#: src/chatty-window.c:382
 msgid "This deletes the conversation history"
 msgstr "У результаті буде вилучено журнал спілкування"
 
-#: src/chatty-window.c:563
+#: src/chatty-window.c:384
 #, c-format
 msgid "Disconnect group chat “%s”"
 msgstr "Від'єднатися від групового спілкування «%s»"
 
-#: src/chatty-window.c:564
+#: src/chatty-window.c:385
 msgid "This removes chat from chats list"
 msgstr "У результаті спілкування буде вилучено зі списку спілкувань"
 
-#: src/chatty-window.c:576
+#: src/chatty-window.c:397
 msgid "Delete"
 msgstr "Вилучити"
 
-#: src/chatty-window.c:698
+#: src/chatty-window.c:522
 msgid "An SMS and XMPP messaging client"
 msgstr "Клієнт обміну повідомленнями SMS і XMPP"
 
-#: src/chatty-window.c:705
+#: src/chatty-window.c:529
 msgid "translator-credits"
 msgstr "Юрій Чорноіван <yurchor@ukr.net>, 2020"
 
-#: src/chatty-window.c:1004
+#: src/chatty-window.c:803
 msgid "Any Protocol"
 msgstr "Будь-який протокол"
 
-#: src/chatty-window.c:1005 src/ui/chatty-settings-dialog.ui:481
+#: src/chatty-window.c:804 src/ui/chatty-settings-dialog.ui:481
 msgid "Matrix"
 msgstr "Matrix"
 
-#: src/chatty-window.c:1006
+#: src/chatty-window.c:805
 msgid "SMS/MMS"
 msgstr "SMS/MMS"
 
-#: src/chatty-window.c:1009 src/ui/chatty-settings-dialog.ui:469
+#: src/chatty-window.c:808 src/ui/chatty-settings-dialog.ui:469
 msgid "XMPP"
 msgstr "XMPP"
 
-#: src/chatty-window.c:1012 src/ui/chatty-settings-dialog.ui:495
+#: src/chatty-window.c:811 src/ui/chatty-settings-dialog.ui:495
 msgid "Telegram"
 msgstr "Telegram"
 
-#: src/chatty-window.c:1049
+#: src/chatty-window.c:848
 #, c-format
 msgid "“%s” is not a valid phone number"
 msgstr "«%s» не є коректним номером телефону"
@@ -704,10 +704,6 @@ msgstr "Сертифікат «%s» було відкликано"
 #, c-format
 msgid "Error validating certificate for ‘%s’"
 msgstr "Помилка під час спроби перевірити чинність сертифіката «%s»"
-
-#: src/ui/chatty-chat-view.ui:234
-msgid "No chat selected"
-msgstr "Не вибрано спілкування"
 
 #: src/ui/chatty-dialog-join-muc.ui:17
 msgid "New Group Chat"
@@ -947,12 +943,10 @@ msgstr "Графічні емоційки"
 
 #: src/ui/chatty-settings-dialog.ui:301
 msgid "if you type :) it will be changed to 😃"
-msgstr ""
-"якщо ви введете :), програма виконає заміну на 😃"
+msgstr "якщо ви введете :), програма виконає заміну на 😃"
 
 #. TRANSLATORS: Return is the Enter key.
 #: src/ui/chatty-settings-dialog.ui:316
-#| msgid "Send message with return key"
 msgid "Send Messages with Return"
 msgstr "Надсилати повідомлення клавішею вводу"
 
@@ -1020,9 +1014,33 @@ msgstr "Полишити спілкування"
 msgid "Delete Chat"
 msgstr "Вилучити спілкування"
 
-#: src/ui/chatty-window.ui:347
+#: src/ui/chatty-window.ui:346
 msgid "Call"
 msgstr "Виклик"
+
+#: src/ui/help-overlay.ui:14
+msgctxt "shortcut window"
+msgid "General"
+msgstr ""
+"Загальні"
+
+#: src/ui/help-overlay.ui:19
+#| msgid "Open Message"
+msgctxt "shortcut window"
+msgid "Open Menu"
+msgstr "Відкрити меню"
+
+#: src/ui/help-overlay.ui:27
+#| msgid "Open Message"
+msgctxt "shortcut window"
+msgid "Open Search"
+msgstr "Відкрити пошук"
+
+#: src/ui/help-overlay.ui:35
+#| msgid "Keyboard _Shortcuts"
+msgctxt "shortcut window"
+msgid "Show Shortcuts"
+msgstr "Показати скорочення"
 
 #: src/users/chatty-contact.c:311
 msgid "Mobile: "
@@ -1035,6 +1053,9 @@ msgstr "Робочий: "
 #: src/users/chatty-contact.c:315
 msgid "Other: "
 msgstr "Інший: "
+
+#~ msgid "No chat selected"
+#~ msgstr "Не вибрано спілкування"
 
 #~ msgid "Chats List"
 #~ msgstr "Список спілкувань"
