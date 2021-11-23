@@ -16,6 +16,7 @@
 #include "chatty-chat.h"
 #include "chatty-mm-buddy.h"
 #include "chatty-message.h"
+#include "chatty-sms-uri.h"
 #include "chatty-contact-provider.h"
 #include "chatty-enums.h"
 
@@ -27,6 +28,9 @@ G_DECLARE_FINAL_TYPE (ChattyMmChat, chatty_mm_chat, CHATTY, MM_CHAT, ChattyChat)
 
 ChattyMmChat     *chatty_mm_chat_new                    (const char     *name,
                                                          const char     *alias,
+                                                         ChattyProtocol  protocol,
+                                                         gboolean        is_im);
+ChattyMmChat     *chatty_mm_chat_new_with_uri           (ChattySmsUri   *uri,
                                                          ChattyProtocol  protocol,
                                                          gboolean        is_im);
 gboolean          chatty_mm_chat_has_custom_name        (ChattyMmChat   *self);

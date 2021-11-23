@@ -38,6 +38,7 @@ struct _ChattyMmChat
   ChattyEds       *chatty_eds;
   ChattyMmAccount *account;
   ChattyHistory   *history_db;
+  ChattySmsUri    *sms_uri;
   GListStore      *chat_users;
   GListStore      *message_store;
   /* A Queue of #GTask */
@@ -537,6 +538,7 @@ chatty_mm_chat_finalize (GObject *object)
   g_clear_object (&self->history_db);
   g_clear_object (&self->chatty_eds);
   g_clear_object (&self->account);
+  g_clear_object (&self->sms_uri);
   g_object_unref (self->message_store);
   g_object_unref (self->chat_users);
   g_free (self->last_message);
@@ -602,6 +604,32 @@ chatty_mm_chat_new (const char     *name,
   self->name = g_strdup (alias);
   self->protocol = protocol;
   self->is_im = !!is_im;
+
+  return self;
+}
+
+ChattyMmChat *
+chatty_mm_chat_new_with_uri (ChattySmsUri   *uri,
+                             ChattyProtocol  protocol,
+                             gboolean        is_im)
+{
+  ChattyMmChat *self;
+  GPtrArray *members;
+
+  g_return_val_if_fail (CHATTY_IS_SMS_URI (uri), NULL);
+
+  self = chatty_mm_chat_new (chatty_sms_uri_get_numbers_str (uri),
+                             NULL, protocol, is_im);
+  self->sms_uri = g_object_ref (uri);
+
+  members = chatty_sms_uri_get_numbers (uri);
+
+  for (guint i = 0; i < members->len; i++) {
+    g_autoptr(ChattyMmBuddy) buddy = NULL;
+
+    buddy = chatty_mm_buddy_new (members->pdata[i], NULL);
+    g_list_store_append (self->chat_users, buddy);
+  }
 
   return self;
 }
