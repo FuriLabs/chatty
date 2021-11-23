@@ -698,7 +698,7 @@ gboolean
 chatty_manager_set_uri (ChattyManager *self,
                         const char    *uri)
 {
-  g_autoptr(ChattyChat) chat = NULL;
+  ChattyChat *chat = NULL;
   g_autofree char *who = NULL;
   ChattyAccount *account;
   const char *country_code;
