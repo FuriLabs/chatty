@@ -1266,6 +1266,35 @@ chatty_mm_account_start_chat (ChattyMmAccount *self,
   return chat;
 }
 
+ChattyChat *
+chatty_mm_account_start_chat_with_uri (ChattyMmAccount *self,
+                                       ChattySmsUri    *uri)
+{
+  ChattyChat *chat;
+
+  g_return_val_if_fail (CHATTY_IS_MM_ACCOUNT (self), NULL);
+  g_return_val_if_fail (CHATTY_IS_SMS_URI (uri), NULL);
+
+  chat = chatty_mm_account_find_chat (self, chatty_sms_uri_get_numbers_str (uri));
+  if (!chat) {
+    GPtrArray *members;
+
+    members = chatty_sms_uri_get_numbers (uri);
+
+    if (members->len == 1)
+      chat = (ChattyChat *)chatty_mm_chat_new_with_uri (uri, CHATTY_PROTOCOL_MMS_SMS, TRUE);
+    else /* Only MMS has multiple recipients */
+      chat = (ChattyChat *)chatty_mm_chat_new_with_uri (uri, CHATTY_PROTOCOL_MMS, FALSE);
+
+    chatty_chat_set_data (chat, self, self->history_db);
+    chatty_mm_chat_set_eds (CHATTY_MM_CHAT (chat), self->chatty_eds);
+
+    g_list_store_append (self->chat_list, chat);
+    g_object_unref (chat);
+  }
+
+  return chat;
+}
 void
 chatty_mm_account_delete_chat (ChattyMmAccount *self,
                                ChattyChat      *chat)
