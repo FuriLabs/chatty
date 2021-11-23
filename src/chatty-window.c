@@ -831,29 +831,6 @@ void
 chatty_window_set_uri (ChattyWindow *self,
                        const char   *uri)
 {
-  g_autofree char *who = NULL;
-  g_auto(GStrv) recipients = NULL;
-  guint num;
-
-  recipients = g_strsplit (uri, ",", -1);
-  num = g_strv_length (recipients);
-  for (int i = 0; i < num; i++) {
-    who = chatty_utils_check_phonenumber (recipients[i], chatty_settings_get_country_iso_code (self->settings));
-    if (!who) {
-      GtkWidget *dialog;
-
-      dialog = gtk_message_dialog_new (GTK_WINDOW (self),
-                                       GTK_DIALOG_MODAL,
-                                       GTK_MESSAGE_WARNING,
-                                       GTK_BUTTONS_CLOSE,
-                                     _("“%s” is not a valid phone number"), uri);
-      gtk_dialog_run (GTK_DIALOG (dialog));
-      gtk_widget_destroy (dialog);
-
-      return;
-    }
-  }
-
   if (!chatty_manager_set_uri (self->manager, uri))
     return;
 
