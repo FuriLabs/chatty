@@ -70,12 +70,6 @@ struct _ChattyMmsd {
   guint             mmsd_watch_id;
   GDBusProxy       *manager_proxy;
   GDBusProxy       *service_proxy;
-  guint             mmsd_service_proxy_watch_id;
-  guint             mmsd_manager_proxy_add_watch_id;
-  guint             mmsd_manager_proxy_remove_watch_id;
-  guint             modemmanager_watch_id;
-  guint             modemmanager_bearer_handler_watch_id;
-  guint             modemmanager_settings_changed_watch_id;
   GDBusProxy       *modemmanager_proxy;
   char             *modem_number;
   char             *default_modem_number;
@@ -88,6 +82,7 @@ struct _ChattyMmsd {
   char             *carrier_proxy;
   gboolean          auto_create_smil;
   gboolean          is_ready;
+  guint             mmsd_signal_id;
   gulong            mmsc_signal_id;
   gulong            apn_signal_id;
   gulong            proxy_signal_id;
@@ -1107,15 +1102,9 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
 }
 
 static void
-chatty_mmsd_get_new_mms_cb (GDBusConnection *connection,
-                            const char      *sender_name,
-                            const char      *object_path,
-                            const char      *interface_name,
-                            const char      *signal_name,
-                            GVariant        *parameters,
-                            gpointer         user_data)
+chatty_mmsd_get_new_mms_cb (ChattyMmsd *self,
+                            GVariant   *parameters)
 {
-  ChattyMmsd *self = user_data;
   mms_payload *payload;
 
   g_debug ("%s", __func__);
@@ -1315,15 +1304,9 @@ chatty_mmsd_smil_changed_cb (ChattyMmsd *self)
 }
 
 static void
-chatty_mmsd_settings_signal_changed_cb (GDBusConnection *connection,
-                                        const char      *sender_name,
-                                        const char      *object_path,
-                                        const char      *interface_name,
-                                        const char      *signal_name,
-                                        GVariant        *parameters,
-                                        gpointer        user_data)
+chatty_mmsd_settings_signal_changed_cb (ChattyMmsd *self,
+                                        GVariant   *parameters)
 {
-  ChattyMmsd *self = user_data;
   char *apn, *mmsc, *proxy;
   ChattySettings *settings;
 
@@ -1455,17 +1438,6 @@ chatty_mmsd_get_mmsd_service_settings_cb (GObject      *service,
     } else {
       chatty_mmsd_sync_settings (self);
     }
-    self->modemmanager_settings_changed_watch_id =
-      g_dbus_connection_signal_subscribe (self->connection,
-                                          MMSD_SERVICE,
-                                          MMSD_MODEMMANAGER_INTERFACE,
-                                          "SettingsChanged",
-                                          MMSD_PATH,
-                                          NULL,
-                                          G_DBUS_SIGNAL_FLAGS_NONE,
-                                          (GDBusSignalCallback)chatty_mmsd_settings_signal_changed_cb,
-                                          self,
-                                          NULL);
   }
 }
 
@@ -1485,23 +1457,6 @@ chatty_mmsd_get_service_cb (GObject      *service,
 
     self->is_ready = TRUE;
     g_object_notify (G_OBJECT (self->mm_account), "status");
-    self->mmsd_service_proxy_watch_id =
-      g_dbus_connection_signal_subscribe (self->connection,
-                                          MMSD_SERVICE,
-                                          MMSD_SERVICE_INTERFACE,
-                                          "MessageAdded",
-                                          MMSD_MODEMMANAGER_PATH,
-                                          NULL,
-                                          G_DBUS_SIGNAL_FLAGS_NONE,
-                                          (GDBusSignalCallback)chatty_mmsd_get_new_mms_cb,
-                                          self,
-                                          NULL);
-
-    if (self->mmsd_service_proxy_watch_id) {
-      g_debug ("Listening for new MMS messages");
-    } else {
-      g_warning ("Failed to connect 'MessageAdded' signal");
-    }
 
     g_dbus_proxy_call (self->service_proxy,
                        "GetMessages",
@@ -1600,15 +1555,9 @@ chatty_mmsd_connect_to_service (ChattyMmsd *self,
 }
 
 static void
-chatty_mmsd_service_added_cb (GDBusConnection *connection,
-                              const char      *sender_name,
-                              const char      *object_path,
-                              const char      *interface_name,
-                              const char      *signal_name,
-                              GVariant        *parameters,
-                              gpointer         user_data)
+chatty_mmsd_service_added_cb (ChattyMmsd *self,
+                              GVariant   *parameters)
 {
-  ChattyMmsd *self = user_data;
   g_autofree char *param = NULL;
 
   param = g_variant_print (parameters, TRUE);
@@ -1623,24 +1572,15 @@ chatty_mmsd_remove_service (ChattyMmsd *self)
   if (G_IS_OBJECT (self->service_proxy)) {
     g_debug ("Removing Service!");
     g_object_unref (self->service_proxy);
-    g_dbus_connection_signal_unsubscribe (self->connection,
-                                          self->mmsd_service_proxy_watch_id);
-
   } else {
     g_warning ("No Service to remove!");
   }
 }
 
 static void
-chatty_mmsd_service_removed_cb (GDBusConnection *connection,
-                                const char      *sender_name,
-                                const char      *object_path,
-                                const char      *interface_name,
-                                const char      *signal_name,
-                                GVariant        *parameters,
-                                gpointer         user_data)
+chatty_mmsd_service_removed_cb (ChattyMmsd *self,
+                                GVariant   *parameters)
 {
-  ChattyMmsd *self = user_data;
   g_autofree char *param = NULL;
 
   param = g_variant_print (parameters, TRUE);
@@ -1666,30 +1606,6 @@ chatty_mmsd_get_manager_cb (GObject      *manager,
     GVariantIter iter;
     gulong num;
     g_debug ("Got MMSD Manager");
-
-    self->mmsd_manager_proxy_add_watch_id =
-      g_dbus_connection_signal_subscribe (self->connection,
-                                          MMSD_SERVICE,
-                                          MMSD_MANAGER_INTERFACE,
-                                          "ServiceAdded",
-                                          MMSD_PATH,
-                                          NULL,
-                                          G_DBUS_SIGNAL_FLAGS_NONE,
-                                          (GDBusSignalCallback)chatty_mmsd_service_added_cb,
-                                          self,
-                                          NULL);
-
-    self->mmsd_manager_proxy_remove_watch_id =
-      g_dbus_connection_signal_subscribe (self->connection,
-                                          MMSD_SERVICE,
-                                          MMSD_MANAGER_INTERFACE,
-                                          "ServiceRemoved",
-                                          MMSD_PATH,
-                                          NULL,
-                                          G_DBUS_SIGNAL_FLAGS_NONE,
-                                          (GDBusSignalCallback)chatty_mmsd_service_removed_cb,
-                                          self,
-                                          NULL);
 
     all_services = g_dbus_proxy_call_sync (self->manager_proxy,
                                            "GetServices",
@@ -1796,13 +1712,8 @@ chatty_mmsd_get_mmsd_modemmanager_settings_cb (GObject      *service,
  *       This may be useful for user feedback.
  */
 static void
-chatty_mmsd_bearer_handler_error_cb (GDBusConnection *connection,
-                                     const char      *sender_name,
-                                     const char      *object_path,
-                                     const char      *interface_name,
-                                     const char      *signal_name,
-                                     GVariant        *parameters,
-                                     gpointer        user_data)
+chatty_mmsd_bearer_handler_error_cb (ChattyMmsd *self,
+                                     GVariant   *parameters)
 {
   guint error;
 
@@ -1840,19 +1751,6 @@ chatty_mmsd_get_modemmanager_cb (GObject      *simple,
   if (error != NULL) {
     g_warning ("Error in MMSD Modem Manager Proxy call: %s\n", error->message);
   } else {
-
-    self->modemmanager_bearer_handler_watch_id =
-      g_dbus_connection_signal_subscribe (self->connection,
-                                          MMSD_SERVICE,
-                                          MMSD_MODEMMANAGER_INTERFACE,
-                                          "BearerHandlerError",
-                                          MMSD_PATH,
-                                          NULL,
-                                          G_DBUS_SIGNAL_FLAGS_NONE,
-                                          (GDBusSignalCallback)chatty_mmsd_bearer_handler_error_cb,
-                                          self,
-                                          NULL);
-
     g_dbus_proxy_call (self->modemmanager_proxy,
                        "ViewSettings",
                        NULL,
@@ -1865,6 +1763,41 @@ chatty_mmsd_get_modemmanager_cb (GObject      *simple,
 }
 
 static void
+chatty_mmsd_signal_emitted_cb (GDBusConnection *connection,
+                               const char      *sender_name,
+                               const char      *object_path,
+                               const char      *interface_name,
+                               const char      *signal_name,
+                               GVariant        *parameters,
+                               gpointer         user_data)
+{
+  ChattyMmsd *self = user_data;
+
+  g_assert (G_IS_DBUS_CONNECTION (connection));
+
+  if (g_strcmp0 (signal_name, "BearerHandlerError") == 0 &&
+      g_strcmp0 (interface_name, MMSD_MODEMMANAGER_INTERFACE) == 0 &&
+      g_strcmp0 (object_path, MMSD_PATH) == 0)
+    chatty_mmsd_bearer_handler_error_cb (self, parameters);
+  else if (g_strcmp0 (signal_name, "ServiceAdded") == 0 &&
+           g_strcmp0 (interface_name, MMSD_MANAGER_INTERFACE) == 0 &&
+           g_strcmp0 (object_path, MMSD_PATH) == 0)
+    chatty_mmsd_service_added_cb (self, parameters);
+  else if (g_strcmp0 (signal_name, "ServiceRemoved") == 0 &&
+           g_strcmp0 (interface_name, MMSD_MANAGER_INTERFACE) == 0 &&
+           g_strcmp0 (object_path, MMSD_PATH) == 0)
+    chatty_mmsd_service_removed_cb (self, parameters);
+  else if (g_strcmp0 (signal_name, "MessageAdded") == 0 &&
+           g_strcmp0 (interface_name, MMSD_SERVICE_INTERFACE) == 0 &&
+           g_strcmp0 (object_path, MMSD_MODEMMANAGER_PATH) == 0)
+    chatty_mmsd_get_new_mms_cb (self, parameters);
+  else if (g_strcmp0 (signal_name, "SettingsChanged") == 0 &&
+           g_strcmp0 (interface_name, MMSD_MODEMMANAGER_INTERFACE) == 0 &&
+           g_strcmp0 (object_path, MMSD_PATH) == 0)
+    chatty_mmsd_settings_signal_changed_cb (self, parameters);
+}
+
+static void
 mmsd_appeared_cb (GDBusConnection *connection,
                   const char      *name,
                   const char      *name_owner,
@@ -1874,6 +1807,15 @@ mmsd_appeared_cb (GDBusConnection *connection,
   g_assert (G_IS_DBUS_CONNECTION (connection));
   self->connection = connection;
   g_debug ("MMSD appeared");
+
+  self->mmsd_signal_id =
+    g_dbus_connection_signal_subscribe (self->connection,
+                                        MMSD_SERVICE,
+                                        NULL, NULL, NULL, NULL, /* Match everything */
+                                        G_DBUS_SIGNAL_FLAGS_NONE,
+                                        chatty_mmsd_signal_emitted_cb,
+                                        self,
+                                        NULL);
 
   g_dbus_proxy_new (self->connection,
                     G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START,
@@ -1909,19 +1851,10 @@ mmsd_vanished_cb (GDBusConnection *connection,
   }
   if (G_IS_OBJECT (self->manager_proxy)) {
     g_object_unref (self->manager_proxy);
-    g_dbus_connection_signal_unsubscribe (self->connection,
-                                          self->mmsd_manager_proxy_add_watch_id);
-    g_dbus_connection_signal_unsubscribe (self->connection,
-                                          self->mmsd_manager_proxy_remove_watch_id);
   }
 
   if (G_IS_OBJECT (self->modemmanager_proxy)) {
     g_object_unref (self->modemmanager_proxy);
-    g_dbus_connection_signal_unsubscribe (self->connection,
-                                          self->modemmanager_bearer_handler_watch_id);
-
-    g_dbus_connection_signal_unsubscribe (self->connection,
-                                          self->modemmanager_settings_changed_watch_id);
   }
 
   if (G_IS_DBUS_CONNECTION (self->connection)) {
