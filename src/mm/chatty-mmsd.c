@@ -2017,7 +2017,6 @@ chatty_mmsd_finalize (GObject *object)
   ChattyMmsd *self = (ChattyMmsd *)object;
 
   clear_chatty_mmsd (self);
-  self->mm_account = NULL;
   g_hash_table_destroy (self->mms_hash_table);
   G_OBJECT_CLASS (chatty_mmsd_parent_class)->finalize (object);
 }
@@ -2044,7 +2043,6 @@ chatty_mmsd_new (ChattyMmAccount *account)
   g_return_val_if_fail (CHATTY_IS_MM_ACCOUNT (account), NULL);
 
   self = g_object_new (CHATTY_TYPE_MMSD, NULL);
-  self->mm_account = account;
   g_set_weak_pointer (&self->mm_account, account);
 
   return self;
