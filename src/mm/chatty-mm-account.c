@@ -897,7 +897,6 @@ mm_new_cb (GObject      *object,
   g_assert (CHATTY_IS_MM_ACCOUNT (self));
 
   self->mm_manager = mm_manager_new_finish (result, &error);
-  chatty_mmsd_load (self->mmsd);
 
   if (!self->mm_watch_id)
     self->mm_watch_id = g_bus_watch_name (G_BUS_TYPE_SYSTEM,

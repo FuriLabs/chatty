@@ -1939,6 +1939,12 @@ chatty_mmsd_new (ChattyMmAccount *account)
   self = g_object_new (CHATTY_TYPE_MMSD, NULL);
   g_set_weak_pointer (&self->mm_account, account);
 
+  g_signal_connect_object (chatty_mm_account_get_devices (account),
+                           "items-changed",
+                           G_CALLBACK (mmsd_device_list_changed_cb),
+                           self, G_CONNECT_SWAPPED);
+  mmsd_device_list_changed_cb (self);
+
   return self;
 }
 
@@ -1948,18 +1954,4 @@ chatty_mmsd_is_ready (ChattyMmsd *self)
   g_return_val_if_fail (CHATTY_IS_MMSD (self), FALSE);
 
   return self->is_ready;
-}
-
-void
-chatty_mmsd_load (ChattyMmsd *self)
-{
-  GListModel *devices;
-
-  g_return_if_fail (CHATTY_IS_MMSD (self));
-
-  devices = chatty_mm_account_get_devices (self->mm_account);
-  g_signal_connect_object (devices, "items-changed",
-                           G_CALLBACK (mmsd_device_list_changed_cb),
-                           self, G_CONNECT_SWAPPED);
-  mmsd_device_list_changed_cb (self);
 }
