@@ -1497,11 +1497,7 @@ clear_chatty_mmsd (ChattyMmsd *self)
     mmsd_vanished_cb (self->connection, MMSD_SERVICE, self);
   }
 
-  if (self->mmsd_watch_id) {
-    g_debug ("Unwatching MMSD");
-    g_bus_unwatch_name (self->mmsd_watch_id);
-    self->mmsd_watch_id = 0;
-  }
+  g_clear_handle_id (&self->mmsd_watch_id, g_bus_unwatch_name);
 }
 
 static void
@@ -1567,17 +1563,6 @@ chatty_mmsd_service_added_cb (ChattyMmsd *self,
 }
 
 static void
-chatty_mmsd_remove_service (ChattyMmsd *self)
-{
-  if (G_IS_OBJECT (self->service_proxy)) {
-    g_debug ("Removing Service!");
-    g_object_unref (self->service_proxy);
-  } else {
-    g_warning ("No Service to remove!");
-  }
-}
-
-static void
 chatty_mmsd_service_removed_cb (ChattyMmsd *self,
                                 GVariant   *parameters)
 {
@@ -1586,7 +1571,7 @@ chatty_mmsd_service_removed_cb (ChattyMmsd *self,
   param = g_variant_print (parameters, TRUE);
   CHATTY_DEBUG_MSG ("Service Removed g_variant: %s", param);
 
-  chatty_mmsd_remove_service (self);
+  g_clear_object (&self->service_proxy);
 }
 
 static void
@@ -1842,24 +1827,24 @@ mmsd_vanished_cb (GDBusConnection *connection,
 
   if (G_IS_OBJECT (self->service_proxy)) {
     ChattySettings *settings;
+
+    g_clear_object (&self->service_proxy);
+
     settings = chatty_settings_get_default ();
-    chatty_mmsd_remove_service (self);
     g_clear_signal_handler (&self->mmsc_signal_id, settings);
     g_clear_signal_handler (&self->apn_signal_id, settings);
     g_clear_signal_handler (&self->proxy_signal_id, settings);
     g_clear_signal_handler (&self->smil_signal_id, settings);
   }
-  if (G_IS_OBJECT (self->manager_proxy)) {
-    g_object_unref (self->manager_proxy);
-  }
 
-  if (G_IS_OBJECT (self->modemmanager_proxy)) {
-    g_object_unref (self->modemmanager_proxy);
-  }
+  g_clear_object (&self->manager_proxy);
+  g_clear_object (&self->modemmanager_proxy);
 
   if (G_IS_DBUS_CONNECTION (self->connection)) {
-    g_dbus_connection_unregister_object (self->connection,
-                                         self->mmsd_watch_id);
+    if (self->mmsd_watch_id)
+      g_dbus_connection_unregister_object (self->connection,
+                                           self->mmsd_watch_id);
+    self->mmsd_watch_id = 0;
   }
 }
 
