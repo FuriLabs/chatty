@@ -117,6 +117,26 @@ static void chatty_mmsd_process_mms (ChattyMmsd *self, mms_payload *payload);
 static void chatty_mmsd_delete_mms (ChattyMmsd *self, char *objectpath);
 
 static void
+mmsd_set_value (ChattyMmsd    *self,
+                GVariantDict  *dict,
+                const char    *key,
+                char         **out)
+{
+  g_autofree char *value = NULL;
+
+  g_clear_pointer (&*out, g_free);
+
+  if (g_variant_dict_lookup (dict, key, "s", &value))
+    *out = g_steal_pointer (&value);
+
+  if (*out == self->carrier_proxy ||
+      *out == self->default_modem_number)
+    g_clear_pointer (&*out, g_free);
+
+  g_debug ("%s is set to %s", key, *out);
+}
+
+static void
 chatty_mmsd_delete_mms_cb (GObject      *interface,
                            GAsyncResult *result,
                            gpointer     *user_data)
@@ -1712,42 +1732,16 @@ chatty_mmsd_get_mmsd_modemmanager_settings_cb (GObject      *service,
 
     GVariantDict dict;
     GVariant *all_settings;
-    char *message_center, *mms_apn, *CarrierMMSProxy, *default_modem_number;
     int auto_process_on_connection, autoprocess_sms_wap;
 
     g_variant_get (ret, "(@a{?*})", &all_settings);
 
     g_variant_dict_init (&dict, all_settings);
-    if (g_variant_dict_lookup (&dict, "CarrierMMSC", "s", &message_center))
-      self->carrier_mmsc = g_strdup(message_center);
-    else
-      self->carrier_mmsc = NULL;
+    mmsd_set_value (self, &dict, "CarrierMMSC", &self->carrier_mmsc);
+    mmsd_set_value (self, &dict, "MMS_APN", &self->mms_apn);
+    mmsd_set_value (self, &dict, "CarrierMMSProxy", &self->carrier_proxy);
+    mmsd_set_value (self, &dict, "default_modem_number", &self->default_modem_number);
 
-    g_debug ("CarrierMMSC is set to %s", self->carrier_mmsc);
-    if (g_variant_dict_lookup (&dict, "MMS_APN", "s", &mms_apn))
-      self->mms_apn = g_strdup(mms_apn);
-    else
-      self->mms_apn = NULL;
-
-    g_debug ("MMS APN is set to %s", self->mms_apn);
-    if (g_variant_dict_lookup (&dict, "CarrierMMSProxy", "s", &CarrierMMSProxy)) {
-      if (g_strcmp0 (CarrierMMSProxy, "NULL") == 0)
-        self->carrier_proxy = NULL;
-      else
-        self->carrier_proxy = g_strdup(CarrierMMSProxy);
-
-    } else
-      self->carrier_proxy = NULL;
-
-    g_debug ("CarrierMMSProxy is set to %s", self->carrier_proxy);
-    if (g_variant_dict_lookup (&dict, "default_modem_number", "s", &default_modem_number)) {
-      if (g_strcmp0 (self->default_modem_number, "NULL") == 0)
-        self->default_modem_number = g_strdup (default_modem_number);
-      else
-        self->default_modem_number = NULL;
-
-      g_debug ("Default Modem Number is set to %s", self->default_modem_number);
-    }
     /*
      * MMSD will automatically manage sending/recieving MMSes
      * This is a lot easier to let MMSD manage
