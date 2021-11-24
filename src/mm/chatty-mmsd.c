@@ -1851,10 +1851,7 @@ mmsd_vanished_cb (GDBusConnection *connection,
 static void
 chatty_mmsd_reload (ChattyMmsd *self)
 {
-  const char *const *own_numbers;
   GListModel *devices;
-  MMObject *mm_object;
-  MMModem *mm_modem;
 
   g_assert (CHATTY_IS_MMSD (self));
   g_assert (!self->mm_device);
@@ -1868,22 +1865,7 @@ chatty_mmsd_reload (ChattyMmsd *self)
   self->mm_device = g_list_model_get_item (devices, 0);
   g_return_if_fail (self->mm_device);
 
-  mm_object = chatty_mm_device_get_object (self->mm_device);
-  mm_modem = mm_object_peek_modem (MM_OBJECT (mm_object));
-
-  /* Figure out what number the modem is on. */
-  own_numbers = mm_modem_get_own_numbers (mm_modem);
-
-  for (guint i = 0; own_numbers && own_numbers[i]; i++) {
-    const char *number, *country_code;
-
-    number = own_numbers[i];
-    country_code = chatty_settings_get_country_iso_code (chatty_settings_get_default ());
-    self->modem_number = chatty_utils_check_phonenumber (number, country_code);
-
-    if (self->modem_number)
-      break;
-  }
+  self->modem_number = chatty_mm_device_get_number (self->mm_device);
 
   /* TODO: Figure out a way to add back in modem number */
   if (!self->modem_number) {
