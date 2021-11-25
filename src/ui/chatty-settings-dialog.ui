@@ -561,9 +561,9 @@
                     <child>
                       <object class="GtkListBox" id="new_account_settings_list">
                         <property name="visible">True</property>
-                        <property name="expand">True</property>
+                        <property name="expand">False</property>
                         <property name="selection-mode">none</property>
-                        <property name="margin-bottom">24</property>
+                        <property name="margin-bottom">6</property>
                         <style>
                           <class name="content"/>
                         </style>
@@ -624,8 +624,45 @@
                             </child>
                           </object>
                         </child>
+
+                        <child>
+                          <object class="HdyActionRow">
+                            <property name="visible" bind-source="matrix_homeserver_entry" bind-property="visible" bind-flags="sync-create"/>
+                            <property name="selectable">False</property>
+                            <property name="activatable">False</property>
+                            <child type="prefix">
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="wrap">True</property>
+                                <property name="xalign">0.0</property>
+                                <property name="label" translatable="yes">Home server</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkEntry" id="matrix_homeserver_entry">
+                                <property name="visible">False</property>
+                                <property name="halign">end</property>
+                                <property name="valign">center</property>
+                                <signal name="changed" handler="settings_homeserver_entry_changed" swapped="yes"/>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+
                       </object>
                     </child>
+
+                    <child>
+                      <object class="GtkLabel" id="matrix_error_label">
+                        <property name="visible">True</property>
+                        <property name="wrap">True</property>
+                        <property name="xalign">0.0</property>
+                        <style>
+                          <class name="error"/>
+                        </style>
+                      </object>
+                    </child>
+
                   </object>
                 </child>
               </object>
@@ -640,98 +677,4 @@
     </child>
 
   </template>
-  <object class="GtkDialog" id="matrix_homeserver_dialog">
-    <property name="visible">False</property>
-    <property name="modal">True</property>
-    <property name="use-header-bar">1</property>
-    <property name="default-height">24</property>
-    <property name="title" translatable="yes">Matrix Home Server</property>
-    <signal name="delete-event" handler="gtk_widget_hide_on_delete"/>
-
-    <child type="titlebar">
-      <object class="GtkHeaderBar">
-        <property name="visible">True</property>
-
-        <!-- Cancel button -->
-        <child>
-          <object class="GtkButton" id="matrix_cancel_button">
-            <property name="visible">True</property>
-            <property name="use-underline">True</property>
-            <property name="label" translatable="yes">_Cancel</property>
-            <signal name="clicked" handler="settings_matrix_cancel_clicked_cb" swapped="yes"/>
-          </object>
-        </child>
-
-        <!-- Spinner -->
-        <child>
-          <object class="GtkSpinner" id="matrix_homeserver_spinner">
-            <property name="visible">True</property>
-          </object>
-          <packing>
-            <property name="pack-type">end</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-
-        <!-- Accept button -->
-        <child>
-          <object class="GtkButton" id="matrix_accept_button">
-            <property name="visible">True</property>
-            <property name="sensitive">False</property>
-            <property name="can-default">True</property>
-            <property name="use-underline">True</property>
-            <property name="label" translatable="yes">_Accept</property>
-            <signal name="clicked" handler="settings_matrix_accept_clicked_cb" swapped="yes"/>
-            <style>
-              <class name="suggested-action"/>
-            </style>
-          </object>
-          <packing>
-            <property name="pack-type">end</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-
-      </object>
-    </child>
-
-    <child internal-child="vbox">
-      <object class="GtkBox">
-        <property name="border-width">0</property>
-        <property name="margin-top">18</property>
-        <property name="margin-start">12</property>
-        <property name="margin-end">12</property>
-        <property name="margin-bottom">18</property>
-        <child>
-          <object class="GtkLabel">
-            <property name="visible">True</property>
-            <property name="margin-bottom">18</property>
-            <property name="wrap">True</property>
-            <property name="max-width-chars">35</property>
-            <property name="xalign">0.0</property>
-            <property name="label" translatable="yes">Enter the matrix home server address.</property>
-          </object>
-        </child>
-        <child>
-          <object class="GtkEntry" id="matrix_homeserver_entry">
-            <property name="visible">True</property>
-            <signal name="changed" handler="settings_homeserver_entry_changed" swapped="yes"/>
-          </object>
-        </child>
-        <child>
-          <object class="GtkLabel" id="matrix_error_label">
-            <property name="visible">True</property>
-            <property name="wrap">True</property>
-            <property name="max-width-chars">35</property>
-            <property name="xalign">0.0</property>
-            <style>
-              <class name="error"/>
-            </style>
-          </object>
-        </child>
-      </object>
-    </child>
-
-  </object>
-
 </interface>
