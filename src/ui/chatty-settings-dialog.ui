@@ -120,10 +120,38 @@
               <packing>
                 <property name="pack-type">end</property>
               </packing>
-            </child>
+           </child>
 
           </object>
         </child>
+
+        <child>
+          <object class="GtkOverlay">
+            <property name="visible">True</property>
+            <child type="overlay">
+              <object class="GtkRevealer" id="notification_revealer">
+                <property name="visible">1</property>
+                <property name="halign">center</property>
+                <property name="valign">start</property>
+                <child>
+                  <object class="GtkBox">
+                    <property name="visible">1</property>
+                    <property name="spacing">12</property>
+                    <style>
+                      <class name="app-notification" />
+                    </style>
+                    <child>
+                      <object class="GtkLabel" id="notification_label">
+                        <property name="visible">1</property>
+                        <property name="wrap">1</property>
+                        <property name="wrap-mode">word-char</property>
+                        <property name="use-markup">1</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
 
         <child>
           <object class="GtkStack" id="main_stack">
@@ -652,17 +680,6 @@
                       </object>
                     </child>
 
-                    <child>
-                      <object class="GtkLabel" id="matrix_error_label">
-                        <property name="visible">True</property>
-                        <property name="wrap">True</property>
-                        <property name="xalign">0.0</property>
-                        <style>
-                          <class name="error"/>
-                        </style>
-                      </object>
-                    </child>
-
                   </object>
                 </child>
               </object>
@@ -670,6 +687,9 @@
                 <property name="name">add-account-view</property>
               </packing>
             </child>
+          </object>
+        </child>
+
           </object>
         </child>
 

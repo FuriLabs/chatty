@@ -63,6 +63,9 @@ struct _ChattySettingsDialog
   GtkWidget      *mms_cancel_button;
   GtkWidget      *mms_save_button;
 
+  GtkWidget      *notification_revealer;
+  GtkWidget      *notification_label;
+
   GtkWidget      *main_stack;
   GtkWidget      *accounts_list_box;
   GtkWidget      *add_account_row;
@@ -103,7 +106,6 @@ struct _ChattySettingsDialog
   GtkWidget      *purple_settings_row;
 
   GtkWidget      *matrix_homeserver_entry;
-  GtkWidget      *matrix_error_label;
 
   gboolean        sms_delivery_reports;
   gboolean        smil_mms;
@@ -113,6 +115,7 @@ struct _ChattySettingsDialog
   GCancellable   *cancellable;
 
   gboolean visible;
+  guint    revealer_timeout_id;
 };
 
 G_DEFINE_TYPE (ChattySettingsDialog, chatty_settings_dialog, HDY_TYPE_WINDOW)
@@ -185,6 +188,17 @@ settings_save_account_cb (GObject      *object,
   }
 }
 
+static gboolean
+dialog_notification_timeout_cb (gpointer user_data)
+{
+  ChattySettingsDialog *self = user_data;
+
+  gtk_revealer_set_reveal_child (GTK_REVEALER (self->notification_revealer), FALSE);
+  g_clear_handle_id (&self->revealer_timeout_id, g_source_remove);
+
+  return G_SOURCE_REMOVE;
+}
+
 static void
 settings_dialog_set_save_state (ChattySettingsDialog *self,
                                 gboolean              in_progress)
@@ -213,8 +227,11 @@ matrix_home_server_verify_cb (GObject      *object,
 
   if (!matrix_utils_verify_homeserver_finish (result, &error)) {
     gtk_widget_set_sensitive (self->add_button, FALSE);
-    gtk_label_set_text (GTK_LABEL (self->matrix_error_label),
+    g_clear_handle_id (&self->revealer_timeout_id, g_source_remove);
+    gtk_label_set_text (GTK_LABEL (self->notification_label),
                         _("Failed to verify server"));
+    gtk_revealer_set_reveal_child (GTK_REVEALER (self->notification_revealer), TRUE);
+    self->revealer_timeout_id = g_timeout_add_seconds (5, dialog_notification_timeout_cb, self);
     return;
   }
 
@@ -261,8 +278,12 @@ matrix_home_server_got_cb (GObject      *object,
     settings_dialog_set_save_state (self, FALSE);
     gtk_widget_set_sensitive (self->add_button, FALSE);
 
-    gtk_label_set_text (GTK_LABEL (self->matrix_error_label),
+    g_clear_handle_id (&self->revealer_timeout_id, g_source_remove);
+    gtk_label_set_text (GTK_LABEL (self->notification_label),
                         _("Couldn't get Home server address"));
+    gtk_revealer_set_reveal_child (GTK_REVEALER (self->notification_revealer), TRUE);
+    self->revealer_timeout_id = g_timeout_add_seconds (5, dialog_notification_timeout_cb, self);
+
     gtk_widget_show (self->matrix_homeserver_entry);
     gtk_entry_grab_focus_without_selecting (GTK_ENTRY (self->matrix_homeserver_entry));
     gtk_editable_set_position (GTK_EDITABLE (self->matrix_homeserver_entry), -1);
@@ -346,8 +367,11 @@ chatty_settings_add_clicked_cb (ChattySettingsDialog *self)
       gtk_editable_set_position (GTK_EDITABLE (entry), -1);
 
       gtk_widget_set_sensitive (self->add_button, FALSE);
-      gtk_label_set_text (GTK_LABEL (self->matrix_error_label),
+      g_clear_handle_id (&self->revealer_timeout_id, g_source_remove);
+      gtk_label_set_text (GTK_LABEL (self->notification_label),
                           _("Couldn't get Home server address"));
+      gtk_revealer_set_reveal_child (GTK_REVEALER (self->notification_revealer), TRUE);
+      self->revealer_timeout_id = g_timeout_add_seconds (5, dialog_notification_timeout_cb, self);
       return;
     }
 
@@ -363,8 +387,11 @@ chatty_settings_add_clicked_cb (ChattySettingsDialog *self)
 
     if (!g_task_propagate_boolean (task, NULL)) {
       gtk_widget_set_sensitive (self->add_button, FALSE);
-      gtk_label_set_text (GTK_LABEL (self->matrix_error_label),
+      g_clear_handle_id (&self->revealer_timeout_id, g_source_remove);
+      gtk_label_set_text (GTK_LABEL (self->notification_label),
                           _("Failed to verify server"));
+      gtk_revealer_set_reveal_child (GTK_REVEALER (self->notification_revealer), TRUE);
+      self->revealer_timeout_id = g_timeout_add_seconds (5, dialog_notification_timeout_cb, self);
       return;
     }
 
@@ -555,8 +582,6 @@ settings_homeserver_entry_changed (ChattySettingsDialog *self,
 
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
   g_assert (GTK_IS_ENTRY (entry));
-
-  gtk_label_set_text (GTK_LABEL (self->matrix_error_label), "");
 
   if (!gtk_widget_is_visible (GTK_WIDGET (entry)))
     return;
@@ -1003,6 +1028,7 @@ chatty_settings_dialog_finalize (GObject *object)
 {
   ChattySettingsDialog *self = (ChattySettingsDialog *)object;
 
+  g_clear_handle_id (&self->revealer_timeout_id, g_source_remove);
   if (self->cancellable)
     g_cancellable_cancel (self->cancellable);
   g_clear_object (&self->cancellable);
@@ -1031,6 +1057,9 @@ chatty_settings_dialog_class_init (ChattySettingsDialogClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, save_button);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, mms_cancel_button);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, mms_save_button);
+
+  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, notification_revealer);
+  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, notification_label);
 
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, main_stack);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, accounts_list_box);
@@ -1072,7 +1101,6 @@ chatty_settings_dialog_class_init (ChattySettingsDialogClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, purple_settings_row);
 
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, matrix_homeserver_entry);
-  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, matrix_error_label);
 
   gtk_widget_class_bind_template_callback (widget_class, chatty_settings_add_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, chatty_settings_save_clicked_cb);
