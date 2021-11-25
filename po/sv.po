@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty master\n"
 "Report-Msgid-Bugs-To: https://source.puri.sm/Librem5/chatty/issues\n"
-"POT-Creation-Date: 2021-11-22 15:25+0000\n"
-"PO-Revision-Date: 2021-11-25 15:48+0100\n"
+"POT-Creation-Date: 2021-11-25 15:25+0000\n"
+"PO-Revision-Date: 2021-11-25 16:47+0100\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -60,7 +60,7 @@ msgstr "Huruvida status för meddelandet ska skickas om det läses"
 msgid "Message carbon copies"
 msgstr "Meddelandekopior"
 
-#: data/sm.puri.Chatty.gschema.xml:26 src/ui/chatty-settings-dialog.ui:263
+#: data/sm.puri.Chatty.gschema.xml:26 src/ui/chatty-settings-dialog.ui:484
 msgid "Share chat history among devices"
 msgstr "Dela chatthistorik mellan enheter"
 
@@ -76,7 +76,7 @@ msgstr "Aktivera MAM-arkivsynkronisering från servern"
 msgid "Enable purple"
 msgstr "Aktivera purple"
 
-#: data/sm.puri.Chatty.gschema.xml:38 src/ui/chatty-settings-dialog.ui:187
+#: data/sm.puri.Chatty.gschema.xml:38 src/ui/chatty-settings-dialog.ui:441
 msgid "Enable purple accounts"
 msgstr "Aktivera purple-konton"
 
@@ -383,7 +383,7 @@ msgstr "Nytt meddelande från %s"
 msgid "Message Received"
 msgstr "Meddelande togs emot"
 
-#: src/purple/chatty-purple-notify.c:44 src/matrix/matrix-utils.c:503
+#: src/purple/chatty-purple-notify.c:44 src/matrix/matrix-utils.c:505
 msgid "Close"
 msgstr "Stäng"
 
@@ -413,11 +413,11 @@ msgstr "Användaren %s har lagt till %s till kontakterna"
 msgid "Authorize %s?"
 msgstr "Auktorisera %s?"
 
-#: src/purple/chatty-purple.c:264 src/matrix/matrix-utils.c:507
+#: src/purple/chatty-purple.c:264 src/matrix/matrix-utils.c:509
 msgid "Reject"
 msgstr "Avvisa"
 
-#: src/purple/chatty-purple.c:265 src/matrix/matrix-utils.c:508
+#: src/purple/chatty-purple.c:265 src/matrix/matrix-utils.c:510
 msgid "Accept"
 msgstr "Acceptera"
 
@@ -496,7 +496,7 @@ msgstr ""
 msgid "Any Protocol"
 msgstr "Alla protokoll"
 
-#: src/chatty-window.c:804 src/ui/chatty-settings-dialog.ui:481
+#: src/chatty-window.c:804 src/ui/chatty-settings-dialog.ui:557
 msgid "Matrix"
 msgstr "Matrix"
 
@@ -504,11 +504,11 @@ msgstr "Matrix"
 msgid "SMS/MMS"
 msgstr "SMS/MMS"
 
-#: src/chatty-window.c:808 src/ui/chatty-settings-dialog.ui:469
+#: src/chatty-window.c:808 src/ui/chatty-settings-dialog.ui:545
 msgid "XMPP"
 msgstr "XMPP"
 
-#: src/chatty-window.c:811 src/ui/chatty-settings-dialog.ui:495
+#: src/chatty-window.c:811 src/ui/chatty-settings-dialog.ui:571
 msgid "Telegram"
 msgstr "Telegram"
 
@@ -598,42 +598,52 @@ msgstr "ansluter…"
 msgid "disconnected"
 msgstr "frånkopplad"
 
-#: src/dialogs/chatty-settings-dialog.c:400
+#: src/dialogs/chatty-settings-dialog.c:232
+#: src/dialogs/chatty-settings-dialog.c:392
+msgid "Failed to verify server"
+msgstr "Misslyckades med att verifiera server"
+
+#: src/dialogs/chatty-settings-dialog.c:283
+#: src/dialogs/chatty-settings-dialog.c:372
+msgid "Couldn't get Home server address"
+msgstr "Kunde inte erhålla hemserverns adress"
+
+#: src/dialogs/chatty-settings-dialog.c:499
 #: src/ui/chatty-ma-account-details.ui:182
 #: src/ui/chatty-pp-account-details.ui:199
 msgid "Delete Account"
 msgstr "Ta bort konto"
 
-#: src/dialogs/chatty-settings-dialog.c:403
+#: src/dialogs/chatty-settings-dialog.c:502
 #, c-format
 msgid "Delete account %s?"
 msgstr "Ta bort kontot %s?"
 
-#: src/dialogs/chatty-settings-dialog.c:511
+#: src/dialogs/chatty-settings-dialog.c:619
 msgid "Restart chatty to disable purple"
 msgstr "Starta om chatty för att inaktivera purple"
 
-#: src/dialogs/chatty-settings-dialog.c:513
-#: src/ui/chatty-settings-dialog.ui:188
+#: src/dialogs/chatty-settings-dialog.c:621
+#: src/ui/chatty-settings-dialog.ui:442
 msgid "Enable purple plugin"
 msgstr "Aktivera purple-insticksmodul"
 
-#: src/dialogs/chatty-settings-dialog.c:527
-#: src/ui/chatty-settings-dialog.ui:151
+#: src/dialogs/chatty-settings-dialog.c:635
+#: src/ui/chatty-settings-dialog.ui:286
 msgid "SMS and MMS Settings"
 msgstr "SMS och MMS-inställningar"
 
-#: src/dialogs/chatty-settings-dialog.c:529 src/ui/chatty-settings-dialog.ui:7
+#: src/dialogs/chatty-settings-dialog.c:637
+#: src/ui/chatty-settings-dialog.ui:305
+msgid "Purple Settings"
+msgstr "Purple-inställningar"
+
+#: src/dialogs/chatty-settings-dialog.c:639 src/ui/chatty-settings-dialog.ui:7
 #: src/ui/chatty-window.ui:17
 msgid "Preferences"
 msgstr "Inställningar"
 
-#. TRANSLATORS: Don't translate "r0.5.x", "r0.6.x" strings
-#: src/dialogs/chatty-settings-dialog.c:611
-msgid "Chatty requires Client-Server API to be ‘r0.5.x’ or ‘r0.6.x’"
-msgstr "Chatty kräver att klient-server-API:t är ‘r0.5.x’ eller ‘r0.6.x’"
-
-#: src/dialogs/chatty-settings-dialog.c:667
+#: src/dialogs/chatty-settings-dialog.c:665
 msgid "Select Protocol"
 msgstr "Välj protokoll"
 
@@ -647,7 +657,6 @@ msgstr "_OK"
 
 #: src/matrix/chatty-ma-account.c:297 src/ui/chatty-dialog-new-chat.ui:52
 #: src/ui/chatty-settings-dialog.ui:46 src/ui/chatty-settings-dialog.ui:107
-#: src/ui/chatty-settings-dialog.ui:612
 msgid "_Cancel"
 msgstr "A_vbryt"
 
@@ -672,27 +681,27 @@ msgid_plural "%s and %u others"
 msgstr[0] "%s och %u till"
 msgstr[1] "%s och %u till"
 
-#: src/matrix/matrix-utils.c:472
+#: src/matrix/matrix-utils.c:474
 #, c-format
 msgid "The certificate for ‘%s’ has unknown CA"
 msgstr "Certifikatet för ”%s” har okänd CA"
 
-#: src/matrix/matrix-utils.c:474
+#: src/matrix/matrix-utils.c:476
 #, c-format
 msgid "The certificate for ‘%s’ is self-signed"
 msgstr "Certifikatet för ”%s” är självsignerat"
 
-#: src/matrix/matrix-utils.c:478
+#: src/matrix/matrix-utils.c:480
 #, c-format
 msgid "The certificate for ‘%s’ has expired"
 msgstr "Certifikatet för ”%s” har gått ut"
 
-#: src/matrix/matrix-utils.c:482
+#: src/matrix/matrix-utils.c:484
 #, c-format
 msgid "The certificate for ‘%s’ has been revoked"
 msgstr "Certifikatet för ”%s” har återkallats"
 
-#: src/matrix/matrix-utils.c:491
+#: src/matrix/matrix-utils.c:493
 #, c-format
 msgid "Error validating certificate for ‘%s’"
 msgstr "Fel vid validering av certifikat för ”%s”"
@@ -861,7 +870,7 @@ msgstr "Konto-ID"
 msgid "Protocol"
 msgstr "Protokoll"
 
-#: src/ui/chatty-pp-account-details.ui:168 src/ui/chatty-settings-dialog.ui:554
+#: src/ui/chatty-pp-account-details.ui:168 src/ui/chatty-settings-dialog.ui:630
 msgid "Password"
 msgstr "Lösenord"
 
@@ -885,98 +894,94 @@ msgstr "_Spara"
 msgid "_Apply"
 msgstr "_Verkställ"
 
-#: src/ui/chatty-settings-dialog.ui:174
+#: src/ui/chatty-settings-dialog.ui:169
 msgid "Accounts"
 msgstr "Konton"
 
-#: src/ui/chatty-settings-dialog.ui:213
+#: src/ui/chatty-settings-dialog.ui:182
 msgid "Add _new account…"
 msgstr "Lägg till _nytt konto…"
 
-#: src/ui/chatty-settings-dialog.ui:227
+#: src/ui/chatty-settings-dialog.ui:196 src/ui/chatty-settings-dialog.ui:461
 msgid "Privacy"
 msgstr "Sekretess"
 
-#: src/ui/chatty-settings-dialog.ui:232
+#: src/ui/chatty-settings-dialog.ui:202
 msgid "Message Receipts"
 msgstr "Meddelandekvitton"
 
-#: src/ui/chatty-settings-dialog.ui:233
+#: src/ui/chatty-settings-dialog.ui:203
 msgid "Confirm received messages"
 msgstr "Bekräfta mottagna meddelanden"
 
-#: src/ui/chatty-settings-dialog.ui:247
-msgid "Message Archive Management"
-msgstr "Meddelandearkivhantering"
-
-#: src/ui/chatty-settings-dialog.ui:248
-msgid "Sync conversations with chat server"
-msgstr "Synka konversationer med chattserver"
-
-#: src/ui/chatty-settings-dialog.ui:262
-msgid "Message Carbon Copies"
-msgstr "Meddelandekopior"
-
-#: src/ui/chatty-settings-dialog.ui:277
+#: src/ui/chatty-settings-dialog.ui:218
 msgid "Typing Notification"
 msgstr "Inmatningsavisering"
 
-#: src/ui/chatty-settings-dialog.ui:278
+#: src/ui/chatty-settings-dialog.ui:219
 msgid "Send typing messages"
 msgstr "Skicka att meddelanden skrivs"
 
-#: src/ui/chatty-settings-dialog.ui:295
+#: src/ui/chatty-settings-dialog.ui:237
 msgid "Editor"
 msgstr "Redigerare"
 
-#: src/ui/chatty-settings-dialog.ui:300
+#: src/ui/chatty-settings-dialog.ui:242
 msgid "Graphical Emoticons"
 msgstr "Grafiska humörsymboler"
 
-#: src/ui/chatty-settings-dialog.ui:301
+#: src/ui/chatty-settings-dialog.ui:243
 msgid "if you type :) it will be changed to 😃"
 msgstr "om du skriver :) så kommer det att ändras till 😃"
 
 #. TRANSLATORS: Return is the Enter key.
-#: src/ui/chatty-settings-dialog.ui:316
+#: src/ui/chatty-settings-dialog.ui:258
 msgid "Send Messages with Return"
 msgstr "Skicka meddelanden med Retur"
 
-#: src/ui/chatty-settings-dialog.ui:344
+#: src/ui/chatty-settings-dialog.ui:274
+msgid "Protocol Settings"
+msgstr "Protokollinställningar"
+
+#: src/ui/chatty-settings-dialog.ui:340
 msgid "Request Delivery Reports"
 msgstr "Begär leveransrapporter"
 
-#: src/ui/chatty-settings-dialog.ui:358
+#: src/ui/chatty-settings-dialog.ui:354
 msgid "SMIL for MMS"
 msgstr "SMIL för MMS"
 
-#: src/ui/chatty-settings-dialog.ui:375
+#: src/ui/chatty-settings-dialog.ui:371
 msgid "MMS Carrier Settings"
 msgstr "MMS-operatörsinställningar"
 
-#: src/ui/chatty-settings-dialog.ui:379
+#: src/ui/chatty-settings-dialog.ui:375
 msgid "MMSC"
 msgstr "MMSC"
 
-#: src/ui/chatty-settings-dialog.ui:394
+#: src/ui/chatty-settings-dialog.ui:390
 msgid "APN"
 msgstr "APN"
 
-#: src/ui/chatty-settings-dialog.ui:409
+#: src/ui/chatty-settings-dialog.ui:405
 msgid "Proxy"
 msgstr "Proxy"
 
-#: src/ui/chatty-settings-dialog.ui:600
-msgid "Matrix Home Server"
-msgstr "Matrix-hemserver"
+#: src/ui/chatty-settings-dialog.ui:467
+msgid "Message Archive Management"
+msgstr "Meddelandearkivhantering"
 
-#: src/ui/chatty-settings-dialog.ui:635
-msgid "_Accept"
-msgstr "_Acceptera"
+#: src/ui/chatty-settings-dialog.ui:468
+msgid "Sync conversations with chat server"
+msgstr "Synka konversationer med chattserver"
 
-#: src/ui/chatty-settings-dialog.ui:664
-msgid "Enter the matrix home server address."
-msgstr "Ange Matrix-hemserverns adress."
+#: src/ui/chatty-settings-dialog.ui:483
+msgid "Message Carbon Copies"
+msgstr "Meddelandekopior"
+
+#: src/ui/chatty-settings-dialog.ui:666
+msgid "Home server"
+msgstr "Hemserver"
 
 #: src/ui/chatty-window.ui:28
 msgid "Keyboard _Shortcuts"
@@ -1041,6 +1046,15 @@ msgstr "Arbete: "
 #: src/users/chatty-contact.c:315
 msgid "Other: "
 msgstr "Annat: "
+
+#~ msgid "Chatty requires Client-Server API to be ‘r0.5.x’ or ‘r0.6.x’"
+#~ msgstr "Chatty kräver att klient-server-API:t är ‘r0.5.x’ eller ‘r0.6.x’"
+
+#~ msgid "Matrix Home Server"
+#~ msgstr "Matrix-hemserver"
+
+#~ msgid "_Accept"
+#~ msgstr "_Acceptera"
 
 #~ msgid "No chat selected"
 #~ msgstr "Ingen chatt vald"
