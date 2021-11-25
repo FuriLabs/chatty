@@ -100,6 +100,8 @@ struct _ChattySettingsDialog
   GtkWidget      *convert_smileys_switch;
   GtkWidget      *return_sends_switch;
 
+  GtkWidget      *purple_settings_row;
+
   GtkWidget      *matrix_homeserver_dialog;
   GtkWidget      *matrix_homeserver_entry;
   GtkWidget      *matrix_accept_button;
@@ -1106,6 +1108,8 @@ chatty_settings_dialog_class_init (ChattySettingsDialogClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, convert_smileys_switch);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, return_sends_switch);
 
+  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, purple_settings_row);
+
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, matrix_homeserver_dialog);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, matrix_homeserver_entry);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, matrix_homeserver_spinner);
@@ -1165,6 +1169,7 @@ chatty_settings_dialog_init (ChattySettingsDialog *self)
     ChattyPurple *purple;
 
     purple = chatty_purple_get_default ();
+    gtk_widget_show (self->purple_settings_row);
     gtk_widget_set_visible (self->message_carbons_row,
                             chatty_purple_has_carbon_plugin (purple));
     g_object_bind_property (purple, "enabled",
@@ -1178,9 +1183,6 @@ chatty_settings_dialog_init (ChattySettingsDialog *self)
   }
 #else
   gtk_widget_hide (self->xmpp_radio_button);
-  gtk_widget_hide (self->enable_purple_row);
-  gtk_widget_hide (self->message_archive_switch);
-  gtk_widget_hide (self->message_carbons_switch);
 #endif
 
   if (chatty_settings_get_experimental_features (chatty_settings_get_default ()))
