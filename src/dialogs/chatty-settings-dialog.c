@@ -1013,9 +1013,6 @@ chatty_settings_dialog_constructed (GObject *object)
   g_object_bind_property (settings, "mam-enabled",
                           self->message_archive_switch, "active",
                           G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
-  g_object_bind_property (settings, "message-carbons",
-                          self->message_carbons_switch, "active",
-                          G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
   g_object_bind_property (settings, "send-typing",
                           self->typing_notification_switch, "active",
                           G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
