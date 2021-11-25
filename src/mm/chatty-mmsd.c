@@ -1888,6 +1888,12 @@ mmsd_device_list_changed_cb (ChattyMmsd *self)
 
   g_assert (CHATTY_IS_MMSD (self));
 
+  /* If mm_account is NULL, the object has been finalized */
+  if (!self->mm_account) {
+    clear_chatty_mmsd (self);
+    return;
+  }
+
   devices = chatty_mm_account_get_devices (self->mm_account);
   n_items = g_list_model_get_n_items (devices);
 
