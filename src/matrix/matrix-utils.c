@@ -802,7 +802,8 @@ api_get_version_cb (GObject      *obj,
     }
 
     g_log (G_LOG_DOMAIN, CHATTY_LOG_LEVEL_TRACE,
-           "'%s' has versions:%s", server, versions->str);
+           "'%s' has versions:%s, valid: %s",
+           server, versions->str, CHATTY_LOG_BOOL (valid));
   }
 
   g_task_return_boolean (task, valid);
