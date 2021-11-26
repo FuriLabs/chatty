@@ -122,8 +122,7 @@ matrix_secret_load_cb (GObject      *object,
                              G_CALLBACK (matrix_ma_account_changed_cb),
                              self, G_CONNECT_SWAPPED);
 
-    chatty_ma_account_set_history_db (accounts->pdata[i], self->history);
-    chatty_ma_account_set_db (accounts->pdata[i], self->matrix_db);
+    chatty_ma_account_set_db (accounts->pdata[i], self->matrix_db, self->history);
     g_list_store_append (self->list_of_chat_list,
                          chatty_ma_account_get_chat_list (accounts->pdata[i]));
   }
@@ -407,8 +406,7 @@ chatty_matrix_save_account_async (ChattyMatrix        *self,
   CHATTY_DEBUG (chatty_item_get_username (CHATTY_ITEM (account)), "Saving account");
 
   task = g_task_new (self, cancellable, callback, user_data);
-  chatty_ma_account_set_history_db (CHATTY_MA_ACCOUNT (account), self->history);
-  chatty_ma_account_set_db (CHATTY_MA_ACCOUNT (account), self->matrix_db);
+  chatty_ma_account_set_db (CHATTY_MA_ACCOUNT (account), self->matrix_db, self->history);
   chatty_ma_account_save_async (CHATTY_MA_ACCOUNT (account), TRUE, NULL,
                                 matrix_save_account_cb, task);
 }

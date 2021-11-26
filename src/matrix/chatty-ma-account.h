@@ -27,10 +27,9 @@ ChattyMaAccount  *chatty_ma_account_new                (const char      *usernam
                                                         const char      *password);
 const char       *chatty_ma_account_get_login_username (ChattyMaAccount *self);
 ChattyMaAccount  *chatty_ma_account_new_secret         (gpointer         secret_retrievable);
-void              chatty_ma_account_set_history_db     (ChattyMaAccount *self,
-                                                        gpointer         history_db);
 void              chatty_ma_account_set_db             (ChattyMaAccount *self,
-                                                        gpointer         matrix_db);
+                                                        gpointer         matrix_db,
+                                                        gpointer         history_db);
 void              chatty_ma_account_save_async         (ChattyMaAccount *self,
                                                         gboolean         force,
                                                         GCancellable    *cancellable,

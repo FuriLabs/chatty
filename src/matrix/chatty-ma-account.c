@@ -1167,17 +1167,6 @@ chatty_ma_account_new_secret (gpointer secret_retrievable)
   return self;
 }
 
-void
-chatty_ma_account_set_history_db (ChattyMaAccount *self,
-                                  gpointer         history_db)
-{
-  g_return_if_fail (CHATTY_IS_MA_ACCOUNT (self));
-  g_return_if_fail (CHATTY_IS_HISTORY (history_db));
-  g_return_if_fail (!self->history_db);
-
-  self->history_db = g_object_ref (history_db);
-}
-
 static void
 db_load_account_cb (GObject      *object,
                     GAsyncResult *result,
@@ -1289,14 +1278,17 @@ history_db_load_account_cb (GObject      *object,
 
 void
 chatty_ma_account_set_db (ChattyMaAccount *self,
-                          gpointer         matrix_db)
+                          gpointer         matrix_db,
+                          gpointer         history_db)
 {
   g_return_if_fail (CHATTY_IS_MA_ACCOUNT (self));
   g_return_if_fail (MATRIX_IS_DB (matrix_db));
+  g_return_if_fail (CHATTY_IS_HISTORY (history_db));
   g_return_if_fail (!self->matrix_db);
-  g_return_if_fail (self->history_db);
+  g_return_if_fail (!self->history_db);
 
   self->matrix_db = g_object_ref (matrix_db);
+  self->history_db = g_object_ref (history_db);
   chatty_history_load_account_async (self->history_db, CHATTY_ACCOUNT (self),
                                      history_db_load_account_cb,
                                      g_object_ref (self));
