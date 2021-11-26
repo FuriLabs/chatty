@@ -341,10 +341,14 @@ chatty_settings_add_clicked_cb (ChattySettingsDialog *self)
     entry = GTK_ENTRY (self->matrix_homeserver_entry);
     server = gtk_entry_get_text (entry);
 
-    if ((!server || !*server) &&
-        (g_str_has_suffix (user_id, ":librem.one") ||
-         g_str_has_suffix (user_id, "@librem.one")))
-      gtk_entry_set_text (entry, "https://chat.librem.one");
+    if (!server || !*server) {
+      if (g_str_has_suffix (user_id, ":librem.one") ||
+          g_str_has_suffix (user_id, "@librem.one"))
+        gtk_entry_set_text (entry, "https://chat.librem.one");
+      else if (g_str_has_suffix (user_id, "talk.puri.sm") ||
+               g_str_has_suffix (user_id, "@puri.sm"))
+        gtk_entry_set_text (entry, "https://talk.puri.sm");
+    }
   }
 
   if (is_matrix && chatty_settings_get_experimental_features (chatty_settings_get_default ())) {
