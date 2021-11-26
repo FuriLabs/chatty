@@ -105,25 +105,20 @@ api_set_string_value (char       **strp,
 }
 
 static void
-api_get_version_cb (GObject      *obj,
-                    GAsyncResult *result,
-                    gpointer      user_data)
+api_verify_homeserver_cb (GObject      *obj,
+                          GAsyncResult *result,
+                          gpointer      user_data)
 {
   MatrixApi *self = user_data;
-  g_autoptr(JsonNode) root = NULL;
-  JsonObject *object = NULL;
-  JsonArray *array = NULL;
   g_autoptr(GError) error = NULL;
+  gboolean success;
 
   g_assert (MATRIX_IS_API (self));
 
-  root = matrix_utils_read_uri_finish (result, &error);
+  success = matrix_utils_verify_homeserver_finish (result, &error);
 
   if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
     return;
-
-  if (!error)
-    error = matrix_utils_json_node_get_error (root);
 
   /* Since GTask can't have timeout, We cancel the cancellable to fake timeout */
   if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_TIMED_OUT)) {
@@ -134,48 +129,18 @@ api_get_version_cb (GObject      *obj,
   if (handle_common_errors (self, error))
     return;
 
-  if (!root) {
+  if (error) {
     CHATTY_TRACE_MSG ("Error verifying home server: %s", error->message);
-    self->callback (self->cb_object, self, self->action, NULL, error);
+    self->callback (self->cb_object, self, MATRIX_VERIFY_HOMESERVER, NULL, error);
     return;
   }
 
-  object = json_node_get_object (root);
-  array = matrix_utils_json_object_get_array (object, "versions");
-
-  if (array) {
-    g_autoptr(GString) versions = NULL;
-    guint length;
-
-    versions = g_string_new ("");
-    length = json_array_get_length (array);
-
-    for (guint i = 0; i < length; i++) {
-      const char *version;
-
-      version = json_array_get_string_element (array, i);
-      g_string_append_printf (versions, " %s", version);
-
-      /* We have tested only with r0.6.x and r0.5.0 */
-      if (g_str_has_prefix (version, "r0.5.") ||
-          g_str_has_prefix (version, "r0.6."))
-        self->homeserver_verified = TRUE;
-    }
-
-    g_log (G_LOG_DOMAIN, CHATTY_LOG_LEVEL_TRACE,
-           "%s has versions:%s", self->homeserver, versions->str);
-
-    if (!self->homeserver_verified)
-      g_warning ("Chatty requires Client-Server API to be ‘r0.5.x’ or ‘r0.6.x’");
-  }
-
-  if (!self->homeserver_verified) {
-    error = g_error_new (MATRIX_ERROR, M_BAD_HOME_SERVER,
-                         "Couldn't Verify Client-Server API to be "
-                         "‘r0.5.0’ or ‘r0.6.0’ for %s", self->homeserver);
-    self->callback (self->cb_object, self, self->action, NULL, error);
-  } else {
+  if (success) {
+    self->homeserver_verified = TRUE;
     matrix_start_sync (self);
+  } else {
+    error = g_error_new (G_IO_ERROR, G_IO_ERROR_FAILED, "Failed to verify homeserver");
+    self->callback (self->cb_object, self, self->action, NULL, error);
   }
 }
 
@@ -829,17 +794,14 @@ matrix_take_red_pill_cb (GObject      *obj,
 static void
 matrix_verify_homeserver (MatrixApi *self)
 {
-  g_autofree char *uri = NULL;
-
   g_assert (MATRIX_IS_API (self));
   g_log (G_LOG_DOMAIN, CHATTY_LOG_LEVEL_TRACE,
          "verifying homeserver %s", self->homeserver);
 
   self->action = MATRIX_VERIFY_HOMESERVER;
-  uri = g_strconcat (self->homeserver, "/_matrix/client/versions", NULL);
-  matrix_utils_read_uri_async (uri, URI_REQUEST_TIMEOUT,
-                               self->cancellable,
-                               api_get_version_cb, self);
+  matrix_utils_verify_homeserver_async (self->homeserver, URI_REQUEST_TIMEOUT,
+                                        self->cancellable,
+                                        api_verify_homeserver_cb, self);
 }
 
 static void
