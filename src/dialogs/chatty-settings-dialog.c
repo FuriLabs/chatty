@@ -644,6 +644,9 @@ settings_update_new_account_view (ChattySettingsDialog *self)
 {
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
 
+  gtk_widget_hide (self->matrix_homeserver_entry);
+
+  gtk_entry_set_text (GTK_ENTRY (self->matrix_homeserver_entry), "");
   gtk_entry_set_text (GTK_ENTRY (self->new_account_id_entry), "");
   gtk_entry_set_text (GTK_ENTRY (self->new_password_entry), "");
 
