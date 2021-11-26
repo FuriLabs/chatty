@@ -285,7 +285,7 @@ handle_password_login (ChattyMaAccount *self,
    * Let’s update matrix_enc & set device keys to upload */
   if (g_error_matches (error, MATRIX_ERROR, M_BAD_PASSWORD)) {
     GtkWidget *dialog, *content, *header_bar;
-    GtkWidget *cancel_btn, *entry;
+    GtkWidget *cancel_btn, *ok_btn, *entry;
     g_autofree char *label = NULL;
     const char *password;
     int response;
@@ -304,8 +304,14 @@ handle_password_login (ChattyMaAccount *self,
                              matrix_api_get_login_username (self->matrix_api));
     gtk_container_add (GTK_CONTAINER (content), gtk_label_new (label));
     entry = gtk_entry_new ();
+    gtk_entry_set_activates_default (GTK_ENTRY (entry), TRUE);
     gtk_entry_set_visibility (GTK_ENTRY (entry), FALSE);
     gtk_container_add (GTK_CONTAINER (content), entry);
+
+    ok_btn = gtk_dialog_get_widget_for_response (GTK_DIALOG (dialog),
+                                                 GTK_RESPONSE_ACCEPT);
+    gtk_widget_set_can_default (ok_btn, TRUE);
+    gtk_widget_grab_default (ok_btn);
     gtk_widget_show_all (content);
 
     header_bar = gtk_dialog_get_header_bar (GTK_DIALOG (dialog));
