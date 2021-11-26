@@ -822,6 +822,7 @@ matrix_utils_verify_homeserver_async (const char          *server,
   g_return_if_fail (callback);
 
   task = g_task_new (NULL, cancellable, callback, user_data);
+  g_task_set_task_data (task, g_strdup (server), g_free);
   g_task_set_source_tag (task, matrix_utils_verify_homeserver_async);
 
   if (!server || !*server ||
