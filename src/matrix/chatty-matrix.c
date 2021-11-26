@@ -437,7 +437,6 @@ chatty_matrix_find_account_with_name  (ChattyMatrix *self,
   account_list = G_LIST_MODEL (self->account_list);
   n_items = g_list_model_get_n_items (account_list);
 
-  g_warning ("account id: %s", account_id);
   for (guint i = 0; i < n_items; i++) {
     g_autoptr(ChattyMaAccount) account = NULL;
 
