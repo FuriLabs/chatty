@@ -578,6 +578,23 @@ uri_file_read_cb (GObject      *object,
                                       g_steal_pointer (&task));
 }
 
+static void
+message_network_event_cb (SoupMessage        *msg,
+                          GSocketClientEvent  event,
+                          GIOStream          *connection,
+                          gpointer            user_data)
+{
+  GSocketAddress *address;
+
+  /* We shall have a non %NULL @connection by %G_SOCKET_CLIENT_CONNECTING event */
+  if (event != G_SOCKET_CLIENT_CONNECTING)
+    return;
+
+  /* @connection is a #GSocketConnection */
+  address = g_socket_connection_get_remote_address (G_SOCKET_CONNECTION (connection), NULL);
+  g_object_set_data_full (user_data, "address", address, g_object_unref);
+}
+
 void
 matrix_utils_read_uri_async (const char          *uri,
                              guint                timeout,
@@ -619,6 +636,10 @@ matrix_utils_read_uri_async (const char          *uri,
   soup_message_set_flags (message, SOUP_MESSAGE_NO_REDIRECT);
   g_object_set_data_full (G_OBJECT (task), "message", g_object_ref (message), g_object_unref);
 
+  /* XXX: Switch to  */
+  g_signal_connect_object (message, "network-event",
+                           G_CALLBACK (message_network_event_cb), task,
+                           G_CONNECT_AFTER);
   session = soup_session_new ();
   g_object_set (G_OBJECT (session), SOUP_SESSION_SSL_STRICT, FALSE, NULL);
 
@@ -658,6 +679,10 @@ get_homeserver_cb (GObject      *obj,
     g_task_return_error (task, error);
     return;
   }
+
+  g_object_set_data_full (G_OBJECT (task), "address",
+                          g_object_steal_data (G_OBJECT (result), "address"),
+                          g_object_unref);
 
   if (JSON_NODE_HOLDS_OBJECT (root))
     object = json_node_get_object (root);
@@ -777,6 +802,10 @@ api_get_version_cb (GObject      *obj,
                                "Failed to get version for server '%s'", server);
     return;
   }
+
+  g_object_set_data_full (G_OBJECT (task), "address",
+                          g_object_steal_data (G_OBJECT (result), "address"),
+                          g_object_unref);
 
   object = json_node_get_object (root);
   array = matrix_utils_json_object_get_array (object, "versions");
