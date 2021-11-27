@@ -154,6 +154,17 @@ chatty_account_list_clear (ChattySettingsDialog *self,
 }
 
 static void
+settings_dialog_set_save_state (ChattySettingsDialog *self,
+                                gboolean              in_progress)
+{
+  g_object_set (self->matrix_spinner, "active", in_progress, NULL);
+  gtk_widget_set_sensitive (self->main_stack, !in_progress);
+  gtk_widget_set_sensitive (self->add_button, !in_progress);
+  gtk_widget_set_visible (self->back_button, !in_progress);
+  gtk_widget_set_visible (self->cancel_button, in_progress);
+}
+
+static void
 settings_save_account_cb (GObject      *object,
                           GAsyncResult *result,
                           gpointer      user_data)
@@ -163,12 +174,7 @@ settings_save_account_cb (GObject      *object,
   g_autoptr(GError) error = NULL;
 
   chatty_manager_save_account_finish (manager, result, &error);
-
-  g_object_set (self->matrix_spinner, "active", FALSE, NULL);
-  gtk_widget_set_sensitive (self->main_stack, TRUE);
-  gtk_widget_set_sensitive (self->add_button, TRUE);
-  gtk_widget_hide (self->cancel_button);
-  gtk_widget_show (self->back_button);
+  settings_dialog_set_save_state (self, FALSE);
 
   if (error) {
     if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
@@ -197,17 +203,6 @@ dialog_notification_timeout_cb (gpointer user_data)
   g_clear_handle_id (&self->revealer_timeout_id, g_source_remove);
 
   return G_SOURCE_REMOVE;
-}
-
-static void
-settings_dialog_set_save_state (ChattySettingsDialog *self,
-                                gboolean              in_progress)
-{
-  g_object_set (self->matrix_spinner, "active", in_progress, NULL);
-  gtk_widget_set_sensitive (self->main_stack, !in_progress);
-  gtk_widget_set_sensitive (self->add_button, !in_progress);
-  gtk_widget_set_visible (self->back_button, !in_progress);
-  gtk_widget_set_visible (self->cancel_button, in_progress);
 }
 
 static void
