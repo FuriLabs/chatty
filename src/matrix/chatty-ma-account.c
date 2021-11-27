@@ -649,10 +649,18 @@ chatty_ma_account_connect (ChattyAccount *account,
                            gboolean       delay)
 {
   ChattyMaAccount *self = (ChattyMaAccount *)account;
+  ChattyStatus status;
 
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
 
   if (!chatty_account_get_enabled (account))
+    return;
+
+  status = chatty_account_get_status (account);
+
+  /* XXX: Check if we can move this to chatty_account_connect() */
+  if (status == CHATTY_CONNECTING ||
+      status == CHATTY_CONNECTED)
     return;
 
   g_clear_handle_id (&self->connect_id, g_source_remove);
