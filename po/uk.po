@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://source.puri.sm/Librem5/chatty/issues\n"
-"POT-Creation-Date: 2021-11-25 15:25+0000\n"
-"PO-Revision-Date: 2021-11-25 20:57+0200\n"
+"POT-Creation-Date: 2021-11-26 03:25+0000\n"
+"PO-Revision-Date: 2021-11-27 10:22+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 
 #: data/sm.puri.Chatty.desktop.in:3 data/sm.puri.Chatty.metainfo.xml.in:6
-#: src/chatty-application.c:280 src/ui/chatty-window.ui:193
+#: src/chatty-application.c:313 src/ui/chatty-window.ui:200
 msgid "Chats"
 msgstr "Спілкування"
 
@@ -210,6 +210,15 @@ msgstr "Увімкнути діагностичні повідомлення lib
 #: src/chatty-application.c:80
 msgid "Enable verbose libpurple debug messages"
 msgstr "Увімкнути докладні діагностичні повідомлення libpurple"
+
+#: src/chatty-application.c:141
+#, c-format
+msgid ""
+"There was an error displaying help:\n"
+"%s"
+msgstr ""
+"Спроба показати довідку завершилася помилкою:\n"
+"%s"
 
 #: src/chatty-avatar.c:158 src/dialogs/chatty-new-chat-dialog.c:258
 msgid "Send To"
@@ -606,12 +615,10 @@ msgstr "від'єднано"
 #: src/dialogs/chatty-settings-dialog.c:232
 #: src/dialogs/chatty-settings-dialog.c:392
 msgid "Failed to verify server"
-msgstr ""
-"Не вдалося перевірити сервер"
+msgstr "Не вдалося перевірити сервер"
 
 #: src/dialogs/chatty-settings-dialog.c:283
 #: src/dialogs/chatty-settings-dialog.c:372
-#| msgid "Enter the matrix home server address."
 msgid "Couldn't get Home server address"
 msgstr "Не вдалося отримати адресу домашнього сервера."
 
@@ -642,7 +649,6 @@ msgstr "Параметри SMS і MMS"
 
 #: src/dialogs/chatty-settings-dialog.c:637
 #: src/ui/chatty-settings-dialog.ui:305
-#| msgid "MMS Carrier Settings"
 msgid "Purple Settings"
 msgstr "Параметри Purple"
 
@@ -769,7 +775,7 @@ msgstr "Додати до контактів"
 msgid "Remove Attachment"
 msgstr "Вилучити долучення"
 
-#: src/ui/chatty-info-dialog.ui:17 src/ui/chatty-window.ui:119
+#: src/ui/chatty-info-dialog.ui:17 src/ui/chatty-window.ui:126
 msgid "Chat Details"
 msgstr "Подробиці спілкування"
 
@@ -949,7 +955,6 @@ msgid "Send Messages with Return"
 msgstr "Надсилати повідомлення клавішею вводу"
 
 #: src/ui/chatty-settings-dialog.ui:274
-#| msgid "Protocol"
 msgid "Protocol Settings"
 msgstr "Параметри протоколу"
 
@@ -990,7 +995,6 @@ msgid "Message Carbon Copies"
 msgstr "Копії повідомлень"
 
 #: src/ui/chatty-settings-dialog.ui:666
-#| msgid "Homeserver"
 msgid "Home server"
 msgstr "Домашній сервер"
 
@@ -998,31 +1002,36 @@ msgstr "Домашній сервер"
 msgid "Keyboard _Shortcuts"
 msgstr "_Клавіатурні скорочення"
 
-#: src/ui/chatty-window.ui:37
+#: src/ui/chatty-window.ui:35
+msgid "Help"
+msgstr ""
+"Довідка"
+
+#: src/ui/chatty-window.ui:44
 msgid "About Chats"
 msgstr "Про «Спілкування»"
 
-#: src/ui/chatty-window.ui:65
+#: src/ui/chatty-window.ui:72
 msgid "New Message…"
 msgstr "Нове повідомлення…"
 
-#: src/ui/chatty-window.ui:78
+#: src/ui/chatty-window.ui:85
 msgid "New SMS/MMS Message…"
 msgstr "Нове повідомлення SMS/MMS…"
 
-#: src/ui/chatty-window.ui:91
+#: src/ui/chatty-window.ui:98
 msgid "New Group Message…"
 msgstr "Нове групове повідомлення…"
 
-#: src/ui/chatty-window.ui:144
+#: src/ui/chatty-window.ui:151
 msgid "Leave Chat"
 msgstr "Полишити спілкування"
 
-#: src/ui/chatty-window.ui:157
+#: src/ui/chatty-window.ui:164
 msgid "Delete Chat"
 msgstr "Вилучити спілкування"
 
-#: src/ui/chatty-window.ui:346
+#: src/ui/chatty-window.ui:353
 msgid "Call"
 msgstr "Виклик"
 
