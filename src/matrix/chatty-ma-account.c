@@ -653,8 +653,11 @@ chatty_ma_account_connect (ChattyAccount *account,
 
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
 
-  if (!chatty_account_get_enabled (account))
+  if (!chatty_account_get_enabled (account)) {
+    CHATTY_TRACE (matrix_api_get_login_username (self->matrix_api),
+                  "Trying to connect disabled account, username:");
     return;
+  }
 
   status = chatty_account_get_status (account);
 
