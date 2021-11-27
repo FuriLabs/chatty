@@ -63,6 +63,9 @@ struct _ChattyMaAccount
   gboolean       account_enabled;
 
   gboolean       avatar_is_loading;
+  /* @is_loading is set when the account is loading
+   * from db and set to not save the change to db.
+   */
   gboolean       is_loading;
   gboolean       save_account_pending;
   gboolean       save_password_pending;
