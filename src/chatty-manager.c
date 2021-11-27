@@ -62,7 +62,6 @@ struct _ChattyManager
   ChattyMmAccount *mm_account;
 
   gboolean         disable_auto_login;
-  gboolean         network_available;
   gboolean         has_loaded;
 };
 
