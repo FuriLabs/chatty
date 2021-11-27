@@ -554,7 +554,6 @@ chatty_ma_account_set_enabled (ChattyAccount *account,
                                gboolean       enable)
 {
   ChattyMaAccount *self = (ChattyMaAccount *)account;
-  GNetworkMonitor *network_monitor;
 
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
 
@@ -571,13 +570,12 @@ chatty_ma_account_set_enabled (ChattyAccount *account,
   }
 
   self->account_enabled = enable;
-  network_monitor = g_network_monitor_get_default ();
   CHATTY_TRACE (chatty_item_get_username (CHATTY_ITEM (account)),
                 "Enable account: %d, is loading: %d, user:",
                 enable, self->is_loading);
 
   if (self->account_enabled &&
-      g_network_monitor_get_connectivity (network_monitor) == G_NETWORK_CONNECTIVITY_FULL) {
+      chatty_ma_account_can_connect (self)) {
     ma_account_update_status (self, CHATTY_CONNECTING);
     matrix_api_start_sync (self->matrix_api);
   } else if (!self->account_enabled){
@@ -1072,6 +1070,14 @@ chatty_ma_account_new (const char *username,
   CHATTY_DEBUG_DETAILED (username, "New Matrix account");
 
   return self;
+}
+
+gboolean
+chatty_ma_account_can_connect (ChattyMaAccount *self)
+{
+  g_return_val_if_fail (CHATTY_IS_MA_ACCOUNT (self), FALSE);
+
+  return matrix_api_can_connect (self->matrix_api);
 }
 
 /**

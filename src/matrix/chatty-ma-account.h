@@ -25,6 +25,7 @@ G_DECLARE_FINAL_TYPE (ChattyMaAccount, chatty_ma_account, CHATTY, MA_ACCOUNT, Ch
 
 ChattyMaAccount  *chatty_ma_account_new                (const char      *username,
                                                         const char      *password);
+gboolean         chatty_ma_account_can_connect         (ChattyMaAccount *self);
 const char       *chatty_ma_account_get_login_username (ChattyMaAccount *self);
 ChattyMaAccount  *chatty_ma_account_new_secret         (gpointer         secret_retrievable);
 void              chatty_ma_account_set_db             (ChattyMaAccount *self,

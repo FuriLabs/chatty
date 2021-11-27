@@ -59,6 +59,7 @@ struct _MatrixApi
 
   MatrixEnc      *matrix_enc;
   MatrixNet      *matrix_net;
+  GSocketAddress *gaddress;
 
   /* Executed for every request response */
   MatrixCallback  callback;
@@ -78,6 +79,8 @@ struct _MatrixApi
   guint           homeserver_verified : 1;
   guint           login_success : 1;
   guint           room_list_loaded : 1;
+  /* Set when @self has tried connecting the network atleast once */
+  guint           has_tried_connecting : 1;
 
   guint           resync_id;
 };
@@ -119,6 +122,10 @@ api_verify_homeserver_cb (GObject      *obj,
 
   if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
     return;
+
+  if (!self->gaddress)
+    self->gaddress = g_object_steal_data (G_OBJECT (result), "address");
+  self->has_tried_connecting = TRUE;
 
   /* Since GTask can't have timeout, We cancel the cancellable to fake timeout */
   if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_TIMED_OUT)) {
@@ -162,6 +169,10 @@ api_get_homeserver_cb (gpointer      object,
 
   CHATTY_TRACE_MSG ("Get home server, has-error: %d, home server: %s",
                     !error, homeserver);
+
+  if (!self->gaddress)
+    self->gaddress = g_object_steal_data (G_OBJECT (result), "address");
+  self->has_tried_connecting = TRUE;
 
   if (!homeserver) {
     self->sync_failed = TRUE;
@@ -455,18 +466,15 @@ static gboolean
 schedule_resync (gpointer user_data)
 {
   MatrixApi *self = user_data;
-  GNetworkMonitor *network_monitor;
-  GNetworkConnectivity connectivity;
+  gboolean sync_now;
 
   g_assert (MATRIX_IS_API (self));
   self->resync_id = 0;
 
-  network_monitor = g_network_monitor_get_default ();
-  connectivity = g_network_monitor_get_connectivity (network_monitor);
+  sync_now = matrix_api_can_connect (self);
+  CHATTY_TRACE (self->username, "Schedule sync. sync now: %d, user: ", sync_now);
 
-  CHATTY_TRACE (self->username, "Schedule sync. sync now: %d, user: ",
-                connectivity == G_NETWORK_CONNECTIVITY_FULL);
-  if (connectivity == G_NETWORK_CONNECTIVITY_FULL)
+  if (sync_now)
     matrix_start_sync (self);
 
   return G_SOURCE_REMOVE;
@@ -511,13 +519,8 @@ handle_common_errors (MatrixApi *self,
       g_error_matches (error, G_IO_ERROR, G_IO_ERROR_TIMED_OUT) ||
       error->domain == G_RESOLVER_ERROR ||
       error->domain == JSON_PARSER_ERROR) {
-    GNetworkMonitor *network_monitor;
 
-    network_monitor = g_network_monitor_get_default ();
-
-    /* Distributions may advertise to have full network support
-     * even when connected only to local network */
-    if (g_network_monitor_get_connectivity (network_monitor) == G_NETWORK_CONNECTIVITY_FULL) {
+    if (matrix_api_can_connect (self)) {
       g_clear_handle_id (&self->resync_id, g_source_remove);
 
       self->sync_failed = TRUE;
@@ -975,6 +978,7 @@ matrix_api_finalize (GObject *object)
 
   g_clear_object (&self->matrix_enc);
   g_clear_object (&self->matrix_net);
+  g_clear_object (&self->gaddress);
 
   g_clear_handle_id (&self->resync_id, g_source_remove);
 
@@ -1046,6 +1050,45 @@ matrix_api_set_enc (MatrixApi *self,
 
   if (self->username && self->device_id)
     matrix_enc_set_details (self->matrix_enc, self->username, self->device_id);
+}
+
+/**
+ * matrix_api_can_connect:
+ * @self: A #MatrixApi
+ *
+ * Check if @self can be connected to homeserver with current
+ * network state.  This function is a bit dumb: returning
+ * %TRUE shall not ensure that the @self is connectable.
+ * But if %FALSE is returned, @self shall not be
+ * able to connect.
+ */
+gboolean
+matrix_api_can_connect (MatrixApi *self)
+{
+  GNetworkMonitor *nm;
+  GInetAddress *inet;
+
+  g_return_val_if_fail (MATRIX_IS_API (self), FALSE);
+
+  /* If never tried, assume we can connect */
+  if (!self->has_tried_connecting)
+    return TRUE;
+
+  nm = g_network_monitor_get_default ();
+
+  if (!self->gaddress || !G_IS_INET_SOCKET_ADDRESS (self->gaddress))
+    goto end;
+
+  inet = g_inet_socket_address_get_address ((GInetSocketAddress *)self->gaddress);
+
+  if (g_inet_address_get_is_loopback (inet) ||
+      g_inet_address_get_is_site_local (inet))
+    return g_network_monitor_can_reach (nm, G_SOCKET_CONNECTABLE (self->gaddress), NULL, NULL);
+
+ end:
+  /* Distributions may advertise to have full network support event
+   * when connected only to local network, so this isn't always right */
+  return g_network_monitor_get_connectivity (nm) == G_NETWORK_CONNECTIVITY_FULL;
 }
 
 /**
