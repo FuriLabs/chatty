@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty master\n"
 "Report-Msgid-Bugs-To: https://source.puri.sm/Librem5/chatty/issues\n"
-"POT-Creation-Date: 2021-11-25 15:25+0000\n"
-"PO-Revision-Date: 2021-11-25 16:47+0100\n"
+"POT-Creation-Date: 2021-11-26 03:25+0000\n"
+"PO-Revision-Date: 2021-11-27 13:09+0100\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -20,7 +20,7 @@ msgstr ""
 "X-Generator: Poedit 3.0\n"
 
 #: data/sm.puri.Chatty.desktop.in:3 data/sm.puri.Chatty.metainfo.xml.in:6
-#: src/chatty-application.c:280 src/ui/chatty-window.ui:193
+#: src/chatty-application.c:313 src/ui/chatty-window.ui:200
 msgid "Chats"
 msgstr "Chattar"
 
@@ -207,6 +207,15 @@ msgstr "Aktivera libpurple-felsökningsmeddelanden"
 #: src/chatty-application.c:80
 msgid "Enable verbose libpurple debug messages"
 msgstr "Aktivera utförliga libpurple-felsökningsmeddelanden"
+
+#: src/chatty-application.c:141
+#, c-format
+msgid ""
+"There was an error displaying help:\n"
+"%s"
+msgstr ""
+"Det uppstod ett fel vid visning av hjälp:\n"
+"%s"
 
 #: src/chatty-avatar.c:158 src/dialogs/chatty-new-chat-dialog.c:258
 msgid "Send To"
@@ -760,7 +769,7 @@ msgstr "Lägg till i Kontakter"
 msgid "Remove Attachment"
 msgstr "Ta bort bilaga"
 
-#: src/ui/chatty-info-dialog.ui:17 src/ui/chatty-window.ui:119
+#: src/ui/chatty-info-dialog.ui:17 src/ui/chatty-window.ui:126
 msgid "Chat Details"
 msgstr "Chattdetaljer"
 
@@ -987,31 +996,35 @@ msgstr "Hemserver"
 msgid "Keyboard _Shortcuts"
 msgstr "_Tangentbordsgenvägar"
 
-#: src/ui/chatty-window.ui:37
+#: src/ui/chatty-window.ui:35
+msgid "Help"
+msgstr "Hjälp"
+
+#: src/ui/chatty-window.ui:44
 msgid "About Chats"
 msgstr "Om Chattar"
 
-#: src/ui/chatty-window.ui:65
+#: src/ui/chatty-window.ui:72
 msgid "New Message…"
 msgstr "Nytt meddelande…"
 
-#: src/ui/chatty-window.ui:78
+#: src/ui/chatty-window.ui:85
 msgid "New SMS/MMS Message…"
 msgstr "Nytt SMS/MMS-meddelande…"
 
-#: src/ui/chatty-window.ui:91
+#: src/ui/chatty-window.ui:98
 msgid "New Group Message…"
 msgstr "Nytt gruppmeddelande…"
 
-#: src/ui/chatty-window.ui:144
+#: src/ui/chatty-window.ui:151
 msgid "Leave Chat"
 msgstr "Lämna chatt"
 
-#: src/ui/chatty-window.ui:157
+#: src/ui/chatty-window.ui:164
 msgid "Delete Chat"
 msgstr "Ta bort chatt"
 
-#: src/ui/chatty-window.ui:346
+#: src/ui/chatty-window.ui:353
 msgid "Call"
 msgstr "Ring"
 
