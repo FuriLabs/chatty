@@ -112,6 +112,21 @@ static void chatty_mmsd_process_mms (ChattyMmsd *self, mms_payload *payload);
 static void chatty_mmsd_delete_mms (ChattyMmsd *self, char *objectpath);
 
 static void
+mms_payload_free (gpointer data)
+{
+  mms_payload *payload = data;
+
+  if (!payload)
+    return;
+
+  g_free (payload->objectpath);
+  g_free (payload->sender);
+  g_free (payload->chat);
+  g_clear_object (&payload->message);
+  g_free (payload);
+}
+
+static void
 mmsd_set_value (ChattyMmsd    *self,
                 GVariantDict  *dict,
                 const char    *key,
@@ -136,16 +151,16 @@ chatty_mmsd_delete_mms_cb (GObject      *interface,
                            GAsyncResult *result,
                            gpointer     *user_data)
 {
+  g_autoptr(GVariant) ret = NULL;
   g_autoptr(GError) error = NULL;
 
-  if (g_dbus_proxy_call_finish (G_DBUS_PROXY (interface),
-                                result,
-                                &error)) {
+  ret = g_dbus_proxy_call_finish (G_DBUS_PROXY (interface), result, &error);
+
+  if (ret) {
     g_debug ("MMS delete finished");
   } else {
     g_warning ("Couldn't delete MMS - error: %s", error ? error->message : "unknown");
   }
-  g_object_unref (interface);
 }
 
 static void
@@ -153,8 +168,8 @@ chatty_mmsd_get_message_proxy_cb (GObject      *service,
                                   GAsyncResult *res,
                                   gpointer      user_data)
 {
+  g_autoptr(GDBusProxy) message_proxy = NULL;
   g_autoptr(GError) error = NULL;
-  GDBusProxy *message_proxy;
 
   message_proxy = g_dbus_proxy_new_finish (res, &error);
   if (error != NULL) {
@@ -254,19 +269,6 @@ chatty_mmsd_message_status_changed_cb (GDBusConnection *connection,
 }
 
 static void
-chatty_mmsd_delete_payload (ChattyMmsd  *self,
-                            mms_payload *payload)
-{
-  g_hash_table_remove (self->mms_hash_table, payload->objectpath);
-
-  g_free (payload->objectpath);
-  g_free (payload->sender);
-  g_free (payload->chat);
-  g_object_unref (payload->message);
-  g_free (payload);
-}
-
-static void
 chatty_mmsd_process_mms (ChattyMmsd  *self,
                          mms_payload *payload)
 {
@@ -315,7 +317,7 @@ chatty_mmsd_process_mms (ChattyMmsd  *self,
                                             payload->mmsd_message_proxy_watch_id);
     }
     chatty_mmsd_delete_mms (self, payload->objectpath);
-    chatty_mmsd_delete_payload (self, payload);
+    g_hash_table_remove (self->mms_hash_table, payload->objectpath);
   }
 }
 
@@ -583,13 +585,12 @@ chatty_mmsd_send_mms_async_cb (GObject      *service,
                                gpointer      user_data)
 {
   ChattyMmsd *self = user_data;
+  g_autoptr(GVariant) ret = NULL;
   g_autoptr(GError) error = NULL;
 
   g_debug ("%s", __func__);
 
-  g_dbus_proxy_call_finish (self->service_proxy,
-                            res,
-                            &error);
+  ret = g_dbus_proxy_call_finish (self->service_proxy, res, &error);
 
   if (error != NULL) {
     g_warning ("Error in Proxy call: %s\n", error->message);
@@ -771,14 +772,22 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
   ChattyMsgDirection direction = CHATTY_DIRECTION_UNKNOWN;
   ChattyMsgStatus mms_status = CHATTY_STATUS_UNKNOWN;
   ChattyMsgType chatty_msg_type = CHATTY_MESSAGE_TEXT;
-  GVariant *properties, *reciever, *attach;
+  g_autoptr(GVariant) properties = NULL;
+  GVariant *reciever, *attach;
   GVariantDict dict;
   GVariantIter iter;
   GFile *container = NULL;
   GList *files = NULL;
   GFile *savepath;
-  char *objectpath = NULL, *date = NULL, *sender = NULL, *rx_modem_number = NULL;
-  char *smil = NULL, *status = NULL, *subject = NULL, *mms_message = NULL;
+  g_autofree char *objectpath = NULL;
+  g_autofree char *date = NULL;
+  g_autofree char *sender = NULL;
+  g_autofree char *smil = NULL;
+  g_autofree char *subject = NULL;
+  g_autofree char *status = NULL;
+  g_autofree char *rx_modem_number = NULL;
+  g_autofree char *mms_message = NULL;
+  g_autofree char *contents = NULL;
   GString *who;
   GVariantIter recipientiter;
   mms_payload *payload;
@@ -845,7 +854,8 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
   payload->mmsd_message_proxy_watch_id = 0;
 
   if (delivery_report) {
-    char *delivery_status;
+    g_autofree char *delivery_status = NULL;
+
     if (!g_variant_dict_lookup (&dict, "Delivery Status", "s", &delivery_status)) {
       g_warning ("Something wrong happened with getting delivery status!");
       payload->delivery_report = FALSE;
@@ -882,7 +892,8 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
   }
   g_variant_iter_init (&recipientiter, recipients);
   while ((reciever = g_variant_iter_next_value (&recipientiter))) {
-    char *temp, *temp2;
+    g_autofree char *temp = NULL;
+    g_autofree char *temp2 = NULL;
     const char *country_code = chatty_settings_get_country_iso_code (chatty_settings_get_default ());
 
     g_variant_get (reciever, "s", &temp2);
@@ -910,7 +921,10 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
     ChattyFileInfo *attachment = NULL;
     GFile *new;
     GFileOutputStream *out;
-    char *filenode, *containerpath, *mimetype, *filename, *contents;
+    g_autofree char *containerpath = NULL;
+    g_autofree char *filenode = NULL;
+    g_autofree char *filename = NULL;
+    g_autofree char *mimetype = NULL;
     gulong size, data;
     gsize length, written = 0;
     g_autoptr(GError) error = NULL;
@@ -937,7 +951,7 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
       if (error && g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND)) {
         g_debug ("MMS Payload does not exist, deleting...");
         chatty_mmsd_delete_mms (self, payload->objectpath);
-        chatty_mmsd_delete_payload (self, payload);
+        g_hash_table_remove (self->mms_hash_table, payload->objectpath);
         return NULL;
       } else if (error) {
         g_warning ("Error loading MMSD Payload: %s", error->message);
@@ -1087,16 +1101,15 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
   if (!unix_time)
     unix_time = time (NULL);
 
-  payload->message = chatty_message_new (NULL,
-                                         mms_message,
-                                         g_path_get_basename (objectpath),
-                                         unix_time,
-                                         chatty_msg_type,
-                                         direction,
-                                         mms_status);
+  {
+    g_autofree char *basename = NULL;
 
-  chatty_message_set_id (payload->message, g_path_get_basename (objectpath));
-  chatty_message_set_files (payload->message, files);
+    basename = g_path_get_basename (objectpath);
+    payload->message = chatty_message_new (NULL, mms_message, basename, unix_time,
+                                           chatty_msg_type, direction, mms_status);
+    chatty_message_set_id (payload->message, basename);
+    chatty_message_set_files (payload->message, files);
+  }
 
   return payload;
 }
@@ -1110,13 +1123,14 @@ chatty_mmsd_get_new_mms_cb (ChattyMmsd *self,
   g_debug ("%s", __func__);
   payload = chatty_mmsd_receive_message (self, parameters);
   if (payload == NULL) {
+    g_autoptr(GVariant) properties = NULL;
     g_autofree char *objectpath = NULL;
-    GVariant *properties;
+
     g_variant_get (parameters, "(o@a{?*})", &objectpath, &properties);
     g_warning ("There was an error with decoding the MMS %s",
                objectpath);
   } else {
-    if (!g_hash_table_insert (self->mms_hash_table, payload->objectpath, payload)) {
+    if (!g_hash_table_insert (self->mms_hash_table, g_strdup (payload->objectpath), payload)) {
       g_warning ("g_hash_table:MMS Already exists! This should not happen");
     }
     chatty_mmsd_process_mms (self, payload);
@@ -1130,7 +1144,7 @@ chatty_mmsd_get_all_mms_cb (GObject      *service,
 {
   ChattyMmsd *self = user_data;
   g_autoptr(GError) error = NULL;
-  GVariant *ret;
+  g_autoptr(GVariant) ret = NULL;
 
   g_debug ("%s", __func__);
 
@@ -1150,10 +1164,10 @@ chatty_mmsd_get_all_mms_cb (GObject      *service,
       g_debug ("Have %lu MMS message (s) to process", num);
 
       while ((message_t = g_variant_iter_next_value (&iter))) {
+        g_autofree char *objectpath = NULL;
         mms_payload *payload;
-        GVariant *properties;
-        char *objectpath;
-        g_variant_get (message_t, "(o@a{?*})", &objectpath, &properties);
+
+        g_variant_get (message_t, "(o@a{?*})", &objectpath, NULL);
         if (g_hash_table_lookup (self->mms_hash_table, objectpath) != NULL) {
           g_debug ("MMS Already exists! skipping...");
           g_variant_unref (message_t);
@@ -1164,13 +1178,12 @@ chatty_mmsd_get_all_mms_cb (GObject      *service,
         if (payload == NULL) {
           g_warning ("There was an error with decoding the MMS Payload!");
         } else {
-          if (!g_hash_table_insert (self->mms_hash_table, objectpath, payload)) {
+          if (!g_hash_table_insert (self->mms_hash_table, g_strdup (objectpath), payload)) {
             g_warning ("g_hash_table:MMS Already exists! This should not happe");
           }
           chatty_mmsd_process_mms (self, payload);
         }
       }
-      g_variant_unref (msg_pack);
     } else {
       g_debug ("Have 0 MMS messages to process");
     }
@@ -1252,13 +1265,12 @@ chatty_mmsd_get_message_queue_cb (GObject      *service,
                                   gpointer      user_data)
 {
   ChattyMmsd *self = user_data;
+  g_autoptr(GVariant) ret = NULL;
   g_autoptr(GError) error = NULL;
 
   g_debug ("%s", __func__);
 
-  g_dbus_proxy_call_finish (self->modemmanager_proxy,
-                            res,
-                            &error);
+  ret = g_dbus_proxy_call_finish (self->modemmanager_proxy, res, &error);
 
   if (error != NULL) {
     g_warning ("Error syncing messages: %s", error->message);
@@ -1339,7 +1351,7 @@ chatty_mmsd_get_mmsd_service_settings_cb (GObject      *service,
 {
   ChattyMmsd *self = user_data;
   g_autoptr(GError) error = NULL;
-  GVariant *ret;
+  g_autoptr(GVariant) ret = NULL;
 
   g_debug ("%s", __func__);
 
@@ -1350,9 +1362,8 @@ chatty_mmsd_get_mmsd_service_settings_cb (GObject      *service,
   if (error != NULL) {
     g_warning ("Error in Proxy call: %s\n", error->message);
   } else {
-
+    g_autoptr(GVariant) all_settings = NULL;
     GVariantDict dict;
-    GVariant *all_settings;
     ChattySettings *settings;
     gboolean request_report;
     gboolean use_delivery_reports, auto_create_smil;
@@ -1504,8 +1515,9 @@ static void
 chatty_mmsd_connect_to_service (ChattyMmsd *self,
                                 GVariant   *service)
 {
-  char *servicepath, *serviceidentity;
-  GVariant *properties;
+  g_autofree char *servicepath = NULL;
+  g_autofree char *serviceidentity = NULL;
+  g_autoptr(GVariant) properties = NULL;
   GVariantDict dict;
 
   /*
@@ -1618,8 +1630,8 @@ chatty_mmsd_get_mmsd_modemmanager_settings_cb (GObject      *service,
                                                gpointer      user_data)
 {
   ChattyMmsd *self = user_data;
+  g_autoptr(GVariant) ret = NULL;
   g_autoptr(GError) error = NULL;
-  GVariant *ret;
 
   g_debug ("%s", __func__);
 
@@ -1630,9 +1642,8 @@ chatty_mmsd_get_mmsd_modemmanager_settings_cb (GObject      *service,
   if (error != NULL) {
     g_warning ("Error in Proxy call: %s\n", error->message);
   } else {
-
+    g_autoptr(GVariant) all_settings = NULL;
     GVariantDict dict;
-    GVariant *all_settings;
     int auto_process_on_connection, autoprocess_sms_wap;
 
     g_variant_get (ret, "(@a{?*})", &all_settings);
@@ -1925,7 +1936,8 @@ chatty_mmsd_class_init (ChattyMmsdClass *klass)
 static void
 chatty_mmsd_init (ChattyMmsd *self)
 {
-  self->mms_hash_table = g_hash_table_new (g_str_hash, g_str_equal);
+  self->mms_hash_table = g_hash_table_new_full (g_str_hash, g_str_equal,
+                                                g_free, mms_payload_free);
 }
 
 ChattyMmsd *
