@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://source.puri.sm/Librem5/chatty/issues\n"
-"POT-Creation-Date: 2021-11-22 15:25+0000\n"
-"PO-Revision-Date: 2021-11-22 19:27+0100\n"
+"POT-Creation-Date: 2021-11-28 15:25+0000\n"
+"PO-Revision-Date: 2021-11-28 19:00+0100\n"
 "Last-Translator: antpanlinux <ant.pandolfo@gmail.com>\n"
 "Language-Team: Italian\n"
 "Language: it\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: data/sm.puri.Chatty.desktop.in:3 data/sm.puri.Chatty.metainfo.xml.in:6
-#: src/chatty-application.c:280 src/ui/chatty-window.ui:193
+#: src/chatty-application.c:313 src/ui/chatty-window.ui:200
 msgid "Chats"
 msgstr "Chats"
 
@@ -57,7 +57,7 @@ msgstr "Se inviare che il messaggio è stato letto"
 msgid "Message carbon copies"
 msgstr "Copie carbone dei messaggi"
 
-#: data/sm.puri.Chatty.gschema.xml:26 src/ui/chatty-settings-dialog.ui:263
+#: data/sm.puri.Chatty.gschema.xml:26 src/ui/chatty-settings-dialog.ui:483
 msgid "Share chat history among devices"
 msgstr "Condividi la cronologia chat tra i dispositivi"
 
@@ -73,7 +73,7 @@ msgstr "Attiva la sincronizzazione dell'archivio GAM dal server"
 msgid "Enable purple"
 msgstr "Attiva purple"
 
-#: data/sm.puri.Chatty.gschema.xml:38 src/ui/chatty-settings-dialog.ui:187
+#: data/sm.puri.Chatty.gschema.xml:38 src/ui/chatty-settings-dialog.ui:440
 msgid "Enable purple accounts"
 msgstr "Attiva gli account purple"
 
@@ -204,6 +204,15 @@ msgstr "Attiva i messaggi di debug libpurple"
 #: src/chatty-application.c:80
 msgid "Enable verbose libpurple debug messages"
 msgstr "Attiva i messaggi dettagliati di debug libpurple"
+
+#: src/chatty-application.c:141
+#, c-format
+msgid ""
+"There was an error displaying help:\n"
+"%s"
+msgstr ""
+"Errore nella visualizzazione dell'aiuto:\n"
+"%s"
 
 #: src/chatty-avatar.c:158 src/dialogs/chatty-new-chat-dialog.c:258
 msgid "Send To"
@@ -383,7 +392,7 @@ msgstr "Nuovo messaggio da %s"
 msgid "Message Received"
 msgstr "Messaggio ricevuto"
 
-#: src/purple/chatty-purple-notify.c:44 src/matrix/matrix-utils.c:503
+#: src/purple/chatty-purple-notify.c:44 src/matrix/matrix-utils.c:505
 msgid "Close"
 msgstr "Chiudi"
 
@@ -413,11 +422,11 @@ msgstr "L'utente %s ha aggiunto %s ai contatti"
 msgid "Authorize %s?"
 msgstr "Autorizzi %s?"
 
-#: src/purple/chatty-purple.c:264 src/matrix/matrix-utils.c:507
+#: src/purple/chatty-purple.c:264 src/matrix/matrix-utils.c:509
 msgid "Reject"
 msgstr "Rifiuta"
 
-#: src/purple/chatty-purple.c:265 src/matrix/matrix-utils.c:508
+#: src/purple/chatty-purple.c:265 src/matrix/matrix-utils.c:510
 msgid "Accept"
 msgstr "Accetta"
 
@@ -496,7 +505,7 @@ msgstr ""
 msgid "Any Protocol"
 msgstr "Qualsiasi Protocollo"
 
-#: src/chatty-window.c:804 src/ui/chatty-settings-dialog.ui:481
+#: src/chatty-window.c:804 src/ui/chatty-settings-dialog.ui:556
 msgid "Matrix"
 msgstr "Matrix"
 
@@ -504,11 +513,11 @@ msgstr "Matrix"
 msgid "SMS/MMS"
 msgstr "SMS/MMS"
 
-#: src/chatty-window.c:808 src/ui/chatty-settings-dialog.ui:469
+#: src/chatty-window.c:808 src/ui/chatty-settings-dialog.ui:544
 msgid "XMPP"
 msgstr "XMPP"
 
-#: src/chatty-window.c:811 src/ui/chatty-settings-dialog.ui:495
+#: src/chatty-window.c:811 src/ui/chatty-settings-dialog.ui:570
 msgid "Telegram"
 msgstr "Telegram"
 
@@ -598,60 +607,71 @@ msgstr "connessione in corso…"
 msgid "disconnected"
 msgstr "disconnesso"
 
-#: src/dialogs/chatty-settings-dialog.c:400
+#: src/dialogs/chatty-settings-dialog.c:227
+#: src/dialogs/chatty-settings-dialog.c:391
+msgid "Failed to verify server"
+msgstr "Impossibile verificare il server"
+
+#: src/dialogs/chatty-settings-dialog.c:278
+#: src/dialogs/chatty-settings-dialog.c:371
+#| msgid "Enter the matrix home server address."
+msgid "Couldn't get Home server address"
+msgstr "Impossibile ottenere l'indirizzo del server personale"
+
+#: src/dialogs/chatty-settings-dialog.c:498
 #: src/ui/chatty-ma-account-details.ui:182
 #: src/ui/chatty-pp-account-details.ui:199
 msgid "Delete Account"
 msgstr "Elimina l'account"
 
-#: src/dialogs/chatty-settings-dialog.c:403
+#: src/dialogs/chatty-settings-dialog.c:501
 #, c-format
 msgid "Delete account %s?"
 msgstr "Eliminare l'account %s?"
 
-#: src/dialogs/chatty-settings-dialog.c:511
+#: src/dialogs/chatty-settings-dialog.c:618
 msgid "Restart chatty to disable purple"
 msgstr "Riavvia Chatty per disattivare purple"
 
-#: src/dialogs/chatty-settings-dialog.c:513
-#: src/ui/chatty-settings-dialog.ui:188
+#: src/dialogs/chatty-settings-dialog.c:620
+#: src/ui/chatty-settings-dialog.ui:441
 msgid "Enable purple plugin"
 msgstr "Attiva il plugin purple"
 
-#: src/dialogs/chatty-settings-dialog.c:527
-#: src/ui/chatty-settings-dialog.ui:151
+#: src/dialogs/chatty-settings-dialog.c:634
+#: src/ui/chatty-settings-dialog.ui:285
 msgid "SMS and MMS Settings"
 msgstr "Impostazioni SMS e MMS"
 
-#: src/dialogs/chatty-settings-dialog.c:529 src/ui/chatty-settings-dialog.ui:7
+#: src/dialogs/chatty-settings-dialog.c:636
+#: src/ui/chatty-settings-dialog.ui:304
+#| msgid "MMS Carrier Settings"
+msgid "Purple Settings"
+msgstr "Impostazioni purple"
+
+#: src/dialogs/chatty-settings-dialog.c:638 src/ui/chatty-settings-dialog.ui:7
 #: src/ui/chatty-window.ui:17
 msgid "Preferences"
 msgstr "Preferenze"
 
-#. TRANSLATORS: Don't translate "r0.5.x", "r0.6.x" strings
-#: src/dialogs/chatty-settings-dialog.c:611
-msgid "Chatty requires Client-Server API to be ‘r0.5.x’ or ‘r0.6.x’"
-msgstr "Chatty richiede che l'API client-server sia 'r0.5.x' o 'r0.6.x'"
-
 #: src/dialogs/chatty-settings-dialog.c:667
 msgid "Select Protocol"
-msgstr "Seleziona protocollo"
+msgstr "Seleziona Protocollo"
 
-#: src/matrix/chatty-ma-account.c:293
+#: src/matrix/chatty-ma-account.c:296
 msgid "Incorrect password"
 msgstr "Password errata"
 
-#: src/matrix/chatty-ma-account.c:296
+#: src/matrix/chatty-ma-account.c:299
 msgid "_OK"
 msgstr "_OK"
 
-#: src/matrix/chatty-ma-account.c:297 src/ui/chatty-dialog-new-chat.ui:52
+#: src/matrix/chatty-ma-account.c:300 src/ui/chatty-dialog-new-chat.ui:52
 #: src/ui/chatty-settings-dialog.ui:46 src/ui/chatty-settings-dialog.ui:107
-#: src/ui/chatty-settings-dialog.ui:612
 msgid "_Cancel"
 msgstr "_Annulla"
 
-#: src/matrix/chatty-ma-account.c:303
+#: src/matrix/chatty-ma-account.c:306
 #, c-format
 msgid "Please enter password for “%s”"
 msgstr "Inserire la password per “%s”"
@@ -672,27 +692,27 @@ msgid_plural "%s and %u others"
 msgstr[0] "%s e %u altro"
 msgstr[1] "%s e %u altri"
 
-#: src/matrix/matrix-utils.c:472
+#: src/matrix/matrix-utils.c:474
 #, c-format
 msgid "The certificate for ‘%s’ has unknown CA"
 msgstr "Il certificato per ‘%s’ ha una CA sconosciuta"
 
-#: src/matrix/matrix-utils.c:474
+#: src/matrix/matrix-utils.c:476
 #, c-format
 msgid "The certificate for ‘%s’ is self-signed"
 msgstr "Il certificato per ‘%s’ è autofirmato"
 
-#: src/matrix/matrix-utils.c:478
+#: src/matrix/matrix-utils.c:480
 #, c-format
 msgid "The certificate for ‘%s’ has expired"
 msgstr "Il certificato per ‘%s’ è scaduto"
 
-#: src/matrix/matrix-utils.c:482
+#: src/matrix/matrix-utils.c:484
 #, c-format
 msgid "The certificate for ‘%s’ has been revoked"
 msgstr "Il certificato per ‘%s’ è stato revocato"
 
-#: src/matrix/matrix-utils.c:491
+#: src/matrix/matrix-utils.c:493
 #, c-format
 msgid "Error validating certificate for ‘%s’"
 msgstr "Errore durante la convalida del certificato per ‘%s’"
@@ -751,7 +771,7 @@ msgstr "Aggiungi ai contatti"
 msgid "Remove Attachment"
 msgstr "Rimuovi allegato"
 
-#: src/ui/chatty-info-dialog.ui:17 src/ui/chatty-window.ui:119
+#: src/ui/chatty-info-dialog.ui:17 src/ui/chatty-window.ui:126
 msgid "Chat Details"
 msgstr "Dettagli chat"
 
@@ -861,7 +881,7 @@ msgstr "ID Account"
 msgid "Protocol"
 msgstr "Protocollo"
 
-#: src/ui/chatty-pp-account-details.ui:168 src/ui/chatty-settings-dialog.ui:554
+#: src/ui/chatty-pp-account-details.ui:168 src/ui/chatty-settings-dialog.ui:629
 msgid "Password"
 msgstr "Password"
 
@@ -885,128 +905,130 @@ msgstr "_Salva"
 msgid "_Apply"
 msgstr "_Applica"
 
-#: src/ui/chatty-settings-dialog.ui:174
+#: src/ui/chatty-settings-dialog.ui:168
 msgid "Accounts"
 msgstr "Account"
 
-#: src/ui/chatty-settings-dialog.ui:213
+#: src/ui/chatty-settings-dialog.ui:181
 msgid "Add _new account…"
 msgstr "Aggiungi _nuovo account…"
 
-#: src/ui/chatty-settings-dialog.ui:227
+#: src/ui/chatty-settings-dialog.ui:195 src/ui/chatty-settings-dialog.ui:460
 msgid "Privacy"
 msgstr "Privacy"
 
-#: src/ui/chatty-settings-dialog.ui:232
+#: src/ui/chatty-settings-dialog.ui:201
 msgid "Message Receipts"
 msgstr "Conferme messaggi"
 
-#: src/ui/chatty-settings-dialog.ui:233
+#: src/ui/chatty-settings-dialog.ui:202
 msgid "Confirm received messages"
 msgstr "Conferma i messaggi ricevuti"
 
-#: src/ui/chatty-settings-dialog.ui:247
-msgid "Message Archive Management"
-msgstr "Gestione dell'Archivio dei Messaggi"
-
-#: src/ui/chatty-settings-dialog.ui:248
-msgid "Sync conversations with chat server"
-msgstr "Sincronizza le conversazioni con il server di chat"
-
-#: src/ui/chatty-settings-dialog.ui:262
-msgid "Message Carbon Copies"
-msgstr "Copie carbone del messaggio"
-
-#: src/ui/chatty-settings-dialog.ui:277
+#: src/ui/chatty-settings-dialog.ui:217
 msgid "Typing Notification"
 msgstr "Notifica di scrittura "
 
-#: src/ui/chatty-settings-dialog.ui:278
+#: src/ui/chatty-settings-dialog.ui:218
 msgid "Send typing messages"
 msgstr "Invia notifiche di scrittura"
 
-#: src/ui/chatty-settings-dialog.ui:295
+#: src/ui/chatty-settings-dialog.ui:236
 msgid "Editor"
 msgstr "Editor"
 
-#: src/ui/chatty-settings-dialog.ui:300
+#: src/ui/chatty-settings-dialog.ui:241
 msgid "Graphical Emoticons"
 msgstr "Faccine grafiche"
 
-#: src/ui/chatty-settings-dialog.ui:301
+#: src/ui/chatty-settings-dialog.ui:242
 msgid "if you type :) it will be changed to 😃"
 msgstr "se scrivi :) sarà cambiato in 😃"
 
 #. TRANSLATORS: Return is the Enter key.
-#: src/ui/chatty-settings-dialog.ui:316
+#: src/ui/chatty-settings-dialog.ui:257
 msgid "Send Messages with Return"
 msgstr "Invia messaggi col tasto invio"
 
-#: src/ui/chatty-settings-dialog.ui:344
+#: src/ui/chatty-settings-dialog.ui:273
+#| msgid "Protocol"
+msgid "Protocol Settings"
+msgstr "Impostazioni Protocollo"
+
+#: src/ui/chatty-settings-dialog.ui:339
 msgid "Request Delivery Reports"
 msgstr "Richiedi rapporto di consegna"
 
-#: src/ui/chatty-settings-dialog.ui:358
+#: src/ui/chatty-settings-dialog.ui:353
 msgid "SMIL for MMS"
 msgstr "SMIL per gli MMS"
 
-#: src/ui/chatty-settings-dialog.ui:375
+#: src/ui/chatty-settings-dialog.ui:370
 msgid "MMS Carrier Settings"
 msgstr "Impostazioni MMS"
 
-#: src/ui/chatty-settings-dialog.ui:379
+#: src/ui/chatty-settings-dialog.ui:374
 msgid "MMSC"
 msgstr "MMSC"
 
-#: src/ui/chatty-settings-dialog.ui:394
+#: src/ui/chatty-settings-dialog.ui:389
 msgid "APN"
 msgstr "APN"
 
-#: src/ui/chatty-settings-dialog.ui:409
+#: src/ui/chatty-settings-dialog.ui:404
 msgid "Proxy"
 msgstr "Proxy"
 
-#: src/ui/chatty-settings-dialog.ui:600
-msgid "Matrix Home Server"
-msgstr "Server Matrix"
+#: src/ui/chatty-settings-dialog.ui:466
+msgid "Message Archive Management"
+msgstr "Gestione dell'Archivio dei Messaggi"
 
-#: src/ui/chatty-settings-dialog.ui:635
-msgid "_Accept"
-msgstr "_Accetta"
+#: src/ui/chatty-settings-dialog.ui:467
+msgid "Sync conversations with chat server"
+msgstr "Sincronizza le conversazioni con il server di chat"
 
-#: src/ui/chatty-settings-dialog.ui:664
-msgid "Enter the matrix home server address."
-msgstr "Inserire l'indirizzo del server Matrix"
+#: src/ui/chatty-settings-dialog.ui:482
+msgid "Message Carbon Copies"
+msgstr "Copie carbone del messaggio"
+
+#: src/ui/chatty-settings-dialog.ui:665
+#| msgid "Homeserver"
+msgid "Home server"
+msgstr "Server personale"
 
 #: src/ui/chatty-window.ui:28
 msgid "Keyboard _Shortcuts"
 msgstr "_Scorciatoie da tastiera"
 
-#: src/ui/chatty-window.ui:37
+#: src/ui/chatty-window.ui:35
+msgid "Help"
+msgstr "Aiuto"
+
+#: src/ui/chatty-window.ui:44
 msgid "About Chats"
 msgstr "Informazioni su Chats"
 
-#: src/ui/chatty-window.ui:65
+#: src/ui/chatty-window.ui:72
 msgid "New Message…"
 msgstr "Nuovo messaggio…"
 
-#: src/ui/chatty-window.ui:78
+#: src/ui/chatty-window.ui:85
 msgid "New SMS/MMS Message…"
 msgstr "Nuovo messaggio SMS/MMS…"
 
-#: src/ui/chatty-window.ui:91
+#: src/ui/chatty-window.ui:98
 msgid "New Group Message…"
 msgstr "Nuovo messaggio di gruppo…"
 
-#: src/ui/chatty-window.ui:144
+#: src/ui/chatty-window.ui:151
 msgid "Leave Chat"
 msgstr "Lascia la chat"
 
-#: src/ui/chatty-window.ui:157
+#: src/ui/chatty-window.ui:164
 msgid "Delete Chat"
 msgstr "Elimina la chat"
 
-#: src/ui/chatty-window.ui:346
+#: src/ui/chatty-window.ui:353
 msgid "Call"
 msgstr "Chiama"
 
