@@ -1397,6 +1397,7 @@ matrix_api_stop_sync (MatrixApi *self)
 {
   g_return_if_fail (MATRIX_IS_API (self));
 
+  g_clear_handle_id (&self->resync_id, g_source_remove);
   g_cancellable_cancel (self->cancellable);
   self->is_sync = FALSE;
   self->sync_failed = FALSE;
