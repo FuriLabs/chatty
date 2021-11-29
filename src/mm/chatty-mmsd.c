@@ -1850,6 +1850,11 @@ mmsd_vanished_cb (GDBusConnection *connection,
 
   g_clear_object (&self->manager_proxy);
   g_clear_object (&self->modemmanager_proxy);
+
+  if (self->mmsd_signal_id && G_IS_DBUS_CONNECTION (self->connection)) {
+    g_dbus_connection_signal_unsubscribe (self->connection, self->mmsd_signal_id);
+    self->mmsd_signal_id = 0;
+  }
 }
 
 static void
