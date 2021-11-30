@@ -852,7 +852,7 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
 
   recipients = g_variant_dict_lookup_value (&dict, "Recipients", G_VARIANT_TYPE_STRING_ARRAY);
 
-  if (rx_modem_number != NULL) {
+  if (rx_modem_number && *rx_modem_number) {
     if (g_strcmp0 (self->modem_number, rx_modem_number) != 0) {
       g_warning ("Receieved Modem Number %s different than current modem number %s",
                  self->modem_number, rx_modem_number);
