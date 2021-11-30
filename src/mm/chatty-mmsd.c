@@ -1973,10 +1973,9 @@ chatty_mmsd_reload (ChattyMmsd *self)
       break;
   }
 
+  /* TODO: Figure out a way to add back in modem number */
   if (!self->modem_number) {
-    g_warning ("Your SIM or Modem does not support modem manger's number! Please file a bug report");
     self->modem_number = g_strdup ("");
-    g_debug ("Making Dummy modem number: %s", self->modem_number);
   }
 
   self->mmsd_watch_id = g_bus_watch_name (G_BUS_TYPE_SESSION,
