@@ -166,6 +166,7 @@
                   <object class="HdyPreferencesGroup">
                     <property name="visible">True</property>
                     <property name="title" translatable="yes">Accounts</property>
+                    <property name="visible" bind-source="accounts_list_box" bind-property="visible" bind-flags="sync-create"/>
 
                     <child>
                       <object class="GtkListBox" id="accounts_list_box">
