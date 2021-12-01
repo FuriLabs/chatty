@@ -615,6 +615,7 @@
                                 <property name="visible">True</property>
                                 <property name="halign">end</property>
                                 <property name="valign">center</property>
+                                <property name="placeholder-text">user@example.com</property>
                                 <signal name="changed" handler="settings_new_detail_changed_cb" swapped="yes"/>
                               </object>
                             </child>

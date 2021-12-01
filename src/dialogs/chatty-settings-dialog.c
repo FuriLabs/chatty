@@ -890,6 +890,17 @@ settings_protocol_changed_cb (ChattySettingsDialog *self,
 
   gtk_widget_grab_focus (self->new_account_id_entry);
 
+  if (button == self->xmpp_radio_button)
+    gtk_entry_set_placeholder_text (GTK_ENTRY (self->new_account_id_entry),
+                                    "user@example.com");
+  else if (button == self->matrix_radio_button)
+    /* TRANSLATORS: Only translate 'or' */
+    gtk_entry_set_placeholder_text (GTK_ENTRY (self->new_account_id_entry),
+                                    _("@user:matrix.org or user@example.com"));
+  else /* Telegram */
+    gtk_entry_set_placeholder_text (GTK_ENTRY (self->new_account_id_entry),
+                                    "+1123456789");
+
   /* Force re-check if id is valid */
   settings_new_detail_changed_cb (self);
 }
