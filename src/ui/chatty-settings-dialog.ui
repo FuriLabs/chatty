@@ -176,14 +176,6 @@
                         <style>
                           <class name="content"/>
                         </style>
-                        <child>
-                          <object class="HdyActionRow" id="add_account_row">
-                            <property name="visible">True</property>
-                            <property name="title" translatable="yes">Add _new account…</property>
-                            <property name="use-underline">True</property>
-                            <property name="activatable">True</property>
-                          </object>
-                        </child>
                       </object>
                     </child>
                   </object>
@@ -698,4 +690,10 @@
     </child>
 
   </template>
+  <object class="HdyActionRow" id="add_account_row">
+    <property name="visible">True</property>
+    <property name="title" translatable="yes">Add _new account…</property>
+    <property name="use-underline">True</property>
+    <property name="activatable">True</property>
+  </object>
 </interface>

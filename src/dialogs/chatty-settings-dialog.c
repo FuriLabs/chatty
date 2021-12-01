@@ -34,6 +34,7 @@
 #include "chatty-utils.h"
 #include "matrix-utils.h"
 #include "chatty-ma-account.h"
+#include "chatty-mm-account.h"
 #include "chatty-manager.h"
 #include "chatty-purple.h"
 #include "chatty-fp-row.h"
@@ -134,23 +135,6 @@ finish_cb (GObject      *object,
     g_task_return_error (user_data, error);
   else
     g_task_return_boolean (user_data, status);
-}
-
-static void
-chatty_account_list_clear (ChattySettingsDialog *self,
-                           GtkListBox           *list)
-{
-  g_autoptr(GList) children = NULL;
-  GList *iter;
-
-  g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
-  g_assert (GTK_IS_LIST_BOX (list));
-
-  children = gtk_container_get_children (GTK_CONTAINER (list));
-
-  for (iter = children; iter != NULL; iter = iter->next)
-    if ((GtkWidget *)iter->data != self->add_account_row)
-      gtk_container_remove (GTK_CONTAINER (list), GTK_WIDGET(iter->data));
 }
 
 static void
@@ -475,8 +459,6 @@ settings_pp_details_changed_cb (ChattySettingsDialog *self,
   gtk_widget_set_sensitive (self->save_button, modified);
 }
 
-static void chatty_settings_dialog_populate_account_list (ChattySettingsDialog *self);
-
 static void
 settings_delete_account_clicked_cb (ChattySettingsDialog *self)
 {
@@ -511,7 +493,6 @@ settings_delete_account_clicked_cb (ChattySettingsDialog *self)
                                            g_steal_pointer (&self->selected_account),
                                            NULL, NULL, NULL);
 
-      chatty_settings_dialog_populate_account_list (self);
       gtk_widget_hide (self->save_button);
       gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "main-settings");
     }
@@ -912,7 +893,6 @@ chatty_account_row_new (ChattyAccount *account)
   GtkWidget      *account_enabled_switch;
   GtkWidget      *spinner;
   const char     *username;
-  ChattyProtocol protocol;
 
   row = HDY_ACTION_ROW (hdy_action_row_new ());
   gtk_list_box_row_set_activatable (GTK_LIST_BOX_ROW (row), TRUE);
@@ -920,15 +900,6 @@ chatty_account_row_new (ChattyAccount *account)
   g_object_set_data (G_OBJECT(row),
                      "row-account",
                      (gpointer) account);
-
-  protocol = chatty_item_get_protocols (CHATTY_ITEM (account));
-  if (protocol & ~(CHATTY_PROTOCOL_XMPP |
-                   CHATTY_PROTOCOL_MATRIX |
-                   CHATTY_PROTOCOL_TELEGRAM |
-                   CHATTY_PROTOCOL_DELTA |
-                   CHATTY_PROTOCOL_THREEPL |
-                   CHATTY_PROTOCOL_MMS_SMS))
-    return NULL;
 
   spinner = gtk_spinner_new ();
   gtk_widget_show (spinner);
@@ -960,42 +931,24 @@ chatty_account_row_new (ChattyAccount *account)
   gtk_container_add (GTK_CONTAINER (row), account_enabled_switch);
   hdy_action_row_set_activatable_widget (row, NULL);
 
+  g_signal_connect_object (account, "notify::status",
+                           G_CALLBACK (chatty_settings_dialog_update_status),
+                           row, G_CONNECT_SWAPPED);
+  chatty_settings_dialog_update_status (GTK_LIST_BOX_ROW (row));
+
   return GTK_WIDGET (row);
 }
 
-static void
-chatty_settings_dialog_populate_account_list (ChattySettingsDialog *self)
+static GtkWidget *
+chatty_settings_account_row_new (ChattyAccount        *account,
+                                 ChattySettingsDialog *self)
 {
-  GListModel *model;
-  guint n_items;
-  gint index = 0;
-
-  chatty_account_list_clear (self, GTK_LIST_BOX (self->accounts_list_box));
-
-  model = chatty_manager_get_accounts (chatty_manager_get_default ());
-  n_items = g_list_model_get_n_items (model);
-
-  for (guint i = 0; i < n_items; i++)
-    {
-      g_autoptr(ChattyAccount) account = NULL;
-      GtkWidget *row;
-
-      account = g_list_model_get_item (model, i);
-
-      row = chatty_account_row_new (account);
-
-      if (!row)
-        continue;
-
-      gtk_list_box_insert (GTK_LIST_BOX (self->accounts_list_box), row, index);
-      g_signal_connect_object (account, "notify::status",
-                               G_CALLBACK (chatty_settings_dialog_update_status),
-                               row, G_CONNECT_SWAPPED);
-      chatty_settings_dialog_update_status (GTK_LIST_BOX_ROW (row));
-      index++;
-    }
+  /* mm account is the last item, and we use the row to show new account row */
+  if (CHATTY_IS_MM_ACCOUNT (account))
+    return self->add_account_row;
+  else
+    return chatty_account_row_new (account);
 }
-
 
 static void
 chatty_settings_dialog_constructed (GObject *object)
@@ -1039,8 +992,6 @@ chatty_settings_dialog_constructed (GObject *object)
   g_object_bind_property (settings, "request-mmsd-smil",
                           self->handle_smil_switch, "active",
                           G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
-
-  chatty_settings_dialog_populate_account_list (self);
 }
 
 static void
@@ -1159,11 +1110,6 @@ chatty_settings_dialog_init (ChattySettingsDialog *self)
   carrier_apn = chatty_settings_get_mms_carrier_apn (settings);
   carrier_proxy = chatty_settings_get_mms_carrier_proxy (settings);
 
-  g_signal_connect_object (G_OBJECT (chatty_manager_get_accounts (manager)),
-                           "items-changed",
-                           G_CALLBACK (chatty_settings_dialog_populate_account_list),
-                           self, G_CONNECT_SWAPPED);
-
   gtk_widget_init_template (GTK_WIDGET (self));
 
 #ifdef PURPLE_ENABLED
@@ -1195,6 +1141,11 @@ chatty_settings_dialog_init (ChattySettingsDialog *self)
   gtk_entry_set_text (GTK_ENTRY (self->carrier_mmsc_entry), carrier_mmsc);
   gtk_entry_set_text (GTK_ENTRY (self->mms_apn_entry), carrier_apn);
   gtk_entry_set_text (GTK_ENTRY (self->mms_proxy_entry), carrier_proxy);
+
+  gtk_list_box_bind_model (GTK_LIST_BOX (self->accounts_list_box),
+                           chatty_manager_get_accounts (manager),
+                           (GtkListBoxCreateWidgetFunc)chatty_settings_account_row_new,
+                           g_object_ref (self), g_object_unref);
 }
 
 GtkWidget *
