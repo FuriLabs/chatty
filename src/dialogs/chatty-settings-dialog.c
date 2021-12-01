@@ -669,6 +669,11 @@ settings_update_new_account_view (ChattySettingsDialog *self)
                                    _("Select Protocol"));
   gtk_widget_show (self->protocol_list);
 
+  if (gtk_widget_is_visible (self->xmpp_radio_button))
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (self->xmpp_radio_button), TRUE);
+  else if (gtk_widget_is_visible (self->matrix_radio_button))
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (self->matrix_radio_button), TRUE);
+
   gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "add-account-view");
 }
 
