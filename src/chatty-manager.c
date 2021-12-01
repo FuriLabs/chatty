@@ -385,6 +385,8 @@ chatty_manager_get_default (void)
 void
 chatty_manager_load (ChattyManager *self)
 {
+  g_autoptr(GListStore) accounts = NULL;
+
   g_return_if_fail (CHATTY_IS_MANAGER (self));
 
   if (self->has_loaded)
@@ -423,6 +425,10 @@ chatty_manager_load (ChattyManager *self)
   manager_add_to_flat_model (self->chat_list,
                              chatty_matrix_get_chat_list (self->matrix));
   chatty_matrix_load (self->matrix);
+
+  accounts = g_list_store_new (CHATTY_TYPE_ACCOUNT);
+  g_list_store_append (accounts, self->mm_account);
+  manager_add_to_flat_model (self->accounts, G_LIST_MODEL (accounts));
 }
 
 GListModel *
