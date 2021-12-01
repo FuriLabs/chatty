@@ -634,6 +634,8 @@ settings_dialog_page_changed_cb (ChattySettingsDialog *self)
     gtk_window_set_title (GTK_WINDOW (self), _("SMS and MMS Settings"));
   else if (g_strcmp0 (name, "purple-settings-view") == 0)
     gtk_window_set_title (GTK_WINDOW (self), _("Purple Settings"));
+  else if (g_strcmp0 (name, "add-account-view") == 0)
+    gtk_window_set_title (GTK_WINDOW (self), _("New Account"));
   else
     gtk_window_set_title (GTK_WINDOW (self), _("Preferences"));
 }
