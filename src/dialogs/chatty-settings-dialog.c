@@ -875,8 +875,8 @@ settings_protocol_changed_cb (ChattySettingsDialog *self,
     gtk_entry_set_placeholder_text (GTK_ENTRY (self->new_account_id_entry),
                                     "user@example.com");
   else if (button == self->matrix_radio_button)
-    /* TRANSLATORS: Only translate 'or' */
     gtk_entry_set_placeholder_text (GTK_ENTRY (self->new_account_id_entry),
+                                    /* TRANSLATORS: Only translate 'or' */
                                     _("@user:matrix.org or user@example.com"));
   else /* Telegram */
     gtk_entry_set_placeholder_text (GTK_ENTRY (self->new_account_id_entry),
