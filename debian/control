@@ -39,6 +39,7 @@ Depends:
  ${misc:Depends},
  ${shlibs:Depends},
 Recommends:
+ mmsd-tng,
  purple-xmpp-carbons,
  purple-lurch,
  purple-xmpp-http-upload,
