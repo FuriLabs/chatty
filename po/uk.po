@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://source.puri.sm/Librem5/chatty/issues\n"
-"POT-Creation-Date: 2021-11-26 03:25+0000\n"
-"PO-Revision-Date: 2021-11-27 10:22+0200\n"
+"POT-Creation-Date: 2021-12-02 03:25+0000\n"
+"PO-Revision-Date: 2021-12-03 13:24+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -612,69 +612,79 @@ msgstr "З'єднання…"
 msgid "disconnected"
 msgstr "від'єднано"
 
-#: src/dialogs/chatty-settings-dialog.c:232
-#: src/dialogs/chatty-settings-dialog.c:392
+#: src/dialogs/chatty-settings-dialog.c:227
+#: src/dialogs/chatty-settings-dialog.c:391
 msgid "Failed to verify server"
 msgstr "Не вдалося перевірити сервер"
 
-#: src/dialogs/chatty-settings-dialog.c:283
-#: src/dialogs/chatty-settings-dialog.c:372
+#: src/dialogs/chatty-settings-dialog.c:278
+#: src/dialogs/chatty-settings-dialog.c:371
 msgid "Couldn't get Home server address"
 msgstr "Не вдалося отримати адресу домашнього сервера."
 
-#: src/dialogs/chatty-settings-dialog.c:499
+#: src/dialogs/chatty-settings-dialog.c:498
 #: src/ui/chatty-ma-account-details.ui:182
 #: src/ui/chatty-pp-account-details.ui:199
 msgid "Delete Account"
 msgstr "Вилучити запис"
 
-#: src/dialogs/chatty-settings-dialog.c:502
+#: src/dialogs/chatty-settings-dialog.c:501
 #, c-format
 msgid "Delete account %s?"
 msgstr "Вилучити запис %s?"
 
-#: src/dialogs/chatty-settings-dialog.c:619
+#: src/dialogs/chatty-settings-dialog.c:618
 msgid "Restart chatty to disable purple"
 msgstr "Перезапустіть chatty, щоб вимкнути purple"
 
-#: src/dialogs/chatty-settings-dialog.c:621
+#: src/dialogs/chatty-settings-dialog.c:620
 #: src/ui/chatty-settings-dialog.ui:442
 msgid "Enable purple plugin"
 msgstr "Увімкнути додаток purple"
 
-#: src/dialogs/chatty-settings-dialog.c:635
+#: src/dialogs/chatty-settings-dialog.c:634
 #: src/ui/chatty-settings-dialog.ui:286
 msgid "SMS and MMS Settings"
 msgstr "Параметри SMS і MMS"
 
-#: src/dialogs/chatty-settings-dialog.c:637
+#: src/dialogs/chatty-settings-dialog.c:636
 #: src/ui/chatty-settings-dialog.ui:305
 msgid "Purple Settings"
 msgstr "Параметри Purple"
 
-#: src/dialogs/chatty-settings-dialog.c:639 src/ui/chatty-settings-dialog.ui:7
+#: src/dialogs/chatty-settings-dialog.c:638
+#| msgid "Accounts"
+msgid "New Account"
+msgstr "Новий обліковий запис"
+
+#: src/dialogs/chatty-settings-dialog.c:640 src/ui/chatty-settings-dialog.ui:7
 #: src/ui/chatty-window.ui:17
 msgid "Preferences"
 msgstr "Параметри"
 
-#: src/dialogs/chatty-settings-dialog.c:665
+#: src/dialogs/chatty-settings-dialog.c:669
 msgid "Select Protocol"
 msgstr "Виберіть протокол"
 
-#: src/matrix/chatty-ma-account.c:293
+#: src/dialogs/chatty-settings-dialog.c:899
+msgid "@user:matrix.org or user@example.com"
+msgstr ""
+"@user:matrix.org або user@example.com"
+
+#: src/matrix/chatty-ma-account.c:296
 msgid "Incorrect password"
 msgstr "Помилковий пароль"
 
-#: src/matrix/chatty-ma-account.c:296
+#: src/matrix/chatty-ma-account.c:299
 msgid "_OK"
 msgstr "_Гаразд"
 
-#: src/matrix/chatty-ma-account.c:297 src/ui/chatty-dialog-new-chat.ui:52
+#: src/matrix/chatty-ma-account.c:300 src/ui/chatty-dialog-new-chat.ui:52
 #: src/ui/chatty-settings-dialog.ui:46 src/ui/chatty-settings-dialog.ui:107
 msgid "_Cancel"
 msgstr "_Скасувати"
 
-#: src/matrix/chatty-ma-account.c:303
+#: src/matrix/chatty-ma-account.c:306
 #, c-format
 msgid "Please enter password for “%s”"
 msgstr "Будь ласка, введіть пароль до «%s»"
@@ -885,7 +895,7 @@ msgstr "Ідентифікатор запису"
 msgid "Protocol"
 msgstr "Протокол"
 
-#: src/ui/chatty-pp-account-details.ui:168 src/ui/chatty-settings-dialog.ui:630
+#: src/ui/chatty-pp-account-details.ui:168 src/ui/chatty-settings-dialog.ui:631
 msgid "Password"
 msgstr "Пароль"
 
@@ -909,7 +919,7 @@ msgstr "З_берегти"
 msgid "_Apply"
 msgstr "З_астосувати"
 
-#: src/ui/chatty-settings-dialog.ui:169
+#: src/ui/chatty-settings-dialog.ui:168
 msgid "Accounts"
 msgstr "Облікові записи"
 
@@ -994,7 +1004,7 @@ msgstr "Синхронізувати спілкування із серверо�
 msgid "Message Carbon Copies"
 msgstr "Копії повідомлень"
 
-#: src/ui/chatty-settings-dialog.ui:666
+#: src/ui/chatty-settings-dialog.ui:667
 msgid "Home server"
 msgstr "Домашній сервер"
 
@@ -1004,8 +1014,7 @@ msgstr "_Клавіатурні скорочення"
 
 #: src/ui/chatty-window.ui:35
 msgid "Help"
-msgstr ""
-"Довідка"
+msgstr "Довідка"
 
 #: src/ui/chatty-window.ui:44
 msgid "About Chats"
