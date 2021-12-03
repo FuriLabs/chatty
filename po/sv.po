@@ -662,7 +662,7 @@ msgstr "Välj protokoll"
 
 #: src/dialogs/chatty-settings-dialog.c:899
 msgid "@user:matrix.org or user@example.com"
-msgstr "@user:matrix.org or user@example.com"
+msgstr "@user:matrix.org eller user@example.com"
 
 #: src/matrix/chatty-ma-account.c:296
 msgid "Incorrect password"
