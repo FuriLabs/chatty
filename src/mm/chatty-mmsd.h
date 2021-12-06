@@ -29,5 +29,21 @@ gboolean    chatty_mmsd_send_mms_async        (ChattyMmsd      *self,
                                                ChattyChat      *chat,
                                                ChattyMessage   *message,
                                                gpointer         user_data);
+gboolean    chatty_mmsd_get_settings          (ChattyMmsd      *self,
+                                               const char     **apn,
+                                               const char     **mmsc,
+                                               const char     **proxy,
+                                               gboolean        *use_smil);
+void        chatty_mmsd_set_settings_async    (ChattyMmsd      *self,
+                                               const char      *apn,
+                                               const char      *mmsc,
+                                               const char      *proxy,
+                                               gboolean         use_smil,
+                                               GCancellable    *cancellable,
+                                               GAsyncReadyCallback callback,
+                                               gpointer         user_data);
+gboolean    chatty_mmsd_set_settings_finish   (ChattyMmsd      *self,
+                                               GAsyncResult    *result,
+                                               GError         **error);
 
 G_END_DECLS

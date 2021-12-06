@@ -1362,3 +1362,41 @@ chatty_mm_account_get_devices (ChattyMmAccount *self)
 
   return G_LIST_MODEL (self->device_list);
 }
+
+gboolean
+chatty_mm_account_get_mms_settings (ChattyMmAccount  *self,
+                                    const char      **apn,
+                                    const char      **mmsc,
+                                    const char      **proxy,
+                                    gboolean         *use_smil)
+{
+  g_return_val_if_fail (CHATTY_MM_ACCOUNT (self), FALSE);
+
+  return chatty_mmsd_get_settings (self->mmsd, apn, mmsc, proxy, use_smil);
+}
+
+void
+chatty_mm_account_set_mms_settings_async (ChattyMmAccount     *self,
+                                          const char          *apn,
+                                          const char          *mmsc,
+                                          const char          *proxy,
+                                          gboolean             use_smil,
+                                          GCancellable        *cancellable,
+                                          GAsyncReadyCallback  callback,
+                                          gpointer             user_data)
+{
+  chatty_mmsd_set_settings_async (self->mmsd, apn, mmsc, proxy, use_smil,
+                                  cancellable, callback, user_data);
+}
+
+gboolean
+chatty_mm_account_set_mms_settings_finish (ChattyMmAccount *self,
+                                           GAsyncResult    *result,
+                                           GError          **error)
+{
+  g_return_val_if_fail (CHATTY_MM_ACCOUNT (self), FALSE);
+  g_return_val_if_fail (G_IS_TASK (result), FALSE);
+  g_return_val_if_fail (!error || !*error, FALSE);
+
+  return chatty_mmsd_set_settings_finish (self->mmsd, result, error);
+}
