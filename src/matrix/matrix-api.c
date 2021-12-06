@@ -554,8 +554,8 @@ handle_one_time_keys (MatrixApi  *self,
     CHATTY_TRACE_MSG ("generating %lu onetime keys", limit - count);
     matrix_enc_create_one_time_keys (self->matrix_enc, limit - count);
 
-    g_free (self->key);
-    self->key = matrix_enc_get_one_time_keys_json (self->matrix_enc);
+    if (!self->key)
+      self->key = matrix_enc_get_one_time_keys_json (self->matrix_enc);
     matrix_upload_key (self);
 
     return TRUE;
