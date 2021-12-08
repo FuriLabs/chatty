@@ -19,6 +19,11 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (ChattyClock, chatty_clock, CHATTY, CLOCK, GObject)
 
+#define SECONDS_PER_MINUTE (60)
+#define SECONDS_PER_HOUR   (60 * SECONDS_PER_MINUTE)
+#define SECONDS_PER_DAY    (24 * SECONDS_PER_HOUR)
+#define SECONDS_PER_WEEK   (7 * SECONDS_PER_DAY)
+
 ChattyClock *chatty_clock_get_default         (void);
 char        *chatty_clock_get_human_time      (ChattyClock *self,
                                                time_t       unix_time,
