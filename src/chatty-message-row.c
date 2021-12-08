@@ -16,6 +16,7 @@
 #include "chatty-utils.h"
 #include "chatty-image-item.h"
 #include "chatty-text-item.h"
+#include "chatty-clock.h"
 #include "chatty-message-row.h"
 
 
@@ -153,7 +154,8 @@ message_row_update_message (ChattyMessageRow *self)
     status_str = "<span color='#6cba3d'> ✓</span>";
 
   time_stamp = chatty_message_get_time (self->message);
-  time_str = chatty_utils_get_human_time (time_stamp);
+  time_str = chatty_clock_get_human_time (chatty_clock_get_default (),
+                                          time_stamp, TRUE);
 
   footer = g_strconcat (time_str, status_str, NULL);
   gtk_label_set_markup (GTK_LABEL (self->footer_label), footer);
