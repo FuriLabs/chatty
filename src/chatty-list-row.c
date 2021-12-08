@@ -25,9 +25,6 @@
 #include "chatty-list-row.h"
 #include "chatty-contact-provider.h"
 
-#define SECONDS_PER_HOUR   3600.0
-
-
 struct _ChattyListRow
 {
   GtkListBoxRow  parent_instance;
@@ -83,7 +80,7 @@ chatty_list_row_update_last_modified (ChattyListRow *self)
   time_now = time (NULL);
   delta_secs = difftime (time_now, last_message_time);
 
-  if (delta_secs < SECONDS_PER_HOUR * 24) {
+  if (delta_secs < 3600.0 * 24) {
     /* Update the time when it's 20% older and at least 30 seconds have passed */
     int update_delay = MAX (delta_secs * 0.2, 30);
 
