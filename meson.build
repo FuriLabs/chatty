@@ -1,6 +1,6 @@
 project(
   'chatty', 'c', 'cpp',
-  version: '0.5.0.beta',
+  version: '0.5.0.beta2',
   meson_version: '>= 0.53.0',
 )
 
@@ -114,6 +114,7 @@ libgd_dep = libgd.get_variable('libgd_dep')
 
 subdir('completion')
 subdir('data')
+subdir('help')
 subdir('src')
 subdir('tests')
 subdir('po')

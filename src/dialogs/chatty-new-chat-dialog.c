@@ -764,7 +764,6 @@ chatty_new_chat_account_list_clear (GtkWidget *list)
 static void
 chatty_new_chat_populate_account_list (ChattyNewChatDialog *self)
 {
-  ChattyAccount *mm_account;
   GListModel   *model;
   HdyActionRow *row;
   guint         n_items;
@@ -784,10 +783,6 @@ chatty_new_chat_populate_account_list (ChattyNewChatDialog *self)
 
     chatty_new_chat_add_account_to_list (self, account);
   }
-
-  /* Add sms account */
-  mm_account = chatty_manager_get_mm_account (self->manager);
-  chatty_new_chat_add_account_to_list (self, mm_account);
 
   row = HDY_ACTION_ROW(gtk_list_box_get_row_at_index (GTK_LIST_BOX (self->accounts_list), 0));
 

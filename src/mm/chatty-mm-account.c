@@ -79,6 +79,32 @@ chatty_mm_device_get_object (ChattyMmDevice *device)
   return device->mm_object;
 }
 
+char *
+chatty_mm_device_get_number (ChattyMmDevice *device)
+{
+  const char *const *own_numbers;
+  MMModem *mm_modem;
+
+  g_return_val_if_fail (CHATTY_IS_MM_DEVICE (device), NULL);
+
+  mm_modem = mm_object_peek_modem (device->mm_object);
+  own_numbers = mm_modem_get_own_numbers (mm_modem);
+
+  for (guint i = 0; own_numbers && own_numbers[i]; i++) {
+    const char *number, *country_code;
+    char *modem_number;
+
+    number = own_numbers[i];
+    country_code = chatty_settings_get_country_iso_code (chatty_settings_get_default ());
+    modem_number = chatty_utils_check_phonenumber (number, country_code);
+
+    if (modem_number)
+      return modem_number;
+  }
+
+  return NULL;
+}
+
 struct _ChattyMmAccount
 {
   ChattyAccount     parent_instance;
@@ -380,6 +406,8 @@ chatty_mm_account_recieve_mms_cb (ChattyMmAccount *self,
   ChattyMessage  *messagecheck;
 
   chat = chatty_mm_account_start_chat (self, recipientlist);
+  g_return_if_fail (CHATTY_IS_MM_CHAT (chat));
+
   /*
    * Check to see if this message exists (e.g. draft MMS sent)
    */
@@ -869,7 +897,6 @@ mm_new_cb (GObject      *object,
   g_assert (CHATTY_IS_MM_ACCOUNT (self));
 
   self->mm_manager = mm_manager_new_finish (result, &error);
-  chatty_mmsd_load (self->mmsd);
 
   if (!self->mm_watch_id)
     self->mm_watch_id = g_bus_watch_name (G_BUS_TYPE_SYSTEM,
