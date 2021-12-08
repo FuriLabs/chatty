@@ -41,7 +41,7 @@ struct _ChattyListRow
 
   ChattyItem    *item;
   gboolean       hide_chat_details;
-  int            last_modified_timeout;
+  gulong         clock_id;
 };
 
 G_DEFINE_TYPE (ChattyListRow, chatty_list_row, GTK_TYPE_LIST_BOX_ROW)
@@ -56,41 +56,55 @@ chatty_list_row_item_is_valid (ChattyItem *item)
     CHATTY_IS_CHAT (item);
 }
 
+static const char *
+list_row_get_clock_signal (time_t time_stamp)
+{
+  double diff;
+
+  diff = difftime (time (NULL), time_stamp);
+
+  if (diff >= - SECONDS_PER_MINUTE &&
+      diff < SECONDS_PER_WEEK)
+    return g_intern_static_string ("day-changed");
+
+  return NULL;
+}
+
 static gboolean
 chatty_list_row_update_last_modified (ChattyListRow *self)
 {
   ChattyChat *item;
   g_autofree char *str = NULL;
-  double delta_secs;
+  const char *time_signal;
   time_t last_message_time;
-  time_t time_now;
-
-  self->last_modified_timeout = 0;
 
   item = CHATTY_CHAT (self->item);
   last_message_time = chatty_chat_get_last_msg_time (item);
-  if (!last_message_time)
+  if (!last_message_time) {
+    g_clear_signal_handler (&self->clock_id, chatty_clock_get_default ());
+
     return G_SOURCE_REMOVE;
+  }
 
   str = chatty_clock_get_human_time (chatty_clock_get_default (),
                                      last_message_time, FALSE);
   if (str)
     gtk_label_set_label (GTK_LABEL (self->last_modified), str);
 
-  time_now = time (NULL);
-  delta_secs = difftime (time_now, last_message_time);
+  time_signal = list_row_get_clock_signal (last_message_time);
 
-  if (delta_secs < 3600.0 * 24) {
-    /* Update the time when it's 20% older and at least 30 seconds have passed */
-    int update_delay = MAX (delta_secs * 0.2, 30);
+  if (time_signal != g_object_get_data (G_OBJECT (self), "time-signal")) {
+    g_clear_signal_handler (&self->clock_id, chatty_clock_get_default ());
+    g_object_set_data (G_OBJECT (self), "time-signal", (gpointer)time_signal);
 
-    self->last_modified_timeout =
-      g_timeout_add_seconds (update_delay,
-                             G_SOURCE_FUNC (chatty_list_row_update_last_modified),
-                             self);
+    if (time_signal)
+      self->clock_id = g_signal_connect_object (chatty_clock_get_default (), time_signal,
+                                                G_CALLBACK (chatty_list_row_update_last_modified),
+                                                self, G_CONNECT_SWAPPED);
+    return G_SOURCE_REMOVE;
   }
 
-  return G_SOURCE_REMOVE;
+  return G_SOURCE_CONTINUE;
 }
 
 #ifdef PURPLE_ENABLED
@@ -125,8 +139,6 @@ chatty_list_row_update (ChattyListRow *self)
 
   g_assert (CHATTY_IS_LIST_ROW (self));
   g_assert (CHATTY_IS_ITEM (self->item));
-
-  g_clear_handle_id (&self->last_modified_timeout, g_source_remove);
 
 #ifdef PURPLE_ENABLED
   if (CHATTY_IS_PP_BUDDY (self->item)) {
@@ -266,7 +278,6 @@ chatty_list_row_finalize (GObject *object)
 {
   ChattyListRow *self = (ChattyListRow *)object;
 
-  g_clear_handle_id (&self->last_modified_timeout, g_source_remove);
   g_clear_object (&self->item);
 
   G_OBJECT_CLASS (chatty_list_row_parent_class)->finalize (object);
