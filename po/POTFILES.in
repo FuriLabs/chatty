@@ -10,6 +10,7 @@ src/chatty-chat-view.c
 src/chatty-chat.c
 src/chatty-chat.h
 src/chatty-contact-list.c
+src/chatty-clock.c
 src/chatty-contact-provider.c
 src/chatty-contact-provider.h
 src/chatty-history.c
