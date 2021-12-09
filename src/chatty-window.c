@@ -682,6 +682,7 @@ chatty_window_finalize (GObject *object)
 {
   ChattyWindow *self = (ChattyWindow *)object;
 
+  g_clear_pointer (&self->new_chat_dialog, gtk_widget_destroy);
   g_clear_object (&self->settings);
   g_clear_object (&self->protocol_tag);
 
