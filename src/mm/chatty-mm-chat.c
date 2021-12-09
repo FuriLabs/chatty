@@ -482,7 +482,7 @@ chatty_mm_chat_set_name (ChattyItem *item,
 static const char *
 chatty_mm_chat_get_username (ChattyItem *item)
 {
-  return "SMS";
+  return "invalid-0000000000000000";
 }
 
 static ChattyProtocol

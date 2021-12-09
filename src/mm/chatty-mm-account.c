@@ -1005,7 +1005,7 @@ chatty_mm_account_get_protocols (ChattyItem *item)
 static const char *
 chatty_mm_account_get_username (ChattyItem *item)
 {
-  return "SMS";
+  return "invalid-0000000000000000";
 }
 
 static void
