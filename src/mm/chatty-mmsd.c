@@ -839,8 +839,7 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
     direction = CHATTY_DIRECTION_IN;
     mms_status = CHATTY_STATUS_RECIEVED;
   } else {
-    chatty_mmsd_delete_mms (self, objectpath);
-    g_return_val_if_reached (NULL);
+    /* This is a state Chatty cannot support yet */
     return NULL;
   }
 
