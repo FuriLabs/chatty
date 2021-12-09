@@ -825,6 +825,8 @@ chatty_new_chat_dialog_show (GtkWidget *widget)
   g_ptr_array_set_size (self->selected_items, 0);
   self->selected_items->pdata[0] = NULL;
 
+  /* Re-filter so that selection changes are reverted */
+  gtk_filter_changed (self->filter, GTK_FILTER_CHANGE_DIFFERENT);
   chatty_list_row_select (CHATTY_LIST_ROW (self->new_contact_row), FALSE);
 
   gtk_widget_set_sensitive (self->start_button, FALSE);
