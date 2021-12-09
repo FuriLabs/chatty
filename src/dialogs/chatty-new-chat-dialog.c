@@ -855,6 +855,10 @@ chatty_new_chat_dialog_dispose (GObject *object)
   if (self->cancellable)
     g_cancellable_cancel (self->cancellable);
 
+  if (self->selected_items)
+    g_ptr_array_foreach (self->selected_items,
+                         chatty_new_chat_unset_items, NULL);
+
   g_clear_pointer (&self->selected_items, g_ptr_array_unref);
   g_clear_object (&self->cancellable);
   g_clear_object (&self->manager);
