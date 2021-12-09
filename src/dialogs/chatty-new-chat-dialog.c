@@ -74,7 +74,6 @@ struct _ChattyNewChatDialog
 
   GPtrArray  *selected_items;
   ChattyItem *selected_item;
-  char       *phone_number;
 
   ChattyContact *dummy_contact;
   GCancellable  *cancellable;
@@ -834,7 +833,6 @@ chatty_new_chat_dialog_show (GtkWidget *widget)
                          (GtkCallback)gtk_widget_destroy, NULL);
 
   /* Reset selection list */
-  g_clear_pointer (&self->phone_number, g_free);
   self->selected_item = NULL;
 
   contacts_search_entry = gtk_entry_get_text (GTK_ENTRY (self->contacts_search_entry));
@@ -860,7 +858,6 @@ chatty_new_chat_dialog_dispose (GObject *object)
   g_clear_object (&self->manager);
   g_clear_object (&self->slice_model);
   g_clear_object (&self->filter);
-  g_clear_pointer (&self->phone_number, g_free);
 
   G_OBJECT_CLASS (chatty_new_chat_dialog_parent_class)->dispose (object);
 }
