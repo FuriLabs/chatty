@@ -243,7 +243,7 @@ text_item_update_message (ChattyTextItem *self)
         if (g_str_has_prefix (file->path, "file://"))
           g_string_append (files_str, file->path);
         else
-          g_string_append_printf (files_str, "file:///%s", file->path);
+          g_string_append_printf (files_str, "file://%s", file->path);
       } else {
         g_string_append (files_str, file->url);
       }
