@@ -24,6 +24,12 @@ config_h.set_quoted('PACKAGE_VERSION', meson.project_version())
 # TODO: Use has_headers: 'olm/olm.h' when we bump meson requirement
 libolm_dep = cc.find_library('olm', required: true)
 
+if (cc.has_function('olm_account_unpublished_fallback_key', dependencies: libolm_dep))
+  config_h.set('OLM_ACCOUNT_PICKLE_V4', true)
+else
+  config_h.set('OLM_ACCOUNT_PICKLE_V4', false)
+endif
+
 if (cc.has_function('olm_pk_key_from_private', dependencies: libolm_dep))
   config_h.set('HAVE_OLM3', true)
 else
