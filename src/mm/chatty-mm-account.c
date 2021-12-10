@@ -403,29 +403,38 @@ chatty_mm_account_recieve_mms_cb (ChattyMmAccount *self,
   ChattyChat *chat;
   g_autoptr(ChattyMmBuddy) senderbuddy = NULL;
   ChattyMsgDirection message_dir;
-  ChattyMessage  *messagecheck;
+  ChattyMsgStatus msg_status;
+
+  message_dir = chatty_message_get_msg_direction (message);
+  msg_status = chatty_message_get_status (message);
 
   chat = chatty_mm_account_start_chat (self, recipientlist);
   g_return_if_fail (CHATTY_IS_MM_CHAT (chat));
 
   /*
-   * Check to see if this message exists (e.g. draft MMS sent)
+   * MMS Messages from Chatty will always start our as a Draft, then will
+   * transition to sent, and if deliver reports is on, to delivered.
+   * Thus, if we get a sent message that is sent or delivered, it is already
+   * in the chat
    */
+  if (message_dir == CHATTY_DIRECTION_OUT &&
+     (msg_status == CHATTY_STATUS_SENT || msg_status == CHATTY_STATUS_DELIVERED)) {
+    ChattyMessage  *messagecheck;
 
-  /*
-   *  TODO: I think it would be nicer if I could have a
-   *        chatty_mm_chat_find_message_with_uid (), then this will work if
-   *        chatty is closed and then reopened.
-   */
-  messagecheck = chatty_mm_chat_find_message_with_id (CHATTY_MM_CHAT (chat),
-                                                      chatty_message_get_id(message));
-  if (messagecheck != NULL) {
-    chatty_message_set_status (messagecheck, chatty_message_get_status (message), 0);
     chatty_history_add_message (self->history_db, chat, message);
+    messagecheck = chatty_mm_chat_find_message_with_id (CHATTY_MM_CHAT (chat),
+                                                        chatty_message_get_id (message));
+    /*
+     *  TODO: chatty_mm_chat_find_message_with_id () will not work if
+     *        chatty is closed and then reopened. There needs to be a way
+     *        to find the message if this check fails
+     */
+    if (messagecheck != NULL)
+      chatty_message_set_status (messagecheck, chatty_message_get_status (message), 0);
+
     return;
   }
 
-  message_dir = chatty_message_get_msg_direction (message);
   if (message_dir == CHATTY_DIRECTION_IN) {
     GListModel *users;
     guint items;
