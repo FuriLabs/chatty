@@ -1,3 +1,34 @@
+chatty (0.5.0~beta3) byzantium; urgency=medium
+
+  [ Mohammed Sadiq ]
+  * message-row: Don't show author for outgoing SMS/MMS
+  * matrix-api: Regenerate keys only if empty
+  * mmsd: Write settings directly to mmsd-tng
+  * settings: Remove unused settings
+  * new-chat-dialog: Remove unused struct member
+  * new-chat-dialog: Update contact filter when dialog is shown
+  * new-chat-dialog: Deselect selected items on dispose
+  * window: Destroy new-chat-dailog on finalize()
+  * tests: Fix matrix tests with olm account pickle v4
+  * text-item: Allow creating text-item from file only messages
+  * text-item: Remove an additional '/' in file url
+
+  [ Yuri Chornoivan ]
+  * po: Update Ukrainian translation
+
+  [ Luna Jernberg ]
+  * po: Update Swedish translation (fixed)
+
+  [ Chris Talbot ]
+  * mm-chat: Force contact update if SMS chat
+  * notification: Change message body based on message type
+  * mmsd: Don't delete statuses Chatty doesn't support yet
+
+  [ Daniel Șerbănescu ]
+  * po: Update Romanian translation
+
+ -- Mohammed Sadiq <sadiq@sadiqpk.org>  Fri, 10 Dec 2021 16:39:18 +0530
+
 chatty (0.5.0~beta2) byzantium; urgency=medium
 
   [ Mohammed Sadiq ]
