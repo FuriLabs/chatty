@@ -19,6 +19,7 @@
 # include "config.h"
 #endif
 
+#include <glib/gi18n.h>
 #include "chatty-settings.h"
 #include "chatty-account.h"
 #include "chatty-mm-chat.h"
@@ -784,6 +785,7 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
   g_autofree char *rx_modem_number = NULL;
   g_autofree char *mms_message = NULL;
   g_autofree char *contents = NULL;
+  g_autofree char *expire_time_string = NULL;
   GString *who;
   GVariantIter recipientiter;
   mms_payload *payload;
@@ -838,6 +840,22 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
      */
     direction = CHATTY_DIRECTION_IN;
     mms_status = CHATTY_STATUS_RECIEVED;
+  } else if (g_strcmp0 (status, "expired") == 0) {
+    g_autoptr(GDateTime) expire_time = NULL;
+    g_autofree char *expire_date = NULL;
+    direction = CHATTY_DIRECTION_IN;
+    mms_status = CHATTY_STATUS_RECIEVED;
+
+    g_variant_dict_lookup (&dict, "Expire", "s", &expire_date);
+
+    expire_time = g_date_time_new_from_iso8601 (expire_date, NULL);
+    if (!expire_time)
+      expire_time = g_date_time_new_now_local ();
+
+  /* TRANSLATORS: Timestamp for minute accuracy, e.g. “2020-08-11 15:27”.
+     See https://developer.gnome.org/glib/stable/glib-GDateTime.html#g-date-time-format
+   */
+    expire_time_string = g_date_time_format (expire_time, _("%Y-%m-%d %H:%M"));
   } else {
     /* This is a state Chatty cannot support yet */
     return NULL;
@@ -885,8 +903,10 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
   } else {
     who = g_string_new (NULL);
   }
-  g_variant_iter_init (&recipientiter, recipients);
-  while ((reciever = g_variant_iter_next_value (&recipientiter))) {
+  if (recipients)
+    g_variant_iter_init (&recipientiter, recipients);
+
+  while (recipients && (reciever = g_variant_iter_next_value (&recipientiter))) {
     g_autofree char *temp = NULL;
     g_autofree char *temp2 = NULL;
     const char *country_code = chatty_settings_get_country_iso_code (chatty_settings_get_default ());
@@ -910,9 +930,10 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
 
   /* Go through the attachments */
   attachments = g_variant_dict_lookup_value (&dict, "Attachments", G_VARIANT_TYPE_ARRAY);
-  g_variant_iter_init (&iter, attachments);
+  if (attachments)
+    g_variant_iter_init (&iter, attachments);
 
-  while ((attach = g_variant_iter_next_value (&iter))) {
+  while (attachments && (attach = g_variant_iter_next_value (&iter))) {
     ChattyFileInfo *attachment = NULL;
     GFile *new;
     GFileOutputStream *out;
@@ -1045,7 +1066,8 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
     files = g_list_prepend (files, attachment);
     attachment = NULL;
   }
-  g_object_unref (container);
+  if (attachments)
+    g_object_unref (container);
 
   num_files = g_list_length (files);
 
@@ -1088,6 +1110,14 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
      *       be SMIL to depend on for formatting.
      */
     mms_message = chatty_mmsd_process_mms_message_attachments (files, subject);
+  }
+
+  if (num_files == 0) {
+    if (g_strcmp0 (status, "expired") == 0)
+      mms_message = g_strdup_printf (_("You received an MMS, but it expired on: %s"),
+                                     expire_time_string);
+    else
+      mms_message = g_strdup (_("You received an empty MMS."));
   }
 
   date_time = g_date_time_new_from_iso8601 (date, NULL);
