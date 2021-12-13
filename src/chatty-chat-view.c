@@ -424,7 +424,7 @@ chat_view_send_file_button_clicked_cb (ChattyChatView *self,
 
   if (CHATTY_IS_MM_CHAT (self->chat)) {
     chat_view_show_file_chooser (self);
-  } if (CHATTY_IS_MA_CHAT (self->chat)) {
+  } else if (CHATTY_IS_MA_CHAT (self->chat)) {
     /* TODO */
 
   } else {
