@@ -40,6 +40,8 @@ void              chatty_mm_chat_prepend_messages       (ChattyMmChat   *self,
                                                          GPtrArray      *messages);
 ChattyMessage    *chatty_mm_chat_find_message_with_id   (ChattyMmChat   *self,
                                                          const char     *id);
+ChattyMessage    *chatty_mm_chat_find_message_with_uid  (ChattyMmChat   *self,
+                                                         const char     *uid);
 ChattyMmBuddy    *chatty_mm_chat_find_user              (ChattyMmChat   *self,
                                                          const char     *phone);
 void              chatty_mm_chat_add_user               (ChattyMmChat   *self,

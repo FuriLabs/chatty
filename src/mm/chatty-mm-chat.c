@@ -670,6 +670,32 @@ chatty_mm_chat_find_message_with_id (ChattyMmChat *self,
   return NULL;
 }
 
+ChattyMessage *
+chatty_mm_chat_find_message_with_uid (ChattyMmChat *self,
+                                      const char   *uid)
+{
+  guint n_items;
+
+  g_return_val_if_fail (CHATTY_IS_MM_CHAT (self), NULL);
+  g_return_val_if_fail (uid && *uid, NULL);
+
+  n_items = g_list_model_get_n_items (G_LIST_MODEL (self->message_store));
+
+  /* Search from end, the item is more likely to be at the end */
+  for (guint i = n_items; i > 0; i--) {
+    g_autoptr(ChattyMessage) message = NULL;
+    const char *message_uid;
+
+    message = g_list_model_get_item (G_LIST_MODEL (self->message_store), i - 1);
+    message_uid = chatty_message_get_uid (message);
+
+    if (g_str_equal (uid, message_uid))
+      return message;
+  }
+
+  return NULL;
+}
+
 ChattyMmBuddy *
 chatty_mm_chat_find_user (ChattyMmChat *self,
                           const char   *phone)
