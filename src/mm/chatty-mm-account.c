@@ -422,13 +422,8 @@ chatty_mm_account_recieve_mms_cb (ChattyMmAccount *self,
     ChattyMessage  *messagecheck;
 
     chatty_history_add_message (self->history_db, chat, message);
-    messagecheck = chatty_mm_chat_find_message_with_id (CHATTY_MM_CHAT (chat),
-                                                        chatty_message_get_id (message));
-    /*
-     *  TODO: chatty_mm_chat_find_message_with_id () will not work if
-     *        chatty is closed and then reopened. There needs to be a way
-     *        to find the message if this check fails
-     */
+    messagecheck = chatty_mm_chat_find_message_with_uid (CHATTY_MM_CHAT (chat),
+                                                         chatty_message_get_uid (message));
     if (messagecheck != NULL)
       chatty_message_set_status (messagecheck, chatty_message_get_status (message), 0);
 
