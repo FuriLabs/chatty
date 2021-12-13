@@ -1537,9 +1537,14 @@ chatty_history_migrate_db_to_v1_to_v3 (ChattyHistory *self,
     sqlite3_stmt *stmt;
     status = sqlite3_prepare_v2 (self->db,
                                  /* SMS users with phone numbers sorted */
-                                 "SELECT DISTINCT generated.who FROM "
-                                 "(SELECT who,id FROM chatty_im WHERE account='SMS' ORDER BY id ASC) "
-                                 "AS generated ORDER BY generated.id;",
+                                 /* HACK: empty LEFT JOIN is used to keep the first distinct match
+                                  * instead of the last in the list.
+                                  * We are still relying on implementation details of sqlite,
+                                  * which is not good.
+                                  */
+                                 "SELECT DISTINCT chatty_im.who FROM chatty_im "
+                                 "LEFT JOIN chatty_im as im "
+                                 "WHERE chatty_im.account='SMS' ORDER BY chatty_im.id ASC;",
                                  -1, &stmt, NULL);
 
     if (status == SQLITE_OK)
