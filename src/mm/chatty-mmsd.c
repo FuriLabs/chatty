@@ -1003,7 +1003,19 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
         out = g_file_create (new, G_FILE_CREATE_PRIVATE, NULL, &error);
         if (error) {
           if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_EXISTS)) {
+            g_autoptr(GFileInfo) file_info = NULL;
             g_debug ("%s Exists, Skipping Error....", g_file_peek_path (new));
+            g_clear_error (&error);
+            file_info = g_file_query_info (new,
+                                           G_FILE_ATTRIBUTE_STANDARD_SIZE,
+                                           G_FILE_QUERY_INFO_NONE,
+                                           NULL,
+                                           &error);
+            if (error)
+              g_warning ("Error getting file info: %s", error->message);
+            else
+              written = g_file_info_get_size (file_info);
+
           } else {
             g_warning ("Failed to create %s: %s",
                        g_file_peek_path (new), error->message);
@@ -1019,22 +1031,21 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
             g_warning ("Failed to write to file %s: %s",
                        g_file_peek_path (new), error->message);
             g_clear_error (&error);
-          } else {
-            attachment->file_name = g_strdup ("mms.smil");
-            attachment->mime_type = g_strdup ("application/smil");
-            attachment->size      = written;
-            attachment->path      = g_file_get_relative_path (parent, new);
-            attachment->url       = g_file_get_uri (new);
-            attachment->status    = CHATTY_FILE_DOWNLOADED;
-
-
-            files            = g_list_append (files, attachment);
-            attachment = NULL;
-            attachment = g_try_new0 (ChattyFileInfo, 1);
           }
         }
-      if (out)
-        g_output_stream_close (G_OUTPUT_STREAM (out), NULL, NULL);
+        if (out)
+          g_output_stream_close (G_OUTPUT_STREAM (out), NULL, NULL);
+
+        attachment->file_name = g_strdup ("mms.smil");
+        attachment->mime_type = g_strdup ("application/smil");
+        attachment->size      = written;
+        attachment->path      = g_file_get_relative_path (parent, new);
+        attachment->url       = g_file_get_uri (new);
+        attachment->status    = CHATTY_FILE_DOWNLOADED;
+
+        files = g_list_append (files, attachment);
+        attachment = NULL;
+        attachment = g_try_new0 (ChattyFileInfo, 1);
       }
     }
     filename = g_strdup (filenode);
@@ -1045,8 +1056,18 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
     out = g_file_create (new, G_FILE_CREATE_PRIVATE, NULL, &error);
     if (error) {
       if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_EXISTS)) {
-        g_debug ("%s Exists, Skipping Error....",
-                 g_file_peek_path (new));
+        g_autoptr(GFileInfo) file_info = NULL;
+        g_debug ("%s Exists, Skipping Error....", g_file_peek_path (new));
+        g_clear_error (&error);
+        file_info = g_file_query_info (new,
+                                       G_FILE_ATTRIBUTE_STANDARD_SIZE,
+                                       G_FILE_QUERY_INFO_NONE,
+                                       NULL,
+                                       &error);
+        if (error)
+          g_warning ("Error getting file info: %s", error->message);
+        else
+          written = g_file_info_get_size (file_info);
       } else {
         g_warning ("Failed to create %s: %s",
                    g_file_peek_path (new), error->message);
