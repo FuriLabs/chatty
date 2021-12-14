@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://source.puri.sm/Librem5/chatty/issues\n"
-"POT-Creation-Date: 2021-12-02 03:25+0000\n"
-"PO-Revision-Date: 2021-12-03 13:24+0200\n"
+"POT-Creation-Date: 2021-12-13 15:25+0000\n"
+"PO-Revision-Date: 2021-12-14 15:33+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -61,7 +61,7 @@ msgstr "Чи слід надсилати дані щодо того, що пов
 msgid "Message carbon copies"
 msgstr "Копії повідомлень"
 
-#: data/sm.puri.Chatty.gschema.xml:26 src/ui/chatty-settings-dialog.ui:484
+#: data/sm.puri.Chatty.gschema.xml:26 src/ui/chatty-settings-dialog.ui:478
 msgid "Share chat history among devices"
 msgstr "Спільний з іншими пристроями журнал спілкування"
 
@@ -77,7 +77,7 @@ msgstr "Увімкнути синхронізацію архіву MAM з сер
 msgid "Enable purple"
 msgstr "Увімкнути purple"
 
-#: data/sm.puri.Chatty.gschema.xml:38 src/ui/chatty-settings-dialog.ui:441
+#: data/sm.puri.Chatty.gschema.xml:38 src/ui/chatty-settings-dialog.ui:435
 msgid "Enable purple accounts"
 msgstr "Вимкнути облікові записи purple"
 
@@ -123,58 +123,26 @@ msgstr ""
 "Визначає, чи слід надсилати запит щодо звітів про доставлення вихідних SMS"
 
 #: data/sm.puri.Chatty.gschema.xml:79
-msgid "Request mmsd to handle SMIL"
-msgstr "Запит щодо mmsd для обробки SMIL"
-
-#: data/sm.puri.Chatty.gschema.xml:80
-msgid "Whether to request mmsd to create SMIL"
-msgstr "Чи слід надсилати запит щодо mmsd для створення SMIL"
-
-#: data/sm.puri.Chatty.gschema.xml:85
-msgid "Carrier mmsc for mmsd"
-msgstr "Носій сигналу mmsc для mmsd"
-
-#: data/sm.puri.Chatty.gschema.xml:86
-msgid "The carrier mmsc to set for mmsd"
-msgstr "Носій сигналу mmsc, який слід встановити для mmsd"
-
-#: data/sm.puri.Chatty.gschema.xml:91
-msgid "Carrier mms apn for mmsd"
-msgstr "Носій сигналу apn mms для mmsd"
-
-#: data/sm.puri.Chatty.gschema.xml:92
-msgid "The mms APN to set for mmsd"
-msgstr "APN mms, який слід встановити для mmsd"
-
-#: data/sm.puri.Chatty.gschema.xml:97
-msgid "Carrier mms proxy for mmsd"
-msgstr "Носій сигналу проксі mms для mmsd"
-
-#: data/sm.puri.Chatty.gschema.xml:98
-msgid "The mms proxy to set for mmsd"
-msgstr "Проксі mms, який слід встановити для mmsd"
-
-#: data/sm.puri.Chatty.gschema.xml:103
 msgid "Enable experimental features"
 msgstr "Увімкнути експериментальні можливості"
 
-#: data/sm.puri.Chatty.gschema.xml:104
+#: data/sm.puri.Chatty.gschema.xml:80
 msgid "Whether to enable experimental features"
 msgstr "Чи слід вмикати експериментальні можливості"
 
-#: data/sm.puri.Chatty.gschema.xml:109
+#: data/sm.puri.Chatty.gschema.xml:85
 msgid "Window maximized"
 msgstr "Вікно розгорнуто"
 
-#: data/sm.puri.Chatty.gschema.xml:110
+#: data/sm.puri.Chatty.gschema.xml:86
 msgid "Window maximized state"
 msgstr "Стан розгорнутого вікна"
 
-#: data/sm.puri.Chatty.gschema.xml:115
+#: data/sm.puri.Chatty.gschema.xml:91
 msgid "Window size"
 msgstr "Розмір вікна"
 
-#: data/sm.puri.Chatty.gschema.xml:116
+#: data/sm.puri.Chatty.gschema.xml:92
 msgid "Window size (width, height)."
 msgstr "Розмір вікна (ширина, висота)."
 
@@ -220,7 +188,7 @@ msgstr ""
 "Спроба показати довідку завершилася помилкою:\n"
 "%s"
 
-#: src/chatty-avatar.c:158 src/dialogs/chatty-new-chat-dialog.c:258
+#: src/chatty-avatar.c:158 src/dialogs/chatty-new-chat-dialog.c:257
 msgid "Send To"
 msgstr "Надіслати"
 
@@ -389,12 +357,12 @@ msgstr "Копіювати"
 msgid "Open Message"
 msgstr "Відкрити повідомлення"
 
-#: src/chatty-notification.c:213
+#: src/chatty-notification.c:214
 #, c-format
 msgid "New message from %s"
 msgstr "Нове повідомлення від %s"
 
-#: src/chatty-notification.c:215
+#: src/chatty-notification.c:216
 msgid "Message Received"
 msgstr "Надійшло повідомлення"
 
@@ -505,33 +473,33 @@ msgstr "Клієнт обміну повідомленнями SMS і XMPP"
 msgid "translator-credits"
 msgstr "Юрій Чорноіван <yurchor@ukr.net>, 2020"
 
-#: src/chatty-window.c:803
+#: src/chatty-window.c:804
 msgid "Any Protocol"
 msgstr "Будь-який протокол"
 
-#: src/chatty-window.c:804 src/ui/chatty-settings-dialog.ui:557
+#: src/chatty-window.c:805 src/ui/chatty-settings-dialog.ui:551
 msgid "Matrix"
 msgstr "Matrix"
 
-#: src/chatty-window.c:805
+#: src/chatty-window.c:806
 msgid "SMS/MMS"
 msgstr "SMS/MMS"
 
-#: src/chatty-window.c:808 src/ui/chatty-settings-dialog.ui:545
+#: src/chatty-window.c:809 src/ui/chatty-settings-dialog.ui:539
 msgid "XMPP"
 msgstr "XMPP"
 
-#: src/chatty-window.c:811 src/ui/chatty-settings-dialog.ui:571
+#: src/chatty-window.c:812 src/ui/chatty-settings-dialog.ui:565
 msgid "Telegram"
 msgstr "Telegram"
 
-#: src/chatty-window.c:848
+#: src/chatty-window.c:849
 #, c-format
 msgid "“%s” is not a valid phone number"
 msgstr "«%s» не є коректним номером телефону"
 
 #: src/dialogs/chatty-mm-chat-info.c:116
-#: src/dialogs/chatty-new-chat-dialog.c:553
+#: src/dialogs/chatty-new-chat-dialog.c:552
 msgid "Unknown Contact"
 msgstr "Невідомий контакт"
 
@@ -592,7 +560,7 @@ msgstr "Ід. Matrix:"
 msgid "Telegram ID:"
 msgstr "Ід. Telegram:"
 
-#: src/dialogs/chatty-new-chat-dialog.c:305
+#: src/dialogs/chatty-new-chat-dialog.c:304
 #, c-format
 msgid "Error opening GNOME Contacts: %s"
 msgstr "Помилка під час спроби відкрити «Контакти» GNOME: %s"
@@ -612,23 +580,23 @@ msgstr "З'єднання…"
 msgid "disconnected"
 msgstr "від'єднано"
 
-#: src/dialogs/chatty-settings-dialog.c:227
-#: src/dialogs/chatty-settings-dialog.c:391
+#: src/dialogs/chatty-settings-dialog.c:210
+#: src/dialogs/chatty-settings-dialog.c:374
 msgid "Failed to verify server"
 msgstr "Не вдалося перевірити сервер"
 
-#: src/dialogs/chatty-settings-dialog.c:278
-#: src/dialogs/chatty-settings-dialog.c:371
+#: src/dialogs/chatty-settings-dialog.c:261
+#: src/dialogs/chatty-settings-dialog.c:354
 msgid "Couldn't get Home server address"
 msgstr "Не вдалося отримати адресу домашнього сервера."
 
-#: src/dialogs/chatty-settings-dialog.c:498
+#: src/dialogs/chatty-settings-dialog.c:479
 #: src/ui/chatty-ma-account-details.ui:182
 #: src/ui/chatty-pp-account-details.ui:199
 msgid "Delete Account"
 msgstr "Вилучити запис"
 
-#: src/dialogs/chatty-settings-dialog.c:501
+#: src/dialogs/chatty-settings-dialog.c:482
 #, c-format
 msgid "Delete account %s?"
 msgstr "Вилучити запис %s?"
@@ -638,22 +606,21 @@ msgid "Restart chatty to disable purple"
 msgstr "Перезапустіть chatty, щоб вимкнути purple"
 
 #: src/dialogs/chatty-settings-dialog.c:620
-#: src/ui/chatty-settings-dialog.ui:442
+#: src/ui/chatty-settings-dialog.ui:436
 msgid "Enable purple plugin"
 msgstr "Увімкнути додаток purple"
 
 #: src/dialogs/chatty-settings-dialog.c:634
-#: src/ui/chatty-settings-dialog.ui:286
+#: src/ui/chatty-settings-dialog.ui:278
 msgid "SMS and MMS Settings"
 msgstr "Параметри SMS і MMS"
 
 #: src/dialogs/chatty-settings-dialog.c:636
-#: src/ui/chatty-settings-dialog.ui:305
+#: src/ui/chatty-settings-dialog.ui:297
 msgid "Purple Settings"
 msgstr "Параметри Purple"
 
 #: src/dialogs/chatty-settings-dialog.c:638
-#| msgid "Accounts"
 msgid "New Account"
 msgstr "Новий обліковий запис"
 
@@ -666,10 +633,10 @@ msgstr "Параметри"
 msgid "Select Protocol"
 msgstr "Виберіть протокол"
 
-#: src/dialogs/chatty-settings-dialog.c:899
+#. TRANSLATORS: Only translate 'or'
+#: src/dialogs/chatty-settings-dialog.c:865
 msgid "@user:matrix.org or user@example.com"
-msgstr ""
-"@user:matrix.org або user@example.com"
+msgstr "@user:matrix.org або user@example.com"
 
 #: src/matrix/chatty-ma-account.c:296
 msgid "Incorrect password"
@@ -730,6 +697,25 @@ msgstr "Сертифікат «%s» було відкликано"
 #, c-format
 msgid "Error validating certificate for ‘%s’"
 msgstr "Помилка під час спроби перевірити чинність сертифіката «%s»"
+
+#. TRANSLATORS: Timestamp for minute accuracy, e.g. “2020-08-11 15:27”.
+#. See https://developer.gnome.org/glib/stable/glib-GDateTime.html#g-date-time-format
+#.
+#: src/mm/chatty-mmsd.c:858
+#| msgid "%Y-%m-%d"
+msgid "%Y-%m-%d %H:%M"
+msgstr "%Y.%m.%d %H:%M"
+
+#: src/mm/chatty-mmsd.c:1117
+#, c-format
+msgid "You received an MMS, but it expired on: %s"
+msgstr ""
+"Вами отримано MMS, але строк його дії вичерпано %s"
+
+#: src/mm/chatty-mmsd.c:1120
+msgid "You received an empty MMS."
+msgstr ""
+"Вами отримано порожнє MMS."
 
 #: src/ui/chatty-dialog-join-muc.ui:17
 msgid "New Group Chat"
@@ -895,7 +881,7 @@ msgstr "Ідентифікатор запису"
 msgid "Protocol"
 msgstr "Протокол"
 
-#: src/ui/chatty-pp-account-details.ui:168 src/ui/chatty-settings-dialog.ui:631
+#: src/ui/chatty-pp-account-details.ui:168 src/ui/chatty-settings-dialog.ui:625
 msgid "Password"
 msgstr "Пароль"
 
@@ -923,90 +909,90 @@ msgstr "З_астосувати"
 msgid "Accounts"
 msgstr "Облікові записи"
 
-#: src/ui/chatty-settings-dialog.ui:182
-msgid "Add _new account…"
-msgstr "Додати _новий обліковий запис…"
-
-#: src/ui/chatty-settings-dialog.ui:196 src/ui/chatty-settings-dialog.ui:461
+#: src/ui/chatty-settings-dialog.ui:188 src/ui/chatty-settings-dialog.ui:455
 msgid "Privacy"
 msgstr "Конфіденційність"
 
-#: src/ui/chatty-settings-dialog.ui:202
+#: src/ui/chatty-settings-dialog.ui:194
 msgid "Message Receipts"
 msgstr "Отримання повідомлень"
 
-#: src/ui/chatty-settings-dialog.ui:203
+#: src/ui/chatty-settings-dialog.ui:195
 msgid "Confirm received messages"
 msgstr "Підтверджувати отримання повідомлень"
 
-#: src/ui/chatty-settings-dialog.ui:218
+#: src/ui/chatty-settings-dialog.ui:210
 msgid "Typing Notification"
 msgstr "Сповіщення щодо набирання"
 
-#: src/ui/chatty-settings-dialog.ui:219
+#: src/ui/chatty-settings-dialog.ui:211
 msgid "Send typing messages"
 msgstr "Надсилати повідомлення щодо набирання"
 
-#: src/ui/chatty-settings-dialog.ui:237
+#: src/ui/chatty-settings-dialog.ui:229
 msgid "Editor"
 msgstr "Редактор"
 
-#: src/ui/chatty-settings-dialog.ui:242
+#: src/ui/chatty-settings-dialog.ui:234
 msgid "Graphical Emoticons"
 msgstr "Графічні емоційки"
 
-#: src/ui/chatty-settings-dialog.ui:243
+#: src/ui/chatty-settings-dialog.ui:235
 msgid "if you type :) it will be changed to 😃"
 msgstr "якщо ви введете :), програма виконає заміну на 😃"
 
 #. TRANSLATORS: Return is the Enter key.
-#: src/ui/chatty-settings-dialog.ui:258
+#: src/ui/chatty-settings-dialog.ui:250
 msgid "Send Messages with Return"
 msgstr "Надсилати повідомлення клавішею вводу"
 
-#: src/ui/chatty-settings-dialog.ui:274
+#: src/ui/chatty-settings-dialog.ui:266
 msgid "Protocol Settings"
 msgstr "Параметри протоколу"
 
-#: src/ui/chatty-settings-dialog.ui:340
+#: src/ui/chatty-settings-dialog.ui:332
 msgid "Request Delivery Reports"
 msgstr "Надсилати запит щодо доставлення"
 
-#: src/ui/chatty-settings-dialog.ui:354
+#: src/ui/chatty-settings-dialog.ui:347
 msgid "SMIL for MMS"
 msgstr "SMIL для MMS"
 
-#: src/ui/chatty-settings-dialog.ui:371
+#: src/ui/chatty-settings-dialog.ui:365
 msgid "MMS Carrier Settings"
 msgstr "Параметри MMS носія сигналу"
 
-#: src/ui/chatty-settings-dialog.ui:375
+#: src/ui/chatty-settings-dialog.ui:369
 msgid "MMSC"
 msgstr "MMSC"
 
-#: src/ui/chatty-settings-dialog.ui:390
+#: src/ui/chatty-settings-dialog.ui:384
 msgid "APN"
 msgstr "APN"
 
-#: src/ui/chatty-settings-dialog.ui:405
+#: src/ui/chatty-settings-dialog.ui:399
 msgid "Proxy"
 msgstr "Проксі"
 
-#: src/ui/chatty-settings-dialog.ui:467
+#: src/ui/chatty-settings-dialog.ui:461
 msgid "Message Archive Management"
 msgstr "Керування архівом повідомлень"
 
-#: src/ui/chatty-settings-dialog.ui:468
+#: src/ui/chatty-settings-dialog.ui:462
 msgid "Sync conversations with chat server"
 msgstr "Синхронізувати спілкування із сервером"
 
-#: src/ui/chatty-settings-dialog.ui:483
+#: src/ui/chatty-settings-dialog.ui:477
 msgid "Message Carbon Copies"
 msgstr "Копії повідомлень"
 
-#: src/ui/chatty-settings-dialog.ui:667
+#: src/ui/chatty-settings-dialog.ui:661
 msgid "Home server"
 msgstr "Домашній сервер"
+
+#: src/ui/chatty-settings-dialog.ui:697
+msgid "Add _new account…"
+msgstr "Додати _новий обліковий запис…"
 
 #: src/ui/chatty-window.ui:28
 msgid "Keyboard _Shortcuts"
@@ -1075,50 +1061,3 @@ msgstr "Робочий: "
 #: src/users/chatty-contact.c:315
 msgid "Other: "
 msgstr "Інший: "
-
-#~ msgid "Chatty requires Client-Server API to be ‘r0.5.x’ or ‘r0.6.x’"
-#~ msgstr ""
-#~ "Для роботи Chatty потрібен програмний інтерфейс клієнт-сервер «r0.5.x» "
-#~ "або «r0.6.x»"
-
-#~ msgid "Matrix Home Server"
-#~ msgstr "Домашній сервер Matrix"
-
-#~ msgid "_Accept"
-#~ msgstr "При_йняти"
-
-#~ msgid "No chat selected"
-#~ msgstr "Не вибрано спілкування"
-
-#~ msgid "Chats List"
-#~ msgstr "Список спілкувань"
-
-#~ msgid "Indicate Idle Contacts"
-#~ msgstr "Позначати бездіяльні контакти"
-
-#~ msgid "Blur avatars from idle contacts"
-#~ msgstr "Розмивати аватари бездіяльних контактів"
-
-#~ msgid "Indicate Unknown Contacts"
-#~ msgstr "Позначати невідомі контакти"
-
-#~ msgid "Color unknown contact ID red"
-#~ msgstr "Позначати ідентифікатори невідомих контактів червоним"
-
-#~ msgid "Convert ASCII emoticons"
-#~ msgstr "Перетворювати емоційки в ASCII"
-
-#~ msgid "Return = Send Message"
-#~ msgstr "Ввід = надіслати повідомлення"
-
-#~ msgid "_Message Settings"
-#~ msgstr "П_араметри повідомлень"
-
-#~ msgid "Delivery Reports"
-#~ msgstr "Звіти щодо доставлення"
-
-#~ msgid "Request delivery reports for SMS and MMS"
-#~ msgstr "Надсилати запит щодо звіту про доставлення SMS та MMS"
-
-#~ msgid "Error saving contact: %s"
-#~ msgstr "Помилка під час спроби зберегти контакт: %s"
