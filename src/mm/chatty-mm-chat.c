@@ -80,43 +80,29 @@ static void
 chatty_mm_chat_update_contact (ChattyMmChat *self)
 {
   guint n_items;
-  GString *title = NULL;
 
   g_assert (CHATTY_IS_MM_CHAT (self));
 
   if (!self->chatty_eds)
     return;
 
-  title = g_string_new (NULL);
   n_items = g_list_model_get_n_items (G_LIST_MODEL (self->chat_users));
 
   for (guint i = 0; i < n_items; i++) {
     g_autoptr(ChattyMmBuddy) buddy = NULL;
     ChattyContact *contact;
-    const char *phone, *name;
+    const char *phone;
 
     buddy = g_list_model_get_item (G_LIST_MODEL (self->chat_users), i);
     phone = chatty_mm_buddy_get_number (buddy);
     contact = chatty_eds_find_by_number (self->chatty_eds, phone);
-    if (contact) {
+    if (contact)
       chatty_mm_buddy_set_contact (buddy, contact);
-      name = chatty_item_get_name (CHATTY_ITEM (contact));
-    } else {
-      name = phone;
-    }
-
-    g_string_append (title, name);
-    /* TODO: Improve so that this is translatable */
-    g_string_append (title, ", ");
   }
 
-  /* Delete the trailing ", " */
-  if (title->len > 2)
-    g_string_truncate (title, title->len - 2);
-
-  if (title->len && (!self->name || !*self->name || !self->has_custom_name || n_items == 1)) {
+  if (!self->name || !*self->name || !self->has_custom_name || n_items == 1) {
     g_free (self->name);
-    self->name = g_string_free (title, FALSE);
+    self->name = chatty_chat_generate_name (CHATTY_CHAT (self), G_LIST_MODEL (self->chat_users));
     self->has_custom_name = FALSE;
 
     g_object_notify (G_OBJECT (self), "name");
