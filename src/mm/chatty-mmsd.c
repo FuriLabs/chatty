@@ -106,7 +106,6 @@ struct _mms_payload {
 G_DEFINE_TYPE (ChattyMmsd, chatty_mmsd, G_TYPE_OBJECT)
 
 static void chatty_mmsd_process_mms (ChattyMmsd *self, mms_payload *payload);
-static void chatty_mmsd_delete_mms (ChattyMmsd *self, char *objectpath);
 
 static void
 mms_payload_free (gpointer data)
@@ -115,6 +114,12 @@ mms_payload_free (gpointer data)
 
   if (!payload)
     return;
+
+  if (payload->mmsd_message_proxy_watch_id != 0) {
+    g_debug ("Unsubscribing from MMS watch");
+    g_dbus_connection_signal_unsubscribe (payload->self->connection,
+                                          payload->mmsd_message_proxy_watch_id);
+  }
 
   g_free (payload->objectpath);
   g_free (payload->sender);
@@ -183,16 +188,22 @@ chatty_mmsd_get_message_proxy_cb (GObject      *service,
   }
 }
 
-static void
+void
 chatty_mmsd_delete_mms (ChattyMmsd *self,
-                        char       *objectpath)
+                        const char *uid)
 {
+  g_autofree char *objectpath = NULL;
+  if (g_str_has_prefix (uid, MMSD_MODEMMANAGER_PATH))
+    objectpath = g_strdup (uid);
+  else
+    objectpath = g_strdup_printf ("%s/%s", MMSD_MODEMMANAGER_PATH, uid);
+
   g_debug ("Deleting MMS with Object Path: %s", objectpath);
 
-  /*
-   *  I see you thinking you can move this, DONT! the objectpath is unique
-   *  based on the message.
-   */
+  if (g_hash_table_lookup (self->mms_hash_table, objectpath) == NULL) {
+     g_debug ("MMS not found. Was it already deleted?");
+     return;
+  }
 
   g_dbus_proxy_new (self->connection,
                     G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START,
@@ -204,6 +215,7 @@ chatty_mmsd_delete_mms (ChattyMmsd *self,
                     chatty_mmsd_get_message_proxy_cb,
                     self);
 
+  g_hash_table_remove (self->mms_hash_table, objectpath);
 }
 
 static void
@@ -308,13 +320,7 @@ chatty_mmsd_process_mms (ChattyMmsd  *self,
     }
   } else {
     g_debug ("MMS is finished sending/delivering/receiving. Deleting....");
-    if (payload->mmsd_message_proxy_watch_id != 0) {
-      g_debug ("Unsubscribing from MMS watch");
-      g_dbus_connection_signal_unsubscribe (self->connection,
-                                            payload->mmsd_message_proxy_watch_id);
-    }
     chatty_mmsd_delete_mms (self, payload->objectpath);
-    g_hash_table_remove (self->mms_hash_table, payload->objectpath);
   }
 }
 
@@ -967,7 +973,6 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
       if (error && g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND)) {
         g_debug ("MMS Payload does not exist, deleting...");
         chatty_mmsd_delete_mms (self, payload->objectpath);
-        g_hash_table_remove (self->mms_hash_table, payload->objectpath);
         return NULL;
       } else if (error) {
         g_warning ("Error loading MMSD Payload: %s", error->message);
