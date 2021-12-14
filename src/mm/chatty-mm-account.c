@@ -394,7 +394,7 @@ chatty_mm_account_append_message (ChattyMmAccount *self,
     g_list_model_items_changed (G_LIST_MODEL (self->chat_list), position, 1, 1);
 }
 
-void
+gboolean
 chatty_mm_account_recieve_mms_cb (ChattyMmAccount *self,
                                   ChattyMessage   *message,
                                   const char      *sender,
@@ -408,9 +408,6 @@ chatty_mm_account_recieve_mms_cb (ChattyMmAccount *self,
   message_dir = chatty_message_get_msg_direction (message);
   msg_status = chatty_message_get_status (message);
 
-  chat = chatty_mm_account_start_chat (self, recipientlist);
-  g_return_if_fail (CHATTY_IS_MM_CHAT (chat));
-
   /*
    * MMS Messages from Chatty will always start our as a Draft, then will
    * transition to sent, and if deliver reports is on, to delivered.
@@ -421,14 +418,29 @@ chatty_mm_account_recieve_mms_cb (ChattyMmAccount *self,
      (msg_status == CHATTY_STATUS_SENT || msg_status == CHATTY_STATUS_DELIVERED)) {
     ChattyMessage  *messagecheck;
 
-    chatty_history_add_message (self->history_db, chat, message);
+    chat = chatty_mm_account_find_chat (self, recipientlist);
+
+    /* The chat was deleted before the update, so just delete the MMS */
+    if (!chat) {
+      chatty_mmsd_delete_mms (self->mmsd, chatty_message_get_uid (message));
+      return FALSE;
+    }
+
     messagecheck = chatty_mm_chat_find_message_with_uid (CHATTY_MM_CHAT (chat),
                                                          chatty_message_get_uid (message));
-    if (messagecheck != NULL)
+    if (messagecheck != NULL) {
       chatty_message_set_status (messagecheck, chatty_message_get_status (message), 0);
+      chatty_history_add_message (self->history_db, chat, message);
+    } else { /* The MMS was deleted before the update, so just delete the MMS */
+      chatty_mmsd_delete_mms (self->mmsd, chatty_message_get_uid (message));
+      return FALSE;
+    }
 
-    return;
+    return TRUE;
   }
+
+  chat = chatty_mm_account_start_chat (self, recipientlist);
+  g_return_val_if_fail (CHATTY_IS_MM_CHAT (chat), FALSE);
 
   if (message_dir == CHATTY_DIRECTION_IN) {
     GListModel *users;
@@ -464,6 +476,8 @@ chatty_mm_account_recieve_mms_cb (ChattyMmAccount *self,
   chatty_message_set_user (message, CHATTY_ITEM (senderbuddy));
 
   chatty_mm_account_append_message (self, message, chat);
+
+  return TRUE;
 }
 
 static void

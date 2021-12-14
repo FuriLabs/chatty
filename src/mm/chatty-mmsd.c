@@ -290,10 +290,13 @@ chatty_mmsd_process_mms (ChattyMmsd  *self,
   recipientlist = g_strdup (payload->chat);
   g_return_if_fail (recipientlist && *recipientlist);
 
-  chatty_mm_account_recieve_mms_cb (self->mm_account,
-                                    message,
-                                    sender,
-                                    recipientlist);
+  if (!chatty_mm_account_recieve_mms_cb (self->mm_account,
+                                         message,
+                                         sender,
+                                         recipientlist)) {
+     g_debug ("Message was deleted!");
+     return;
+  }
 
   /*
    * Message is still a draft in mmsd and hasn't been sent.
