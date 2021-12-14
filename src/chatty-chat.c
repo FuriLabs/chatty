@@ -17,6 +17,7 @@
 
 #define _GNU_SOURCE
 #include <string.h>
+#include <glib/gi18n.h>
 
 #include "chatty-notification.h"
 #include "chatty-history.h"
@@ -573,6 +574,59 @@ chatty_chat_is_im (ChattyChat *self)
   g_return_val_if_fail (CHATTY_IS_CHAT (self), FALSE);
 
   return CHATTY_CHAT_GET_CLASS (self)->is_im (self);
+}
+
+/**
+ * chatty_chat_generate_name:
+ * @self: A #ChattyChat
+ *
+ * Generate custom name from chat members.
+ *
+ * Returns: A string that can be used to represent
+ * @self chat.  Free with g_free().
+ */
+char *
+chatty_chat_generate_name (ChattyChat *self,
+                           GListModel *members)
+{
+  const char *name_a = NULL, *name_b = NULL;
+  guint n_items, count;
+
+  g_return_val_if_fail (CHATTY_IS_CHAT (self), NULL);
+  g_return_val_if_fail (G_IS_LIST_MODEL (members), NULL);
+
+  count = n_items = g_list_model_get_n_items (members);
+
+  for (guint i = 0; i < MIN (3, n_items); i++) {
+    g_autoptr(ChattyItem) buddy = NULL;
+
+    buddy = g_list_model_get_item (members, i);
+
+    /* Don't add self to create room name */
+    if (g_strcmp0 (chatty_item_get_username (buddy), chatty_item_get_username (CHATTY_ITEM (self))) == 0) {
+      count--;
+      continue;
+    }
+
+    if (!name_a)
+      name_a = chatty_item_get_name (buddy);
+    else
+      name_b = chatty_item_get_name (buddy);
+  }
+
+  if (count == 0)
+    return g_strdup (_("Empty room"));
+
+  if (count == 1)
+    return g_strdup (name_a);
+
+  if (count == 2)
+    /* TRANSLATORS: %s are name/user-id/phone numbers of two users */
+    return g_strdup_printf (_("%s and %s"), name_a, name_b);
+
+  return g_strdup_printf (g_dngettext (GETTEXT_PACKAGE, "%s and %u other",
+                                       "%s and %u others", count - 1),
+                          name_a, count - 1);
 }
 
 gboolean
