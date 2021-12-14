@@ -1001,7 +1001,7 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
 
         new = g_file_get_child (savepath, "mms.smil");
         out = g_file_create (new, G_FILE_CREATE_PRIVATE, NULL, &error);
-        if (out == NULL) {
+        if (error) {
           if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_EXISTS)) {
             g_debug ("%s Exists, Skipping Error....", g_file_peek_path (new));
           } else {
@@ -1033,6 +1033,8 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
             attachment = g_try_new0 (ChattyFileInfo, 1);
           }
         }
+      if (out)
+        g_output_stream_close (G_OUTPUT_STREAM (out), NULL, NULL);
       }
     }
     filename = g_strdup (filenode);
@@ -1062,7 +1064,8 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
         g_clear_error (&error);
       }
     }
-    g_output_stream_close (G_OUTPUT_STREAM (out), NULL, NULL);
+    if (out)
+      g_output_stream_close (G_OUTPUT_STREAM (out), NULL, NULL);
 
     attachment->file_name = g_strdup (filename);
     attachment->mime_type = g_strdup (mimetype);
