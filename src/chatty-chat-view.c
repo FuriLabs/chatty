@@ -291,6 +291,8 @@ chat_account_status_changed_cb (ChattyChatView *self)
   gtk_widget_set_sensitive (self->message_input, enabled);
   gtk_widget_set_sensitive (self->send_file_button, enabled);
   gtk_widget_set_sensitive (self->send_message_button, enabled);
+
+  gtk_widget_set_visible (self->send_file_button, chatty_chat_has_file_upload (self->chat));
 }
 
 static GtkWidget *
