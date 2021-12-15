@@ -86,8 +86,15 @@ find_url (const char  *buffer,
       break;
   }
 
-  if (url)
-    *end = strchrnul (url, ' ');
+  if (url) {
+    size_t url_end;
+
+    url_end = strcspn (url, " \n()[],\t\r");
+    if (url_end)
+      *end = url + url_end;
+    else
+      *end = url + strlen (url);
+  }
 
   return url;
 }
