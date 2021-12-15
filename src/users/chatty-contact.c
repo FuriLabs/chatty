@@ -262,7 +262,7 @@ chatty_contact_new (EContact        *contact,
   ChattyContact *self;
 
   self = g_object_new (CHATTY_TYPE_CONTACT, NULL);
-  self->e_contact = g_object_ref (contact);
+  g_set_object (&self->e_contact, contact);
   self->attribute = attr;
   self->protocol  = protocol;
 
