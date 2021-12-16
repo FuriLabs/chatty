@@ -121,6 +121,9 @@ compare_table (sqlite3    *db,
 
   status = sqlite3_prepare_v2 (db, sql, -1, &stmt, NULL);
   if (status != SQLITE_OK)
+    g_message ("%s", sqlite3_errmsg (db));
+
+  if (status != SQLITE_OK)
     g_warning ("sql: %s", sql);
 
   g_assert_cmpint (status, ==, SQLITE_OK);
@@ -143,6 +146,9 @@ compare_table (sqlite3    *db,
 static void
 compare_history_db (sqlite3 *db)
 {
+  sqlite3_stmt *stmt;
+  int status;
+
   /* Pragma version should match */
   g_assert_cmpint (history_db_get_int (db, "PRAGMA main.user_version;"), ==,
                    history_db_get_int (db, "PRAGMA test.user_version;"));
@@ -151,6 +157,32 @@ compare_history_db (sqlite3 *db)
   g_assert_cmpint (history_db_get_int (db, "SELECT COUNT(*) FROM main.sqlite_master;"),
                    ==,
                    history_db_get_int (db, "SELECT COUNT(*) FROM test.sqlite_master;"));
+
+  status = sqlite3_prepare_v2 (db, "SELECT DISTINCT tbl_name,type FROM main.sqlite_master "
+                               /* A column with 'sqlite' in name is not ours */
+                               "WHERE NOT instr(name,'sqlite');", -1, &stmt, NULL);
+  g_assert_cmpint (status, ==, SQLITE_OK);
+
+  while ((status = sqlite3_step (stmt)) == SQLITE_ROW) {
+    g_autofree char *main_sql = NULL;
+    g_autofree char *test_sql = NULL;
+    g_autofree char *sql = NULL;
+
+    sql = g_strdup_printf ("SELECT COUNT (*) FROM ("
+                           "SELECT name,type,\"notnull\",dflt_value,pk FROM pragma_table_info('%s', 'main') "
+                           "UNION "
+                           "SELECT name,type,\"notnull\",dflt_value,pk FROM pragma_table_info('%s', 'test') "
+                           ");", sqlite3_column_text (stmt, 0), sqlite3_column_text (stmt, 0));
+    main_sql = g_strdup_printf ("SELECT COUNT(*) FROM pragma_table_info('%s', 'main');",
+                                sqlite3_column_text (stmt, 0));
+    test_sql = g_strdup_printf ("SELECT COUNT(*) FROM pragma_table_info('%s', 'test');",
+                                sqlite3_column_text (stmt, 0));
+    g_debug ("%d items in '%s' table", history_db_get_int (db, main_sql), sqlite3_column_text (stmt, 0));
+    compare_table (db, sql, history_db_get_int (db, main_sql), history_db_get_int (db, test_sql));
+  }
+
+  sqlite3_finalize (stmt);
+  g_assert_cmpint (status, ==, SQLITE_DONE);
 
   /* As duplicate rows are removed, SELECT count should match the size of one table. */
   compare_table (db,
