@@ -652,119 +652,77 @@ chatty_mmsd_send_mms_async (ChattyMmsd    *self,
  * all attachments along with the Message and Subject.
  */
 static char *
-chatty_mmsd_process_mms_message_attachments (GList *files, char *subject)
+chatty_mmsd_process_mms_message_attachments (GList **filesp)
 {
   GString *message_contents;
-  GFile *text_file = NULL;
-  gboolean first_attachment = FALSE;
+  gboolean content_set = FALSE;
 
   message_contents = g_string_new (NULL);
-  for (GList *l = files; l != NULL; l = l->next) {
+
+  for (GList *l = *filesp; l != NULL;) {
     ChattyFileInfo *attachment = l->data;
 
+    l = l->next;
     if (g_strcmp0(attachment->mime_type, "application/smil") == 0) {
+      *filesp = g_list_remove (*filesp, attachment);
+      if (attachment->url) {
+        g_autoptr(GFile) file = NULL;
+        g_autoptr(GError) error = NULL;
+
+        file = g_file_new_for_uri (attachment->url);
+        g_file_delete (file, NULL, &error);
+
+        if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND))
+          g_warning ("Deleting file failed: %s", error->message);
+      }
+      chatty_file_info_free (attachment);
+
       continue;
     }
 
-    if (g_str_match_string ("text/plain", attachment->mime_type, TRUE)) {
-      /* If an MMS has a message, it tends to be the first text/plain attachment */
-      if (text_file == NULL) {
-        g_autoptr(GError) error = NULL;
-        char *contents;
-        gsize length;
+    /* If an MMS has a message, it tends to be the first text/plain attachment */
+    if (!content_set && g_str_match_string ("text/plain", attachment->mime_type, TRUE)) {
+      g_autoptr(GFile) text_file = NULL;
+      g_autofree char *contents = NULL;
+      g_autoptr(GError) error = NULL;
+      gsize length;
 
-        text_file = g_file_new_build_filename (g_get_user_data_dir (),
-                                               "chatty", attachment->path, NULL);
-        g_file_load_contents (text_file,
-                              NULL,
-                              &contents,
-                              &length,
-                              NULL,
-                              &error);
-        message_contents = g_string_prepend (message_contents, "\n\n");
-        message_contents = g_string_prepend (message_contents, contents);
-        if (subject != NULL) {
-          message_contents = g_string_prepend (message_contents, "Message: ");
-        }
-        g_object_unref (text_file);
-      } else {
-        g_debug ("Already found text file, skipping....");
-        if (first_attachment)
-          message_contents = g_string_append (message_contents, "\n\n");
-        else
-          first_attachment = TRUE;
-
-        message_contents = g_string_append (message_contents, attachment->url);
+      text_file = g_file_new_build_filename (g_get_user_data_dir (),
+                                             "chatty", attachment->path, NULL);
+      g_file_load_contents (text_file,
+                            NULL,
+                            &contents,
+                            &length,
+                            NULL,
+                            &error);
+      if (error) {
+        g_warning ("error opening file: %s", error->message);
+        break;
       }
-    } else {
-      if (first_attachment)
-        message_contents = g_string_append (message_contents, "\n\n");
-      else
-        first_attachment = TRUE;
 
-      message_contents = g_string_append (message_contents, attachment->url);
-    }
-  }
+      if (contents && *contents)
+        g_string_append (message_contents, contents);
+      content_set = TRUE;
 
-  if (subject != NULL) {
-    message_contents = g_string_prepend (message_contents, "\n\n");
-    message_contents = g_string_prepend (message_contents, subject);
-    message_contents = g_string_prepend (message_contents, "Subject: ");
-  }
+      /* We don't want the message content to be saved as a file */
+      *filesp = g_list_remove (*filesp, attachment);
+      if (attachment->url) {
+        g_autoptr(GFile) file = NULL;
 
-  return g_string_free (message_contents, FALSE);
-}
+        file = g_file_new_for_uri (attachment->url);
+        g_file_delete (file, NULL, &error);
 
-static char *
-chatty_mmsd_process_mms_message_text (GList *files, char *subject)
-{
-  GString *message_contents;
-  GFile *text_file = NULL;
-
-  message_contents = g_string_new (NULL);
-  for (GList *l = files; l != NULL; l = l->next) {
-    ChattyFileInfo *attachment = l->data;
-
-    if (g_strcmp0(attachment->mime_type, "application/smil") == 0) {
-      continue;
-    }
-
-    if (g_str_match_string ("text/plain", attachment->mime_type, TRUE)) {
-      /* If an MMS has a message, it tends to be the first text/plain attachment */
-      if (text_file == NULL) {
-        g_autoptr(GError) error = NULL;
-        char *contents;
-        gsize length;
-
-        g_debug ("Found Text file!");
-        text_file = g_file_new_build_filename (g_get_user_data_dir (),
-                                               "chatty", attachment->path, NULL);
-        g_file_load_contents (text_file,
-                              NULL,
-                              &contents,
-                              &length,
-                              NULL,
-                              &error);
-        message_contents = g_string_prepend (message_contents, contents);
-        if (subject != NULL) {
-          message_contents = g_string_prepend (message_contents, "Message: ");
-        }
-        g_object_unref (text_file);
-      } else {
-        g_debug ("Already found text file, skipping....");
+        if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND))
+          g_warning ("Deleting file failed: %s", error->message);
       }
+      chatty_file_info_free (attachment);
     }
   }
 
-  if (subject != NULL) {
-    message_contents = g_string_prepend (message_contents, "\n\n");
-    message_contents = g_string_prepend (message_contents, subject);
-    message_contents = g_string_prepend (message_contents, "Subject: ");
-  }
+  if (message_contents->len)
+    return g_string_free (message_contents, FALSE);
 
-  g_debug ("MMS Message: %s", message_contents->str);
-
-  return g_string_free (message_contents, FALSE);
+  return NULL;
 }
 
 static mms_payload *
@@ -800,7 +758,6 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
   mms_payload *payload;
   gint64 unix_time = 0;
   int delivery_report = FALSE;
-  guint num_files;
 
   parent = g_file_new_build_filename (g_get_user_data_dir (),
                                       "chatty", NULL);
@@ -1103,50 +1060,26 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
   if (attachments)
     g_object_unref (container);
 
-  num_files = g_list_length (files);
+  mms_message = chatty_mmsd_process_mms_message_attachments (&files);
 
-  if (num_files == 2) {
-    GList *l = files->next;
-    ChattyFileInfo *smil_file = l->data;
-    /*
-     * If there is only one file and SMIL, there is no reason to keep the SMIL
-     * treat it just like there is only one attachment
-     */
-    if (g_strcmp0(smil_file->mime_type, "application/smil") == 0) {
-      files = g_list_delete_link (files, l);
-      num_files = g_list_length (files);
-      chatty_file_info_free (smil_file);
-    }
+  if ((!files || !files->data) && savepath) {
+    g_autoptr(GError) error = NULL;
+
+    g_file_delete (savepath, NULL, &error);
+
+    if (error)
+      g_warning ("Error deleting empty MMS directory: %s", error->message);
   }
 
-  if (num_files == 1) {
+  if (!subject && !mms_message && files && g_list_length (files) == 1) {
     ChattyFileInfo *attachment = files->data;
-    if (g_str_has_prefix (attachment->mime_type, "image")) {
+
+    if (attachment && attachment->mime_type &&
+        g_str_has_prefix (attachment->mime_type, "image"))
       chatty_msg_type = CHATTY_MESSAGE_IMAGE;
-    } else if (g_str_has_prefix (attachment->mime_type, "video")) {
-      /* TODO: Support for inline video */
-      //chatty_msg_type = CHATTY_MESSAGE_VIDEO;
-      mms_message = chatty_mmsd_process_mms_message_attachments (files, subject);
-    } else if (g_str_has_prefix (attachment->mime_type, "audio")) {
-      /* TODO: Support for inline audio */
-      //chatty_msg_type = CHATTY_MESSAGE_AUDIO;
-      mms_message = chatty_mmsd_process_mms_message_attachments (files, subject);
-    } else if (g_str_match_string ("text/plain", attachment->mime_type, TRUE)) {
-      mms_message = chatty_mmsd_process_mms_message_text (files, subject);
-    } else {
-      /* TODO: Support for inline file */
-      //chatty_msg_type = CHATTY_MESSAGE_FILE;
-      mms_message = chatty_mmsd_process_mms_message_attachments (files, subject);
-    }
-  } else {
-    /*
-     * TODO: Support for inline multiple attachments. There may not necessarily
-     *       be SMIL to depend on for formatting.
-     */
-    mms_message = chatty_mmsd_process_mms_message_attachments (files, subject);
   }
 
-  if (num_files == 0) {
+  if (!mms_message && !files) {
     if (g_strcmp0 (status, "expired") == 0)
       mms_message = g_strdup_printf (_("You received an MMS, but it expired on: %s"),
                                      expire_time_string);
@@ -1166,6 +1099,7 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
     basename = g_path_get_basename (objectpath);
     payload->message = chatty_message_new (NULL, mms_message, basename, unix_time,
                                            chatty_msg_type, direction, mms_status);
+    chatty_message_set_subject (payload->message, subject);
     chatty_message_set_id (payload->message, basename);
     chatty_message_set_files (payload->message, files);
   }
