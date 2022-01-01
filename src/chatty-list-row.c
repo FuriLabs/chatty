@@ -40,6 +40,7 @@ struct _ChattyListRow
   GtkWidget     *unread_message_count;
   GtkWidget     *checkbox;
   GtkWidget     *add_contact_button;
+  GtkWidget     *call_button;
 
   ChattyItem    *item;
   gboolean       hide_chat_details;
@@ -395,6 +396,21 @@ chatty_list_row_add_contact_clicked_cb (ChattyListRow *self)
 }
 
 static void
+chatty_list_row_call_button_clicked_cb (ChattyListRow *self)
+{
+  g_autoptr(GError) error = NULL;
+  g_autofree char *uri = NULL;
+
+  g_return_if_fail (CHATTY_IS_CONTACT (self->item));
+
+  uri = g_strconcat ("tel://", chatty_item_get_username (self->item), NULL);
+
+  g_debug ("Calling uri: %s", uri);
+  if (!gtk_show_uri_on_window (NULL, uri, GDK_CURRENT_TIME, &error))
+    g_warning ("Failed to launch call: %s", error->message);
+}
+
+static void
 chatty_list_row_finalize (GObject *object)
 {
   ChattyListRow *self = (ChattyListRow *)object;
@@ -423,8 +439,10 @@ chatty_list_row_class_init (ChattyListRowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyListRow, last_modified);
   gtk_widget_class_bind_template_child (widget_class, ChattyListRow, unread_message_count);
   gtk_widget_class_bind_template_child (widget_class, ChattyListRow, add_contact_button);
+  gtk_widget_class_bind_template_child (widget_class, ChattyListRow, call_button);
 
   gtk_widget_class_bind_template_callback (widget_class, chatty_list_row_add_contact_clicked_cb);
+  gtk_widget_class_bind_template_callback (widget_class, chatty_list_row_call_button_clicked_cb);
 }
 
 static void
@@ -521,4 +539,24 @@ chatty_list_row_set_contact (ChattyListRow *self, gboolean enable)
   g_return_if_fail (CHATTY_IS_LIST_ROW (self));
 
   gtk_widget_set_visible (self->add_contact_button, enable);
+}
+
+void
+chatty_list_row_set_call (ChattyListRow *self, gboolean enable)
+{
+  g_autoptr(GAppInfo) app_info = NULL;
+
+  g_return_if_fail (CHATTY_IS_LIST_ROW (self));
+
+  app_info = g_app_info_get_default_for_uri_scheme ("tel");
+
+  if (app_info) {
+    gboolean user_valid;
+    user_valid = CHATTY_IS_CONTACT (self->item) &&
+                 chatty_utils_username_is_valid (chatty_item_get_username (self->item),
+                                                 CHATTY_PROTOCOL_MMS_SMS);
+
+    gtk_widget_set_visible (self->call_button, enable && user_valid);
+  } else
+    gtk_widget_hide (self->call_button);
 }
