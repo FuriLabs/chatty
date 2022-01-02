@@ -964,7 +964,9 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
 
     if (!container) {
       g_autofree char *tag = NULL;
+      g_autofree char *uid = NULL;
 
+      uid = g_path_get_basename (objectpath);
       container = g_file_new_for_path (containerpath);
       g_file_load_contents (container,
                             NULL,
@@ -982,7 +984,7 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
         return NULL;
       }
 
-      tag = g_strconcat (date, payload->sender, NULL);
+      tag = g_strconcat (date, payload->sender, uid, NULL);
       /* Save MMS in $XDG_DATA_HOME/chatty/mms/ */
       savepath = g_file_new_build_filename (g_get_user_data_dir (),
                                             "chatty", "mms", tag, NULL);
