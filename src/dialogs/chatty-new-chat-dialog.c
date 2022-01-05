@@ -133,13 +133,14 @@ static gboolean
 dialog_filter_item_cb (ChattyItem          *item,
                        ChattyNewChatDialog *self)
 {
+  ChattyAccount *account;
+
   g_return_val_if_fail (CHATTY_IS_NEW_CHAT_DIALOG (self), FALSE);
 
   if (self->multi_selection) {
-    ChattyAccount *mm_account;
 
-    mm_account  = chatty_manager_get_mm_account (self->manager);
-    if (chatty_account_get_status (mm_account) == CHATTY_CONNECTED) {
+    account = chatty_manager_get_mm_account (self->manager);
+    if (chatty_account_get_status (account) == CHATTY_CONNECTED) {
       if (chatty_item_matches (item, self->search_str, CHATTY_PROTOCOL_MMS_SMS, TRUE) &&
           !new_chat_dialog_contact_is_selected (CHATTY_CONTACT (item)))
         return TRUE;
@@ -151,8 +152,6 @@ dialog_filter_item_cb (ChattyItem          *item,
 
 #ifdef PURPLE_ENABLED
   if (CHATTY_IS_PP_BUDDY (item)) {
-    ChattyAccount *account;
-
     account = chatty_pp_buddy_get_account (CHATTY_PP_BUDDY (item));
 
     if (chatty_account_get_status (account) != CHATTY_CONNECTED)
@@ -161,8 +160,6 @@ dialog_filter_item_cb (ChattyItem          *item,
 #endif
 
   if (CHATTY_IS_CHAT (item)) {
-    ChattyAccount *account;
-
 #ifdef PURPLE_ENABLED
     /* Hide chat if it's buddy chat as the buddy is shown separately */
     if (CHATTY_IS_PP_CHAT (item) &&
