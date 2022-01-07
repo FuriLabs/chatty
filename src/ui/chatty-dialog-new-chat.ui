@@ -145,9 +145,10 @@
           <object class="GtkScrolledWindow">
             <property name="propagate_natural_height">True</property>
             <property name="hscrollbar_policy">never</property>
+            <property name="vscrollbar_policy">never</property>
             <property name="expand">True</property>
             <property name="visible">True</property>
-            <signal name="edge-reached" handler="contact_stroll_edge_reached_cb" swapped="yes"/>
+
             <child>
               <object class="GtkStack" id="new_chat_stack">
                 <property name="visible">True</property>
@@ -194,75 +195,11 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkListBox" id="contacts_listbox">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="expand">False</property>
-                        <property name="selection-mode">none</property>
-                        <signal name="row-activated" handler="selected_contact_row_activated_cb" swapped="yes"/>
-                        <style>
-                         <class name="frame"/>
-                        </style>
+                      <object class="ChattyContactList" id="contact_list">
+                        <property name="visible">1</property>
+                        <signal name="selection-changed" handler="contact_list_selection_changed_cb" swapped="yes"/>
                       </object>
                     </child>
-
-                    <child>
-                      <object class="GtkStack" id="contact_list_stack">
-                        <property name="visible">True</property>
-
-                        <!-- Search results view -->
-                        <child>
-                          <object class="GtkBox" id="contact_list_view">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="hexpand">True</property>
-                            <property name="orientation">vertical</property>
-                            <property name="valign">start</property>
-
-                            <child>
-                              <object class="GtkListBox" id="new_contact_listbox">
-                                <property name="visible" bind-source="new_contact_row" bind-property="visible"/>
-                                <property name="selection-mode">none</property>
-                                <signal name="row-activated" handler="contact_row_activated_cb" swapped="yes"/>
-                                <child>
-                                  <object class="ChattyListRow" id="new_contact_row"/>
-                                </child>
-                                <style>
-                                 <class name="frame"/>
-                                </style>
-                              </object>
-                            </child>
-
-                            <child>
-                              <object class="GtkListBox" id="chats_listbox">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="expand">True</property>
-                                <property name="selection-mode">none</property>
-                                <signal name="row-activated" handler="contact_row_activated_cb" swapped="yes"/>
-                                <style>
-                                 <class name="frame"/>
-                                </style>
-                              </object>
-                            </child>
-
-                          </object>
-                        </child>
-
-                        <!-- Empty search results view -->
-                        <child>
-                          <object class="HdyStatusPage" id="empty_search_view">
-                            <property name="visible">True</property>
-                            <property name="expand">True</property>
-                            <property name="icon-name">system-search-symbolic</property>
-                            <property name="title" translatable="yes">No Search Results</property>
-                            <property name="description" translatable="yes">Try different search, or type a valid number to create new chat</property>
-                          </object>
-                        </child>
-
-                      </object>
-                    </child>
-
                   </object>
                   <packing>
                     <property name="name">view-new-chat</property>
@@ -419,6 +356,7 @@
                 </child>
               </object>
             </child>
+
           </object>
           <packing>
             <property name="expand">True</property>
