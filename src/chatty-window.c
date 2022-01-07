@@ -271,54 +271,13 @@ static void
 window_show_new_chat_dialog (ChattyWindow *self,
                              gboolean      can_multi_select)
 {
-  g_autoptr(GString) sendlist = g_string_new (NULL);
   ChattyNewChatDialog *dialog;
-  GListModel *model;
-  guint n_items;
-  gint response;
 
   g_assert (CHATTY_IS_WINDOW (self));
 
   dialog = CHATTY_NEW_CHAT_DIALOG (self->new_chat_dialog);
   chatty_new_chat_dialog_set_multi_selection (dialog, can_multi_select);
-
-  response = gtk_dialog_run (GTK_DIALOG (self->new_chat_dialog));
-  gtk_widget_hide (self->new_chat_dialog);
-
-  if (response != GTK_RESPONSE_OK)
-    return;
-
-  model = chatty_new_chat_dialog_get_selected_items (dialog);
-  n_items = g_list_model_get_n_items (model);
-
-  for (guint i = 0; i < n_items; i++) {
-    g_autoptr(ChattyItem) item = NULL;
-    const char *phone_number;
-
-    item = g_list_model_get_item (model, i);
-
-    if (CHATTY_IS_CONTACT (item)) {
-      phone_number = chatty_item_get_username (item);
-      sendlist = g_string_append (sendlist, phone_number);
-      g_string_append (sendlist, ",");
-    }
-  }
-
-  /* Remove the trailing "," */
-  if (sendlist->len >= 1)
-    g_string_truncate (sendlist, sendlist->len - 1);
-
-  if (n_items == 1) {
-    g_autoptr(ChattyItem) item = NULL;
-
-    item = g_list_model_get_item (model, 0);
-
-    if (!CHATTY_IS_CONTACT (item) ||
-        !chatty_contact_is_dummy (CHATTY_CONTACT (item)))
-      chatty_window_open_item (self, item);
-  }
-
-  chatty_window_set_uri (self, sendlist->str);
+  gtk_window_present (GTK_WINDOW (self->new_chat_dialog));
 }
 
 static void
@@ -607,6 +566,52 @@ protocol_list_header_func (GtkListBoxRow *row,
   }
 }
 
+static void
+new_chat_selection_changed_cb (ChattyWindow        *self,
+                               ChattyNewChatDialog *dialog)
+{
+  g_autoptr(GString) users = g_string_new (NULL);
+  GListModel *model;
+  guint n_items;
+
+  g_assert (CHATTY_IS_WINDOW (self));
+  g_assert (CHATTY_IS_NEW_CHAT_DIALOG (dialog));
+
+  model = chatty_new_chat_dialog_get_selected_items (dialog);
+  n_items = g_list_model_get_n_items (model);
+
+  if (n_items == 0)
+    return;
+
+  for (guint i = 0; i < n_items; i++) {
+    g_autoptr(ChattyItem) item = NULL;
+    const char *phone_number;
+
+    item = g_list_model_get_item (model, i);
+
+    if (CHATTY_IS_CONTACT (item)) {
+      phone_number = chatty_item_get_username (item);
+      g_string_append (users, phone_number);
+      g_string_append (users, ",");
+    }
+  }
+
+  /* Remove the trailing "," */
+  if (users->len >= 1)
+    g_string_truncate (users, users->len - 1);
+
+  if (n_items == 1) {
+    g_autoptr(ChattyItem) item = NULL;
+
+    item = g_list_model_get_item (model, 0);
+
+    if (!CHATTY_IS_CONTACT (item) ||
+        !chatty_contact_is_dummy (CHATTY_CONTACT (item)))
+      chatty_window_open_item (self, item);
+  }
+
+  chatty_window_set_uri (self, users->str);
+}
 
 static void
 chatty_window_unmap (GtkWidget *widget)
@@ -663,6 +668,10 @@ chatty_window_constructed (GObject *object)
     gtk_window_maximize (window);
 
   self->new_chat_dialog = chatty_new_chat_dialog_new (GTK_WINDOW (self));
+  g_signal_connect_object (self->new_chat_dialog, "selection-changed",
+                           G_CALLBACK (new_chat_selection_changed_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
   self->chat_info_dialog = chatty_info_dialog_new (GTK_WINDOW (self));
 
   G_OBJECT_CLASS (chatty_window_parent_class)->constructed (object);

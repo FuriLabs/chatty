@@ -69,7 +69,7 @@ ui_files = files (
   # but works fine locally
   # 'ui/chatty-info-dialog.ui',
   # 'ui/chatty-dialog-join-muc.ui',
-  'ui/chatty-dialog-new-chat.ui',
+  # 'ui/chatty-dialog-new-chat.ui',
   'ui/chatty-fp-row.ui',
   'ui/chatty-list-row.ui',
   'ui/chatty-message-row.ui',

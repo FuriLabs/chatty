@@ -147,3 +147,8 @@ button.delete-button {
   min-height: 27px;
   min-width: 27px;
 }
+
+.no-margin,
+.no-margin > scrolledwindow > viewport > clamp {
+  margin: 0;
+}
