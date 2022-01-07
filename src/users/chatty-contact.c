@@ -269,6 +269,20 @@ chatty_contact_new (EContact        *contact,
   return self;
 }
 
+ChattyContact *
+chatty_contact_dummy_new (const char *name,
+                          const char *value)
+{
+  ChattyContact *self;
+
+  self = g_object_new (CHATTY_TYPE_CONTACT, NULL);
+  self->name = g_strdup (name);
+  self->value = g_strdup (value);
+  g_object_set_data (G_OBJECT (self), "dummy", GINT_TO_POINTER (TRUE));
+
+  return self;
+}
+
 void
 chatty_contact_set_name (ChattyContact *self,
                          const char    *name)
