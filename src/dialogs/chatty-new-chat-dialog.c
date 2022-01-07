@@ -58,10 +58,7 @@ struct _ChattyNewChatDialog
 
   ChattyAccount   *selected_account;
   ChattyManager   *manager;
-
-  GListStore *selection_list;
-  GPtrArray  *selected_items;
-  ChattyItem *selected_item;
+  GListStore      *selection_list;
 
   GCancellable  *cancellable;
 
@@ -75,20 +72,13 @@ static void
 start_button_clicked_cb (ChattyNewChatDialog *self)
 {
   GListModel *model;
-  guint n_items;
 
   g_assert (CHATTY_IS_NEW_CHAT_DIALOG (self));
 
   model = G_LIST_MODEL (self->selection_list);
-  n_items = g_list_model_get_n_items (model);
 
-  if (n_items < 1)
+  if (g_list_model_get_n_items (model) < 1)
     return;
-
-  g_ptr_array_set_size (self->selected_items, 0);
-
-  for (guint i = 0; i < n_items; i++)
-    g_ptr_array_add (self->selected_items, g_list_model_get_item (model, i));
 
   gtk_dialog_response (GTK_DIALOG (self), GTK_RESPONSE_OK);
 }
@@ -194,16 +184,12 @@ contact_list_selection_changed_cb (ChattyNewChatDialog *self)
 
   g_assert (CHATTY_IS_NEW_CHAT_DIALOG (self));
 
-  g_clear_object (&self->selected_item);
   model = G_LIST_MODEL (self->selection_list);
   n_items = g_list_model_get_n_items (model);
 
   if (self->multi_selection) {
     gtk_widget_set_sensitive (self->start_button, n_items > 0);
   } else if (n_items > 0) {
-    self->selected_item = g_list_model_get_item (model, 0);
-    g_list_store_remove_all (self->selection_list);
-
     gtk_dialog_response (GTK_DIALOG (self), GTK_RESPONSE_OK);
   }
 }
@@ -457,13 +443,6 @@ chatty_new_chat_dialog_update (ChattyNewChatDialog *self)
 }
 
 static void
-chatty_new_chat_unset_items (gpointer data,
-                             gpointer user_data)
-{
-  g_object_set_data (data, "selected", GINT_TO_POINTER (FALSE));
-}
-
-static void
 chatty_new_chat_dialog_show (GtkWidget *widget)
 {
   ChattyNewChatDialog *self = (ChattyNewChatDialog *)widget;
@@ -471,12 +450,7 @@ chatty_new_chat_dialog_show (GtkWidget *widget)
   g_return_if_fail (CHATTY_IS_NEW_CHAT_DIALOG (self));
 
   /* Reset selection list */
-  g_clear_object (&self->selected_item);
   g_list_store_remove_all (self->selection_list);
-  g_ptr_array_foreach (self->selected_items,
-                       chatty_new_chat_unset_items, NULL);
-  g_ptr_array_set_size (self->selected_items, 0);
-  self->selected_items->pdata[0] = NULL;
 
   gtk_widget_set_sensitive (self->start_button, FALSE);
   gtk_entry_set_text (GTK_ENTRY (self->contacts_search_entry), "");
@@ -492,11 +466,6 @@ chatty_new_chat_dialog_dispose (GObject *object)
   if (self->cancellable)
     g_cancellable_cancel (self->cancellable);
 
-  if (self->selected_items)
-    g_ptr_array_foreach (self->selected_items,
-                         chatty_new_chat_unset_items, NULL);
-
-  g_clear_pointer (&self->selected_items, g_ptr_array_unref);
   g_clear_object (&self->cancellable);
   g_clear_object (&self->manager);
 
@@ -557,7 +526,6 @@ chatty_new_chat_dialog_init (ChattyNewChatDialog *self)
                                            self->selection_list);
 
   self->multi_selection = FALSE;
-  self->selected_items = g_ptr_array_new_full (1, g_object_unref);
   self->dummy_prefix_radio = gtk_radio_button_new_from_widget (GTK_RADIO_BUTTON (NULL));
 
   self->manager = g_object_ref (chatty_manager_get_default ());
@@ -575,19 +543,10 @@ chatty_new_chat_dialog_new (GtkWindow *parent_window)
                        NULL);
 }
 
-
-ChattyItem *
-chatty_new_chat_dialog_get_selected_item (ChattyNewChatDialog *self)
-{
-  g_return_val_if_fail (CHATTY_IS_NEW_CHAT_DIALOG (self), NULL);
-
-  return self->selected_item;
-}
-
-GPtrArray *
+GListModel *
 chatty_new_chat_dialog_get_selected_items (ChattyNewChatDialog *self)
 {
   g_return_val_if_fail (CHATTY_IS_NEW_CHAT_DIALOG (self), NULL);
 
-  return self->selected_items;
+  return G_LIST_MODEL (self->selection_list);
 }

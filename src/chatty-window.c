@@ -268,50 +268,19 @@ notify_fold_cb (ChattyWindow *self)
 }
 
 static void
-window_new_message_clicked_cb (ChattyWindow *self)
-{
-  ChattyNewChatDialog *dialog;
-  ChattyItem *item;
-  const char *phone_number = NULL;
-  gint response;
-
-  g_assert (CHATTY_IS_WINDOW (self));
-
-  dialog = CHATTY_NEW_CHAT_DIALOG (self->new_chat_dialog);
-  chatty_new_chat_dialog_set_multi_selection (dialog, FALSE);
-
-  response = gtk_dialog_run (GTK_DIALOG (self->new_chat_dialog));
-  gtk_widget_hide (self->new_chat_dialog);
-
-  if (response != GTK_RESPONSE_OK)
-    return;
-
-  item = chatty_new_chat_dialog_get_selected_item (dialog);
-
-  if (CHATTY_IS_CONTACT (item) &&
-      chatty_contact_is_dummy (CHATTY_CONTACT (item)))
-    phone_number = chatty_item_get_username (item);
-
-  if (phone_number)
-    chatty_window_set_uri (self, phone_number);
-  else if (item)
-    chatty_window_open_item (self, item);
-  else
-    g_return_if_reached ();
-}
-
-static void
-window_new_sms_mms_message_clicked_cb (ChattyWindow *self)
+window_show_new_chat_dialog (ChattyWindow *self,
+                             gboolean      can_multi_select)
 {
   g_autoptr(GString) sendlist = g_string_new (NULL);
   ChattyNewChatDialog *dialog;
-  GPtrArray *items;
+  GListModel *model;
+  guint n_items;
   gint response;
 
   g_assert (CHATTY_IS_WINDOW (self));
 
   dialog = CHATTY_NEW_CHAT_DIALOG (self->new_chat_dialog);
-  chatty_new_chat_dialog_set_multi_selection (dialog, TRUE);
+  chatty_new_chat_dialog_set_multi_selection (dialog, can_multi_select);
 
   response = gtk_dialog_run (GTK_DIALOG (self->new_chat_dialog));
   gtk_widget_hide (self->new_chat_dialog);
@@ -319,13 +288,14 @@ window_new_sms_mms_message_clicked_cb (ChattyWindow *self)
   if (response != GTK_RESPONSE_OK)
     return;
 
-  items = chatty_new_chat_dialog_get_selected_items (dialog);
+  model = chatty_new_chat_dialog_get_selected_items (dialog);
+  n_items = g_list_model_get_n_items (model);
 
-  for (guint i = 0; i < items->len; i++) {
+  for (guint i = 0; i < n_items; i++) {
+    g_autoptr(ChattyItem) item = NULL;
     const char *phone_number;
-    ChattyItem *item;
 
-    item = items->pdata[i];
+    item = g_list_model_get_item (model, i);
 
     if (CHATTY_IS_CONTACT (item)) {
       phone_number = chatty_item_get_username (item);
@@ -338,7 +308,29 @@ window_new_sms_mms_message_clicked_cb (ChattyWindow *self)
   if (sendlist->len >= 1)
     g_string_truncate (sendlist, sendlist->len - 1);
 
+  if (n_items == 1) {
+    g_autoptr(ChattyItem) item = NULL;
+
+    item = g_list_model_get_item (model, 0);
+
+    if (!CHATTY_IS_CONTACT (item) ||
+        !chatty_contact_is_dummy (CHATTY_CONTACT (item)))
+      chatty_window_open_item (self, item);
+  }
+
   chatty_window_set_uri (self, sendlist->str);
+}
+
+static void
+window_new_message_clicked_cb (ChattyWindow *self)
+{
+  window_show_new_chat_dialog (self, FALSE);
+}
+
+static void
+window_new_sms_mms_message_clicked_cb (ChattyWindow *self)
+{
+  window_show_new_chat_dialog (self, TRUE);
 }
 
 static void
