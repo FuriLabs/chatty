@@ -21,6 +21,7 @@
 #include "chatty-chat.h"
 #include "chatty-purple.h"
 #include "chatty-contact-list.h"
+#include "chatty-list-row.h"
 #include "chatty-mm-account.h"
 #include "chatty-ma-account.h"
 #include "chatty-log.h"
@@ -46,6 +47,11 @@ struct _ChattyNewChatDialog
   GtkWidget *apply_button;
   GtkWidget *progress_spinner;
 
+  GtkWidget *group_title_entry;
+  GtkWidget *self_contact_row;
+  GtkWidget *selected_contact_list;
+  GtkWidget *add_more_row;
+
   GtkWidget *contact_list;
   GtkWidget *contacts_search_entry;
   GtkWidget *contact_edit_grid;
@@ -56,11 +62,13 @@ struct _ChattyNewChatDialog
   GtkWidget *add_in_contacts_button;
 
   GtkWidget *main_stack;
+  GtkWidget *new_group_chat_view;
   GtkWidget *contact_list_view;
   GtkWidget *add_contact_view;
 
   GtkWidget *dummy_prefix_radio;
 
+  ChattyItem      *self_contact;
   ChattyAccount   *selected_account;
   ChattyManager   *manager;
   GListStore      *selection_list;
@@ -112,17 +120,11 @@ chatty_new_chat_dialog_set_multi_selection (ChattyNewChatDialog *self,
   self->multi_selection = enable;
   hdy_header_bar_set_show_close_button (HDY_HEADER_BAR (self->header_bar), !enable);
   chatty_contact_list_can_multi_select (CHATTY_CONTACT_LIST (self->contact_list), enable);
+  gtk_widget_set_sensitive (self->apply_button, FALSE);
 
   if (enable) {
-    gtk_button_set_label (GTK_BUTTON (self->apply_button), _("Create"));
-    gtk_widget_show (self->apply_button);
     gtk_widget_set_sensitive (self->apply_button, FALSE);
-    gtk_widget_show (self->cancel_button);
-    gtk_widget_hide (self->edit_contact_button);
-  } else {
-    gtk_widget_show (self->edit_contact_button);
-    gtk_widget_hide (self->apply_button);
-    gtk_widget_hide (self->cancel_button);
+    gtk_stack_set_visible_child (GTK_STACK (self->main_stack), self->new_group_chat_view);
   }
 }
 
@@ -131,7 +133,10 @@ back_button_clicked_cb (ChattyNewChatDialog *self)
 {
   g_assert (CHATTY_IS_NEW_CHAT_DIALOG (self));
 
-  gtk_stack_set_visible_child (GTK_STACK (self->main_stack), self->contact_list_view);
+  if (self->multi_selection)
+    gtk_stack_set_visible_child (GTK_STACK (self->main_stack), self->new_group_chat_view);
+  else
+    gtk_stack_set_visible_child (GTK_STACK (self->main_stack), self->contact_list_view);
 }
 
 
@@ -156,16 +161,40 @@ new_chat_dialog_page_changed_cb (ChattyNewChatDialog *self)
   gtk_widget_hide (self->cancel_button);
   gtk_widget_hide (self->apply_button);
   gtk_widget_hide (self->edit_contact_button);
+  gtk_widget_show (self->apply_button);
+  hdy_header_bar_set_show_close_button (HDY_HEADER_BAR (self->header_bar), FALSE);
 
   visible_child = gtk_stack_get_visible_child (GTK_STACK (self->main_stack));
 
   if (visible_child == self->contact_list_view) {
-    gtk_widget_show (self->edit_contact_button);
+    if (self->multi_selection) {
+      gtk_button_set_label (GTK_BUTTON (self->apply_button), _("Add"));
+      gtk_widget_show (self->back_button);
+    } else {
+      gtk_widget_hide (self->apply_button);
+      hdy_header_bar_set_show_close_button (HDY_HEADER_BAR (self->header_bar), TRUE);
+      gtk_widget_show (self->edit_contact_button);
+    }
+  } else if (visible_child == self->new_group_chat_view) {
+    gboolean can_create;
+
+    gtk_button_set_label (GTK_BUTTON (self->apply_button), _("Create"));
+    gtk_widget_show (self->cancel_button);
+
+    can_create = g_list_model_get_n_items (G_LIST_MODEL (self->selection_list)) > 0;
+    gtk_widget_set_sensitive (self->apply_button, can_create);
   } else {
     gtk_button_set_label (GTK_BUTTON (self->apply_button), _("Add Contact"));
-    gtk_widget_show (self->apply_button);
-    gtk_widget_show (self->back_button);
+   gtk_widget_show (self->back_button);
   }
+}
+
+static void
+add_more_contact_row_activated_cb (ChattyNewChatDialog *self)
+{
+  g_assert (CHATTY_IS_NEW_CHAT_DIALOG (self));
+
+  gtk_stack_set_visible_child (GTK_STACK (self->main_stack), self->contact_list_view);
 }
 
 static void
@@ -325,6 +354,11 @@ new_chat_dialog_apply_button_clicked_cb (ChattyNewChatDialog *self)
     if (g_list_model_get_n_items (model) == 0)
       return;
 
+    if (self->multi_selection)
+      gtk_stack_set_visible_child (GTK_STACK (self->main_stack), self->new_group_chat_view);
+    else
+      g_signal_emit (self, signals[SELECTION_CHANGED], 0);
+  } else {
     g_signal_emit (self, signals[SELECTION_CHANGED], 0);
   }
 }
@@ -487,6 +521,18 @@ chatty_new_chat_dialog_update (ChattyNewChatDialog *self)
 }
 
 static void
+new_chat_dialog_selected_contacts_changed_cb (ChattyNewChatDialog *self)
+{
+  guint n_items;
+
+  g_assert (CHATTY_IS_NEW_CHAT_DIALOG (self));
+
+  n_items = g_list_model_get_n_items (G_LIST_MODEL (self->selection_list));
+  gtk_widget_set_visible (GTK_WIDGET (self->selected_contact_list), n_items > 0);
+  gtk_widget_set_sensitive (GTK_WIDGET (self->apply_button), n_items > 0);
+}
+
+static void
 chatty_new_chat_dialog_show (GtkWidget *widget)
 {
   ChattyNewChatDialog *self = (ChattyNewChatDialog *)widget;
@@ -501,6 +547,7 @@ chatty_new_chat_dialog_show (GtkWidget *widget)
   gtk_stack_set_visible_child (GTK_STACK (self->main_stack), self->contact_list_view);
   new_chat_dialog_page_changed_cb (self);
   chatty_new_chat_dialog_set_multi_selection (self, self->multi_selection);
+  new_chat_dialog_selected_contacts_changed_cb (self);
 
   GTK_WIDGET_CLASS (chatty_new_chat_dialog_parent_class)->show (widget);
 }
@@ -547,6 +594,11 @@ chatty_new_chat_dialog_class_init (ChattyNewChatDialogClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyNewChatDialog, apply_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyNewChatDialog, progress_spinner);
 
+  gtk_widget_class_bind_template_child (widget_class, ChattyNewChatDialog, group_title_entry);
+  gtk_widget_class_bind_template_child (widget_class, ChattyNewChatDialog, self_contact_row);
+  gtk_widget_class_bind_template_child (widget_class, ChattyNewChatDialog, selected_contact_list);
+  gtk_widget_class_bind_template_child (widget_class, ChattyNewChatDialog, add_more_row);
+
   gtk_widget_class_bind_template_child (widget_class, ChattyNewChatDialog, contacts_search_entry);
   gtk_widget_class_bind_template_child (widget_class, ChattyNewChatDialog, contact_list);
   gtk_widget_class_bind_template_child (widget_class, ChattyNewChatDialog, contact_edit_grid);
@@ -556,6 +608,7 @@ chatty_new_chat_dialog_class_init (ChattyNewChatDialogClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyNewChatDialog, add_in_contacts_button);
 
   gtk_widget_class_bind_template_child (widget_class, ChattyNewChatDialog, main_stack);
+  gtk_widget_class_bind_template_child (widget_class, ChattyNewChatDialog, new_group_chat_view);
   gtk_widget_class_bind_template_child (widget_class, ChattyNewChatDialog, contact_list_view);
   gtk_widget_class_bind_template_child (widget_class, ChattyNewChatDialog, add_contact_view);
 
@@ -565,6 +618,7 @@ chatty_new_chat_dialog_class_init (ChattyNewChatDialogClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, new_chat_dialog_apply_button_clicked_cb);
 
   gtk_widget_class_bind_template_callback (widget_class, new_chat_dialog_page_changed_cb);
+  gtk_widget_class_bind_template_callback (widget_class, add_more_contact_row_activated_cb);
   gtk_widget_class_bind_template_callback (widget_class, contact_search_entry_activated_cb);
   gtk_widget_class_bind_template_callback (widget_class, contact_search_entry_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, contact_list_selection_changed_cb);
@@ -580,9 +634,19 @@ chatty_new_chat_dialog_init (ChattyNewChatDialog *self)
   gtk_widget_init_template (GTK_WIDGET (self));
   self->cancellable = g_cancellable_new ();
 
+  self->self_contact = CHATTY_ITEM (chatty_contact_dummy_new (_("You"), "MMS"));
+  chatty_list_row_set_item (CHATTY_LIST_ROW (self->self_contact_row), self->self_contact);
+
   self->selection_list = g_list_store_new (CHATTY_TYPE_ITEM);
+  g_signal_connect_object (self->selection_list, "items-changed",
+                           G_CALLBACK (new_chat_dialog_selected_contacts_changed_cb),
+                           self, G_CONNECT_SWAPPED);
   chatty_contact_list_set_selection_store (CHATTY_CONTACT_LIST (self->contact_list),
                                            self->selection_list);
+  chatty_contact_list_show_selected_only (CHATTY_CONTACT_LIST (self->selected_contact_list));
+  chatty_contact_list_set_selection_store (CHATTY_CONTACT_LIST (self->selected_contact_list),
+                                           self->selection_list);
+  chatty_contact_list_can_multi_select (CHATTY_CONTACT_LIST (self->selected_contact_list), TRUE);
 
   self->multi_selection = FALSE;
   self->dummy_prefix_radio = gtk_radio_button_new_from_widget (GTK_RADIO_BUTTON (NULL));
@@ -607,4 +671,19 @@ chatty_new_chat_dialog_get_selected_items (ChattyNewChatDialog *self)
   g_return_val_if_fail (CHATTY_IS_NEW_CHAT_DIALOG (self), NULL);
 
   return G_LIST_MODEL (self->selection_list);
+}
+
+const char *
+chatty_new_chat_dialog_get_chat_title (ChattyNewChatDialog *self)
+{
+  const char *group_title;
+
+  g_return_val_if_fail (CHATTY_IS_NEW_CHAT_DIALOG (self), NULL);
+
+  group_title = gtk_entry_get_text (GTK_ENTRY (self->group_title_entry));
+
+  if (group_title && *group_title)
+    return group_title;
+
+  return NULL;
 }

@@ -22,8 +22,7 @@ G_DECLARE_FINAL_TYPE (ChattyContactList, chatty_contact_list, CHATTY, CONTACT_LI
 GtkWidget  *chatty_contact_list_new                 (void);
 void        chatty_contact_list_set_selection_store (ChattyContactList *self,
                                                      GListStore        *list_store);
-void        chatty_contct_list_show_selected_only   (ChattyContactList *self,
-                                                     gboolean           show_selected_only);
+void        chatty_contact_list_show_selected_only  (ChattyContactList *self);
 void        chatty_contact_list_can_multi_select    (ChattyContactList *self,
                                                      gboolean           can_multi_select);
 void        chatty_contact_list_set_filter          (ChattyContactList *self,

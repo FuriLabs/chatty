@@ -140,7 +140,7 @@ chatty_window_open_item (ChattyWindow *self,
     const char *number;
 
     number = chatty_item_get_username (item);
-    chatty_window_set_uri (self, number);
+    chatty_window_set_uri (self, number, NULL);
 
     return;
   }
@@ -573,6 +573,7 @@ new_chat_selection_changed_cb (ChattyWindow        *self,
   g_autoptr(GString) users = g_string_new (NULL);
   GListModel *model;
   guint n_items;
+  const char *name;
 
   g_assert (CHATTY_IS_WINDOW (self));
   g_assert (CHATTY_IS_NEW_CHAT_DIALOG (dialog));
@@ -610,7 +611,8 @@ new_chat_selection_changed_cb (ChattyWindow        *self,
       chatty_window_open_item (self, item);
   }
 
-  chatty_window_set_uri (self, users->str);
+  name = chatty_new_chat_dialog_get_chat_title (dialog);
+  chatty_window_set_uri (self, users->str, name);
 }
 
 static void
@@ -830,9 +832,10 @@ chatty_window_new (GtkApplication *application)
 
 void
 chatty_window_set_uri (ChattyWindow *self,
-                       const char   *uri)
+                       const char   *uri,
+                       const char   *name)
 {
-  if (!chatty_manager_set_uri (self->manager, uri))
+  if (!chatty_manager_set_uri (self->manager, uri, name))
     return;
 
   gtk_widget_hide (self->new_chat_dialog);

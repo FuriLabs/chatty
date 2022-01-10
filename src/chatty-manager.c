@@ -701,7 +701,8 @@ chatty_manager_find_chat_with_name (ChattyManager  *self,
 
 gboolean
 chatty_manager_set_uri (ChattyManager *self,
-                        const char    *uri)
+                        const char    *uri,
+                        const char    *name)
 {
   g_autoptr(ChattySmsUri) sms_uri = NULL;
   ChattyAccount *account;
@@ -731,6 +732,7 @@ chatty_manager_set_uri (ChattyManager *self,
   }
 
   chat = chatty_mm_account_start_chat_with_uri (CHATTY_MM_ACCOUNT (account), sms_uri);
+  chatty_item_set_name (CHATTY_ITEM (chat), name);
 
   g_signal_emit (self, signals[OPEN_CHAT], 0, chat);
 
