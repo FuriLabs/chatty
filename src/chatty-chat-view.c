@@ -527,12 +527,13 @@ chat_view_input_key_pressed_cb (ChattyChatView *self,
 static void
 chat_view_message_input_changed_cb (ChattyChatView *self)
 {
-  gboolean has_text;
+  gboolean has_text, has_files;
 
   g_assert (CHATTY_IS_CHAT_VIEW (self));
 
   has_text = gtk_text_buffer_get_char_count (self->message_input_buffer) > 0;
-  gtk_widget_set_visible (self->send_message_button, has_text);
+  has_files = gtk_revealer_get_reveal_child (GTK_REVEALER (self->attachment_revealer));
+  gtk_widget_set_visible (self->send_message_button, has_text || has_files);
 
   if (chatty_settings_get_send_typing (chatty_settings_get_default ()))
     chatty_update_typing_status (self);
