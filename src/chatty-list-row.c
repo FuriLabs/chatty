@@ -18,6 +18,7 @@
 
 #include "chatty-purple.h"
 #include "chatty-contact.h"
+#include "chatty-contact-list.h"
 #include "chatty-chat.h"
 #include "chatty-avatar.h"
 #include "chatty-list-row.h"
@@ -39,6 +40,7 @@ struct _ChattyListRow
   GtkWidget     *last_modified;
   GtkWidget     *unread_message_count;
   GtkWidget     *checkbox;
+  GtkWidget     *close_button;
   GtkWidget     *add_contact_button;
   GtkWidget     *call_button;
 
@@ -383,6 +385,24 @@ write_eds_contact_cb (GObject      *object,
 }
 
 static void
+chatty_list_row_delete_clicked_cb (ChattyListRow *self)
+{
+  GtkWidget *scrolled, *list;
+
+  g_assert (CHATTY_IS_LIST_ROW (self));
+
+  /* We can't directly use CHATTY_TYPE_CONTACT_LIST as it's not linked with the shared library */
+  scrolled = gtk_widget_get_ancestor (GTK_WIDGET (self), GTK_TYPE_SCROLLED_WINDOW);
+
+  if (!scrolled)
+    return;
+
+  list = gtk_widget_get_parent (scrolled);
+  if (list)
+    g_signal_emit_by_name (list, "delete-row", self);
+}
+
+static void
 chatty_list_row_add_contact_clicked_cb (ChattyListRow *self)
 {
   const char *phone;
@@ -434,6 +454,7 @@ chatty_list_row_class_init (ChattyListRowClass *klass)
                                                "ui/chatty-list-row.ui");
   gtk_widget_class_bind_template_child (widget_class, ChattyListRow, avatar);
   gtk_widget_class_bind_template_child (widget_class, ChattyListRow, checkbox);
+  gtk_widget_class_bind_template_child (widget_class, ChattyListRow, close_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyListRow, title);
   gtk_widget_class_bind_template_child (widget_class, ChattyListRow, subtitle);
   gtk_widget_class_bind_template_child (widget_class, ChattyListRow, last_modified);
@@ -441,6 +462,7 @@ chatty_list_row_class_init (ChattyListRowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyListRow, add_contact_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyListRow, call_button);
 
+  gtk_widget_class_bind_template_callback (widget_class, chatty_list_row_delete_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, chatty_list_row_add_contact_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, chatty_list_row_call_button_clicked_cb);
 }
@@ -559,4 +581,13 @@ chatty_list_row_set_call (ChattyListRow *self, gboolean enable)
     gtk_widget_set_visible (self->call_button, enable && user_valid);
   } else
     gtk_widget_hide (self->call_button);
+}
+
+void
+chatty_list_row_show_delete_button (ChattyListRow *self)
+{
+  g_return_if_fail (CHATTY_IS_LIST_ROW (self));
+
+  gtk_widget_show (self->close_button);
+  gtk_widget_hide (self->checkbox);
 }

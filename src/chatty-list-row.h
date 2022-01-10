@@ -32,5 +32,6 @@ void        chatty_list_row_set_contact (ChattyListRow *self,
                                          gboolean enable);
 void        chatty_list_row_set_call    (ChattyListRow *self,
                                          gboolean enable);
+void        chatty_list_row_show_delete_button (ChattyListRow *self);
 
 G_END_DECLS
