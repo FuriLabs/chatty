@@ -1,3 +1,48 @@
+chatty (0.6.0~beta) byzantium; urgency=medium
+
+  [ Mohammed Sadiq ]
+  * This version changes the DB schema so we bumped the version number to 0.6.0 to indicate that.  It is still supposed to be the last beta before the next stable release.
+  * Add NEWS
+  * mm: Add an SMS URI parser
+  * mm-chat: Add API to create chat from SMS URI
+  * mm-account: Add API start chat from SMS URI
+  * manager: Use ChattySmsUri to handle SMS URIs
+  * window: Avoid validating SMS URI
+  * chat: Add API to generate chat name
+  * ma-chat: Use the new API to generate name
+  * mm-chat: Use the new API to generate name
+  * chat-view: Show send button for file only messages
+  * tests: Improve history tests
+  * message: Add API for message subject
+  * history: Update db design to handle more MMS features
+  * mmsd: Add files as attachments to message
+  * text-item: Generate text content for multi file messages
+
+  [ Anders Jonsson ]
+  * po: Update Swedish translation
+
+  [ Yuri Chornoivan ]
+  * po: Update Ukrainian translation
+
+  [ Vittorio Monti ]
+  * po: Update Italian translation
+
+  [ Daniel Șerbănescu ]
+  * po: Update Romanian translation
+
+  [ Jan Jasper de Kroon ]
+  * po/nl.po: Dutch translation updates
+
+  [ Chris Talbot ]
+  * mmsd: Add uid to folder
+  * list-row: Add call button
+  * mm-chat-info: Add call button next to contacts for group chats
+
+  [ Kyle Evans ]
+  * run.in: show gdb the source, debug from anywhere
+
+ -- Mohammed Sadiq <sadiq@sadiqpk.org>  Tue, 11 Jan 2022 14:36:10 +0530
+
 chatty (0.5.0~beta4) byzantium; urgency=medium
 
   [ Chris Talbot ]

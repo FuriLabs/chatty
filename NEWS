@@ -1,3 +1,28 @@
+Overview of Changes in Chats 0.6.0~beta. Tue, 11 Jan 2022
+=========================================================
+This version of Chats updates the database schema and thus once you update
+to 0.6.0~beta, you shall NOT be able to go back to any older version.  When
+the db schema is updated, a copy of older version of the db is stored as
+~/.purple/chatty/db/chatty-history.db.xxxx (where xxxx is a unix timestamp)
+
+Right now in any of the 0.5.0~beta, there are several things that are not being
+explicitly saved in the chatty database (such as the subject, multiple attachments, etc).
+!1023 fixed those issues so that chatty can appropriately handle them.  However,
+once one runs that MR, one cannot backport the database, hence the reasoning to go
+to 0.6.0~beta instead of 0.5.0~beta5.  It makes it obvious that this is a major upgrade.
+
+* Update database schema to handle MMS subject, multi file attachments, etc.
+* Improve database tests to avoid incompatible changes
+* Improve auto generated names for multi user MMS chats
+* Allow calling contacts from info page
+* Fixes issue(s) #666, #668
+* Update Translations
+  - Italian
+  - Ukrainian
+  - Romanian
+  - Dutch
+
+
 Overview of Changes in Chats 0.5.0~beta4. Wed, 15 Dec 2021
 ==========================================================
 * MMS
