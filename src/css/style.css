@@ -18,7 +18,7 @@
   border-color: @theme_selected_bg_color;
 }
 
-.button_send_green {
+.button_send_green:not(:disabled) {
   background: #6cba3d;
   border-color: #6cba3d;
   color: white;
