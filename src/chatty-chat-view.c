@@ -288,7 +288,6 @@ chat_account_status_changed_cb (ChattyChatView *self)
   g_return_if_fail (account);
 
   enabled = chatty_account_get_status (account) == CHATTY_CONNECTED;
-  gtk_widget_set_sensitive (self->message_input, enabled);
   gtk_widget_set_sensitive (self->send_file_button, enabled);
   gtk_widget_set_sensitive (self->send_message_button, enabled);
 
