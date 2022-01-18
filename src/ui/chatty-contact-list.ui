@@ -30,7 +30,6 @@
                 <!-- List of selected contacts, only when multi select enabled -->
                 <child>
                   <object class="GtkListBox" id="selected_contact_list">
-                    <property name="expand">1</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="vexpand">False</property>
