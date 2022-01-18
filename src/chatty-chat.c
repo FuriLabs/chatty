@@ -19,6 +19,7 @@
 #include <string.h>
 #include <glib/gi18n.h>
 
+#include "chatty-mm-buddy.h"
 #include "chatty-notification.h"
 #include "chatty-history.h"
 #include "chatty-chat.h"
@@ -608,10 +609,23 @@ chatty_chat_generate_name (ChattyChat *self,
       continue;
     }
 
-    if (!name_a)
+    if (!name_a) {
       name_a = chatty_item_get_name (buddy);
-    else
+
+      if (!name_a || !*name_a)
+        name_a = chatty_item_get_username (buddy);
+
+      if ((!name_a || !*name_a) && CHATTY_IS_MM_BUDDY (buddy))
+        name_a = chatty_mm_buddy_get_number (CHATTY_MM_BUDDY (buddy));
+    } else {
       name_b = chatty_item_get_name (buddy);
+
+      if (!name_b || !*name_b)
+        name_b = chatty_item_get_username (buddy);
+
+      if ((!name_b || !*name_b) && CHATTY_IS_MM_BUDDY (buddy))
+        name_b = chatty_mm_buddy_get_number (CHATTY_MM_BUDDY (buddy));
+    }
   }
 
   if (count == 0)
@@ -622,11 +636,11 @@ chatty_chat_generate_name (ChattyChat *self,
 
   if (count == 2)
     /* TRANSLATORS: %s are name/user-id/phone numbers of two users */
-    return g_strdup_printf (_("%s and %s"), name_a, name_b);
+    return g_strdup_printf (_("%s and %s"), name_a ?: "", name_b ?: "");
 
   return g_strdup_printf (g_dngettext (GETTEXT_PACKAGE, "%s and %u other",
                                        "%s and %u others", count - 1),
-                          name_a, count - 1);
+                          name_a ?: "", count - 1);
 }
 
 gboolean
