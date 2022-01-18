@@ -74,6 +74,7 @@ struct _ChattyWindow
   GtkWidget *delete_button;
 
   GtkWidget *chat_view;
+  GtkWidget *settings_dialog;
 
   GtkWidget *protocol_list;
   GtkWidget *protocol_any_row;
@@ -426,12 +427,11 @@ window_show_chat_info_clicked_cb (ChattyWindow *self)
 static void
 chatty_window_show_settings_dialog (ChattyWindow *self)
 {
-  GtkWidget *dialog;
-
   g_assert (CHATTY_IS_WINDOW (self));
 
-  dialog = chatty_settings_dialog_new (GTK_WINDOW (self));
-  gtk_window_present (GTK_WINDOW (dialog));
+  if (!self->settings_dialog)
+    self->settings_dialog = chatty_settings_dialog_new (GTK_WINDOW (self));
+  gtk_window_present (GTK_WINDOW (self->settings_dialog));
 }
 
 /* Copied from chatty-dialogs.c written by Andrea Schäfer <mosibasu@me.com> */
