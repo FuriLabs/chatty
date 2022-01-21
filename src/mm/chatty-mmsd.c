@@ -778,9 +778,9 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
 
   /* Android seems to put this on the subject */
   if (g_strcmp0 ("NoSubject", subject) == 0)
-    subject = NULL;
-  else if (strlen (subject) < 1)
-    subject = NULL;
+    g_clear_pointer (&subject, g_free);
+  else if (subject && !*subject)
+    g_clear_pointer (&subject, g_free);
 
   /* Determine what type of MMS we have */
   if (g_strcmp0 (status, "draft") == 0) {
