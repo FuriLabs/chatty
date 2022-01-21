@@ -738,6 +738,7 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
   ChattyMsgStatus mms_status = CHATTY_STATUS_UNKNOWN;
   ChattyMsgType chatty_msg_type = CHATTY_MESSAGE_TEXT;
   g_autoptr(GVariant) properties = NULL;
+  g_autoptr(GFileInfo) attachment_info = NULL;
   GVariant *reciever, *attach;
   GVariantDict dict;
   GVariantIter iter;
@@ -1048,8 +1049,29 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
     if (out)
       g_output_stream_close (G_OUTPUT_STREAM (out), NULL, NULL);
 
+    attachment_info = g_file_query_info (new,
+                                         G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
+                                         G_FILE_QUERY_INFO_NONE,
+                                         NULL,
+                                         &error);
+
+    if (error != NULL) {
+      g_clear_error (&error);
+      attachment->mime_type = g_strdup (mimetype);
+    } else if (g_file_info_get_content_type (attachment_info) == NULL) {
+      /* If we can't figure out content type, do not trust what the MMS tells it is */
+      attachment->mime_type = g_strdup ("application/octet-stream");
+    } else {
+      attachment->mime_type = g_content_type_get_mime_type (g_file_info_get_content_type (attachment_info));
+      if (attachment->mime_type == NULL) {
+        if (g_file_info_get_content_type (attachment_info) != NULL)
+          attachment->mime_type = g_strdup (g_file_info_get_content_type (attachment_info));
+        else
+          attachment->mime_type = g_strdup ("application/octet-stream");
+      }
+    }
+
     attachment->file_name = g_strdup (filename);
-    attachment->mime_type = g_strdup (mimetype);
     attachment->size      = written;
     attachment->path      = g_file_get_relative_path (parent, new);
     attachment->url       = g_file_get_uri (new);
