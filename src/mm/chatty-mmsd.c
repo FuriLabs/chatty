@@ -1333,6 +1333,7 @@ chatty_mmsd_get_mmsd_service_settings_cb (GObject      *service,
     g_autoptr(GVariant) all_settings = NULL;
     GVariantDict dict;
     int max_attach_total_size, max_attachments;
+    gboolean autocreatesmil;
 
     g_variant_get (ret, "(@a{?*})", &all_settings);
     g_variant_dict_init (&dict, all_settings);
@@ -1350,6 +1351,11 @@ chatty_mmsd_get_mmsd_service_settings_cb (GObject      *service,
       self->max_num_attach = DEFAULT_MAXIMUM_ATTACHMENTS;
 
     g_debug ("MaxAttachments is set to %d", self->max_num_attach);
+
+    if (g_variant_dict_lookup (&dict, "AutoCreateSMIL", "b", &autocreatesmil))
+      self->auto_create_smil = autocreatesmil;
+
+    g_debug ("AutoCreateSMIL is set to %d", self->auto_create_smil);
   }
 }
 
