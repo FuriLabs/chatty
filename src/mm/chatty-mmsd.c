@@ -141,8 +141,9 @@ mmsd_set_value (ChattyMmsd    *self,
   if (g_variant_dict_lookup (dict, key, "s", &value))
     *out = g_steal_pointer (&value);
 
-  if (*out == self->carrier_proxy ||
-      *out == self->default_modem_number)
+  if ((*out == self->carrier_proxy ||
+      *out == self->default_modem_number) &&
+      ((g_strcmp0 (*out, "NULL") == 0) || !*out))
     g_clear_pointer (&*out, g_free);
 
   g_debug ("%s is set to %s", key, *out);
