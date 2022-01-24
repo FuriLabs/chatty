@@ -607,8 +607,10 @@ new_chat_selection_changed_cb (ChattyWindow        *self,
     item = g_list_model_get_item (model, 0);
 
     if (!CHATTY_IS_CONTACT (item) ||
-        !chatty_contact_is_dummy (CHATTY_CONTACT (item)))
+        !chatty_contact_is_dummy (CHATTY_CONTACT (item))) {
       chatty_window_open_item (self, item);
+      goto end;
+    }
   }
 
   name = chatty_new_chat_dialog_get_chat_title (dialog);
