@@ -582,7 +582,7 @@ new_chat_selection_changed_cb (ChattyWindow        *self,
   n_items = g_list_model_get_n_items (model);
 
   if (n_items == 0)
-    return;
+    goto end;
 
   for (guint i = 0; i < n_items; i++) {
     g_autoptr(ChattyItem) item = NULL;
@@ -613,6 +613,9 @@ new_chat_selection_changed_cb (ChattyWindow        *self,
 
   name = chatty_new_chat_dialog_get_chat_title (dialog);
   chatty_window_set_uri (self, users->str, name);
+
+ end:
+  gtk_widget_hide (GTK_WIDGET (dialog));
 }
 
 static void
