@@ -82,6 +82,9 @@ chatty_mm_chat_info_set_item (ChattyChatInfo *info,
   gtk_container_foreach (GTK_CONTAINER (self->contacts_list_box),
                          (GtkCallback)gtk_widget_destroy, NULL);
 
+  if (!chat)
+    return;
+
   chatty_avatar_set_item (CHATTY_AVATAR (self->avatar), CHATTY_ITEM (chat));
 
   if (chatty_chat_is_im (chat)) {
