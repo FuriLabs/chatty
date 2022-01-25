@@ -1,3 +1,15 @@
+Overview of Changes in Chats 0.6.0. Tue, 25 Jan 2022
+====================================================
+* MMS
+  - Implement new Group message work flow
+  - Fix setting proxy
+* Fix various memory leaks and warnings
+* Fix issue(s) #235 #670
+* Update Translations
+  - Ukrainian
+  - Swedish
+
+
 Overview of Changes in Chats 0.6.0~beta. Tue, 11 Jan 2022
 =========================================================
 This version of Chats updates the database schema and thus once you update
