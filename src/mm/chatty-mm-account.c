@@ -437,6 +437,16 @@ chatty_mm_account_recieve_mms_cb (ChattyMmAccount *self,
     }
 
     return TRUE;
+  } else if (message_dir == CHATTY_DIRECTION_OUT && msg_status == CHATTY_STATUS_SENDING) {
+    chat = chatty_mm_account_find_chat (self, recipientlist);
+
+    if (chat) {
+      ChattyMessage  *messagecheck;
+      messagecheck = chatty_mm_chat_find_message_with_uid (CHATTY_MM_CHAT (chat),
+                                                           chatty_message_get_uid (message));
+      if (messagecheck != NULL)
+        return TRUE;
+    }
   }
 
   chat = chatty_mm_account_start_chat (self, recipientlist);
