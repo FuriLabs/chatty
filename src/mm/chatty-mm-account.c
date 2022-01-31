@@ -384,6 +384,7 @@ chatty_mm_account_append_message (ChattyMmAccount *self,
 
   chatty_mm_chat_append_message (CHATTY_MM_CHAT (chat), message);
   chatty_history_add_message (self->history_db, chat, message);
+  chatty_chat_set_unread_count (chat, chatty_chat_get_unread_count (chat) + 1);
   g_signal_emit_by_name (chat, "changed", 0);
   if (chatty_message_get_msg_direction (message) == CHATTY_DIRECTION_IN) {
     chatty_chat_show_notification (CHATTY_CHAT (chat),
