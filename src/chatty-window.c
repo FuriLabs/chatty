@@ -472,7 +472,7 @@ chatty_window_show_about_dialog (ChattyWindow *self)
                          "version", GIT_VERSION,
                          "comments", _("An SMS and XMPP messaging client"),
                          "website", "https://source.puri.sm/Librem5/chatty",
-                         "copyright", "© 2018–2021 Purism SPC",
+                         "copyright", "© 2018–2022 Purism SPC",
                          "license-type", GTK_LICENSE_GPL_3_0,
                          "authors", authors,
                          "artists", artists,
