@@ -392,6 +392,16 @@ chat_view_message_items_changed (ChattyChatView *self)
 }
 
 static void
+chat_view_chat_changed_cb (ChattyChatView *self)
+{
+  if (!self->chat)
+    return;
+
+  if (CHATTY_IS_MM_CHAT (self->chat))
+    chatty_chat_set_unread_count (self->chat, 0);
+}
+
+static void
 chat_view_show_file_chooser (ChattyChatView *self)
 {
   GtkWindow *window;
@@ -956,6 +966,9 @@ chatty_chat_view_set_chat (ChattyChatView *self,
     g_signal_handlers_disconnect_by_func (chatty_chat_get_messages (self->chat),
                                           chat_view_message_items_changed,
                                           self);
+    g_signal_handlers_disconnect_by_func (chatty_chat_get_messages (self->chat),
+                                          chat_view_chat_changed_cb,
+                                          self);
 
     gtk_widget_hide (self->scroll_down_button);
     self->first_scroll_to_bottom = FALSE;
@@ -998,7 +1011,11 @@ chatty_chat_view_set_chat (ChattyChatView *self,
   g_signal_connect_object (messages, "items-changed",
                            G_CALLBACK (chat_view_message_items_changed),
                            self, G_CONNECT_SWAPPED);
+  g_signal_connect_object (chat, "changed",
+                           G_CALLBACK (chat_view_chat_changed_cb),
+                           self, G_CONNECT_SWAPPED);
   chat_view_message_items_changed (self);
+  chat_view_chat_changed_cb (self);
 
   if (g_list_model_get_n_items (messages) <= 3)
     chatty_chat_load_past_messages (chat, -1);
