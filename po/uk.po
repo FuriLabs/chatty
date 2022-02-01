@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://source.puri.sm/Librem5/chatty/issues\n"
-"POT-Creation-Date: 2022-01-31 15:24+0000\n"
-"PO-Revision-Date: 2022-01-31 17:50+0200\n"
+"POT-Creation-Date: 2022-02-01 17:45+0000\n"
+"PO-Revision-Date: 2022-02-01 20:36+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -235,11 +235,11 @@ msgstr "Ваші повідомлення зашифровано"
 msgid "Your messages are not encrypted"
 msgstr "Ваші повідомлення не зашифровано"
 
-#: src/chatty-chat-view.c:404
+#: src/chatty-chat-view.c:414
 msgid "Select File..."
 msgstr "Вибір файла…"
 
-#: src/chatty-chat-view.c:407 src/purple/chatty-purple-request.c:175
+#: src/chatty-chat-view.c:417 src/purple/chatty-purple-request.c:175
 #: src/chatty-window.c:347 src/dialogs/chatty-pp-chat-info.c:90
 #: src/dialogs/chatty-ma-account-details.c:119
 #: src/dialogs/chatty-pp-account-details.c:91
@@ -248,7 +248,7 @@ msgstr "Вибір файла…"
 msgid "Cancel"
 msgstr "Скасувати"
 
-#: src/chatty-chat-view.c:408 src/purple/chatty-purple-request.c:177
+#: src/chatty-chat-view.c:418 src/purple/chatty-purple-request.c:177
 #: src/dialogs/chatty-pp-chat-info.c:89
 #: src/dialogs/chatty-ma-account-details.c:118
 #: src/dialogs/chatty-pp-account-details.c:90
@@ -289,14 +289,12 @@ msgstr "Немає контактів"
 
 #: src/chatty-clock.c:86
 msgid "Just Now"
-msgstr ""
-"Просто зараз"
+msgstr "Просто зараз"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
 #: src/chatty-clock.c:95 src/chatty-clock.c:125
-#| msgid "%A %I∶%M %p"
 msgid "%I∶%M %p"
 msgstr "%H:%M"
 
@@ -304,15 +302,11 @@ msgstr "%H:%M"
 #, c-format
 msgid "%lu minute ago"
 msgid_plural "%lu minutes ago"
-msgstr[0] ""
-"%lu хвилину тому"
-msgstr[1] ""
-"%lu хвилини тому"
-msgstr[2] ""
-"%lu хвилин тому"
+msgstr[0] "%lu хвилину тому"
+msgstr[1] "%lu хвилини тому"
+msgstr[2] "%lu хвилин тому"
 
 #: src/chatty-clock.c:112
-#| msgid "%A %H∶%M"
 msgid "Today %H∶%M"
 msgstr "Сьогодні %H:%M"
 
@@ -320,20 +314,17 @@ msgstr "Сьогодні %H:%M"
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
 #: src/chatty-clock.c:120
-#| msgid "%A %I∶%M %p"
 msgid "Today %I∶%M %p"
 msgstr "Сьогодні %H:%M"
 
 #: src/chatty-clock.c:132
 msgid "Yesterday %H∶%M"
-msgstr ""
-"Вчора %H:%M"
+msgstr "Вчора %H:%M"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “Yesterday 06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
 #: src/chatty-clock.c:137
-#| msgid "%A %I∶%M %p"
 msgid "Yesterday %I∶%M %p"
 msgstr "Вчора %H:%M"
 
@@ -463,31 +454,31 @@ msgstr "У результаті спілкування буде вилучено
 msgid "Delete"
 msgstr "Вилучити"
 
-#: src/chatty-window.c:473
+#: src/chatty-window.c:474
 msgid "An SMS and XMPP messaging client"
 msgstr "Клієнт обміну повідомленнями SMS і XMPP"
 
-#: src/chatty-window.c:480
+#: src/chatty-window.c:481
 msgid "translator-credits"
 msgstr "Юрій Чорноіван <yurchor@ukr.net>, 2020"
 
-#: src/chatty-window.c:814
+#: src/chatty-window.c:815
 msgid "Any Protocol"
 msgstr "Будь-який протокол"
 
-#: src/chatty-window.c:815 src/ui/chatty-settings-dialog.ui:552
+#: src/chatty-window.c:816 src/ui/chatty-settings-dialog.ui:552
 msgid "Matrix"
 msgstr "Matrix"
 
-#: src/chatty-window.c:816
+#: src/chatty-window.c:817
 msgid "SMS/MMS"
 msgstr "SMS/MMS"
 
-#: src/chatty-window.c:819 src/ui/chatty-settings-dialog.ui:540
+#: src/chatty-window.c:820 src/ui/chatty-settings-dialog.ui:540
 msgid "XMPP"
 msgstr "XMPP"
 
-#: src/chatty-window.c:822 src/ui/chatty-settings-dialog.ui:566
+#: src/chatty-window.c:823 src/ui/chatty-settings-dialog.ui:566
 msgid "Telegram"
 msgstr "Telegram"
 
@@ -693,7 +684,8 @@ msgstr "Помилка під час спроби перевірити чинн�
 #. See https://developer.gnome.org/glib/stable/glib-GDateTime.html#g-date-time-format
 #.
 #: src/mm/chatty-mmsd.c:826
-msgid "%Y-%m-%d %H:%M"
+#| msgid "%Y-%m-%d %H:%M"
+msgid "%Y-%m-%d %H∶%M"
 msgstr "%Y.%m.%d %H:%M"
 
 #: src/mm/chatty-mmsd.c:1107
