@@ -87,6 +87,9 @@ void           chatty_history_load_account_async  (ChattyHistory       *self,
 gboolean       chatty_history_load_account_finish (ChattyHistory        *self,
                                                    GAsyncResult         *result,
                                                    GError              **error);
+void           chatty_history_set_last_read_msg   (ChattyHistory        *self,
+                                                   ChattyChat           *chat,
+                                                   ChattyMessage        *message);
 
 /* old APIs */
 void           chatty_history_open                (ChattyHistory         *self,

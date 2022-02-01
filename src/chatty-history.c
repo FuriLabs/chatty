@@ -2710,6 +2710,35 @@ get_sms_thread_members (ChattyHistory *self,
   return members;
 }
 
+static guint
+get_unread_message_count (ChattyHistory *self,
+                          int            thread_id)
+{
+  sqlite3_stmt *stmt;
+  guint unread_count = 0;
+
+  g_assert (CHATTY_IS_HISTORY (self));
+
+  if (!thread_id)
+    return 0;
+
+  sqlite3_prepare_v2 (self->db,
+                      "SELECT COUNT(*) FROM messages "
+                      "INNER JOIN threads "
+                      /* We consider the message with last_read_id to be unread */
+                      "ON messages.thread_id=threads.id AND messages.id >= threads.last_read_id  "
+                      "WHERE messages.thread_id=? ",
+                      -1, &stmt, NULL);
+  history_bind_int (stmt, 1, thread_id, "binding when getting unread message count");
+
+  if (sqlite3_step (stmt) == SQLITE_ROW)
+    unread_count = sqlite3_column_int (stmt, 0);
+
+  sqlite3_finalize (stmt);
+
+  return unread_count;
+}
+
 static void
 history_get_chats (ChattyHistory *self,
                    GTask         *task)
@@ -2786,6 +2815,14 @@ history_get_chats (ChattyHistory *self,
     }
 
     messages = get_messages_before_time (self, chat, NULL, thread_id, INT_MAX, 1);
+
+    /* For now, we handle unread count only for MM accounts */
+    if (CHATTY_IS_MM_ACCOUNT (account)) {
+      int unread_count;
+
+      unread_count = get_unread_message_count (self, thread_id);
+      chatty_chat_set_unread_count (chat, unread_count);
+    }
 
     if (CHATTY_IS_MA_ACCOUNT (account))
       chatty_ma_chat_add_messages (CHATTY_MA_CHAT (chat), messages);
@@ -3000,6 +3037,61 @@ history_load_account (ChattyHistory *self,
 
   status = sqlite3_finalize (stmt);
   warn_if_sql_error (status, "finalizing when getting user details");
+
+  g_task_return_boolean (task, TRUE);
+}
+
+static void
+history_set_last_read_msg (ChattyHistory *self,
+                           GTask         *task)
+{
+  ChattyMessage *message;
+  sqlite3_stmt *stmt;
+  ChattyChat *chat;
+  const char *uid = NULL;
+  int thread_id, message_id = 0;
+
+  g_assert (CHATTY_IS_HISTORY (self));
+  g_assert (G_IS_TASK (task));
+  g_assert (g_thread_self () == self->worker_thread);
+
+  if (!self->db) {
+    g_task_return_new_error (task,
+                             G_IO_ERROR, G_IO_ERROR_FAILED,
+                             "Database not opened");
+    return;
+  }
+
+  chat = g_object_get_data (G_OBJECT (task), "chat");
+  message = g_object_get_data (G_OBJECT (task), "message");
+  g_assert (CHATTY_IS_CHAT (chat));
+  g_assert (!message || CHATTY_IS_MESSAGE (message));
+
+  if (message)
+    uid = chatty_message_get_uid (message);
+  thread_id = insert_or_ignore_thread (self, chat, task);
+
+  if (!thread_id)
+    return;
+
+  sqlite3_prepare_v2 (self->db,
+                      "SELECT messages.id FROM messages "
+                      "INNER JOIN threads ON threads.id=messages.thread_id AND threads.id=?"
+                      "WHERE messages.uid=?;", -1, &stmt, NULL);
+  history_bind_int (stmt, 1, thread_id, "binding when setting last read message");
+  history_bind_text (stmt, 2, uid, "binding when setting last read message");
+
+  if (sqlite3_step (stmt) == SQLITE_ROW)
+    message_id = sqlite3_column_int (stmt, 0);
+  sqlite3_finalize (stmt);
+
+  sqlite3_prepare_v2 (self->db,
+                      "UPDATE threads SET last_read_id=iif(?1 = 0, null, ?1) "
+                      "WHERE threads.id=?2;", -1, &stmt, NULL);
+  history_bind_int (stmt, 1, message_id, "binding when setting last read message");
+  history_bind_int (stmt, 2, thread_id, "binding when setting last read message");
+  sqlite3_step (stmt);
+  sqlite3_finalize (stmt);
 
   g_task_return_boolean (task, TRUE);
 }
@@ -3710,6 +3802,34 @@ chatty_history_load_account_finish (ChattyHistory  *self,
   g_return_val_if_fail (!error || !*error, FALSE);
 
   return g_task_propagate_boolean (G_TASK (result), error);
+}
+
+void
+chatty_history_set_last_read_msg (ChattyHistory *self,
+                                  ChattyChat    *chat,
+                                  ChattyMessage *message)
+{
+  g_autoptr(GTask) task = NULL;
+
+  g_return_if_fail (self->db);
+  g_return_if_fail (CHATTY_IS_HISTORY (self));
+  g_return_if_fail (CHATTY_IS_MM_CHAT (chat));
+  g_return_if_fail (!message || CHATTY_IS_MESSAGE (message));
+
+  if (message)
+    g_object_ref (message);
+
+  task = g_task_new (NULL, NULL, NULL, NULL);
+  g_object_ref (task);
+  g_task_set_task_data (task, history_set_last_read_msg, NULL);
+  g_object_set_data_full (G_OBJECT (task), "chat", g_object_ref (chat), g_object_unref);
+  g_object_set_data_full (G_OBJECT (task), "message", message, g_object_unref);
+
+  g_async_queue_push (self->queue, task);
+
+  /* Wait until the task is completed */
+  while (!g_task_get_completed (task))
+    g_main_context_iteration (NULL, TRUE);
 }
 
 static void
