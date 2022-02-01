@@ -442,6 +442,7 @@ chatty_window_show_about_dialog (ChattyWindow *self)
     "Adrien Plazas <kekun.plazas@laposte.net>",
     "Andrea Schäfer <mosibasu@me.com>",
     "Benedikt Wildenhain <benedikt.wildenhain@hs-bochum.de>",
+    "Chris Talbot (kop316) <chris@talbothome.com>",
     "Guido Günther <agx@sigxcpu.org>",
     "Julian Sparber <jsparber@gnome.org>",
     "Leland Carlye <leland.carlye@protonmail.com>",
