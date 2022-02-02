@@ -161,6 +161,26 @@ settings_remove_style (GtkWidget  *widget,
 }
 
 static void
+settings_check_librem_one (ChattySettingsDialog *self)
+{
+  GtkEntry *entry;
+  const char *server, *user_id;
+
+  entry = GTK_ENTRY (self->matrix_homeserver_entry);
+  server = gtk_entry_get_text (entry);
+  user_id = gtk_entry_get_text (GTK_ENTRY (self->new_account_id_entry));
+
+  if (!server || !*server) {
+    if (g_str_has_suffix (user_id, ":librem.one") ||
+        g_str_has_suffix (user_id, "@librem.one"))
+      gtk_entry_set_text (entry, "https://chat.librem.one");
+    else if (g_str_has_suffix (user_id, "talk.puri.sm") ||
+             g_str_has_suffix (user_id, "@puri.sm"))
+      gtk_entry_set_text (entry, "https://talk.puri.sm");
+  }
+}
+
+static void
 settings_dialog_set_save_state (ChattySettingsDialog *self,
                                 gboolean              in_progress)
 {
@@ -336,22 +356,8 @@ chatty_settings_add_clicked_cb (ChattySettingsDialog *self)
   is_matrix = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (self->matrix_radio_button));
   is_telegram = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (self->telegram_radio_button));
 
-  if (is_matrix) {
-    GtkEntry *entry;
-    const char *server;
-
-    entry = GTK_ENTRY (self->matrix_homeserver_entry);
-    server = gtk_entry_get_text (entry);
-
-    if (!server || !*server) {
-      if (g_str_has_suffix (user_id, ":librem.one") ||
-          g_str_has_suffix (user_id, "@librem.one"))
-        gtk_entry_set_text (entry, "https://chat.librem.one");
-      else if (g_str_has_suffix (user_id, "talk.puri.sm") ||
-               g_str_has_suffix (user_id, "@puri.sm"))
-        gtk_entry_set_text (entry, "https://talk.puri.sm");
-    }
-  }
+  if (is_matrix)
+    settings_check_librem_one (self);
 
   if (is_matrix && chatty_settings_get_experimental_features (chatty_settings_get_default ())) {
     chatty_settings_save_matrix (self, user_id, password);
@@ -856,8 +862,11 @@ settings_new_detail_changed_cb (ChattySettingsDialog *self)
   else
     settings_apply_style (GTK_WIDGET (self->new_password_entry), "error");
 
-  if (!id || !*id)
+  if (!id || !*id) {
+    gtk_entry_set_text (GTK_ENTRY (self->matrix_homeserver_entry), "");
+    gtk_widget_show (self->matrix_homeserver_entry);
     gtk_widget_hide (self->matrix_homeserver_entry);
+  }
 
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (self->matrix_radio_button)))
     protocol = CHATTY_PROTOCOL_MATRIX;
@@ -882,6 +891,7 @@ settings_new_detail_changed_cb (ChattySettingsDialog *self)
   if (protocol & CHATTY_PROTOCOL_MATRIX &&
       valid_protocol & CHATTY_PROTOCOL_EMAIL) {
     gtk_widget_show (self->matrix_homeserver_entry);
+    settings_check_librem_one (self);
     settings_homeserver_entry_changed (self, GTK_ENTRY (self->matrix_homeserver_entry));
   }
 
