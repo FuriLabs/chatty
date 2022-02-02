@@ -814,13 +814,16 @@ static void
 settings_new_detail_changed_cb (ChattySettingsDialog *self)
 {
   const gchar *id, *password;
-  ChattyProtocol protocol;
+  ChattyProtocol protocol, valid_protocol;
   gboolean valid = TRUE;
 
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
 
   id = gtk_entry_get_text (GTK_ENTRY (self->new_account_id_entry));
   password = gtk_entry_get_text (GTK_ENTRY (self->new_password_entry));
+
+  if (!id || !*id)
+    gtk_widget_hide (self->matrix_homeserver_entry);
 
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (self->matrix_radio_button)))
     protocol = CHATTY_PROTOCOL_MATRIX;
@@ -833,11 +836,19 @@ settings_new_detail_changed_cb (ChattySettingsDialog *self)
       gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (self->matrix_radio_button)))
     protocol = CHATTY_PROTOCOL_MATRIX | CHATTY_PROTOCOL_EMAIL;
 
+  valid_protocol = chatty_utils_username_is_valid (id, protocol);
+  valid = valid && valid_protocol;
+
+  /* If user tried to login to matrix via email, ask for homeserver details */
+  if (protocol & CHATTY_PROTOCOL_MATRIX &&
+      valid_protocol & CHATTY_PROTOCOL_EMAIL) {
+    gtk_widget_show (self->matrix_homeserver_entry);
+    settings_homeserver_entry_changed (self, GTK_ENTRY (self->matrix_homeserver_entry));
+  }
+
   /* Allow empty passwords for telegram accounts */
   if (protocol != CHATTY_PROTOCOL_TELEGRAM)
     valid = valid && password && *password;
-
-  valid = valid && chatty_utils_username_is_valid (id, protocol);
 
   /* Don’t allow adding if an account with same id exists */
   if (valid &&
