@@ -137,6 +137,30 @@ finish_cb (GObject      *object,
 }
 
 static void
+settings_apply_style (GtkWidget  *widget,
+                      const char *style)
+{
+  GtkStyleContext *context;
+
+  g_assert (style && *style);
+
+  context = gtk_widget_get_style_context (widget);
+  gtk_style_context_add_class (context, style);
+}
+
+static void
+settings_remove_style (GtkWidget  *widget,
+                       const char *style)
+{
+  GtkStyleContext *context;
+
+  g_assert (style && *style);
+
+  context = gtk_widget_get_style_context (widget);
+  gtk_style_context_remove_class (context, style);
+}
+
+static void
 settings_dialog_set_save_state (ChattySettingsDialog *self,
                                 gboolean              in_progress)
 {
@@ -597,6 +621,11 @@ settings_homeserver_entry_changed (ChattySettingsDialog *self,
     valid = valid && *uri->host && g_str_equal (soup_uri_get_path (uri), "/");
   }
 
+  if (valid)
+    settings_remove_style (GTK_WIDGET (entry), "error");
+  else
+    settings_apply_style (GTK_WIDGET (entry), "error");
+
   gtk_widget_set_sensitive (self->add_button, valid);
 }
 
@@ -822,6 +851,11 @@ settings_new_detail_changed_cb (ChattySettingsDialog *self)
   id = gtk_entry_get_text (GTK_ENTRY (self->new_account_id_entry));
   password = gtk_entry_get_text (GTK_ENTRY (self->new_password_entry));
 
+  if (password && *password)
+    settings_remove_style (GTK_WIDGET (self->new_password_entry), "error");
+  else
+    settings_apply_style (GTK_WIDGET (self->new_password_entry), "error");
+
   if (!id || !*id)
     gtk_widget_hide (self->matrix_homeserver_entry);
 
@@ -838,6 +872,11 @@ settings_new_detail_changed_cb (ChattySettingsDialog *self)
 
   valid_protocol = chatty_utils_username_is_valid (id, protocol);
   valid = valid && valid_protocol;
+
+  if (valid_protocol)
+    settings_remove_style (GTK_WIDGET (self->new_account_id_entry), "error");
+  else
+    settings_apply_style (GTK_WIDGET (self->new_account_id_entry), "error");
 
   /* If user tried to login to matrix via email, ask for homeserver details */
   if (protocol & CHATTY_PROTOCOL_MATRIX &&
