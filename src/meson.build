@@ -116,6 +116,7 @@ chatty_deps += [
   libfeedback_dep,
   libm_dep,
   libphonenumber_dep,
+  libcmatrix_dep,
 ]
 
 gnome = import('gnome')

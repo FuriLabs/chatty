@@ -64,5 +64,6 @@ gboolean        chatty_manager_set_uri                (ChattyManager      *self,
                                                        const char         *uri,
                                                        const char         *name);
 ChattyHistory  *chatty_manager_get_history            (ChattyManager      *self);
+gpointer        chatty_manager_matrix_client_new      (ChattyManager      *self);
 
 G_END_DECLS

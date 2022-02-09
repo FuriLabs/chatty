@@ -16,6 +16,8 @@
 #include <json-glib/json-glib.h>
 #include <libsoup/soup.h>
 
+#include "cm-enums.h"
+
 #define MATRIX_ERROR (matrix_error_quark ())
 
 GQuark        matrix_error_quark                    (void);

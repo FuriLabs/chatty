@@ -3017,8 +3017,8 @@ history_load_account (ChattyHistory *self,
 
   if (!user_name || !*user_name) {
     g_task_return_new_error (task,
-                             G_IO_ERROR, G_IO_ERROR_FAILED,
-                             "Error: username name is empty");
+                             G_IO_ERROR, G_IO_ERROR_NOT_FOUND,
+                             "Username name is empty");
     return;
   }
 

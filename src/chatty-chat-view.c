@@ -285,6 +285,12 @@ chat_view_attachment_revealer_notify_cb (ChattyChatView *self)
   has_text = gtk_text_buffer_get_char_count (self->message_input_buffer) > 0;
 
   gtk_widget_set_visible (self->send_message_button, has_files || has_text);
+
+  if (!has_files)
+    {
+      gtk_widget_set_sensitive (self->send_file_button, TRUE);
+      gtk_widget_set_sensitive (self->message_input, TRUE);
+    }
 }
 
 static void
@@ -429,6 +435,8 @@ chat_view_show_file_chooser (ChattyChatView *self)
 
     /* Currently multiple files are allowed only for MMS chats */
     gtk_widget_set_sensitive (self->send_file_button, CHATTY_IS_MM_CHAT (self->chat));
+    /* Files with message content is supported only by MMS chats */
+    gtk_widget_set_sensitive (self->message_input, CHATTY_IS_MM_CHAT (self->chat));
   }
 
   gtk_widget_destroy (dialog);
@@ -445,8 +453,7 @@ chat_view_send_file_button_clicked_cb (ChattyChatView *self,
   if (CHATTY_IS_MM_CHAT (self->chat)) {
     chat_view_show_file_chooser (self);
   } else if (CHATTY_IS_MA_CHAT (self->chat)) {
-    /* TODO */
-
+    chat_view_show_file_chooser (self);
   } else {
 #ifdef PURPLE_ENABLED
     chatty_pp_chat_show_file_upload (CHATTY_PP_CHAT (self->chat));

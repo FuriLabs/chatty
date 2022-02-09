@@ -21,21 +21,6 @@ config_h.set_quoted('LOCALEDIR', join_paths(get_option('prefix'), get_option('lo
 config_h.set_quoted('PACKAGE_NAME', meson.project_name())
 config_h.set_quoted('PACKAGE_VERSION', meson.project_version())
 
-# TODO: Use has_headers: 'olm/olm.h' when we bump meson requirement
-libolm_dep = cc.find_library('olm', required: true)
-
-if (cc.has_function('olm_account_unpublished_fallback_key', dependencies: libolm_dep))
-  config_h.set('OLM_ACCOUNT_PICKLE_V4', true)
-else
-  config_h.set('OLM_ACCOUNT_PICKLE_V4', false)
-endif
-
-if (cc.has_function('olm_pk_key_from_private', dependencies: libolm_dep))
-  config_h.set('HAVE_OLM3', true)
-else
-  config_h.set('HAVE_OLM2', true)
-endif
-
 configure_file(
   output: 'config.h',
   configuration: config_h,
@@ -117,6 +102,13 @@ libgd = subproject('libgd',
                    ])
 
 libgd_dep = libgd.get_variable('libgd_dep')
+
+libcmatrix = subproject('libcmatrix',
+                        default_options: [
+                          'build-examples=false',
+                        ])
+libcmatrix_dep = libcmatrix.get_variable('libcmatrix_dep')
+
 
 subdir('completion')
 subdir('data')

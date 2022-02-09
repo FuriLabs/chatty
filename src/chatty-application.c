@@ -28,6 +28,8 @@
 # include "version.h"
 #endif
 
+#define CMATRIX_USE_EXPERIMENTAL_API
+#include <cmatrix.h>
 #include <glib/gi18n.h>
 #include <handy.h>
 
@@ -329,6 +331,7 @@ chatty_application_startup (GApplication *application)
   g_info ("%s %s, git version: %s", PACKAGE_NAME, PACKAGE_VERSION, GIT_VERSION);
 
   hdy_init ();
+  cm_init (TRUE);
 
   g_set_application_name (_("Chats"));
 

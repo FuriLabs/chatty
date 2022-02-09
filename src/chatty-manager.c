@@ -18,6 +18,8 @@
 #define LIBFEEDBACK_USE_UNSTABLE_API
 #include <libfeedback.h>
 #include <glib/gi18n.h>
+#define CMATRIX_USE_EXPERIMENTAL_API
+#include "cmatrix.h"
 #include "contrib/gtk.h"
 
 #include "chatty-settings.h"
@@ -748,4 +750,15 @@ chatty_manager_get_history (ChattyManager *self)
     self->history = chatty_history_new ();
 
   return self->history;
+}
+
+gpointer
+chatty_manager_matrix_client_new (ChattyManager *self)
+{
+  g_return_val_if_fail (CHATTY_IS_MANAGER (self), NULL);
+
+  if (!self->matrix || !chatty_settings_get_experimental_features (chatty_settings_get_default ()))
+    return NULL;
+
+  return chatty_matrix_client_new (self->matrix);
 }

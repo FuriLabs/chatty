@@ -89,10 +89,11 @@ chatty_secret_store_save_async (ChattyAccount       *account,
   /* XXX: We use a dumb string search, so don't change the order or spacing of the format string */
   credentials = g_strdup_printf ("{\"username\": \"%s\",  \"password\": \"%s\","
                                  "\"access-token\": \"%s\", "
-                                 "\"pickle-key\": \"%s\", \"device-id\": \"%s\"}",
+                                 "\"pickle-key\": \"%s\", \"device-id\": \"%s\", \"enabled\": \"%s\"}",
                                  chatty_item_get_username (CHATTY_ITEM (account)),
                                  password ? password : "", token ? token : "",
-                                 key ? key : "", device_id);
+                                 key ? key : "", device_id,
+                                 chatty_account_get_enabled (account) ? "true" : "false");
   schema = secret_store_get_schema ();
   server = chatty_ma_account_get_homeserver (CHATTY_MA_ACCOUNT (account));
   label = g_strdup_printf (_("Chatty password for \"%s\""), username);
@@ -142,19 +143,15 @@ secret_load_cb (GObject      *object,
   }
 
   for (GList *item = secrets; item; item = item->next) {
-    ChattyMaAccount *account;
-
     if (!accounts)
       accounts = g_ptr_array_new_full (5, g_object_unref);
 
-    account = chatty_ma_account_new_secret (item->data);
-
-    if (account)
-      g_ptr_array_insert (accounts, -1, account);
+    if (item->data)
+      g_ptr_array_insert (accounts, -1, item->data);
   }
 
   if (secrets)
-    g_list_free_full (secrets, g_object_unref);
+    g_list_free (secrets);
 
   g_task_return_pointer (task, accounts, (GDestroyNotify)g_ptr_array_unref);
 }

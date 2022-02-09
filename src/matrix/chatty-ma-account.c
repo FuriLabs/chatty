@@ -1,7 +1,7 @@
 /* -*- mode: c; c-basic-offset: 2; indent-tabs-mode: nil; -*- */
 /* chatty-ma-account.c
  *
- * Copyright 2020 Purism SPC
+ * Copyright 2020, 2022 Purism SPC
  *
  * Author(s):
  *   Mohammed Sadiq <sadiq@sadiqpk.org>
@@ -18,9 +18,6 @@
 
 #include "chatty-secret-store.h"
 #include "chatty-history.h"
-#include "matrix-api.h"
-#include "matrix-enc.h"
-#include "matrix-db.h"
 #include "matrix-utils.h"
 #include "chatty-utils.h"
 #include "chatty-ma-chat.h"
@@ -42,33 +39,27 @@ struct _ChattyMaAccount
 
   char           *name;
 
-  MatrixApi      *matrix_api;
-  MatrixEnc      *matrix_enc;
-  MatrixDb       *matrix_db;
+  CmMatrix       *cm_matrix;
+  CmClient       *cm_client;
+
   HdyValueObject *device_fp;
 
   ChattyHistory  *history_db;
 
-  char           *pickle_key;
-  char           *next_batch;
-
   GListStore     *chat_list;
-  /* this will be moved to chat_list after login succeeds */
-  GPtrArray      *db_chat_list;
   GdkPixbuf      *avatar;
   ChattyFileInfo *avatar_file;
 
   ChattyStatus   status;
-  gboolean       homeserver_valid;
-  gboolean       account_enabled;
+  /* Temporarely store the account enabled status */
+  gboolean       account_enabled_in_store;
 
   gboolean       avatar_is_loading;
   /* @is_loading is set when the account is loading
    * from db and set to not save the change to db.
    */
   gboolean       is_loading;
-  gboolean       save_account_pending;
-  gboolean       save_password_pending;
+  gboolean       save_pending;
 
   /* for sending events, incremented for each event */
   int            event_id;
@@ -83,7 +74,7 @@ G_DEFINE_TYPE (ChattyMaAccount, chatty_ma_account, CHATTY_TYPE_ACCOUNT)
     if (self->status != _status) {                                      \
       self->status = _status;                                           \
       g_object_notify (G_OBJECT (self), "status");                      \
-      CHATTY_TRACE (matrix_api_get_username (self->matrix_api),         \
+      CHATTY_TRACE (cm_client_get_user_id (self->cm_client),            \
                     "status changed, connected: %s, user:",             \
                     _status == CHATTY_CONNECTING ? "connecting" :       \
                     CHATTY_LOG_BOOL (_status == CHATTY_CONNECTED));     \
@@ -110,22 +101,6 @@ ma_account_get_avatar_pixbuf_cb (GObject      *object,
   if (!error) {
     g_set_object (&self->avatar, pixbuf);
     g_signal_emit_by_name (self, "avatar-changed");
-  }
-}
-
-static void
-ma_account_get_avatar_cb (GObject      *object,
-                          GAsyncResult *result,
-                          gpointer      user_data)
-{
-  g_autoptr(ChattyMaAccount) self = user_data;
-
-  self->avatar_is_loading = FALSE;
-
-  if (matrix_api_get_file_finish (self->matrix_api, result, NULL)) {
-    g_clear_object (&self->avatar);
-    g_signal_emit_by_name (self, "avatar-changed");
-    chatty_history_update_user (self->history_db, CHATTY_ACCOUNT (self));
   }
 }
 
@@ -158,37 +133,6 @@ matrix_find_chat_with_id (ChattyMaAccount *self,
 }
 
 static void
-matrix_parse_device_data (ChattyMaAccount *self,
-                          JsonObject      *to_device)
-{
-  JsonObject *object;
-  JsonArray *array;
-  guint length = 0;
-
-  g_assert (CHATTY_IS_MA_ACCOUNT (self));
-  g_assert (to_device);
-
-  array = matrix_utils_json_object_get_array (to_device, "events");
-  if (array)
-    length = json_array_get_length (array);
-
-  if (length)
-    CHATTY_TRACE_MSG ("Got %d to-device events", length);
-
-  for (guint i = 0; i < length; i++) {
-    const char *type;
-
-    object = json_array_get_object_element (array, i);
-    type = matrix_utils_json_object_get_string (object, "type");
-
-    CHATTY_TRACE_MSG ("parsing to-device event, type: %s", type);
-
-    if (g_strcmp0 (type, "m.room.encrypted") == 0)
-      matrix_enc_handle_room_encrypted (self->matrix_enc, object);
-  }
-}
-
-static void
 matrix_parse_room_data (ChattyMaAccount *self,
                         JsonObject       *rooms)
 {
@@ -214,17 +158,7 @@ matrix_parse_room_data (ChattyMaAccount *self,
 
       CHATTY_TRACE (room_id->data, "joined room, new: %d, room:", !!chat);
 
-      if (!chat) {
-        chat = g_object_new (CHATTY_TYPE_MA_CHAT, "room-id", room_id->data, NULL);
-        chatty_ma_chat_set_matrix_db (chat, self->matrix_db);
-        chatty_ma_chat_set_history_db (chat, self->history_db);
-        /* TODO */
-        /* chatty_ma_chat_set_last_batch (chat, self->next_batch); */
-        chatty_ma_chat_set_data (chat, CHATTY_ACCOUNT (self), self->matrix_api, self->matrix_enc);
-        g_object_set (chat, "json-data", room_data, NULL);
-        g_list_store_append (self->chat_list, chat);
-        g_object_unref (chat);
-      } else if (room_data) {
+      if (chat && room_data) {
         g_object_set (chat, "json-data", room_data, NULL);
         g_list_model_items_changed (G_LIST_MODEL (self->chat_list), index, 1, 1);
       }
@@ -262,7 +196,8 @@ handle_get_homeserver (ChattyMaAccount *self,
 
   if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND)) {
     g_warning ("Couldn't connect to ‘/.well-known/matrix/client’ ");
-    matrix_api_set_homeserver (self->matrix_api, "https://chat.librem.one");
+    cm_client_set_homeserver (self->cm_client, "https://chat.librem.one");
+    cm_client_start_sync (self->cm_client);
   }
 }
 
@@ -286,10 +221,10 @@ handle_password_login (ChattyMaAccount *self,
 
   /* If no error, Api is informing us that logging in succeeded.
    * Let’s update matrix_enc & set device keys to upload */
-  if (g_error_matches (error, MATRIX_ERROR, M_BAD_PASSWORD)) {
-    GtkWidget *dialog, *content, *header_bar;
+  if (g_error_matches (error, CM_ERROR, M_BAD_PASSWORD)) {
+    GtkWidget *dialog, *content, *header_bar, *label;
     GtkWidget *cancel_btn, *ok_btn, *entry;
-    g_autofree char *label = NULL;
+    g_autofree char *message = NULL;
     const char *password;
     int response;
 
@@ -303,9 +238,12 @@ handle_password_login (ChattyMaAccount *self,
     content = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
     gtk_container_set_border_width (GTK_CONTAINER (content), 18);
     gtk_box_set_spacing (GTK_BOX (content), 12);
-    label = g_strdup_printf (_("Please enter password for “%s”"),
-                             matrix_api_get_login_username (self->matrix_api));
-    gtk_container_add (GTK_CONTAINER (content), gtk_label_new (label));
+    message = g_strdup_printf (_("Please enter password for “%s”, homeserver: %s"),
+                             cm_client_get_login_id (self->cm_client),
+                             cm_client_get_homeserver (self->cm_client));
+    label = gtk_label_new (message);
+    gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
+    gtk_container_add (GTK_CONTAINER (content), label);
     entry = gtk_entry_new ();
     gtk_entry_set_activates_default (GTK_ENTRY (entry), TRUE);
     gtk_entry_set_visibility (GTK_ENTRY (entry), FALSE);
@@ -334,7 +272,7 @@ handle_password_login (ChattyMaAccount *self,
     if (response != GTK_RESPONSE_ACCEPT || !password || !*password) {
       chatty_account_set_enabled (CHATTY_ACCOUNT (self), FALSE);
     } else {
-      matrix_api_set_password (self->matrix_api, password);
+      cm_client_set_password (self->cm_client, password);
       self->is_loading = TRUE;
       chatty_account_set_enabled (CHATTY_ACCOUNT (self), FALSE);
       self->is_loading = FALSE;
@@ -345,7 +283,8 @@ handle_password_login (ChattyMaAccount *self,
   }
 
   if (!error) {
-    self->save_password_pending = TRUE;
+    self->save_pending = TRUE;
+
     chatty_account_save (CHATTY_ACCOUNT (self));
 
     ma_account_update_status (self, CHATTY_CONNECTED);
@@ -353,73 +292,10 @@ handle_password_login (ChattyMaAccount *self,
 }
 
 static void
-handle_upload_key (ChattyMaAccount *self,
-                   JsonObject      *object,
-                   GError          *error)
-{
-  g_assert (CHATTY_IS_MA_ACCOUNT (self));
-
-  if (object) {
-    /* XXX: check later */
-    matrix_enc_publish_one_time_keys (self->matrix_enc);
-
-    self->save_account_pending = TRUE;
-    chatty_account_save (CHATTY_ACCOUNT (self));
-  }
-}
-
-static ChattyMaChat *
-ma_account_find_chat (ChattyMaAccount *self,
-                      const char      *room_id)
-{
-  GPtrArray *chats = self->db_chat_list;
-
-  g_assert (CHATTY_IS_MA_ACCOUNT (self));
-
-  if (!room_id || !*room_id || !chats)
-    return NULL;
-
-  for (guint i = 0; i < chats->len; i++) {
-    const char *chat_name;
-
-    chat_name = chatty_chat_get_chat_name (chats->pdata[i]);
-    if (g_strcmp0 (chat_name, room_id) == 0)
-      return g_object_ref (chats->pdata[i]);
-  }
-
-  return NULL;
-}
-
-static void
 handle_get_joined_rooms (ChattyMaAccount *self,
                          JsonObject      *object,
                          GError          *error)
 {
-  JsonArray *array;
-  guint length = 0;
-
-  g_assert (CHATTY_IS_MA_ACCOUNT (self));
-
-  array = matrix_utils_json_object_get_array (object, "joined_rooms");
-
-  if (array)
-    length = json_array_get_length (array);
-
-  for (guint i = 0; i < length; i++) {
-    g_autoptr(ChattyMaChat) chat = NULL;
-    const char *room_id;
-
-    room_id = json_array_get_string_element (array, i);
-    chat = ma_account_find_chat (self, room_id);
-    if (!chat)
-      chat = g_object_new (CHATTY_TYPE_MA_CHAT, "room-id", room_id, NULL);
-    chatty_ma_chat_set_matrix_db (chat, self->matrix_db);
-    chatty_ma_chat_set_history_db (chat, self->history_db);
-    chatty_ma_chat_set_data (chat, CHATTY_ACCOUNT (self), self->matrix_api, self->matrix_enc);
-    g_list_store_append (self->chat_list, chat);
-  }
-
-  g_clear_pointer (&self->db_chat_list, g_ptr_array_unref);
 }
 
 static void
@@ -436,28 +312,25 @@ handle_red_pill (ChattyMaAccount *self,
 
   ma_account_update_status (self, CHATTY_CONNECTED);
 
-  object = matrix_utils_json_object_get_object (root, "to_device");
-  if (object)
-    matrix_parse_device_data (self, object);
-
   object = matrix_utils_json_object_get_object (root, "rooms");
   if (object)
     matrix_parse_room_data (self, object);
-
-  self->save_account_pending = TRUE;
-  chatty_account_save (CHATTY_ACCOUNT (self));
 }
 
 static void
-matrix_account_sync_cb (ChattyMaAccount *self,
-                        MatrixApi       *api,
-                        MatrixAction     action,
-                        JsonObject      *object,
-                        GError          *error)
+cm_account_sync_cb (ChattyMaAccount *self,
+                    CmClient        *cm_client,
+                    CmAction         action,
+                    const char      *event,
+                    const char      *json,
+                    GError          *error)
 {
+  g_autoptr(JsonNode) node = NULL;
+  JsonObject *object;
+
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
-  g_assert (MATRIX_IS_API (api));
-  g_assert (self->matrix_api == api);
+  g_assert (CM_IS_CLIENT (self->cm_client));
+  g_assert (self->cm_client == cm_client);
 
   if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
     return;
@@ -478,46 +351,58 @@ matrix_account_sync_cb (ChattyMaAccount *self,
     return;
   }
 
-  if (!error && !matrix_api_is_sync (self->matrix_api) &&
-      action != MATRIX_GET_JOINED_ROOMS) {
-    ma_account_update_status (self, CHATTY_DISCONNECTED);
-    return;
+  /* TODO */
+  /* if (!error && !cm_client_is_sync (self->cm_client) && */
+  /*     action != CM_GET_JOINED_ROOMS) { */
+  /*   ma_account_update_status (self, CHATTY_DISCONNECTED); */
+  /*   return; */
+  /* } */
+
+  if (json) {
+    node = json_from_string (json, &error);
+
+    if (error || !JSON_NODE_HOLDS_OBJECT (node)) {
+      if (error)
+        g_warning ("Warning parsing json: %s", error->message);
+      else
+        g_warning ("JsonNode doesn't hold an object");
+      return;
+    };
+
+    object = json_node_get_object (node);
   }
 
   switch (action) {
-  case MATRIX_BLUE_PILL:
+  case CM_BLUE_PILL:
     return;
 
-  case MATRIX_GET_HOMESERVER:
+  case CM_GET_HOMESERVER:
     handle_get_homeserver (self, object, error);
     return;
 
-  case MATRIX_VERIFY_HOMESERVER:
+  case CM_VERIFY_HOMESERVER:
     handle_verify_homeserver (self, object, error);
     return;
 
-  case MATRIX_PASSWORD_LOGIN:
+  case CM_PASSWORD_LOGIN:
     handle_password_login (self, object, error);
     return;
 
-  case MATRIX_UPLOAD_KEY:
-    handle_upload_key (self, object, error);
-    return;
-
-  case MATRIX_GET_JOINED_ROOMS:
+  case CM_GET_JOINED_ROOMS:
     handle_get_joined_rooms (self, object, error);
     return;
 
-  case MATRIX_RED_PILL:
+  case CM_RED_PILL:
     handle_red_pill (self, object, error);
     return;
 
-  case MATRIX_ACCESS_TOKEN_LOGIN:
-  case MATRIX_SET_TYPING:
-  case MATRIX_SEND_MESSAGE:
-  case MATRIX_SEND_IMAGE:
-  case MATRIX_SEND_VIDEO:
-  case MATRIX_SEND_FILE:
+  case CM_UPLOAD_KEY:
+  case CM_ACCESS_TOKEN_LOGIN:
+  case CM_SET_TYPING:
+  case CM_SEND_MESSAGE:
+  case CM_SEND_IMAGE:
+  case CM_SEND_VIDEO:
+  case CM_SEND_FILE:
   default:
     break;
   }
@@ -546,7 +431,7 @@ chatty_ma_account_get_enabled (ChattyAccount *account)
 
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
 
-  return self->account_enabled;
+  return cm_client_get_enabled (self->cm_client);
 }
 
 static void
@@ -556,40 +441,16 @@ chatty_ma_account_set_enabled (ChattyAccount *account,
   ChattyMaAccount *self = (ChattyMaAccount *)account;
 
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
+  g_assert (self->cm_client);
+  g_assert (self->cm_matrix);
 
-  if (self->account_enabled == enable)
-    return;
+  cm_client_set_enabled (self->cm_client, enable);
 
-  g_clear_handle_id (&self->connect_id, g_source_remove);
-
-  if (!self->matrix_enc && enable) {
-    CHATTY_TRACE_MSG ("Create new enc. user: %s has pickle: %d, has key: %d",
-                      chatty_item_get_username (CHATTY_ITEM (account)), FALSE, FALSE);
-    self->matrix_enc = matrix_enc_new (self->matrix_db, NULL, NULL);
-    matrix_api_set_enc (self->matrix_api, self->matrix_enc);
-  }
-
-  self->account_enabled = enable;
-  CHATTY_TRACE (chatty_item_get_username (CHATTY_ITEM (account)),
-                "Enable account: %d, is loading: %d, user:",
-                enable, self->is_loading);
-
-  if (self->account_enabled &&
-      chatty_ma_account_can_connect (self)) {
-    ma_account_update_status (self, CHATTY_CONNECTING);
-    matrix_api_start_sync (self->matrix_api);
-  } else if (!self->account_enabled){
-    ma_account_update_status (self, CHATTY_DISCONNECTED);
-    matrix_api_stop_sync (self->matrix_api);
-  }
+  self->save_pending = TRUE;
+  chatty_account_save (account);
 
   g_object_notify (G_OBJECT (self), "enabled");
   g_object_notify (G_OBJECT (self), "status");
-
-  if (!self->is_loading) {
-    self->save_account_pending = TRUE;
-    chatty_account_save (account);
-  }
 }
 
 static const char *
@@ -600,7 +461,7 @@ chatty_ma_account_get_password (ChattyAccount *account)
 
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
 
-  password = matrix_api_get_password (self->matrix_api);
+  password = cm_client_get_password (self->cm_client);
 
   if (password)
     return password;
@@ -616,13 +477,21 @@ chatty_ma_account_set_password (ChattyAccount *account,
 
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
 
-  if (g_strcmp0 (password, matrix_api_get_password (self->matrix_api)) == 0)
+
+  if (self->cm_client)
+    {
+      if (cm_client_get_logging_in (self->cm_client) ||
+          cm_client_get_logged_in (self->cm_client))
+        return;
+    }
+
+  if (g_strcmp0 (password, cm_client_get_password (self->cm_client)) == 0)
     return;
 
-  matrix_api_set_password (self->matrix_api, password);
+  cm_client_set_password (self->cm_client, password);
 
-  if (matrix_api_get_homeserver (self->matrix_api)) {
-    self->save_password_pending = TRUE;
+  if (cm_client_get_homeserver (self->cm_client)) {
+    self->save_pending = TRUE;
     chatty_account_save (account);
   }
 }
@@ -635,8 +504,7 @@ account_connect (gpointer user_data)
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
 
   self->connect_id = 0;
-  matrix_api_start_sync (self->matrix_api);
-  ma_account_update_status (self, CHATTY_CONNECTING);
+  cm_client_start_sync (self->cm_client);
 
   return G_SOURCE_REMOVE;
 }
@@ -652,7 +520,7 @@ chatty_ma_account_connect (ChattyAccount *account,
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
 
   if (!chatty_account_get_enabled (account)) {
-    CHATTY_TRACE (matrix_api_get_login_username (self->matrix_api),
+    CHATTY_TRACE (cm_client_get_login_id (self->cm_client),
                   "Trying to connect disabled account, username:");
     return;
   }
@@ -675,7 +543,7 @@ chatty_ma_account_disconnect (ChattyAccount *account)
 
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
 
-  matrix_api_stop_sync (self->matrix_api);
+  cm_client_stop_sync (self->cm_client);
   ma_account_update_status (self, CHATTY_DISCONNECTED);
 }
 
@@ -692,7 +560,7 @@ chatty_ma_account_save (ChattyAccount *account)
   ChattyMaAccount *self = (ChattyMaAccount *)account;
 
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
-  g_return_if_fail (matrix_api_get_login_username (self->matrix_api));
+  g_return_if_fail (cm_client_get_login_id (self->cm_client));
 
   chatty_ma_account_save_async (self, FALSE, NULL, NULL, NULL);
 }
@@ -713,15 +581,15 @@ chatty_ma_account_get_device_fp (ChattyAccount *account)
 
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
 
-  device_id = matrix_api_get_device_id (self->matrix_api);
+  device_id = cm_client_get_device_id (self->cm_client);
   g_clear_object (&self->device_fp);
 
-  if (!self->device_fp && device_id) {
+  if (device_id) {
     g_autoptr(GString) fp = NULL;
     const char *str;
 
     fp = g_string_new (NULL);
-    str = matrix_enc_get_ed25519_key (self->matrix_enc);
+    str = cm_client_get_ed25519_key (self->cm_client);
 
     while (str && *str) {
       g_autofree char *chunk = g_strndup (str, 4);
@@ -755,7 +623,7 @@ ma_account_leave_chat_cb (GObject      *object,
   chat = g_task_get_task_data (task);
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
 
-  success = matrix_api_leave_chat_finish (self->matrix_api, result, &error);
+  success = cm_room_leave_finish (CM_ROOM (object), result, &error);
   CHATTY_TRACE_MSG ("Leaving chat: %s(%s), success: %d",
                     chatty_item_get_name (CHATTY_ITEM (chat)),
                     chatty_chat_get_chat_name (chat),
@@ -810,10 +678,10 @@ chatty_ma_account_leave_chat_async (ChattyAccount       *account,
                      GINT_TO_POINTER (chatty_item_get_state (CHATTY_ITEM (chat))));
   chatty_item_set_state (CHATTY_ITEM (chat), CHATTY_ITEM_HIDDEN);
   chatty_history_update_chat (self->history_db, chat);
-  matrix_api_leave_chat_async (self->matrix_api,
-                               chatty_chat_get_chat_name (chat),
-                               ma_account_leave_chat_cb,
-                               g_steal_pointer (&task));
+  cm_room_leave_async (chatty_ma_chat_get_cm_room (CHATTY_MA_CHAT (chat)),
+                       NULL,
+                       ma_account_leave_chat_cb,
+                       g_steal_pointer (&task));
 }
 
 static ChattyProtocol
@@ -854,8 +722,8 @@ chatty_ma_account_get_username (ChattyItem *item)
 
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
 
-  if (matrix_api_get_username (self->matrix_api))
-    return matrix_api_get_username (self->matrix_api);
+  if (self->cm_client && cm_client_get_user_id (self->cm_client))
+    return cm_client_get_user_id (self->cm_client);
 
   return "";
 }
@@ -868,11 +736,11 @@ chatty_ma_account_set_username (ChattyItem *item,
 
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
 
-  matrix_api_set_login_username (self->matrix_api, username);
+  cm_client_set_login_id (self->cm_client, username);
 
   /* If in test, also set username */
   if (g_test_initialized ())
-    matrix_api_set_username (self->matrix_api, username);
+    cm_client_set_user_id (self->cm_client, username);
 }
 
 static ChattyFileInfo *
@@ -913,11 +781,6 @@ chatty_ma_account_get_avatar (ChattyItem *item)
                                    ma_account_get_avatar_pixbuf_cb,
                                    g_object_ref (self));
 
-  } else {
-    matrix_api_get_file_async (self->matrix_api, NULL, self->avatar_file,
-                               NULL, NULL,
-                               ma_account_get_avatar_cb,
-                               g_object_ref (self));
   }
 
   return NULL;
@@ -937,7 +800,7 @@ ma_account_set_user_avatar_cb (GObject      *object,
   self = g_task_get_source_object (task);
   g_assert (CHATTY_MA_ACCOUNT (self));
 
-  matrix_api_set_user_avatar_finish (self->matrix_api, result, &error);
+  cm_account_set_user_avatar_finish (CM_ACCOUNT (object), result, &error);
 
   if (error)
     g_task_return_error (task, error);
@@ -971,6 +834,7 @@ chatty_ma_account_set_avatar_async (ChattyItem          *item,
 {
   ChattyMaAccount *self = (ChattyMaAccount *)item;
   g_autoptr(GTask) task = NULL;
+  GFile *file;
 
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
 
@@ -982,7 +846,9 @@ chatty_ma_account_set_avatar_async (ChattyItem          *item,
       return;
     }
 
-  matrix_api_set_user_avatar_async (self->matrix_api, file_name, cancellable,
+  file = g_file_new_for_path (file_name);
+  cm_account_set_user_avatar_async (cm_client_get_account (self->cm_client),
+                                    file, cancellable,
                                     ma_account_set_user_avatar_cb,
                                     g_steal_pointer (&task));
 }
@@ -995,19 +861,13 @@ chatty_ma_account_finalize (GObject *object)
   g_clear_handle_id (&self->connect_id, g_source_remove);
   g_list_store_remove_all (self->chat_list);
 
-  g_clear_object (&self->matrix_api);
-  g_clear_object (&self->matrix_enc);
   g_clear_object (&self->device_fp);
   g_clear_object (&self->chat_list);
   g_clear_object (&self->avatar);
-  g_clear_object (&self->matrix_db);
   g_clear_object (&self->history_db);
-  g_clear_pointer (&self->db_chat_list, g_ptr_array_unref);
   g_clear_pointer (&self->avatar_file, chatty_file_info_free);
 
   g_free (self->name);
-  g_free (self->pickle_key);
-  g_free (self->next_batch);
 
   G_OBJECT_CLASS (chatty_ma_account_parent_class)->finalize (object);
 }
@@ -1049,10 +909,60 @@ static void
 chatty_ma_account_init (ChattyMaAccount *self)
 {
   self->chat_list = g_list_store_new (CHATTY_TYPE_MA_CHAT);
+}
 
-  self->matrix_api = matrix_api_new (NULL);
-  matrix_api_set_sync_callback (self->matrix_api,
-                                (MatrixCallback)matrix_account_sync_cb, self);
+static void
+joined_rooms_changed (ChattyMaAccount *self,
+                      int              position,
+                      int              removed,
+                      int              added,
+                      GListModel      *model)
+{
+  g_autoptr(GPtrArray) items = NULL;
+
+  g_assert (CHATTY_IS_MA_ACCOUNT (self));
+  g_assert (G_IS_LIST_MODEL (model));
+
+  for (guint i = position; i < position + added; i++)
+    {
+      g_autoptr(CmRoom) room = NULL;
+      ChattyMaChat *chat;
+
+      if (!items)
+          items = g_ptr_array_new_with_free_func (g_object_unref);
+
+      room = g_list_model_get_item (model, i);
+      chat = chatty_ma_chat_new_with_room (room);
+      chatty_ma_chat_set_history_db (chat, self->history_db);
+      chatty_ma_chat_set_data (chat, CHATTY_ACCOUNT (self), self->cm_client);
+      g_ptr_array_add (items, chat);
+    }
+
+  g_list_store_splice (self->chat_list, position, removed,
+                       items ? items->pdata : NULL, added);
+}
+
+static void
+ma_account_set_client (ChattyMaAccount *self,
+                       CmClient        *client)
+{
+  GListModel *joined_rooms;
+
+  g_assert (CHATTY_IS_MA_ACCOUNT (self));
+  g_assert (CM_IS_CLIENT (client));
+  g_assert (!self->cm_client);
+
+  self->cm_client = client;
+  cm_client_set_device_name (client, "Chatty");
+  cm_client_set_sync_callback (client,
+                               (CmCallback)cm_account_sync_cb,
+                               self, NULL);
+
+  joined_rooms = cm_client_get_joined_rooms (client);
+  g_signal_connect_object (joined_rooms, "items-changed",
+                           G_CALLBACK (joined_rooms_changed), self,
+                           G_CONNECT_SWAPPED);
+  joined_rooms_changed (self, 0, 0, g_list_model_get_n_items (joined_rooms), joined_rooms);
 }
 
 ChattyMaAccount *
@@ -1064,10 +974,25 @@ chatty_ma_account_new (const char *username,
   g_return_val_if_fail (username, NULL);
 
   self = g_object_new (CHATTY_TYPE_MA_ACCOUNT, NULL);
+  ma_account_set_client (self, g_object_new (CM_TYPE_CLIENT, NULL));
+  cm_client_set_user_id (self->cm_client, username);
 
   chatty_item_set_username (CHATTY_ITEM (self), username);
   chatty_account_set_password (CHATTY_ACCOUNT (self), password);
   CHATTY_DEBUG_DETAILED (username, "New Matrix account");
+
+  return self;
+}
+
+ChattyMaAccount *
+chatty_ma_account_new_from_client (CmClient *cm_client)
+{
+  ChattyMaAccount *self;
+
+  g_return_val_if_fail (CM_IS_CLIENT (cm_client), NULL);
+
+  self = g_object_new (CHATTY_TYPE_MA_ACCOUNT, NULL);
+  ma_account_set_client (self, g_object_ref (cm_client));
 
   return self;
 }
@@ -1077,7 +1002,7 @@ chatty_ma_account_can_connect (ChattyMaAccount *self)
 {
   g_return_val_if_fail (CHATTY_IS_MA_ACCOUNT (self), FALSE);
 
-  return matrix_api_can_connect (self->matrix_api);
+  return cm_client_can_connect (self->cm_client);
 }
 
 /**
@@ -1098,7 +1023,7 @@ chatty_ma_account_get_login_username (ChattyMaAccount *self)
 {
   g_return_val_if_fail (CHATTY_IS_MA_ACCOUNT (self), "");
 
-  return matrix_api_get_login_username (self->matrix_api);
+  return cm_client_get_login_id (self->cm_client);
 }
 
 static char *
@@ -1131,8 +1056,27 @@ ma_account_get_value (const char *str,
   return NULL;
 }
 
+static void
+client_status_changed_cb (ChattyMaAccount *self)
+{
+  ChattyStatus status = CHATTY_DISCONNECTED;
+
+  g_assert (CHATTY_IS_MA_ACCOUNT (self));
+
+  if (!cm_client_get_enabled (self->cm_client))
+    status = CHATTY_DISCONNECTED;
+  else if (cm_client_is_sync (self->cm_client))
+    status = CHATTY_CONNECTED;
+  else if (cm_client_get_logging_in (self->cm_client) ||
+           cm_client_get_logged_in (self->cm_client))
+    status = CHATTY_CONNECTING;
+
+  ma_account_update_status (self, status);
+}
+
 ChattyMaAccount *
-chatty_ma_account_new_secret (gpointer secret_retrievable)
+chatty_ma_account_new_secret (gpointer  secret_retrievable,
+                              CmMatrix *cm_matrix)
 {
   ChattyMaAccount *self = NULL;
   g_autoptr(GHashTable) attributes = NULL;
@@ -1142,8 +1086,11 @@ chatty_ma_account_new_secret (gpointer secret_retrievable)
   const char *username, *login_username;
   char *password, *token, *device_id;
   char *password_str, *token_str = NULL;
+  g_autofree char *enabled = NULL;
 
   g_return_val_if_fail (SECRET_IS_RETRIEVABLE (item), NULL);
+  g_return_val_if_fail (CM_IS_MATRIX (cm_matrix), NULL);
+  g_return_val_if_fail (cm_matrix_is_ready (cm_matrix), NULL);
 
   value = secret_retrievable_retrieve_secret_sync (item, NULL, NULL);
 
@@ -1161,21 +1108,41 @@ chatty_ma_account_new_secret (gpointer secret_retrievable)
   g_return_val_if_fail (password, NULL);
   password_str = g_strcompress (password);
 
-  self = chatty_ma_account_new (login_username, password_str);
   token = ma_account_get_value (credentials, "\"access-token\"");
   device_id = ma_account_get_value (credentials, "\"device-id\"");
   username = ma_account_get_value (credentials, "\"username\"");
 
-  if (username && *username)
-    matrix_api_set_username (self->matrix_api, username);
-  chatty_ma_account_set_homeserver (self, homeserver);
-
   if (token)
     token_str = g_strcompress (token);
 
+  self = g_object_new (CHATTY_TYPE_MA_ACCOUNT, NULL);
+  ma_account_set_client (self, cm_matrix_client_new (cm_matrix));
+  chatty_ma_account_set_matrix (self, cm_matrix);
+  cm_client_set_homeserver (self->cm_client, homeserver);
+  cm_client_set_login_id (self->cm_client, login_username);
+  cm_client_set_user_id (self->cm_client, username);
+  cm_client_set_password (self->cm_client, password_str);
+  cm_client_set_device_id (self->cm_client, device_id);
+  enabled = ma_account_get_value (credentials, "\"enabled\"");
+
+  if (g_strcmp0 (enabled, "true") == 0)
+    self->account_enabled_in_store = TRUE;
+
+  /* DEBUG */
+  cm_client_set_access_token (self->cm_client, token_str);
+
+  g_signal_connect_object (self->cm_client, "status-changed",
+                           G_CALLBACK (client_status_changed_cb),
+                           self, G_CONNECT_SWAPPED);
+
+  chatty_ma_account_set_homeserver (self, homeserver);
+
+
   if (token && device_id) {
-    self->pickle_key = ma_account_get_value (credentials, "\"pickle-key\"");
-    matrix_api_set_access_token (self->matrix_api, token_str, device_id);
+    g_autofree char *pickle = NULL;
+
+    pickle = ma_account_get_value (credentials, "\"pickle-key\"");
+    cm_client_set_pickle_key (self->cm_client, pickle);
   }
 
   matrix_utils_free_buffer (device_id);
@@ -1187,80 +1154,27 @@ chatty_ma_account_new_secret (gpointer secret_retrievable)
   return self;
 }
 
-static void
-db_load_account_cb (GObject      *object,
-                    GAsyncResult *result,
-                    gpointer      user_data)
+void
+chatty_ma_account_set_matrix (ChattyMaAccount *self,
+                              CmMatrix        *cm_matrix)
 {
-  ChattyMaAccount *self = user_data;
-  GTask *task = (GTask *)result;
-  g_autoptr(GError) error = NULL;
-  gboolean enabled;
+  g_return_if_fail (CHATTY_IS_MA_ACCOUNT (self));
+  g_return_if_fail (CM_IS_MATRIX (cm_matrix));
+  g_return_if_fail (self->cm_client);
 
-  g_assert (CHATTY_IS_MA_ACCOUNT (self));
-  g_assert (G_IS_TASK (task));
-
-  if (!self->matrix_enc) {
-    const char *pickle;
-
-    pickle = g_object_get_data (G_OBJECT (task), "pickle");
-    CHATTY_TRACE (chatty_item_get_username (CHATTY_ITEM (self)),
-                  "Create new enc. has pickle: %d, has key: %d, user:",
-                  !!pickle, !!self->pickle_key);
-    self->matrix_enc = matrix_enc_new (self->matrix_db, pickle, self->pickle_key);
-    matrix_api_set_enc (self->matrix_api, self->matrix_enc);
-    if (!pickle)
-      matrix_api_set_access_token (self->matrix_api, NULL, NULL);
-    g_clear_pointer (&self->pickle_key, matrix_utils_free_buffer);
-  }
-
-  if (!matrix_db_load_account_finish (self->matrix_db, result, &error)) {
-    if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
-      g_warning ("Error loading account %s: %s",
-                 chatty_item_get_username (CHATTY_ITEM (self)),
-                 error->message);
-    return;
-  }
-
-  enabled = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (task), "enabled"));
-  self->next_batch = g_strdup (g_object_get_data (G_OBJECT (task), "batch"));
-  CHATTY_TRACE (chatty_item_get_username (CHATTY_ITEM (self)),
-                "Loaded from db. enabled: %d, has next-batch: %d, user:",
-                !!enabled, !!self->next_batch);
-
-  self->is_loading = TRUE;
-
-  matrix_api_set_next_batch (self->matrix_api, self->next_batch);
-  chatty_account_set_enabled (CHATTY_ACCOUNT (self), enabled);
-  self->is_loading = FALSE;
+  if (!self->cm_matrix)
+    self->cm_matrix = g_object_ref (cm_matrix);
 }
 
-static void
-db_load_chats_cb (GObject      *object,
-                  GAsyncResult *result,
-                  gpointer      user_data)
+void
+chatty_ma_account_load (ChattyMaAccount *self)
 {
-  ChattyMaAccount *self = user_data;
-  GTask *task = (GTask *)result;
-  GPtrArray *chats = NULL;
-  g_autoptr(GError) error = NULL;
+  g_return_if_fail (CHATTY_IS_MA_ACCOUNT (self));
+  g_return_if_fail (self->cm_client);
 
-  g_assert (CHATTY_IS_MA_ACCOUNT (self));
-  g_assert (G_IS_TASK (task));
+  cm_client_start_sync (self->cm_client);
 
-  chats = chatty_history_get_chats_finish (self->history_db, result, &error);
-  self->db_chat_list = chats;
-  CHATTY_TRACE (chatty_item_get_username (CHATTY_ITEM (self)),
-                "Loaded %u chats from db, user:",
-                !chats ? 0 : chats->len);
-
-  if (error)
-    g_warning ("Error getting chats: %s", error->message);
-
-
-  matrix_db_load_account_async (self->matrix_db, CHATTY_ACCOUNT (self),
-                                matrix_api_get_device_id (self->matrix_api),
-                                db_load_account_cb, self);
+  g_object_notify (G_OBJECT (self), "status");
 }
 
 static void
@@ -1277,7 +1191,8 @@ history_db_load_account_cb (GObject      *object,
 
   chatty_history_load_account_finish (self->history_db, result, &error);
 
-  if (error)
+  /* It's a valid case for the item to not be in db */
+  if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND))
     g_warning ("error loading account: %s", error->message);
 
   name = g_object_get_data (G_OBJECT (result), "name");
@@ -1292,56 +1207,21 @@ history_db_load_account_cb (GObject      *object,
   file->path = g_strdup (avatar_path);
   self->avatar_file = file;
 
-  chatty_history_get_chats_async (self->history_db, CHATTY_ACCOUNT (self),
-                                  db_load_chats_cb, self);
+  cm_client_set_enabled (self->cm_client, self->account_enabled_in_store);
 }
 
 void
 chatty_ma_account_set_db (ChattyMaAccount *self,
-                          gpointer         matrix_db,
                           gpointer         history_db)
 {
   g_return_if_fail (CHATTY_IS_MA_ACCOUNT (self));
-  g_return_if_fail (MATRIX_IS_DB (matrix_db));
   g_return_if_fail (CHATTY_IS_HISTORY (history_db));
-  g_return_if_fail (!self->matrix_db);
   g_return_if_fail (!self->history_db);
 
-  self->matrix_db = g_object_ref (matrix_db);
   self->history_db = g_object_ref (history_db);
   chatty_history_load_account_async (self->history_db, CHATTY_ACCOUNT (self),
                                      history_db_load_account_cb,
                                      g_object_ref (self));
-}
-
-static void
-ma_account_db_save_cb (GObject      *object,
-                       GAsyncResult *result,
-                       gpointer      user_data)
-{
-  ChattyMaAccount *self;
-  g_autoptr(GTask) task = user_data;
-  GError *error = NULL;
-  gboolean status;
-
-  g_assert (G_IS_ASYNC_RESULT (result));
-  g_assert (G_IS_TASK (task));
-
-  self = g_task_get_source_object (task);
-  g_assert (CHATTY_IS_MA_ACCOUNT (self));
-
-  status = matrix_db_save_account_finish (self->matrix_db, result, &error);
-  if (error || !status)
-    CHATTY_TRACE_MSG ("Saving %s failed",
-                      chatty_item_get_username (CHATTY_ITEM (self)));
-
-  if (error || !status)
-    self->save_account_pending = TRUE;
-
-  if (error)
-    g_task_return_error (task, error);
-  else
-    g_task_return_boolean (task, status);
 }
 
 static void
@@ -1363,23 +1243,10 @@ ma_account_save_cb (GObject      *object,
   status = chatty_secret_store_save_finish (result, &error);
 
   if (error || !status)
-    self->save_password_pending = TRUE;
+    self->save_pending = TRUE;
 
   if (error) {
     g_task_return_error (task, error);
-  } else if (self->save_account_pending) {
-    char *pickle = NULL;
-
-    if (matrix_api_get_access_token (self->matrix_api))
-      pickle = matrix_enc_get_account_pickle (self->matrix_enc);
-
-    self->save_account_pending = FALSE;
-    matrix_db_save_account_async (self->matrix_db, CHATTY_ACCOUNT (self),
-                                  chatty_account_get_enabled (CHATTY_ACCOUNT (self)),
-                                  pickle,
-                                  matrix_api_get_device_id (self->matrix_api),
-                                  matrix_api_get_next_batch (self->matrix_api),
-                                  ma_account_db_save_cb, g_steal_pointer (&task));
   } else {
     g_task_return_boolean (task, status);
   }
@@ -1404,31 +1271,18 @@ chatty_ma_account_save_async (ChattyMaAccount     *self,
   g_return_if_fail (*chatty_ma_account_get_homeserver (self));
 
   task = g_task_new (self, cancellable, callback, user_data);
-  if (self->save_password_pending || force) {
+  if (self->save_pending || force) {
     char *key = NULL;
 
-    if (self->matrix_enc && matrix_api_get_access_token (self->matrix_api))
-      key = matrix_enc_get_pickle_key (self->matrix_enc);
+    if (cm_client_get_access_token (self->cm_client))
+      key = g_strdup (cm_client_get_pickle_key (self->cm_client));
 
-    self->save_password_pending = FALSE;
+    self->save_pending = FALSE;
     chatty_secret_store_save_async (CHATTY_ACCOUNT (self),
-                                    g_strdup (matrix_api_get_access_token (self->matrix_api)),
-                                    matrix_api_get_device_id (self->matrix_api),
+                                    g_strdup (cm_client_get_access_token (self->cm_client)),
+                                    cm_client_get_device_id (self->cm_client),
                                     key, cancellable,
                                     ma_account_save_cb, task);
-  } else if (self->save_account_pending) {
-    char *pickle = NULL;
-
-    if (matrix_api_get_access_token (self->matrix_api))
-      pickle = matrix_enc_get_account_pickle (self->matrix_enc);
-
-    self->save_account_pending = FALSE;
-    matrix_db_save_account_async (self->matrix_db, CHATTY_ACCOUNT (self),
-                                  chatty_account_get_enabled (CHATTY_ACCOUNT (self)),
-                                  pickle,
-                                  matrix_api_get_device_id (self->matrix_api),
-                                  matrix_api_get_next_batch (self->matrix_api),
-                                  ma_account_db_save_cb, task);
   }
 }
 
@@ -1450,7 +1304,7 @@ chatty_ma_account_get_homeserver (ChattyMaAccount *self)
 
   g_return_val_if_fail (CHATTY_IS_MA_ACCOUNT (self), "");
 
-  homeserver = matrix_api_get_homeserver (self->matrix_api);
+  homeserver = cm_client_get_homeserver (self->cm_client);
 
   if (homeserver)
     return homeserver;
@@ -1464,7 +1318,7 @@ chatty_ma_account_set_homeserver (ChattyMaAccount *self,
 {
   g_return_if_fail (CHATTY_IS_MA_ACCOUNT (self));
 
-  matrix_api_set_homeserver (self->matrix_api, server_url);
+  cm_client_set_homeserver (self->cm_client, server_url);
 }
 
 const char *
@@ -1473,7 +1327,7 @@ chatty_ma_account_get_device_id (ChattyMaAccount *self)
   const char *device_id;
   g_return_val_if_fail (CHATTY_IS_MA_ACCOUNT (self), "");
 
-  device_id = matrix_api_get_device_id (self->matrix_api);
+  device_id = cm_client_get_device_id (self->cm_client);
 
   if (device_id)
     return device_id;
@@ -1504,7 +1358,6 @@ ma_get_details_cb (GObject      *object,
 {
   ChattyMaAccount *self;
   g_autoptr(GTask) task = user_data;
-  char *name, *avatar_url;
   GError *error = NULL;
 
   g_assert (G_IS_TASK (task));
@@ -1512,9 +1365,8 @@ ma_get_details_cb (GObject      *object,
   self = g_task_get_source_object (task);
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
 
-  matrix_api_get_user_info_finish (self->matrix_api,
-                                   &name, &avatar_url,
-                                   result, &error);
+  cm_user_load_info_finish (CM_USER (object),
+                            result, &error);
 
   if (error)
     g_task_return_error (task, error);
@@ -1522,16 +1374,16 @@ ma_get_details_cb (GObject      *object,
     ChattyFileInfo *file;
 
     CHATTY_TRACE_MSG ("Got user info for %s",
-                      matrix_api_get_username (self->matrix_api));
+                      cm_client_get_user_id (self->cm_client));
 
     g_free (self->name);
-    self->name = name;
+    self->name = g_strdup (cm_user_get_display_name (CM_USER (object)));
     file = self->avatar_file;
 
-    if (g_strcmp0 (file->url, avatar_url) != 0) {
+    if (g_strcmp0 (file->url, cm_user_get_avatar_url (CM_USER (object))) != 0) {
       g_clear_pointer (&file->path, g_free);
       g_free (file->url);
-      file->url = avatar_url;
+      file->url = g_strdup (cm_user_get_avatar_url (CM_USER (object)));
     }
 
     chatty_history_update_user (self->history_db, CHATTY_ACCOUNT (self));
@@ -1547,18 +1399,20 @@ chatty_ma_account_get_details_async (ChattyMaAccount     *self,
                                      gpointer             user_data)
 {
   g_autoptr(GTask) task = NULL;
+  CmAccount *account;
 
   g_return_if_fail (CHATTY_IS_MA_ACCOUNT (self));
   g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
 
   task = g_task_new (self, cancellable, callback, user_data);
+  account = cm_client_get_account (self->cm_client);
 
   if (self->name)
     g_task_return_boolean (task, TRUE);
   else
-    matrix_api_get_user_info_async (self->matrix_api, NULL, cancellable,
-                                    ma_get_details_cb,
-                                    g_steal_pointer (&task));
+    cm_user_load_info_async (CM_USER (account), cancellable,
+                             ma_get_details_cb,
+                             g_steal_pointer (&task));
 }
 
 gboolean
@@ -1586,7 +1440,9 @@ ma_set_name_cb (GObject      *object,
   self = g_task_get_source_object (task);
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
 
-  matrix_api_set_name_finish (self->matrix_api, result, &error);
+  cm_account_set_display_name_finish (CM_ACCOUNT (object), result, &error);
+  CHATTY_TRACE (chatty_item_get_username (CHATTY_ITEM (self)),
+                "Setting name %s user:", CHATTY_LOG_SUCESS (!error));
 
   if (error)
     g_task_return_error (task, error);
@@ -1618,8 +1474,9 @@ chatty_ma_account_set_name_async (ChattyMaAccount     *self,
   task = g_task_new (self, cancellable, callback, user_data);
   g_task_set_task_data (task, g_strdup (name), g_free);
 
-  matrix_api_set_name_async (self->matrix_api, name, cancellable,
-                             ma_set_name_cb, task);
+  cm_account_set_display_name_async (cm_client_get_account (self->cm_client),
+                                     name, cancellable,
+                                     ma_set_name_cb, task);
 }
 
 gboolean
@@ -1648,9 +1505,9 @@ ma_get_3pid_cb (GObject      *object,
   self = g_task_get_source_object (task);
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
 
-  matrix_api_get_3pid_finish (self->matrix_api,
-                              &emails, &phones,
-                              result, &error);
+  cm_account_get_3pids_finish (CM_ACCOUNT (object),
+                               &emails, &phones,
+                               result, &error);
 
   if (error)
     g_task_return_error (task, error);
@@ -1677,9 +1534,10 @@ chatty_ma_account_get_3pid_async (ChattyMaAccount     *self,
 
   task = g_task_new (self, cancellable, callback, user_data);
 
-  matrix_api_get_3pid_async (self->matrix_api, cancellable,
-                             ma_get_3pid_cb,
-                             g_steal_pointer (&task));
+  cm_account_get_3pids_async (cm_client_get_account (self->cm_client),
+                              cancellable,
+                              ma_get_3pid_cb,
+                              g_steal_pointer (&task));
 }
 
 gboolean
@@ -1714,7 +1572,7 @@ ma_delete_3pid_cb (GObject      *object,
   self = g_task_get_source_object (task);
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
 
-  matrix_api_delete_3pid_finish (self->matrix_api, result, &error);
+  cm_account_delete_3pid_finish (CM_ACCOUNT (object), result, &error);
 
   if (error)
     g_task_return_error (task, error);
@@ -1731,14 +1589,19 @@ chatty_ma_account_delete_3pid_async (ChattyMaAccount     *self,
                                      gpointer             user_data)
 {
   GTask *task = NULL;
+  const char *type_str = NULL;
 
   g_return_if_fail (CHATTY_IS_MA_ACCOUNT (self));
   g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
 
   task = g_task_new (self, cancellable, callback, user_data);
 
-  matrix_api_delete_3pid_async (self->matrix_api,
-                                value, type, cancellable,
+  if (type == CHATTY_ID_PHONE)
+    type_str = "msisdn";
+  else
+    type_str = "email";
+  cm_account_delete_3pid_async (cm_client_get_account (self->cm_client),
+                                value, type_str, cancellable,
                                 ma_delete_3pid_cb, task);
 }
 
@@ -1761,6 +1624,6 @@ chatty_ma_account_add_chat (ChattyMaAccount *self,
   g_return_if_fail (CHATTY_IS_MA_CHAT (chat));
 
   chatty_ma_chat_set_data (CHATTY_MA_CHAT (chat), CHATTY_ACCOUNT (self),
-                           self->matrix_api, self->matrix_enc);
+                           self->cm_client);
   g_list_store_append (self->chat_list, chat);
 }

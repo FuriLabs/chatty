@@ -20,7 +20,6 @@
 #include <string.h>
 #include <glib/gi18n.h>
 
-#include "matrix-enums.h"
 #include "chatty-log.h"
 #include "chatty-utils.h"
 #include "matrix-utils.h"

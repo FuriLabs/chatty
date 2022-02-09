@@ -1,0 +1,4 @@
+[wrap-git]
+directory=libcmatrix
+url=https://source.puri.sm/mohammed.sadiq/libcmatrix
+revision=main

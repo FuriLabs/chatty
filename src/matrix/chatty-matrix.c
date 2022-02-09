@@ -16,13 +16,14 @@
 #endif
 
 #include "contrib/gtk.h"
+#define CMATRIX_USE_EXPERIMENTAL_API
+#include "cmatrix.h"
 
 #include "chatty-secret-store.h"
 #include "chatty-settings.h"
 #include "chatty-ma-account.h"
 #include "chatty-ma-buddy.h"
 #include "chatty-ma-chat.h"
-#include "matrix-db.h"
 #include "chatty-matrix.h"
 #include "chatty-log.h"
 
@@ -36,7 +37,7 @@ struct _ChattyMatrix
   GtkFlattenListModel *chat_list;
 
   ChattyHistory *history;
-  MatrixDb      *matrix_db;
+  CmMatrix      *cm_matrix;
 
   /* The timeout id for the callback on network changes */
   guint          network_change_id;
@@ -44,11 +45,21 @@ struct _ChattyMatrix
   gboolean       has_loaded;
   gboolean       disable_auto_login;
   gboolean       network_available;
+  gboolean       enabled;
+  gboolean       is_ready;
 };
 
 G_DEFINE_TYPE (ChattyMatrix, chatty_matrix, G_TYPE_OBJECT)
 
 #define RECONNECT_TIMEOUT    1000 /* milliseconds */
+
+enum {
+  PROP_0,
+  PROP_ENABLED,
+  N_PROPS
+};
+
+static GParamSpec *properties[N_PROPS];
 
 static gboolean
 matrix_reconnect (gpointer user_data)
@@ -118,50 +129,66 @@ matrix_secret_load_cb (GObject      *object,
 {
   ChattyMatrix *self = user_data;
   g_autoptr(GPtrArray) accounts = NULL;
+  g_autoptr(GPtrArray) secrets = NULL;
   g_autoptr(GError) error = NULL;
 
   g_assert (CHATTY_IS_MATRIX (self));
 
-  accounts = chatty_secret_load_finish (result, &error);
+  secrets = chatty_secret_load_finish (result, &error);
   g_info ("Loading accounts from secrets %s", CHATTY_LOG_SUCESS (!error));
 
   if (error)
     g_warning ("Error loading secret accounts: %s", error->message);
+
+  for (guint i = 0; secrets && i < secrets->len; i++)
+    {
+      ChattyMaAccount *account;
+
+      if (!accounts)
+        accounts = g_ptr_array_new_full (5, g_object_unref);
+
+      account = chatty_ma_account_new_secret (secrets->pdata[i], self->cm_matrix);
+
+      if (account)
+        g_ptr_array_insert (accounts, -1, account);
+    }
 
   if (!accounts)
     return;
 
   g_info ("Loaded %d matrix accounts", accounts ? accounts->len : 0);
 
-  for (guint i = 0; i < accounts->len; i++) {
+  for (guint i = 0; accounts && i < accounts->len; i++) {
     g_signal_connect_object (accounts->pdata[i], "notify::status",
                              G_CALLBACK (matrix_ma_account_changed_cb),
                              self, G_CONNECT_SWAPPED);
+    chatty_ma_account_set_db (accounts->pdata[i], self->history);
 
-    chatty_ma_account_set_db (accounts->pdata[i], self->matrix_db, self->history);
     g_list_store_append (self->list_of_chat_list,
                          chatty_ma_account_get_chat_list (accounts->pdata[i]));
   }
 
   g_list_store_splice (self->account_list, 0, 0, accounts->pdata, accounts->len);
+
 }
 
 static void
-matrix_db_open_cb (GObject      *object,
-                   GAsyncResult *result,
-                   gpointer      user_data)
+chatty_matrix_get_property (GObject    *object,
+                            guint       prop_id,
+                            GValue     *value,
+                            GParamSpec *pspec)
 {
-  ChattyMatrix *self = user_data;
-  g_autoptr(GError) error = NULL;
+  ChattyMatrix *self = (ChattyMatrix *)object;
 
-  g_assert (CHATTY_IS_MATRIX (self));
+  switch (prop_id)
+    {
+    case PROP_ENABLED:
+      g_value_set_boolean (value, chatty_matrix_is_enabled (self));
+      break;
 
-  if (matrix_db_open_finish (self->matrix_db, result, &error))
-    chatty_secret_load_async (NULL, matrix_secret_load_cb, self);
-  else if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
-    g_warning ("Failed to open Matrix DB: %s", error->message);
-
-  g_info ("Opening matrix db %s", CHATTY_LOG_SUCESS (!error));
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
 }
 
 static void
@@ -179,7 +206,6 @@ chatty_matrix_finalize (GObject *object)
   g_clear_object (&self->chat_list);
 
   g_clear_object (&self->history);
-  g_clear_object (&self->matrix_db);
 
   G_OBJECT_CLASS (chatty_matrix_parent_class)->finalize (object);
 }
@@ -190,6 +216,21 @@ chatty_matrix_class_init (ChattyMatrixClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
   object_class->finalize = chatty_matrix_finalize;
+  object_class->get_property = chatty_matrix_get_property;
+
+  /**
+   * ChattyMatrix:enabled:
+   *
+   * Whether matrix is enabled and usable
+   */
+  properties[PROP_ENABLED] =
+    g_param_spec_boolean ("enabled",
+                          "matrix enabled",
+                          "matrix enabled",
+                          FALSE,
+                          G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+
+  g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
 static void
@@ -211,6 +252,7 @@ chatty_matrix_init (ChattyMatrix *self)
                            G_CALLBACK (matrix_network_changed_cb), self,
                            G_CONNECT_AFTER | G_CONNECT_SWAPPED);
 
+  self->enabled = chatty_settings_get_experimental_features (chatty_settings_get_default ());
 }
 
 ChattyMatrix *
@@ -228,24 +270,55 @@ chatty_matrix_new (ChattyHistory *history,
   return self;
 }
 
+gboolean
+chatty_matrix_is_enabled (ChattyMatrix *self)
+{
+  g_return_val_if_fail (CHATTY_IS_MATRIX (self), FALSE);
+
+  return self->enabled && self->is_ready;
+}
+
+static void
+matrix_open_cb (GObject      *obj,
+                GAsyncResult *result,
+                gpointer      user_data)
+{
+  g_autoptr(ChattyMatrix) self = user_data;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (CHATTY_IS_MATRIX (self));
+
+  cm_matrix_open_finish (self->cm_matrix, result, &error);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ENABLED]);
+
+  if (error) {
+    g_warning ("Error plugging in to the matrix: %s", error->message);
+    return;
+  }
+
+  chatty_secret_load_async (NULL, matrix_secret_load_cb, self);
+}
+
 void
 chatty_matrix_load (ChattyMatrix *self)
 {
-  char *db_path;
+  g_autofree char *db_path = NULL;
+  g_autofree char *data_path = NULL;
+  g_autofree char *cache_path = NULL;
 
-  if (self->has_loaded)
+  if (self->cm_matrix)
     return;
-
-  self->has_loaded = TRUE;
 
   if (!chatty_settings_get_experimental_features (chatty_settings_get_default ()))
     return;
 
-  self->matrix_db = matrix_db_new ();
-  db_path =  g_build_filename (chatty_utils_get_purple_dir (), "chatty", "db", NULL);
-  matrix_db_open_async (self->matrix_db, db_path, "matrix.db",
-                        matrix_db_open_cb, self);
-  g_info ("Opening matrix db");
+  data_path = g_build_filename (g_get_user_data_dir (), "chatty", "matrix", NULL);
+  cache_path = g_build_filename (g_get_user_cache_dir (), "chatty", "matrix", NULL);
+  self->cm_matrix = g_object_new (CM_TYPE_MATRIX, NULL);
+
+  db_path = g_build_filename (chatty_utils_get_purple_dir (), "chatty", "db", NULL);
+  cm_matrix_open_async (self->cm_matrix, db_path, "matrix.db", NULL,
+                        matrix_open_cb, g_object_ref (self));
 }
 
 GListModel *
@@ -263,34 +336,6 @@ chatty_matrix_get_chat_list (ChattyMatrix *self)
 
   return G_LIST_MODEL (self->chat_list);
 
-}
-
-static void
-matrix_db_account_delete_cb (GObject      *object,
-                             GAsyncResult *result,
-                             gpointer      user_data)
-{
-  g_autoptr(GTask) task = user_data;
-  ChattyMaAccount *account;
-  GError *error = NULL;
-  const char *username;
-  gboolean status;
-
-  g_assert (G_IS_TASK (task));
-
-  status = matrix_db_delete_account_finish (MATRIX_DB (object),
-                                            result, &error);
-
-  account = g_task_get_task_data (task);
-  username = chatty_item_get_username (CHATTY_ITEM (account));
-  if (!username || !*username)
-    username = chatty_ma_account_get_login_username (account);
-  CHATTY_DEBUG_DETAILED (username, "Deleting %s, account:", CHATTY_LOG_SUCESS (!error));
-
-  if (error)
-    g_task_return_error (task, error);
-  else
-    g_task_return_boolean (task, status);
 }
 
 static void
@@ -322,9 +367,7 @@ matrix_account_delete_cb (GObject      *object,
   if (error)
     g_task_return_error (task, error);
   else
-    matrix_db_delete_account_async (self->matrix_db, CHATTY_ACCOUNT (account),
-                                    matrix_db_account_delete_cb,
-                                    g_steal_pointer (&task));
+    chatty_account_delete (CHATTY_ACCOUNT (account));
 }
 
 void
@@ -397,6 +440,8 @@ matrix_save_account_cb (GObject      *object,
 
   if (saved) {
     g_list_store_append (self->account_list, account);
+    g_list_store_append (self->list_of_chat_list,
+                         chatty_ma_account_get_chat_list (account));
 
     g_signal_connect_object (account, "notify::status",
                              G_CALLBACK (matrix_ma_account_changed_cb),
@@ -424,7 +469,8 @@ chatty_matrix_save_account_async (ChattyMatrix        *self,
   CHATTY_DEBUG (chatty_item_get_username (CHATTY_ITEM (account)), "Saving account");
 
   task = g_task_new (self, cancellable, callback, user_data);
-  chatty_ma_account_set_db (CHATTY_MA_ACCOUNT (account), self->matrix_db, self->history);
+  chatty_ma_account_set_matrix (CHATTY_MA_ACCOUNT (account), self->cm_matrix);
+  chatty_ma_account_set_db (CHATTY_MA_ACCOUNT (account), self->history);
   chatty_ma_account_save_async (CHATTY_MA_ACCOUNT (account), TRUE, NULL,
                                 matrix_save_account_cb, task);
 }
@@ -509,4 +555,12 @@ chatty_matrix_find_chat_with_name (ChattyMatrix   *self,
   }
 
   return NULL;
+}
+
+CmClient *
+chatty_matrix_client_new (ChattyMatrix *self)
+{
+  g_return_val_if_fail (CHATTY_IS_MATRIX (self), NULL);
+
+  return cm_matrix_client_new (self->cm_matrix);
 }

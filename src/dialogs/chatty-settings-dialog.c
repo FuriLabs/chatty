@@ -30,6 +30,8 @@
 #endif
 
 #include <glib/gi18n.h>
+#define CMATRIX_USE_EXPERIMENTAL_API
+#include "cmatrix.h"
 
 #include "chatty-utils.h"
 #include "matrix-utils.h"
@@ -241,83 +243,153 @@ matrix_home_server_verify_cb (GObject      *object,
   ChattySettingsDialog *self = user_data;
   g_autoptr(ChattyMaAccount) account = NULL;
   g_autoptr(GError) error = NULL;
-  const char *username, *password, *server;
+  const char *homeserver, *server;
 
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
 
   settings_dialog_set_save_state (self, FALSE);
+  /* verified homeserver URL */
+  homeserver = cm_client_get_homeserver_finish (CM_CLIENT (object), result, &error);
+  /* homeserver URL entered by the user */
   server = gtk_entry_get_text (GTK_ENTRY (self->matrix_homeserver_entry));
 
-  if (!matrix_utils_verify_homeserver_finish (result, &error)) {
+  if (!homeserver) {
     gtk_widget_set_sensitive (self->add_button, FALSE);
     g_clear_handle_id (&self->revealer_timeout_id, g_source_remove);
-    gtk_label_set_text (GTK_LABEL (self->notification_label),
-                        _("Failed to verify server"));
+
+    if (error)
+      g_dbus_error_strip_remote_error (error);
+
+    if (server && *server) {
+      g_autofree char *label = NULL;
+
+      if (error)
+        label = g_strdup_printf (_("Failed to verify server: %s"), error->message);
+      else
+        label = g_strdup (_("Failed to verify server"));
+
+      gtk_label_set_text (GTK_LABEL (self->notification_label), label);
+    } else {
+      settings_dialog_set_save_state (self, FALSE);
+      gtk_label_set_text (GTK_LABEL (self->notification_label),
+                          _("Couldn't get Home server address"));
+      gtk_widget_show (self->matrix_homeserver_entry);
+      gtk_entry_grab_focus_without_selecting (GTK_ENTRY (self->matrix_homeserver_entry));
+      gtk_editable_set_position (GTK_EDITABLE (self->matrix_homeserver_entry), -1);
+    }
+
     gtk_revealer_set_reveal_child (GTK_REVEALER (self->notification_revealer), TRUE);
     self->revealer_timeout_id = g_timeout_add_seconds (5, dialog_notification_timeout_cb, self);
     return;
   }
 
-  username = gtk_entry_get_text (GTK_ENTRY (self->new_account_id_entry));
-  password = gtk_entry_get_text (GTK_ENTRY (self->new_password_entry));
-
-  account = chatty_ma_account_new (username, password);
-  chatty_ma_account_set_homeserver (account, server);
+  account = chatty_ma_account_new_from_client (CM_CLIENT (object));
   chatty_manager_save_account_async (chatty_manager_get_default (), CHATTY_ACCOUNT (account),
                                      NULL, settings_save_account_cb, self);
 }
 
-static void
-chatty_settings_save_matrix (ChattySettingsDialog *self,
-                             const char           *user_id,
-                             const char           *password);
-static void
-matrix_home_server_got_cb (GObject      *object,
-                           GAsyncResult *result,
-                           gpointer      user_data)
-{
-  ChattySettingsDialog *self = user_data;
-  g_autoptr(ChattyMaAccount) account = NULL;
-  g_autofree char *home_server = NULL;
+/* static void */
+/* chatty_settings_save_matrix (ChattySettingsDialog *self, */
+/*                              const char           *user_id, */
+/*                              const char           *password); */
+/* static void */
+/* matrix_home_server_got_cb (GObject      *object, */
+/*                            GAsyncResult *result, */
+/*                            gpointer      user_data) */
+/* { */
+/*   ChattySettingsDialog *self = user_data; */
+/*   g_autoptr(ChattyMaAccount) account = NULL; */
+/*   const char *home_server = NULL; */
 
-  g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
+/*   g_assert (CHATTY_IS_SETTINGS_DIALOG (self)); */
 
-  home_server = matrix_utils_get_homeserver_finish (result, NULL);
+/*   home_server = cm_client_get_homeserver_finish (CM_CLIENT (object), result, NULL); */
 
-  if (g_cancellable_is_cancelled (self->cancellable)) {
-    settings_dialog_set_save_state (self, FALSE);
-    return;
-  }
+/*   if (g_cancellable_is_cancelled (self->cancellable)) { */
+/*     settings_dialog_set_save_state (self, FALSE); */
+/*     return; */
+/*   } */
 
-  if (home_server && *home_server) {
-    const char *username, *password;
+/*   if (home_server && *home_server) { */
+/*     const char *username, *password; */
 
-    username = gtk_entry_get_text (GTK_ENTRY (self->new_account_id_entry));
-    password = gtk_entry_get_text (GTK_ENTRY (self->new_password_entry));
+/*     username = gtk_entry_get_text (GTK_ENTRY (self->new_account_id_entry)); */
+/*     password = gtk_entry_get_text (GTK_ENTRY (self->new_password_entry)); */
 
-    gtk_entry_set_text (GTK_ENTRY (self->matrix_homeserver_entry), home_server);
-    chatty_settings_save_matrix (self, username, password);
-  } else {
-    settings_dialog_set_save_state (self, FALSE);
-    gtk_widget_set_sensitive (self->add_button, FALSE);
+/*     gtk_entry_set_text (GTK_ENTRY (self->matrix_homeserver_entry), home_server); */
+/*     chatty_settings_save_matrix (self, username, password); */
+/*   } else { */
+/*     settings_dialog_set_save_state (self, FALSE); */
+/*     gtk_widget_set_sensitive (self->add_button, FALSE); */
 
-    g_clear_handle_id (&self->revealer_timeout_id, g_source_remove);
-    gtk_label_set_text (GTK_LABEL (self->notification_label),
-                        _("Couldn't get Home server address"));
-    gtk_revealer_set_reveal_child (GTK_REVEALER (self->notification_revealer), TRUE);
-    self->revealer_timeout_id = g_timeout_add_seconds (5, dialog_notification_timeout_cb, self);
+/*     g_clear_handle_id (&self->revealer_timeout_id, g_source_remove); */
+/*     gtk_label_set_text (GTK_LABEL (self->notification_label), */
+/*                         _("Couldn't get Home server address")); */
+/*     gtk_revealer_set_reveal_child (GTK_REVEALER (self->notification_revealer), TRUE); */
+/*     self->revealer_timeout_id = g_timeout_add_seconds (5, dialog_notification_timeout_cb, self); */
 
-    gtk_widget_show (self->matrix_homeserver_entry);
-    gtk_entry_grab_focus_without_selecting (GTK_ENTRY (self->matrix_homeserver_entry));
-    gtk_editable_set_position (GTK_EDITABLE (self->matrix_homeserver_entry), -1);
-  }
-}
+/*     gtk_widget_show (self->matrix_homeserver_entry); */
+/*     gtk_entry_grab_focus_without_selecting (GTK_ENTRY (self->matrix_homeserver_entry)); */
+/*     gtk_editable_set_position (GTK_EDITABLE (self->matrix_homeserver_entry), -1); */
+/*   } */
+/* } */
+
+/* static void */
+/* settings_matrix_login_cb (GObject      *obj, */
+/*                           GAsyncResult *result, */
+/*                           gpointer      user_data) */
+/* { */
+/*   ChattySettingsDialog *self = user_data; */
+/*   CmClient *cm_client = CM_CLIENT (obj); */
+/*   g_autoptr(ChattyMaAccount) account = NULL; */
+/*   g_autoptr(GError) error = NULL; */
+/*   const char *username, *password, *server; */
+/*   const char *action; */
+
+/*   g_assert (CHATTY_IS_SETTINGS_DIALOG (self)); */
+
+/*   settings_dialog_set_save_state (self, FALSE); */
+/*   cm_client_login_finish (CM_CLIENT (obj), result, &error); */
+
+/*   if (g_cancellable_is_cancelled (self->cancellable)) */
+/*     return; */
+
+/*   action = g_object_get_data (G_OBJECT (result), "action"); */
+
+/*   if (error && g_strcmp0 (action, "get-homeserver") == 0) { */
+/*     gtk_widget_set_sensitive (self->add_button, FALSE); */
+/*     gtk_widget_show (self->matrix_homeserver_entry); */
+/*     gtk_entry_grab_focus_without_selecting (GTK_ENTRY (self->matrix_homeserver_entry)); */
+/*     gtk_editable_set_position (GTK_EDITABLE (self->matrix_homeserver_entry), -1); */
+/*     return; */
+/*   } else if (error && g_strcmp0 (action, "verify-homeserver") == 0) { */
+/*     g_clear_handle_id (&self->revealer_timeout_id, g_source_remove); */
+/*     gtk_label_set_text (GTK_LABEL (self->notification_label), */
+/*                         _("Failed to verify server")); */
+/*     gtk_revealer_set_reveal_child (GTK_REVEALER (self->notification_revealer), TRUE); */
+/*     self->revealer_timeout_id = g_timeout_add_seconds (5, dialog_notification_timeout_cb, self); */
+
+/*     gtk_widget_set_sensitive (self->add_button, FALSE); */
+/*     settings_apply_style (self->matrix_homeserver_entry, "error"); */
+/*     gtk_entry_grab_focus_without_selecting (GTK_ENTRY (self->matrix_homeserver_entry)); */
+/*     return; */
+/*   } else if (error) { */
+/*     g_warning ("Error: %s", error->message); */
+/*     return; */
+/*   } */
+
+/*   account = chatty_ma_account_new_from_client (cm_client); */
+/*   chatty_manager_save_account_async (chatty_manager_get_default (), CHATTY_ACCOUNT (account), */
+/*                                      NULL, settings_save_account_cb, self); */
+
+/* } */
 
 static void
 chatty_settings_save_matrix (ChattySettingsDialog *self,
                              const char           *user_id,
                              const char           *password)
 {
+  g_autoptr(CmClient) cm_client = NULL;
   GtkEntry *entry;
   const char *uri;
 
@@ -332,12 +404,14 @@ chatty_settings_save_matrix (ChattySettingsDialog *self,
   entry = GTK_ENTRY (self->matrix_homeserver_entry);
   uri = gtk_entry_get_text (entry);
 
-  if (uri && *uri)
-    matrix_utils_verify_homeserver_async (uri, 30, self->cancellable,
-                                          matrix_home_server_verify_cb, self);
-  else
-    matrix_utils_get_homeserver_async (user_id, 10, self->cancellable,
-                                       matrix_home_server_got_cb, self);
+  cm_client = chatty_manager_matrix_client_new (chatty_manager_get_default ());
+  cm_client_set_user_id (cm_client, user_id);
+  cm_client_set_login_id (cm_client, user_id);
+  cm_client_set_homeserver (cm_client, uri);
+  cm_client_set_password (cm_client, password);
+  cm_client_get_homeserver_async (cm_client, self->cancellable,
+                                  matrix_home_server_verify_cb,
+                                  self);
 }
 
 static void

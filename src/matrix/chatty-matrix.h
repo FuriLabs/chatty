@@ -12,6 +12,8 @@
 #pragma once
 
 #include <glib-object.h>
+#define CMATRIX_USE_EXPERIMENTAL_API
+#include "cmatrix.h"
 
 #include "chatty-history.h"
 
@@ -21,9 +23,10 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (ChattyMatrix, chatty_matrix, CHATTY, MATRIX, GObject)
 
-ChattyMatrix  *chatty_matrix_new                     (ChattyHistory  *history,
+ChattyMatrix   *chatty_matrix_new                     (ChattyHistory  *history,
                                                       gboolean        disable_auto_login);
-void           chatty_matrix_load                    (ChattyMatrix   *self);
+gboolean        chatty_matrix_is_enabled              (ChattyMatrix   *self);
+void            chatty_matrix_load                    (ChattyMatrix   *self);
 GListModel     *chatty_matrix_get_account_list       (ChattyMatrix   *self);
 GListModel     *chatty_matrix_get_chat_list          (ChattyMatrix   *self);
 void            chatty_matrix_delete_account_async   (ChattyMatrix   *self,
@@ -48,5 +51,6 @@ ChattyChat     *chatty_matrix_find_chat_with_name    (ChattyMatrix   *self,
                                                       ChattyProtocol  protocol,
                                                       const char     *account_id,
                                                       const char     *chat_id);
+CmClient       *chatty_matrix_client_new             (ChattyMatrix   *self);
 
 G_END_DECLS

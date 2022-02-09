@@ -13,10 +13,10 @@
 
 #include <glib-object.h>
 #include <json-glib/json-glib.h>
+#define CMATRIX_USE_EXPERIMENTAL_API
+#include "cmatrix.h"
 
 #include "chatty-item.h"
-#include "matrix-api.h"
-#include "matrix-enc.h"
 
 G_BEGIN_DECLS
 
@@ -27,16 +27,11 @@ typedef struct _BuddyDevice BuddyDevice;
 G_DECLARE_FINAL_TYPE (ChattyMaBuddy, chatty_ma_buddy, CHATTY, MA_BUDDY, ChattyItem)
 
 ChattyMaBuddy   *chatty_ma_buddy_new               (const char    *matrix_id,
-                                                    MatrixApi     *api,
-                                                    MatrixEnc     *enc);
+                                                    CmClient      *client);
+ChattyMaBuddy   *chatty_ma_buddy_new_with_user     (CmUser        *user,
+                                                    CmClient      *client);
 const char      *chatty_ma_buddy_get_id            (ChattyMaBuddy *self);
 guint            chatty_ma_buddy_get_id_hash       (ChattyMaBuddy *self);
-void             chatty_ma_buddy_add_devices       (ChattyMaBuddy *self,
-                                                    JsonObject    *root);
-GList           *chatty_ma_buddy_get_devices       (ChattyMaBuddy *self);
-JsonObject      *chatty_ma_buddy_device_key_json   (ChattyMaBuddy *self);
-void             chatty_ma_buddy_add_one_time_keys (ChattyMaBuddy *self,
-                                                    JsonObject    *root);
 
 const char      *chatty_ma_device_get_id           (BuddyDevice   *device);
 const char      *chatty_ma_device_get_ed_key       (BuddyDevice   *device);

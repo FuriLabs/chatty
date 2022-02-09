@@ -12,6 +12,8 @@
 #pragma once
 
 #include <glib-object.h>
+#define CMATRIX_USE_EXPERIMENTAL_API
+#include "cmatrix.h"
 
 #include "chatty-chat.h"
 #include "chatty-enums.h"
@@ -25,11 +27,15 @@ G_DECLARE_FINAL_TYPE (ChattyMaAccount, chatty_ma_account, CHATTY, MA_ACCOUNT, Ch
 
 ChattyMaAccount  *chatty_ma_account_new                (const char      *username,
                                                         const char      *password);
-gboolean         chatty_ma_account_can_connect         (ChattyMaAccount *self);
+ChattyMaAccount  *chatty_ma_account_new_from_client    (CmClient        *cm_client);
+void              chatty_ma_account_load               (ChattyMaAccount *self);
+gboolean          chatty_ma_account_can_connect        (ChattyMaAccount *self);
 const char       *chatty_ma_account_get_login_username (ChattyMaAccount *self);
-ChattyMaAccount  *chatty_ma_account_new_secret         (gpointer         secret_retrievable);
+ChattyMaAccount  *chatty_ma_account_new_secret         (gpointer         secret_retrievable,
+                                                        CmMatrix        *cm_matrix);
+void              chatty_ma_account_set_matrix         (ChattyMaAccount *self,
+                                                        CmMatrix        *cm_matrix);
 void              chatty_ma_account_set_db             (ChattyMaAccount *self,
-                                                        gpointer         matrix_db,
                                                         gpointer         history_db);
 void              chatty_ma_account_save_async         (ChattyMaAccount *self,
                                                         gboolean         force,
