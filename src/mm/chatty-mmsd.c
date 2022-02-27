@@ -76,7 +76,7 @@ struct _ChattyMmsd {
   char             *default_modem_number;
   GPtrArray        *mms_arr;
   GHashTable       *mms_hash_table;
-  int               max_attach_size;
+  gsize             max_attach_size;
   int               max_num_attach;
   char             *carrier_mmsc;
   char             *mms_apn;
@@ -482,7 +482,8 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
     g_debug ("Total Number of attachments %d", total_files_count);
     other_attachments_size = attachments_size-image_attachments_size;
     if (other_attachments_size > self->max_attach_size) {
-      g_warning ("Size of attachments that can't be resized %ld greater then maximum attachment size %d",
+      g_warning ("Size of attachments that can't be resized %" G_GSIZE_FORMAT
+                 " greater then maximum attachment size %" G_GSIZE_FORMAT,
                  other_attachments_size, self->max_attach_size);
       return NULL;
     }
@@ -1356,7 +1357,8 @@ chatty_mmsd_get_mmsd_service_settings_cb (GObject      *service,
   } else {
     g_autoptr(GVariant) all_settings = NULL;
     GVariantDict dict;
-    int max_attach_total_size, max_attachments;
+    gsize max_attach_total_size;
+    int max_attachments;
     gboolean autocreatesmil;
 
     g_variant_get (ret, "(@a{?*})", &all_settings);
@@ -1367,7 +1369,7 @@ chatty_mmsd_get_mmsd_service_settings_cb (GObject      *service,
     else
       self->max_attach_size = DEFAULT_MAXIMUM_ATTACHMENT_SIZE;
 
-    g_debug ("TotalMaxAttachmentSize is set to %d", self->max_attach_size);
+    g_debug ("TotalMaxAttachmentSize is set to %" G_GSIZE_FORMAT, self->max_attach_size);
 
     if (g_variant_dict_lookup (&dict, "MaxAttachments", "i", &max_attachments))
       self->max_num_attach = max_attachments;
