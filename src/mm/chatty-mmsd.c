@@ -1358,7 +1358,7 @@ chatty_mmsd_get_mmsd_service_settings_cb (GObject      *service,
   } else {
     g_autoptr(GVariant) all_settings = NULL;
     GVariantDict dict;
-    gsize max_attach_total_size;
+    int max_attach_total_size;
     int max_attachments;
     gboolean autocreatesmil;
 
@@ -1366,7 +1366,7 @@ chatty_mmsd_get_mmsd_service_settings_cb (GObject      *service,
     g_variant_dict_init (&dict, all_settings);
 
     if (g_variant_dict_lookup (&dict, "TotalMaxAttachmentSize", "i", &max_attach_total_size))
-      self->max_attach_size = max_attach_total_size;
+      self->max_attach_size = (gsize) max_attach_total_size;
     else
       self->max_attach_size = DEFAULT_MAXIMUM_ATTACHMENT_SIZE;
 
