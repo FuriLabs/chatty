@@ -797,7 +797,7 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
     mms_status = CHATTY_STATUS_DELIVERED;
   } else if (g_strcmp0 (status, "received") == 0) {
     direction = CHATTY_DIRECTION_IN;
-    mms_status = CHATTY_STATUS_RECIEVED;
+    mms_status = CHATTY_STATUS_RECEIVED;
   } else if (g_strcmp0 (status, "downloaded") == 0) {
     /* This is an internal mmsd-tng state, and shouldn't be shown */
     return NULL;
@@ -808,12 +808,12 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
      * it like a "received" message.
      */
     direction = CHATTY_DIRECTION_IN;
-    mms_status = CHATTY_STATUS_RECIEVED;
+    mms_status = CHATTY_STATUS_RECEIVED;
   } else if (g_strcmp0 (status, "expired") == 0) {
     g_autoptr(GDateTime) expire_time = NULL;
     g_autofree char *expire_date = NULL;
     direction = CHATTY_DIRECTION_IN;
-    mms_status = CHATTY_STATUS_RECIEVED;
+    mms_status = CHATTY_STATUS_RECEIVED;
 
     g_variant_dict_lookup (&dict, "Expire", "s", &expire_date);
 
