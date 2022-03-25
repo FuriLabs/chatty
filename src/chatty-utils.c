@@ -282,6 +282,18 @@ chatty_utils_jabber_id_strip (const char *name)
 
   return stripped;
 }
+/*
+ * chatty_utils_sanitize_filename:
+ * @filename: the filename to sanitize
+ *
+ * Sanitizes a filename by modifying the passed in string in place.
+ * It's basically the reverse of `ChattyTextItem.find_url()`.
+ */
+void
+chatty_utils_sanitize_filename (char *filename)
+{
+  g_strdelimit (filename, " ()[],", '_');
+}
 
 
 gboolean
