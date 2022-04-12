@@ -157,6 +157,32 @@
           </packing>
         </child>
         <child>
+          <object class="GtkModelButton" id="block_button">
+            <property name="visible">False</property>
+            <property name="can_focus">False</property>
+            <property name="receives_default">False</property>
+            <property name="text" translatable="yes">Block Contact</property>
+            <signal name="clicked" handler="window_block_contact_clicked_cb" swapped="yes"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="unblock_button">
+            <property name="visible">False</property>
+            <property name="can_focus">False</property>
+            <property name="receives_default">False</property>
+            <property name="text" translatable="yes">Unblock Contact</property>
+            <signal name="clicked" handler="window_unblock_contact_clicked_cb" swapped="yes"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+          </packing>
+        </child>
+        <child>
           <object class="GtkModelButton" id="delete_button">
             <property name="visible">True</property>
             <property name="can_focus">False</property>

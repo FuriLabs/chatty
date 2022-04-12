@@ -72,6 +72,8 @@ struct _ChattyWindow
   GtkWidget *header_sub_menu_button;
   GtkWidget *leave_button;
   GtkWidget *delete_button;
+  GtkWidget *block_button;
+  GtkWidget *unblock_button;
 
   GtkWidget *chat_view;
   GtkWidget *settings_dialog;
@@ -411,6 +413,56 @@ window_leave_chat_clicked_cb (ChattyWindow *self)
 }
 
 static void
+window_block_contact_clicked_cb (ChattyWindow *self)
+{
+  GtkWidget *message;
+  ChattyChat *chat;
+  ChattyItemState state;
+  int result;
+
+  g_assert (CHATTY_IS_WINDOW (self));
+
+  chat = chatty_chat_view_get_chat (CHATTY_CHAT_VIEW (self->chat_view));
+  g_return_if_fail (CHATTY_IS_MM_CHAT (chat));
+  g_return_if_fail (chatty_chat_is_im (chat));
+
+  message = gtk_message_dialog_new (GTK_WINDOW (self),
+                                    GTK_DIALOG_MODAL | GTK_DIALOG_USE_HEADER_BAR,
+                                    GTK_MESSAGE_INFO,
+                                    GTK_BUTTONS_OK_CANCEL,
+                                    _("You shall no longer be notified for new messages, continue?"));
+
+  result = gtk_dialog_run (GTK_DIALOG (message));
+  gtk_widget_destroy (message);
+
+  if (result == GTK_RESPONSE_CANCEL)
+    return;
+
+  chatty_item_set_state (CHATTY_ITEM (chat), CHATTY_ITEM_BLOCKED);
+  state = chatty_item_get_state (CHATTY_ITEM (chat));
+  gtk_widget_set_visible (self->block_button, state == CHATTY_ITEM_VISIBLE);
+  gtk_widget_set_visible (self->unblock_button, state == CHATTY_ITEM_BLOCKED);
+}
+
+static void
+window_unblock_contact_clicked_cb (ChattyWindow *self)
+{
+  ChattyChat *chat;
+  ChattyItemState state;
+
+  g_assert (CHATTY_IS_WINDOW (self));
+
+  chat = chatty_chat_view_get_chat (CHATTY_CHAT_VIEW (self->chat_view));
+  g_return_if_fail (CHATTY_IS_MM_CHAT (chat));
+  g_return_if_fail (chatty_chat_is_im (chat));
+
+  chatty_item_set_state (CHATTY_ITEM (chat), CHATTY_ITEM_VISIBLE);
+  state = chatty_item_get_state (CHATTY_ITEM (chat));
+  gtk_widget_set_visible (self->block_button, state == CHATTY_ITEM_VISIBLE);
+  gtk_widget_set_visible (self->unblock_button, state == CHATTY_ITEM_BLOCKED);
+}
+
+static void
 window_show_chat_info_clicked_cb (ChattyWindow *self)
 {
   ChattyInfoDialog *dialog;
@@ -739,6 +791,8 @@ chatty_window_class_init (ChattyWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyWindow, header_sub_menu_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyWindow, leave_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyWindow, delete_button);
+  gtk_widget_class_bind_template_child (widget_class, ChattyWindow, block_button);
+  gtk_widget_class_bind_template_child (widget_class, ChattyWindow, unblock_button);
 
   gtk_widget_class_bind_template_child (widget_class, ChattyWindow, search_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyWindow, chats_search_bar);
@@ -762,6 +816,8 @@ chatty_window_class_init (ChattyWindowClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, window_back_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, window_show_chat_info_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, window_leave_chat_clicked_cb);
+  gtk_widget_class_bind_template_callback (widget_class, window_block_contact_clicked_cb);
+  gtk_widget_class_bind_template_callback (widget_class, window_unblock_contact_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, window_delete_buddy_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, window_call_button_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, window_search_changed_cb);
@@ -881,6 +937,8 @@ chatty_window_open_chat (ChattyWindow *self,
   /* We can't delete MaChat */
   can_delete = !CHATTY_IS_MA_CHAT (chat);
   gtk_widget_set_visible (self->delete_button, can_delete);
+  gtk_widget_hide (self->block_button);
+  gtk_widget_hide (self->unblock_button);
   hdy_leaflet_set_visible_child (HDY_LEAFLET (self->content_box), self->chat_view);
   gtk_widget_hide (self->call_button);
 
@@ -893,6 +951,14 @@ chatty_window_open_chat (ChattyWindow *self,
 
     users = chatty_chat_get_users (chat);
     name = chatty_chat_get_chat_name (chat);
+
+    if (g_list_model_get_n_items (users) == 1) {
+      ChattyItemState state;
+
+      state = chatty_item_get_state ((CHATTY_ITEM (chat)));
+      gtk_widget_set_visible (self->block_button, state == CHATTY_ITEM_VISIBLE);
+      gtk_widget_set_visible (self->unblock_button, state == CHATTY_ITEM_BLOCKED);
+    }
 
     if (g_list_model_get_n_items (users) == 1 &&
         chatty_utils_username_is_valid (name, CHATTY_PROTOCOL_MMS_SMS)) {
