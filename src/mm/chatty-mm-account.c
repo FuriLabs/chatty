@@ -1300,9 +1300,9 @@ chatty_mm_account_start_chat (ChattyMmAccount *self,
     sorted_name = create_sorted_numbers (recipientlist, members);
 
     if (members->len == 1)
-      chat = (ChattyChat *)chatty_mm_chat_new (sorted_name, NULL, CHATTY_PROTOCOL_MMS_SMS, TRUE);
+      chat = (ChattyChat *)chatty_mm_chat_new (sorted_name, NULL, CHATTY_PROTOCOL_MMS_SMS, TRUE, CHATTY_ITEM_VISIBLE);
     else /* Only MMS has multiple recipients */
-      chat = (ChattyChat *)chatty_mm_chat_new (sorted_name, NULL, CHATTY_PROTOCOL_MMS, FALSE);
+      chat = (ChattyChat *)chatty_mm_chat_new (sorted_name, NULL, CHATTY_PROTOCOL_MMS, FALSE, CHATTY_ITEM_VISIBLE);
 
     chatty_mm_chat_add_users (CHATTY_MM_CHAT (chat), members);
     chatty_chat_set_data (chat, self, self->history_db);

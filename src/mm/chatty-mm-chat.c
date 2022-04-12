@@ -630,10 +630,11 @@ chatty_mm_chat_init (ChattyMmChat *self)
 }
 
 ChattyMmChat *
-chatty_mm_chat_new (const char     *name,
-                    const char     *alias,
-                    ChattyProtocol  protocol,
-                    gboolean        is_im)
+chatty_mm_chat_new (const char      *name,
+                    const char      *alias,
+                    ChattyProtocol   protocol,
+                    gboolean         is_im,
+                    ChattyItemState  state)
 {
   ChattyMmChat *self;
 
@@ -642,6 +643,7 @@ chatty_mm_chat_new (const char     *name,
   self->name = g_strdup (alias);
   self->protocol = protocol;
   self->is_im = !!is_im;
+  self->visibility_state = state;
 
   return self;
 }
@@ -657,7 +659,7 @@ chatty_mm_chat_new_with_uri (ChattySmsUri   *uri,
   g_return_val_if_fail (CHATTY_IS_SMS_URI (uri), NULL);
 
   self = chatty_mm_chat_new (chatty_sms_uri_get_numbers_str (uri),
-                             NULL, protocol, is_im);
+                             NULL, protocol, is_im, CHATTY_ITEM_VISIBLE);
   self->sms_uri = g_object_ref (uri);
 
   members = chatty_sms_uri_get_numbers (uri);
