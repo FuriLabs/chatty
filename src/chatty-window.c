@@ -79,6 +79,7 @@ struct _ChattyWindow
   GtkWidget *protocol_list;
   GtkWidget *protocol_any_row;
 
+  GBinding  *header_label_binding;
   GdTaggedEntryTag *protocol_tag;
 
   ChattyManager *manager;
@@ -94,15 +95,17 @@ static void
 window_set_item (ChattyWindow *self,
                  ChattyChat   *chat)
 {
-  const char *header_label = "";
-
   g_assert (CHATTY_IS_WINDOW (self));
 
-  if (CHATTY_IS_CHAT (chat))
-    header_label = chatty_item_get_name (CHATTY_ITEM (chat));
-
   chatty_avatar_set_item (CHATTY_AVATAR (self->sub_header_icon), CHATTY_ITEM (chat));
-  gtk_label_set_label (GTK_LABEL (self->sub_header_label), header_label);
+  g_clear_object (&self->header_label_binding);
+  gtk_label_set_label (GTK_LABEL (self->sub_header_label), "");
+
+  if (CHATTY_IS_CHAT (chat)) {
+    self->header_label_binding = g_object_bind_property (chat, "name",
+                                                         self->sub_header_label, "label",
+                                                         G_BINDING_SYNC_CREATE);
+  }
 
   if (!chat)
     hdy_leaflet_set_visible_child_name (HDY_LEAFLET (self->content_box), "sidebar");
