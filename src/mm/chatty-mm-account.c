@@ -383,6 +383,10 @@ chatty_mm_account_append_message (ChattyMmAccount *self,
   g_assert (CHATTY_IS_MESSAGE (message));
   g_assert (CHATTY_IS_CHAT (chat));
 
+  /* Unarchive archived chat on new message */
+  if (chatty_item_get_state (CHATTY_ITEM (chat)) == CHATTY_ITEM_ARCHIVED)
+    chatty_item_set_state (CHATTY_ITEM (chat), CHATTY_ITEM_VISIBLE);
+
   chatty_mm_chat_append_message (CHATTY_MM_CHAT (chat), message);
   chatty_history_add_message (self->history_db, chat, message);
   chatty_chat_set_unread_count (chat, chatty_chat_get_unread_count (chat) + 1);
