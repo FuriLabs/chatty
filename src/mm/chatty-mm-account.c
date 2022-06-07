@@ -639,7 +639,7 @@ parse_sms (ChattyMmAccount *self,
         chatty_message_set_status (message, CHATTY_STATUS_DELIVERED, 0);
         chat = chatty_mm_account_find_chat (self, mm_sms_get_number (sms));
         if (chat)
-          chatty_history_add_message (self->history_db, chat, message);
+          success = chatty_history_add_message (self->history_db, chat, message);
       }
 
       CHATTY_TRACE_MSG ("deleting message %s", mm_sms_get_path (sms));
