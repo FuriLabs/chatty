@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://source.puri.sm/Librem5/chatty/issues\n"
-"POT-Creation-Date: 2022-04-28 15:25+0000\n"
-"PO-Revision-Date: 2022-05-03 15:18+0200\n"
+"POT-Creation-Date: 2022-07-19 03:24+0000\n"
+"PO-Revision-Date: 2022-07-19 15:54+0200\n"
 "Last-Translator: antpanlinux <ant.pandolfo@gmail.com>\n"
 "Language-Team: Italian\n"
 "Language: it\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: data/sm.puri.Chatty.desktop.in:3 data/sm.puri.Chatty.metainfo.xml.in:6
-#: src/chatty-application.c:333 src/chatty-window.c:330
+#: src/chatty-application.c:336 src/chatty-window.c:339
 #: src/ui/chatty-window.ui:265
 msgid "Chats"
 msgstr "Chats"
@@ -150,27 +150,27 @@ msgstr "Chats è un'applicazione di messaggistica che supporta XMPP e SMS."
 msgid "Chats message window"
 msgstr "Finestra di messaggio Chats"
 
-#: src/chatty-application.c:76
+#: src/chatty-application.c:78
 msgid "Show release version"
 msgstr "Mostra versione"
 
-#: src/chatty-application.c:77
+#: src/chatty-application.c:79
 msgid "Start in daemon mode"
 msgstr "Avvia in modalità demone"
 
-#: src/chatty-application.c:78
+#: src/chatty-application.c:80
 msgid "Disable all accounts"
 msgstr "Disattiva tutti gli account"
 
-#: src/chatty-application.c:79
+#: src/chatty-application.c:81
 msgid "Enable libpurple debug messages"
 msgstr "Attiva i messaggi di debug libpurple"
 
-#: src/chatty-application.c:81
+#: src/chatty-application.c:83
 msgid "Enable verbose libpurple debug messages"
 msgstr "Attiva i messaggi dettagliati di debug libpurple"
 
-#: src/chatty-application.c:142
+#: src/chatty-application.c:144
 #, c-format
 msgid ""
 "There was an error displaying help:\n"
@@ -230,12 +230,12 @@ msgstr "Il tuo messaggio è cifrato"
 msgid "Your messages are not encrypted"
 msgstr "Il tuo messaggio non è cifrato"
 
-#: src/chatty-chat-view.c:414
+#: src/chatty-chat-view.c:420
 msgid "Select File..."
 msgstr "Seleziona file..."
 
-#: src/chatty-chat-view.c:417 src/purple/chatty-purple-request.c:175
-#: src/chatty-window.c:413 src/dialogs/chatty-pp-chat-info.c:90
+#: src/chatty-chat-view.c:423 src/purple/chatty-purple-request.c:175
+#: src/chatty-window.c:422 src/dialogs/chatty-pp-chat-info.c:90
 #: src/dialogs/chatty-ma-account-details.c:119
 #: src/dialogs/chatty-pp-account-details.c:91
 #: src/ui/chatty-dialog-join-muc.ui:21 src/ui/chatty-info-dialog.ui:44
@@ -243,7 +243,7 @@ msgstr "Seleziona file..."
 msgid "Cancel"
 msgstr "Annulla"
 
-#: src/chatty-chat-view.c:418 src/purple/chatty-purple-request.c:177
+#: src/chatty-chat-view.c:424 src/purple/chatty-purple-request.c:177
 #: src/dialogs/chatty-pp-chat-info.c:89
 #: src/dialogs/chatty-ma-account-details.c:118
 #: src/dialogs/chatty-pp-account-details.c:90
@@ -347,7 +347,7 @@ msgstr "Moderatore"
 msgid "Member"
 msgstr "Membro"
 
-#: src/chatty-manager.c:727
+#: src/chatty-manager.c:729
 #, c-format
 msgid "“%s” is not a valid URI"
 msgstr "“%s” non è un URI valido"
@@ -369,7 +369,7 @@ msgstr "Nuovo messaggio da %s"
 msgid "Message Received"
 msgstr "Messaggio ricevuto"
 
-#: src/purple/chatty-purple-notify.c:44 src/matrix/matrix-utils.c:505
+#: src/purple/chatty-purple-notify.c:44 src/matrix/matrix-utils.c:504
 msgid "Close"
 msgstr "Chiudi"
 
@@ -399,11 +399,11 @@ msgstr "L'utente %s ha aggiunto %s ai contatti"
 msgid "Authorize %s?"
 msgstr "Autorizzi %s?"
 
-#: src/purple/chatty-purple.c:264 src/matrix/matrix-utils.c:509
+#: src/purple/chatty-purple.c:264 src/matrix/matrix-utils.c:508
 msgid "Reject"
 msgstr "Rifiuta"
 
-#: src/purple/chatty-purple.c:265 src/matrix/matrix-utils.c:510
+#: src/purple/chatty-purple.c:265 src/matrix/matrix-utils.c:509
 msgid "Accept"
 msgstr "Accetta"
 
@@ -420,68 +420,68 @@ msgstr "Login fallito"
 msgid "Please check ID and password"
 msgstr "Per favore controlla ID e password"
 
-#: src/chatty-secret-store.c:98
+#: src/chatty-secret-store.c:99
 #, c-format
 msgid "Chatty password for \"%s\""
 msgstr "Password Chatty per \"%s\""
 
-#: src/chatty-window.c:399
+#: src/chatty-window.c:408
 #, c-format
 msgid "Delete chat with “%s”"
 msgstr "Elimina chat con “%s”"
 
-#: src/chatty-window.c:400
+#: src/chatty-window.c:409
 msgid "This deletes the conversation history"
 msgstr "Questo elimina la cronologia delle conversazioni"
 
-#: src/chatty-window.c:402
+#: src/chatty-window.c:411
 #, c-format
 msgid "Disconnect group chat “%s”"
 msgstr "Disconnetti la chat di gruppo “%s”"
 
-#: src/chatty-window.c:403
+#: src/chatty-window.c:412
 msgid "This removes chat from chats list"
 msgstr "Questo rimuove la chat dalla lista delle chat"
 
-#: src/chatty-window.c:415
+#: src/chatty-window.c:424
 msgid "Delete"
 msgstr "Elimina"
 
-#: src/chatty-window.c:493
+#: src/chatty-window.c:502
 msgid "You shall no longer be notified for new messages, continue?"
 msgstr "Non sarai più notificato se riceverai nuovi messaggi. Vuoi continuare?"
 
-#: src/chatty-window.c:568
+#: src/chatty-window.c:577
 msgid "Archived"
 msgstr "Archiviata"
 
-#: src/chatty-window.c:621
+#: src/chatty-window.c:630
 msgid "An SMS and XMPP messaging client"
 msgstr "Un client di messaggistica SMS e XMPP"
 
-#: src/chatty-window.c:628
+#: src/chatty-window.c:637
 msgid "translator-credits"
 msgstr ""
 "Pandolfo Antonio <ant.pandolfo@gmail.com>\n"
 "Vittorio <postav@pm.me>, 2021"
 
-#: src/chatty-window.c:978
+#: src/chatty-window.c:989
 msgid "Any Protocol"
 msgstr "Qualsiasi Protocollo"
 
-#: src/chatty-window.c:979 src/ui/chatty-settings-dialog.ui:627
+#: src/chatty-window.c:990 src/ui/chatty-settings-dialog.ui:627
 msgid "Matrix"
 msgstr "Matrix"
 
-#: src/chatty-window.c:980
+#: src/chatty-window.c:991
 msgid "SMS/MMS"
 msgstr "SMS/MMS"
 
-#: src/chatty-window.c:983 src/ui/chatty-settings-dialog.ui:615
+#: src/chatty-window.c:994 src/ui/chatty-settings-dialog.ui:615
 msgid "XMPP"
 msgstr "XMPP"
 
-#: src/chatty-window.c:986 src/ui/chatty-settings-dialog.ui:641
+#: src/chatty-window.c:997 src/ui/chatty-settings-dialog.ui:641
 msgid "Telegram"
 msgstr "Telegram"
 
@@ -581,112 +581,117 @@ msgstr "connessione in corso…"
 msgid "disconnected"
 msgstr "disconnesso"
 
-#: src/dialogs/chatty-settings-dialog.c:255
-#: src/dialogs/chatty-settings-dialog.c:405
+#: src/dialogs/chatty-settings-dialog.c:267
+#, c-format
+msgid "Failed to verify server: %s"
+msgstr "Impossibile verificare il server: %s"
+
+#: src/dialogs/chatty-settings-dialog.c:269
+#: src/dialogs/chatty-settings-dialog.c:479
 msgid "Failed to verify server"
 msgstr "Impossibile verificare il server"
 
-#: src/dialogs/chatty-settings-dialog.c:306
-#: src/dialogs/chatty-settings-dialog.c:385
+#: src/dialogs/chatty-settings-dialog.c:275
+#: src/dialogs/chatty-settings-dialog.c:459
 msgid "Couldn't get Home server address"
 msgstr "Impossibile ottenere l'indirizzo del server personale"
 
-#: src/dialogs/chatty-settings-dialog.c:510
+#: src/dialogs/chatty-settings-dialog.c:584
 #: src/ui/chatty-ma-account-details.ui:182
 #: src/ui/chatty-pp-account-details.ui:199
 msgid "Delete Account"
 msgstr "Elimina l'account"
 
-#: src/dialogs/chatty-settings-dialog.c:513
+#: src/dialogs/chatty-settings-dialog.c:587
 #, c-format
 msgid "Delete account %s?"
 msgstr "Eliminare l'account %s?"
 
-#: src/dialogs/chatty-settings-dialog.c:654
+#: src/dialogs/chatty-settings-dialog.c:728
 msgid "Restart chatty to disable purple"
 msgstr "Riavvia Chatty per disattivare purple"
 
-#: src/dialogs/chatty-settings-dialog.c:656
+#: src/dialogs/chatty-settings-dialog.c:730
 #: src/ui/chatty-settings-dialog.ui:512
 msgid "Enable purple plugin"
 msgstr "Attiva il plugin purple"
 
-#: src/dialogs/chatty-settings-dialog.c:670
+#: src/dialogs/chatty-settings-dialog.c:744
 #: src/ui/chatty-settings-dialog.ui:279
 msgid "SMS and MMS Settings"
 msgstr "Impostazioni SMS e MMS"
 
-#: src/dialogs/chatty-settings-dialog.c:672
+#: src/dialogs/chatty-settings-dialog.c:746
 #: src/ui/chatty-settings-dialog.ui:298
 msgid "Purple Settings"
 msgstr "Impostazioni purple"
 
-#: src/dialogs/chatty-settings-dialog.c:674
+#: src/dialogs/chatty-settings-dialog.c:748
 msgid "New Account"
 msgstr "Nuovo account"
 
-#: src/dialogs/chatty-settings-dialog.c:676
+#: src/dialogs/chatty-settings-dialog.c:750
 #: src/ui/chatty-settings-dialog.ui:364
 msgid "Blocked Contacts"
 msgstr "Contatti bloccati"
 
-#: src/dialogs/chatty-settings-dialog.c:678 src/ui/chatty-settings-dialog.ui:7
+#: src/dialogs/chatty-settings-dialog.c:752 src/ui/chatty-settings-dialog.ui:7
 #: src/ui/chatty-window.ui:30
 msgid "Preferences"
 msgstr "Preferenze"
 
-#: src/dialogs/chatty-settings-dialog.c:707
+#: src/dialogs/chatty-settings-dialog.c:781
 msgid "Select Protocol"
 msgstr "Seleziona Protocollo"
 
 #. TRANSLATORS: Only translate 'or'
-#: src/dialogs/chatty-settings-dialog.c:948
+#: src/dialogs/chatty-settings-dialog.c:1022
 msgid "@user:matrix.org or user@example.com"
 msgstr "@user:matrix.org oppure user@example.com"
 
-#: src/dialogs/chatty-settings-dialog.c:1057
+#: src/dialogs/chatty-settings-dialog.c:1131
 msgid "Unblock contact"
 msgstr "Sblocca contatto"
 
-#: src/matrix/chatty-ma-account.c:296
+#: src/matrix/chatty-ma-account.c:231
 msgid "Incorrect password"
 msgstr "Password errata"
 
-#: src/matrix/chatty-ma-account.c:299
+#: src/matrix/chatty-ma-account.c:234
 msgid "_OK"
 msgstr "_OK"
 
-#: src/matrix/chatty-ma-account.c:300 src/ui/chatty-dialog-new-chat.ui:74
+#: src/matrix/chatty-ma-account.c:235 src/ui/chatty-dialog-new-chat.ui:74
 #: src/ui/chatty-settings-dialog.ui:47 src/ui/chatty-settings-dialog.ui:108
 msgid "_Cancel"
 msgstr "_Annulla"
 
-#: src/matrix/chatty-ma-account.c:306
+#: src/matrix/chatty-ma-account.c:241
 #, c-format
-msgid "Please enter password for “%s”"
-msgstr "Inserire la password per “%s”"
+msgid "Please enter password for “%s”, homeserver: %s"
+msgstr "Inserire la password per “%s”, server personale: %s"
 
-#: src/matrix/matrix-utils.c:474
+#: src/matrix/matrix-utils.c:473
 #, c-format
 msgid "The certificate for ‘%s’ has unknown CA"
 msgstr "Il certificato per ‘%s’ ha una CA sconosciuta"
 
-#: src/matrix/matrix-utils.c:476
+#: src/matrix/matrix-utils.c:475
 #, c-format
 msgid "The certificate for ‘%s’ is self-signed"
 msgstr "Il certificato per ‘%s’ è autofirmato"
 
-#: src/matrix/matrix-utils.c:480
+#: src/matrix/matrix-utils.c:479
 #, c-format
 msgid "The certificate for ‘%s’ has expired"
 msgstr "Il certificato per ‘%s’ è scaduto"
 
-#: src/matrix/matrix-utils.c:484
+#: src/matrix/matrix-utils.c:483
 #, c-format
 msgid "The certificate for ‘%s’ has been revoked"
 msgstr "Il certificato per ‘%s’ è stato revocato"
 
-#: src/matrix/matrix-utils.c:493
+#: src/matrix/matrix-utils.c:492
 #, c-format
 msgid "Error validating certificate for ‘%s’"
 msgstr "Errore durante la convalida del certificato per ‘%s’"
