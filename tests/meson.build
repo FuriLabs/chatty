@@ -21,7 +21,6 @@ test_items = [
   'history',
   'settings',
   'utils',
-  'matrix-utils',
   'message-text-item',
   'mm-account',
   'sms-uri',
