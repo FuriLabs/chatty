@@ -95,6 +95,12 @@ item_set_image (gpointer user_data)
   GList *files;
   int scale_factor;
 
+  /* It's possible that we get signals after dispose().
+   * Fix warning in those cases
+   */
+  if (!self->message)
+    return G_SOURCE_REMOVE;
+
   if (chatty_message_get_cm_event (self->message)) {
     chatty_message_get_file_stream_async (self->message, NULL,
                                           image_item_get_stream_cb,
