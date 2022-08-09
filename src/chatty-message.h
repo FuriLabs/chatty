@@ -11,6 +11,8 @@
 
 #pragma once
 
+#define CMATRIX_USE_EXPERIMENTAL_API
+#include <cmatrix.h>
 #include <glib-object.h>
 
 #include "chatty-item.h"
@@ -29,6 +31,9 @@ ChattyMessage      *chatty_message_new             (ChattyItem         *user,
                                                     ChattyMsgType       type,
                                                     ChattyMsgDirection  direction,
                                                     ChattyMsgStatus     status);
+ChattyMessage      *chatty_message_new_from_event  (ChattyItem         *user,
+                                                    CmEvent            *event);
+CmEvent            *chatty_message_get_cm_event    (ChattyMessage      *self);
 
 const char         *chatty_message_get_subject     (ChattyMessage      *self);
 void                chatty_message_set_subject     (ChattyMessage      *self,
@@ -39,6 +44,13 @@ void                chatty_message_set_encrypted   (ChattyMessage      *self,
                                                     gboolean            is_encrypted);
 
 GList              *chatty_message_get_files       (ChattyMessage      *self);
+void                chatty_message_get_file_stream_async   (ChattyMessage       *self,
+                                                            GCancellable        *cancellable,
+                                                            GAsyncReadyCallback  callback,
+                                                            gpointer             user_data);
+GInputStream       *chatty_message_get_file_stream_finish  (ChattyMessage       *self,
+                                                            GAsyncResult        *result,
+                                                            GError             **error);
 void                chatty_message_set_files       (ChattyMessage      *self,
                                                     GList              *files);
 void                chatty_message_add_file_from_path (ChattyMessage   *self,
