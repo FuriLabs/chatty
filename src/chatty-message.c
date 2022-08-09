@@ -196,6 +196,7 @@ chatty_message_new_from_event (ChattyItem *user,
       status = CHATTY_STATUS_RECEIVED;
       break;
 
+    case CM_EVENT_STATE_WAITING:
     case CM_EVENT_STATE_SENDING:
       status = CHATTY_STATUS_SENDING;
       break;
@@ -220,7 +221,8 @@ chatty_message_new_from_event (ChattyItem *user,
   if ((!body || !*body) &&
       cm_event_get_m_type (event) == CM_M_ROOM_ENCRYPTED)
     direction = CHATTY_DIRECTION_SYSTEM;
-  else if (cm_event_get_state (event) == CM_EVENT_STATE_SENT ||
+  else if (cm_event_get_state (event) == CM_EVENT_STATE_WAITING ||
+           cm_event_get_state (event) == CM_EVENT_STATE_SENT ||
            cm_event_get_state (event) == CM_EVENT_STATE_SENDING ||
            cm_event_get_state (event) == CM_EVENT_STATE_SENDING_FAILED)
     direction = CHATTY_DIRECTION_OUT;
@@ -228,7 +230,7 @@ chatty_message_new_from_event (ChattyItem *user,
     direction = CHATTY_DIRECTION_IN;
 
   if (direction == CHATTY_DIRECTION_SYSTEM)
-    body = _("Got an encrypted event, but couldn't decrypt due to missing keys");
+    body = _("Got an encrypted message, but couldn't decrypt due to missing keys");
   else if (CM_IS_ROOM_MESSAGE_EVENT (event))
     body = cm_room_message_event_get_body ((gpointer)event);
   else
@@ -240,6 +242,7 @@ chatty_message_new_from_event (ChattyItem *user,
                              type, direction, status);
 
   self->cm_event = g_object_ref (event);
+  self->user = g_object_ref (user);
 
   if (type == CHATTY_MESSAGE_IMAGE ||
       type == CHATTY_MESSAGE_FILE ||

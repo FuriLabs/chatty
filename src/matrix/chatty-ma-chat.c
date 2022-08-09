@@ -52,22 +52,17 @@ struct _ChattyMaChat
   ChattyMaBuddy       *self_buddy;
   GListStore          *buddy_list;
   GListStore          *message_list;
-  GtkSortListModel    *sorted_message_list;
+  GtkFilterListModel  *filtered_event_list;
 
-  JsonObject       *json_data;
   ChattyAccount    *account;
   CmClient         *cm_client;
   CmRoom           *cm_room;
-  ChattyHistory    *history_db;
 
   ChattyItemState visibility_state;
-  gint64          highlight_count;
   int             unread_count;
-  int             room_name_update_ts;
 
   guint          notification_shown : 1;
 
-  guint          prev_batch_loading : 1;
   guint          history_is_loading : 1;
   guint          avatar_is_loading : 1;
 
@@ -79,24 +74,20 @@ G_DEFINE_TYPE (ChattyMaChat, chatty_ma_chat, CHATTY_TYPE_CHAT)
 
 enum {
   PROP_0,
-  PROP_JSON_DATA,
   PROP_ROOM_ID,
   N_PROPS
 };
 
 static GParamSpec *properties[N_PROPS];
 
-static int
-sort_message (gconstpointer a,
-              gconstpointer b,
-              gpointer      user_data)
+static gboolean
+ma_chat_filter_event_list (ChattyMessage *message,
+                           ChattyMaChat  *self)
 {
-  time_t time_a, time_b;
+  g_assert (CHATTY_IS_MESSAGE (message));
+  g_assert (CHATTY_IS_MA_CHAT (self));
 
-  time_a = chatty_message_get_time ((gpointer)a);
-  time_b = chatty_message_get_time ((gpointer)b);
-
-  return time_a - time_b;
+  return !!chatty_message_get_cm_event (message);
 }
 
 static void
@@ -111,20 +102,19 @@ chatty_mat_chat_update_name (ChattyMaChat *self)
   self->generated_name = chatty_chat_generate_name (CHATTY_CHAT (self),
                                                     G_LIST_MODEL (self->buddy_list));
   g_signal_emit_by_name (self, "avatar-changed");
-  chatty_history_update_chat (self->history_db, CHATTY_CHAT (self));
 }
 
 static ChattyMaBuddy *
-ma_chat_find_buddy (ChattyMaChat *self,
-                    GListModel   *model,
-                    const char   *matrix_id,
-                    guint        *index)
+ma_chat_find_cm_user (ChattyMaChat *self,
+                      GListModel   *model,
+                      CmUser       *user,
+                      guint        *index,
+                      gboolean      add_if_missing)
 {
   guint n_items;
 
   g_assert (CHATTY_IS_MA_CHAT (self));
   g_assert (G_IS_LIST_MODEL (model));
-  g_return_val_if_fail (matrix_id && *matrix_id, NULL);
 
   n_items = g_list_model_get_n_items (model);
 
@@ -132,33 +122,25 @@ ma_chat_find_buddy (ChattyMaChat *self,
     g_autoptr(ChattyMaBuddy) buddy = NULL;
 
     buddy = g_list_model_get_item (model, i);
-    if (g_str_equal (chatty_item_get_username (CHATTY_ITEM (buddy)), matrix_id)) {
+    if (chatty_ma_buddy_matches_cm_user (buddy, user)) {
       if (index)
         *index = i;
 
-      return buddy;
+      return g_steal_pointer (&buddy);
     }
   }
 
+  if (add_if_missing)
+    {
+      ChattyMaBuddy *buddy;
+
+      buddy = chatty_ma_buddy_new_with_user (user);
+      g_list_store_append (self->buddy_list, buddy);
+
+      return buddy;
+    }
+
   return NULL;
-}
-
-static ChattyMaBuddy *
-ma_chat_add_buddy (ChattyMaChat *self,
-                   GListStore   *store,
-                   const char   *matrix_id)
-{
-  g_autoptr(ChattyMaBuddy) buddy = NULL;
-
-  g_assert (CHATTY_IS_MA_CHAT (self));
-
-  if (!matrix_id || *matrix_id != '@')
-    g_return_val_if_reached (NULL);
-
-  buddy = chatty_ma_buddy_new (matrix_id, self->cm_client);
-  g_list_store_append (store, buddy);
-
-  return buddy;
 }
 
 static void
@@ -185,424 +167,24 @@ ma_chat_get_avatar_pixbuf_cb (GObject      *object,
   self->avatar_is_loading = FALSE;
 }
 
-static ChattyFileInfo *
-ma_chat_new_file (ChattyMaChat *self,
-                  JsonObject   *object,
-                  JsonObject   *content)
-{
-  ChattyFileInfo *file = NULL;
-  const char *url;
-
-  g_assert (CHATTY_IS_MA_CHAT (self));
-
-  url = matrix_utils_json_object_get_string (object, "url");
-
-  if (url && g_str_has_prefix (url, "mxc://")) {
-    file = g_new0 (ChattyFileInfo, 1);
-
-    file->url = g_strdup (url);
-    file->file_name = g_strdup (matrix_utils_json_object_get_string (object, "body"));
-    object = matrix_utils_json_object_get_object (content, "info");
-    file->mime_type = g_strdup (matrix_utils_json_object_get_string (object, "mimetype"));
-    file->height = matrix_utils_json_object_get_int (object, "h");
-    file->width = matrix_utils_json_object_get_int (object, "w");
-    file->size = matrix_utils_json_object_get_int (object, "size");
-  }
-
-  return file;
-}
-
 static void
-chat_handle_m_media (ChattyMaChat  *self,
-                     ChattyMessage *message,
-                     JsonObject    *content,
-                     const char    *type,
-                     gboolean       encrypted)
+ma_chat_get_past_events_cb (GObject      *object,
+                            GAsyncResult *result,
+                            gpointer      user_data)
 {
-  ChattyFileInfo *file = NULL;
-  JsonObject *object;
-
-  g_assert (CHATTY_IS_MA_CHAT (self));
-  g_assert (CHATTY_IS_MESSAGE (message));
-  g_assert (content);
-  g_assert (type);
-
-  CHATTY_TRACE_MSG ("Got media, type: %s, encrypted: %d", type, !!encrypted);
-
-  if (encrypted)
-    object = matrix_utils_json_object_get_object (content, "file");
-  else
-    object = content;
-
-  if (!matrix_utils_json_object_get_string (object, "url"))
-    return;
-
-  if (!g_str_equal (type, "m.image") &&
-      !g_str_equal (type, "m.video") &&
-      !g_str_equal (type, "m.file") &&
-      !g_str_equal (type, "m.audio"))
-    return;
-
-  file = ma_chat_new_file (self, object, content);
-
-  if (!file)
-    return;
-
-  g_object_set_data_full (G_OBJECT (message), "file-url", g_strdup (file->url), g_free);
-  chatty_message_set_files (message, g_list_append (NULL, file));
-  return;
-}
-
-static void
-matrix_add_message_from_data (ChattyMaChat  *self,
-                              ChattyMaBuddy *buddy,
-                              JsonObject    *root,
-                              JsonObject    *object,
-                              gboolean       encrypted)
-{
-  g_autoptr(ChattyMessage) message = NULL;
-  JsonObject *content;
-  const char *body, *type;
-  ChattyMsgDirection direction = CHATTY_DIRECTION_IN;
-  ChattyMsgType msg_type;
-  const char *uuid;
-  time_t ts;
-
-  g_assert (CHATTY_IS_MA_CHAT (self));
-  g_assert (object);
-
-  content = matrix_utils_json_object_get_object (object, "content");
-  type = matrix_utils_json_object_get_string (content, "msgtype");
-
-  if (!type)
-    return;
-
-  if (g_str_equal (type, "m.image"))
-    msg_type = CHATTY_MESSAGE_IMAGE;
-  else if (g_str_equal (type, "m.video"))
-    msg_type = CHATTY_MESSAGE_VIDEO;
-  else if (g_str_equal (type, "m.file"))
-    msg_type = CHATTY_MESSAGE_FILE;
-  else if (g_str_equal (type, "m.audio"))
-    msg_type = CHATTY_MESSAGE_AUDIO;
-  else if (g_str_equal (type, "m.location"))
-    msg_type = CHATTY_MESSAGE_LOCATION;
-  else
-    msg_type = CHATTY_MESSAGE_TEXT;
-
-  body = matrix_utils_json_object_get_string (content, "body");
-  if (root)
-    uuid = matrix_utils_json_object_get_string (root, "event_id");
-  else
-    uuid = matrix_utils_json_object_get_string (object, "event_id");
-
-  /* timestamp is in milliseconds */
-  ts = matrix_utils_json_object_get_int (object, "origin_server_ts");
-  ts = ts / 1000;
-
-  if (buddy == self->self_buddy)
-    direction = CHATTY_DIRECTION_OUT;
-
-  CHATTY_TRACE_MSG ("Got message, direction: %s, type %s",
-                    direction == CHATTY_DIRECTION_OUT ? "out" : "in", type);
-
-  if (direction == CHATTY_DIRECTION_OUT && uuid) {
-    JsonObject *data_unsigned;
-    const char *transaction_id;
-    guint n_items = 0, limit;
-
-    if (root)
-      data_unsigned = matrix_utils_json_object_get_object (root, "unsigned");
-    else
-      data_unsigned = matrix_utils_json_object_get_object (object, "unsigned");
-    transaction_id = matrix_utils_json_object_get_string (data_unsigned, "transaction_id");
-
-    if (transaction_id)
-      n_items = g_list_model_get_n_items (G_LIST_MODEL (self->message_list));
-
-    if (n_items > 50)
-      limit = n_items - 50;
-    else
-      limit = 0;
-
-    /* Note: i, limit and n_items are unsigned */
-    for (guint i = n_items - 1; i + 1 > limit; i--) {
-      g_autoptr(ChattyMessage) msg = NULL;
-      const char *event_id;
-
-      msg = g_list_model_get_item (G_LIST_MODEL (self->message_list), i);
-      event_id = g_object_get_data (G_OBJECT (msg), "event-id");
-
-      if (event_id && g_str_equal (event_id, transaction_id)) {
-        chatty_message_set_uid (msg, uuid);
-        chatty_history_add_message (self->history_db, CHATTY_CHAT (self), msg);
-        return;
-      }
-    }
-  }
-
-  /* We should move to more precise time (ie, time in ms) as it is already provided */
-  message = chatty_message_new (CHATTY_ITEM (buddy), body, uuid, ts, msg_type, direction, 0);
-  chatty_message_set_encrypted (message, encrypted);
-
-  if (msg_type != CHATTY_MESSAGE_TEXT)
-    chat_handle_m_media (self, message, content, type, encrypted);
-
-  g_list_store_append (self->message_list, message);
-  chatty_history_add_message (self->history_db, CHATTY_CHAT (self), message);
-}
-
-static void
-handle_m_room_encrypted (ChattyMaChat  *self,
-                         ChattyMaBuddy *buddy,
-                         JsonObject    *root)
-{
-  g_autofree char *plaintext = NULL;
-  g_autofree char *json_str = NULL;
-
-  g_assert (CHATTY_IS_MA_CHAT (self));
-
-  if (!root)
-    return;
-
-  json_str = matrix_utils_json_object_to_string (root, FALSE);
-  plaintext = cm_room_decrypt_content (self->cm_room, json_str);
-
-  if (plaintext) {
-    g_autoptr(JsonObject) message = NULL;
-
-    message = matrix_utils_string_to_json_object (plaintext);
-    matrix_add_message_from_data (self, buddy, root, message, TRUE);
-  }
-}
-
-static void
-ma_chat_handle_ephemeral (ChattyMaChat *self,
-                          JsonObject   *root)
-{
-  JsonObject *object;
-  JsonArray *array;
-
-  g_assert (CHATTY_IS_MA_CHAT (self));
-  g_assert (root);
-
-  array = matrix_utils_json_object_get_array (root, "events");
-
-  if (array) {
-    g_autoptr(GList) elements = NULL;
-
-    elements = json_array_get_elements (array);
-
-    for (GList *node = elements; node; node = node->next) {
-      const char *type;
-
-      object = json_node_get_object (node->data);
-      type = matrix_utils_json_object_get_string (object, "type");
-      object = matrix_utils_json_object_get_object (object, "content");
-
-      if (g_strcmp0 (type, "m.typing") == 0) {
-        array = matrix_utils_json_object_get_array (object, "user_ids");
-
-        if (array) {
-          const char *username, *name = NULL;
-          guint typing_count = 0;
-          gboolean buddy_typing = FALSE;
-          gboolean self_typing = FALSE;
-
-          typing_count = json_array_get_length (array);
-          buddy_typing = typing_count >= 2;
-
-          /* Handle the first item so that we don’t have to
-             handle buddy_typing in the loop */
-          username = cm_client_get_user_id (self->cm_client);
-          if (typing_count)
-            name = json_array_get_string_element (array, 0);
-
-          if (g_strcmp0 (name, username) == 0)
-            self_typing = TRUE;
-          else if (typing_count)
-            buddy_typing = TRUE;
-
-          /* Check if the server says we are typing too */
-          for (guint i = 0; !self_typing && i < typing_count; i++)
-            if (g_str_equal (json_array_get_string_element (array, i), username))
-              self_typing = TRUE;
-
-          if (self->buddy_typing != buddy_typing) {
-            self->buddy_typing = buddy_typing;
-            g_object_notify (G_OBJECT (self), "buddy-typing");
-          }
-        }
-      }
-    }
-  }
-}
-
-static void
-parse_chat_array (ChattyMaChat *self,
-                  JsonArray    *array)
-{
-  g_autoptr(GList) events = NULL;
-
-  if (!array)
-    return;
-
-  events = json_array_get_elements (array);
-  CHATTY_TRACE_MSG ("Got %u events", json_array_get_length (array));
-
-  for (GList *event = events; event; event = event->next) {
-    ChattyMaBuddy *buddy;
-    JsonObject *object;
-    const char *type, *sender;
-
-    object = json_node_get_object (event->data);
-    type = matrix_utils_json_object_get_string (object, "type");
-    sender = matrix_utils_json_object_get_string (object, "sender");
-
-    if (!type || !*type || !sender || !*sender)
-      continue;
-
-    buddy = ma_chat_find_buddy (self, G_LIST_MODEL (self->buddy_list), sender, NULL);
-
-    if (!buddy)
-      buddy = ma_chat_add_buddy (self, self->buddy_list, sender);
-
-    if (!self->self_buddy &&
-        g_strcmp0 (sender, chatty_item_get_username (CHATTY_ITEM (self))) == 0)
-      g_set_object (&self->self_buddy, buddy);
-
-    if (g_str_equal (type, "m.room.message")) {
-      matrix_add_message_from_data (self, buddy, NULL, object, FALSE);
-    } else if (g_str_equal (type, "m.room.encrypted")) {
-      handle_m_room_encrypted (self, buddy, object);
-    }
-  }
-
-  if (!self->room_name_loaded) {
-    self->room_name_loaded = TRUE;
-    g_object_notify (G_OBJECT (self), "name");
-    g_signal_emit_by_name (self, "avatar-changed");
-  }
-}
-
-static void
-matrix_chat_set_json_data (ChattyMaChat *self,
-                           JsonObject   *object)
-{
-  g_assert (CHATTY_IS_MA_CHAT (self));
-
-  g_clear_pointer (&self->json_data, json_object_unref);
-  self->json_data = object;
-
-  if (!object)
-    return;
-
-  object = matrix_utils_json_object_get_object (self->json_data, "ephemeral");
-  if (object)
-    ma_chat_handle_ephemeral (self, object);
-
-  object = matrix_utils_json_object_get_object (self->json_data, "unread_notifications");
-  if (object)
-    self->highlight_count = matrix_utils_json_object_get_int (object, "highlight_count");
-
-  object = matrix_utils_json_object_get_object (self->json_data, "timeline");
-  parse_chat_array (self, matrix_utils_json_object_get_array (object, "events"));
-
-  object = matrix_utils_json_object_get_object (self->json_data, "unread_notifications");
-  if (object) {
-    guint old_count;
-
-    old_count = self->unread_count;
-    self->unread_count = matrix_utils_json_object_get_int (object, "notification_count");
-    chatty_chat_show_notification (CHATTY_CHAT (self), NULL);
-    g_signal_emit_by_name (self, "changed", 0);
-
-    /* Reset notification state on new messages */
-    if (self->unread_count > old_count)
-      self->notification_shown = FALSE;
-  }
-}
-
-static void
-get_messages_cb (GObject      *obj,
-                 GAsyncResult *result,
-                 gpointer      user_data)
-{
-  ChattyMaChat *self;
-  g_autoptr(GTask) task = user_data;
-  g_autoptr(JsonNode) node = NULL;
+  g_autoptr(ChattyMaChat) self = user_data;
+  /* g_autoptr(GPtrArray) events = NULL; */
   g_autoptr(GError) error = NULL;
-  JsonObject *root = NULL;
-  g_autofree char *json_str;
 
-  g_assert (G_IS_TASK (task));
-
-  self = g_task_get_source_object (task);
   g_assert (CHATTY_IS_MA_CHAT (self));
 
-  json_str = cm_room_load_prev_batch_finish (self->cm_room, result, &error);
-  self->prev_batch_loading = FALSE;
+  cm_room_load_past_events_finish (CM_ROOM (object), result, &error);
+
   self->history_is_loading = FALSE;
   g_object_notify (G_OBJECT (self), "loading-history");
 
-  if (!json_str) {
-    if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
-      g_warning ("error: %s", error->message);
-    g_task_return_boolean (task, FALSE);
-    return;
-  }
-
-  node = json_from_string (json_str, &error);
-  root = json_node_get_object (node);
-  parse_chat_array (self, matrix_utils_json_object_get_array (root, "chunk"));
-}
-
-static void
-ma_chat_load_db_messages_cb (GObject      *object,
-                             GAsyncResult *result,
-                             gpointer      user_data)
-{
-  ChattyMaChat *self;
-  g_autoptr(GTask) task = user_data;
-  g_autoptr(GPtrArray) messages = NULL;
-  g_autoptr(GError) error = NULL;
-
-  g_assert (G_IS_TASK (task));
-
-  self = g_task_get_source_object (task);
-  g_assert (CHATTY_IS_MA_CHAT (self));
-
-  g_object_freeze_notify (G_OBJECT (self));
-
-  messages = chatty_history_get_messages_finish (self->history_db, result, &error);
-  self->history_is_loading = FALSE;
-  g_object_notify (G_OBJECT (self), "loading-history");
-
-  if (error &&
-      !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED) &&
-      !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND))
-    g_warning ("Error fetching messages from db: %s,", error->message);
-
-  CHATTY_TRACE_MSG ("Messages loaded from db: %u", !messages ? 0 : messages->len);
-
-  if (messages && messages->len) {
-    g_list_store_splice (self->message_list, 0, 0, messages->pdata, messages->len);
-    chatty_chat_show_notification (CHATTY_CHAT (self), NULL);
-    g_signal_emit_by_name (self, "changed", 0);
-    g_task_return_boolean (task, TRUE);
-  } else if (!messages && !self->prev_batch_loading) {
-    self->history_is_loading = TRUE;
-    self->prev_batch_loading = TRUE;
-    g_object_notify (G_OBJECT (self), "loading-history");
-    cm_room_load_prev_batch_async (self->cm_room, NULL,
-                                   get_messages_cb,
-                                   g_steal_pointer (&task));
-  } else {
-    /* TODO */
-    /* g_task_return_boolean (); */
-  }
-
-  g_object_thaw_notify (G_OBJECT (self));
+  if (error)
+    g_warning ("Error: %s", error->message);
 }
 
 static gboolean
@@ -632,31 +214,18 @@ chatty_ma_chat_real_past_messages (ChattyChat *chat,
                                    int         count)
 {
   ChattyMaChat *self = (ChattyMaChat *)chat;
-  GListModel *model;
-  GTask *task;
-  guint n_items;
 
   g_assert (CHATTY_IS_MA_CHAT (self));
   g_assert (count > 0);
-
-  if (self->history_is_loading)
-    return;
 
   CHATTY_TRACE (self->room_id, "Loading %d past messages from", count);
 
   self->history_is_loading = TRUE;
   g_object_notify (G_OBJECT (self), "loading-history");
 
-  model = chatty_chat_get_messages (chat);
-  n_items = g_list_model_get_n_items (model);
-
-  task = g_task_new (self, NULL, NULL, NULL);
-  g_object_set_data (G_OBJECT (task), "count", GUINT_TO_POINTER (n_items));
-
-  chatty_history_get_messages_async (self->history_db, chat,
-                                     g_list_model_get_item (model, 0),
-                                     count, ma_chat_load_db_messages_cb,
-                                     task);
+  cm_room_load_past_events_async (self->cm_room,
+                                  ma_chat_get_past_events_cb,
+                                  g_object_ref (self));
 }
 
 static gboolean
@@ -676,7 +245,7 @@ chatty_ma_chat_get_messages (ChattyChat *chat)
 
   g_assert (CHATTY_IS_MA_CHAT (self));
 
-  return G_LIST_MODEL (self->sorted_message_list);
+  return G_LIST_MODEL (self->filtered_event_list);
 }
 
 static ChattyAccount *
@@ -768,7 +337,7 @@ chatty_ma_chat_get_last_message (ChattyChat *chat)
 
   g_assert (CHATTY_IS_MA_CHAT (self));
 
-  model = G_LIST_MODEL (self->message_list);
+  model = G_LIST_MODEL (self->filtered_event_list);
   n_items = g_list_model_get_n_items (model);
 
   if (n_items == 0)
@@ -830,8 +399,8 @@ chatty_ma_chat_set_unread_count (ChattyChat *chat,
 
     message = g_list_model_get_item (model, n_items - 1);
     cm_room_set_read_marker_async (self->cm_room,
-                                   chatty_message_get_uid (message),
-                                   chatty_message_get_uid (message),
+                                   chatty_message_get_cm_event (message),
+                                   chatty_message_get_cm_event (message),
                                    chat_set_read_marker_cb, self);
   } else {
     self->unread_count = unread_count;
@@ -914,14 +483,13 @@ chatty_ma_chat_send_message_async (ChattyChat          *chat,
 }
 
 static void
-ma_download_file_stream_cb (GObject      *obj,
-                            GAsyncResult *result,
-                            gpointer      user_data)
+ma_chat_download_cb (GObject      *object,
+                     GAsyncResult *result,
+                     gpointer      user_data)
 {
   ChattyMaChat *self;
   g_autoptr(GTask) task = user_data;
-  ChattyMessage *message;
-  ChattyFileInfo *file;
+  g_autoptr(GInputStream) istream = NULL;
   GError *error = NULL;
 
   g_assert (G_IS_TASK (task));
@@ -929,91 +497,7 @@ ma_download_file_stream_cb (GObject      *obj,
   self = g_task_get_source_object (task);
   g_assert (CHATTY_IS_MA_CHAT (self));
 
-  g_output_stream_splice_finish (G_OUTPUT_STREAM (obj), result, &error);
-  message = g_object_get_data (user_data, "message");
-  file = g_object_get_data (user_data, "file");
-
-  if (error) {
-    file->status = CHATTY_FILE_ERROR;
-    g_task_return_error (task, error);
-  } else {
-    g_autofree char *file_name = NULL;
-    g_autoptr(GFile) parent = NULL;
-    GFile *out_file;
-
-    out_file = g_object_get_data (user_data, "out-file");
-    parent = g_file_new_build_filename (g_get_user_cache_dir (), "chatty", NULL);
-
-    file_name = g_path_get_basename (file->url);
-    file->path = g_file_get_relative_path (parent, out_file);
-    file->status = CHATTY_FILE_DOWNLOADED;
-
-    g_task_return_boolean (task, TRUE);
-  }
-
-  chatty_history_add_message (self->history_db, CHATTY_CHAT (self), message);
-  chatty_message_emit_updated (message);
-}
-
-static void
-ma_chat_download_cb (GObject      *object,
-                     GAsyncResult *result,
-                     gpointer      user_data)
-{
-  ChattyMaChat *self;
-  g_autoptr(GTask) task = user_data;
-  g_autoptr(GError) error = NULL;
-  g_autoptr(GInputStream) istream = NULL;
-  ChattyMessage *message;
-  ChattyFileInfo *file;
-
-  g_assert (G_IS_TASK (task));
-
-  self = g_task_get_source_object (task);
-  g_assert (CHATTY_IS_MA_CHAT (self));
-
-  file = g_object_get_data (G_OBJECT (task), "file");
-  message = g_object_get_data (G_OBJECT (task), "message");
-  g_return_if_fail (file);
-  g_return_if_fail (message);
-
-  istream = cm_client_get_file_finish (self->cm_client, result, &error);
-
-  if (istream) {
-    GOutputStream *out_stream;
-    g_autofree char *file_name = NULL;
-    GFile *out_file;
-
-    file_name = g_path_get_basename (file->url);
-    out_file = g_file_new_build_filename (g_get_user_cache_dir (), "chatty", "matrix",
-                                          "files", file_name, NULL);
-    out_stream = (GOutputStream *)g_file_create (out_file, G_FILE_CREATE_NONE, NULL, &error);
-    g_object_set_data_full (user_data, "out-file", out_file, g_object_unref);
-
-    if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_EXISTS))
-      {
-        GFileIOStream *io_stream;
-
-        io_stream = g_file_open_readwrite (out_file, NULL, NULL);
-        out_stream = g_io_stream_get_output_stream (G_IO_STREAM (io_stream));
-      }
-
-    if (out_stream) {
-      g_output_stream_splice_async (G_OUTPUT_STREAM (out_stream), istream,
-                                    G_OUTPUT_STREAM_SPLICE_CLOSE_SOURCE |
-                                    G_OUTPUT_STREAM_SPLICE_CLOSE_TARGET,
-                                    0, NULL,
-                                    ma_download_file_stream_cb,
-                                    g_steal_pointer (&task));
-    } else {
-      g_task_return_boolean (task, FALSE);
-    }
-  } else {
-      file->status = CHATTY_FILE_UNKNOWN;
-
-    chatty_history_add_message (self->history_db, CHATTY_CHAT (self), message);
-    chatty_message_emit_updated (message);
-  }
+  istream = chatty_message_get_file_stream_finish (CHATTY_MESSAGE (object), result, &error);
 }
 
 static void
@@ -1027,7 +511,6 @@ chatty_ma_chat_get_files_async (ChattyChat          *chat,
   ChattyFileInfo *file;
   GList *files;
 
-  g_assert (CHATTY_IS_MA_CHAT (self));
   g_assert (CHATTY_IS_MESSAGE (message));
 
   task = g_task_new (self, NULL, callback, user_data);
@@ -1043,7 +526,7 @@ chatty_ma_chat_get_files_async (ChattyChat          *chat,
 
 
   file = files->data;
-  if (!file->url || file->status != CHATTY_FILE_UNKNOWN)
+  if (file->status != CHATTY_FILE_UNKNOWN)
     {
       g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_FAILED,
                                "File URL missing or invalid file state");
@@ -1052,11 +535,9 @@ chatty_ma_chat_get_files_async (ChattyChat          *chat,
 
   g_object_set_data (G_OBJECT (task), "file", file);
 
-  file->status = CHATTY_FILE_DOWNLOADING;
-  chatty_message_emit_updated (message);
-  cm_client_get_file_async (self->cm_client, file->url, NULL,
-                            ma_chat_download_cb,
-                            g_steal_pointer (&task));
+  chatty_message_get_file_stream_async (message, NULL,
+                                        ma_chat_download_cb,
+                                        g_steal_pointer (&task));
 }
 
 static gboolean
@@ -1103,6 +584,16 @@ chatty_ma_chat_get_name (ChattyItem *item)
   g_assert (CHATTY_IS_MA_CHAT (self));
 
   name = cm_room_get_name (self->cm_room);
+
+  if (name && cm_room_get_past_name (self->cm_room)) {
+    g_free (self->room_name);
+    self->room_name = g_strdup_printf ("%s (was %s)", name,
+                                       cm_room_get_past_name (self->cm_room));
+  }
+
+  if (self->room_name)
+    return self->room_name;
+
   if (name && *name)
     return name;
 
@@ -1206,10 +697,6 @@ chatty_ma_chat_set_property (GObject      *object,
 
   switch (prop_id)
     {
-    case PROP_JSON_DATA:
-      matrix_chat_set_json_data (self, g_value_dup_boxed (value));
-      break;
-
     case PROP_ROOM_ID:
       self->room_id = g_value_dup_string (value);
       break;
@@ -1231,15 +718,10 @@ chatty_ma_chat_finalize (GObject *object)
   g_list_store_remove_all (self->message_list);
   g_list_store_remove_all (self->buddy_list);
   g_clear_object (&self->message_list);
-  g_clear_object (&self->sorted_message_list);
   g_clear_object (&self->buddy_list);
   g_clear_object (&self->self_buddy);
   g_clear_pointer (&self->avatar_file, chatty_file_info_free);
   g_clear_object (&self->avatar);
-
-  g_clear_object (&self->history_db);
-
-  g_clear_pointer (&self->json_data, json_object_unref);
 
   g_free (self->room_name);
   g_free (self->generated_name);
@@ -1285,17 +767,10 @@ chatty_ma_chat_class_init (ChattyMaChatClass *klass)
   chat_class->set_typing = chatty_ma_chat_set_typing;
   chat_class->show_notification = chatty_ma_chat_show_notification;
 
-  properties[PROP_JSON_DATA] =
-    g_param_spec_boxed ("json-data",
-                        "json-data",
-                        "json-data for the room",
-                        JSON_TYPE_OBJECT,
-                        G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS);
-
   properties[PROP_ROOM_ID] =
     g_param_spec_string ("room-id",
-                         "json-data",
-                         "json-data for the room",
+                         "room id",
+                         "Matrix room id the room",
                          NULL,
                          G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT_ONLY);
 
@@ -1305,12 +780,15 @@ chatty_ma_chat_class_init (ChattyMaChatClass *klass)
 static void
 chatty_ma_chat_init (ChattyMaChat *self)
 {
-  g_autoptr(GtkSorter) sorter = NULL;
-
-  sorter = gtk_custom_sorter_new (sort_message, NULL, NULL);
+  g_autoptr(GtkFilter) filter = NULL;
 
   self->message_list = g_list_store_new (CHATTY_TYPE_MESSAGE);
-  self->sorted_message_list = gtk_sort_list_model_new (G_LIST_MODEL (self->message_list), sorter);
+
+  filter = gtk_custom_filter_new ((GtkCustomFilterFunc)ma_chat_filter_event_list,
+                                  g_object_ref (self),
+                                  g_object_unref);
+  self->filtered_event_list = gtk_filter_list_model_new (G_LIST_MODEL (self->message_list),
+                                                         filter);
   self->buddy_list = g_list_store_new (CHATTY_TYPE_MA_BUDDY);
   self->avatar_cancellable = g_cancellable_new ();
 }
@@ -1371,7 +849,7 @@ joined_members_changed_cb (ChattyMaChat *self,
         items = g_ptr_array_new_with_free_func (g_object_unref);
 
       user = g_list_model_get_item (model, i);
-      buddy = chatty_ma_buddy_new_with_user (user, self->cm_client);
+      buddy = chatty_ma_buddy_new_with_user (user);
       g_ptr_array_add (items, buddy);
     }
 
@@ -1379,11 +857,53 @@ joined_members_changed_cb (ChattyMaChat *self,
                        items ? items->pdata : NULL, added);
 }
 
+static void
+events_list_changed_cb (ChattyMaChat *self,
+                        guint         position,
+                        guint         removed,
+                        guint         added,
+                        GListModel   *model)
+{
+  g_autoptr(GPtrArray) items = NULL;
+
+  g_assert (CHATTY_IS_CHAT (self));
+  g_assert (G_IS_LIST_MODEL (model));
+
+  for (guint i = position; i < position + added; i++)
+    {
+      g_autoptr(CmEvent) event = NULL;
+      ChattyMessage *message;
+
+      if (!items)
+        items = g_ptr_array_new_with_free_func (g_object_unref);
+
+      event = g_list_model_get_item (model, i);
+
+      if (CM_IS_ROOM_MESSAGE_EVENT (event) ||
+          cm_event_is_encrypted (event)) {
+        g_autoptr(ChattyMaBuddy) user = NULL;
+
+        user = ma_chat_find_cm_user (self, G_LIST_MODEL (self->buddy_list),
+                                     cm_event_get_sender (event), NULL, TRUE);
+        message = chatty_message_new_from_event (CHATTY_ITEM (user), event);
+      } else {
+        message = g_object_new (CHATTY_TYPE_MESSAGE, NULL);
+      }
+
+      g_object_set_data_full (G_OBJECT (message), "cm-event", g_object_ref (event), g_object_unref);
+      g_ptr_array_add (items, message);
+    }
+
+  g_list_store_splice (self->message_list, position, removed,
+                       items ? items->pdata : NULL, added);
+  g_signal_emit_by_name (self, "changed", 0);
+}
+
 ChattyMaChat *
 chatty_ma_chat_new_with_room (CmRoom *room)
 {
   ChattyMaChat *self;
-  GListModel *members;
+  GListModel *members, *events;
 
   g_return_val_if_fail (CM_IS_ROOM (room), NULL);
 
@@ -1405,6 +925,14 @@ chatty_ma_chat_new_with_room (CmRoom *room)
                              g_list_model_get_n_items (members),
                              members);
 
+  events = cm_room_get_events_list (room);
+  g_signal_connect_object (events, "items-changed",
+                           G_CALLBACK (events_list_changed_cb),
+                           self, G_CONNECT_SWAPPED);
+  events_list_changed_cb (self, 0, 0,
+                          g_list_model_get_n_items (events),
+                          events);
+
   return self;
 }
 
@@ -1416,15 +944,48 @@ chatty_ma_chat_get_cm_room (ChattyMaChat *self)
   return self->cm_room;
 }
 
-void
-chatty_ma_chat_set_history_db (ChattyMaChat *self,
-                               gpointer      history_db)
+gboolean
+chatty_ma_chat_can_set_encryption (ChattyMaChat *self)
 {
-  g_return_if_fail (CHATTY_IS_MA_CHAT (self));
-  g_return_if_fail (CHATTY_IS_HISTORY (history_db));
-  g_return_if_fail (!self->history_db);
+  g_return_val_if_fail (CHATTY_IS_MA_CHAT (self), FALSE);
 
-  self->history_db = g_object_ref (history_db);
+  if (!self->cm_room)
+    return FALSE;
+
+  return cm_room_self_has_power_for_event (self->cm_room, CM_M_ROOM_ENCRYPTION);
+}
+
+void
+chatty_ma_chat_add_events (ChattyMaChat *self,
+                           GPtrArray    *events,
+                           gboolean      append)
+{
+  g_autoptr(GPtrArray) messages = NULL;
+
+  g_return_if_fail (CHATTY_IS_MA_CHAT (self));
+
+  messages = g_ptr_array_new_full (100, g_object_unref);
+
+  for (guint i = 0; i < events->len; i++)
+    {
+      CmEvent *event = events->pdata[i];
+
+      /* We support only message events in chatty */
+      if (CM_IS_ROOM_MESSAGE_EVENT (event))
+        {
+          g_autoptr(ChattyMaBuddy) user = NULL;
+
+          user = ma_chat_find_cm_user (self, G_LIST_MODEL (self->buddy_list),
+                                       cm_event_get_sender (event), NULL, TRUE);
+          g_ptr_array_add (messages, chatty_message_new_from_event (CHATTY_ITEM (user), event));
+        }
+      else
+        {
+          CHATTY_TRACE_MSG ("Received non room event with id: %s", cm_event_get_id (event));
+        }
+    }
+
+  chatty_ma_chat_add_messages (self, messages, append);
 }
 
 /**
@@ -1462,11 +1023,17 @@ chatty_ma_chat_matches_id (ChattyMaChat *self,
 
 void
 chatty_ma_chat_add_messages (ChattyMaChat *self,
-                             GPtrArray    *messages)
+                             GPtrArray    *messages,
+                             gboolean      append)
 {
+  guint position = 0;
+
   g_return_if_fail (CHATTY_IS_MA_CHAT (self));
 
+  if (append)
+    position = g_list_model_get_n_items (G_LIST_MODEL (self->message_list));
+
   if (messages && messages->len)
-    g_list_store_splice (self->message_list, 0, 0,
+    g_list_store_splice (self->message_list, position, 0,
                          messages->pdata, messages->len);
 }

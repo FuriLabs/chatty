@@ -663,8 +663,7 @@ chatty_manager_find_account_with_name (ChattyManager  *self,
   g_return_val_if_fail (CHATTY_IS_MANAGER (self), NULL);
   g_return_val_if_fail (account_id && *account_id, NULL);
 
-  if (protocol & CHATTY_PROTOCOL_MATRIX &&
-      chatty_settings_get_experimental_features (chatty_settings_get_default ()))
+  if (protocol & CHATTY_PROTOCOL_MATRIX)
     return chatty_matrix_find_account_with_name (self->matrix, account_id);
 
 #ifdef PURPLE_ENABLED
@@ -687,15 +686,12 @@ chatty_manager_find_chat_with_name (ChattyManager  *self,
     return chatty_mm_account_find_chat (self->mm_account, chat_id);
 
 #ifdef PURPLE_ENABLED
-  if (protocol & (CHATTY_PROTOCOL_XMPP | CHATTY_PROTOCOL_TELEGRAM) ||
-      (!chatty_settings_get_experimental_features (chatty_settings_get_default ()) &&
-       protocol & CHATTY_PROTOCOL_MATRIX))
+  if (protocol & (CHATTY_PROTOCOL_XMPP | CHATTY_PROTOCOL_TELEGRAM))
     return chatty_purple_find_chat_with_name (chatty_purple_get_default (),
                                               protocol, account_id, chat_id);
 #endif
 
-  if (chatty_settings_get_experimental_features (chatty_settings_get_default ())
-      && protocol == CHATTY_PROTOCOL_MATRIX)
+  if (protocol == CHATTY_PROTOCOL_MATRIX)
     return chatty_matrix_find_chat_with_name (self->matrix, protocol, account_id, chat_id);
 
   return NULL;
@@ -757,8 +753,20 @@ chatty_manager_matrix_client_new (ChattyManager *self)
 {
   g_return_val_if_fail (CHATTY_IS_MANAGER (self), NULL);
 
-  if (!self->matrix || !chatty_settings_get_experimental_features (chatty_settings_get_default ()))
+  if (!self->matrix)
     return NULL;
 
   return chatty_matrix_client_new (self->matrix);
+}
+
+gboolean
+chatty_manager_has_matrix_with_id (ChattyManager *self,
+                                   const char    *user_id)
+{
+  g_return_val_if_fail (CHATTY_IS_MANAGER (self), FALSE);
+
+  if (!self->matrix)
+    return FALSE;
+
+  return chatty_matrix_has_user_id (self->matrix, user_id);
 }

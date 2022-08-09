@@ -52,5 +52,7 @@ ChattyChat     *chatty_matrix_find_chat_with_name    (ChattyMatrix   *self,
                                                       const char     *account_id,
                                                       const char     *chat_id);
 CmClient       *chatty_matrix_client_new             (ChattyMatrix   *self);
+gboolean        chatty_matrix_has_user_id            (ChattyMatrix   *self,
+                                                      const char     *user_id);
 
 G_END_DECLS

@@ -7,7 +7,3 @@ libsrc += files([
   'chatty-ma-buddy.c',
   'chatty-ma-chat.c',
 ])
-
-chatty_deps += [
-  dependency('json-glib-1.0'),
-]

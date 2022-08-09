@@ -33,14 +33,17 @@ ChattyMaChat *chatty_ma_chat_new                (const char     *room_id,
                                                  gboolean        encrypted);
 ChattyMaChat *chatty_ma_chat_new_with_room      (CmRoom        *room);
 CmRoom       *chatty_ma_chat_get_cm_room        (ChattyMaChat  *self);
-void          chatty_ma_chat_set_history_db     (ChattyMaChat  *self,
-                                                 gpointer       history_db);
+gboolean      chatty_ma_chat_can_set_encryption (ChattyMaChat  *self);
+void          chatty_ma_chat_add_events         (ChattyMaChat  *self,
+                                                 GPtrArray     *events,
+                                                 gboolean       append);
 void          chatty_ma_chat_set_data           (ChattyMaChat  *self,
                                                  ChattyAccount *account,
                                                  gpointer       client);
 gboolean      chatty_ma_chat_matches_id         (ChattyMaChat  *self,
                                                  const char    *room_id);
 void          chatty_ma_chat_add_messages       (ChattyMaChat  *self,
-                                                 GPtrArray     *messages);
+                                                 GPtrArray     *messages,
+                                                 gboolean       append);
 
 G_END_DECLS

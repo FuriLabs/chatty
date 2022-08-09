@@ -2831,7 +2831,7 @@ history_get_chats (ChattyHistory *self,
     }
 
     if (CHATTY_IS_MA_ACCOUNT (account))
-      chatty_ma_chat_add_messages (CHATTY_MA_CHAT (chat), messages);
+      chatty_ma_chat_add_messages (CHATTY_MA_CHAT (chat), messages, FALSE);
     else
       chatty_mm_chat_prepend_messages (CHATTY_MM_CHAT (chat), messages);
 

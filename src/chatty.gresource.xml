@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
   <gresource prefix="/sm/puri/Chatty">
-    <file alias="matrix-filter.json">matrix/matrix-filter.json</file>
     <file preprocess="xml-stripblanks" alias="gtk/help-overlay.ui">ui/help-overlay.ui</file>
     <file preprocess="xml-stripblanks">ui/chatty-selectable-row.ui</file>
     <file preprocess="xml-stripblanks">ui/chatty-fp-row.ui</file>

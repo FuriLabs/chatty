@@ -22,30 +22,12 @@ struct _ChattyMaBuddy
 {
   ChattyItem      parent_instance;
 
-  char           *matrix_id;
-  char           *name;
-
   CmUser         *cm_user;
-  CmClient       *cm_client;
 
   /* generated using g_str_hash for faster comparison */
   guint           id_hash;
   gboolean        is_self;
 };
-
-struct _BuddyDevice
-{
-
-  char *device_id;
-  char *device_name;
-  char *curve_key; /* Public part Curve25519 identity key pair */
-  char *ed_key;    /* Public part of Ed25519 fingerprint key pair */
-  char *one_time_key;
-
-  gboolean meagolm_v1;
-  gboolean olm_v1;
-};
-
 
 G_DEFINE_TYPE (ChattyMaBuddy, chatty_ma_buddy, CHATTY_TYPE_ITEM)
 
@@ -70,45 +52,32 @@ chatty_ma_buddy_matches (ChattyItem     *item,
 {
   ChattyMaBuddy *self = (ChattyMaBuddy *)item;
 
-  if (needle == self->matrix_id)
-    return TRUE;
-
-  if (!needle || !self->matrix_id)
+  if (!self->cm_user || !cm_user_get_id (self->cm_user))
     return FALSE;
 
-  return strcasestr (needle, self->matrix_id) != NULL;
+  if (needle == cm_user_get_id (self->cm_user))
+    return TRUE;
+
+  return strcasestr (needle, cm_user_get_id (self->cm_user)) != NULL;
 }
 
 static const char *
 chatty_ma_buddy_get_name (ChattyItem *item)
 {
   ChattyMaBuddy *self = (ChattyMaBuddy *)item;
+  const char *name = NULL;
 
   g_assert (CHATTY_IS_MA_BUDDY (self));
 
-  if (self->name)
-    return self->name;
+  if (!self->cm_user)
+    return "";
 
-  if (self->matrix_id)
-    return self->matrix_id;
+  name = cm_user_get_display_name (self->cm_user);
 
-  return "";
-}
+  if (name)
+    return name;
 
-static void
-chatty_ma_buddy_set_name (ChattyItem *item,
-                          const char *name)
-{
-  ChattyMaBuddy *self = (ChattyMaBuddy *)item;
-
-  g_assert (CHATTY_IS_MA_BUDDY (self));
-
-  g_free (self->name);
-
-  if (!name || !*name)
-    self->name = NULL;
-  else
-    self->name = g_strdup (name);
+  return cm_user_get_id (self->cm_user);
 }
 
 /*
@@ -131,9 +100,6 @@ chatty_ma_buddy_get_username (ChattyItem *item)
   if (self->cm_user)
     return cm_user_get_id (self->cm_user);
 
-  if (self->matrix_id)
-    return self->matrix_id;
-
   return "";
 }
 
@@ -152,11 +118,7 @@ chatty_ma_buddy_dispose (GObject *object)
 {
   ChattyMaBuddy *self = (ChattyMaBuddy *)object;
 
-  g_clear_pointer (&self->matrix_id, g_free);
-  g_clear_pointer (&self->name, g_free);
-
   g_clear_object (&self->cm_user);
-  g_clear_object (&self->cm_client);
 
   G_OBJECT_CLASS (chatty_ma_buddy_parent_class)->dispose (object);
 }
@@ -172,7 +134,6 @@ chatty_ma_buddy_class_init (ChattyMaBuddyClass *klass)
   item_class->get_protocols = chatty_ma_buddy_get_protocols;
   item_class->matches  = chatty_ma_buddy_matches;
   item_class->get_name = chatty_ma_buddy_get_name;
-  item_class->set_name = chatty_ma_buddy_set_name;
   item_class->get_username = chatty_ma_buddy_get_username;
   item_class->get_avatar = chatty_ma_buddy_get_avatar;
 
@@ -197,42 +158,26 @@ chatty_ma_buddy_init (ChattyMaBuddy *self)
 }
 
 ChattyMaBuddy *
-chatty_ma_buddy_new (const char *matrix_id,
-                     CmClient   *client)
-{
-  ChattyMaBuddy *self;
-
-  g_return_val_if_fail (matrix_id && *matrix_id == '@', NULL);
-  g_return_val_if_fail (CM_IS_CLIENT (client), NULL);
-
-  self = g_object_new (CHATTY_TYPE_MA_BUDDY, NULL);
-  self->matrix_id = g_strdup (matrix_id);
-  self->cm_client = g_object_ref (client);
-
-  if (g_str_equal (matrix_id, cm_client_get_user_id (client)))
-    self->is_self = TRUE;
-
-  return self;
-}
-
-ChattyMaBuddy *
-chatty_ma_buddy_new_with_user (CmUser   *user,
-                               CmClient *client)
+chatty_ma_buddy_new_with_user (CmUser *user)
 {
   ChattyMaBuddy *self;
 
   g_return_val_if_fail (CM_IS_USER (user), NULL);
-  g_return_val_if_fail (CM_IS_CLIENT (client), NULL);
 
   self = g_object_new (CHATTY_TYPE_MA_BUDDY, NULL);
   self->cm_user = g_object_ref (user);
-  self->cm_client = g_object_ref (client);
-
-  if (g_strcmp0 (cm_user_get_id (user),
-                 cm_client_get_user_id (client)) == 0)
-    self->is_self = TRUE;
 
   return self;
+}
+
+gboolean
+chatty_ma_buddy_matches_cm_user (ChattyMaBuddy *self,
+                                 CmUser        *user)
+{
+  g_return_val_if_fail (CHATTY_IS_MA_BUDDY (self), FALSE);
+  g_return_val_if_fail (CM_IS_USER (user), FALSE);
+
+  return user == self->cm_user;
 }
 
 guint
@@ -240,40 +185,8 @@ chatty_ma_buddy_get_id_hash (ChattyMaBuddy *self)
 {
   g_return_val_if_fail (CHATTY_IS_MA_BUDDY (self), 0);
 
-  if (!self->id_hash && self->matrix_id)
-    self->id_hash = g_str_hash (self->matrix_id);
+  if (!self->id_hash && self->cm_user)
+    self->id_hash = g_str_hash (cm_user_get_id (self->cm_user));
 
   return self->id_hash;
-}
-
-const char *
-chatty_ma_device_get_id (BuddyDevice *device)
-{
-  g_return_val_if_fail (device, "");
-
-  return device->device_id;
-}
-
-const char *
-chatty_ma_device_get_ed_key (BuddyDevice *device)
-{
-  g_return_val_if_fail (device, "");
-
-  return device->ed_key;
-}
-
-const char *
-chatty_ma_device_get_curve_key (BuddyDevice *device)
-{
-  g_return_val_if_fail (device, "");
-
-  return device->curve_key;
-}
-
-char *
-chatty_ma_device_get_one_time_key (BuddyDevice *device)
-{
-  g_return_val_if_fail (device, g_strdup (""));
-
-  return g_steal_pointer (&device->one_time_key);
 }

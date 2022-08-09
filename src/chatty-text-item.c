@@ -221,13 +221,11 @@ static void
 text_item_update_message (ChattyTextItem *self)
 {
   g_autoptr(GString) str = NULL;
-  ChattySettings *settings;
   const char *text;
 
   g_assert (CHATTY_IS_TEXT_ITEM (self));
   g_assert (self->message);
 
-  settings = chatty_settings_get_default ();
   text = chatty_message_get_text (self->message);
   str = g_string_sized_new (256);
 
@@ -259,8 +257,7 @@ text_item_update_message (ChattyTextItem *self)
     }
   }
 
-  if ((self->protocol == CHATTY_PROTOCOL_MATRIX &&
-       chatty_settings_get_experimental_features (settings)) ||
+  if (self->protocol == CHATTY_PROTOCOL_MATRIX ||
       self->protocol & (CHATTY_PROTOCOL_MMS_SMS | CHATTY_PROTOCOL_MMS)) {
     g_autofree char *content = NULL;
     const char *subject;
