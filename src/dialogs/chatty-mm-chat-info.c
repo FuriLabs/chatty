@@ -71,7 +71,7 @@ chatty_mm_chat_info_set_item (ChattyChatInfo *info,
                               ChattyChat     *chat)
 {
   ChattyMmChatInfo *self = (ChattyMmChatInfo *)info;
-  g_autoptr (ChattyContact) self_contact;
+  g_autoptr(ChattyContact) self_contact = NULL;
   GListModel *users;
   GtkWidget *contact_row;
   guint n_items = 0;
@@ -112,7 +112,7 @@ chatty_mm_chat_info_set_item (ChattyChatInfo *info,
      gtk_list_box_prepend (GTK_LIST_BOX (self->contacts_list_box),
                            GTK_WIDGET (contact_row));
     } else {
-      g_autoptr (ChattyContact) new_contact;
+      g_autoptr(ChattyContact) new_contact = NULL;
       const char *phone;
 
       phone = chatty_mm_buddy_get_number (buddy);
