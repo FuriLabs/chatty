@@ -117,8 +117,20 @@ subdir('src')
 subdir('tests')
 subdir('po')
 
-summary({
-  'Enable libpurple': purple_dep.found(),
-})
+system = target_machine.system()
+if system == 'linux'
+  system = 'GNU/Linux'
+endif
+
+summary({'Target': system,
+         'Target arch': target_machine.cpu(),
+         'Compiler': cc.get_id(),
+         'Version': cc.version(),
+         'Linker': cc.get_linker_id(),
+        }, section: 'Toolchain')
+
+summary({'Build type': get_option('buildtype'),
+         'libpurple': purple_dep.found(),
+        }, section: 'Configuration')
 
 meson.add_install_script('build-aux/meson/postinstall.py')
