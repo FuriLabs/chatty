@@ -275,18 +275,6 @@ chatty_application_command_line (GApplication            *application,
 
   options = g_application_command_line_get_options_dict (command_line);
 
-  self->show_window = TRUE;
-  if (g_variant_dict_contains (options, "daemon")) {
-    /* Hold application only the first time daemon mode is set */
-    if (!self->daemon)
-      g_application_hold (application);
-
-    self->show_window = FALSE;
-    self->daemon = TRUE;
-
-    g_debug ("Enable daemon mode");
-  }
-
   if (g_variant_dict_contains (options, "nologin"))
     chatty_manager_disable_auto_login (chatty_manager_get_default (), TRUE);
 
@@ -294,6 +282,20 @@ chatty_application_command_line (GApplication            *application,
   if (g_variant_dict_contains (options, "debug"))
     chatty_purple_enable_debug ();
 #endif
+
+  self->show_window = TRUE;
+  if (g_variant_dict_contains (options, "daemon")) {
+    /* Hold application only the first time daemon mode is set */
+    if (!self->daemon)
+      g_application_hold (application);
+
+    chatty_manager_load (self->manager);
+
+    self->show_window = FALSE;
+    self->daemon = TRUE;
+
+    g_debug ("Enable daemon mode");
+  }
 
   arguments = g_application_command_line_get_arguments (command_line, &argc);
 
@@ -350,7 +352,6 @@ chatty_application_startup (GApplication *application)
   g_signal_connect_object (self->manager, "open-chat",
                            G_CALLBACK (application_open_chat),
                            self, G_CONNECT_SWAPPED);
-  chatty_manager_load (self->manager);
 
   g_signal_connect_object (self, "window-removed",
                            G_CALLBACK (app_window_removed_cb),
@@ -376,6 +377,8 @@ chatty_application_activate (GApplication *application)
   ChattyApplication *self = (ChattyApplication *)application;
 
   g_assert (GTK_IS_APPLICATION (app));
+
+  chatty_manager_load (self->manager);
 
   if (!self->main_window && self->show_window) {
     g_set_weak_pointer (&self->main_window, chatty_window_new (app));
