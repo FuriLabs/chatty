@@ -23,16 +23,62 @@ static int verbosity;
 gboolean any_domain;
 gboolean no_anonymize;
 gboolean stderr_is_journal;
+gboolean fatal_criticals, fatal_warnings;
+
+static gboolean
+should_show_log_for_level (GLogLevelFlags log_level,
+                           int            verbosity_level)
+{
+  if (verbosity_level >= 5)
+    return TRUE;
+
+  if (log_level & CHATTY_LOG_LEVEL_TRACE)
+    return verbosity_level >= 4;
+
+  if (log_level & G_LOG_LEVEL_DEBUG)
+    return verbosity_level >= 3;
+
+  if (log_level & G_LOG_LEVEL_INFO)
+    return verbosity_level >= 2;
+
+  if (log_level & G_LOG_LEVEL_MESSAGE)
+    return verbosity_level >= 1;
+
+  return FALSE;
+}
+
+static gboolean
+matches_domain (const char *log_domains,
+                const char *domain)
+{
+  g_auto(GStrv) domain_list = NULL;
+
+  if (!log_domains || !*log_domains ||
+      !domain || !*domain)
+    return FALSE;
+
+  domain_list = g_strsplit (log_domains, ",", -1);
+
+  for (guint i = 0; domain_list[i]; i++)
+    {
+      if (g_str_has_prefix (domain, domain_list[i]))
+        return TRUE;
+    }
+
+  return FALSE;
+}
 
 static gboolean
 should_log (const char     *log_domain,
             GLogLevelFlags  log_level)
 {
+  g_assert (log_domain);
+
   /* Ignore custom flags set */
   log_level = log_level & ~CHATTY_LOG_DETAILED;
 
   /* Don't skip serious logs */
-  if (log_level & (G_LOG_LEVEL_ERROR | G_LOG_LEVEL_WARNING))
+  if (log_level & (G_LOG_LEVEL_ERROR | G_LOG_LEVEL_CRITICAL | G_LOG_LEVEL_WARNING))
     return TRUE;
 
   if (any_domain && domains) {
@@ -44,53 +90,27 @@ should_log (const char     *log_domain,
     return verbosity >= 4;
   }
 
-  if (!any_domain && domains && log_domain && strstr (domains, log_domain))
-    return TRUE;
+  if (!domains && g_str_has_prefix (log_domain, DEFAULT_DOMAIN_PREFIX))
+    return should_show_log_for_level (log_level, verbosity);
 
-  switch ((int)log_level)
-    {
-    case G_LOG_LEVEL_MESSAGE:
-      if (verbosity < 1)
-        return FALSE;
-      break;
+  if (domains && matches_domain (domains, log_domain))
+    return should_show_log_for_level (log_level, verbosity);
 
-    case G_LOG_LEVEL_INFO:
-      if (verbosity < 2)
-        return FALSE;
-      break;
-
-    case G_LOG_LEVEL_DEBUG:
-      if (verbosity < 3)
-        return FALSE;
-      break;
-
-    case CHATTY_LOG_LEVEL_TRACE:
-      if (verbosity < 4)
-        return FALSE;
-      break;
-
-    default:
-      break;
-    }
-
-  if (!log_domain)
-    log_domain = "**";
-
-  /* Skip logs from other domains if verbosity level is low */
-  if (any_domain && !domains &&
-      verbosity < 5 &&
-      log_level > G_LOG_LEVEL_MESSAGE &&
-      !strstr (log_domain, DEFAULT_DOMAIN_PREFIX))
+  /* If we didn't handle domains in the preceding statement,
+   * we should no longer log them */
+  if (domains)
     return FALSE;
 
   /* GdkPixbuf logs are too much verbose, skip unless asked not to. */
-  if (log_level >= G_LOG_LEVEL_MESSAGE &&
-      verbosity < 7 &&
+  if (verbosity < 8 &&
       g_strcmp0 (log_domain, "GdkPixbuf") == 0 &&
       (!domains || !strstr (domains, log_domain)))
     return FALSE;
 
-  return TRUE;
+  if (verbosity >= 6)
+    return TRUE;
+
+  return FALSE;
 }
 
 static void
@@ -170,18 +190,15 @@ chatty_log_write (GLogLevelFlags   log_level,
                   gpointer         user_data)
 {
   g_autoptr(GString) log_str = NULL;
-  FILE *stream;
+  FILE *stream = stdout;
   gboolean can_color;
 
-  if (stderr_is_journal)
-    if (g_log_writer_journald (log_level, fields, n_fields, user_data) == G_LOG_WRITER_HANDLED)
-      return G_LOG_WRITER_HANDLED;
+  if (stderr_is_journal &&
+      g_log_writer_journald (log_level, fields, n_fields, user_data) == G_LOG_WRITER_HANDLED)
+    return G_LOG_WRITER_HANDLED;
 
-  if (log_level & (G_LOG_LEVEL_ERROR |
-                   G_LOG_LEVEL_CRITICAL | G_LOG_LEVEL_WARNING))
+  if (log_level & (G_LOG_LEVEL_ERROR | G_LOG_LEVEL_CRITICAL | G_LOG_LEVEL_WARNING))
     stream = stderr;
-  else
-    stream = stdout;
 
   log_str = g_string_new (NULL);
 
@@ -202,7 +219,6 @@ chatty_log_write (GLogLevelFlags   log_level,
   }
 
   can_color = g_log_writer_supports_color (fileno (stream));
-  
   log_str_append_log_domain (log_str, log_domain, can_color);
   g_string_append_printf (log_str, "[%5d]:", getpid ());
 
@@ -239,6 +255,13 @@ chatty_log_write (GLogLevelFlags   log_level,
   fprintf (stream, "%s\n", log_str->str);
   fflush (stream);
 
+  if (fatal_criticals &&
+      (log_level | G_LOG_LEVEL_CRITICAL))
+    G_BREAKPOINT ();
+  else if (fatal_warnings &&
+           (log_level | G_LOG_LEVEL_CRITICAL | G_LOG_LEVEL_WARNING))
+    G_BREAKPOINT ();
+
   return G_LOG_WRITER_HANDLED;
 }
 
@@ -261,24 +284,17 @@ chatty_log_handler (GLogLevelFlags   log_level,
         log_message = field->value;
     }
 
-  if (!should_log (log_domain, log_level))
-    return G_LOG_WRITER_HANDLED;
-
   if (!log_domain)
     log_domain = "**";
 
   if (!log_message)
     log_message = "(NULL) message";
 
-  if (any_domain)
-    return chatty_log_write (log_level, log_domain, log_message,
-                             fields, n_fields, user_data);
+  if (!should_log (log_domain, log_level))
+    return G_LOG_WRITER_HANDLED;
 
-  if (!log_domain || strstr (domains, log_domain))
-    return chatty_log_write (log_level, log_domain, log_message,
-                             fields, n_fields, user_data);
-
-  return G_LOG_WRITER_HANDLED;
+  return chatty_log_write (log_level, log_domain, log_message,
+                           fields, n_fields, user_data);
 }
 
 static void
@@ -302,12 +318,17 @@ chatty_log_init (void)
       if (!domains || g_str_equal (domains, "all"))
         any_domain = TRUE;
 
-      if (domains && g_str_equal (domains, "no-anonymize"))
+      if (domains && strstr (domains, "no-anonymize"))
         {
           any_domain = TRUE;
           no_anonymize = TRUE;
           g_clear_pointer (&domains, g_free);
         }
+
+      if (g_strcmp0 (g_getenv ("G_DEBUG"), "fatal-criticals") == 0)
+        fatal_criticals = TRUE;
+      else if (g_strcmp0 (g_getenv ("G_DEBUG"), "fatal-warnings") == 0)
+        fatal_warnings = TRUE;
 
       stderr_is_journal = g_log_writer_is_journald (fileno (stderr));
       g_log_set_writer_func (chatty_log_handler, NULL, NULL);
