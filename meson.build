@@ -1,7 +1,7 @@
 project(
   'chatty', 'c', 'cpp',
   version: '0.6.7',
-  meson_version: '>= 0.53.0',
+  meson_version: '>= 0.56.0',
 )
 
 i18n = import('i18n')
