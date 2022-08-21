@@ -32,7 +32,7 @@ foreach item: test_items
     item,
     item + '.c',
     include_directories: tests_inc,
-    link_with: libchatty.get_static_lib(),
+    link_with: libchatty_static,
     dependencies: chatty_deps,
   )
   test(item, t, env: env, timeout: 300)
