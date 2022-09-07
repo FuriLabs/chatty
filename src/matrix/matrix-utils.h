@@ -16,10 +16,6 @@
 
 #include "cm-enums.h"
 
-void          matrix_utils_clear                    (char          *buffer,
-                                                     size_t         length);
-void          matrix_utils_free_buffer              (char          *buffer);
-
 void          matrix_utils_get_pixbuf_async         (const char    *file,
                                                      GCancellable  *cancellable,
                                                      GAsyncReadyCallback callback,

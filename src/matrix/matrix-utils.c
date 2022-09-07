@@ -16,43 +16,11 @@
 # include "config.h"
 #endif
 
-#define __STDC_WANT_LIB_EXT1__ 1
 #include <string.h>
-#include <glib/gi18n.h>
 
 #include "chatty-log.h"
 #include "chatty-utils.h"
 #include "matrix-utils.h"
-
-void
-matrix_utils_clear (char   *buffer,
-                    size_t  length)
-{
-  if (!buffer || length == 0)
-    return;
-
-  /* Brushing up your C: Note: we are not comparing with -1 */
-  if (length == -1)
-    length = strlen (buffer);
-
-#ifdef __STDC_LIB_EXT1__
-  memset_s (buffer, length, 0, length);
-#elif HAVE_EXPLICIT_BZERO
-  explicit_bzero (buffer, length);
-#else
-  volatile char *end = buffer + length;
-
-  while (buffer != end)
-    *(buffer++) = 0;
-#endif
-}
-
-void
-matrix_utils_free_buffer (char *buffer)
-{
-  matrix_utils_clear (buffer, -1);
-  g_free (buffer);
-}
 
 static void
 pixbuf_load_stream_cb (GObject      *object,
