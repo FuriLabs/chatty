@@ -739,29 +739,6 @@ ma_account_set_client (ChattyMaAccount *self,
 }
 
 ChattyMaAccount *
-chatty_ma_account_new (const char *username,
-                       const char *password)
-{
-  ChattyMaAccount *self;
-  CmClient *client;
-
-  g_return_val_if_fail (username, NULL);
-
-  self = g_object_new (CHATTY_TYPE_MA_ACCOUNT, NULL);
-  client = g_object_new (CM_TYPE_CLIENT, NULL);
-  /* Mark client to not save changes to db */
-  g_object_set_data (G_OBJECT (client), "no-save", GINT_TO_POINTER (TRUE));
-  ma_account_set_client (self, client);
-  cm_client_set_user_id (self->cm_client, username);
-
-  chatty_item_set_username (CHATTY_ITEM (self), username);
-  chatty_account_set_password (CHATTY_ACCOUNT (self), password);
-  CHATTY_DEBUG_DETAILED (username, "New Matrix account");
-
-  return self;
-}
-
-ChattyMaAccount *
 chatty_ma_account_new_from_client (CmClient *cm_client)
 {
   ChattyMaAccount *self;

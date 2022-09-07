@@ -25,8 +25,6 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (ChattyMaAccount, chatty_ma_account, CHATTY, MA_ACCOUNT, ChattyAccount)
 
-ChattyMaAccount  *chatty_ma_account_new                (const char      *username,
-                                                        const char      *password);
 ChattyMaAccount  *chatty_ma_account_new_from_client    (CmClient        *cm_client);
 CmClient         *chatty_ma_account_get_cm_client      (ChattyMaAccount *self);
 gboolean          chatty_ma_account_can_connect        (ChattyMaAccount *self);
