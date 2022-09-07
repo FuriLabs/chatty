@@ -42,10 +42,7 @@ struct _ChattyMaChat
   ChattyChat           parent_instance;
 
   char                *room_name;
-  char                *generated_name;
   char                *room_id;
-  char                *encryption;
-  char                *last_batch;
   GdkPixbuf           *avatar;
   ChattyFileInfo      *avatar_file;
   GCancellable        *avatar_cancellable;
@@ -88,20 +85,6 @@ ma_chat_filter_event_list (ChattyMessage *message,
   g_assert (CHATTY_IS_MA_CHAT (self));
 
   return !!chatty_message_get_cm_event (message);
-}
-
-static void
-chatty_mat_chat_update_name (ChattyMaChat *self)
-{
-  g_assert (CHATTY_IS_MA_CHAT (self));
-
-  if (self->room_name)
-    return;
-
-  g_free (self->generated_name);
-  self->generated_name = chatty_chat_generate_name (CHATTY_CHAT (self),
-                                                    G_LIST_MODEL (self->buddy_list));
-  g_signal_emit_by_name (self, "avatar-changed");
 }
 
 static ChattyMaBuddy *
@@ -597,18 +580,6 @@ chatty_ma_chat_get_name (ChattyItem *item)
   if (name && *name)
     return name;
 
-  if (self->room_name)
-    return self->room_name;
-
-  if (!self->room_name_loaded)
-    return self->room_id;
-
-  if (!self->generated_name)
-    chatty_mat_chat_update_name (self);
-
-  if (self->generated_name)
-    return self->generated_name;
-
   if (self->room_id)
     return self->room_id;
 
@@ -724,9 +695,7 @@ chatty_ma_chat_finalize (GObject *object)
   g_clear_object (&self->avatar);
 
   g_free (self->room_name);
-  g_free (self->generated_name);
   g_free (self->room_id);
-  g_free (self->last_batch);
 
   G_OBJECT_CLASS (chatty_ma_chat_parent_class)->finalize (object);
 }
@@ -953,39 +922,6 @@ chatty_ma_chat_can_set_encryption (ChattyMaChat *self)
     return FALSE;
 
   return cm_room_self_has_power_for_event (self->cm_room, CM_M_ROOM_ENCRYPTION);
-}
-
-void
-chatty_ma_chat_add_events (ChattyMaChat *self,
-                           GPtrArray    *events,
-                           gboolean      append)
-{
-  g_autoptr(GPtrArray) messages = NULL;
-
-  g_return_if_fail (CHATTY_IS_MA_CHAT (self));
-
-  messages = g_ptr_array_new_full (100, g_object_unref);
-
-  for (guint i = 0; i < events->len; i++)
-    {
-      CmEvent *event = events->pdata[i];
-
-      /* We support only message events in chatty */
-      if (CM_IS_ROOM_MESSAGE_EVENT (event))
-        {
-          g_autoptr(ChattyMaBuddy) user = NULL;
-
-          user = ma_chat_find_cm_user (self, G_LIST_MODEL (self->buddy_list),
-                                       cm_event_get_sender (event), NULL, TRUE);
-          g_ptr_array_add (messages, chatty_message_new_from_event (CHATTY_ITEM (user), event));
-        }
-      else
-        {
-          CHATTY_TRACE_MSG ("Received non room event with id: %s", cm_event_get_id (event));
-        }
-    }
-
-  chatty_ma_chat_add_messages (self, messages, append);
 }
 
 /**
