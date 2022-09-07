@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://source.puri.sm/Librem5/chatty/issues\n"
-"POT-Creation-Date: 2022-07-18 15:24+0000\n"
-"PO-Revision-Date: 2022-07-18 18:56+0300\n"
+"POT-Creation-Date: 2022-09-07 15:24+0000\n"
+"PO-Revision-Date: 2022-09-07 19:07+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -20,7 +20,7 @@ msgstr ""
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 
 #: data/sm.puri.Chatty.desktop.in:3 data/sm.puri.Chatty.metainfo.xml.in:6
-#: src/chatty-application.c:336 src/chatty-window.c:339
+#: src/chatty-application.c:338 src/chatty-window.c:339
 #: src/ui/chatty-window.ui:265
 msgid "Chats"
 msgstr "Спілкування"
@@ -356,7 +356,7 @@ msgstr "Модератор"
 msgid "Member"
 msgstr "Член"
 
-#: src/chatty-manager.c:729
+#: src/chatty-manager.c:725
 #, c-format
 msgid "“%s” is not a valid URI"
 msgstr "«%s» не є коректною адресою"
@@ -364,6 +364,12 @@ msgstr "«%s» не є коректною адресою"
 #: src/chatty-message-row.c:82
 msgid "Copy"
 msgstr "Копіювати"
+
+#: src/chatty-message.c:233
+msgid "Got an encrypted message, but couldn't decrypt due to missing keys"
+msgstr ""
+"Отримано зашифроване повідомлення, але його не вдалося розшифрувати через"
+" брак ключів"
 
 #: src/chatty-notification.c:181
 msgid "Open Message"
@@ -378,7 +384,7 @@ msgstr "Нове повідомлення від %s"
 msgid "Message Received"
 msgstr "Надійшло повідомлення"
 
-#: src/purple/chatty-purple-notify.c:44 src/matrix/matrix-utils.c:504
+#: src/purple/chatty-purple-notify.c:44
 msgid "Close"
 msgstr "Закрити"
 
@@ -408,11 +414,11 @@ msgstr "Користувач %s додав %s до контактів"
 msgid "Authorize %s?"
 msgstr "Уповноважити %s?"
 
-#: src/purple/chatty-purple.c:264 src/matrix/matrix-utils.c:508
+#: src/purple/chatty-purple.c:264
 msgid "Reject"
 msgstr "Відмовити"
 
-#: src/purple/chatty-purple.c:265 src/matrix/matrix-utils.c:509
+#: src/purple/chatty-purple.c:265
 msgid "Accept"
 msgstr "Прийняти"
 
@@ -421,11 +427,11 @@ msgstr "Прийняти"
 msgid "Add %s to contact list"
 msgstr "Додати %s до списку контактів"
 
-#: src/purple/chatty-purple.c:587
+#: src/purple/chatty-purple.c:586
 msgid "Login failed"
 msgstr "Невдала спроба увійти"
 
-#: src/purple/chatty-purple.c:592
+#: src/purple/chatty-purple.c:591
 msgid "Please check ID and password"
 msgstr "Будь ласка, перевірте ідентифікатор і пароль"
 
@@ -589,122 +595,93 @@ msgstr "З'єднання…"
 msgid "disconnected"
 msgstr "від'єднано"
 
-#: src/dialogs/chatty-settings-dialog.c:267
+#: src/dialogs/chatty-settings-dialog.c:251
 #, c-format
-#| msgid "Failed to verify server"
 msgid "Failed to verify server: %s"
 msgstr "Не вдалося перевірити сервер: %s"
 
-#: src/dialogs/chatty-settings-dialog.c:269
-#: src/dialogs/chatty-settings-dialog.c:479
+#: src/dialogs/chatty-settings-dialog.c:253
 msgid "Failed to verify server"
 msgstr "Не вдалося перевірити сервер"
 
-#: src/dialogs/chatty-settings-dialog.c:275
-#: src/dialogs/chatty-settings-dialog.c:459
+#: src/dialogs/chatty-settings-dialog.c:259
 msgid "Couldn't get Home server address"
 msgstr "Не вдалося отримати адресу домашнього сервера."
 
-#: src/dialogs/chatty-settings-dialog.c:584
+#: src/dialogs/chatty-settings-dialog.c:428
 #: src/ui/chatty-ma-account-details.ui:182
 #: src/ui/chatty-pp-account-details.ui:199
 msgid "Delete Account"
 msgstr "Вилучити запис"
 
-#: src/dialogs/chatty-settings-dialog.c:587
+#: src/dialogs/chatty-settings-dialog.c:431
 #, c-format
 msgid "Delete account %s?"
 msgstr "Вилучити запис %s?"
 
-#: src/dialogs/chatty-settings-dialog.c:728
+#: src/dialogs/chatty-settings-dialog.c:582
 msgid "Restart chatty to disable purple"
 msgstr "Перезапустіть chatty, щоб вимкнути purple"
 
-#: src/dialogs/chatty-settings-dialog.c:730
+#: src/dialogs/chatty-settings-dialog.c:584
 #: src/ui/chatty-settings-dialog.ui:512
 msgid "Enable purple plugin"
 msgstr "Увімкнути додаток purple"
 
-#: src/dialogs/chatty-settings-dialog.c:744
+#: src/dialogs/chatty-settings-dialog.c:598
 #: src/ui/chatty-settings-dialog.ui:279
 msgid "SMS and MMS Settings"
 msgstr "Параметри SMS і MMS"
 
-#: src/dialogs/chatty-settings-dialog.c:746
+#: src/dialogs/chatty-settings-dialog.c:600
 #: src/ui/chatty-settings-dialog.ui:298
 msgid "Purple Settings"
 msgstr "Параметри Purple"
 
-#: src/dialogs/chatty-settings-dialog.c:748
+#: src/dialogs/chatty-settings-dialog.c:602
 msgid "New Account"
 msgstr "Новий обліковий запис"
 
-#: src/dialogs/chatty-settings-dialog.c:750
+#: src/dialogs/chatty-settings-dialog.c:604
 #: src/ui/chatty-settings-dialog.ui:364
 msgid "Blocked Contacts"
 msgstr "Заблоковані контакти"
 
-#: src/dialogs/chatty-settings-dialog.c:752 src/ui/chatty-settings-dialog.ui:7
+#: src/dialogs/chatty-settings-dialog.c:606 src/ui/chatty-settings-dialog.ui:7
 #: src/ui/chatty-window.ui:30
 msgid "Preferences"
 msgstr "Параметри"
 
-#: src/dialogs/chatty-settings-dialog.c:781
+#: src/dialogs/chatty-settings-dialog.c:634
 msgid "Select Protocol"
 msgstr "Виберіть протокол"
 
 #. TRANSLATORS: Only translate 'or'
-#: src/dialogs/chatty-settings-dialog.c:1022
+#: src/dialogs/chatty-settings-dialog.c:878
 msgid "@user:matrix.org or user@example.com"
 msgstr "@user:matrix.org або user@example.com"
 
-#: src/dialogs/chatty-settings-dialog.c:1131
+#: src/dialogs/chatty-settings-dialog.c:987
 msgid "Unblock contact"
 msgstr "Розблокувати контакт"
 
-#: src/matrix/chatty-ma-account.c:231
+#: src/matrix/chatty-ma-account.c:105
 msgid "Incorrect password"
 msgstr "Помилковий пароль"
 
-#: src/matrix/chatty-ma-account.c:234
+#: src/matrix/chatty-ma-account.c:108
 msgid "_OK"
 msgstr "_Гаразд"
 
-#: src/matrix/chatty-ma-account.c:235 src/ui/chatty-dialog-new-chat.ui:74
+#: src/matrix/chatty-ma-account.c:109 src/ui/chatty-dialog-new-chat.ui:74
 #: src/ui/chatty-settings-dialog.ui:47 src/ui/chatty-settings-dialog.ui:108
 msgid "_Cancel"
 msgstr "_Скасувати"
 
-#: src/matrix/chatty-ma-account.c:241
+#: src/matrix/chatty-ma-account.c:115
 #, c-format
-#| msgid "Please enter password for “%s”"
 msgid "Please enter password for “%s”, homeserver: %s"
 msgstr "Будь ласка, введіть пароль до «%s», домашній сервер: %s"
-
-#: src/matrix/matrix-utils.c:473
-#, c-format
-msgid "The certificate for ‘%s’ has unknown CA"
-msgstr "Сертифікат «%s» містить невідомий запис служби сертифікації"
-
-#: src/matrix/matrix-utils.c:475
-#, c-format
-msgid "The certificate for ‘%s’ is self-signed"
-msgstr "Сертифікат «%s» є самопідписаним"
-
-#: src/matrix/matrix-utils.c:479
-#, c-format
-msgid "The certificate for ‘%s’ has expired"
-msgstr "Строк дії сертифіката «%s» вичерпано"
-
-#: src/matrix/matrix-utils.c:483
-#, c-format
-msgid "The certificate for ‘%s’ has been revoked"
-msgstr "Сертифікат «%s» було відкликано"
-
-#: src/matrix/matrix-utils.c:492
-#, c-format
-msgid "Error validating certificate for ‘%s’"
-msgstr "Помилка під час спроби перевірити чинність сертифіката «%s»"
 
 #. TRANSLATORS: Timestamp for minute accuracy, e.g. “2020-08-11 15:27”.
 #. See https://developer.gnome.org/glib/stable/glib-GDateTime.html#g-date-time-format
@@ -1082,3 +1059,4 @@ msgstr "Робочий: "
 #: src/users/chatty-contact.c:329
 msgid "Other: "
 msgstr "Інший: "
+
