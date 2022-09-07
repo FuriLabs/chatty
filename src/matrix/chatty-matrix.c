@@ -36,11 +36,9 @@ struct _ChattyMatrix
   GListStore    *list_of_chat_list;
   GtkFlattenListModel *chat_list;
 
-  ChattyHistory *history;
   CmMatrix      *cm_matrix;
 
   gboolean       disable_auto_login;
-  gboolean       enabled;
   gboolean       is_ready;
 };
 
@@ -143,8 +141,6 @@ chatty_matrix_finalize (GObject *object)
   g_clear_object (&self->list_of_chat_list);
   g_clear_object (&self->chat_list);
 
-  g_clear_object (&self->history);
-
   G_OBJECT_CLASS (chatty_matrix_parent_class)->finalize (object);
 }
 
@@ -181,20 +177,14 @@ chatty_matrix_init (ChattyMatrix *self)
 
   model = G_LIST_MODEL (self->list_of_chat_list);
   self->chat_list = gtk_flatten_list_model_new (CHATTY_TYPE_CHAT, model);
-
-  self->enabled = TRUE;
 }
 
 ChattyMatrix *
-chatty_matrix_new (ChattyHistory *history,
-                   gboolean       disable_auto_login)
+chatty_matrix_new (gboolean disable_auto_login)
 {
   ChattyMatrix *self;
 
-  g_return_val_if_fail (CHATTY_IS_HISTORY (history), NULL);
-
   self = g_object_new (CHATTY_TYPE_MATRIX, NULL);
-  self->history = g_object_ref (history);
   self->disable_auto_login = !!disable_auto_login;
 
   return self;
@@ -205,7 +195,7 @@ chatty_matrix_is_enabled (ChattyMatrix *self)
 {
   g_return_val_if_fail (CHATTY_IS_MATRIX (self), FALSE);
 
-  return self->enabled && self->is_ready;
+  return self->is_ready;
 }
 
 static void

@@ -420,8 +420,7 @@ chatty_manager_load (ChattyManager *self)
   chatty_mm_account_load_async (self->mm_account, NULL, NULL);
 
   /* Matrix Setup */
-  self->matrix = chatty_matrix_new (chatty_manager_get_history (self),
-                                    self->disable_auto_login);
+  self->matrix = chatty_matrix_new (self->disable_auto_login);
   manager_add_to_flat_model (self->accounts,
                              chatty_matrix_get_account_list (self->matrix));
   manager_add_to_flat_model (self->chat_list,

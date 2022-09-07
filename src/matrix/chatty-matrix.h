@@ -23,8 +23,7 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (ChattyMatrix, chatty_matrix, CHATTY, MATRIX, GObject)
 
-ChattyMatrix   *chatty_matrix_new                     (ChattyHistory  *history,
-                                                      gboolean        disable_auto_login);
+ChattyMatrix   *chatty_matrix_new                     (gboolean        disable_auto_login);
 gboolean        chatty_matrix_is_enabled              (ChattyMatrix   *self);
 void            chatty_matrix_load                    (ChattyMatrix   *self);
 GListModel     *chatty_matrix_get_account_list       (ChattyMatrix   *self);
