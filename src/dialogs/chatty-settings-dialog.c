@@ -278,6 +278,7 @@ chatty_settings_save_matrix (ChattySettingsDialog *self,
                              const char           *password)
 {
   g_autoptr(CmClient) cm_client = NULL;
+  CmAccount *cm_account;
   GtkEntry *entry;
   const char *uri;
 
@@ -293,7 +294,8 @@ chatty_settings_save_matrix (ChattySettingsDialog *self,
   uri = gtk_entry_get_text (entry);
 
   cm_client = chatty_manager_matrix_client_new (chatty_manager_get_default ());
-  cm_client_set_login_id (cm_client, user_id);
+  cm_account = cm_client_get_account (cm_client);
+  cm_account_set_login_id (cm_account, user_id);
   cm_client_set_homeserver (cm_client, uri);
   cm_client_set_password (cm_client, password);
   cm_client_get_homeserver_async (cm_client, self->cancellable,

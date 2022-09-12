@@ -100,6 +100,7 @@ handle_password_login (ChattyMaAccount *self,
     GtkWidget *cancel_btn, *ok_btn, *entry;
     g_autofree char *message = NULL;
     const char *password;
+    CmAccount *cm_account;
     int response;
 
     dialog = gtk_dialog_new_with_buttons (_("Incorrect password"),
@@ -112,9 +113,10 @@ handle_password_login (ChattyMaAccount *self,
     content = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
     gtk_container_set_border_width (GTK_CONTAINER (content), 18);
     gtk_box_set_spacing (GTK_BOX (content), 12);
+    cm_account = cm_client_get_account (self->cm_client);
     message = g_strdup_printf (_("Please enter password for “%s”, homeserver: %s"),
-                             cm_client_get_login_id (self->cm_client),
-                             cm_client_get_homeserver (self->cm_client));
+                               cm_account_get_login_id (cm_account),
+                               cm_client_get_homeserver (self->cm_client));
     label = gtk_label_new (message);
     gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
     gtk_container_add (GTK_CONTAINER (content), label);
@@ -288,7 +290,10 @@ chatty_ma_account_connect (ChattyAccount *account,
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
 
   if (!chatty_account_get_enabled (account)) {
-    CHATTY_TRACE (cm_client_get_login_id (self->cm_client),
+    CmAccount *cm_account;
+
+    cm_account = cm_client_get_account (self->cm_client);
+    CHATTY_TRACE (cm_account_get_login_id (cm_account),
                   "Trying to connect disabled account, username:");
     return;
   }
@@ -488,10 +493,12 @@ chatty_ma_account_set_username (ChattyItem *item,
                                 const char *username)
 {
   ChattyMaAccount *self = (ChattyMaAccount *)item;
+  CmAccount *cm_account;
 
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
 
-  cm_client_set_login_id (self->cm_client, username);
+  cm_account = cm_client_get_account (self->cm_client);
+  cm_account_set_login_id (cm_account, username);
 
   /* If in test, also set username */
   if (g_test_initialized ())
@@ -783,9 +790,13 @@ chatty_ma_account_can_connect (ChattyMaAccount *self)
 const char *
 chatty_ma_account_get_login_username (ChattyMaAccount *self)
 {
+  CmAccount *cm_account;
+
   g_return_val_if_fail (CHATTY_IS_MA_ACCOUNT (self), "");
 
-  return cm_client_get_login_id (self->cm_client);
+  cm_account = cm_client_get_account (self->cm_client);
+
+  return cm_account_get_login_id (cm_account);
 }
 
 const char *

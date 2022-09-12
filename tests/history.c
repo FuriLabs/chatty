@@ -781,6 +781,7 @@ test_history_chat (void)
   g_autoptr(ChattyHistory) history = NULL;
   g_autoptr(ChattyMaAccount) ma_account = NULL;
   CmClient *cm_client;
+  CmAccount *cm_account;
 
   g_remove (g_test_get_filename (G_TEST_BUILT, "test-history.db", NULL));
 
@@ -789,8 +790,9 @@ test_history_chat (void)
   g_assert_true (chatty_history_is_open (history));
 
   cm_client = cm_client_new ();
+  cm_account = cm_client_get_account (cm_client);
   g_object_set_data (G_OBJECT (cm_client), "no-save", GINT_TO_POINTER (TRUE));
-  cm_client_set_login_id (cm_client, "@alice:example.com");
+  cm_account_set_login_id (cm_account, "@alice:example.com");
   cm_client_set_user_id (cm_client, "@alice:example.com");
   ma_account = chatty_ma_account_new_from_client (cm_client);
   g_assert (CHATTY_IS_MA_ACCOUNT (ma_account));
