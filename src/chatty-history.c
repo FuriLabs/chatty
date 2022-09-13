@@ -2565,9 +2565,12 @@ history_add_message (ChattyHistory *self,
   if ((!who || !*who) && direction == CHATTY_DIRECTION_IN && chatty_chat_is_im (chat))
     who = chatty_chat_get_chat_name (chat);
 
+  sqlite3_exec (self->db, "BEGIN TRANSACTION;", NULL, NULL, NULL);
   thread_id = insert_or_ignore_thread (self, chat, task);
-  if (!thread_id)
+  if (!thread_id) {
+    sqlite3_exec (self->db, "END TRANSACTION;", NULL, NULL, NULL);
     return;
+  }
 
   sender_id = insert_or_ignore_user (self, chatty_item_get_protocols (CHATTY_ITEM (chat)), who, alias, task);
 
@@ -2576,6 +2579,7 @@ history_add_message (ChattyHistory *self,
     int message_id = 0;
 
     if (!msg) {
+      sqlite3_exec (self->db, "END TRANSACTION;", NULL, NULL, NULL);
       g_task_return_boolean (task, TRUE);
       return;
     }
@@ -2605,6 +2609,7 @@ history_add_message (ChattyHistory *self,
 
     status = sqlite3_step (stmt);
     sqlite3_finalize (stmt);
+    sqlite3_exec (self->db, "END TRANSACTION;", NULL, NULL, NULL);
 
     if (status == SQLITE_DONE)
       g_task_return_boolean (task, TRUE);
@@ -2667,6 +2672,7 @@ history_add_message (ChattyHistory *self,
   if (status == SQLITE_ROW)
     history_add_files (self, message, sqlite3_column_int (stmt, 0));
   sqlite3_finalize (stmt);
+  sqlite3_exec (self->db, "END TRANSACTION;", NULL, NULL, NULL);
 
   if (status == SQLITE_DONE || status == SQLITE_ROW)
     g_task_return_boolean (task, TRUE);
@@ -2893,10 +2899,13 @@ history_update_user (ChattyHistory *self,
     return;
   }
 
+  sqlite3_exec (self->db, "BEGIN TRANSACTION;", NULL, NULL, NULL);
   id = insert_or_ignore_user (self, protocol, user_name, name, task);
 
-  if (!id)
+  if (!id) {
+    sqlite3_exec (self->db, "END TRANSACTION;", NULL, NULL, NULL);
     return;
+  }
 
   file_info = chatty_item_get_avatar_file (CHATTY_ITEM (account));
   file_id = add_file_info (self, file_info);
@@ -2910,6 +2919,8 @@ history_update_user (ChattyHistory *self,
 
   sqlite3_step (stmt);
   sqlite3_finalize (stmt);
+  sqlite3_exec (self->db, "END TRANSACTION;", NULL, NULL, NULL);
+
   g_task_return_boolean (task, TRUE);
 }
 
@@ -3059,10 +3070,14 @@ history_set_last_read_msg (ChattyHistory *self,
 
   if (message)
     uid = chatty_message_get_uid (message);
+
+  sqlite3_exec (self->db, "BEGIN TRANSACTION;", NULL, NULL, NULL);
   thread_id = insert_or_ignore_thread (self, chat, task);
 
-  if (!thread_id)
+  if (!thread_id) {
+    sqlite3_exec (self->db, "END TRANSACTION;", NULL, NULL, NULL);
     return;
+  }
 
   sqlite3_prepare_v2 (self->db,
                       "SELECT messages.id FROM messages "
@@ -3082,6 +3097,7 @@ history_set_last_read_msg (ChattyHistory *self,
   history_bind_int (stmt, 2, thread_id, "binding when setting last read message");
   sqlite3_step (stmt);
   sqlite3_finalize (stmt);
+  sqlite3_exec (self->db, "END TRANSACTION;", NULL, NULL, NULL);
 
   g_task_return_boolean (task, TRUE);
 }
