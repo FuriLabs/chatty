@@ -531,7 +531,19 @@ chat_view_send_message_button_clicked_cb (ChattyChatView *self)
   gtk_text_buffer_delete (self->message_input_buffer, &start, &end);
 
   if (self->draft_message) {
-    chatty_message_set_text (self->draft_message, "");
+    g_autofree char *uid = NULL;
+
+    g_clear_object (&self->draft_message);
+
+    uid = g_uuid_string_random ();
+    /* chatty-history expects the content of the message to not change.
+     * So instead of changing the content and resaving, create a new one
+     * with empty content to avoid a possible crash as the history thread
+     * may read the freed memory content otherwise
+     */
+    self->draft_message = chatty_message_new (NULL, "", uid, time (NULL),
+                                              CHATTY_MESSAGE_TEXT,
+                                              CHATTY_DIRECTION_OUT, CHATTY_STATUS_DRAFT);
     chatty_history_add_message (self->history, self->chat, self->draft_message);
   }
 
