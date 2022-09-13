@@ -337,13 +337,13 @@ message_event_get_file_stream_cb (GObject      *object,
   old_status = file->status;
 
   if (file->file_stream)
-    file->status = CHATTY_FILE_DOWNLOADED;
+    g_atomic_int_set (&file->status, CHATTY_FILE_DOWNLOADED);
   else if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED) ||
            g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NETWORK_UNREACHABLE) ||
            g_error_matches (error, G_IO_ERROR, G_IO_ERROR_HOST_UNREACHABLE))
-    file->status = CHATTY_FILE_UNKNOWN;
+    g_atomic_int_set (&file->status, CHATTY_FILE_UNKNOWN);
   else
-    file->status = CHATTY_FILE_ERROR;
+    g_atomic_int_set (&file->status, CHATTY_FILE_ERROR);
 
   if (old_status != file->status)
     chatty_message_emit_updated (self);
@@ -384,7 +384,7 @@ chatty_message_get_file_stream_async (ChattyMessage       *self,
     return;
   }
 
-  file->status = CHATTY_FILE_DOWNLOADING;
+  g_atomic_int_set (&file->status, CHATTY_FILE_DOWNLOADING);
   chatty_message_emit_updated (self);
 
   if (self->cm_event) {
@@ -683,7 +683,8 @@ chatty_message_set_status (ChattyMessage   *self,
 {
   g_return_if_fail (CHATTY_IS_MESSAGE (self));
 
-  self->status = status;
+  g_atomic_int_set (&self->status, status);
+
   if (mtime)
     self->time = mtime;
 
