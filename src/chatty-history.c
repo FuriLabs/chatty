@@ -620,6 +620,7 @@ chatty_history_create_schema (ChattyHistory *self,
     "FROM users "
     "WHERE users.username='"MM_NUMBER"';"
 
+    "PRAGMA user_version = " STRING (HISTORY_VERSION) ";"
     "COMMIT;";
 
   status = sqlite3_exec (self->db, sql, NULL, NULL, &error);
@@ -635,36 +636,6 @@ chatty_history_create_schema (ChattyHistory *self,
                            "Couldn't create tables. errno: %d, desc: %s. %s",
                            status, sqlite3_errmsg (db), error);
   sqlite3_close (db);
-  sqlite3_free (error);
-
-  return FALSE;
-}
-
-static gboolean
-chatty_history_update_version (ChattyHistory *self,
-                               GTask         *task)
-{
-  char *error = NULL;
-  const char *sql;
-  int status;
-
-  g_assert (CHATTY_IS_HISTORY (self));
-  g_assert (G_IS_TASK (task));
-  g_assert (g_thread_self () == self->worker_thread);
-  g_assert (self->db);
-
-  sql = "PRAGMA user_version = " STRING (HISTORY_VERSION) ";";
-
-  status = sqlite3_exec (self->db, sql, NULL, NULL, &error);
-
-  if (status == SQLITE_OK)
-    return TRUE;
-
-  g_task_return_new_error (task,
-                           G_IO_ERROR,
-                           G_IO_ERROR_FAILED,
-                           "Couldn't set db version. errno: %d, desc: %s. %s",
-                           status, sqlite3_errmsg (self->db), error);
   sqlite3_free (error);
 
   return FALSE;
@@ -1343,6 +1314,7 @@ chatty_history_migrate_db_to_v1_to_v3 (ChattyHistory *self,
                          "AND chatty_chat.who IS NULL or chatty_chat.who GLOB '@?*:?*' "
                          "ORDER BY timestamp ASC, chatty_chat.id ASC;"
 
+                         "PRAGMA user_version = 4;"
                          "COMMIT;",
                          NULL, NULL, &error);
 
@@ -1652,12 +1624,8 @@ chatty_history_migrate_db_to_v1_to_v3 (ChattyHistory *self,
                            "DROP TABLE chatty_im;"
                            "COMMIT;", NULL, NULL, &error);
 
-  if (status == SQLITE_OK || status == SQLITE_DONE) {
-    /* Update user_version pragma */
-    if (!chatty_history_update_version (self, task))
-      return FALSE;
+  if (status == SQLITE_OK || status == SQLITE_DONE)
     return TRUE;
-  }
 
   g_task_return_new_error (task,
                            G_IO_ERROR,
@@ -1755,15 +1723,12 @@ chatty_history_migrate_db_to_v2 (ChattyHistory *self,
                          "DROP TABLE IF EXISTS threads;"
                          "ALTER TABLE temp_threads RENAME TO threads;"
 
+                         "PRAGMA user_version = 2;"
                          "COMMIT;",
                          NULL, NULL, &error);
 
-  if (status == SQLITE_OK || status == SQLITE_DONE) {
-    /* Update user_version pragma */
-    if (!chatty_history_update_version (self, task))
-      return FALSE;
+  if (status == SQLITE_OK || status == SQLITE_DONE)
     return TRUE;
-  }
 
   g_task_return_new_error (task,
                            G_IO_ERROR,
@@ -1796,15 +1761,12 @@ chatty_history_migrate_db_to_v3 (ChattyHistory *self,
                          "ALTER TABLE threads ADD COLUMN visibility INT NOT NULL DEFAULT "
                          STRING(THREAD_VISIBILITY_VISIBLE) ";"
 
+                         "PRAGMA user_version = 3;"
                          "COMMIT;",
                          NULL, NULL, &error);
 
-  if (status == SQLITE_OK || status == SQLITE_DONE) {
-    /* Update user_version pragma */
-    if (!chatty_history_update_version (self, task))
-      return FALSE;
+  if (status == SQLITE_OK || status == SQLITE_DONE)
     return TRUE;
-  }
 
   g_task_return_new_error (task,
                            G_IO_ERROR,
@@ -1928,15 +1890,12 @@ chatty_history_migrate_db_to_v4 (ChattyHistory *self,
                          "DROP TABLE IF EXISTS image;"
                          "DROP TABLE IF EXISTS video;"
 
+                         "PRAGMA user_version = 4;"
                          "COMMIT;",
                          NULL, NULL, &error);
 
-  if (status == SQLITE_OK || status == SQLITE_DONE) {
-    /* Update user_version pragma */
-    if (!chatty_history_update_version (self, task))
-      return FALSE;
+  if (status == SQLITE_OK || status == SQLITE_DONE)
     return TRUE;
-  }
 
   g_task_return_new_error (task,
                            G_IO_ERROR,
@@ -2033,9 +1992,6 @@ history_open_db (ChattyHistory *self,
         return;
     } else {
       if (!chatty_history_create_schema (self, task))
-        return;
-
-      if (!chatty_history_update_version (self, task))
         return;
     }
 
