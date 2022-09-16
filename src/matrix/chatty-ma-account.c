@@ -882,7 +882,7 @@ ma_get_details_cb (GObject      *object,
     self->name = g_strdup (cm_user_get_display_name (CM_USER (object)));
     file = self->avatar_file;
 
-    if (g_strcmp0 (file->url, cm_user_get_avatar_url (CM_USER (object))) != 0) {
+    if (file && g_strcmp0 (file->url, cm_user_get_avatar_url (CM_USER (object))) != 0) {
       g_clear_pointer (&file->path, g_free);
       g_free (file->url);
       file->url = g_strdup (cm_user_get_avatar_url (CM_USER (object)));
