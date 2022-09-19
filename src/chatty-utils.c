@@ -422,6 +422,8 @@ chatty_file_info_free (ChattyFileInfo *file_info)
   if (!file_info)
     return;
 
+  g_clear_object (&file_info->file);
+  g_clear_object (&file_info->file_stream);
   g_free (file_info->file_name);
   g_free (file_info->url);
   g_free (file_info->path);

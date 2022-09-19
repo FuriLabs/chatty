@@ -89,11 +89,6 @@ static gboolean
 item_set_image (gpointer user_data)
 {
   ChattyImageItem *self = user_data;
-  g_autoptr(GdkPixbuf) pixbuf = NULL;
-  g_autofree char *path = NULL;
-  ChattyFileInfo *file;
-  GList *files;
-  int scale_factor;
 
   /* It's possible that we get signals after dispose().
    * Fix warning in those cases
@@ -101,30 +96,9 @@ item_set_image (gpointer user_data)
   if (!self->message)
     return G_SOURCE_REMOVE;
 
-  if (chatty_message_get_cm_event (self->message)) {
-    chatty_message_get_file_stream_async (self->message, NULL,
-                                          image_item_get_stream_cb,
-                                          g_object_ref (self));
-    return G_SOURCE_REMOVE;
-  }
-
-  files = chatty_message_get_files (self->message);
-  g_return_val_if_fail (files && files->data, G_SOURCE_REMOVE);
-  file = files->data;
-  scale_factor = gtk_widget_get_scale_factor (GTK_WIDGET (self));
-
-  if (file->path) {
-    if (self->protocol == CHATTY_PROTOCOL_MMS_SMS || self->protocol == CHATTY_PROTOCOL_MMS)
-      path = g_build_filename (g_get_user_data_dir (), "chatty", file->path, NULL);
-    else
-      path = g_build_filename (g_get_user_cache_dir (), "chatty", file->path, NULL);
-  }
-
-  if (path)
-    pixbuf = gdk_pixbuf_new_from_file_at_scale (path, 240 * scale_factor,
-                                                -1, TRUE, NULL);
-  image_item_paint (self, pixbuf);
-
+  chatty_message_get_file_stream_async (self->message, NULL, self->protocol, NULL,
+                                        image_item_get_stream_cb,
+                                        g_object_ref (self));
   return G_SOURCE_REMOVE;
 }
 

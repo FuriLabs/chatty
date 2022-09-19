@@ -518,7 +518,7 @@ chatty_ma_chat_get_files_async (ChattyChat          *chat,
 
   g_object_set_data (G_OBJECT (task), "file", file);
 
-  chatty_message_get_file_stream_async (message, NULL,
+  chatty_message_get_file_stream_async (message, NULL, CHATTY_PROTOCOL_MATRIX, NULL,
                                         ma_chat_download_cb,
                                         g_steal_pointer (&task));
 }

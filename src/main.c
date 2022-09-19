@@ -24,6 +24,8 @@ main (int   argc,
 {
   g_autoptr(ChattyApplication) application = NULL;
 
+  g_setenv ("SOUP_FORCE_HTTP1", "1", FALSE);
+
   chatty_log_init ();
   gd_ensure_types ();
 

@@ -316,26 +316,27 @@ chatty_message_get_files (ChattyMessage *self)
 }
 
 static void
-message_get_file_stream_cb (GObject      *object,
-                            GAsyncResult *result,
-                            gpointer      user_data)
+message_event_get_file_stream_cb (GObject      *object,
+                                  GAsyncResult *result,
+                                  gpointer      user_data)
 {
   ChattyMessage *self;
   g_autoptr(GTask) task = user_data;
-  GInputStream *stream;
   GError *error = NULL;
   ChattyFileInfo *file;
+  ChattyFileStatus old_status;
 
   g_assert (G_IS_TASK (task));
 
   self = g_task_get_source_object (task);
   g_assert (CHATTY_IS_MESSAGE (self));
 
-  stream = cm_room_message_event_get_file_finish (CM_ROOM_MESSAGE_EVENT (object), result, &error);
-
   file = self->files->data;
+  file->file_stream = cm_room_message_event_get_file_finish (CM_ROOM_MESSAGE_EVENT (object), result, &error);
 
-  if (stream)
+  old_status = file->status;
+
+  if (file->file_stream)
     file->status = CHATTY_FILE_DOWNLOADED;
   else if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED) ||
            g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NETWORK_UNREACHABLE) ||
@@ -344,37 +345,70 @@ message_get_file_stream_cb (GObject      *object,
   else
     file->status = CHATTY_FILE_ERROR;
 
-  chatty_message_emit_updated (self);
+  if (old_status != file->status)
+    chatty_message_emit_updated (self);
 
   if (error)
     g_task_return_error (task, error);
   else
-    g_task_return_pointer (task, stream, g_object_unref);
+    g_task_return_pointer (task, g_object_ref (file->file_stream), g_object_unref);
 }
 
 void
 chatty_message_get_file_stream_async (ChattyMessage       *self,
+                                      ChattyFileInfo      *file,
+                                      ChattyProtocol       protocol,
                                       GCancellable        *cancellable,
                                       GAsyncReadyCallback  callback,
                                       gpointer             user_data)
 {
-  ChattyFileInfo *file;
   GTask *task;
 
   g_return_if_fail (CHATTY_IS_MESSAGE (self));
-  g_return_if_fail (CM_ROOM_MESSAGE_EVENT (self->cm_event));
   g_return_if_fail (self->files);
 
   task = g_task_new (self, cancellable, callback, user_data);
 
-  file = self->files->data;
+  if (!file)
+    file = self->files->data;
+
+  if (!file || !file->path) {
+    g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_FAILED,
+                             "Message has no file");
+    return;
+  }
+
+  if (file->file_stream) {
+    g_seekable_seek (G_SEEKABLE (file->file_stream), 0, G_SEEK_SET, NULL, NULL);
+    g_task_return_pointer (task, g_object_ref (file->file_stream), g_object_unref);
+    return;
+  }
+
   file->status = CHATTY_FILE_DOWNLOADING;
   chatty_message_emit_updated (self);
 
-  cm_room_message_event_get_file_async (CM_ROOM_MESSAGE_EVENT (self->cm_event),
-                                        cancellable,
-                                        NULL, NULL,
-                                        message_get_file_stream_cb, task);
+  if (self->cm_event) {
+    cm_room_message_event_get_file_async (CM_ROOM_MESSAGE_EVENT (self->cm_event),
+                                          cancellable,
+                                          NULL, NULL,
+                                          message_event_get_file_stream_cb, task);
+  } else {
+    g_autofree char *path = NULL;
+
+    if (protocol == CHATTY_PROTOCOL_MMS_SMS || protocol == CHATTY_PROTOCOL_MMS)
+      path = g_build_filename (g_get_user_data_dir (), "chatty", file->path, NULL);
+    else
+      path = g_build_filename (g_get_user_cache_dir (), "chatty", file->path, NULL);
+
+    if (!file->file)
+      file->file = g_file_new_for_path (path);
+
+    file->file_stream = (gpointer)g_file_read (file->file, NULL, NULL);
+    g_task_return_pointer (task, g_object_ref (file->file_stream), g_object_unref);
+
+    file->status = CHATTY_FILE_DOWNLOADED;
+    chatty_message_emit_updated (self);
+  }
 }
 
 GInputStream *
