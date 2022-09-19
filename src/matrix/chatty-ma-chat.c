@@ -338,7 +338,7 @@ chatty_ma_chat_get_unread_count (ChattyChat *chat)
 
   g_assert (CHATTY_IS_MA_CHAT (self));
 
-  return self->unread_count;
+  return cm_room_get_unread_notification_counts (self->cm_room);
 }
 
 static void
@@ -352,7 +352,6 @@ chat_set_read_marker_cb (GObject      *object,
   g_assert (CHATTY_IS_MA_CHAT (self));
 
   if (cm_room_set_read_marker_finish (self->cm_room, result, &error)) {
-    self->unread_count = 0;
     g_signal_emit_by_name (self, "changed", 0);
   } else if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
     g_warning ("Error updating read marker: %s", error->message);
@@ -366,29 +365,21 @@ chatty_ma_chat_set_unread_count (ChattyChat *chat,
 
   g_assert (CHATTY_IS_MA_CHAT (self));
 
-  if (self->unread_count == unread_count)
-    return;
-
   if (unread_count == 0) {
-    g_autoptr(ChattyMessage) message = NULL;
+    g_autoptr(CmEvent) event = NULL;
     GListModel *model;
     guint n_items;
 
-    model = G_LIST_MODEL (self->message_list);
+    model = cm_room_get_events_list (self->cm_room);
     n_items = g_list_model_get_n_items (model);
 
     if (n_items == 0)
       return;
 
-    message = g_list_model_get_item (model, n_items - 1);
+    event = g_list_model_get_item (model, n_items - 1);
     cm_room_set_read_marker_async (self->cm_room,
-                                   chatty_message_get_cm_event (message),
-                                   chatty_message_get_cm_event (message),
+                                   event, event,
                                    chat_set_read_marker_cb, self);
-  } else {
-    self->unread_count = unread_count;
-    chatty_chat_show_notification (CHATTY_CHAT (chat), NULL);
-    g_signal_emit_by_name (self, "changed", 0);
   }
 }
 
