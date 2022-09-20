@@ -278,9 +278,11 @@ chatty_settings_save_matrix (ChattySettingsDialog *self,
                              const char           *password)
 {
   g_autoptr(CmClient) cm_client = NULL;
+  g_autofree char *uri_prefixed = NULL;
   CmAccount *cm_account;
   GtkEntry *entry;
   const char *uri;
+  gboolean uri_has_prefix;
 
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
   g_return_if_fail (user_id && *user_id);
@@ -293,10 +295,16 @@ chatty_settings_save_matrix (ChattySettingsDialog *self,
   entry = GTK_ENTRY (self->matrix_homeserver_entry);
   uri = gtk_entry_get_text (entry);
 
+  uri_has_prefix = g_str_has_prefix (uri, "http");
+
+  /* Assume https by default */
+  if (!uri_has_prefix)
+    uri_prefixed = g_strdup_printf ("https://%s", uri);
+
   cm_client = chatty_manager_matrix_client_new (chatty_manager_get_default ());
   cm_account = cm_client_get_account (cm_client);
   cm_account_set_login_id (cm_account, user_id);
-  cm_client_set_homeserver (cm_client, uri);
+  cm_client_set_homeserver (cm_client, uri_has_prefix ? uri : uri_prefixed);
   cm_client_set_password (cm_client, password);
   cm_client_get_homeserver_async (cm_client, self->cancellable,
                                   matrix_home_server_verify_cb,
@@ -540,11 +548,17 @@ settings_homeserver_entry_changed (ChattySettingsDialog *self,
 
   if (server && *server) {
     g_autoptr(GUri) uri = NULL;
+    g_autofree char *server_prefixed = NULL;
     const char *scheme = NULL;
     const char *path = NULL;
     const char *host = NULL;
+    gboolean server_has_prefix = g_str_has_prefix (server, "http");
 
-    uri = g_uri_parse (gtk_entry_get_text (entry), G_URI_FLAGS_NONE, NULL);
+    /* Assume https by default */
+    if (!server_has_prefix)
+      server_prefixed = g_strdup_printf ("https://%s", server);
+
+    uri = g_uri_parse (server_has_prefix ? server : server_prefixed, G_URI_FLAGS_NONE, NULL);
     if (uri) {
       scheme = g_uri_get_scheme (uri);
       path = g_uri_get_path (uri);
