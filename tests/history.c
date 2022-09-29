@@ -739,74 +739,6 @@ add_chatty_message (ChattyHistory      *history,
 }
 
 static void
-add_chat_and_test (ChattyHistory   *history,
-                   ChattyMaAccount *account,
-                   const char      *room_id,
-                   const char      *room_name,
-                   gboolean         hidden,
-                   guint            total_count)
-{
-  g_autoptr(GPtrArray) chat_list = NULL;
-  g_autoptr(GTask) task = NULL;
-
-  if (room_id) {
-    g_autoptr(ChattyMaChat) chat = NULL;
-
-    chat = chatty_ma_chat_new (room_id, room_name, NULL, FALSE);
-    g_assert (CHATTY_IS_MA_CHAT (chat));
-    if (hidden)
-      chatty_item_set_state (CHATTY_ITEM (chat), CHATTY_ITEM_HIDDEN);
-    chatty_ma_account_add_chat (account, CHATTY_CHAT (chat));
-    g_assert_true (chatty_history_update_chat (history, CHATTY_CHAT (chat)));
-  }
-
-  task = g_task_new (NULL, NULL, NULL, NULL);
-  chatty_history_get_chats_async (history, CHATTY_ACCOUNT (account),
-                                  finish_pointer_cb, task);
-
-  while (!g_task_get_completed (task))
-    g_main_context_iteration (NULL, TRUE);
-  chat_list = g_task_propagate_pointer (task, NULL);
-  if (total_count) {
-    g_assert_nonnull (chat_list);
-    g_assert_cmpint (chat_list->len, ==, total_count);
-  } else {
-    g_assert_null (chat_list);
-  }
-}
-
-static void
-test_history_chat (void)
-{
-  g_autoptr(ChattyHistory) history = NULL;
-  g_autoptr(ChattyMaAccount) ma_account = NULL;
-  CmClient *cm_client;
-  CmAccount *cm_account;
-
-  g_remove (g_test_get_filename (G_TEST_BUILT, "test-history.db", NULL));
-
-  history = chatty_history_new ();
-  chatty_history_open (history, g_test_get_dir (G_TEST_BUILT), "test-history.db");
-  g_assert_true (chatty_history_is_open (history));
-
-  cm_client = cm_client_new ();
-  cm_account = cm_client_get_account (cm_client);
-  g_object_set_data (G_OBJECT (cm_client), "no-save", GINT_TO_POINTER (TRUE));
-  cm_account_set_login_id (cm_account, "@alice:example.com");
-  cm_client_set_user_id (cm_client, "@alice:example.com");
-  ma_account = chatty_ma_account_new_from_client (cm_client);
-  g_assert (CHATTY_IS_MA_ACCOUNT (ma_account));
-
-  add_chat_and_test (history, ma_account, NULL, NULL, FALSE, 0);
-  add_chat_and_test (history, ma_account, "!xdesSDcdsSXXs", "Test room", FALSE, 1);
-  add_chat_and_test (history, ma_account, "!aabbdesSDcdsS", "Another test room", FALSE, 2);
-  add_chat_and_test (history, ma_account, "!aabbdesSDcdsS", "Name changed", FALSE, 2);
-  add_chat_and_test (history, ma_account, "!aabbdesSDcdsS", "Name changed", TRUE, 1);
-
-  chatty_history_close (history);
-}
-
-static void
 test_history_message (void)
 {
   g_autoptr(ChattyHistory) history = NULL;
@@ -1241,7 +1173,6 @@ main (int   argc,
   g_setenv ("GSETTINGS_BACKEND", "memory", TRUE);
 
   g_test_add_func ("/history/new", test_history_new);
-  g_test_add_func ("/history/chat", test_history_chat);
   g_test_add_func ("/history/message", test_history_message);
   g_test_add_func ("/history/raw_message", test_history_raw_message);
   g_test_add_func ("/history/db", test_history_db);
