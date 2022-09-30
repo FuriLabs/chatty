@@ -807,8 +807,8 @@ chatty_ma_chat_new_with_room (CmRoom *room)
 
   g_return_val_if_fail (CM_IS_ROOM (room), NULL);
 
-  self = g_object_new (CHATTY_TYPE_MA_CHAT,
-                       "room-id", cm_room_get_id (room), NULL);
+  self = g_object_new (CHATTY_TYPE_MA_CHAT, NULL);
+  self->room_id = g_strdup (cm_room_get_id (room));
   self->cm_room = g_object_ref (room);
   g_signal_connect_object (room, "notify::name",
                            G_CALLBACK (ma_chat_name_changed_cb),
