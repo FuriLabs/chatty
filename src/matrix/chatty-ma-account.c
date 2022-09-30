@@ -488,23 +488,6 @@ chatty_ma_account_get_username (ChattyItem *item)
   return "";
 }
 
-static void
-chatty_ma_account_set_username (ChattyItem *item,
-                                const char *username)
-{
-  ChattyMaAccount *self = (ChattyMaAccount *)item;
-  CmAccount *cm_account;
-
-  g_assert (CHATTY_IS_MA_ACCOUNT (self));
-
-  cm_account = cm_client_get_account (self->cm_client);
-  cm_account_set_login_id (cm_account, username);
-
-  /* If in test, also set username */
-  if (g_test_initialized ())
-    cm_client_set_user_id (self->cm_client, username);
-}
-
 static ChattyFileInfo *
 chatty_ma_account_get_avatar_file (ChattyItem *item)
 {
@@ -645,7 +628,6 @@ chatty_ma_account_class_init (ChattyMaAccountClass *klass)
   item_class->get_name = chatty_ma_account_get_name;
   item_class->set_name = chatty_ma_account_set_name;
   item_class->get_username = chatty_ma_account_get_username;
-  item_class->set_username = chatty_ma_account_set_username;
   item_class->get_avatar_file = chatty_ma_account_get_avatar_file;
   item_class->get_avatar = chatty_ma_account_get_avatar;
   item_class->set_avatar_async = chatty_ma_account_set_avatar_async;
