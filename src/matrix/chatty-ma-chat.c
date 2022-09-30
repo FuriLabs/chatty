@@ -20,7 +20,6 @@
 #include "cmatrix.h"
 
 #include "contrib/gtk.h"
-#include "chatty-history.h"
 #include "chatty-utils.h"
 #include "matrix-utils.h"
 #include "chatty-ma-buddy.h"
@@ -46,7 +45,6 @@ struct _ChattyMaChat
   GdkPixbuf           *avatar;
   ChattyFileInfo      *avatar_file;
   GCancellable        *avatar_cancellable;
-  ChattyMaBuddy       *self_buddy;
   GListStore          *buddy_list;
   GListStore          *message_list;
   GtkFilterListModel  *filtered_event_list;
@@ -63,19 +61,10 @@ struct _ChattyMaChat
   guint          history_is_loading : 1;
   guint          avatar_is_loading : 1;
 
-  guint          room_name_loaded : 1;
   guint          buddy_typing : 1;
 };
 
 G_DEFINE_TYPE (ChattyMaChat, chatty_ma_chat, CHATTY_TYPE_CHAT)
-
-enum {
-  PROP_0,
-  PROP_ROOM_ID,
-  N_PROPS
-};
-
-static GParamSpec *properties[N_PROPS];
 
 static gboolean
 ma_chat_filter_event_list (ChattyMessage *message,
@@ -426,7 +415,6 @@ chatty_ma_chat_send_message_async (ChattyChat          *chat,
   g_assert (CHATTY_IS_MA_CHAT (self));
   g_assert (CHATTY_IS_MESSAGE (message));
 
-  chatty_message_set_user (message, CHATTY_ITEM (self->self_buddy));
   chatty_message_set_status (message, CHATTY_STATUS_SENDING, 0);
 
   task = g_task_new (self, NULL, callback, user_data);
@@ -650,25 +638,6 @@ chatty_ma_chat_get_avatar (ChattyItem *item)
 }
 
 static void
-chatty_ma_chat_set_property (GObject      *object,
-                             guint         prop_id,
-                             const GValue *value,
-                             GParamSpec   *pspec)
-{
-  ChattyMaChat *self = (ChattyMaChat *)object;
-
-  switch (prop_id)
-    {
-    case PROP_ROOM_ID:
-      self->room_id = g_value_dup_string (value);
-      break;
-
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-    }
-}
-
-static void
 chatty_ma_chat_finalize (GObject *object)
 {
   ChattyMaChat *self = (ChattyMaChat *)object;
@@ -681,7 +650,6 @@ chatty_ma_chat_finalize (GObject *object)
   g_list_store_remove_all (self->buddy_list);
   g_clear_object (&self->message_list);
   g_clear_object (&self->buddy_list);
-  g_clear_object (&self->self_buddy);
   g_clear_pointer (&self->avatar_file, chatty_file_info_free);
   g_clear_object (&self->avatar);
 
@@ -698,7 +666,6 @@ chatty_ma_chat_class_init (ChattyMaChatClass *klass)
   ChattyItemClass *item_class = CHATTY_ITEM_CLASS (klass);
   ChattyChatClass *chat_class = CHATTY_CHAT_CLASS (klass);
 
-  object_class->set_property = chatty_ma_chat_set_property;
   object_class->finalize = chatty_ma_chat_finalize;
 
   item_class->get_name = chatty_ma_chat_get_name;
@@ -726,15 +693,6 @@ chatty_ma_chat_class_init (ChattyMaChatClass *klass)
   chat_class->get_buddy_typing = chatty_ma_chat_get_buddy_typing;
   chat_class->set_typing = chatty_ma_chat_set_typing;
   chat_class->show_notification = chatty_ma_chat_show_notification;
-
-  properties[PROP_ROOM_ID] =
-    g_param_spec_string ("room-id",
-                         "room id",
-                         "Matrix room id the room",
-                         NULL,
-                         G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT_ONLY);
-
-  g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
 static void
@@ -751,24 +709,6 @@ chatty_ma_chat_init (ChattyMaChat *self)
                                                          filter);
   self->buddy_list = g_list_store_new (CHATTY_TYPE_MA_BUDDY);
   self->avatar_cancellable = g_cancellable_new ();
-}
-
-ChattyMaChat *
-chatty_ma_chat_new (const char     *room_id,
-                    const char     *name,
-                    ChattyFileInfo *avatar,
-                    gboolean        encrypted)
-{
-  ChattyMaChat *self;
-
-  g_return_val_if_fail (room_id && *room_id, NULL);
-
-  self = g_object_new (CHATTY_TYPE_MA_CHAT,
-                       "room-id", room_id, NULL);
-  self->room_name = g_strdup (name);
-  self->avatar_file = avatar;
-
-  return self;
 }
 
 static void
@@ -946,21 +886,4 @@ chatty_ma_chat_matches_id (ChattyMaChat *self,
     return FALSE;
 
   return g_strcmp0 (self->room_id, room_id) == 0;
-}
-
-void
-chatty_ma_chat_add_messages (ChattyMaChat *self,
-                             GPtrArray    *messages,
-                             gboolean      append)
-{
-  guint position = 0;
-
-  g_return_if_fail (CHATTY_IS_MA_CHAT (self));
-
-  if (append)
-    position = g_list_model_get_n_items (G_LIST_MODEL (self->message_list));
-
-  if (messages && messages->len)
-    g_list_store_splice (self->message_list, position, 0,
-                         messages->pdata, messages->len);
 }
