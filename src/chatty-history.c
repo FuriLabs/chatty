@@ -2750,7 +2750,6 @@ history_get_chats (ChattyHistory *self,
   ChattyAccount *account;
   sqlite3_stmt *stmt;
   const char *user_id;
-  int protocol, encrypted;
 
   g_assert (CHATTY_IS_HISTORY (self));
   g_assert (G_IS_TASK (task));
@@ -2764,15 +2763,10 @@ history_get_chats (ChattyHistory *self,
   }
 
   account = g_object_get_data (G_OBJECT (task), "account");
-  /* We currently handle only matrix accounts */
-  g_assert (CHATTY_IS_MA_ACCOUNT (account) || CHATTY_IS_MM_ACCOUNT (account));
+  /* We currently handle only MM accounts */
+  g_assert (CHATTY_IS_MM_ACCOUNT (account));
 
   user_id = chatty_item_get_username (CHATTY_ITEM (account));
-
-  if (CHATTY_IS_MA_ACCOUNT (account))
-    protocol = PROTOCOL_MATRIX;
-  else
-    protocol = PROTOCOL_MMS_SMS;
 
   sqlite3_prepare_v2 (self->db,
                       /*           0           1             2              3                4  */
@@ -2786,7 +2780,7 @@ history_get_chats (ChattyHistory *self,
                       "WHERE visibility!=" STRING(THREAD_VISIBILITY_HIDDEN),
                       -1, &stmt, NULL);
   history_bind_text (stmt, 1, user_id, "binding when getting threads");
-  history_bind_int (stmt, 2, protocol, "binding when getting threads");
+  history_bind_int (stmt, 2, PROTOCOL_MMS_SMS, "binding when getting threads");
 
   while (sqlite3_step (stmt) == SQLITE_ROW) {
     g_autoptr(GPtrArray) messages = NULL;
@@ -2794,6 +2788,7 @@ history_get_chats (ChattyHistory *self,
     const char *name, *alias;
     ChattyChat *chat;
     int thread_id, visibility;
+    int unread_count;
 
     if (!threads)
       threads = g_ptr_array_new_full (30, g_object_unref);
@@ -2801,7 +2796,6 @@ history_get_chats (ChattyHistory *self,
     thread_id = sqlite3_column_int (stmt, 0);
     name = (const char *)sqlite3_column_text (stmt, 1);
     alias = (const char *)sqlite3_column_text (stmt, 2);
-    encrypted = sqlite3_column_int (stmt, 3);
     visibility = sqlite3_column_int (stmt, 7);
 
     if (sqlite3_column_text (stmt, 5)) {
@@ -2810,9 +2804,7 @@ history_get_chats (ChattyHistory *self,
       file->path = g_strdup ((const char *)sqlite3_column_text (stmt, 6));
     }
 
-    if (CHATTY_IS_MA_ACCOUNT (account)) {
-      chat = (gpointer)chatty_ma_chat_new (name, alias, file, encrypted);
-    } else if (sqlite3_column_int (stmt, 4) == THREAD_GROUP_CHAT) {
+    if (sqlite3_column_int (stmt, 4) == THREAD_GROUP_CHAT) {
       chat = (gpointer)chatty_mm_chat_new (name, alias, CHATTY_PROTOCOL_MMS, FALSE,
                                            history_value_to_visibility (visibility));
     } else {
@@ -2822,22 +2814,14 @@ history_get_chats (ChattyHistory *self,
 
     messages = get_messages_before_time (self, chat, NULL, thread_id, INT_MAX, 1);
 
-    /* For now, we handle unread count only for MM accounts */
-    if (CHATTY_IS_MM_ACCOUNT (account)) {
-      int unread_count;
+    unread_count = get_unread_message_count (self, thread_id);
+    chatty_chat_set_unread_count (chat, unread_count);
 
-      unread_count = get_unread_message_count (self, thread_id);
-      chatty_chat_set_unread_count (chat, unread_count);
-    }
-
-    if (CHATTY_IS_MA_ACCOUNT (account))
-      chatty_ma_chat_add_messages (CHATTY_MA_CHAT (chat), messages, FALSE);
-    else
-      chatty_mm_chat_prepend_messages (CHATTY_MM_CHAT (chat), messages);
+    chatty_mm_chat_prepend_messages (CHATTY_MM_CHAT (chat), messages);
 
     g_ptr_array_insert (threads, -1, chat);
 
-    if (protocol == PROTOCOL_MMS_SMS) {
+    {
       g_autoptr(GPtrArray) members = NULL;
 
       members = get_sms_thread_members (self, thread_id);
@@ -3635,10 +3619,9 @@ chatty_history_get_chats_async (ChattyHistory       *self,
   g_return_if_fail (CHATTY_IS_HISTORY (self));
   g_return_if_fail (CHATTY_IS_ACCOUNT (account));
 
-  /* Currently we handle only matrix and SMS accounts */
+  /* Currently we handle only MM accounts */
   protocol = chatty_account_get_protocol_name (account);
-  if (!g_str_equal (protocol, "Matrix") &&
-      !g_str_equal (protocol, "SMS"))
+  if (!g_str_equal (protocol, "SMS"))
     g_return_if_reached ();
 
   task = g_task_new (self, NULL, callback, user_data);
