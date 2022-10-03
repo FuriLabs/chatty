@@ -13,6 +13,7 @@ src/chatty-contact-list.c
 src/chatty-clock.c
 src/chatty-contact-provider.c
 src/chatty-contact-provider.h
+src/chatty-header-bar.c
 src/chatty-history.c
 src/chatty-history.h
 src/chatty-fp-row.c
@@ -69,6 +70,7 @@ src/ui/chatty-contact-row.ui
 src/ui/chatty-dialog-join-muc.ui
 src/ui/chatty-dialog-new-chat.ui
 src/ui/chatty-file-item.ui
+src/ui/chatty-header-bar.ui
 src/ui/chatty-info-dialog.ui
 src/ui/chatty-ma-chat-info.ui
 src/ui/chatty-pp-chat-info.ui
