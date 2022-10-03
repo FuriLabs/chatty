@@ -93,6 +93,7 @@ chatty_sources += [
   'chatty-chat-list.c',
   'chatty-contact-list.c',
   'chatty-header-bar.c',
+  'chatty-main-view.c',
   'chatty-window.c',
   'dialogs/chatty-info-dialog.c',
   'dialogs/chatty-settings-dialog.c',
