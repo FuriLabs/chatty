@@ -30,7 +30,6 @@ struct _ChattyChatView
   GtkStack    parent_instance;
 
   GtkWidget  *message_view;
-  GtkWidget  *empty_view;
 
   GtkWidget  *message_list;
   GtkWidget  *loading_spinner;
@@ -888,7 +887,6 @@ chatty_chat_view_class_init (ChattyChatViewClass *klass)
                                                "ui/chatty-chat-view.ui");
 
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, message_view);
-  gtk_widget_class_bind_template_child (widget_class, ChattyChatView, empty_view);
 
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, scroll_down_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, message_list);
@@ -928,7 +926,6 @@ chatty_chat_view_init (ChattyChatView *self)
 
   gtk_widget_init_template (GTK_WIDGET (self));
   gtk_list_box_set_placeholder (GTK_LIST_BOX (self->message_list), self->no_message_status);
-  gtk_stack_set_visible_child (GTK_STACK (self), self->empty_view);
 
   g_signal_connect_after (G_OBJECT (self), "file-requested",
                           G_CALLBACK (chat_view_file_requested_cb), self);
@@ -1013,11 +1010,6 @@ chatty_chat_view_set_chat (ChattyChatView *self,
                                               CHATTY_MESSAGE_TEXT,
                                               CHATTY_DIRECTION_OUT, CHATTY_STATUS_DRAFT);
   }
-
-  if (chat)
-    gtk_stack_set_visible_child (GTK_STACK (self), self->message_view);
-  else
-    gtk_stack_set_visible_child (GTK_STACK (self), self->empty_view);
 
   if (!chat) {
     gtk_list_box_bind_model (GTK_LIST_BOX (self->message_list),
