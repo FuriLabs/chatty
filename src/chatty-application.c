@@ -122,6 +122,60 @@ application_open_uri (ChattyApplication *self)
 }
 
 static void
+chatty_application_show_about (GSimpleAction *action,
+                               GVariant      *parameter,
+                               gpointer       user_data)
+{
+  ChattyApplication *self = user_data;
+
+  static const gchar *authors[] = {
+    "Adrien Plazas <kekun.plazas@laposte.net>",
+    "Andrea Schäfer <mosibasu@me.com>",
+    "Benedikt Wildenhain <benedikt.wildenhain@hs-bochum.de>",
+    "Chris Talbot (kop316) <chris@talbothome.com>",
+    "Guido Günther <agx@sigxcpu.org>",
+    "Julian Sparber <jsparber@gnome.org>",
+    "Leland Carlye <leland.carlye@protonmail.com>",
+    "Mohammed Sadiq https://www.sadiqpk.org/",
+    "Richard Bayerle (OMEMO Plugin) https://github.com/gkdr/lurch",
+    "Ruslan Marchenko <me@ruff.mobi>",
+    "and more...",
+    NULL
+  };
+
+  static const gchar *artists[] = {
+    "Tobias Bernard <tbernard@gnome.org>",
+    NULL
+  };
+
+  static const gchar *documenters[] = {
+    "Heather Ellsworth <heather.ellsworth@puri.sm>",
+    NULL
+  };
+
+  if (!self->main_window)
+    return;
+
+  /*
+   * “program-name” defaults to g_get_application_name().
+   * Don’t set it explicitly so that there is one less
+   * string to translate.
+   */
+  gtk_show_about_dialog (gtk_application_get_active_window (user_data),
+                         "logo-icon-name", CHATTY_APP_ID,
+                         "version", GIT_VERSION,
+                         "comments", _("An SMS and XMPP messaging client"),
+                         "website", "https://source.puri.sm/Librem5/chatty",
+                         "copyright", "© 2018–2022 Purism SPC",
+                         "license-type", GTK_LICENSE_GPL_3_0,
+                         "authors", authors,
+                         "artists", artists,
+                         "documenters", documenters,
+                         "translator-credits", _("translator-credits"),
+                         NULL);
+}
+
+static void
 chatty_application_show_help (GSimpleAction *action,
 			      GVariant      *parameter,
 			      gpointer       user_data)
@@ -312,9 +366,11 @@ chatty_application_command_line (GApplication            *application,
 }
 
 static const GActionEntry app_entries[] = {
+  { "about", chatty_application_show_about },
   { "help", chatty_application_show_help, },
   { "open-chat", chatty_application_open_chat, "(ssi)" },
-  { "show-window", chatty_application_show_window } };
+  { "show-window", chatty_application_show_window }
+};
 
 static void
 chatty_application_startup (GApplication *application)
