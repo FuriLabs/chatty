@@ -29,7 +29,7 @@
 #include "chatty-settings.h"
 #include "chatty-mm-chat.h"
 #include "chatty-chat-list.h"
-#include "chatty-chat-view.h"
+#include "chatty-main-view.h"
 #include "chatty-manager.h"
 #include "chatty-utils.h"
 #include "chatty-selectable-row.h"
@@ -51,6 +51,7 @@ struct _ChattyWindow
 
   GtkWidget *header_bar;
   GtkWidget *content_box;
+  GtkWidget *content_view;
   GtkWidget *sidebar;
 
   GtkWidget *new_chat_dialog;
@@ -59,7 +60,6 @@ struct _ChattyWindow
   GtkWidget *chats_search_bar;
   GtkWidget *chats_search_entry;
 
-  GtkWidget *chat_view;
   GtkWidget *settings_dialog;
 
   GtkWidget *protocol_list;
@@ -98,7 +98,7 @@ window_set_item (ChattyWindow *self,
   g_assert (CHATTY_IS_WINDOW (self));
 
   g_clear_signal_handler (&self->chat_changed_handler,
-                          chatty_chat_view_get_chat (CHATTY_CHAT_VIEW (self->chat_view)));
+                          chatty_main_view_get_item (CHATTY_MAIN_VIEW (self->content_view)));
 
   if (CHATTY_IS_CHAT (chat)) {
     self->chat_changed_handler = g_signal_connect_object (chat, "changed",
@@ -110,7 +110,7 @@ window_set_item (ChattyWindow *self,
     hdy_leaflet_set_visible_child_name (HDY_LEAFLET (self->content_box), "sidebar");
 
   chatty_header_bar_set_item (CHATTY_HEADER_BAR (self->header_bar), CHATTY_ITEM (chat));
-  chatty_chat_view_set_chat (CHATTY_CHAT_VIEW (self->chat_view), chat);
+  chatty_main_view_set_item (CHATTY_MAIN_VIEW (self->content_view), CHATTY_ITEM (chat));
 }
 
 static void
@@ -214,7 +214,7 @@ window_chat_list_selection_changed (ChattyWindow   *self,
     model = chatty_chat_list_get_filter_model (CHATTY_CHAT_LIST (self->chat_list));
     if (g_list_model_get_n_items (model) == 0) {
       chatty_header_bar_set_item (CHATTY_HEADER_BAR (self->header_bar), NULL);
-      chatty_chat_view_set_chat (CHATTY_CHAT_VIEW (self->chat_view), NULL);
+      chatty_main_view_set_item (CHATTY_MAIN_VIEW (self->content_view), NULL);
     }
 
     return;
@@ -223,7 +223,7 @@ window_chat_list_selection_changed (ChattyWindow   *self,
   chat = chat_list->pdata[0];
   g_return_if_fail (CHATTY_IS_CHAT (chat));
 
-  if (chat == chatty_chat_view_get_chat (CHATTY_CHAT_VIEW (self->chat_view)))
+  if (chat == (gpointer)chatty_main_view_get_item (CHATTY_MAIN_VIEW (self->content_view)))
     return;
 
 #ifdef PURPLE_ENABLED
@@ -332,7 +332,7 @@ window_chat_deleted_cb (ChattyWindow *self,
   g_assert (CHATTY_IS_WINDOW (self));
   g_assert (CHATTY_IS_CHAT (chat));
 
-  if (chatty_chat_view_get_chat (CHATTY_CHAT_VIEW (self->chat_view)) != chat)
+  if (chatty_main_view_get_item (CHATTY_MAIN_VIEW (self->content_view)) != (gpointer)chat)
     return;
 
   window_set_item (self, NULL);
@@ -414,15 +414,15 @@ chatty_window_archive_chat (GSimpleAction *action,
                             gpointer       user_data)
 {
   ChattyWindow *self = user_data;
-  ChattyChat *chat;
+  ChattyItem *item;
 
   g_assert (CHATTY_IS_WINDOW (self));
 
-  chat = chatty_chat_view_get_chat (CHATTY_CHAT_VIEW (self->chat_view));
-  g_return_if_fail (CHATTY_IS_MM_CHAT (chat));
-  g_return_if_fail (chatty_chat_is_im (chat));
+  item = chatty_main_view_get_item (CHATTY_MAIN_VIEW (self->content_view));
+  g_return_if_fail (CHATTY_IS_MM_CHAT (item));
+  g_return_if_fail (chatty_chat_is_im (CHATTY_CHAT (item)));
 
-  chatty_item_set_state (CHATTY_ITEM (chat), CHATTY_ITEM_ARCHIVED);
+  chatty_item_set_state (item, CHATTY_ITEM_ARCHIVED);
 }
 
 static void
@@ -431,15 +431,15 @@ chatty_window_unarchive_chat (GSimpleAction *action,
                               gpointer       user_data)
 {
   ChattyWindow *self = user_data;
-  ChattyChat *chat;
+  ChattyItem *item;
 
   g_assert (CHATTY_IS_WINDOW (self));
 
-  chat = chatty_chat_view_get_chat (CHATTY_CHAT_VIEW (self->chat_view));
-  g_return_if_fail (CHATTY_IS_MM_CHAT (chat));
-  g_return_if_fail (chatty_chat_is_im (chat));
+  item = chatty_main_view_get_item (CHATTY_MAIN_VIEW (self->content_view));
+  g_return_if_fail (CHATTY_IS_MM_CHAT (item));
+  g_return_if_fail (chatty_chat_is_im (CHATTY_CHAT (item)));
 
-  chatty_item_set_state (CHATTY_ITEM (chat), CHATTY_ITEM_VISIBLE);
+  chatty_item_set_state (item, CHATTY_ITEM_VISIBLE);
 }
 
 static void
@@ -449,14 +449,14 @@ chatty_window_block_chat (GSimpleAction *action,
 {
   ChattyWindow *self = user_data;
   GtkWidget *message;
-  ChattyChat *chat;
+  ChattyItem *item;
   int result;
 
   g_assert (CHATTY_IS_WINDOW (self));
 
-  chat = chatty_chat_view_get_chat (CHATTY_CHAT_VIEW (self->chat_view));
-  g_return_if_fail (CHATTY_IS_MM_CHAT (chat));
-  g_return_if_fail (chatty_chat_is_im (chat));
+  item = chatty_main_view_get_item (CHATTY_MAIN_VIEW (self->content_view));
+  g_return_if_fail (CHATTY_IS_MM_CHAT (item));
+  g_return_if_fail (chatty_chat_is_im (CHATTY_CHAT (item)));
 
   message = gtk_message_dialog_new (GTK_WINDOW (self),
                                     GTK_DIALOG_MODAL | GTK_DIALOG_USE_HEADER_BAR,
@@ -470,7 +470,7 @@ chatty_window_block_chat (GSimpleAction *action,
   if (result == GTK_RESPONSE_CANCEL)
     return;
 
-  chatty_item_set_state (CHATTY_ITEM (chat), CHATTY_ITEM_BLOCKED);
+  chatty_item_set_state (item, CHATTY_ITEM_BLOCKED);
 }
 
 static void
@@ -479,15 +479,15 @@ chatty_window_unblock_chat (GSimpleAction *action,
                             gpointer       user_data)
 {
   ChattyWindow *self = user_data;
-  ChattyChat *chat;
+  ChattyItem *item;
 
   g_assert (CHATTY_IS_WINDOW (self));
 
-  chat = chatty_chat_view_get_chat (CHATTY_CHAT_VIEW (self->chat_view));
-  g_return_if_fail (CHATTY_IS_MM_CHAT (chat));
-  g_return_if_fail (chatty_chat_is_im (chat));
+  item = chatty_main_view_get_item (CHATTY_MAIN_VIEW (self->content_view));
+  g_return_if_fail (CHATTY_IS_MM_CHAT (item));
+  g_return_if_fail (chatty_chat_is_im (CHATTY_CHAT (item)));
 
-  chatty_item_set_state (CHATTY_ITEM (chat), CHATTY_ITEM_VISIBLE);
+  chatty_item_set_state (item, CHATTY_ITEM_VISIBLE);
 
 }
 
@@ -506,7 +506,7 @@ chatty_window_delete_chat (GSimpleAction *action,
 
   g_assert (CHATTY_IS_WINDOW (self));
 
-  chat = chatty_chat_view_get_chat (CHATTY_CHAT_VIEW (self->chat_view));
+  chat = (ChattyChat *)chatty_main_view_get_item (CHATTY_MAIN_VIEW (self->content_view));
   g_return_if_fail (chat);
 
   name = chatty_item_get_name (CHATTY_ITEM (chat));
@@ -570,7 +570,7 @@ chatty_window_leave_chat (GSimpleAction *action,
 
   g_assert (CHATTY_IS_WINDOW (self));
 
-  chat = chatty_chat_view_get_chat (CHATTY_CHAT_VIEW (self->chat_view));
+  chat = (ChattyChat *)chatty_main_view_get_item (CHATTY_MAIN_VIEW (self->content_view));
   g_warn_if_fail (chat);
 
   if (chat) {
@@ -610,7 +610,7 @@ chatty_window_show_chat_details (GSimpleAction *action,
 
   g_assert (CHATTY_IS_WINDOW (self));
 
-  chat = chatty_chat_view_get_chat (CHATTY_CHAT_VIEW (self->chat_view));
+  chat = (ChattyChat *)chatty_main_view_get_item (CHATTY_MAIN_VIEW (self->content_view));
   g_return_if_fail (CHATTY_IS_CHAT (chat));
 
   dialog = CHATTY_INFO_DIALOG (self->chat_info_dialog);
@@ -683,7 +683,7 @@ chatty_window_call_user (GSimpleAction *action,
 
   g_assert (CHATTY_IS_WINDOW (self));
 
-  chat = chatty_chat_view_get_chat (CHATTY_CHAT_VIEW (self->chat_view));
+  chat = (ChattyChat *)chatty_main_view_get_item (CHATTY_MAIN_VIEW (self->content_view));
   g_return_if_fail (CHATTY_IS_MM_CHAT (chat));
 
   uri = g_strconcat ("tel://", chatty_chat_get_chat_name (chat), NULL);
@@ -791,9 +791,9 @@ chatty_window_dispose (GObject *object)
   ChattyWindow *self = (ChattyWindow *)object;
 
   /* XXX: Why it fails without the check? */
-  if (CHATTY_IS_CHAT_VIEW (self->chat_view))
+  if (CHATTY_IS_MAIN_VIEW (self->content_view))
     g_clear_signal_handler (&self->chat_changed_handler,
-                            chatty_chat_view_get_chat (CHATTY_CHAT_VIEW (self->chat_view)));
+                            chatty_main_view_get_item (CHATTY_MAIN_VIEW (self->content_view)));
   g_clear_object (&self->manager);
 
   G_OBJECT_CLASS (chatty_window_parent_class)->dispose (object);
@@ -822,10 +822,10 @@ chatty_window_class_init (ChattyWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyWindow, chats_search_entry);
 
   gtk_widget_class_bind_template_child (widget_class, ChattyWindow, content_box);
+  gtk_widget_class_bind_template_child (widget_class, ChattyWindow, content_view);
   gtk_widget_class_bind_template_child (widget_class, ChattyWindow, sidebar);
 
   gtk_widget_class_bind_template_child (widget_class, ChattyWindow, chat_list);
-  gtk_widget_class_bind_template_child (widget_class, ChattyWindow, chat_view);
   gtk_widget_class_bind_template_child (widget_class, ChattyWindow, protocol_list);
 
   gtk_widget_class_bind_template_callback (widget_class, notify_fold_cb);
@@ -870,7 +870,7 @@ chatty_window_init (ChattyWindow *self)
   hdy_search_bar_connect_entry (HDY_SEARCH_BAR (self->chats_search_bar),
                                 GTK_ENTRY (self->chats_search_entry));
   self->manager = g_object_ref (chatty_manager_get_default ());
-  chatty_chat_view_set_db (CHATTY_CHAT_VIEW (self->chat_view),
+  chatty_main_view_set_db (CHATTY_MAIN_VIEW (self->content_view),
                            chatty_manager_get_history (self->manager));
   g_signal_connect_object (self->manager, "chat-deleted",
                            G_CALLBACK (window_chat_deleted_cb), self,
@@ -923,10 +923,15 @@ chatty_window_set_uri (ChattyWindow *self,
 ChattyChat *
 chatty_window_get_active_chat (ChattyWindow *self)
 {
+  ChattyItem *item = NULL;
+
   g_return_val_if_fail (CHATTY_IS_WINDOW (self), NULL);
 
   if (gtk_window_has_toplevel_focus (GTK_WINDOW (self)))
-    return chatty_chat_view_get_chat (CHATTY_CHAT_VIEW (self->chat_view));
+    item = chatty_main_view_get_item (CHATTY_MAIN_VIEW (self->content_view));
+
+  if (CHATTY_IS_CHAT (item))
+    return CHATTY_CHAT (item);
 
   return NULL;
 }
@@ -943,7 +948,7 @@ chatty_window_open_chat (ChattyWindow *self,
 
   window_set_item (self, chat);
 
-  hdy_leaflet_set_visible_child (HDY_LEAFLET (self->content_box), self->chat_view);
+  hdy_leaflet_set_visible_child (HDY_LEAFLET (self->content_box), self->content_view);
 
   if (chatty_window_get_active_chat (self))
     chatty_chat_set_unread_count (chat, 0);

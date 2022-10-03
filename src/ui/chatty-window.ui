@@ -96,7 +96,7 @@
             </child>
 
             <child>
-              <object class="ChattyChatView" id="chat_view">
+              <object class="ChattyMainView" id="content_view">
                 <property name="visible">True</property>
                 <property name="width_request">300</property>
               </object>
