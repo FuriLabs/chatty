@@ -206,6 +206,11 @@ chatty_list_row_update (ChattyListRow *self)
     last_message_time = chatty_chat_get_last_msg_time (item);
     gtk_widget_set_visible (self->last_modified, last_message_time > 0);
 
+    if (chatty_chat_get_chat_state (CHATTY_CHAT (self->item)) == CHATTY_CHAT_INVITED) {
+      gtk_label_set_text (GTK_LABEL (self->unread_message_count), "!");
+      gtk_widget_show (self->unread_message_count);
+    }
+
     chatty_list_row_update_last_modified (self);
   }
 
