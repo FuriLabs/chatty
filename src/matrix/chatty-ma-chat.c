@@ -66,6 +66,9 @@ struct _ChattyMaChat
 
 G_DEFINE_TYPE (ChattyMaChat, chatty_ma_chat, CHATTY_TYPE_CHAT)
 
+/* Private */
+CmStatus cm_room_get_status (CmRoom *self);
+
 static gboolean
 ma_chat_filter_event_list (ChattyMessage *message,
                            ChattyMaChat  *self)
@@ -163,6 +166,19 @@ static gboolean
 chatty_ma_chat_is_im (ChattyChat *chat)
 {
   return TRUE;
+}
+
+static ChattyChatState
+chatty_ma_chat_get_chat_state (ChattyChat *chat)
+{
+  ChattyMaChat *self = (ChattyMaChat *)chat;
+
+  g_assert (CHATTY_IS_MA_CHAT (self));
+
+  if (cm_room_get_status (self->cm_room) == CM_STATUS_INVITE)
+    return CHATTY_CHAT_INVITED;
+
+  return CHATTY_CHAT_JOINED;
 }
 
 static gboolean
@@ -677,6 +693,7 @@ chatty_ma_chat_class_init (ChattyMaChatClass *klass)
   item_class->get_avatar = chatty_ma_chat_get_avatar;
 
   chat_class->is_im = chatty_ma_chat_is_im;
+  chat_class->get_chat_state = chatty_ma_chat_get_chat_state;
   chat_class->has_file_upload = chatty_ma_chat_has_file_upload;
   chat_class->get_chat_name = chatty_ma_chat_get_chat_name;
   chat_class->load_past_messages = chatty_ma_chat_real_past_messages;
