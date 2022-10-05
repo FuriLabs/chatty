@@ -315,6 +315,76 @@ chatty_ma_chat_set_encryption_async (ChattyChat          *chat,
                                    g_steal_pointer (&task));
 }
 
+static void
+ma_chat_accept_invite_cb (GObject      *object,
+                          GAsyncResult *result,
+                          gpointer      user_data)
+{
+  ChattyMaChat *self;
+  g_autoptr(GTask) task = user_data;
+  GError *error = NULL;
+  gboolean success;
+
+  self = g_task_get_source_object (task);
+  success = cm_room_accept_invite_finish (self->cm_room, result, &error);
+
+  if (error)
+    g_task_return_error (task, error);
+  else
+    g_task_return_boolean (task, success);
+}
+
+static void
+chatty_ma_chat_accept_invite_async (ChattyChat          *chat,
+                                    GAsyncReadyCallback  callback,
+                                    gpointer             user_data)
+{
+  ChattyMaChat *self = (ChattyMaChat *)chat;
+  GTask *task;
+
+  g_assert (CHATTY_IS_MA_CHAT (chat));
+
+  task = g_task_new (self, NULL, callback, user_data);
+  cm_room_accept_invite_async (self->cm_room, NULL,
+                               ma_chat_accept_invite_cb,
+                               task);
+}
+
+static void
+ma_chat_reject_invite_cb (GObject      *object,
+                          GAsyncResult *result,
+                          gpointer      user_data)
+{
+  ChattyMaChat *self;
+  g_autoptr(GTask) task = user_data;
+  g_autoptr(GError) error = NULL;
+  gboolean success;
+
+  self = g_task_get_source_object (task);
+  success = cm_room_reject_invite_finish (self->cm_room, result, &error);
+
+  if (error)
+    g_task_return_error (task, error);
+  else
+    g_task_return_boolean (task, success);
+}
+
+static void
+chatty_ma_chat_reject_invite_async (ChattyChat          *chat,
+                                    GAsyncReadyCallback  callback,
+                                    gpointer             user_data)
+{
+  ChattyMaChat *self = (ChattyMaChat *)chat;
+  GTask *task;
+
+  g_assert (CHATTY_IS_MA_CHAT (chat));
+
+  task = g_task_new (self, NULL, callback, user_data);
+  cm_room_reject_invite_async (self->cm_room, NULL,
+                               ma_chat_reject_invite_cb,
+                               task);
+}
+
 static const char *
 chatty_ma_chat_get_last_message (ChattyChat *chat)
 {
@@ -702,6 +772,8 @@ chatty_ma_chat_class_init (ChattyMaChatClass *klass)
   chat_class->get_account  = chatty_ma_chat_get_account;
   chat_class->get_encryption = chatty_ma_chat_get_encryption;
   chat_class->set_encryption_async = chatty_ma_chat_set_encryption_async;
+  chat_class->accept_invite_async = chatty_ma_chat_accept_invite_async;
+  chat_class->reject_invite_async = chatty_ma_chat_reject_invite_async;
   chat_class->get_last_message = chatty_ma_chat_get_last_message;
   chat_class->get_unread_count = chatty_ma_chat_get_unread_count;
   chat_class->set_unread_count = chatty_ma_chat_set_unread_count;
