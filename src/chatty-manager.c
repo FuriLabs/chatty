@@ -109,10 +109,19 @@ manager_sort_chat_item (ChattyChat *a,
                         ChattyChat *b,
                         gpointer    user_data)
 {
+  ChattyChatState a_state, b_state;
   time_t a_time, b_time;
 
   g_assert (CHATTY_IS_CHAT (a));
   g_assert (CHATTY_IS_CHAT (b));
+
+  a_state = chatty_chat_get_chat_state (a);
+  b_state = chatty_chat_get_chat_state (b);
+
+  if (a_state != b_state &&
+      (a_state == CHATTY_CHAT_INVITED ||
+       b_state == CHATTY_CHAT_INVITED))
+    return a_state == CHATTY_CHAT_INVITED ? -1 : 1;
 
   a_time = chatty_chat_get_last_msg_time (a);
   b_time = chatty_chat_get_last_msg_time (b);
