@@ -704,7 +704,7 @@ static void
 ma_account_set_client (ChattyMaAccount *self,
                        CmClient        *client)
 {
-  GListModel *joined_rooms;
+  GListModel *joined_rooms, *invited_rooms;
 
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
   g_assert (CM_IS_CLIENT (client));
@@ -725,6 +725,12 @@ ma_account_set_client (ChattyMaAccount *self,
                            G_CALLBACK (joined_rooms_changed), self,
                            G_CONNECT_SWAPPED);
   joined_rooms_changed (self, 0, 0, g_list_model_get_n_items (joined_rooms), joined_rooms);
+
+  invited_rooms = cm_client_get_invited_rooms (client);
+  g_signal_connect_object (invited_rooms, "items-changed",
+                           G_CALLBACK (joined_rooms_changed), self,
+                           G_CONNECT_SWAPPED);
+  joined_rooms_changed (self, 0, 0, g_list_model_get_n_items (invited_rooms), invited_rooms);
 }
 
 ChattyMaAccount *
