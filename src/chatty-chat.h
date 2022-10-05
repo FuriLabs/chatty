@@ -33,6 +33,7 @@ struct _ChattyChatClass
                                            gpointer    history_db);
   gboolean          (*is_im)              (ChattyChat *self);
   gboolean          (*has_file_upload)    (ChattyChat *self);
+  ChattyChatState   (*get_chat_state)     (ChattyChat *self);
   const char       *(*get_chat_name)      (ChattyChat *self);
   ChattyAccount    *(*get_account)        (ChattyChat *self);
   GListModel       *(*get_messages)       (ChattyChat *self);
@@ -96,6 +97,7 @@ void                chatty_chat_set_data           (ChattyChat *self,
 gboolean            chatty_chat_is_im              (ChattyChat *self);
 char               *chatty_chat_generate_name      (ChattyChat *self,
                                                     GListModel *members);
+ChattyChatState     chatty_chat_get_chat_state     (ChattyChat *self);
 gboolean            chatty_chat_has_file_upload    (ChattyChat *self);
 const char         *chatty_chat_get_chat_name      (ChattyChat *self);
 ChattyAccount      *chatty_chat_get_account        (ChattyChat *self);

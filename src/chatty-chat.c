@@ -52,6 +52,7 @@ enum {
   PROP_0,
   PROP_ENCRYPT,
   PROP_BUDDY_TYPING,
+  PROP_CHAT_STATE,
   PROP_LOADING_HISTORY,
   N_PROPS
 };
@@ -87,6 +88,14 @@ chatty_chat_real_is_im (ChattyChat *self)
   g_assert (CHATTY_IS_CHAT (self));
 
   return priv->is_im;
+}
+
+static ChattyChatState
+chatty_chat_real_get_chat_state (ChattyChat *self)
+{
+  g_assert (CHATTY_IS_CHAT (self));
+
+  return CHATTY_CHAT_JOINED;
 }
 
 static gboolean
@@ -391,6 +400,10 @@ chatty_chat_get_property (GObject    *object,
       g_value_set_boolean (value, chatty_chat_get_buddy_typing (self));
       break;
 
+    case PROP_CHAT_STATE:
+      g_value_set_boolean (value, chatty_chat_get_chat_state (self));
+      break;
+
     case PROP_LOADING_HISTORY:
       g_value_set_boolean (value, chatty_chat_is_loading_history (self));
       break;
@@ -453,6 +466,7 @@ chatty_chat_class_init (ChattyChatClass *klass)
 
   klass->set_data = chatty_chat_real_set_data;
   klass->is_im = chatty_chat_real_is_im;
+  klass->get_chat_state = chatty_chat_real_get_chat_state;
   klass->has_file_upload = chatty_chat_real_has_file_upload;
   klass->get_chat_name = chatty_chat_real_get_chat_name;
   klass->get_account = chatty_chat_real_get_account;
@@ -485,6 +499,13 @@ chatty_chat_class_init (ChattyChatClass *klass)
                           "Whether the chat is encrypted or not",
                           FALSE,
                           G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+
+  properties[PROP_CHAT_STATE] =
+    g_param_spec_boolean ("chat-state",
+                          "Chat state",
+                          "Whether the chat is having invite state or not",
+                          FALSE,
+                          G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
   properties[PROP_BUDDY_TYPING] =
     g_param_spec_boolean ("buddy-typing",
@@ -644,6 +665,14 @@ chatty_chat_generate_name (ChattyChat *self,
   return g_strdup_printf (g_dngettext (GETTEXT_PACKAGE, "%s and %u other",
                                        "%s and %u others", count - 1),
                           name_a ?: "", count - 1);
+}
+
+ChattyChatState
+chatty_chat_get_chat_state (ChattyChat *self)
+{
+  g_return_val_if_fail (CHATTY_IS_CHAT (self), CHATTY_CHAT_UNKNOWN);
+
+  return CHATTY_CHAT_GET_CLASS (self)->get_chat_state (self);
 }
 
 gboolean
