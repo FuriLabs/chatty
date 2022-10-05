@@ -72,6 +72,18 @@ struct _ChattyChatClass
   gboolean          (*set_encryption_finish) (ChattyChat    *self,
                                               GAsyncResult  *result,
                                               GError       **error);
+  void              (*accept_invite_async)   (ChattyChat           *self,
+                                              GAsyncReadyCallback   callback,
+                                              gpointer              user_data);
+  gboolean          (*accept_invite_finish)  (ChattyChat           *self,
+                                              GAsyncResult         *result,
+                                              GError              **error);
+  void              (*reject_invite_async)   (ChattyChat           *self,
+                                              GAsyncReadyCallback   callback,
+                                              gpointer              user_data);
+  gboolean          (*reject_invite_finish)  (ChattyChat           *self,
+                                              GAsyncResult         *result,
+                                              GError              **error);
   gboolean          (*get_buddy_typing)   (ChattyChat *self);
   void              (*set_typing)         (ChattyChat *self,
                                            gboolean    is_typing);
@@ -138,6 +150,19 @@ void                chatty_chat_set_encryption_async (ChattyChat     *self,
 gboolean            chatty_chat_set_encryption_finish (ChattyChat    *self,
                                                        GAsyncResult  *result,
                                                        GError       **error);
+
+void                chatty_chat_accept_invite_async   (ChattyChat          *self,
+                                                       GAsyncReadyCallback   callback,
+                                                       gpointer              user_data);
+gboolean            chatty_chat_accept_invite_finish  (ChattyChat           *self,
+                                                       GAsyncResult         *result,
+                                                       GError              **error);
+void                chatty_chat_reject_invite_async   (ChattyChat          *self,
+                                                       GAsyncReadyCallback   callback,
+                                                       gpointer              user_data);
+gboolean            chatty_chat_reject_invite_finish  (ChattyChat           *self,
+                                                       GAsyncResult         *result,
+                                                       GError              **error);
 gboolean            chatty_chat_get_buddy_typing   (ChattyChat *self);
 void                chatty_chat_set_typing         (ChattyChat *self,
                                                     gboolean    is_typing);

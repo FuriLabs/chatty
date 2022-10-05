@@ -266,6 +266,55 @@ chatty_chat_real_set_encryption_async (ChattyChat          *self,
                            "Setting encryption not supported");
 }
 
+static void
+chatty_chat_real_accept_invite_async (ChattyChat          *self,
+                                      GAsyncReadyCallback  callback,
+                                      gpointer             user_data)
+{
+  g_assert (CHATTY_IS_CHAT (self));
+
+  g_task_report_new_error (self, callback, user_data,
+                           chatty_chat_real_accept_invite_async,
+                           G_IO_ERROR,
+                           G_IO_ERROR_NOT_SUPPORTED,
+                           "Accept invite not supported");
+}
+
+static gboolean
+chatty_chat_real_accept_invite_finish (ChattyChat   *self,
+                                        GAsyncResult *result,
+                                        GError       **error)
+{
+  g_assert (CHATTY_IS_CHAT (self));
+  g_assert (G_IS_TASK (result));
+
+  return g_task_propagate_boolean (G_TASK (result), error);
+}
+
+static void
+chatty_chat_real_reject_invite_async (ChattyChat          *self,
+                                      GAsyncReadyCallback  callback,
+                                      gpointer             user_data)
+{
+  g_assert (CHATTY_IS_CHAT (self));
+
+  g_task_report_new_error (self, callback, user_data,
+                           chatty_chat_real_reject_invite_async,
+                           G_IO_ERROR,
+                           G_IO_ERROR_NOT_SUPPORTED,
+                           "Reject invite not supported");
+}
+
+static gboolean
+chatty_chat_real_reject_invite_finish (ChattyChat   *self,
+                                       GAsyncResult *result,
+                                       GError       **error)
+{
+  g_assert (CHATTY_IS_CHAT (self));
+  g_assert (G_IS_TASK (result));
+
+  return g_task_propagate_boolean (G_TASK (result), error);
+}
 
 static gboolean
 chatty_chat_real_set_encryption_finish (ChattyChat   *self,
@@ -486,6 +535,10 @@ chatty_chat_class_init (ChattyChatClass *klass)
   klass->get_encryption = chatty_chat_real_get_encryption;
   klass->set_encryption = chatty_chat_real_set_encryption;
   klass->set_encryption_async = chatty_chat_real_set_encryption_async;
+  klass->accept_invite_async = chatty_chat_real_accept_invite_async;
+  klass->accept_invite_finish = chatty_chat_real_accept_invite_finish;
+  klass->reject_invite_async = chatty_chat_real_reject_invite_async;
+  klass->reject_invite_finish = chatty_chat_real_reject_invite_finish;
   klass->set_encryption_finish = chatty_chat_real_set_encryption_finish;
   klass->get_buddy_typing = chatty_chat_real_get_buddy_typing;
   klass->set_typing = chatty_chat_real_set_typing;
@@ -947,6 +1000,48 @@ chatty_chat_set_typing (ChattyChat *self,
   g_return_if_fail (CHATTY_IS_CHAT (self));
 
   CHATTY_CHAT_GET_CLASS (self)->set_typing (self, !!is_typing);
+}
+
+void
+chatty_chat_accept_invite_async (ChattyChat          *self,
+                                 GAsyncReadyCallback  callback,
+                                 gpointer             user_data)
+{
+  g_return_if_fail (CHATTY_IS_CHAT (self));
+
+  CHATTY_CHAT_GET_CLASS (self)->accept_invite_async (self, callback, user_data);
+}
+
+gboolean
+chatty_chat_accept_invite_finish (ChattyChat    *self,
+                                  GAsyncResult  *result,
+                                  GError       **error)
+{
+  g_return_val_if_fail (CHATTY_IS_CHAT (self), FALSE);
+  g_return_val_if_fail (G_IS_ASYNC_RESULT (result), FALSE);
+
+  return CHATTY_CHAT_GET_CLASS (self)->accept_invite_finish (self, result, error);
+}
+
+void
+chatty_chat_reject_invite_async (ChattyChat          *self,
+                                 GAsyncReadyCallback  callback,
+                                 gpointer             user_data)
+{
+  g_return_if_fail (CHATTY_IS_CHAT (self));
+
+  CHATTY_CHAT_GET_CLASS (self)->reject_invite_async (self, callback, user_data);
+}
+
+gboolean
+chatty_chat_reject_invite_finish (ChattyChat    *self,
+                                  GAsyncResult  *result,
+                                  GError       **error)
+{
+  g_return_val_if_fail (CHATTY_IS_CHAT (self), FALSE);
+  g_return_val_if_fail (G_IS_ASYNC_RESULT (result), FALSE);
+
+  return CHATTY_CHAT_GET_CLASS (self)->reject_invite_finish (self, result, error);
 }
 
 gboolean
