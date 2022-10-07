@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://source.puri.sm/Librem5/chatty/issues\n"
-"POT-Creation-Date: 2022-10-03 15:24+0000\n"
-"PO-Revision-Date: 2022-10-03 20:34+0300\n"
+"POT-Creation-Date: 2022-10-07 03:24+0000\n"
+"PO-Revision-Date: 2022-10-07 19:11+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -223,33 +223,33 @@ msgstr "Немає архівованих спілкувань"
 msgid "Start Chatting"
 msgstr "Почати спілкування"
 
-#: src/chatty-chat-view.c:212
+#: src/chatty-chat-view.c:211
 msgid "This is an SMS conversation"
 msgstr "Це обмін повідомленнями SMS"
 
-#: src/chatty-chat-view.c:214 src/chatty-chat-view.c:220
+#: src/chatty-chat-view.c:213 src/chatty-chat-view.c:219
 msgid "Your messages are not encrypted, and carrier rates may apply"
 msgstr ""
 "Ваші повідомлення не зашифровано, оператор може стягувати сплату за "
 "передавання даних"
 
-#: src/chatty-chat-view.c:218
+#: src/chatty-chat-view.c:217
 msgid "This is an IM conversation"
 msgstr "Це спілкування у службі обміну повідомленнями"
 
-#: src/chatty-chat-view.c:224
+#: src/chatty-chat-view.c:223
 msgid "Your messages are encrypted"
 msgstr "Ваші повідомлення зашифровано"
 
-#: src/chatty-chat-view.c:227
+#: src/chatty-chat-view.c:226
 msgid "Your messages are not encrypted"
 msgstr "Ваші повідомлення не зашифровано"
 
-#: src/chatty-chat-view.c:420
+#: src/chatty-chat-view.c:419
 msgid "Select File..."
 msgstr "Вибір файла…"
 
-#: src/chatty-chat-view.c:423 src/purple/chatty-purple-request.c:175
+#: src/chatty-chat-view.c:422 src/purple/chatty-purple-request.c:175
 #: src/chatty-window.c:529 src/dialogs/chatty-pp-chat-info.c:90
 #: src/dialogs/chatty-ma-account-details.c:119
 #: src/dialogs/chatty-pp-account-details.c:91
@@ -258,24 +258,24 @@ msgstr "Вибір файла…"
 msgid "Cancel"
 msgstr "Скасувати"
 
-#: src/chatty-chat-view.c:424 src/purple/chatty-purple-request.c:177
+#: src/chatty-chat-view.c:423 src/purple/chatty-purple-request.c:177
 #: src/dialogs/chatty-pp-chat-info.c:89
 #: src/dialogs/chatty-ma-account-details.c:118
 #: src/dialogs/chatty-pp-account-details.c:90
 msgid "Open"
 msgstr "Відкрити"
 
-#: src/chatty-chat.c:635
+#: src/chatty-chat.c:709
 msgid "Empty room"
 msgstr "Порожня кімната"
 
 #. TRANSLATORS: %s are name/user-id/phone numbers of two users
-#: src/chatty-chat.c:642
+#: src/chatty-chat.c:716
 #, c-format
 msgid "%s and %s"
 msgstr "%s і %s"
 
-#: src/chatty-chat.c:644
+#: src/chatty-chat.c:718
 #, c-format
 msgid "%s and %u other"
 msgid_plural "%s and %u others"
@@ -356,6 +356,11 @@ msgstr "Архівовано"
 msgid "Device ID %s fingerprint:"
 msgstr "Відбиток ідентифікатора пристрою %s:"
 
+#: src/chatty-invite-view.c:72
+#, c-format
+msgid "Do you want to join “%s”"
+msgstr "Хочете долучитися до «%s»"
+
 #: src/chatty-list-row.c:118
 msgid "Owner"
 msgstr "Власник"
@@ -368,7 +373,7 @@ msgstr "Модератор"
 msgid "Member"
 msgstr "Член"
 
-#: src/chatty-manager.c:724
+#: src/chatty-manager.c:733
 #, c-format
 msgid "“%s” is not a valid URI"
 msgstr "«%s» не є коректною адресою"
@@ -740,19 +745,14 @@ msgid "Back"
 msgstr "Назад"
 
 #: src/ui/chatty-header-bar.ui:45
-#| msgid "Add Contact"
 msgid "Add Chat"
 msgstr "Додати спілкування"
 
 #: src/ui/chatty-header-bar.ui:65
-#| msgctxt "shortcut window"
-#| msgid "Open Menu"
 msgid "Menu"
 msgstr "Меню"
 
 #: src/ui/chatty-header-bar.ui:87
-#| msgctxt "shortcut window"
-#| msgid "Open Search"
 msgid "Search"
 msgstr "Пошук"
 
@@ -824,6 +824,16 @@ msgstr "Застосувати"
 #: src/ui/chatty-info-dialog.ui:82
 msgid "Invite"
 msgstr "Запросити"
+
+#: src/ui/chatty-invite-view.ui:71
+#| msgid "Accept"
+msgid "_Accept"
+msgstr "При_йняти"
+
+#: src/ui/chatty-invite-view.ui:100
+#| msgid "Reject"
+msgid "_Reject"
+msgstr "Від_!мовити"
 
 #: src/ui/chatty-ma-chat-info.ui:67 src/ui/chatty-ma-account-details.ui:233
 msgid "Matrix ID"
