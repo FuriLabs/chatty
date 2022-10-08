@@ -24,11 +24,11 @@ msgstr ""
 #: src/chatty-application.c:338 src/chatty-window.c:339
 #: src/ui/chatty-window.ui:265
 msgid "Chats"
-msgstr "Chats"
+msgstr "Chatty"
 
 #: data/sm.puri.Chatty.desktop.in:6
 msgid "SMS and XMPP chat application"
-msgstr "Aplicación de mensajería por SMS y XMPP"
+msgstr "Una Aplicación de mensajería"
 
 #: data/sm.puri.Chatty.desktop.in:7
 msgid "XMPP;SMS;chat;jabber;messaging;modem"
@@ -100,7 +100,7 @@ msgstr "Reemplazar texto a emoticonos"
 
 #: data/sm.puri.Chatty.gschema.xml:62
 msgid "Convert text matching emoticons as real emoticons"
-msgstr "Reemplazar emoticonos textuales que coincidan"
+msgstr "Reemplazar texto por Emoticonos reales"
 
 #: data/sm.puri.Chatty.gschema.xml:67
 msgid "Enter key sends the message"
@@ -112,19 +112,19 @@ msgstr "Si presionar la tecla Intro envía el mensaje"
 
 #: data/sm.puri.Chatty.gschema.xml:73
 msgid "Request SMS delivery reports"
-msgstr ""
+msgstr "Solicitar entrega de envío de SMS"
 
 #: data/sm.puri.Chatty.gschema.xml:74
 msgid "Whether to request delivery reports for outgoing SMS"
-msgstr ""
+msgstr "Ya sea para solicitar entregas de SMS salientes"
 
 #: data/sm.puri.Chatty.gschema.xml:79
 msgid "Enable experimental features"
-msgstr ""
+msgstr "Habilitar funciones experimentales"
 
 #: data/sm.puri.Chatty.gschema.xml:80
 msgid "Whether to enable experimental features"
-msgstr ""
+msgstr "Ya sea para habilitar funciones experimentales"
 
 #: data/sm.puri.Chatty.gschema.xml:85
 msgid "Window maximized"
@@ -148,11 +148,11 @@ msgstr "Una aplicación de mensajería"
 
 #: data/sm.puri.Chatty.metainfo.xml.in:9
 msgid "Chats is a messaging application supporting XMPP and SMS."
-msgstr "Chats es una aplicación de mensajería que soporte SMS y XMPP"
+msgstr "Chatty es una aplicación de mensajería que soporta SMS y XMPP"
 
 #: data/sm.puri.Chatty.metainfo.xml.in:16
 msgid "Chats message window"
-msgstr "Ventana de mensajes de Chats"
+msgstr "Ventana de mensajes de Chatty"
 
 #: src/chatty-application.c:78
 msgid "Show release version"
@@ -160,7 +160,7 @@ msgstr "Mostrar versión de lanzamiento"
 
 #: src/chatty-application.c:79
 msgid "Start in daemon mode"
-msgstr "Iniciar en modo de daemon"
+msgstr "Iniciar en modo demonio"
 
 #: src/chatty-application.c:80
 msgid "Disable all accounts"
@@ -195,19 +195,19 @@ msgstr "Agregar una cuenta de mensajería instantánea en Preferencias."
 
 #: src/chatty-chat-list.c:215 src/chatty-contact-list.c:282
 msgid "No Search Results"
-msgstr ""
+msgstr "Sin resultados de búsqueda"
 
 #: src/chatty-chat-list.c:216
 msgid "Try different search"
-msgstr ""
+msgstr "Intentar búsqueda diferente"
 
 #: src/chatty-chat-list.c:220
 msgid "No archived chats"
-msgstr ""
+msgstr "No hay Conversaciones archivadas"
 
 #: src/chatty-chat-list.c:222
 msgid "Start Chatting"
-msgstr "Empezar a chatear"
+msgstr "Iniciar a Conversar"
 
 #: src/chatty-chat-view.c:212
 msgid "This is an SMS conversation"
@@ -223,11 +223,11 @@ msgstr "Esta es una conversación de mensajería instantánea"
 
 #: src/chatty-chat-view.c:224
 msgid "Your messages are encrypted"
-msgstr "Sus mensajes están cifrados"
+msgstr "Los mensajes están cifrados"
 
 #: src/chatty-chat-view.c:227
 msgid "Your messages are not encrypted"
-msgstr "Sus mensajes no están cifrados"
+msgstr "Los mensajes no están cifrados"
 
 #: src/chatty-chat-view.c:420
 msgid "Select File..."
@@ -276,7 +276,7 @@ msgstr ""
 
 #: src/chatty-contact-list.c:287
 msgid "No Contacts"
-msgstr "Ningún contacto"
+msgstr "No hay contactos"
 
 #: src/chatty-clock.c:86
 msgid "Just Now"
@@ -298,25 +298,25 @@ msgstr[1] "Hace %lu minutos"
 
 #: src/chatty-clock.c:112
 msgid "Today %H∶%M"
-msgstr ""
+msgstr "Hoy %H∶%M"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “Today 06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
 #: src/chatty-clock.c:120
 msgid "Today %I∶%M %p"
-msgstr ""
+msgstr "Hoy %I∶%M %p"
 
 #: src/chatty-clock.c:132
 msgid "Yesterday %H∶%M"
-msgstr ""
+msgstr "Ayer %H∶%M"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “Yesterday 06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
 #: src/chatty-clock.c:137
 msgid "Yesterday %I∶%M %p"
-msgstr ""
+msgstr "Ayer  %I∶%M %p"
 
 #. TRANSLATORS: Timestamp from more than 7 days ago or future date
 #. * (eg: when the system time is wrong), e.g. “2022-01-01”.
@@ -330,11 +330,11 @@ msgstr "%d-%m-%Y"
 #: src/chatty-fp-row.c:131
 #, c-format
 msgid "Device ID %s fingerprint:"
-msgstr ""
+msgstr "Id. dispositivo %s huella digital:"
 
 #: src/chatty-list-row.c:118
 msgid "Owner"
-msgstr "Dueño"
+msgstr "Propietario"
 
 #: src/chatty-list-row.c:121
 msgid "Moderator"
@@ -347,7 +347,7 @@ msgstr "Miembro"
 #: src/chatty-manager.c:724
 #, c-format
 msgid "“%s” is not a valid URI"
-msgstr ""
+msgstr "“%s” no es un URI válido"
 
 #: src/chatty-message-row.c:82
 msgid "Copy"
@@ -355,7 +355,7 @@ msgstr "Copiar"
 
 #: src/chatty-message.c:233
 msgid "Got an encrypted message, but couldn't decrypt due to missing keys"
-msgstr ""
+msgstr "Recibí un mensaje cifrado, pero no pude descifrarlo debido a falta de claves"
 
 #: src/chatty-notification.c:181
 msgid "Open Message"
