@@ -19,6 +19,7 @@
 #include "matrix-utils.h"
 #include "chatty-utils.h"
 #include "chatty-ma-chat.h"
+#include "chatty-ma-key-chat.h"
 #include "chatty-ma-account.h"
 #include "chatty-log.h"
 
@@ -649,7 +650,7 @@ chatty_ma_account_class_init (ChattyMaAccountClass *klass)
 static void
 chatty_ma_account_init (ChattyMaAccount *self)
 {
-  self->chat_list = g_list_store_new (CHATTY_TYPE_MA_CHAT);
+  self->chat_list = g_list_store_new (CHATTY_TYPE_CHAT);
 }
 
 static void
@@ -683,6 +684,34 @@ joined_rooms_changed (ChattyMaAccount *self,
 }
 
 static void
+key_verifications_changed (ChattyMaAccount *self,
+                           int              position,
+                           int              removed,
+                           int              added,
+                           GListModel      *model)
+{
+  g_autoptr(GPtrArray) items = NULL;
+
+  g_assert (CHATTY_IS_MA_ACCOUNT (self));
+  g_assert (G_IS_LIST_MODEL (model));
+
+  for (guint i = position; i < position + added; i++) {
+    g_autoptr(CmEvent) event = NULL;
+    ChattyMaKeyChat *chat;
+
+    if (!items)
+      items = g_ptr_array_new_with_free_func (g_object_unref);
+
+    event = g_list_model_get_item (model, i);
+    chat = chatty_ma_key_chat_new (self, event);
+    g_ptr_array_add (items, chat);
+  }
+
+  g_list_store_splice (self->chat_list, position, removed,
+                       items ? items->pdata : NULL, added);
+}
+
+static void
 client_status_changed_cb (ChattyMaAccount *self)
 {
   ChattyStatus status = CHATTY_DISCONNECTED;
@@ -704,7 +733,7 @@ static void
 ma_account_set_client (ChattyMaAccount *self,
                        CmClient        *client)
 {
-  GListModel *joined_rooms, *invited_rooms;
+  GListModel *joined_rooms, *invited_rooms, *key_verifications;
 
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
   g_assert (CM_IS_CLIENT (client));
@@ -731,6 +760,12 @@ ma_account_set_client (ChattyMaAccount *self,
                            G_CALLBACK (joined_rooms_changed), self,
                            G_CONNECT_SWAPPED);
   joined_rooms_changed (self, 0, 0, g_list_model_get_n_items (invited_rooms), invited_rooms);
+
+  key_verifications = cm_client_get_key_verifications (client);
+  g_signal_connect_object (key_verifications, "items-changed",
+                           G_CALLBACK (key_verifications_changed), self,
+                           G_CONNECT_SWAPPED);
+  key_verifications_changed (self, 0, 0, g_list_model_get_n_items (key_verifications), key_verifications);
 }
 
 ChattyMaAccount *
