@@ -62,6 +62,7 @@ src/matrix/chatty-ma-account.c
 src/matrix/chatty-ma-account.h
 src/matrix/chatty-ma-chat.c
 src/matrix/chatty-ma-chat.h
+src/matrix/chatty-ma-key-chat.c
 src/matrix/matrix-utils.c
 src/matrix/matrix-utils.h
 src/mm/chatty-mmsd.c
