@@ -20,6 +20,7 @@
 #include "chatty-contact.h"
 #include "chatty-contact-list.h"
 #include "chatty-chat.h"
+#include "chatty-ma-key-chat.h"
 #include "chatty-avatar.h"
 #include "chatty-clock.h"
 #include "chatty-list-row.h"
@@ -377,6 +378,9 @@ chatty_list_row_set_item (ChattyListRow *self,
   g_object_bind_property (item, "name",
                           self->title, "label",
                           G_BINDING_SYNC_CREATE);
+
+  if (CHATTY_IS_MA_KEY_CHAT (item))
+    self->hide_chat_details = TRUE;
 
   if (CHATTY_IS_CHAT (item))
     g_signal_connect_object (item, "changed",
