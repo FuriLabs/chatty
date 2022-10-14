@@ -37,6 +37,7 @@ src/chatty-secret-store.c
 src/chatty-secret-store.h
 src/chatty-settings.c
 src/chatty-settings.h
+src/chatty-verification-view.c
 src/chatty-window.c
 src/chatty-window.h
 src/dialogs/chatty-info-dialog.c
@@ -83,6 +84,7 @@ src/ui/chatty-list-row.ui
 src/ui/chatty-ma-account-details.ui
 src/ui/chatty-pp-account-details.ui
 src/ui/chatty-settings-dialog.ui
+src/ui/chatty-verification-view.ui
 src/ui/chatty-window.ui
 src/ui/help-overlay.ui
 src/users/chatty-account.c

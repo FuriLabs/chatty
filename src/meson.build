@@ -95,6 +95,7 @@ chatty_sources += [
   'chatty-header-bar.c',
   'chatty-main-view.c',
   'chatty-invite-view.c',
+  'chatty-verification-view.c',
   'chatty-window.c',
   'dialogs/chatty-info-dialog.c',
   'dialogs/chatty-settings-dialog.c',
