@@ -118,6 +118,10 @@ manager_sort_chat_item (ChattyChat *a,
   a_state = chatty_chat_get_chat_state (a);
   b_state = chatty_chat_get_chat_state (b);
 
+  if (a_state == CHATTY_CHAT_VERIFICATION ||
+      b_state == CHATTY_CHAT_VERIFICATION)
+    return a_state == CHATTY_CHAT_VERIFICATION ? -1 : 1;
+
   if (a_state != b_state &&
       (a_state == CHATTY_CHAT_INVITED ||
        b_state == CHATTY_CHAT_INVITED))
