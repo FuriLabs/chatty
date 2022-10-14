@@ -19,6 +19,12 @@
         </child>
 
         <child>
+          <object class="ChattyVerificationView" id="verification_view">
+            <property name="visible">1</property>
+          </object>
+        </child>
+
+        <child>
           <object class="GtkBox" id="empty_view">
             <property name="visible">1</property>
           </object>

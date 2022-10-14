@@ -16,8 +16,10 @@
 #endif
 
 #include "chatty-chat.h"
+#include "chatty-ma-key-chat.h"
 #include "chatty-history.h"
 #include "chatty-invite-view.h"
+#include "chatty-verification-view.h"
 #include "chatty-chat-view.h"
 #include "chatty-main-view.h"
 
@@ -28,6 +30,7 @@ struct _ChattyMainView
   GtkWidget    *main_stack;
   GtkWidget    *content_view;
   GtkWidget    *invite_view;
+  GtkWidget    *verification_view;
   GtkWidget    *empty_view;
 
   ChattyItem   *item;
@@ -60,9 +63,11 @@ chatty_main_view_class_init (ChattyMainViewClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyMainView, main_stack);
   gtk_widget_class_bind_template_child (widget_class, ChattyMainView, content_view);
   gtk_widget_class_bind_template_child (widget_class, ChattyMainView, invite_view);
+  gtk_widget_class_bind_template_child (widget_class, ChattyMainView, verification_view);
   gtk_widget_class_bind_template_child (widget_class, ChattyMainView, empty_view);
 
   g_type_ensure (CHATTY_TYPE_CHAT_VIEW);
+  g_type_ensure (CHATTY_TYPE_VERIFICATION_VIEW);
 }
 
 static void
@@ -89,8 +94,9 @@ chatty_main_view_set_item (ChattyMainView *self,
   g_return_if_fail (!item || CHATTY_IS_ITEM (item));
 
   g_set_object (&self->item, item);
+  chatty_verification_view_set_item (CHATTY_VERIFICATION_VIEW (self->verification_view), item);
 
-  if (!item || CHATTY_IS_CHAT (item))
+  if (!item || (CHATTY_IS_CHAT (item) && !CHATTY_IS_MA_KEY_CHAT (item)))
     chatty_chat_view_set_chat (CHATTY_CHAT_VIEW (self->content_view), (ChattyChat *)item);
 
   if (CHATTY_IS_CHAT (item)) {
@@ -103,6 +109,8 @@ chatty_main_view_set_item (ChattyMainView *self,
 
     if (state == CHATTY_CHAT_INVITED)
       gtk_stack_set_visible_child (GTK_STACK (self->main_stack), self->invite_view);
+    else if (state == CHATTY_CHAT_VERIFICATION)
+      gtk_stack_set_visible_child (GTK_STACK (self->main_stack), self->verification_view);
     else
       gtk_stack_set_visible_child (GTK_STACK (self->main_stack), self->content_view);
   } else {
