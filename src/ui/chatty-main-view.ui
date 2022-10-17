@@ -3,30 +3,78 @@
   <template class="ChattyMainView" parent="GtkBox">
 
     <child>
-      <object class="GtkStack" id="main_stack">
+      <object class="GtkOverlay">
         <property name="visible">1</property>
 
-        <child>
-          <object class="ChattyChatView" id="content_view">
+        <child type="overlay">
+          <object class="GtkRevealer" id="notification_revealer">
             <property name="visible">1</property>
+            <property name="halign">center</property>
+            <property name="valign">start</property>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">1</property>
+                <property name="spacing">12</property>
+                <style>
+                  <class name="app-notification" />
+                </style>
+                <child>
+                  <object class="GtkLabel" id="notification_label">
+                    <property name="visible">1</property>
+                    <property name="use-markup">1</property>
+                    <property name="ellipsize">end</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton" id="close_button">
+                    <property name="visible">0</property>
+                    <signal name="clicked" handler="main_view_notification_closed_cb" swapped="yes" />
+                    <child internal-child="accessible">
+                      <object class="AtkObject">
+                        <property name="accessible-name" translatable="yes">Close</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImage">
+                        <property name="visible">1</property>
+                        <property name="icon-name">window-close-symbolic</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
           </object>
         </child>
 
         <child>
-          <object class="ChattyInviteView" id="invite_view">
+          <object class="GtkStack" id="main_stack">
             <property name="visible">1</property>
-          </object>
-        </child>
 
-        <child>
-          <object class="ChattyVerificationView" id="verification_view">
-            <property name="visible">1</property>
-          </object>
-        </child>
+            <child>
+              <object class="ChattyChatView" id="content_view">
+                <property name="visible">1</property>
+              </object>
+            </child>
 
-        <child>
-          <object class="GtkBox" id="empty_view">
-            <property name="visible">1</property>
+            <child>
+              <object class="ChattyInviteView" id="invite_view">
+                <property name="visible">1</property>
+              </object>
+            </child>
+
+            <child>
+              <object class="ChattyVerificationView" id="verification_view">
+                <property name="visible">1</property>
+              </object>
+            </child>
+
+            <child>
+              <object class="GtkBox" id="empty_view">
+                <property name="visible">1</property>
+              </object>
+            </child>
+
           </object>
         </child>
 
