@@ -25,6 +25,7 @@ build-pureos-gcc-byzantium-no-purple:
   stage: build
   script:
     - apt-get -y build-dep .
+    - apt-get -y install git
     - export LC_ALL=C.UTF-8
     - meson . _build -Dpurple=disabled
     - ninja -C _build
@@ -35,7 +36,7 @@ build-pureos-gcc-byzantium:
   stage: build
   script:
     - apt-get -y build-dep .
-    - apt-get -y install libgtk-3-bin xvfb
+    - apt-get -y install libgtk-3-bin xvfb git
     - export LC_ALL=C.UTF-8
     - meson . _build -Db_coverage=true --werror
     - ninja -C _build
@@ -51,7 +52,7 @@ test:debian-gcc:
     - build-pureos-gcc-byzantium
   script:
     - apt-get -y build-dep .
-    - apt-get -y install libgtk-3-bin xvfb lcov
+    - apt-get -y install libgtk-3-bin xvfb lcov git
     - export G_DEBUG=fatal-warnings
     - export LC_ALL=C.UTF-8
     - xvfb-run -a -s "-screen 0 1024x768x24" ninja -C _build test
@@ -66,7 +67,7 @@ check-po:
     - build-pureos-gcc-byzantium
   before_script:
     - apt-get -y update
-    - apt-get -y install intltool
+    - apt-get -y install intltool git
   script:
     # barf on untranslated C files. Seems intltool
     # can't be told to exit with non-zero exit status

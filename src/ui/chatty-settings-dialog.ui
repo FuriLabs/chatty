@@ -60,7 +60,7 @@
                 <property name="label" translatable="yes">_Add</property>
                 <signal name="clicked" handler="chatty_settings_add_clicked_cb" swapped="yes" />
                 <style>
-                  <class name="default" />
+                  <class name="suggested-action" />
                 </style>
               </object>
               <packing>

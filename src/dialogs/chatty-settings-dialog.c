@@ -30,6 +30,8 @@
 #endif
 
 #include <glib/gi18n.h>
+#define CMATRIX_USE_EXPERIMENTAL_API
+#include "cmatrix.h"
 
 #include "chatty-utils.h"
 #include "matrix-utils.h"
@@ -120,22 +122,6 @@ struct _ChattySettingsDialog
 };
 
 G_DEFINE_TYPE (ChattySettingsDialog, chatty_settings_dialog, HDY_TYPE_WINDOW)
-
-static void
-finish_cb (GObject      *object,
-           GAsyncResult *result,
-           gpointer      user_data)
-{
-  GError *error = NULL;
-  gboolean status;
-
-  status = g_task_propagate_boolean (G_TASK (result), &error);
-
-  if (error)
-    g_task_return_error (user_data, error);
-  else
-    g_task_return_boolean (user_data, status);
-}
 
 static void
 settings_apply_style (GtkWidget  *widget,
@@ -241,28 +227,47 @@ matrix_home_server_verify_cb (GObject      *object,
   ChattySettingsDialog *self = user_data;
   g_autoptr(ChattyMaAccount) account = NULL;
   g_autoptr(GError) error = NULL;
-  const char *username, *password, *server;
+  const char *homeserver, *server;
 
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
 
   settings_dialog_set_save_state (self, FALSE);
+  /* verified homeserver URL */
+  homeserver = cm_client_get_homeserver_finish (CM_CLIENT (object), result, &error);
+  /* homeserver URL entered by the user */
   server = gtk_entry_get_text (GTK_ENTRY (self->matrix_homeserver_entry));
 
-  if (!matrix_utils_verify_homeserver_finish (result, &error)) {
+  if (!homeserver) {
     gtk_widget_set_sensitive (self->add_button, FALSE);
     g_clear_handle_id (&self->revealer_timeout_id, g_source_remove);
-    gtk_label_set_text (GTK_LABEL (self->notification_label),
-                        _("Failed to verify server"));
+
+    if (error)
+      g_dbus_error_strip_remote_error (error);
+
+    if (server && *server) {
+      g_autofree char *label = NULL;
+
+      if (error)
+        label = g_strdup_printf (_("Failed to verify server: %s"), error->message);
+      else
+        label = g_strdup (_("Failed to verify server"));
+
+      gtk_label_set_text (GTK_LABEL (self->notification_label), label);
+    } else {
+      settings_dialog_set_save_state (self, FALSE);
+      gtk_label_set_text (GTK_LABEL (self->notification_label),
+                          _("Couldn't get Home server address"));
+      gtk_widget_show (self->matrix_homeserver_entry);
+      gtk_entry_grab_focus_without_selecting (GTK_ENTRY (self->matrix_homeserver_entry));
+      gtk_editable_set_position (GTK_EDITABLE (self->matrix_homeserver_entry), -1);
+    }
+
     gtk_revealer_set_reveal_child (GTK_REVEALER (self->notification_revealer), TRUE);
     self->revealer_timeout_id = g_timeout_add_seconds (5, dialog_notification_timeout_cb, self);
     return;
   }
 
-  username = gtk_entry_get_text (GTK_ENTRY (self->new_account_id_entry));
-  password = gtk_entry_get_text (GTK_ENTRY (self->new_password_entry));
-
-  account = chatty_ma_account_new (username, password);
-  chatty_ma_account_set_homeserver (account, server);
+  account = chatty_ma_account_new_from_client (CM_CLIENT (object));
   chatty_manager_save_account_async (chatty_manager_get_default (), CHATTY_ACCOUNT (account),
                                      NULL, settings_save_account_cb, self);
 }
@@ -270,56 +275,14 @@ matrix_home_server_verify_cb (GObject      *object,
 static void
 chatty_settings_save_matrix (ChattySettingsDialog *self,
                              const char           *user_id,
-                             const char           *password);
-static void
-matrix_home_server_got_cb (GObject      *object,
-                           GAsyncResult *result,
-                           gpointer      user_data)
-{
-  ChattySettingsDialog *self = user_data;
-  g_autoptr(ChattyMaAccount) account = NULL;
-  g_autofree char *home_server = NULL;
-
-  g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
-
-  home_server = matrix_utils_get_homeserver_finish (result, NULL);
-
-  if (g_cancellable_is_cancelled (self->cancellable)) {
-    settings_dialog_set_save_state (self, FALSE);
-    return;
-  }
-
-  if (home_server && *home_server) {
-    const char *username, *password;
-
-    username = gtk_entry_get_text (GTK_ENTRY (self->new_account_id_entry));
-    password = gtk_entry_get_text (GTK_ENTRY (self->new_password_entry));
-
-    gtk_entry_set_text (GTK_ENTRY (self->matrix_homeserver_entry), home_server);
-    chatty_settings_save_matrix (self, username, password);
-  } else {
-    settings_dialog_set_save_state (self, FALSE);
-    gtk_widget_set_sensitive (self->add_button, FALSE);
-
-    g_clear_handle_id (&self->revealer_timeout_id, g_source_remove);
-    gtk_label_set_text (GTK_LABEL (self->notification_label),
-                        _("Couldn't get Home server address"));
-    gtk_revealer_set_reveal_child (GTK_REVEALER (self->notification_revealer), TRUE);
-    self->revealer_timeout_id = g_timeout_add_seconds (5, dialog_notification_timeout_cb, self);
-
-    gtk_widget_show (self->matrix_homeserver_entry);
-    gtk_entry_grab_focus_without_selecting (GTK_ENTRY (self->matrix_homeserver_entry));
-    gtk_editable_set_position (GTK_EDITABLE (self->matrix_homeserver_entry), -1);
-  }
-}
-
-static void
-chatty_settings_save_matrix (ChattySettingsDialog *self,
-                             const char           *user_id,
                              const char           *password)
 {
+  g_autoptr(CmClient) cm_client = NULL;
+  g_autofree char *uri_prefixed = NULL;
+  CmAccount *cm_account;
   GtkEntry *entry;
   const char *uri;
+  gboolean uri_has_prefix;
 
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
   g_return_if_fail (user_id && *user_id);
@@ -332,12 +295,20 @@ chatty_settings_save_matrix (ChattySettingsDialog *self,
   entry = GTK_ENTRY (self->matrix_homeserver_entry);
   uri = gtk_entry_get_text (entry);
 
-  if (uri && *uri)
-    matrix_utils_verify_homeserver_async (uri, 30, self->cancellable,
-                                          matrix_home_server_verify_cb, self);
-  else
-    matrix_utils_get_homeserver_async (user_id, 10, self->cancellable,
-                                       matrix_home_server_got_cb, self);
+  uri_has_prefix = g_str_has_prefix (uri, "http");
+
+  /* Assume https by default */
+  if (!uri_has_prefix)
+    uri_prefixed = g_strdup_printf ("https://%s", uri);
+
+  cm_client = chatty_manager_matrix_client_new (chatty_manager_get_default ());
+  cm_account = cm_client_get_account (cm_client);
+  cm_account_set_login_id (cm_account, user_id);
+  cm_client_set_homeserver (cm_client, uri_has_prefix ? uri : uri_prefixed);
+  cm_client_set_password (cm_client, password);
+  cm_client_get_homeserver_async (cm_client, self->cancellable,
+                                  matrix_home_server_verify_cb,
+                                  self);
 }
 
 static void
@@ -360,56 +331,13 @@ chatty_settings_add_clicked_cb (ChattySettingsDialog *self)
   if (is_matrix)
     settings_check_librem_one (self);
 
-  if (is_matrix && chatty_settings_get_experimental_features (chatty_settings_get_default ())) {
+  if (is_matrix) {
     chatty_settings_save_matrix (self, user_id, password);
     return;
   }
 
 #ifdef PURPLE_ENABLED
-  if (is_matrix) {
-    g_autoptr(GTask) task = NULL;
-    GtkEntry *entry;
-    const char *server_url;
-
-    entry = GTK_ENTRY (self->matrix_homeserver_entry);
-    server_url = gtk_entry_get_text (entry);
-
-    if (!server_url || !*server_url) {
-      gtk_widget_show (GTK_WIDGET (entry));
-      gtk_entry_grab_focus_without_selecting (entry);
-      gtk_editable_set_position (GTK_EDITABLE (entry), -1);
-
-      gtk_widget_set_sensitive (self->add_button, FALSE);
-      g_clear_handle_id (&self->revealer_timeout_id, g_source_remove);
-      gtk_label_set_text (GTK_LABEL (self->notification_label),
-                          _("Couldn't get Home server address"));
-      gtk_revealer_set_reveal_child (GTK_REVEALER (self->notification_revealer), TRUE);
-      self->revealer_timeout_id = g_timeout_add_seconds (5, dialog_notification_timeout_cb, self);
-      return;
-    }
-
-    task = g_task_new (self, NULL, NULL, NULL);
-    settings_dialog_set_save_state (self, TRUE);
-    matrix_utils_verify_homeserver_async (server_url, 10, self->cancellable,
-                                          finish_cb, task);
-
-    while (!g_task_get_completed (task))
-      g_main_context_iteration (NULL, TRUE);
-
-    settings_dialog_set_save_state (self, FALSE);
-
-    if (!g_task_propagate_boolean (task, NULL)) {
-      gtk_widget_set_sensitive (self->add_button, FALSE);
-      g_clear_handle_id (&self->revealer_timeout_id, g_source_remove);
-      gtk_label_set_text (GTK_LABEL (self->notification_label),
-                          _("Failed to verify server"));
-      gtk_revealer_set_reveal_child (GTK_REVEALER (self->notification_revealer), TRUE);
-      self->revealer_timeout_id = g_timeout_add_seconds (5, dialog_notification_timeout_cb, self);
-      return;
-    }
-
-    account = (ChattyAccount *)chatty_pp_account_new (CHATTY_PROTOCOL_MATRIX, user_id, server_url, FALSE);
-  } else if (is_telegram) {
+  if (is_telegram) {
     account = (ChattyAccount *)chatty_pp_account_new (CHATTY_PROTOCOL_TELEGRAM, user_id, NULL, FALSE);
   } else {/* XMPP */
     gboolean has_encryption;
@@ -619,13 +547,29 @@ settings_homeserver_entry_changed (ChattySettingsDialog *self,
   server = gtk_entry_get_text (entry);
 
   if (server && *server) {
-    g_autoptr(SoupURI) uri = NULL;
+    g_autoptr(GUri) uri = NULL;
+    g_autofree char *server_prefixed = NULL;
+    const char *scheme = NULL;
+    const char *path = NULL;
+    const char *host = NULL;
+    gboolean server_has_prefix = g_str_has_prefix (server, "http");
 
-    uri = soup_uri_new (gtk_entry_get_text (entry));
+    /* Assume https by default */
+    if (!server_has_prefix)
+      server_prefixed = g_strdup_printf ("https://%s", server);
 
-    valid = SOUP_URI_VALID_FOR_HTTP (uri);
-    /* We need an absolute path URI */
-    valid = valid && *uri->host && g_str_equal (soup_uri_get_path (uri), "/");
+    uri = g_uri_parse (server_has_prefix ? server : server_prefixed, G_URI_FLAGS_NONE, NULL);
+    if (uri) {
+      scheme = g_uri_get_scheme (uri);
+      path = g_uri_get_path (uri);
+      host = g_uri_get_host (uri);
+    }
+
+    valid = scheme && *scheme;
+    valid = valid && (g_str_equal (scheme, "http") || g_str_equal (scheme, "https"));
+    valid = valid && host && *host;
+    valid = valid && !g_str_has_suffix (host, ".");
+    valid = valid && (!path || !*path);
   }
 
   if (valid)
@@ -693,12 +637,11 @@ settings_update_new_account_view (ChattySettingsDialog *self)
   gtk_widget_grab_focus (self->new_account_id_entry);
   gtk_widget_show (self->add_button);
 
-  if (chatty_settings_get_experimental_features (chatty_settings_get_default ()))
-    gtk_widget_set_visible (self->matrix_row, TRUE);
+  gtk_widget_set_visible (self->matrix_row, TRUE);
 
 #ifdef PURPLE_ENABLED
-  if (purple_find_prpl ("prpl-matrix"))
-    gtk_widget_set_visible (self->matrix_row, TRUE);
+  /* if (purple_find_prpl ("prpl-matrix")) */
+  /*   gtk_widget_set_visible (self->matrix_row, TRUE); */
 
   gtk_widget_set_visible (self->telegram_row, purple_find_prpl ("prpl-telegram") != NULL);
 #endif
@@ -898,12 +841,15 @@ settings_new_detail_changed_cb (ChattySettingsDialog *self)
   else
     protocol = CHATTY_PROTOCOL_XMPP;
 
-  if (chatty_settings_get_experimental_features (chatty_settings_get_default ()) &&
-      gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (self->matrix_radio_button)))
+  if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (self->matrix_radio_button)))
     protocol = CHATTY_PROTOCOL_MATRIX | CHATTY_PROTOCOL_EMAIL;
 
   valid_protocol = chatty_utils_username_is_valid (id, protocol);
   valid = valid && valid_protocol;
+
+  if (valid_protocol &&
+      gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (self->matrix_radio_button)))
+    valid_protocol = !chatty_manager_has_matrix_with_id (chatty_manager_get_default (), id);
 
   if (valid_protocol)
     settings_remove_style (GTK_WIDGET (self->new_account_id_entry), "error");
@@ -1269,8 +1215,7 @@ chatty_settings_dialog_init (ChattySettingsDialog *self)
   gtk_widget_hide (self->xmpp_radio_button);
 #endif
 
-  if (chatty_settings_get_experimental_features (chatty_settings_get_default ()))
-    show_account_box = TRUE;
+  show_account_box = TRUE;
 
   gtk_widget_set_visible (self->accounts_list_box, show_account_box);
 

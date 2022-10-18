@@ -68,19 +68,21 @@ ui_files = files (
   'ui/chatty-contact-row.ui',
   # FIXME: Testing this fails in CI,
   # but works fine locally
-  # 'ui/chatty-info-dialog.ui',
-  # 'ui/chatty-dialog-join-muc.ui',
+  'ui/chatty-info-dialog.ui',
+  'ui/chatty-dialog-join-muc.ui',
+  # Can't test as this requires chatty-contact-list,
   # 'ui/chatty-dialog-new-chat.ui',
   'ui/chatty-fp-row.ui',
   'ui/chatty-list-row.ui',
   'ui/chatty-message-row.ui',
   # FIXME
-  # 'ui/chatty-pp-account-details.ui',
-  # 'ui/chatty-ma-chat-info.ui',
-  # 'ui/chatty-pp-user-info.ui',
-  # 'ui/chatty-mm-chat-info.ui',
-  # 'ui/chatty-settings-dialog.ui',
-  # We can't test with GdTaggedEntry
+  'ui/chatty-pp-account-details.ui',
+  'ui/chatty-ma-chat-info.ui',
+  'ui/chatty-pp-chat-info.ui',
+  'ui/chatty-mm-chat-info.ui',
+  'ui/chatty-settings-dialog.ui',
+  # Can't test as this requires chatty-chat-list,
+  # which is not in libsrc
   # 'ui/chatty-window.ui',
 )
 
@@ -90,6 +92,10 @@ chatty_sources += [
   'chatty-application.c',
   'chatty-chat-list.c',
   'chatty-contact-list.c',
+  'chatty-header-bar.c',
+  'chatty-main-view.c',
+  'chatty-invite-view.c',
+  'chatty-verification-view.c',
   'chatty-window.c',
   'dialogs/chatty-info-dialog.c',
   'dialogs/chatty-settings-dialog.c',
@@ -101,7 +107,7 @@ chatty_sources += [
 libphonenumber_dep = cc.find_library('phonenumber', required: true)
 
 chatty_deps += [
-  dependency('gio-2.0', version: '>= 2.50'),
+  dependency('gio-2.0', version: '>= 2.66'),
   dependency('gtk+-3.0', version: '>= 3.22'),
   libgd_dep,
   dependency('libsecret-1'),
@@ -116,6 +122,7 @@ chatty_deps += [
   libfeedback_dep,
   libm_dep,
   libphonenumber_dep,
+  libcmatrix_dep,
 ]
 
 gnome = import('gnome')
@@ -125,16 +132,24 @@ resources = gnome.compile_resources('chatty-resources',
   c_name: 'chatty'
 )
 
-libchatty = both_libraries(
-  'chatty', libsrc, resources,
+libchatty_shared = shared_library(
+  'chatty', [libsrc, 'library.c'],
+  resources,
   include_directories: src_inc,
   install: false,
   dependencies: chatty_deps,
 )
 
+libchatty_static = static_library(
+  'chatty', libsrc,
+  resources,
+  include_directories: src_inc,
+  dependencies: chatty_deps,
+)
+
 gtk_builder_tool = find_program('gtk-builder-tool', required: false)
 if gtk_builder_tool.found()
-  preload_env = 'LD_PRELOAD=@0@:libhandy-1.so'.format(libchatty.get_shared_lib().full_path())
+  preload_env = 'LD_PRELOAD=libhandy-1.so:@0@'.format(libchatty_shared.full_path())
   foreach file: ui_files
     test('Validate @0@'.format(file), gtk_builder_tool,
          env: [preload_env],
@@ -145,7 +160,7 @@ endif
 executable('chatty', chatty_sources, resources,
   include_directories: src_inc,
   dependencies: chatty_deps,
-  link_with: libchatty.get_static_lib(),
+  link_with: libchatty_static,
   install: true,
   install_rpath: purple_plugdir,
 )

@@ -30,7 +30,6 @@ struct _ChattyChatView
   GtkStack    parent_instance;
 
   GtkWidget  *message_view;
-  GtkWidget  *empty_view;
 
   GtkWidget  *message_list;
   GtkWidget  *loading_spinner;
@@ -285,6 +284,12 @@ chat_view_attachment_revealer_notify_cb (ChattyChatView *self)
   has_text = gtk_text_buffer_get_char_count (self->message_input_buffer) > 0;
 
   gtk_widget_set_visible (self->send_message_button, has_files || has_text);
+
+  if (!has_files)
+    {
+      gtk_widget_set_sensitive (self->send_file_button, TRUE);
+      gtk_widget_set_sensitive (self->message_input, TRUE);
+    }
 }
 
 static void
@@ -429,6 +434,8 @@ chat_view_show_file_chooser (ChattyChatView *self)
 
     /* Currently multiple files are allowed only for MMS chats */
     gtk_widget_set_sensitive (self->send_file_button, CHATTY_IS_MM_CHAT (self->chat));
+    /* Files with message content is supported only by MMS chats */
+    gtk_widget_set_sensitive (self->message_input, CHATTY_IS_MM_CHAT (self->chat));
   }
 
   gtk_widget_destroy (dialog);
@@ -445,8 +452,7 @@ chat_view_send_file_button_clicked_cb (ChattyChatView *self,
   if (CHATTY_IS_MM_CHAT (self->chat)) {
     chat_view_show_file_chooser (self);
   } else if (CHATTY_IS_MA_CHAT (self->chat)) {
-    /* TODO */
-
+    chat_view_show_file_chooser (self);
   } else {
 #ifdef PURPLE_ENABLED
     chatty_pp_chat_show_file_upload (CHATTY_PP_CHAT (self->chat));
@@ -525,7 +531,19 @@ chat_view_send_message_button_clicked_cb (ChattyChatView *self)
   gtk_text_buffer_delete (self->message_input_buffer, &start, &end);
 
   if (self->draft_message) {
-    chatty_message_set_text (self->draft_message, "");
+    g_autofree char *uid = NULL;
+
+    g_clear_object (&self->draft_message);
+
+    uid = g_uuid_string_random ();
+    /* chatty-history expects the content of the message to not change.
+     * So instead of changing the content and resaving, create a new one
+     * with empty content to avoid a possible crash as the history thread
+     * may read the freed memory content otherwise
+     */
+    self->draft_message = chatty_message_new (NULL, "", uid, time (NULL),
+                                              CHATTY_MESSAGE_TEXT,
+                                              CHATTY_DIRECTION_OUT, CHATTY_STATUS_DRAFT);
     chatty_history_add_message (self->history, self->chat, self->draft_message);
   }
 
@@ -881,7 +899,6 @@ chatty_chat_view_class_init (ChattyChatViewClass *klass)
                                                "ui/chatty-chat-view.ui");
 
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, message_view);
-  gtk_widget_class_bind_template_child (widget_class, ChattyChatView, empty_view);
 
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, scroll_down_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, message_list);
@@ -921,7 +938,6 @@ chatty_chat_view_init (ChattyChatView *self)
 
   gtk_widget_init_template (GTK_WIDGET (self));
   gtk_list_box_set_placeholder (GTK_LIST_BOX (self->message_list), self->no_message_status);
-  gtk_stack_set_visible_child (GTK_STACK (self), self->empty_view);
 
   g_signal_connect_after (G_OBJECT (self), "file-requested",
                           G_CALLBACK (chat_view_file_requested_cb), self);
@@ -1006,11 +1022,6 @@ chatty_chat_view_set_chat (ChattyChatView *self,
                                               CHATTY_MESSAGE_TEXT,
                                               CHATTY_DIRECTION_OUT, CHATTY_STATUS_DRAFT);
   }
-
-  if (chat)
-    gtk_stack_set_visible_child (GTK_STACK (self), self->message_view);
-  else
-    gtk_stack_set_visible_child (GTK_STACK (self), self->empty_view);
 
   if (!chat) {
     gtk_list_box_bind_model (GTK_LIST_BOX (self->message_list),

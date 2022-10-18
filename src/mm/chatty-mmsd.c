@@ -1508,6 +1508,93 @@ chatty_mmsd_service_added_cb (ChattyMmsd *self,
   chatty_mmsd_connect_to_service (self, parameters);
 }
 
+enum mms_tx_rx_error {
+  MMS_TX_RX_ERROR_UNKNOWN,
+  MMS_TX_RX_ERROR_DNS,
+  MMS_TX_RX_ERROR_HTTP
+};
+
+static void
+chatty_mmsd_service_send_error_cb (ChattyMmsd *self,
+                                   GVariant   *parameters)
+{
+  g_autoptr(GVariant) error_props = NULL;
+  g_autofree char *recipientlist = NULL;
+  g_autofree char *mms_path = NULL;
+  g_autofree char *sender = NULL;
+  g_autofree char *host = NULL;
+  unsigned int error_type;
+  mms_payload *payload;
+  ChattyMessage *message;
+  GVariantDict dict;
+
+  g_variant_get (parameters, "(@a{?*})", &error_props);
+  g_variant_dict_init (&dict, error_props);
+
+  if (!g_variant_dict_lookup (&dict, "ErrorType", "u", &error_type))
+    error_type = MMS_TX_RX_ERROR_UNKNOWN;
+
+  g_variant_dict_lookup (&dict, "Host", "s", &host);
+  g_variant_dict_lookup (&dict, "MessagePath", "s", &mms_path);
+
+  g_warning ("Error sending MMS of type %u, host %s, Chatty message uid %s",
+             error_type,
+             host,
+             mms_path);
+
+  payload = g_hash_table_lookup (self->mms_hash_table, mms_path);
+
+  if (payload == NULL) {
+     g_debug ("MMS not found. Was it already deleted?");
+     return;
+  }
+
+  message = payload->message;
+  sender = g_strdup (payload->sender);
+  recipientlist = g_strdup (payload->chat);
+  g_return_if_fail (recipientlist && *recipientlist);
+
+  chatty_message_set_status (payload->message,
+                             CHATTY_STATUS_SENDING_FAILED,
+                             0);
+
+  if (!chatty_mm_account_recieve_mms_cb (self->mm_account,
+                                         message,
+                                         sender,
+                                         recipientlist)) {
+     g_debug ("Message was deleted!");
+     return;
+  }
+  /* TODO: Have a user notification that the send failed */
+
+}
+
+static void
+chatty_mmsd_service_receive_error_cb (ChattyMmsd *self,
+                                      GVariant   *parameters)
+{
+  g_autoptr(GVariant) error_props = NULL;
+  g_autofree char *mms_from = NULL;
+  g_autofree char *host = NULL;
+  unsigned int error_type;
+  GVariantDict dict;
+
+  g_variant_get (parameters, "(@a{?*})", &error_props);
+  g_variant_dict_init (&dict, error_props);
+
+  if (!g_variant_dict_lookup (&dict, "ErrorType", "u", &error_type))
+    error_type = MMS_TX_RX_ERROR_UNKNOWN;
+
+  g_variant_dict_lookup (&dict, "Host", "s", &host);
+  g_variant_dict_lookup (&dict, "From", "s", &mms_from);
+
+  /* TODO: Notify user of issue */
+  g_warning ("Error receiving MMS of type %u, host %s, from %s",
+             error_type,
+             host,
+             mms_from);
+}
+
 static void
 chatty_mmsd_service_removed_cb (ChattyMmsd *self,
                                 GVariant   *parameters)
@@ -1717,6 +1804,14 @@ chatty_mmsd_signal_emitted_cb (GDBusConnection *connection,
            g_strcmp0 (interface_name, MMSD_MANAGER_INTERFACE) == 0 &&
            g_strcmp0 (object_path, MMSD_PATH) == 0)
     chatty_mmsd_service_removed_cb (self, parameters);
+  else if (g_strcmp0 (signal_name, "MessageSendError") == 0 &&
+           g_strcmp0 (interface_name, MMSD_SERVICE_INTERFACE) == 0 &&
+           g_strcmp0 (object_path, MMSD_MODEMMANAGER_PATH) == 0)
+    chatty_mmsd_service_send_error_cb (self, parameters);
+  else if (g_strcmp0 (signal_name, "MessageReceiveError") == 0 &&
+           g_strcmp0 (interface_name, MMSD_SERVICE_INTERFACE) == 0 &&
+           g_strcmp0 (object_path, MMSD_MODEMMANAGER_PATH) == 0)
+    chatty_mmsd_service_receive_error_cb (self, parameters);
   else if (g_strcmp0 (signal_name, "MessageAdded") == 0 &&
            g_strcmp0 (interface_name, MMSD_SERVICE_INTERFACE) == 0 &&
            g_strcmp0 (object_path, MMSD_MODEMMANAGER_PATH) == 0)

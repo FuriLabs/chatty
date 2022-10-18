@@ -21,7 +21,8 @@ struct _ChattyFileInfo {
   char *url;
   char *path;
   char *mime_type;
-  gpointer user_data;
+  GFile        *file;
+  GInputStream *file_stream;
   gsize width;
   gsize height;
   gsize size;

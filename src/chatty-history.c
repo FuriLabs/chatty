@@ -494,8 +494,7 @@ chatty_history_create_schema (ChattyHistory *self,
   /* XXX: SELECT * FROM files sounds better, WHERE file.id != x feels better too.
    * So what to name? file or files?
    */
-  sql = "BEGIN TRANSACTION;"
-
+  sql =
     "CREATE TABLE IF NOT EXISTS mime_type ("
     "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "
     "name TEXT NOT NULL UNIQUE);"
@@ -620,7 +619,7 @@ chatty_history_create_schema (ChattyHistory *self,
     "FROM users "
     "WHERE users.username='"MM_NUMBER"';"
 
-    "COMMIT;";
+    "PRAGMA user_version = " STRING (HISTORY_VERSION) ";";
 
   status = sqlite3_exec (self->db, sql, NULL, NULL, &error);
 
@@ -635,36 +634,6 @@ chatty_history_create_schema (ChattyHistory *self,
                            "Couldn't create tables. errno: %d, desc: %s. %s",
                            status, sqlite3_errmsg (db), error);
   sqlite3_close (db);
-  sqlite3_free (error);
-
-  return FALSE;
-}
-
-static gboolean
-chatty_history_update_version (ChattyHistory *self,
-                               GTask         *task)
-{
-  char *error = NULL;
-  const char *sql;
-  int status;
-
-  g_assert (CHATTY_IS_HISTORY (self));
-  g_assert (G_IS_TASK (task));
-  g_assert (g_thread_self () == self->worker_thread);
-  g_assert (self->db);
-
-  sql = "PRAGMA user_version = " STRING (HISTORY_VERSION) ";";
-
-  status = sqlite3_exec (self->db, sql, NULL, NULL, &error);
-
-  if (status == SQLITE_OK)
-    return TRUE;
-
-  g_task_return_new_error (task,
-                           G_IO_ERROR,
-                           G_IO_ERROR_FAILED,
-                           "Couldn't set db version. errno: %d, desc: %s. %s",
-                           status, sqlite3_errmsg (self->db), error);
   sqlite3_free (error);
 
   return FALSE;
@@ -1076,13 +1045,8 @@ chatty_history_migrate_db_to_v1_to_v3 (ChattyHistory *self,
     return FALSE;
 
   status = sqlite3_exec (self->db,
-
-                         "BEGIN TRANSACTION;"
                          "UPDATE chatty_im SET account='"MM_NUMBER"' "
                          "WHERE chatty_im.account='SMS';"
-                         "COMMIT;"
-
-                         "BEGIN TRANSACTION;"
 
                          /*** Users ***/
                          /* XMPP IM accounts */
@@ -1343,13 +1307,13 @@ chatty_history_migrate_db_to_v1_to_v3 (ChattyHistory *self,
                          "AND chatty_chat.who IS NULL or chatty_chat.who GLOB '@?*:?*' "
                          "ORDER BY timestamp ASC, chatty_chat.id ASC;"
 
-                         "COMMIT;",
+                         "PRAGMA user_version = 4;",
                          NULL, NULL, &error);
 
   if (!e_phone_number_is_supported ())
     g_debug ("Not compiled with libphonenumber");
 
-  if (status == SQLITE_OK) {
+  {
     sqlite3_stmt *stmt;
 
     /* Get all numbers in international format */
@@ -1358,8 +1322,6 @@ chatty_history_migrate_db_to_v1_to_v3 (ChattyHistory *self,
                                  "SELECT DISTINCT account,who FROM chatty_im "
                                  "WHERE account GLOB '+[0-9]*[^@]*[0-9]';",
                                  -1, &stmt, NULL);
-    if (status == SQLITE_OK)
-      status = sqlite3_exec (self->db, "BEGIN TRANSACTION;", NULL, NULL, &error);
 
     while (sqlite3_step (stmt) == SQLITE_ROW) {
       g_autofree char *account_number = NULL;
@@ -1429,22 +1391,16 @@ chatty_history_migrate_db_to_v1_to_v3 (ChattyHistory *self,
                   "AND u.type="STRING(CHATTY_ID_PHONE_VALUE) ";",
                   NULL, NULL, &error);
 
-    if (status == SQLITE_DONE || status == SQLITE_OK)
-      status = sqlite3_exec (self->db, "COMMIT;", NULL, NULL, &error);
-
     sqlite3_finalize (stmt);
   }
 
-  if (status == SQLITE_OK) {
+  {
     sqlite3_stmt *stmt;
     status = sqlite3_prepare_v2 (self->db,
                                  /* Telegram Chats */
                                  "SELECT DISTINCT account,who,room FROM chatty_chat "
                                  "WHERE account GLOB '+[0-9]*[^@:.]*[0-9]';",
                                  -1, &stmt, NULL);
-
-    if (status == SQLITE_OK)
-      status = sqlite3_exec (self->db, "BEGIN TRANSACTION;", NULL, NULL, &error);
 
     while (sqlite3_step (stmt) == SQLITE_ROW) {
       g_autofree char *account_number = NULL;
@@ -1566,13 +1522,10 @@ chatty_history_migrate_db_to_v1_to_v3 (ChattyHistory *self,
                   "AND u.type="STRING(CHATTY_ID_PHONE_VALUE) ";",
                   NULL, NULL, &error);
 
-    if (status == SQLITE_DONE || status == SQLITE_OK)
-      status = sqlite3_exec (self->db, "COMMIT;", NULL, NULL, &error);
-
     sqlite3_finalize (stmt);
   }
 
-  if (status == SQLITE_OK) {
+  {
     sqlite3_stmt *stmt;
     status = sqlite3_prepare_v2 (self->db,
                                  /* SMS users with phone numbers sorted */
@@ -1585,9 +1538,6 @@ chatty_history_migrate_db_to_v1_to_v3 (ChattyHistory *self,
                                  "LEFT JOIN chatty_im as im "
                                  "WHERE chatty_im.account='"MM_NUMBER"' ORDER BY chatty_im.id ASC;",
                                  -1, &stmt, NULL);
-
-    if (status == SQLITE_OK)
-      status = sqlite3_exec (self->db, "BEGIN TRANSACTION;", NULL, NULL, &error);
 
     while (sqlite3_step (stmt) == SQLITE_ROW) {
       g_autofree char *sender_number = NULL;
@@ -1638,26 +1588,17 @@ chatty_history_migrate_db_to_v1_to_v3 (ChattyHistory *self,
                   "AND u.type="STRING(CHATTY_ID_PHONE_VALUE) ";",
                   NULL, NULL, &error);
 
-    if (status == SQLITE_DONE || status == SQLITE_OK)
-      status = sqlite3_exec (self->db, "COMMIT;", NULL, NULL, &error);
-
     sqlite3_finalize (stmt);
   }
 
   /* Drop old tables */
-  if (status == SQLITE_OK)
-    status = sqlite3_exec (self->db,
-                           "BEGIN TRANSACTION;"
-                           "DROP TABLE chatty_chat;"
-                           "DROP TABLE chatty_im;"
-                           "COMMIT;", NULL, NULL, &error);
+  status = sqlite3_exec (self->db,
+                         "DROP TABLE chatty_chat;"
+                         "DROP TABLE chatty_im;",
+                         NULL, NULL, &error);
 
-  if (status == SQLITE_OK || status == SQLITE_DONE) {
-    /* Update user_version pragma */
-    if (!chatty_history_update_version (self, task))
-      return FALSE;
+  if (status == SQLITE_OK || status == SQLITE_DONE)
     return TRUE;
-  }
 
   g_task_return_new_error (task,
                            G_IO_ERROR,
@@ -1684,8 +1625,8 @@ chatty_history_migrate_db_to_v2 (ChattyHistory *self,
   chatty_history_backup (self);
 
   status = sqlite3_exec (self->db,
-                         "BEGIN TRANSACTION;"
-                         "PRAGMA foreign_keys=OFF;"
+                         /* "BEGIN TRANSACTION;" */
+                         /* "PRAGMA foreign_keys=OFF;" */
 
                          "DROP TABLE IF EXISTS media;"
                          "DROP TABLE IF EXISTS files;"
@@ -1755,15 +1696,12 @@ chatty_history_migrate_db_to_v2 (ChattyHistory *self,
                          "DROP TABLE IF EXISTS threads;"
                          "ALTER TABLE temp_threads RENAME TO threads;"
 
-                         "COMMIT;",
+                         "PRAGMA user_version = 2;",
+                         /* "COMMIT;", */
                          NULL, NULL, &error);
 
-  if (status == SQLITE_OK || status == SQLITE_DONE) {
-    /* Update user_version pragma */
-    if (!chatty_history_update_version (self, task))
-      return FALSE;
+  if (status == SQLITE_OK || status == SQLITE_DONE)
     return TRUE;
-  }
 
   g_task_return_new_error (task,
                            G_IO_ERROR,
@@ -1790,21 +1728,14 @@ chatty_history_migrate_db_to_v3 (ChattyHistory *self,
   chatty_history_backup (self);
 
   status = sqlite3_exec (self->db,
-                         "BEGIN TRANSACTION;"
-                         "PRAGMA foreign_keys=OFF;"
-
                          "ALTER TABLE threads ADD COLUMN visibility INT NOT NULL DEFAULT "
                          STRING(THREAD_VISIBILITY_VISIBLE) ";"
 
-                         "COMMIT;",
+                         "PRAGMA user_version = 3;",
                          NULL, NULL, &error);
 
-  if (status == SQLITE_OK || status == SQLITE_DONE) {
-    /* Update user_version pragma */
-    if (!chatty_history_update_version (self, task))
-      return FALSE;
+  if (status == SQLITE_OK || status == SQLITE_DONE)
     return TRUE;
-  }
 
   g_task_return_new_error (task,
                            G_IO_ERROR,
@@ -1831,9 +1762,6 @@ chatty_history_migrate_db_to_v4 (ChattyHistory *self,
   chatty_history_backup (self);
 
   status = sqlite3_exec (self->db,
-                         "BEGIN TRANSACTION;"
-                         "PRAGMA foreign_keys=OFF;"
-
                          "ALTER TABLE threads ADD COLUMN notification INTEGER NOT NULL DEFAULT 1;"
                          "ALTER TABLE messages ADD COLUMN subject TEXT;"
 
@@ -1928,15 +1856,11 @@ chatty_history_migrate_db_to_v4 (ChattyHistory *self,
                          "DROP TABLE IF EXISTS image;"
                          "DROP TABLE IF EXISTS video;"
 
-                         "COMMIT;",
+                         "PRAGMA user_version = 4;",
                          NULL, NULL, &error);
 
-  if (status == SQLITE_OK || status == SQLITE_DONE) {
-    /* Update user_version pragma */
-    if (!chatty_history_update_version (self, task))
-      return FALSE;
+  if (status == SQLITE_OK || status == SQLITE_DONE)
     return TRUE;
-  }
 
   g_task_return_new_error (task,
                            G_IO_ERROR,
@@ -2028,18 +1952,22 @@ history_open_db (ChattyHistory *self,
   if (status == SQLITE_OK) {
     self->db = db;
 
+    sqlite3_exec (self->db, "PRAGMA foreign_keys = OFF;", NULL, NULL, NULL);
+    sqlite3_exec (self->db, "BEGIN TRANSACTION;", NULL, NULL, NULL);
     if (db_exists) {
-      if (!chatty_history_migrate (self, task))
+      if (!chatty_history_migrate (self, task)) {
+        sqlite3_exec (self->db, "END TRANSACTION;", NULL, NULL, NULL);
         return;
+      }
     } else {
-      if (!chatty_history_create_schema (self, task))
+      if (!chatty_history_create_schema (self, task)) {
+        sqlite3_exec (self->db, "END TRANSACTION;", NULL, NULL, NULL);
         return;
-
-      if (!chatty_history_update_version (self, task))
-        return;
+      }
     }
 
     sqlite3_exec (self->db, "PRAGMA foreign_keys = ON;", NULL, NULL, NULL);
+    sqlite3_exec (self->db, "END TRANSACTION;", NULL, NULL, NULL);
     g_task_return_boolean (task, TRUE);
   } else {
     g_task_return_boolean (task, FALSE);
@@ -2565,9 +2493,12 @@ history_add_message (ChattyHistory *self,
   if ((!who || !*who) && direction == CHATTY_DIRECTION_IN && chatty_chat_is_im (chat))
     who = chatty_chat_get_chat_name (chat);
 
+  sqlite3_exec (self->db, "BEGIN TRANSACTION;", NULL, NULL, NULL);
   thread_id = insert_or_ignore_thread (self, chat, task);
-  if (!thread_id)
+  if (!thread_id) {
+    sqlite3_exec (self->db, "END TRANSACTION;", NULL, NULL, NULL);
     return;
+  }
 
   sender_id = insert_or_ignore_user (self, chatty_item_get_protocols (CHATTY_ITEM (chat)), who, alias, task);
 
@@ -2576,6 +2507,7 @@ history_add_message (ChattyHistory *self,
     int message_id = 0;
 
     if (!msg) {
+      sqlite3_exec (self->db, "END TRANSACTION;", NULL, NULL, NULL);
       g_task_return_boolean (task, TRUE);
       return;
     }
@@ -2605,6 +2537,7 @@ history_add_message (ChattyHistory *self,
 
     status = sqlite3_step (stmt);
     sqlite3_finalize (stmt);
+    sqlite3_exec (self->db, "END TRANSACTION;", NULL, NULL, NULL);
 
     if (status == SQLITE_DONE)
       g_task_return_boolean (task, TRUE);
@@ -2667,6 +2600,7 @@ history_add_message (ChattyHistory *self,
   if (status == SQLITE_ROW)
     history_add_files (self, message, sqlite3_column_int (stmt, 0));
   sqlite3_finalize (stmt);
+  sqlite3_exec (self->db, "END TRANSACTION;", NULL, NULL, NULL);
 
   if (status == SQLITE_DONE || status == SQLITE_ROW)
     g_task_return_boolean (task, TRUE);
@@ -2750,7 +2684,6 @@ history_get_chats (ChattyHistory *self,
   ChattyAccount *account;
   sqlite3_stmt *stmt;
   const char *user_id;
-  int protocol, encrypted;
 
   g_assert (CHATTY_IS_HISTORY (self));
   g_assert (G_IS_TASK (task));
@@ -2764,15 +2697,10 @@ history_get_chats (ChattyHistory *self,
   }
 
   account = g_object_get_data (G_OBJECT (task), "account");
-  /* We currently handle only matrix accounts */
-  g_assert (CHATTY_IS_MA_ACCOUNT (account) || CHATTY_IS_MM_ACCOUNT (account));
+  /* We currently handle only MM accounts */
+  g_assert (CHATTY_IS_MM_ACCOUNT (account));
 
   user_id = chatty_item_get_username (CHATTY_ITEM (account));
-
-  if (CHATTY_IS_MA_ACCOUNT (account))
-    protocol = PROTOCOL_MATRIX;
-  else
-    protocol = PROTOCOL_MMS_SMS;
 
   sqlite3_prepare_v2 (self->db,
                       /*           0           1             2              3                4  */
@@ -2786,7 +2714,7 @@ history_get_chats (ChattyHistory *self,
                       "WHERE visibility!=" STRING(THREAD_VISIBILITY_HIDDEN),
                       -1, &stmt, NULL);
   history_bind_text (stmt, 1, user_id, "binding when getting threads");
-  history_bind_int (stmt, 2, protocol, "binding when getting threads");
+  history_bind_int (stmt, 2, PROTOCOL_MMS_SMS, "binding when getting threads");
 
   while (sqlite3_step (stmt) == SQLITE_ROW) {
     g_autoptr(GPtrArray) messages = NULL;
@@ -2794,6 +2722,7 @@ history_get_chats (ChattyHistory *self,
     const char *name, *alias;
     ChattyChat *chat;
     int thread_id, visibility;
+    int unread_count;
 
     if (!threads)
       threads = g_ptr_array_new_full (30, g_object_unref);
@@ -2801,7 +2730,6 @@ history_get_chats (ChattyHistory *self,
     thread_id = sqlite3_column_int (stmt, 0);
     name = (const char *)sqlite3_column_text (stmt, 1);
     alias = (const char *)sqlite3_column_text (stmt, 2);
-    encrypted = sqlite3_column_int (stmt, 3);
     visibility = sqlite3_column_int (stmt, 7);
 
     if (sqlite3_column_text (stmt, 5)) {
@@ -2810,9 +2738,7 @@ history_get_chats (ChattyHistory *self,
       file->path = g_strdup ((const char *)sqlite3_column_text (stmt, 6));
     }
 
-    if (CHATTY_IS_MA_ACCOUNT (account)) {
-      chat = (gpointer)chatty_ma_chat_new (name, alias, file, encrypted);
-    } else if (sqlite3_column_int (stmt, 4) == THREAD_GROUP_CHAT) {
+    if (sqlite3_column_int (stmt, 4) == THREAD_GROUP_CHAT) {
       chat = (gpointer)chatty_mm_chat_new (name, alias, CHATTY_PROTOCOL_MMS, FALSE,
                                            history_value_to_visibility (visibility));
     } else {
@@ -2822,22 +2748,14 @@ history_get_chats (ChattyHistory *self,
 
     messages = get_messages_before_time (self, chat, NULL, thread_id, INT_MAX, 1);
 
-    /* For now, we handle unread count only for MM accounts */
-    if (CHATTY_IS_MM_ACCOUNT (account)) {
-      int unread_count;
+    unread_count = get_unread_message_count (self, thread_id);
+    chatty_chat_set_unread_count (chat, unread_count);
 
-      unread_count = get_unread_message_count (self, thread_id);
-      chatty_chat_set_unread_count (chat, unread_count);
-    }
-
-    if (CHATTY_IS_MA_ACCOUNT (account))
-      chatty_ma_chat_add_messages (CHATTY_MA_CHAT (chat), messages);
-    else
-      chatty_mm_chat_prepend_messages (CHATTY_MM_CHAT (chat), messages);
+    chatty_mm_chat_prepend_messages (CHATTY_MM_CHAT (chat), messages);
 
     g_ptr_array_insert (threads, -1, chat);
 
-    if (protocol == PROTOCOL_MMS_SMS) {
+    {
       g_autoptr(GPtrArray) members = NULL;
 
       members = get_sms_thread_members (self, thread_id);
@@ -2909,10 +2827,13 @@ history_update_user (ChattyHistory *self,
     return;
   }
 
+  sqlite3_exec (self->db, "BEGIN TRANSACTION;", NULL, NULL, NULL);
   id = insert_or_ignore_user (self, protocol, user_name, name, task);
 
-  if (!id)
+  if (!id) {
+    sqlite3_exec (self->db, "END TRANSACTION;", NULL, NULL, NULL);
     return;
+  }
 
   file_info = chatty_item_get_avatar_file (CHATTY_ITEM (account));
   file_id = add_file_info (self, file_info);
@@ -2926,6 +2847,8 @@ history_update_user (ChattyHistory *self,
 
   sqlite3_step (stmt);
   sqlite3_finalize (stmt);
+  sqlite3_exec (self->db, "END TRANSACTION;", NULL, NULL, NULL);
+
   g_task_return_boolean (task, TRUE);
 }
 
@@ -3017,8 +2940,8 @@ history_load_account (ChattyHistory *self,
 
   if (!user_name || !*user_name) {
     g_task_return_new_error (task,
-                             G_IO_ERROR, G_IO_ERROR_FAILED,
-                             "Error: username name is empty");
+                             G_IO_ERROR, G_IO_ERROR_NOT_FOUND,
+                             "Username name is empty");
     return;
   }
 
@@ -3075,10 +2998,14 @@ history_set_last_read_msg (ChattyHistory *self,
 
   if (message)
     uid = chatty_message_get_uid (message);
+
+  sqlite3_exec (self->db, "BEGIN TRANSACTION;", NULL, NULL, NULL);
   thread_id = insert_or_ignore_thread (self, chat, task);
 
-  if (!thread_id)
+  if (!thread_id) {
+    sqlite3_exec (self->db, "END TRANSACTION;", NULL, NULL, NULL);
     return;
+  }
 
   sqlite3_prepare_v2 (self->db,
                       "SELECT messages.id FROM messages "
@@ -3098,6 +3025,7 @@ history_set_last_read_msg (ChattyHistory *self,
   history_bind_int (stmt, 2, thread_id, "binding when setting last read message");
   sqlite3_step (stmt);
   sqlite3_finalize (stmt);
+  sqlite3_exec (self->db, "END TRANSACTION;", NULL, NULL, NULL);
 
   g_task_return_boolean (task, TRUE);
 }
@@ -3635,10 +3563,9 @@ chatty_history_get_chats_async (ChattyHistory       *self,
   g_return_if_fail (CHATTY_IS_HISTORY (self));
   g_return_if_fail (CHATTY_IS_ACCOUNT (account));
 
-  /* Currently we handle only matrix and SMS accounts */
+  /* Currently we handle only MM accounts */
   protocol = chatty_account_get_protocol_name (account);
-  if (!g_str_equal (protocol, "Matrix") &&
-      !g_str_equal (protocol, "SMS"))
+  if (!g_str_equal (protocol, "SMS"))
     g_return_if_reached ();
 
   task = g_task_new (self, NULL, callback, user_data);

@@ -1,3 +1,6 @@
 [submodule "subprojects/libgd"]
 	path = subprojects/libgd
 	url = https://gitlab.gnome.org/GNOME/libgd.git
+[submodule "subprojects/libcmatrix"]
+	path = subprojects/libcmatrix
+	url = https://source.puri.sm/Librem5/libcmatrix.git

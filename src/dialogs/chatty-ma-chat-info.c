@@ -127,6 +127,8 @@ chatty_ma_chat_info_set_item (ChattyChatInfo *info,
   g_signal_connect_swapped (self->chat, "notify::encrypt",
                             G_CALLBACK (ma_chat_encrypt_changed_cb),
                             self);
+  gtk_widget_set_sensitive (self->encryption_switch,
+                            chatty_ma_chat_can_set_encryption (CHATTY_MA_CHAT (self->chat)));
   ma_chat_encrypt_changed_cb (self);
 }
 

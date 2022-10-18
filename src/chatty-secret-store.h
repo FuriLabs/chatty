@@ -21,16 +21,6 @@
 
 G_BEGIN_DECLS
 
-void       chatty_secret_store_save_async  (ChattyAccount       *account,
-                                            char                *access_token,
-                                            const char          *device_id,
-                                            char                *pickle_key,
-                                            GCancellable        *cancellable,
-                                            GAsyncReadyCallback  callback,
-                                            gpointer             user_data);
-gboolean   chatty_secret_store_save_finish (GAsyncResult        *result,
-                                            GError             **error);
-
 void       chatty_secret_load_async        (GCancellable        *cancellable,
                                             GAsyncReadyCallback  callback,
                                             gpointer             user_data);

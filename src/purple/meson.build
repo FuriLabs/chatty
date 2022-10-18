@@ -4,7 +4,7 @@ if (not purple_dep.found())
   subdir_done()
 endif
 
-purple_plugdir = purple_dep.get_pkgconfig_variable('plugindir')
+purple_plugdir = purple_dep.get_variable(pkgconfig: 'plugindir')
 jabber = meson.get_compiler('c').find_library('jabber', dirs: purple_plugdir)
 jabber_incdir = include_directories('xeps/prpl/jabber')
 src_inc += jabber_incdir
