@@ -11,3 +11,4 @@ StartupNotify=true
 MimeType=x-scheme-handler/sms
 # Translators: Do NOT translate or transliterate this text (these are enum types)!
 X-Purism-FormFactor=Workstation;Mobile;
+X-Phosh-UsesFeedback=true

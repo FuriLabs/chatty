@@ -178,9 +178,11 @@ create_sorted_numbers (const char *numbers,
   /* Make the array bigger so that we can assure it's NULL terminated */
   g_ptr_array_set_size (sorted, sorted->len + 1);
 
-  for (guint i = 0; i < sorted->len - 1; i++) {
+  for (guint i = 0; i < sorted->len - 1;) {
     if (g_strcmp0 (sorted->pdata[i], sorted->pdata[i + 1]) == 0)
       g_ptr_array_remove_index (sorted, i);
+    else
+      i++;
   }
 
   return g_strjoinv (",", (char **)sorted->pdata);

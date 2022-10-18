@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="ChattyMainView" parent="GtkBox">
+
+    <child>
+      <object class="GtkStack" id="main_stack">
+        <property name="visible">1</property>
+
+        <child>
+          <object class="ChattyChatView" id="content_view">
+            <property name="visible">1</property>
+          </object>
+        </child>
+
+        <child>
+          <object class="ChattyInviteView" id="invite_view">
+            <property name="visible">1</property>
+          </object>
+        </child>
+
+        <child>
+          <object class="ChattyVerificationView" id="verification_view">
+            <property name="visible">1</property>
+          </object>
+        </child>
+
+        <child>
+          <object class="GtkBox" id="empty_view">
+            <property name="visible">1</property>
+          </object>
+        </child>
+
+      </object>
+    </child>
+
+  </template>
+</interface>

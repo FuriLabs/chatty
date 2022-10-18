@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty master\n"
 "Report-Msgid-Bugs-To: https://source.puri.sm/Librem5/chatty/issues\n"
-"POT-Creation-Date: 2022-04-26 15:24+0000\n"
-"PO-Revision-Date: 2022-04-26 19:31+0200\n"
+"POT-Creation-Date: 2022-09-08 03:24+0000\n"
+"PO-Revision-Date: 2022-09-07 17:59+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -17,17 +17,13 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.1.1\n"
 
 #: data/sm.puri.Chatty.desktop.in:3 data/sm.puri.Chatty.metainfo.xml.in:6
-#: src/chatty-application.c:333 src/chatty-window.c:330
+#: src/chatty-application.c:338 src/chatty-window.c:339
 #: src/ui/chatty-window.ui:265
 msgid "Chats"
 msgstr "Chattar"
-
-#: data/sm.puri.Chatty.desktop.in:5
-msgid "sm.puri.Chatty"
-msgstr "sm.puri.Chatty"
 
 #: data/sm.puri.Chatty.desktop.in:6
 msgid "SMS and XMPP chat application"
@@ -157,27 +153,27 @@ msgstr "Chattar är ett meddelandeprogram med stöd för XMPP och SMS."
 msgid "Chats message window"
 msgstr "Meddelandefönster för Chattar"
 
-#: src/chatty-application.c:76
+#: src/chatty-application.c:78
 msgid "Show release version"
 msgstr "Visa utgåvans version"
 
-#: src/chatty-application.c:77
+#: src/chatty-application.c:79
 msgid "Start in daemon mode"
 msgstr "Starta i demonläge"
 
-#: src/chatty-application.c:78
+#: src/chatty-application.c:80
 msgid "Disable all accounts"
 msgstr "Inaktivera alla konton"
 
-#: src/chatty-application.c:79
+#: src/chatty-application.c:81
 msgid "Enable libpurple debug messages"
 msgstr "Aktivera libpurple-felsökningsmeddelanden"
 
-#: src/chatty-application.c:81
+#: src/chatty-application.c:83
 msgid "Enable verbose libpurple debug messages"
 msgstr "Aktivera utförliga libpurple-felsökningsmeddelanden"
 
-#: src/chatty-application.c:142
+#: src/chatty-application.c:144
 #, c-format
 msgid ""
 "There was an error displaying help:\n"
@@ -234,12 +230,12 @@ msgstr "Dina meddelanden krypteras"
 msgid "Your messages are not encrypted"
 msgstr "Dina meddelanden krypteras inte"
 
-#: src/chatty-chat-view.c:414
+#: src/chatty-chat-view.c:420
 msgid "Select File..."
 msgstr "Välj fil…"
 
-#: src/chatty-chat-view.c:417 src/purple/chatty-purple-request.c:175
-#: src/chatty-window.c:413 src/dialogs/chatty-pp-chat-info.c:90
+#: src/chatty-chat-view.c:423 src/purple/chatty-purple-request.c:175
+#: src/chatty-window.c:422 src/dialogs/chatty-pp-chat-info.c:90
 #: src/dialogs/chatty-ma-account-details.c:119
 #: src/dialogs/chatty-pp-account-details.c:91
 #: src/ui/chatty-dialog-join-muc.ui:21 src/ui/chatty-info-dialog.ui:44
@@ -247,7 +243,7 @@ msgstr "Välj fil…"
 msgid "Cancel"
 msgstr "Avbryt"
 
-#: src/chatty-chat-view.c:418 src/purple/chatty-purple-request.c:177
+#: src/chatty-chat-view.c:424 src/purple/chatty-purple-request.c:177
 #: src/dialogs/chatty-pp-chat-info.c:89
 #: src/dialogs/chatty-ma-account-details.c:118
 #: src/dialogs/chatty-pp-account-details.c:90
@@ -305,25 +301,25 @@ msgstr[1] "%lu minuter sedan"
 
 #: src/chatty-clock.c:112
 msgid "Today %H∶%M"
-msgstr "Idag %H∶%M"
+msgstr "I dag %H∶%M"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “Today 06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
 #: src/chatty-clock.c:120
 msgid "Today %I∶%M %p"
-msgstr "Idag %I∶%M %p"
+msgstr "I dag %I∶%M %p"
 
 #: src/chatty-clock.c:132
 msgid "Yesterday %H∶%M"
-msgstr "Igår %H∶%M"
+msgstr "I går %H∶%M"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “Yesterday 06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
 #: src/chatty-clock.c:137
 msgid "Yesterday %I∶%M %p"
-msgstr "Igår %I∶%M %p"
+msgstr "I går %I∶%M %p"
 
 #. TRANSLATORS: Timestamp from more than 7 days ago or future date
 #. * (eg: when the system time is wrong), e.g. “2022-01-01”.
@@ -351,7 +347,7 @@ msgstr "Moderator"
 msgid "Member"
 msgstr "Medlem"
 
-#: src/chatty-manager.c:727
+#: src/chatty-manager.c:724
 #, c-format
 msgid "“%s” is not a valid URI"
 msgstr "”%s” är inte en giltig URI"
@@ -359,6 +355,12 @@ msgstr "”%s” är inte en giltig URI"
 #: src/chatty-message-row.c:82
 msgid "Copy"
 msgstr "Kopiera"
+
+#: src/chatty-message.c:233
+msgid "Got an encrypted message, but couldn't decrypt due to missing keys"
+msgstr ""
+"Fick ett krypterat meddelande, men kunde inte dekryptera på grund av saknade "
+"nycklar"
 
 #: src/chatty-notification.c:181
 msgid "Open Message"
@@ -373,7 +375,7 @@ msgstr "Nytt meddelande från %s"
 msgid "Message Received"
 msgstr "Meddelande togs emot"
 
-#: src/purple/chatty-purple-notify.c:44 src/matrix/matrix-utils.c:505
+#: src/purple/chatty-purple-notify.c:44
 msgid "Close"
 msgstr "Stäng"
 
@@ -403,11 +405,11 @@ msgstr "Användaren %s har lagt till %s till kontakterna"
 msgid "Authorize %s?"
 msgstr "Auktorisera %s?"
 
-#: src/purple/chatty-purple.c:264 src/matrix/matrix-utils.c:509
+#: src/purple/chatty-purple.c:264
 msgid "Reject"
 msgstr "Avvisa"
 
-#: src/purple/chatty-purple.c:265 src/matrix/matrix-utils.c:510
+#: src/purple/chatty-purple.c:265
 msgid "Accept"
 msgstr "Acceptera"
 
@@ -416,76 +418,71 @@ msgstr "Acceptera"
 msgid "Add %s to contact list"
 msgstr "Lägg till %s till kontaktlista"
 
-#: src/purple/chatty-purple.c:587
+#: src/purple/chatty-purple.c:586
 msgid "Login failed"
 msgstr "Inloggning misslyckades"
 
-#: src/purple/chatty-purple.c:592
+#: src/purple/chatty-purple.c:591
 msgid "Please check ID and password"
 msgstr "Kontrollera ID och lösenord"
 
-#: src/chatty-secret-store.c:98
-#, c-format
-msgid "Chatty password for \"%s\""
-msgstr "Chatty-lösenord för ”%s”"
-
-#: src/chatty-window.c:399
+#: src/chatty-window.c:408
 #, c-format
 msgid "Delete chat with “%s”"
 msgstr "Ta bort chatt med ”%s”"
 
-#: src/chatty-window.c:400
+#: src/chatty-window.c:409
 msgid "This deletes the conversation history"
 msgstr "Det här tar bort meddelandehistoriken"
 
-#: src/chatty-window.c:402
+#: src/chatty-window.c:411
 #, c-format
 msgid "Disconnect group chat “%s”"
 msgstr "Lämna gruppchatten ”%s”"
 
-#: src/chatty-window.c:403
+#: src/chatty-window.c:412
 msgid "This removes chat from chats list"
 msgstr "Detta tar bort chatten från chattlistan"
 
-#: src/chatty-window.c:415
+#: src/chatty-window.c:424
 msgid "Delete"
 msgstr "Ta bort"
 
-#: src/chatty-window.c:493
+#: src/chatty-window.c:502
 msgid "You shall no longer be notified for new messages, continue?"
 msgstr "Du kommer inte längre att meddelas om nya meddelanden, fortsätt?"
 
-#: src/chatty-window.c:568
+#: src/chatty-window.c:577
 msgid "Archived"
 msgstr "Arkiverade"
 
-#: src/chatty-window.c:621
+#: src/chatty-window.c:630
 msgid "An SMS and XMPP messaging client"
 msgstr "En SMS- och XMPP-meddelandeklient"
 
-#: src/chatty-window.c:628
+#: src/chatty-window.c:637
 msgid "translator-credits"
 msgstr ""
 "Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Luna Jernberg <droidbittin@gmail.com>"
 
-#: src/chatty-window.c:978
+#: src/chatty-window.c:989
 msgid "Any Protocol"
 msgstr "Alla protokoll"
 
-#: src/chatty-window.c:979 src/ui/chatty-settings-dialog.ui:627
+#: src/chatty-window.c:990 src/ui/chatty-settings-dialog.ui:627
 msgid "Matrix"
 msgstr "Matrix"
 
-#: src/chatty-window.c:980
+#: src/chatty-window.c:991
 msgid "SMS/MMS"
 msgstr "SMS/MMS"
 
-#: src/chatty-window.c:983 src/ui/chatty-settings-dialog.ui:615
+#: src/chatty-window.c:994 src/ui/chatty-settings-dialog.ui:615
 msgid "XMPP"
 msgstr "XMPP"
 
-#: src/chatty-window.c:986 src/ui/chatty-settings-dialog.ui:641
+#: src/chatty-window.c:997 src/ui/chatty-settings-dialog.ui:641
 msgid "Telegram"
 msgstr "Telegram"
 
@@ -585,115 +582,93 @@ msgstr "ansluter…"
 msgid "disconnected"
 msgstr "frånkopplad"
 
-#: src/dialogs/chatty-settings-dialog.c:255
-#: src/dialogs/chatty-settings-dialog.c:405
+#: src/dialogs/chatty-settings-dialog.c:251
+#, c-format
+msgid "Failed to verify server: %s"
+msgstr "Misslyckades med att verifiera server: %s"
+
+#: src/dialogs/chatty-settings-dialog.c:253
 msgid "Failed to verify server"
 msgstr "Misslyckades med att verifiera server"
 
-#: src/dialogs/chatty-settings-dialog.c:306
-#: src/dialogs/chatty-settings-dialog.c:385
+#: src/dialogs/chatty-settings-dialog.c:259
 msgid "Couldn't get Home server address"
 msgstr "Kunde inte erhålla hemserverns adress"
 
-#: src/dialogs/chatty-settings-dialog.c:510
+#: src/dialogs/chatty-settings-dialog.c:428
 #: src/ui/chatty-ma-account-details.ui:182
 #: src/ui/chatty-pp-account-details.ui:199
 msgid "Delete Account"
 msgstr "Ta bort konto"
 
-#: src/dialogs/chatty-settings-dialog.c:513
+#: src/dialogs/chatty-settings-dialog.c:431
 #, c-format
 msgid "Delete account %s?"
 msgstr "Ta bort kontot %s?"
 
-#: src/dialogs/chatty-settings-dialog.c:654
+#: src/dialogs/chatty-settings-dialog.c:582
 msgid "Restart chatty to disable purple"
 msgstr "Starta om chatty för att inaktivera purple"
 
-#: src/dialogs/chatty-settings-dialog.c:656
+#: src/dialogs/chatty-settings-dialog.c:584
 #: src/ui/chatty-settings-dialog.ui:512
 msgid "Enable purple plugin"
 msgstr "Aktivera purple-insticksmodul"
 
-#: src/dialogs/chatty-settings-dialog.c:670
+#: src/dialogs/chatty-settings-dialog.c:598
 #: src/ui/chatty-settings-dialog.ui:279
 msgid "SMS and MMS Settings"
 msgstr "SMS och MMS-inställningar"
 
-#: src/dialogs/chatty-settings-dialog.c:672
+#: src/dialogs/chatty-settings-dialog.c:600
 #: src/ui/chatty-settings-dialog.ui:298
 msgid "Purple Settings"
 msgstr "Purple-inställningar"
 
-#: src/dialogs/chatty-settings-dialog.c:674
+#: src/dialogs/chatty-settings-dialog.c:602
 msgid "New Account"
 msgstr "Nytt konto"
 
-#: src/dialogs/chatty-settings-dialog.c:676
+#: src/dialogs/chatty-settings-dialog.c:604
 #: src/ui/chatty-settings-dialog.ui:364
 msgid "Blocked Contacts"
 msgstr "Blockerade kontakter"
 
-#: src/dialogs/chatty-settings-dialog.c:678 src/ui/chatty-settings-dialog.ui:7
+#: src/dialogs/chatty-settings-dialog.c:606 src/ui/chatty-settings-dialog.ui:7
 #: src/ui/chatty-window.ui:30
 msgid "Preferences"
 msgstr "Inställningar"
 
-#: src/dialogs/chatty-settings-dialog.c:707
+#: src/dialogs/chatty-settings-dialog.c:634
 msgid "Select Protocol"
 msgstr "Välj protokoll"
 
 #. TRANSLATORS: Only translate 'or'
-#: src/dialogs/chatty-settings-dialog.c:948
+#: src/dialogs/chatty-settings-dialog.c:878
 msgid "@user:matrix.org or user@example.com"
 msgstr "@user:matrix.org eller user@example.com"
 
-#: src/dialogs/chatty-settings-dialog.c:1057
+#: src/dialogs/chatty-settings-dialog.c:987
 msgid "Unblock contact"
 msgstr "Avblockera kontakt"
 
-#: src/matrix/chatty-ma-account.c:296
+#: src/matrix/chatty-ma-account.c:105
 msgid "Incorrect password"
 msgstr "Felaktigt lösenord"
 
-#: src/matrix/chatty-ma-account.c:299
+#: src/matrix/chatty-ma-account.c:108
 msgid "_OK"
 msgstr "_OK"
 
-#: src/matrix/chatty-ma-account.c:300 src/ui/chatty-dialog-new-chat.ui:74
+#: src/matrix/chatty-ma-account.c:109 src/ui/chatty-dialog-new-chat.ui:74
 #: src/ui/chatty-settings-dialog.ui:47 src/ui/chatty-settings-dialog.ui:108
 msgid "_Cancel"
 msgstr "A_vbryt"
 
-#: src/matrix/chatty-ma-account.c:306
+#: src/matrix/chatty-ma-account.c:115
 #, c-format
-msgid "Please enter password for “%s”"
-msgstr "Ange lösenordet för ”%s”"
-
-#: src/matrix/matrix-utils.c:474
-#, c-format
-msgid "The certificate for ‘%s’ has unknown CA"
-msgstr "Certifikatet för ”%s” har okänd CA"
-
-#: src/matrix/matrix-utils.c:476
-#, c-format
-msgid "The certificate for ‘%s’ is self-signed"
-msgstr "Certifikatet för ”%s” är självsignerat"
-
-#: src/matrix/matrix-utils.c:480
-#, c-format
-msgid "The certificate for ‘%s’ has expired"
-msgstr "Certifikatet för ”%s” har gått ut"
-
-#: src/matrix/matrix-utils.c:484
-#, c-format
-msgid "The certificate for ‘%s’ has been revoked"
-msgstr "Certifikatet för ”%s” har återkallats"
-
-#: src/matrix/matrix-utils.c:493
-#, c-format
-msgid "Error validating certificate for ‘%s’"
-msgstr "Fel vid validering av certifikat för ”%s”"
+msgid "Please enter password for “%s”, homeserver: %s"
+msgstr "Ange lösenordet för ”%s”, hemserver: %s"
 
 #. TRANSLATORS: Timestamp for minute accuracy, e.g. “2020-08-11 15:27”.
 #. See https://developer.gnome.org/glib/stable/glib-GDateTime.html#g-date-time-format
@@ -1070,3 +1045,27 @@ msgstr "Arbete: "
 #: src/users/chatty-contact.c:329
 msgid "Other: "
 msgstr "Annat: "
+
+#, c-format
+#~ msgid "Chatty password for \"%s\""
+#~ msgstr "Chatty-lösenord för ”%s”"
+
+#, c-format
+#~ msgid "The certificate for ‘%s’ has unknown CA"
+#~ msgstr "Certifikatet för ”%s” har okänd CA"
+
+#, c-format
+#~ msgid "The certificate for ‘%s’ is self-signed"
+#~ msgstr "Certifikatet för ”%s” är självsignerat"
+
+#, c-format
+#~ msgid "The certificate for ‘%s’ has expired"
+#~ msgstr "Certifikatet för ”%s” har gått ut"
+
+#, c-format
+#~ msgid "The certificate for ‘%s’ has been revoked"
+#~ msgstr "Certifikatet för ”%s” har återkallats"
+
+#, c-format
+#~ msgid "Error validating certificate for ‘%s’"
+#~ msgstr "Fel vid validering av certifikat för ”%s”"

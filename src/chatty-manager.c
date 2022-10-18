@@ -18,6 +18,8 @@
 #define LIBFEEDBACK_USE_UNSTABLE_API
 #include <libfeedback.h>
 #include <glib/gi18n.h>
+#define CMATRIX_USE_EXPERIMENTAL_API
+#include "cmatrix.h"
 #include "contrib/gtk.h"
 
 #include "chatty-settings.h"
@@ -107,10 +109,23 @@ manager_sort_chat_item (ChattyChat *a,
                         ChattyChat *b,
                         gpointer    user_data)
 {
+  ChattyChatState a_state, b_state;
   time_t a_time, b_time;
 
   g_assert (CHATTY_IS_CHAT (a));
   g_assert (CHATTY_IS_CHAT (b));
+
+  a_state = chatty_chat_get_chat_state (a);
+  b_state = chatty_chat_get_chat_state (b);
+
+  if (a_state == CHATTY_CHAT_VERIFICATION ||
+      b_state == CHATTY_CHAT_VERIFICATION)
+    return a_state == CHATTY_CHAT_VERIFICATION ? -1 : 1;
+
+  if (a_state != b_state &&
+      (a_state == CHATTY_CHAT_INVITED ||
+       b_state == CHATTY_CHAT_INVITED))
+    return a_state == CHATTY_CHAT_INVITED ? -1 : 1;
 
   a_time = chatty_chat_get_last_msg_time (a);
   b_time = chatty_chat_get_last_msg_time (b);
@@ -418,8 +433,7 @@ chatty_manager_load (ChattyManager *self)
   chatty_mm_account_load_async (self->mm_account, NULL, NULL);
 
   /* Matrix Setup */
-  self->matrix = chatty_matrix_new (chatty_manager_get_history (self),
-                                    self->disable_auto_login);
+  self->matrix = chatty_matrix_new (self->disable_auto_login);
   manager_add_to_flat_model (self->accounts,
                              chatty_matrix_get_account_list (self->matrix));
   manager_add_to_flat_model (self->chat_list,
@@ -661,8 +675,7 @@ chatty_manager_find_account_with_name (ChattyManager  *self,
   g_return_val_if_fail (CHATTY_IS_MANAGER (self), NULL);
   g_return_val_if_fail (account_id && *account_id, NULL);
 
-  if (protocol & CHATTY_PROTOCOL_MATRIX &&
-      chatty_settings_get_experimental_features (chatty_settings_get_default ()))
+  if (protocol & CHATTY_PROTOCOL_MATRIX)
     return chatty_matrix_find_account_with_name (self->matrix, account_id);
 
 #ifdef PURPLE_ENABLED
@@ -685,15 +698,12 @@ chatty_manager_find_chat_with_name (ChattyManager  *self,
     return chatty_mm_account_find_chat (self->mm_account, chat_id);
 
 #ifdef PURPLE_ENABLED
-  if (protocol & (CHATTY_PROTOCOL_XMPP | CHATTY_PROTOCOL_TELEGRAM) ||
-      (!chatty_settings_get_experimental_features (chatty_settings_get_default ()) &&
-       protocol & CHATTY_PROTOCOL_MATRIX))
+  if (protocol & (CHATTY_PROTOCOL_XMPP | CHATTY_PROTOCOL_TELEGRAM))
     return chatty_purple_find_chat_with_name (chatty_purple_get_default (),
                                               protocol, account_id, chat_id);
 #endif
 
-  if (chatty_settings_get_experimental_features (chatty_settings_get_default ())
-      && protocol == CHATTY_PROTOCOL_MATRIX)
+  if (protocol == CHATTY_PROTOCOL_MATRIX)
     return chatty_matrix_find_chat_with_name (self->matrix, protocol, account_id, chat_id);
 
   return NULL;
@@ -748,4 +758,27 @@ chatty_manager_get_history (ChattyManager *self)
     self->history = chatty_history_new ();
 
   return self->history;
+}
+
+gpointer
+chatty_manager_matrix_client_new (ChattyManager *self)
+{
+  g_return_val_if_fail (CHATTY_IS_MANAGER (self), NULL);
+
+  if (!self->matrix)
+    return NULL;
+
+  return chatty_matrix_client_new (self->matrix);
+}
+
+gboolean
+chatty_manager_has_matrix_with_id (ChattyManager *self,
+                                   const char    *user_id)
+{
+  g_return_val_if_fail (CHATTY_IS_MANAGER (self), FALSE);
+
+  if (!self->matrix)
+    return FALSE;
+
+  return chatty_matrix_has_user_id (self->matrix, user_id);
 }

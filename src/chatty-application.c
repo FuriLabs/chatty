@@ -28,6 +28,8 @@
 # include "version.h"
 #endif
 
+#define CMATRIX_USE_EXPERIMENTAL_API
+#include <cmatrix.h>
 #include <glib/gi18n.h>
 #include <handy.h>
 
@@ -117,6 +119,60 @@ application_open_uri (ChattyApplication *self)
   g_clear_pointer (&self->uri, g_free);
 
   return G_SOURCE_REMOVE;
+}
+
+static void
+chatty_application_show_about (GSimpleAction *action,
+                               GVariant      *parameter,
+                               gpointer       user_data)
+{
+  ChattyApplication *self = user_data;
+
+  static const gchar *authors[] = {
+    "Adrien Plazas <kekun.plazas@laposte.net>",
+    "Andrea Schäfer <mosibasu@me.com>",
+    "Benedikt Wildenhain <benedikt.wildenhain@hs-bochum.de>",
+    "Chris Talbot (kop316) <chris@talbothome.com>",
+    "Guido Günther <agx@sigxcpu.org>",
+    "Julian Sparber <jsparber@gnome.org>",
+    "Leland Carlye <leland.carlye@protonmail.com>",
+    "Mohammed Sadiq https://www.sadiqpk.org/",
+    "Richard Bayerle (OMEMO Plugin) https://github.com/gkdr/lurch",
+    "Ruslan Marchenko <me@ruff.mobi>",
+    "and more...",
+    NULL
+  };
+
+  static const gchar *artists[] = {
+    "Tobias Bernard <tbernard@gnome.org>",
+    NULL
+  };
+
+  static const gchar *documenters[] = {
+    "Heather Ellsworth <heather.ellsworth@puri.sm>",
+    NULL
+  };
+
+  if (!self->main_window)
+    return;
+
+  /*
+   * “program-name” defaults to g_get_application_name().
+   * Don’t set it explicitly so that there is one less
+   * string to translate.
+   */
+  gtk_show_about_dialog (gtk_application_get_active_window (user_data),
+                         "logo-icon-name", CHATTY_APP_ID,
+                         "version", GIT_VERSION,
+                         "comments", _("An SMS and XMPP messaging client"),
+                         "website", "https://source.puri.sm/Librem5/chatty",
+                         "copyright", "© 2018–2022 Purism SPC",
+                         "license-type", GTK_LICENSE_GPL_3_0,
+                         "authors", authors,
+                         "artists", artists,
+                         "documenters", documenters,
+                         "translator-credits", _("translator-credits"),
+                         NULL);
 }
 
 static void
@@ -273,18 +329,6 @@ chatty_application_command_line (GApplication            *application,
 
   options = g_application_command_line_get_options_dict (command_line);
 
-  self->show_window = TRUE;
-  if (g_variant_dict_contains (options, "daemon")) {
-    /* Hold application only the first time daemon mode is set */
-    if (!self->daemon)
-      g_application_hold (application);
-
-    self->show_window = FALSE;
-    self->daemon = TRUE;
-
-    g_debug ("Enable daemon mode");
-  }
-
   if (g_variant_dict_contains (options, "nologin"))
     chatty_manager_disable_auto_login (chatty_manager_get_default (), TRUE);
 
@@ -292,6 +336,20 @@ chatty_application_command_line (GApplication            *application,
   if (g_variant_dict_contains (options, "debug"))
     chatty_purple_enable_debug ();
 #endif
+
+  self->show_window = TRUE;
+  if (g_variant_dict_contains (options, "daemon")) {
+    /* Hold application only the first time daemon mode is set */
+    if (!self->daemon)
+      g_application_hold (application);
+
+    chatty_manager_load (self->manager);
+
+    self->show_window = FALSE;
+    self->daemon = TRUE;
+
+    g_debug ("Enable daemon mode");
+  }
 
   arguments = g_application_command_line_get_arguments (command_line, &argc);
 
@@ -308,9 +366,11 @@ chatty_application_command_line (GApplication            *application,
 }
 
 static const GActionEntry app_entries[] = {
+  { "about", chatty_application_show_about },
   { "help", chatty_application_show_help, },
   { "open-chat", chatty_application_open_chat, "(ssi)" },
-  { "show-window", chatty_application_show_window } };
+  { "show-window", chatty_application_show_window }
+};
 
 static void
 chatty_application_startup (GApplication *application)
@@ -329,6 +389,7 @@ chatty_application_startup (GApplication *application)
   g_info ("%s %s, git version: %s", PACKAGE_NAME, PACKAGE_VERSION, GIT_VERSION);
 
   hdy_init ();
+  cm_init (TRUE);
 
   g_set_application_name (_("Chats"));
 
@@ -347,7 +408,6 @@ chatty_application_startup (GApplication *application)
   g_signal_connect_object (self->manager, "open-chat",
                            G_CALLBACK (application_open_chat),
                            self, G_CONNECT_SWAPPED);
-  chatty_manager_load (self->manager);
 
   g_signal_connect_object (self, "window-removed",
                            G_CALLBACK (app_window_removed_cb),
@@ -373,6 +433,8 @@ chatty_application_activate (GApplication *application)
   ChattyApplication *self = (ChattyApplication *)application;
 
   g_assert (GTK_IS_APPLICATION (app));
+
+  chatty_manager_load (self->manager);
 
   if (!self->main_window && self->show_window) {
     g_set_weak_pointer (&self->main_window, chatty_window_new (app));

@@ -1,3 +1,128 @@
+chatty (0.7.0~rc0) byzantium; urgency=medium
+
+  [ Mohammed Sadiq ]
+  * tests: Use memory backend for gsettings
+  * matrix: Port to use libcmatrix
+  * mm-chat-info: Fix possible invalid free
+  * log: Sync with upstream
+  * application: Fix nologin commandline argument
+  * build: Bump meson version to 0.56
+  * build: Fix using deprecated meson options
+  * build: Improve meson build summary
+  * log: Fix a thinko
+  * build: Fix validating ui files
+  * po: Add Hebrew translation
+  * mm: Fix removing duplicate items from array
+  * log: Anonymize unicode strings properly
+  * message: Add support for CmEvent messages
+  * tests: Remove matrix-utils test
+  * matrix: Update libcmatrix and adapt to changes
+  * image-item: Don't update image on dispose
+  * tests: Create matrix account from cm_client
+  * matrix: Remove unused code
+  * ma-chat: Remove unused code
+  * secret-store: Remove unused code
+  * matrix-utils: Remove unused code
+  * ma-account: Remove unused code
+  * subprojects: Update cmatrix
+  * Update cmatrix
+  * subprojects: Update cmatrix
+  * build: Point libcmatrix URL to official source
+  * ma-account: Fix a crash when accessing avatar url
+  * message: Use the same API to get file for all protocols
+  * Update cmatrix
+  * ma-chat: Fix unread count
+  * tests: Remove chat history tests
+  * history: Remove matrix support
+  * ma-chat: Remove no longer used code
+  * ma-account: Remove no longer used code
+  * ma-chat: Fix setting room id
+  * application: Add an action to show about dialog
+  * Add chatty-header-bar
+  * window: Use chatty-header-bar for header bar
+  * Add chatty-main-view
+  * window: Use chatty-main-view
+  * chat-view: Remove empty view
+  * enums: Add ChattyChatState
+  * Update cmatrix
+  * chat: Add API to get chat state
+  * ma-chat: Implement get_state()
+  * chat: Add API to accept/reject invites
+  * ma-chat: Implement accept/reject invites
+  * manager: List invited rooms in the top of chat list
+  * ma-account: Add invited chats to chat list
+  * list-row: Mark invited room as such
+  * Add chatty-invite-view
+  * main-view: Use chatty-invite-view
+  * history: Use sqlite transactions
+  * history: Improve setting user version
+  * history: More sqlite transactions
+  * message: Change status atomically
+  * chat-view: Create a new draft to save in history
+  * invite-view: Add a translator comment
+  * Update cmatrix
+  * enums: Add CHATTY_CHAT_VERIFICATION
+  * Add chatty-ma-key-chat
+  * ma-account: Add chat verifications to chat list
+  * avatar: Use system-lock icon for matrix verification
+  * list-row: Hide chat details for key verifications
+  * manager: Place chat verifications at the top of chat list
+  * Add chatty-verification-view
+  * main-view: Use verification-view for verifications
+  * log: Improve abort() on fatal errors
+  * main: Log backtrace on fatal errors
+
+  [ Chris Talbot ]
+  * Add function to call out transmit or receieve issue for MMS
+
+  [ Anders Jonsson ]
+  * po: Update Swedish translation
+  * po: Update Swedish translation
+
+  [ Yuri Chornoivan ]
+  * po: Update Ukrainian translation
+  * po: Update Ukrainian translation
+  * po: Update Ukrainian translation
+  * po: Update Ukrainian translation
+
+  [ Vittorio Monti ]
+  * Update Italian translation
+  * Update Italian translation
+
+  [ Guido Günther ]
+  * data: Indicate that chatty provides LED/haptic feedback
+
+  [ Jeremy Bicha ]
+  * utils: update for GNOME Desktop 43 thumbnail API changes
+
+  [ Марко М. Костић (Marko M. Kostić) ]
+  * Update Serbian translation
+
+  [ Rafael Fontenelle ]
+  * Update Brazilian Portuguese translation
+
+  [ Emin Tufan Çetin ]
+  * Update Turkish translation
+
+  [ Evangelos Ribeiro Tzaras ]
+  * submodule: Point libcmatrix URL to official sources
+  * settings-dialog: Mark "add" button in account page as suggested action
+  * settings-dialog: Default to https if no scheme given in homeserver entry
+
+  [ Daniel Șerbănescu ]
+  * po: Update Romanian translation
+
+  [ Pablo Correa Gómez ]
+  * po: Update Spanish translation
+
+  [ carlosgonz ]
+  * po: Update Spanish translation
+
+  [ Yosef Or Boczko ]
+  * po: Update Hebrew Translation
+
+ -- Mohammed Sadiq <sadiq@sadiqpk.org>  Mon, 17 Oct 2022 11:16:33 +0530
+
 chatty (0.6.7) byzantium; urgency=medium
 
   [ Andrey Skvortsov ]

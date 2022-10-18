@@ -33,6 +33,7 @@ struct _ChattyChatClass
                                            gpointer    history_db);
   gboolean          (*is_im)              (ChattyChat *self);
   gboolean          (*has_file_upload)    (ChattyChat *self);
+  ChattyChatState   (*get_chat_state)     (ChattyChat *self);
   const char       *(*get_chat_name)      (ChattyChat *self);
   ChattyAccount    *(*get_account)        (ChattyChat *self);
   GListModel       *(*get_messages)       (ChattyChat *self);
@@ -71,6 +72,18 @@ struct _ChattyChatClass
   gboolean          (*set_encryption_finish) (ChattyChat    *self,
                                               GAsyncResult  *result,
                                               GError       **error);
+  void              (*accept_invite_async)   (ChattyChat           *self,
+                                              GAsyncReadyCallback   callback,
+                                              gpointer              user_data);
+  gboolean          (*accept_invite_finish)  (ChattyChat           *self,
+                                              GAsyncResult         *result,
+                                              GError              **error);
+  void              (*reject_invite_async)   (ChattyChat           *self,
+                                              GAsyncReadyCallback   callback,
+                                              gpointer              user_data);
+  gboolean          (*reject_invite_finish)  (ChattyChat           *self,
+                                              GAsyncResult         *result,
+                                              GError              **error);
   gboolean          (*get_buddy_typing)   (ChattyChat *self);
   void              (*set_typing)         (ChattyChat *self,
                                            gboolean    is_typing);
@@ -96,6 +109,7 @@ void                chatty_chat_set_data           (ChattyChat *self,
 gboolean            chatty_chat_is_im              (ChattyChat *self);
 char               *chatty_chat_generate_name      (ChattyChat *self,
                                                     GListModel *members);
+ChattyChatState     chatty_chat_get_chat_state     (ChattyChat *self);
 gboolean            chatty_chat_has_file_upload    (ChattyChat *self);
 const char         *chatty_chat_get_chat_name      (ChattyChat *self);
 ChattyAccount      *chatty_chat_get_account        (ChattyChat *self);
@@ -136,6 +150,19 @@ void                chatty_chat_set_encryption_async (ChattyChat     *self,
 gboolean            chatty_chat_set_encryption_finish (ChattyChat    *self,
                                                        GAsyncResult  *result,
                                                        GError       **error);
+
+void                chatty_chat_accept_invite_async   (ChattyChat          *self,
+                                                       GAsyncReadyCallback   callback,
+                                                       gpointer              user_data);
+gboolean            chatty_chat_accept_invite_finish  (ChattyChat           *self,
+                                                       GAsyncResult         *result,
+                                                       GError              **error);
+void                chatty_chat_reject_invite_async   (ChattyChat          *self,
+                                                       GAsyncReadyCallback   callback,
+                                                       gpointer              user_data);
+gboolean            chatty_chat_reject_invite_finish  (ChattyChat           *self,
+                                                       GAsyncResult         *result,
+                                                       GError              **error);
 gboolean            chatty_chat_get_buddy_typing   (ChattyChat *self);
 void                chatty_chat_set_typing         (ChattyChat *self,
                                                     gboolean    is_typing);
