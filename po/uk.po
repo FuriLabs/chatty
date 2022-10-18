@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://source.puri.sm/Librem5/chatty/issues\n"
-"POT-Creation-Date: 2022-10-17 15:24+0000\n"
-"PO-Revision-Date: 2022-10-17 20:12+0300\n"
+"POT-Creation-Date: 2022-10-18 15:24+0000\n"
+"PO-Revision-Date: 2022-10-18 21:51+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -372,9 +372,19 @@ msgstr "Модератор"
 
 #: src/chatty-list-row.c:125
 msgid "Member"
-msgstr "Член"
+msgstr "Учасник"
 
-#: src/chatty-manager.c:737
+#: src/chatty-main-view.c:64
+#| msgid "disconnected"
+msgid "Account disconnected"
+msgstr "Обліковий запис від'єднано"
+
+#: src/chatty-main-view.c:66
+#| msgid "connecting…"
+msgid "Account connecting…"
+msgstr "З'єднання з обліковим записом…"
+
+#: src/chatty-manager.c:741
 #, c-format
 msgid "“%s” is not a valid URI"
 msgstr "«%s» не є коректною адресою"
@@ -461,7 +471,6 @@ msgstr "Собака"
 
 #. "U+1F436"
 #: src/chatty-verification-view.c:29
-#| msgid "Chats"
 msgid "Cat"
 msgstr "Кіт"
 
@@ -577,7 +586,6 @@ msgstr "Банан"
 
 #. "U+1F34C"
 #: src/chatty-verification-view.c:52
-#| msgid "Apply"
 msgid "Apple"
 msgstr "Яблуко"
 
@@ -781,7 +789,6 @@ msgid "Show Emojis"
 msgstr "Показати емоційки"
 
 #: src/chatty-verification-view.c:390
-#| msgid "Phone Number:"
 msgid "Show Numbers"
 msgstr "Показувати номери"
 
@@ -1019,7 +1026,6 @@ msgid "Please enter password for “%s”, homeserver: %s"
 msgstr "Будь ласка, введіть пароль до «%s», домашній сервер: %s"
 
 #: src/matrix/chatty-ma-key-chat.c:63
-#| msgid "Typing Notification"
 msgid "Key Verification"
 msgstr "Перевірка ключа"
 
@@ -1403,8 +1409,8 @@ msgid ""
 "Verifying this user will mark their session as trusted, and also mark your "
 "session as trusted to them."
 msgstr ""
-"Підтвердження особи цього користувача зробить сеанс довіреним, а також"
-" позначити ваш сеанс як довірений для цього користувача."
+"Підтвердження особи цього користувача зробить сеанс довіреним, а також "
+"позначити ваш сеанс як довірений для цього користувача."
 
 #: src/ui/chatty-verification-view.ui:113
 msgid "C_ontinue"
@@ -1414,21 +1420,21 @@ msgstr "Пр_одовжити"
 msgid ""
 "Verify this user by confirming the following emoji appears on their screen"
 msgstr ""
-"Підтвердьте особу цього користувача за допомогою вказаної нижче емоційки,"
-" яка з'явиться на екрані його пристрою"
+"Підтвердьте особу цього користувача за допомогою вказаної нижче емоційки, "
+"яка з'явиться на екрані його пристрою"
 
 #: src/ui/chatty-verification-view.ui:453
 msgid ""
 "Verify this user by confirming the following number appears on their screen."
 msgstr ""
-"Підтвердьте особу цього користувача за допомогою вказаного нижче числа, яке"
-" з'явиться на екрані його пристрою."
+"Підтвердьте особу цього користувача за допомогою вказаного нижче числа, яке "
+"з'явиться на екрані його пристрою."
 
 #: src/ui/chatty-verification-view.ui:498
 msgid "To be secure, do this in person or use a trusted way to communicate."
 msgstr ""
-"Заради безпеки, виконайте це у реальному житті або скористайтеся надійним"
-" способом зв'язку."
+"Заради безпеки, виконайте це у реальному житті або скористайтеся надійним "
+"способом зв'язку."
 
 #: src/ui/chatty-verification-view.ui:511
 msgctxt "verb, which means 'both items are not the same'"
