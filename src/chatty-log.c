@@ -23,16 +23,91 @@ static int verbosity;
 gboolean any_domain;
 gboolean no_anonymize;
 gboolean stderr_is_journal;
+gboolean fatal_criticals, fatal_warnings;
+
+/* Copied from GLib, LGPLv2.1+ */
+static void
+_g_log_abort (gboolean breakpoint)
+{
+  gboolean debugger_present;
+
+  if (g_test_subprocess ())
+    {
+      /* If this is a test case subprocess then it probably caused
+       * this error message on purpose, so just exit() rather than
+       * abort()ing, to avoid triggering any system crash-reporting
+       * daemon.
+       */
+      _exit (1);
+    }
+
+#ifdef G_OS_WIN32
+  debugger_present = IsDebuggerPresent ();
+#else
+  /* Assume GDB is attached. */
+  debugger_present = TRUE;
+#endif /* !G_OS_WIN32 */
+
+  if (debugger_present && breakpoint)
+    G_BREAKPOINT ();
+  else
+    g_abort ();
+}
+
+static gboolean
+should_show_log_for_level (GLogLevelFlags log_level,
+                           int            verbosity_level)
+{
+  if (verbosity_level >= 5)
+    return TRUE;
+
+  if (log_level & CHATTY_LOG_LEVEL_TRACE)
+    return verbosity_level >= 4;
+
+  if (log_level & G_LOG_LEVEL_DEBUG)
+    return verbosity_level >= 3;
+
+  if (log_level & G_LOG_LEVEL_INFO)
+    return verbosity_level >= 2;
+
+  if (log_level & G_LOG_LEVEL_MESSAGE)
+    return verbosity_level >= 1;
+
+  return FALSE;
+}
+
+static gboolean
+matches_domain (const char *log_domains,
+                const char *domain)
+{
+  g_auto(GStrv) domain_list = NULL;
+
+  if (!log_domains || !*log_domains ||
+      !domain || !*domain)
+    return FALSE;
+
+  domain_list = g_strsplit (log_domains, ",", -1);
+
+  for (guint i = 0; domain_list[i]; i++)
+    {
+      if (g_str_has_prefix (domain, domain_list[i]))
+        return TRUE;
+    }
+
+  return FALSE;
+}
 
 static gboolean
 should_log (const char     *log_domain,
             GLogLevelFlags  log_level)
 {
+  g_assert (log_domain);
+
   /* Ignore custom flags set */
   log_level = log_level & ~CHATTY_LOG_DETAILED;
 
   /* Don't skip serious logs */
-  if (log_level & (G_LOG_LEVEL_ERROR | G_LOG_LEVEL_WARNING))
+  if (log_level & (G_LOG_LEVEL_ERROR | G_LOG_LEVEL_CRITICAL | G_LOG_LEVEL_WARNING))
     return TRUE;
 
   if (any_domain && domains) {
@@ -44,53 +119,27 @@ should_log (const char     *log_domain,
     return verbosity >= 4;
   }
 
-  if (!any_domain && domains && log_domain && strstr (domains, log_domain))
-    return TRUE;
+  if (!domains && g_str_has_prefix (log_domain, DEFAULT_DOMAIN_PREFIX))
+    return should_show_log_for_level (log_level, verbosity);
 
-  switch ((int)log_level)
-    {
-    case G_LOG_LEVEL_MESSAGE:
-      if (verbosity < 1)
-        return FALSE;
-      break;
+  if (domains && matches_domain (domains, log_domain))
+    return should_show_log_for_level (log_level, verbosity);
 
-    case G_LOG_LEVEL_INFO:
-      if (verbosity < 2)
-        return FALSE;
-      break;
-
-    case G_LOG_LEVEL_DEBUG:
-      if (verbosity < 3)
-        return FALSE;
-      break;
-
-    case CHATTY_LOG_LEVEL_TRACE:
-      if (verbosity < 4)
-        return FALSE;
-      break;
-
-    default:
-      break;
-    }
-
-  if (!log_domain)
-    log_domain = "**";
-
-  /* Skip logs from other domains if verbosity level is low */
-  if (any_domain && !domains &&
-      verbosity < 5 &&
-      log_level > G_LOG_LEVEL_MESSAGE &&
-      !strstr (log_domain, DEFAULT_DOMAIN_PREFIX))
+  /* If we didn't handle domains in the preceding statement,
+   * we should no longer log them */
+  if (domains)
     return FALSE;
 
   /* GdkPixbuf logs are too much verbose, skip unless asked not to. */
-  if (log_level >= G_LOG_LEVEL_MESSAGE &&
-      verbosity < 7 &&
+  if (verbosity < 8 &&
       g_strcmp0 (log_domain, "GdkPixbuf") == 0 &&
       (!domains || !strstr (domains, log_domain)))
     return FALSE;
 
-  return TRUE;
+  if (verbosity >= 6)
+    return TRUE;
+
+  return FALSE;
 }
 
 static void
@@ -170,18 +219,15 @@ chatty_log_write (GLogLevelFlags   log_level,
                   gpointer         user_data)
 {
   g_autoptr(GString) log_str = NULL;
-  FILE *stream;
+  FILE *stream = stdout;
   gboolean can_color;
 
-  if (stderr_is_journal)
-    if (g_log_writer_journald (log_level, fields, n_fields, user_data) == G_LOG_WRITER_HANDLED)
-      return G_LOG_WRITER_HANDLED;
+  if (stderr_is_journal &&
+      g_log_writer_journald (log_level, fields, n_fields, user_data) == G_LOG_WRITER_HANDLED)
+    return G_LOG_WRITER_HANDLED;
 
-  if (log_level & (G_LOG_LEVEL_ERROR |
-                   G_LOG_LEVEL_CRITICAL | G_LOG_LEVEL_WARNING))
+  if (log_level & (G_LOG_LEVEL_ERROR | G_LOG_LEVEL_CRITICAL | G_LOG_LEVEL_WARNING))
     stream = stderr;
-  else
-    stream = stdout;
 
   log_str = g_string_new (NULL);
 
@@ -202,7 +248,6 @@ chatty_log_write (GLogLevelFlags   log_level,
   }
 
   can_color = g_log_writer_supports_color (fileno (stream));
-  
   log_str_append_log_domain (log_str, log_domain, can_color);
   g_string_append_printf (log_str, "[%5d]:", getpid ());
 
@@ -239,6 +284,16 @@ chatty_log_write (GLogLevelFlags   log_level,
   fprintf (stream, "%s\n", log_str->str);
   fflush (stream);
 
+  if (fatal_criticals &&
+      (log_level & G_LOG_LEVEL_CRITICAL))
+    log_level |= G_LOG_FLAG_FATAL;
+  else if (fatal_warnings &&
+           (log_level & (G_LOG_LEVEL_CRITICAL | G_LOG_LEVEL_WARNING)))
+    log_level |= G_LOG_FLAG_FATAL;
+
+  if (log_level & (G_LOG_FLAG_FATAL | G_LOG_LEVEL_ERROR))
+    _g_log_abort (!(log_level & G_LOG_FLAG_RECURSION));
+
   return G_LOG_WRITER_HANDLED;
 }
 
@@ -261,24 +316,17 @@ chatty_log_handler (GLogLevelFlags   log_level,
         log_message = field->value;
     }
 
-  if (!should_log (log_domain, log_level))
-    return G_LOG_WRITER_HANDLED;
-
   if (!log_domain)
     log_domain = "**";
 
   if (!log_message)
     log_message = "(NULL) message";
 
-  if (any_domain)
-    return chatty_log_write (log_level, log_domain, log_message,
-                             fields, n_fields, user_data);
+  if (!should_log (log_domain, log_level))
+    return G_LOG_WRITER_HANDLED;
 
-  if (!log_domain || strstr (domains, log_domain))
-    return chatty_log_write (log_level, log_domain, log_message,
-                             fields, n_fields, user_data);
-
-  return G_LOG_WRITER_HANDLED;
+  return chatty_log_write (log_level, log_domain, log_message,
+                           fields, n_fields, user_data);
 }
 
 static void
@@ -302,12 +350,17 @@ chatty_log_init (void)
       if (!domains || g_str_equal (domains, "all"))
         any_domain = TRUE;
 
-      if (domains && g_str_equal (domains, "no-anonymize"))
+      if (domains && strstr (domains, "no-anonymize"))
         {
           any_domain = TRUE;
           no_anonymize = TRUE;
           g_clear_pointer (&domains, g_free);
         }
+
+      if (g_strcmp0 (g_getenv ("G_DEBUG"), "fatal-criticals") == 0)
+        fatal_criticals = TRUE;
+      else if (g_strcmp0 (g_getenv ("G_DEBUG"), "fatal-warnings") == 0)
+        fatal_warnings = TRUE;
 
       stderr_is_journal = g_log_writer_is_journald (fileno (stderr));
       g_log_set_writer_func (chatty_log_handler, NULL, NULL);
@@ -393,6 +446,8 @@ void
 chatty_log_anonymize_value (GString    *str,
                             const char *value)
 {
+  gunichar c, next_c, prev_c;
+
   if (!value || !*value)
     return;
 
@@ -407,30 +462,30 @@ chatty_log_anonymize_value (GString    *str,
       return;
     }
 
-  if (!isalnum (*value))
-    g_string_append_c (str, *value++);
+  if (!g_utf8_validate (value, -1, NULL))
+    {
+      g_string_append (str, "******");
+      return;
+    }
 
-  if (*value)
-    g_string_append_c (str, *value++);
+  c = g_utf8_get_char (value);
+  g_string_append_unichar (str, c);
 
-  if (*value)
-    g_string_append_c (str, *value++);
+  value = g_utf8_next_char (value);
 
-  if (!*value)
-    return;
-
-  /* Replace all but the last two alnum chars with 'x' */
   while (*value)
     {
-      while (isalnum (*value) && value[1] && value[2])
-        {
-          if (value[1] == ':' || value[1] == '@' || value[1] == ' ' ||
-              value[-1] == ':' || value[-1] == '@' || value[-1] == ' ')
-            g_string_append_c (str, *value);
-          else
-            g_string_append_c (str, '#');
-          value++;
-        }
-      g_string_append_c (str, *value++);
+      prev_c = c;
+      c = g_utf8_get_char (value);
+
+      value = g_utf8_next_char (value);
+      next_c = g_utf8_get_char (value);
+
+      if (!g_unichar_isalnum (c))
+        g_string_append_unichar (str, c);
+      else if (!g_unichar_isalnum (prev_c) || !g_unichar_isalnum (next_c))
+        g_string_append_unichar (str, c);
+      else
+        g_string_append_c (str, '#');
     }
 }

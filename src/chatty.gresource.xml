@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
   <gresource prefix="/sm/puri/Chatty">
-    <file alias="matrix-filter.json">matrix/matrix-filter.json</file>
     <file preprocess="xml-stripblanks" alias="gtk/help-overlay.ui">ui/help-overlay.ui</file>
     <file preprocess="xml-stripblanks">ui/chatty-selectable-row.ui</file>
     <file preprocess="xml-stripblanks">ui/chatty-fp-row.ui</file>
     <file preprocess="xml-stripblanks">ui/chatty-list-row.ui</file>
     <file preprocess="xml-stripblanks">ui/chatty-chat-list.ui</file>
     <file preprocess="xml-stripblanks">ui/chatty-chat-view.ui</file>
+    <file preprocess="xml-stripblanks">ui/chatty-main-view.ui</file>
+    <file preprocess="xml-stripblanks">ui/chatty-verification-view.ui</file>
+    <file preprocess="xml-stripblanks">ui/chatty-invite-view.ui</file>
     <file preprocess="xml-stripblanks">ui/chatty-contact-list.ui</file>
     <file preprocess="xml-stripblanks">ui/chatty-contact-row.ui</file>
     <file preprocess="xml-stripblanks">ui/chatty-file-item.ui</file>
@@ -22,6 +24,7 @@
     <file preprocess="xml-stripblanks">ui/chatty-settings-dialog.ui</file>
     <file preprocess="xml-stripblanks">ui/chatty-dialog-new-chat.ui</file>
     <file preprocess="xml-stripblanks">ui/chatty-dialog-join-muc.ui</file>
+    <file preprocess="xml-stripblanks">ui/chatty-header-bar.ui</file>
     <file preprocess="xml-stripblanks">ui/chatty-window.ui</file>
     <file preprocess="xml-stripblanks">icons/eye-not-looking-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/eye-open-negative-filled-symbolic.svg</file>

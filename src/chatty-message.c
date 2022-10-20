@@ -15,6 +15,8 @@
 # include "config.h"
 #endif
 
+#include <glib/gi18n.h>
+
 #include "chatty-mm-buddy.h"
 #include "chatty-message.h"
 #include "chatty-utils.h"
@@ -36,6 +38,7 @@ struct _ChattyMessage
   char            *message;
   char            *uid;
   char            *id;
+  CmEvent         *cm_event;
 
   ChattyFileInfo  *preview;
   GList           *files;
@@ -66,6 +69,7 @@ chatty_message_finalize (GObject *object)
   ChattyMessage *self = (ChattyMessage *)object;
 
   g_clear_object (&self->user);
+  g_clear_object (&self->cm_event);
   g_free (self->message);
   g_free (self->subject);
   g_free (self->uid);
@@ -133,6 +137,132 @@ chatty_message_new (ChattyItem         *user,
   return self;
 }
 
+ChattyMessage *
+chatty_message_new_from_event (ChattyItem *user,
+                               CmEvent    *event)
+{
+  ChattyMessage *self;
+  const char *body = NULL;
+  ChattyMsgType type = CHATTY_MESSAGE_UNKNOWN;
+  ChattyMsgDirection direction;
+  ChattyMsgStatus status;
+
+  g_return_val_if_fail (CM_IS_EVENT (event), NULL);
+  g_return_val_if_fail (CHATTY_IS_ITEM (user), NULL);
+
+  if (CM_IS_ROOM_MESSAGE_EVENT (event)) {
+    switch (cm_room_message_event_get_msg_type ((gpointer)event))
+      {
+      case CM_CONTENT_TYPE_TEXT:
+      case CM_CONTENT_TYPE_EMOTE:
+      case CM_CONTENT_TYPE_NOTICE:
+      case CM_CONTENT_TYPE_SERVER_NOTICE:
+        type = CHATTY_MESSAGE_TEXT;
+        break;
+
+      case CM_CONTENT_TYPE_IMAGE:
+        type = CHATTY_MESSAGE_IMAGE;
+        break;
+
+      case CM_CONTENT_TYPE_FILE:
+        type = CHATTY_MESSAGE_FILE;
+        break;
+
+      case CM_CONTENT_TYPE_AUDIO:
+        type = CHATTY_MESSAGE_AUDIO;
+        break;
+
+      case CM_CONTENT_TYPE_LOCATION:
+        type = CHATTY_MESSAGE_LOCATION;
+        break;
+
+      case CM_CONTENT_TYPE_VIDEO:
+        type = CHATTY_MESSAGE_VIDEO;
+        break;
+
+      case CM_CONTENT_TYPE_UNKNOWN:
+      default:
+        break;
+      }
+  }
+
+  switch (cm_event_get_state (event))
+    {
+    case CM_EVENT_STATE_DRAFT:
+      status = CHATTY_STATUS_DRAFT;
+      break;
+
+    case CM_EVENT_STATE_RECEIVED:
+      status = CHATTY_STATUS_RECEIVED;
+      break;
+
+    case CM_EVENT_STATE_WAITING:
+    case CM_EVENT_STATE_SENDING:
+      status = CHATTY_STATUS_SENDING;
+      break;
+
+    case CM_EVENT_STATE_SENDING_FAILED:
+      status = CHATTY_STATUS_SENDING_FAILED;
+      break;
+
+    case CM_EVENT_STATE_SENT:
+      status = CHATTY_STATUS_SENT;
+      break;
+
+    case CM_EVENT_STATE_UNKNOWN:
+    default:
+      status = CHATTY_STATUS_UNKNOWN;
+      break;
+    }
+
+  if (CM_IS_ROOM_MESSAGE_EVENT (event))
+    body = cm_room_message_event_get_body ((gpointer)event);
+
+  if ((!body || !*body) &&
+      cm_event_get_m_type (event) == CM_M_ROOM_ENCRYPTED)
+    direction = CHATTY_DIRECTION_SYSTEM;
+  else if (cm_event_get_state (event) == CM_EVENT_STATE_WAITING ||
+           cm_event_get_state (event) == CM_EVENT_STATE_SENT ||
+           cm_event_get_state (event) == CM_EVENT_STATE_SENDING ||
+           cm_event_get_state (event) == CM_EVENT_STATE_SENDING_FAILED)
+    direction = CHATTY_DIRECTION_OUT;
+  else
+    direction = CHATTY_DIRECTION_IN;
+
+  if (direction == CHATTY_DIRECTION_SYSTEM)
+    body = _("Got an encrypted message, but couldn't decrypt due to missing keys");
+  else if (CM_IS_ROOM_MESSAGE_EVENT (event))
+    body = cm_room_message_event_get_body ((gpointer)event);
+  else
+    body = "";
+
+  self = chatty_message_new (user, body,
+                             cm_event_get_id (event),
+                             cm_event_get_time_stamp (event) / 1000,
+                             type, direction, status);
+
+  self->cm_event = g_object_ref (event);
+  self->user = g_object_ref (user);
+
+  if (type == CHATTY_MESSAGE_IMAGE ||
+      type == CHATTY_MESSAGE_FILE ||
+      type == CHATTY_MESSAGE_AUDIO ||
+      type == CHATTY_MESSAGE_VIDEO) {
+    /* Add some dummy data, we handle files appropriately elsewhere */
+    chatty_message_add_file_from_path (self, "/");
+  }
+
+  return self;
+}
+
+CmEvent *
+chatty_message_get_cm_event (ChattyMessage *self)
+{
+  g_return_val_if_fail (CHATTY_IS_MESSAGE (self), NULL);
+
+  return self->cm_event;
+}
+
 const char *
 chatty_message_get_subject (ChattyMessage *self)
 {
@@ -184,6 +314,115 @@ chatty_message_get_files (ChattyMessage *self)
 
   return self->files;
 }
+
+static void
+message_event_get_file_stream_cb (GObject      *object,
+                                  GAsyncResult *result,
+                                  gpointer      user_data)
+{
+  ChattyMessage *self;
+  g_autoptr(GTask) task = user_data;
+  GError *error = NULL;
+  ChattyFileInfo *file;
+  ChattyFileStatus old_status;
+
+  g_assert (G_IS_TASK (task));
+
+  self = g_task_get_source_object (task);
+  g_assert (CHATTY_IS_MESSAGE (self));
+
+  file = self->files->data;
+  file->file_stream = cm_room_message_event_get_file_finish (CM_ROOM_MESSAGE_EVENT (object), result, &error);
+
+  old_status = file->status;
+
+  if (file->file_stream)
+    g_atomic_int_set (&file->status, CHATTY_FILE_DOWNLOADED);
+  else if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED) ||
+           g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NETWORK_UNREACHABLE) ||
+           g_error_matches (error, G_IO_ERROR, G_IO_ERROR_HOST_UNREACHABLE))
+    g_atomic_int_set (&file->status, CHATTY_FILE_UNKNOWN);
+  else
+    g_atomic_int_set (&file->status, CHATTY_FILE_ERROR);
+
+  if (old_status != file->status)
+    chatty_message_emit_updated (self);
+
+  if (error)
+    g_task_return_error (task, error);
+  else
+    g_task_return_pointer (task, g_object_ref (file->file_stream), g_object_unref);
+}
+
+void
+chatty_message_get_file_stream_async (ChattyMessage       *self,
+                                      ChattyFileInfo      *file,
+                                      ChattyProtocol       protocol,
+                                      GCancellable        *cancellable,
+                                      GAsyncReadyCallback  callback,
+                                      gpointer             user_data)
+{
+  GTask *task;
+
+  g_return_if_fail (CHATTY_IS_MESSAGE (self));
+  g_return_if_fail (self->files);
+
+  task = g_task_new (self, cancellable, callback, user_data);
+
+  if (!file)
+    file = self->files->data;
+
+  if (!file || !file->path) {
+    g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_FAILED,
+                             "Message has no file");
+    return;
+  }
+
+  if (file->file_stream) {
+    g_seekable_seek (G_SEEKABLE (file->file_stream), 0, G_SEEK_SET, NULL, NULL);
+    g_task_return_pointer (task, g_object_ref (file->file_stream), g_object_unref);
+    return;
+  }
+
+  g_atomic_int_set (&file->status, CHATTY_FILE_DOWNLOADING);
+  chatty_message_emit_updated (self);
+
+  if (self->cm_event) {
+    cm_room_message_event_get_file_async (CM_ROOM_MESSAGE_EVENT (self->cm_event),
+                                          cancellable,
+                                          NULL, NULL,
+                                          message_event_get_file_stream_cb, task);
+  } else {
+    g_autofree char *path = NULL;
+
+    if (protocol == CHATTY_PROTOCOL_MMS_SMS || protocol == CHATTY_PROTOCOL_MMS)
+      path = g_build_filename (g_get_user_data_dir (), "chatty", file->path, NULL);
+    else
+      path = g_build_filename (g_get_user_cache_dir (), "chatty", file->path, NULL);
+
+    if (!file->file)
+      file->file = g_file_new_for_path (path);
+
+    file->file_stream = (gpointer)g_file_read (file->file, NULL, NULL);
+    g_task_return_pointer (task, g_object_ref (file->file_stream), g_object_unref);
+
+    file->status = CHATTY_FILE_DOWNLOADED;
+    chatty_message_emit_updated (self);
+  }
+}
+
+GInputStream *
+chatty_message_get_file_stream_finish (ChattyMessage  *self,
+                                       GAsyncResult   *result,
+                                       GError        **error)
+{
+  g_return_val_if_fail (CHATTY_IS_MESSAGE (self), FALSE);
+  g_return_val_if_fail (G_IS_TASK (result), FALSE);
+  g_return_val_if_fail (!error || !*error, FALSE);
+
+  return g_task_propagate_pointer (G_TASK (result), error);
+}
+
 
 /**
  * chatty_message_set_files:
@@ -444,7 +683,8 @@ chatty_message_set_status (ChattyMessage   *self,
 {
   g_return_if_fail (CHATTY_IS_MESSAGE (self));
 
-  self->status = status;
+  g_atomic_int_set (&self->status, status);
+
   if (mtime)
     self->time = mtime;
 

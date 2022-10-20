@@ -86,9 +86,11 @@ chatty_sms_parse_numbers (ChattySmsUri *self)
   /* Make the array bigger so that we can assure it's NULL terminated */
   g_ptr_array_set_size (array, array->len + 1);
 
-  for (guint i = 0; i < array->len - 1; i++) {
+  for (guint i = 0; i < array->len - 1;) {
     if (g_strcmp0 (array->pdata[i], array->pdata[i + 1]) == 0)
       g_ptr_array_remove_index (array, i);
+    else
+      i++;
   }
 
   self->numbers_str = g_strjoinv (",", (char **)array->pdata);

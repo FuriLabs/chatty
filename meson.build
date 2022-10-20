@@ -1,7 +1,7 @@
 project(
   'chatty', 'c', 'cpp',
-  version: '0.6.7',
-  meson_version: '>= 0.53.0',
+  version: '0.7.0.rc0',
+  meson_version: '>= 0.56.0',
 )
 
 i18n = import('i18n')
@@ -21,27 +21,12 @@ config_h.set_quoted('LOCALEDIR', join_paths(get_option('prefix'), get_option('lo
 config_h.set_quoted('PACKAGE_NAME', meson.project_name())
 config_h.set_quoted('PACKAGE_VERSION', meson.project_version())
 
-# TODO: Use has_headers: 'olm/olm.h' when we bump meson requirement
-libolm_dep = cc.find_library('olm', required: true)
-
-if (cc.has_function('olm_account_unpublished_fallback_key', dependencies: libolm_dep))
-  config_h.set('OLM_ACCOUNT_PICKLE_V4', true)
-else
-  config_h.set('OLM_ACCOUNT_PICKLE_V4', false)
-endif
-
-if (cc.has_function('olm_pk_key_from_private', dependencies: libolm_dep))
-  config_h.set('HAVE_OLM3', true)
-else
-  config_h.set('HAVE_OLM2', true)
-endif
-
 configure_file(
   output: 'config.h',
   configuration: config_h,
 )
 add_project_arguments([
-  '-I' + meson.build_root(),
+  '-I' + meson.project_build_root(),
   '-DHAVE_CONFIG_H',
   '-DGLIB_DISABLE_DEPRECATION_WARNINGS',
   '-DG_LOG_USE_STRUCTURED',
@@ -118,6 +103,13 @@ libgd = subproject('libgd',
 
 libgd_dep = libgd.get_variable('libgd_dep')
 
+libcmatrix = subproject('libcmatrix',
+                        default_options: [
+                          'build-examples=false',
+                        ])
+libcmatrix_dep = libcmatrix.get_variable('libcmatrix_dep')
+
+
 subdir('completion')
 subdir('data')
 subdir('help')
@@ -125,8 +117,20 @@ subdir('src')
 subdir('tests')
 subdir('po')
 
-summary({
-  'Enable libpurple': purple_dep.found(),
-})
+system = target_machine.system()
+if system == 'linux'
+  system = 'GNU/Linux'
+endif
+
+summary({'Target': system,
+         'Target arch': target_machine.cpu(),
+         'Compiler': cc.get_id(),
+         'Version': cc.version(),
+         'Linker': cc.get_linker_id(),
+        }, section: 'Toolchain')
+
+summary({'Build type': get_option('buildtype'),
+         'libpurple': purple_dep.found(),
+        }, section: 'Configuration')
 
 meson.add_install_script('build-aux/meson/postinstall.py')

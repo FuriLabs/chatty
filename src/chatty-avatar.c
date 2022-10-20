@@ -17,6 +17,7 @@
 #include <handy.h>
 
 #include "chatty-chat.h"
+#include "chatty-ma-key-chat.h"
 #include "chatty-mm-chat.h"
 #include "chatty-avatar.h"
 
@@ -56,7 +57,10 @@ avatar_changed_cb (ChattyAvatar *self)
   if (self->item)
     avatar = (GLoadableIcon *)chatty_item_get_avatar (self->item);
 
-  hdy_avatar_set_loadable_icon (HDY_AVATAR (self->avatar), avatar);
+  if (CHATTY_IS_MA_KEY_CHAT (self->item))
+    hdy_avatar_set_icon_name (HDY_AVATAR (self->avatar), "system-lock-screen-symbolic");
+  else
+    hdy_avatar_set_loadable_icon (HDY_AVATAR (self->avatar), avatar);
 }
 
 static void
@@ -65,6 +69,8 @@ item_name_changed_cb (ChattyAvatar *self)
   if (!CHATTY_IS_CONTACT (self->item) ||
       !chatty_contact_is_dummy (CHATTY_CONTACT (self->item)))
     chatty_avatar_set_title (self, chatty_item_get_name (self->item));
+
+  hdy_avatar_set_show_initials (HDY_AVATAR (self->avatar), !CHATTY_IS_MA_KEY_CHAT (self->item));
 
   if (CHATTY_IS_MM_CHAT (self->item)) {
     gboolean has_name;

@@ -1,3 +1,12 @@
+chatty (0.7.0~rc0-1) unstable; urgency=medium
+
+  * New upstream version 0.7.0~rc0
+    Closes: #1018134, thanks Jeremy Bicha!
+    Closes: #1020063, thanks Lucas Nussbaum!
+  * Remove upstreamed patches
+
+ -- Evangelos Ribeiro Tzaras <devrtz-debian@fortysixandtwo.eu>  Tue, 18 Oct 2022 17:17:25 +0200
+
 chatty (0.6.7-2) unstable; urgency=medium
 
   * Mark as team upload

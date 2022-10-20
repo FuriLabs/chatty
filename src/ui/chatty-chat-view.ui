@@ -227,12 +227,6 @@
       </object>
     </child>
 
-    <child>
-      <object class="GtkBox" id="empty_view">
-        <property name="visible">True</property>
-      </object>
-    </child>
-
   </template>
 
   <object class="GtkTextBuffer" id="message_input_buffer">

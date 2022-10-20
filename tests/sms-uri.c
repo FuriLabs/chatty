@@ -42,6 +42,7 @@ data array[] = {
   { "sms://+919995112233?body=I'm busy", "I'm busy", "+919995112233", 1, TRUE, TRUE},
   { "sms://123,453?body=a ചെറിയ test", "a ചെറിയ test", "123,453", 2, TRUE, TRUE},
   { "sms://453,123,145,123,453?body=HELP", "HELP", "123,145,453", 3, TRUE, TRUE},
+  { "sms://123,123,123,123,123?body=HELP", "HELP", "123", 1, TRUE, TRUE},
   { "sms://453,123,145,123,453?body=HELP%20me", "HELP me", "123,145,453", 3, TRUE, TRUE},
   { "sms:9995 123 123?body=Call me later", "Call me later", "+919995123123", 1, TRUE, TRUE, "IN"},
   { "sms:+919995 123 123?body= before and after ", " before and after ", "+919995123123", 1, TRUE, TRUE, "US"},

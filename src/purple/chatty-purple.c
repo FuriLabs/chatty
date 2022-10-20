@@ -503,8 +503,7 @@ purple_account_added_cb (PurpleAccount *pp_account,
   protocol_id = purple_account_get_protocol_id (pp_account);
 
   /* We handles matrix accounts native. */
-  if (chatty_settings_get_experimental_features (chatty_settings_get_default ()) &&
-      g_strcmp0 (protocol_id, "prpl-matrix") == 0) {
+  if (g_strcmp0 (protocol_id, "prpl-matrix") == 0) {
     return;
   }
 
@@ -1725,10 +1724,8 @@ chatty_purple_load_plugins (ChattyPurple *self)
   chatty_xeps_init ();
   settings = chatty_settings_get_default ();
 
-  if (chatty_settings_get_experimental_features (settings))
-    chatty_purple_unload_plugin (purple_plugins_find_with_id ("prpl-matrix"));
-
-  /* We now have native SMS */
+  /* We now have native Matrix and SMS */
+  chatty_purple_unload_plugin (purple_plugins_find_with_id ("prpl-matrix"));
   chatty_purple_unload_plugin (purple_plugins_find_with_id ("prpl-mm-sms"));
 
   g_signal_connect_object (settings, "notify::message-carbons",

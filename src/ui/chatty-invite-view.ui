@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="ChattyInviteView" parent="GtkBox">
+
+    <child>
+      <object class="HdyClamp">
+        <property name="visible">1</property>
+        <property name="hexpand">1</property>
+        <property name="margin-top">18</property>
+        <property name="margin-bottom">18</property>
+        <property name="margin-start">18</property>
+        <property name="margin-end">18</property>
+        <property name="halign">center</property>
+        <property name="valign">center</property>
+
+        <child>
+          <object class="GtkBox">
+            <property name="visible">1</property>
+            <property name="orientation">vertical</property>
+            <property name="spacing">18</property>
+
+            <child>
+              <object class="GtkLabel" id="invite_title">
+                <property name="visible">1</property>
+                <property name="wrap">1</property>
+                <property name="justify">center</property>
+                <style>
+                  <class name="large-title"/>
+                </style>
+              </object>
+            </child>
+
+            <child>
+              <object class="ChattyAvatar" id="chat_avatar">
+                <property name="visible">1</property>
+                <property name="width-request">96</property>
+                <property name="height-request">96</property>
+              </object>
+            </child>
+
+            <!-- todo: when we have inviter details -->
+            <child>
+              <object class="GtkLabel" id="invite_subtitle">
+                <property name="visible">0</property>
+                <property name="wrap">1</property>
+                <property name="justify">center</property>
+                <style>
+                  <class name="heading"/>
+                </style>
+              </object>
+            </child>
+
+            <child>
+              <object class="GtkButton" id="accept_button">
+                <property name="visible">1</property>
+                <signal name="clicked" handler="invite_accept_clicked_cb" swapped="yes"/>
+                <style>
+                  <class name="suggested-action"/>
+                </style>
+
+                <!-- todo: Use GtkCenterBox when porting to GTK4 -->
+                <child>
+                  <object class="GtkBox">
+                    <property name="visible">1</property>
+                    <property name="spacing">6</property>
+                    <property name="halign">center</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">1</property>
+                        <property name="use-underline">1</property>
+                        <property name="label" translatable="yes">_Accept</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSpinner" id="accept_spinner">
+                        <property name="visible">1</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+
+              </object>
+            </child>
+
+            <child>
+              <object class="GtkButton" id="reject_button">
+                <property name="visible">1</property>
+                <property name="sensitive" bind-source="accept_button" bind-property="sensitive" bind-flags="sync-create"/>
+                <signal name="clicked" handler="invite_reject_clicked_cb" swapped="yes"/>
+
+                <child>
+                  <object class="GtkBox">
+                    <property name="visible">1</property>
+                    <property name="spacing">6</property>
+                    <property name="halign">center</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">1</property>
+                        <property name="use-underline">1</property>
+                        <property name="label" translatable="yes">_Reject</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSpinner" id="reject_spinner">
+                        <property name="visible">1</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+
+              </object>
+            </child>
+
+          </object>
+        </child>
+
+      </object> <!-- ./HdyClamp -->
+    </child>
+
+  </template>
+</interface>

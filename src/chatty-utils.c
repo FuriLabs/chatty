@@ -422,6 +422,8 @@ chatty_file_info_free (ChattyFileInfo *file_info)
   if (!file_info)
     return;
 
+  g_clear_object (&file_info->file);
+  g_clear_object (&file_info->file_stream);
   g_free (file_info->file_name);
   g_free (file_info->url);
   g_free (file_info->path);
@@ -550,6 +552,26 @@ utils_create_thumbnail (GTask        *task,
     return;
   }
 
+#if defined(GNOME_DESKTOP_PLATFORM_VERSION) && GNOME_DESKTOP_PLATFORM_VERSION >= 43
+  thumbnail = gnome_desktop_thumbnail_factory_generate_thumbnail (factory, uri, content_type, NULL, &error);
+  if (!thumbnail) {
+    g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_FAILED, "Failed to create thumbnail for file: %s (%s)", uri, error->message);
+
+    g_warning ("Failed to create thumbnail for file: %s", uri);
+
+    g_error_free (error);
+    return;
+  }
+
+  gnome_desktop_thumbnail_factory_save_thumbnail (factory, thumbnail, uri, mtime, NULL, &error);
+  if (error) {
+    g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_FAILED, "Failed to create thumbnail for file: %s (%s)", uri, error->message);
+    g_error_free (error);
+    return;
+  }
+
+  g_task_return_boolean (task, TRUE);
+#else
   thumbnail = gnome_desktop_thumbnail_factory_generate_thumbnail (factory, uri, content_type);
 
   if (thumbnail) {
@@ -562,6 +584,7 @@ utils_create_thumbnail (GTask        *task,
   }
 
   g_task_return_boolean (task, TRUE);
+#endif
 }
 
 void

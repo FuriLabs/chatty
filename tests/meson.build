@@ -6,7 +6,8 @@ tests_inc = [
 env = environment()
 env.set('G_TEST_SRCDIR', meson.current_source_dir())
 env.set('G_TEST_BUILDDIR', meson.current_build_dir())
-env.set('GSETTINGS_SCHEMA_DIR', join_paths(meson.build_root(), 'data'))
+env.set('GSETTINGS_BACKEND', 'memory')
+env.set('GSETTINGS_SCHEMA_DIR', join_paths(meson.project_build_root(), 'data'))
 env.set('MALLOC_CHECK_', '2')
 
 test_items = []
@@ -20,10 +21,6 @@ test_items = [
   'history',
   'settings',
   'utils',
-  'matrix-api',
-  'matrix-db',
-  'matrix-enc',
-  'matrix-utils',
   'message-text-item',
   'mm-account',
   'sms-uri',
@@ -34,7 +31,7 @@ foreach item: test_items
     item,
     item + '.c',
     include_directories: tests_inc,
-    link_with: libchatty.get_static_lib(),
+    link_with: libchatty_static,
     dependencies: chatty_deps,
   )
   test(item, t, env: env, timeout: 300)

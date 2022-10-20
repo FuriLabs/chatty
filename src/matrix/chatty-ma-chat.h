@@ -12,12 +12,10 @@
 #pragma once
 
 #include <glib-object.h>
+#define CMATRIX_USE_EXPERIMENTAL_API
+#include "cmatrix.h"
 
-#include "chatty-item.h"
-#include "chatty-account.h"
-#include "chatty-message.h"
 #include "chatty-chat.h"
-#include "chatty-enums.h"
 
 G_BEGIN_DECLS
 
@@ -25,25 +23,13 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (ChattyMaChat, chatty_ma_chat, CHATTY, MA_CHAT, ChattyChat)
 
-ChattyMaChat *chatty_ma_chat_new                (const char     *room_id,
-                                                 const char     *name,
-                                                 ChattyFileInfo *avatar,
-                                                 gboolean        encrypted);
-void          chatty_ma_chat_set_history_db     (ChattyMaChat  *self,
-                                                 gpointer       history_db);
-void          chatty_ma_chat_set_matrix_db      (ChattyMaChat  *self,
-                                                 gpointer       matrix_db);
+ChattyMaChat *chatty_ma_chat_new_with_room      (CmRoom        *room);
+CmRoom       *chatty_ma_chat_get_cm_room        (ChattyMaChat  *self);
+gboolean      chatty_ma_chat_can_set_encryption (ChattyMaChat  *self);
 void          chatty_ma_chat_set_data           (ChattyMaChat  *self,
                                                  ChattyAccount *account,
-                                                 gpointer       api,
-                                                 gpointer       enc);
+                                                 gpointer       client);
 gboolean      chatty_ma_chat_matches_id         (ChattyMaChat  *self,
                                                  const char    *room_id);
-void          chatty_ma_chat_set_prev_batch     (ChattyMaChat  *self,
-                                                 char          *prev_batch);
-void          chatty_ma_chat_set_last_batch     (ChattyMaChat  *self,
-                                                 const char    *last_batch);
-void          chatty_ma_chat_add_messages       (ChattyMaChat  *self,
-                                                 GPtrArray     *messages);
 
 G_END_DECLS

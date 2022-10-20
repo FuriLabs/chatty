@@ -36,50 +36,69 @@ struct _ChattyImageItem
 G_DEFINE_TYPE (ChattyImageItem, chatty_image_item, GTK_TYPE_BIN)
 
 
-static gboolean
-item_set_image (gpointer user_data)
+static void
+image_item_paint (ChattyImageItem *self,
+                  GdkPixbuf       *pixbuf)
 {
-  ChattyImageItem *self = user_data;
-  g_autoptr(GdkPixbuf) pixbuf = NULL;
-  cairo_surface_t *surface = NULL;
-  g_autofree char *path = NULL;
-  ChattyFileInfo *file;
   GtkStyleContext *sc;
-  GList *files;
-  int scale_factor;
 
-  files = chatty_message_get_files (self->message);
-  g_return_val_if_fail (files && files->data, G_SOURCE_REMOVE);
-  file = files->data;
-  scale_factor = gtk_widget_get_scale_factor (GTK_WIDGET (self));
   sc = gtk_widget_get_style_context (self->image);
 
-  if (file->path) {
-    if (self->protocol == CHATTY_PROTOCOL_MMS_SMS || self->protocol == CHATTY_PROTOCOL_MMS)
-      path = g_build_filename (g_get_user_data_dir (), "chatty", file->path, NULL);
-    else
-      path = g_build_filename (g_get_user_cache_dir (), "chatty", file->path, NULL);
-  }
+  if (pixbuf) {
+    cairo_surface_t *surface = NULL;
 
-  if (path)
-    pixbuf = gdk_pixbuf_new_from_file_at_scale (path, 240 * scale_factor,
-                                                -1, TRUE, NULL);
-  if (pixbuf)
     surface = gdk_cairo_surface_create_from_pixbuf (pixbuf, 0,
                                                     gtk_widget_get_window (GTK_WIDGET (self)));
-
-  if (file->status == CHATTY_FILE_DOWNLOADED && pixbuf) {
     gtk_style_context_remove_class (sc, "dim-label");
     gtk_image_set_from_surface (GTK_IMAGE (self->image), surface);
+    g_clear_pointer (&surface, cairo_surface_destroy);
   } else {
     gtk_style_context_add_class (sc, "dim-label");
     gtk_image_set_from_icon_name (GTK_IMAGE (self->image),
                                   "image-x-generic-symbolic",
                                   GTK_ICON_SIZE_BUTTON);
+    return;
   }
+}
 
-  g_clear_pointer (&surface, cairo_surface_destroy);
+static void
+image_item_get_stream_cb (GObject      *object,
+                          GAsyncResult *result,
+                          gpointer      user_data)
+{
+  g_autoptr(ChattyImageItem) self = user_data;
+  g_autoptr(GInputStream) stream = NULL;
+  g_autoptr(GdkPixbuf) pixbuf = NULL;
+  int scale_factor;
 
+  if (gtk_widget_in_destruction (GTK_WIDGET (self)))
+    return;
+
+  stream = chatty_message_get_file_stream_finish (self->message, result, NULL);
+
+  if (!stream)
+    return;
+
+  scale_factor = gtk_widget_get_scale_factor (GTK_WIDGET (self));
+  pixbuf = gdk_pixbuf_new_from_stream_at_scale (stream, 240 * scale_factor,
+                                                -1, TRUE, NULL, NULL);
+  image_item_paint (self, pixbuf);
+}
+
+static gboolean
+item_set_image (gpointer user_data)
+{
+  ChattyImageItem *self = user_data;
+
+  /* It's possible that we get signals after dispose().
+   * Fix warning in those cases
+   */
+  if (!self->message)
+    return G_SOURCE_REMOVE;
+
+  chatty_message_get_file_stream_async (self->message, NULL, self->protocol, NULL,
+                                        image_item_get_stream_cb,
+                                        g_object_ref (self));
   return G_SOURCE_REMOVE;
 }
 
