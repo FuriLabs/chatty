@@ -31,7 +31,7 @@ struct _ChattyMaKeyChat
   CmClient        *cm_client;
   ChattyMaBuddy   *buddy;
 
-  CmEvent         *key_event;
+  CmVerificationEvent *key_event;
   ChattyChatState  chat_state;
 };
 
@@ -112,8 +112,8 @@ key_event_updated_cb (ChattyMaKeyChat *self)
 }
 
 ChattyMaKeyChat *
-chatty_ma_key_chat_new (gpointer  ma_account,
-                        CmEvent  *key_event)
+chatty_ma_key_chat_new (gpointer             ma_account,
+                        CmVerificationEvent *key_event)
 {
   ChattyMaKeyChat *self;
   CmEventType event_type;
@@ -121,7 +121,7 @@ chatty_ma_key_chat_new (gpointer  ma_account,
   g_return_val_if_fail (CHATTY_MA_ACCOUNT (ma_account), NULL);
   g_return_val_if_fail (CM_IS_EVENT (key_event), NULL);
 
-  event_type = cm_event_get_m_type (key_event);
+  event_type = cm_event_get_m_type (CM_EVENT (key_event));
   g_return_val_if_fail (event_type == CM_M_KEY_VERIFICATION_START ||
                         event_type == CM_M_KEY_VERIFICATION_REQUEST, NULL);
 
@@ -129,7 +129,7 @@ chatty_ma_key_chat_new (gpointer  ma_account,
   g_set_weak_pointer (&self->ma_account, ma_account);
   self->cm_client = g_object_ref (chatty_ma_account_get_cm_client (ma_account));
   self->key_event = g_object_ref (key_event);
-  self->buddy = chatty_ma_buddy_new_with_user (cm_event_get_sender (key_event));
+  self->buddy = chatty_ma_buddy_new_with_user (cm_event_get_sender (CM_EVENT (key_event)));
 
   g_signal_connect_object (self->key_event, "updated",
                            G_CALLBACK (key_event_updated_cb),
@@ -144,7 +144,7 @@ chatty_ma_key_chat_get_event (ChattyMaKeyChat *self)
 {
   g_return_val_if_fail (CHATTY_IS_MA_KEY_CHAT (self), NULL);
 
-  return self->key_event;
+  return CM_EVENT (self->key_event);
 }
 
 ChattyItem *
@@ -183,7 +183,7 @@ ma_key_cancel_cb (GObject      *object,
   gboolean success;
 
   self = g_task_get_source_object (task);
-  success = cm_client_key_verification_cancel_finish (CM_CLIENT (object), result, &error);
+  success = cm_verification_event_cancel_finish (self->key_event, result, &error);
 
   if (success)
     self->chat_state = CHATTY_CHAT_LEFT;
@@ -205,9 +205,8 @@ chatty_ma_key_cancel_async (ChattyMaKeyChat     *self,
 
   task = g_task_new (self, NULL, callback, user_data);
 
-  cm_client_key_verification_cancel_async (self->cm_client, self->key_event, NULL,
-                                           ma_key_cancel_cb,
-                                           task);
+  cm_verification_event_cancel_async (self->key_event, NULL,
+                                      ma_key_cancel_cb, task);
 }
 
 gboolean
@@ -230,7 +229,7 @@ ma_key_accept_cb (GObject      *object,
   GError *error = NULL;
   gboolean success;
 
-  success = cm_client_key_verification_continue_finish (CM_CLIENT (object), result, &error);
+  success = cm_verification_event_continue_finish (CM_VERIFICATION_EVENT (object), result, &error);
 
   if (error)
     g_task_return_error (task, error);
@@ -249,9 +248,8 @@ chatty_ma_key_accept_async (ChattyMaKeyChat     *self,
 
   task = g_task_new (self, NULL, callback, user_data);
 
-  cm_client_key_verification_continue_async (self->cm_client, self->key_event, NULL,
-                                             ma_key_accept_cb,
-                                             task);
+  cm_verification_event_continue_async (self->key_event, NULL,
+                                        ma_key_accept_cb, task);
 }
 
 gboolean
@@ -274,7 +272,7 @@ ma_key_match_cb (GObject      *object,
   GError *error = NULL;
   gboolean success;
 
-  success = cm_client_key_verification_match_finish (CM_CLIENT (object), result, &error);
+  success = cm_verification_event_match_finish (CM_VERIFICATION_EVENT (object), result, &error);
 
   if (error)
     g_task_return_error (task, error);
@@ -293,9 +291,8 @@ chatty_ma_key_match_async (ChattyMaKeyChat     *self,
 
   task = g_task_new (self, NULL, callback, user_data);
 
-  cm_client_key_verification_match_async (self->cm_client, self->key_event, NULL,
-                                          ma_key_match_cb,
-                                          task);
+  cm_verification_event_match_async (self->key_event, NULL,
+                                     ma_key_match_cb, task);
 }
 
 gboolean
