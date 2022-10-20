@@ -1,3 +1,23 @@
+chatty (0.7.0~rc1) byzantium; urgency=medium
+
+  [ Mohammed Sadiq ]
+  * manager: Don't filter out matrix chats
+  * main-view: Show an app-notification if account not connected
+  * Update cmatrix
+  * main: Don't force libsoup HTTP/1
+  * main-view: Let the stack be non-homogeneous
+  * verification-view: Fix showing subsequent verifications
+  * Update cmatrix and adapt to API changes
+  * style: Imrpove unread badge style
+  * list-row: Use bullet for invite and verification chats
+  * Update cmatrix
+
+  [ Yuri Chornoivan ]
+  * po: Update Ukrainian translation
+  * po: Update Ukrainian translation
+
+ -- Mohammed Sadiq <sadiq@sadiqpk.org>  Fri, 21 Oct 2022 19:42:34 +0530
+
 chatty (0.7.0~rc0) byzantium; urgency=medium
 
   [ Mohammed Sadiq ]
