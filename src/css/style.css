@@ -84,9 +84,9 @@
   color: white;
   font-weight: bold;
   font-size: 0.8em;
-  border-radius: 10px;
-  min-width: 0.7em; 
-  padding: 2px 5px;
+  border-radius: 9999px;
+  min-width: 0.7em;
+  padding: 2px 6px;
 }
 
 .muted-badge {

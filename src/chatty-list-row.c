@@ -30,6 +30,7 @@ struct _ChattyListRow
 {
   GtkListBoxRow  parent_instance;
 
+  GtkWidget     *content_grid;
   GtkWidget     *avatar;
   GtkWidget     *title;
   GtkWidget     *subtitle;
@@ -207,10 +208,16 @@ chatty_list_row_update (ChattyListRow *self)
     last_message_time = chatty_chat_get_last_msg_time (item);
     gtk_widget_set_visible (self->last_modified, last_message_time > 0);
 
-    if (chatty_chat_get_chat_state (CHATTY_CHAT (self->item)) == CHATTY_CHAT_INVITED) {
-      gtk_label_set_text (GTK_LABEL (self->unread_message_count), "!");
+    if (chatty_chat_get_chat_state (CHATTY_CHAT (self->item)) == CHATTY_CHAT_INVITED ||
+        CHATTY_IS_MA_KEY_CHAT (self->item)) {
+      gtk_label_set_text (GTK_LABEL (self->unread_message_count), "⚫︎");
       gtk_widget_show (self->unread_message_count);
-    }
+      gtk_container_child_set (GTK_CONTAINER (self->content_grid), self->unread_message_count,
+                               "top-attach", 0, NULL);
+    } else {
+      gtk_container_child_set (GTK_CONTAINER (self->content_grid), self->unread_message_count,
+                               "top-attach", 1, NULL);
+      }
 
     chatty_list_row_update_last_modified (self);
   }
@@ -300,6 +307,8 @@ chatty_list_row_class_init (ChattyListRowClass *klass)
   gtk_widget_class_set_template_from_resource (widget_class,
                                                "/sm/puri/Chatty/"
                                                "ui/chatty-list-row.ui");
+
+  gtk_widget_class_bind_template_child (widget_class, ChattyListRow, content_grid);
   gtk_widget_class_bind_template_child (widget_class, ChattyListRow, avatar);
   gtk_widget_class_bind_template_child (widget_class, ChattyListRow, checkbox);
   gtk_widget_class_bind_template_child (widget_class, ChattyListRow, close_button);
@@ -378,9 +387,6 @@ chatty_list_row_set_item (ChattyListRow *self,
   g_object_bind_property (item, "name",
                           self->title, "label",
                           G_BINDING_SYNC_CREATE);
-
-  if (CHATTY_IS_MA_KEY_CHAT (item))
-    self->hide_chat_details = TRUE;
 
   if (CHATTY_IS_CHAT (item))
     g_signal_connect_object (item, "changed",

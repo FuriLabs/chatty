@@ -3,7 +3,7 @@
   <template class="ChattyListRow" parent="GtkListBoxRow">
     <property name="visible">True</property>
     <child>
-      <object class="GtkGrid">
+      <object class="GtkGrid" id="content_grid">
         <property name="visible">True</property>
         <property name="margin">6</property>
         <property name="column-spacing">9</property>

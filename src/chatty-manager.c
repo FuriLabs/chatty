@@ -155,6 +155,10 @@ manager_filter_chat_item (ChattyItem *item)
 
     account = chatty_chat_get_account (CHATTY_CHAT (item));
 
+    /* Always show Matrix chats if the account is enabled */
+    if (CHATTY_IS_MA_ACCOUNT (account) && chatty_account_get_enabled (account))
+      return TRUE;
+
     if (!account || chatty_account_get_status (account) != CHATTY_CONNECTED)
       return FALSE;
   }

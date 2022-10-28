@@ -1,3 +1,9 @@
+chatty (0.7.0~rc1-1) unstable; urgency=medium
+
+  * New upstream version 0.7.0~rc1
+
+ -- Evangelos Ribeiro Tzaras <devrtz-debian@fortysixandtwo.eu>  Fri, 28 Oct 2022 10:20:52 +0200
+
 chatty (0.7.0~rc0-1) unstable; urgency=medium
 
   * New upstream version 0.7.0~rc0

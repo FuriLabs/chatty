@@ -472,6 +472,8 @@ chatty_verification_view_set_item (ChattyVerificationView *self,
   g_return_if_fail (CHATTY_IS_VERIFICATION_VIEW (self));
 
   if (self->item) {
+    self->emoji_set = FALSE;
+    self->emoji_shown = FALSE;
     g_clear_object (&self->name_binding);
     chatty_avatar_set_item (CHATTY_AVATAR (self->user_avatar), NULL);
     g_clear_signal_handler (&self->update_handler, self->item);
