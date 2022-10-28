@@ -696,7 +696,7 @@ key_verifications_changed (ChattyMaAccount *self,
   g_assert (G_IS_LIST_MODEL (model));
 
   for (guint i = position; i < position + added; i++) {
-    g_autoptr(CmEvent) event = NULL;
+    g_autoptr(CmVerificationEvent) event = NULL;
     ChattyMaKeyChat *chat;
 
     if (!items)

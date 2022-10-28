@@ -63,8 +63,6 @@ main (int   argc,
 {
   g_autoptr(ChattyApplication) application = NULL;
 
-  g_setenv ("SOUP_FORCE_HTTP1", "1", FALSE);
-
   g_set_prgname (CHATTY_APP_ID);
   enable_backtrace ();
   chatty_log_init ();

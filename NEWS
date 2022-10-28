@@ -1,3 +1,12 @@
+Overview of Changes in Chats 0.7.0~rc1. Fri, 21 October 2022
+============================================================
+* Fix matrix verifications
+* Show matrix history with no network connectivity
+* Fix window height with onscreen-keyboard shown
+* prefer HTTP/2 for matrix if available
+* Update Translations
+  - Ukrainian
+
 Overview of Changes in Chats 0.7.0~rc0. Mon, 17 October 2022
 ============================================================
 * Move all matrix code to libcmatrix

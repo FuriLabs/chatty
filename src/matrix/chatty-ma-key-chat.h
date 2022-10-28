@@ -23,7 +23,7 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (ChattyMaKeyChat, chatty_ma_key_chat, CHATTY, MA_KEY_CHAT, ChattyChat)
 
 ChattyMaKeyChat     *chatty_ma_key_chat_new          (gpointer             ma_account,
-                                                      CmEvent             *key_event);
+                                                      CmVerificationEvent *key_event);
 CmEvent             *chatty_ma_key_chat_get_event    (ChattyMaKeyChat     *self);
 ChattyItem          *chatty_ma_key_chat_get_sender   (ChattyMaKeyChat     *self);
 GPtrArray           *chatty_ma_key_get_emoji         (ChattyMaKeyChat     *self);

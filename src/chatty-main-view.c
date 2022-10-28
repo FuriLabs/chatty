@@ -15,6 +15,8 @@
 # include "config.h"
 #endif
 
+#include <glib/gi18n.h>
+
 #include "chatty-chat.h"
 #include "chatty-ma-key-chat.h"
 #include "chatty-history.h"
@@ -26,6 +28,10 @@
 struct _ChattyMainView
 {
   GtkBox        parent_instance;
+
+  GtkWidget    *notification_revealer;
+  GtkWidget    *notification_label;
+  GtkWidget    *close_button;
 
   GtkWidget    *main_stack;
   GtkWidget    *content_view;
@@ -39,9 +45,49 @@ struct _ChattyMainView
 G_DEFINE_TYPE (ChattyMainView, chatty_main_view, GTK_TYPE_BOX)
 
 static void
+main_view_account_status_changed_cb (ChattyMainView *self)
+{
+  ChattyAccount *account;
+  const char *status_text = "";
+  ChattyStatus status;
+  gboolean reveal = FALSE;
+
+  g_assert (CHATTY_IS_MAIN_VIEW (self));
+
+  account = chatty_chat_get_account (CHATTY_CHAT (self->item));
+  status  = chatty_account_get_status (account);
+
+  if (status != CHATTY_CONNECTED)
+    reveal = TRUE;
+
+  if (status == CHATTY_DISCONNECTED)
+    status_text = _("Account disconnected");
+  else if (status == CHATTY_CONNECTING)
+    status_text = _("Account connecting…");
+
+  gtk_label_set_label (GTK_LABEL (self->notification_label), status_text);
+  gtk_revealer_set_reveal_child (GTK_REVEALER (self->notification_revealer), reveal);
+}
+
+static void
+main_view_notification_closed_cb (ChattyMainView *self)
+{
+  g_assert (CHATTY_IS_MAIN_VIEW (self));
+}
+
+static void
 chatty_main_view_dispose (GObject *object)
 {
   ChattyMainView *self = (ChattyMainView *)object;
+
+  if (CHATTY_IS_CHAT (self->item) && chatty_chat_get_account (CHATTY_CHAT (self->item))) {
+    ChattyAccount *account;
+
+    account = chatty_chat_get_account (CHATTY_CHAT (self->item));
+    g_signal_handlers_disconnect_by_func (account,
+                                          main_view_account_status_changed_cb,
+                                          self);
+  }
 
   g_clear_object (&self->item);
 
@@ -60,11 +106,17 @@ chatty_main_view_class_init (ChattyMainViewClass *klass)
                                                "/sm/puri/Chatty/"
                                                "ui/chatty-main-view.ui");
 
+  gtk_widget_class_bind_template_child (widget_class, ChattyMainView, notification_revealer);
+  gtk_widget_class_bind_template_child (widget_class, ChattyMainView, notification_label);
+  gtk_widget_class_bind_template_child (widget_class, ChattyMainView, close_button);
+
   gtk_widget_class_bind_template_child (widget_class, ChattyMainView, main_stack);
   gtk_widget_class_bind_template_child (widget_class, ChattyMainView, content_view);
   gtk_widget_class_bind_template_child (widget_class, ChattyMainView, invite_view);
   gtk_widget_class_bind_template_child (widget_class, ChattyMainView, verification_view);
   gtk_widget_class_bind_template_child (widget_class, ChattyMainView, empty_view);
+
+  gtk_widget_class_bind_template_callback (widget_class, main_view_notification_closed_cb);
 
   g_type_ensure (CHATTY_TYPE_CHAT_VIEW);
   g_type_ensure (CHATTY_TYPE_VERIFICATION_VIEW);
@@ -93,6 +145,17 @@ chatty_main_view_set_item (ChattyMainView *self,
   g_return_if_fail (CHATTY_IS_MAIN_VIEW (self));
   g_return_if_fail (!item || CHATTY_IS_ITEM (item));
 
+  if (self->item && item != self->item) {
+    if (CHATTY_IS_CHAT (self->item) && chatty_chat_get_account (CHATTY_CHAT (self->item))) {
+      ChattyAccount *account;
+
+      account = chatty_chat_get_account (CHATTY_CHAT (self->item));
+      g_signal_handlers_disconnect_by_func (account,
+                                            main_view_account_status_changed_cb,
+                                            self);
+    }
+  }
+
   g_set_object (&self->item, item);
   chatty_verification_view_set_item (CHATTY_VERIFICATION_VIEW (self->verification_view), item);
 
@@ -114,7 +177,19 @@ chatty_main_view_set_item (ChattyMainView *self,
     else
       gtk_stack_set_visible_child (GTK_STACK (self->main_stack), self->content_view);
   } else {
+    gtk_revealer_set_reveal_child (GTK_REVEALER (self->notification_revealer), FALSE);
     gtk_stack_set_visible_child (GTK_STACK (self->main_stack), self->empty_view);
+  }
+
+  if (CHATTY_IS_CHAT (item) && chatty_chat_get_account (CHATTY_CHAT (item))) {
+    ChattyAccount *account;
+
+    account = chatty_chat_get_account (CHATTY_CHAT (item));
+
+    g_signal_connect_object (account, "notify::status",
+                             G_CALLBACK (main_view_account_status_changed_cb),
+                             self, G_CONNECT_SWAPPED);
+    main_view_account_status_changed_cb (self);
   }
 }
 
