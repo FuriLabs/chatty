@@ -21,6 +21,7 @@ src/chatty-fp-row.h
 src/chatty-invite-view.c
 src/chatty-list-row.c
 src/chatty-list-row.h
+src/chatty-main-view.c
 src/chatty-manager.c
 src/chatty-manager.h
 src/chatty-message-row.c
