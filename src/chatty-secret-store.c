@@ -15,7 +15,6 @@
 #include <libsecret/secret.h>
 #include <glib/gi18n.h>
 
-#include "matrix-utils.h"
 #include "chatty-ma-account.h"
 #include "chatty-secret-store.h"
 #include "chatty-log.h"

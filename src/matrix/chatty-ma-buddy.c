@@ -15,7 +15,6 @@
 #include <string.h>
 #include <glib/gi18n.h>
 
-#include "matrix-utils.h"
 #include "chatty-ma-buddy.h"
 
 struct _ChattyMaBuddy

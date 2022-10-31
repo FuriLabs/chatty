@@ -21,7 +21,6 @@
 
 #include "contrib/gtk.h"
 #include "chatty-utils.h"
-#include "matrix-utils.h"
 #include "chatty-ma-buddy.h"
 #include "chatty-ma-chat.h"
 #include "chatty-log.h"

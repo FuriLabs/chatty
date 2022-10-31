@@ -16,7 +16,6 @@
 
 #include "chatty-secret-store.h"
 #include "chatty-history.h"
-#include "matrix-utils.h"
 #include "chatty-utils.h"
 #include "chatty-ma-chat.h"
 #include "chatty-ma-key-chat.h"
