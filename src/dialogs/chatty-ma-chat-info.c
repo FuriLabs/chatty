@@ -111,6 +111,7 @@ chatty_ma_chat_info_set_item (ChattyChatInfo *info,
   g_assert (!chat || CHATTY_IS_MA_CHAT (chat));
 
   if (self->chat && chat != self->chat) {
+    chatty_avatar_set_item (CHATTY_AVATAR (self->avatar), (ChattyItem *) chat);
     g_signal_handlers_disconnect_by_func (self->chat,
                                           ma_chat_encrypt_changed_cb,
                                           self);
@@ -119,6 +120,7 @@ chatty_ma_chat_info_set_item (ChattyChatInfo *info,
   if (!g_set_object (&self->chat, chat) || !chat)
     return;
 
+  chatty_avatar_set_item (CHATTY_AVATAR (self->avatar), CHATTY_ITEM (chat));
   gtk_label_set_text (GTK_LABEL (self->matrix_id_label),
                       chatty_chat_get_chat_name (self->chat));
   gtk_label_set_text (GTK_LABEL (self->name_label),
