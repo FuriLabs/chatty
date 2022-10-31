@@ -23,6 +23,7 @@ struct _ChattyMaBuddy
   ChattyItem      parent_instance;
 
   CmUser         *cm_user;
+  GdkPixbuf      *avatar;
 
   /* generated using g_str_hash for faster comparison */
   guint           id_hash;
@@ -103,12 +104,43 @@ chatty_ma_buddy_get_username (ChattyItem *item)
   return "";
 }
 
+static void
+ma_buddy_get_avatar_cb (GObject      *object,
+                        GAsyncResult *result,
+                        gpointer      user_data)
+{
+  g_autoptr(ChattyMaBuddy) self = user_data;
+  g_autoptr(GInputStream) stream = NULL;
+  g_autoptr(GError) error = NULL;
+
+  if (self->avatar)
+    return;
+
+  stream = cm_user_get_avatar_finish (self->cm_user, result, &error);
+
+  if (error || !stream)
+    return;
+
+  self->avatar = gdk_pixbuf_new_from_stream (stream, NULL, NULL);
+  g_signal_emit_by_name (self, "avatar-changed", 0);
+}
+
 static GdkPixbuf *
 chatty_ma_buddy_get_avatar (ChattyItem *item)
 {
   ChattyMaBuddy *self = (ChattyMaBuddy *)item;
 
   g_assert (CHATTY_IS_MA_BUDDY (self));
+
+  if (self->avatar)
+    return self->avatar;
+
+  if (!self->cm_user)
+    return NULL;
+
+  cm_user_get_avatar_async (self->cm_user, NULL,
+                            ma_buddy_get_avatar_cb,
+                            g_object_ref (self));
 
   return NULL;
 }
@@ -157,6 +189,16 @@ chatty_ma_buddy_init (ChattyMaBuddy *self)
 {
 }
 
+static void
+ma_buddy_changed_cb (ChattyMaBuddy *self)
+{
+  g_assert (CHATTY_IS_MA_BUDDY (self));
+
+  g_clear_object (&self->avatar);
+  g_signal_emit_by_name (self, "changed", 0);
+  g_signal_emit_by_name (self, "avatar-changed", 0);
+}
+
 ChattyMaBuddy *
 chatty_ma_buddy_new_with_user (CmUser *user)
 {
@@ -166,6 +208,8 @@ chatty_ma_buddy_new_with_user (CmUser *user)
 
   self = g_object_new (CHATTY_TYPE_MA_BUDDY, NULL);
   self->cm_user = g_object_ref (user);
+  g_signal_connect_swapped (self->cm_user, "changed",
+                            G_CALLBACK (ma_buddy_changed_cb), self);
 
   return self;
 }
