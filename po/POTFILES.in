@@ -76,6 +76,7 @@ src/ui/chatty-header-bar.ui
 src/ui/chatty-info-dialog.ui
 src/ui/chatty-invite-view.ui
 src/ui/chatty-ma-chat-info.ui
+src/ui/chatty-main-view.ui
 src/ui/chatty-pp-chat-info.ui
 src/ui/chatty-mm-chat-info.ui
 src/ui/chatty-fp-row.ui
