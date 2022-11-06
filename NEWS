@@ -1,3 +1,13 @@
+Overview of Changes in Chats 0.7.0~rc2. Sun, 06 November 2022
+=============================================================
+* Matrix - Load user and room avatar
+* Follow upstream dark style preference changes
+* Disable HTTP/2 for matrix (again), it breaks sometimes
+* Update Translations
+  - Italian
+  - Swedish
+  - Romanian
+
 Overview of Changes in Chats 0.7.0~rc1. Fri, 21 October 2022
 ============================================================
 * Fix matrix verifications
