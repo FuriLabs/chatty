@@ -1,3 +1,34 @@
+chatty (0.7.0~rc2) byzantium; urgency=medium
+
+  [ Mohammed Sadiq ]
+  * chat-list: Casefold search needle
+  * Update cmatrix
+  * ma-chat-info: Set avatar when item is set
+  * ma-buddy: Load user avatar
+  * ma-chat: Load room avatar
+  * ma-account: Load account avatar
+  * matrix: Remove no longer used code
+  * po: Update POTFILES.in
+  * main: Log stack traces only on verbose log
+
+  [ Vittorio Monti ]
+  * Update Italian translation
+
+  [ Pablo Correa Gómez ]
+  * application: follow upstream dark style preference changes
+
+  [ Anders Jonsson ]
+  * po: Update Swedish translation
+
+  [ Daniel Șerbănescu ]
+  * po: Update Romanian translation
+
+  [ Guido Günther ]
+  * chat-view: Fix harmless oks_ -> osk_ typo
+  * chat-view: Turn on word-completion input hint
+
+ -- Mohammed Sadiq <sadiq@sadiqpk.org>  Sun, 06 Nov 2022 10:26:43 +0530
+
 chatty (0.7.0~rc1) byzantium; urgency=medium
 
   [ Mohammed Sadiq ]

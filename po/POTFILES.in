@@ -65,8 +65,6 @@ src/matrix/chatty-ma-account.h
 src/matrix/chatty-ma-chat.c
 src/matrix/chatty-ma-chat.h
 src/matrix/chatty-ma-key-chat.c
-src/matrix/matrix-utils.c
-src/matrix/matrix-utils.h
 src/mm/chatty-mmsd.c
 src/mm/chatty-mmsd.h
 src/ui/chatty-chat-view.ui
@@ -78,6 +76,7 @@ src/ui/chatty-header-bar.ui
 src/ui/chatty-info-dialog.ui
 src/ui/chatty-invite-view.ui
 src/ui/chatty-ma-chat-info.ui
+src/ui/chatty-main-view.ui
 src/ui/chatty-pp-chat-info.ui
 src/ui/chatty-mm-chat-info.ui
 src/ui/chatty-fp-row.ui
