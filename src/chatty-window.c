@@ -255,6 +255,13 @@ notify_fold_cb (ChattyWindow *self)
 
   folded = hdy_leaflet_get_folded (HDY_LEAFLET (self->content_box));
   chatty_chat_list_set_selection_mode (CHATTY_CHAT_LIST (self->chat_list), !folded);
+
+  if (!folded) {
+    ChattyItem *item;
+
+    item = chatty_main_view_get_item (CHATTY_MAIN_VIEW (self->content_view));
+    chatty_chat_list_select_item (CHATTY_CHAT_LIST (self->chat_list), item);
+  }
 }
 
 static void
