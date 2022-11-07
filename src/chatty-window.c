@@ -223,8 +223,14 @@ window_chat_list_selection_changed (ChattyWindow   *self,
   chat = chat_list->pdata[0];
   g_return_if_fail (CHATTY_IS_CHAT (chat));
 
-  if (chat == (gpointer)chatty_main_view_get_item (CHATTY_MAIN_VIEW (self->content_view)))
+  if (chat == (gpointer)chatty_main_view_get_item (CHATTY_MAIN_VIEW (self->content_view))) {
+    hdy_leaflet_set_visible_child (HDY_LEAFLET (self->content_box), self->content_view);
+
+    if (chatty_window_get_active_chat (self))
+      chatty_chat_set_unread_count (chat, 0);
+
     return;
+  }
 
 #ifdef PURPLE_ENABLED
   if (CHATTY_IS_PP_CHAT (chat))
