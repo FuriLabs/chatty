@@ -188,6 +188,7 @@
                             <property name="right-margin">6</property>
                             <property name="top-margin">6</property>
                             <property name="bottom-margin">6</property>
+                            <property name="input-hints">word-completion</property>
                             <signal name="key-press-event" handler="chat_view_input_key_pressed_cb" swapped="yes"/>
                           </object>
                         </child>

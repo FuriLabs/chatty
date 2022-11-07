@@ -414,7 +414,7 @@ chatty_chat_list_filter_string (ChattyChatList *self,
   g_clear_pointer (&self->chat_needle, g_free);
 
   if (needle && *needle)
-    self->chat_needle = g_strdup (needle);
+    self->chat_needle = g_utf8_casefold (needle, -1);
 
   gtk_filter_changed (self->filter, GTK_FILTER_CHANGE_DIFFERENT);
 }

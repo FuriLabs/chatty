@@ -821,7 +821,7 @@ osk_appeared_cb (GDBusConnection *connection,
 }
 
 static void
-oks_vanished_cb (GDBusConnection *connection,
+osk_vanished_cb (GDBusConnection *connection,
                  const char      *name,
                  gpointer         user_data)
 {
@@ -948,7 +948,7 @@ chatty_chat_view_init (ChattyChatView *self)
   self->osk_id = g_bus_watch_name (G_BUS_TYPE_SESSION, "sm.puri.OSK0",
                                    G_BUS_NAME_WATCHER_FLAGS_NONE,
                                    osk_appeared_cb,
-                                   oks_vanished_cb,
+                                   osk_vanished_cb,
                                    g_object_ref (self),
                                    g_object_unref);
 

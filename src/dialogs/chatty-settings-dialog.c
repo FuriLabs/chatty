@@ -34,7 +34,6 @@
 #include "cmatrix.h"
 
 #include "chatty-utils.h"
-#include "matrix-utils.h"
 #include "chatty-ma-account.h"
 #include "chatty-mm-account.h"
 #include "chatty-manager.h"
