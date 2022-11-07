@@ -396,6 +396,36 @@ chatty_chat_list_select_first (ChattyChatList *self)
 }
 
 void
+chatty_chat_list_select_item (ChattyChatList *self,
+                              ChattyItem     *item)
+{
+  GtkListBox *box;
+  ChattyListRow *row = NULL;
+
+  g_return_if_fail (CHATTY_IS_CHAT_LIST (self));
+  g_return_if_fail (!item || CHATTY_IS_ITEM (item));
+
+  if (!item) {
+    chatty_chat_list_select_first (self);
+    return;
+  }
+
+  box = GTK_LIST_BOX (self->chats_listbox);
+  row = (ChattyListRow *)gtk_list_box_get_row_at_index (box, 0);
+
+  for (guint i = 1; row; i++)
+    {
+      if (chatty_list_row_get_item (row) == item)
+        break;
+
+      row = (ChattyListRow *)gtk_list_box_get_row_at_index (box, i);
+    }
+
+  if (row)
+    gtk_widget_activate (GTK_WIDGET (row));
+}
+
+void
 chatty_chat_list_filter_protocol (ChattyChatList *self,
                                   ChattyProtocol  protocol)
 {
