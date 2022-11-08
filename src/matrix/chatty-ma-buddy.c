@@ -207,8 +207,9 @@ chatty_ma_buddy_new_with_user (CmUser *user)
 
   self = g_object_new (CHATTY_TYPE_MA_BUDDY, NULL);
   self->cm_user = g_object_ref (user);
-  g_signal_connect_swapped (self->cm_user, "changed",
-                            G_CALLBACK (ma_buddy_changed_cb), self);
+  g_signal_connect_object (self->cm_user, "changed",
+                           G_CALLBACK (ma_buddy_changed_cb),
+                           self, G_CONNECT_SWAPPED);
 
   return self;
 }
