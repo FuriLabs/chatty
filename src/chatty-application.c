@@ -389,6 +389,8 @@ chatty_application_startup (GApplication *application)
   g_info ("%s %s, git version: %s", PACKAGE_NAME, PACKAGE_VERSION, GIT_VERSION);
 
   hdy_init ();
+  hdy_style_manager_set_color_scheme (hdy_style_manager_get_default (),
+                                      HDY_COLOR_SCHEME_PREFER_LIGHT);
   cm_init (TRUE);
 
   g_set_application_name (_("Chats"));

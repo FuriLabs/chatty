@@ -111,7 +111,7 @@ chatty_deps += [
   dependency('gtk+-3.0', version: '>= 3.22'),
   libgd_dep,
   dependency('libsecret-1'),
-  dependency('libhandy-1', version: '>= 1.1.90'),
+  dependency('libhandy-1', version: '>= 1.5.0'),
   dependency('sqlite3', version: '>=3.0.0'),
   dependency('libebook-contacts-1.2'),
   dependency('libebook-1.2'),

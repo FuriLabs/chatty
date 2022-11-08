@@ -16,7 +16,6 @@
 
 #include "chatty-secret-store.h"
 #include "chatty-history.h"
-#include "matrix-utils.h"
 #include "chatty-utils.h"
 #include "chatty-ma-chat.h"
 #include "chatty-ma-key-chat.h"
@@ -46,7 +45,6 @@ struct _ChattyMaAccount
   ChattyFileInfo *avatar_file;
 
   ChattyStatus   status;
-  gboolean       avatar_is_loading;
   guint          connect_id;
 };
 
@@ -64,29 +62,6 @@ G_DEFINE_TYPE (ChattyMaAccount, chatty_ma_account, CHATTY_TYPE_ACCOUNT)
                     CHATTY_LOG_BOOL (_status == CHATTY_CONNECTED));     \
     }                                                                   \
   } while (0)
-
-static void
-ma_account_get_avatar_pixbuf_cb (GObject      *object,
-                                 GAsyncResult *result,
-                                 gpointer      user_data)
-{
-  g_autoptr(ChattyMaAccount) self = user_data;
-  g_autoptr(GError) error = NULL;
-  GdkPixbuf *pixbuf;
-
-  g_assert (CHATTY_IS_MA_ACCOUNT (self));
-
-  pixbuf = matrix_utils_get_pixbuf_finish (result, &error);
-
-  self->avatar_is_loading = FALSE;
-  if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
-    g_warning ("Error loading avatar file: %s", error->message);
-
-  if (!error) {
-    g_set_object (&self->avatar, pixbuf);
-    g_signal_emit_by_name (self, "avatar-changed");
-  }
-}
 
 static void
 handle_password_login (ChattyMaAccount *self,
@@ -502,33 +477,43 @@ chatty_ma_account_get_avatar_file (ChattyItem *item)
   return NULL;
 }
 
+static void
+ma_account_get_avatar_cb (GObject      *object,
+                          GAsyncResult *result,
+                          gpointer      user_data)
+{
+  g_autoptr(ChattyMaAccount) self = user_data;
+  g_autoptr(GInputStream) stream = NULL;
+  g_autoptr(GError) error = NULL;
+
+  if (self->avatar)
+    return;
+
+  stream = cm_user_get_avatar_finish (CM_USER (object), result, &error);
+
+  if (error || !stream)
+    return;
+
+  self->avatar = gdk_pixbuf_new_from_stream (stream, NULL, NULL);
+  g_signal_emit_by_name (self, "avatar-changed", 0);
+}
+
 static GdkPixbuf *
 chatty_ma_account_get_avatar (ChattyItem *item)
 {
   ChattyMaAccount *self = (ChattyMaAccount *)item;
+  CmAccount *account;
 
   g_assert (CHATTY_IS_MA_ACCOUNT (self));
 
   if (self->avatar)
     return self->avatar;
 
-  if (!self->avatar_file || !self->avatar_file->url ||
-      !*self->avatar_file->url || self->avatar_is_loading)
-    return NULL;
+  account = cm_client_get_account (self->cm_client);
 
-  self->avatar_is_loading = TRUE;
-  if (self->avatar_file->path) {
-    g_autofree char *path = NULL;
-    path = g_build_filename (g_get_user_cache_dir (), "chatty",
-                             self->avatar_file->path, NULL);
-
-    matrix_utils_get_pixbuf_async (path,
-                                   NULL,
-                                   ma_account_get_avatar_pixbuf_cb,
-                                   g_object_ref (self));
-
-  }
-
+  cm_user_get_avatar_async (CM_USER (account), NULL,
+                            ma_account_get_avatar_cb,
+                            g_object_ref (self));
   return NULL;
 }
 
@@ -768,15 +753,30 @@ ma_account_set_client (ChattyMaAccount *self,
   key_verifications_changed (self, 0, 0, g_list_model_get_n_items (key_verifications), key_verifications);
 }
 
+static void
+ma_account_changed_cb (ChattyMaAccount *self)
+{
+  g_assert (CHATTY_IS_MA_ACCOUNT (self));
+
+  g_clear_object (&self->avatar);
+  g_object_notify (G_OBJECT (self), "name");
+  g_signal_emit_by_name (self, "avatar-changed", 0);
+}
+
 ChattyMaAccount *
 chatty_ma_account_new_from_client (CmClient *cm_client)
 {
   ChattyMaAccount *self;
+  CmAccount *account;
 
   g_return_val_if_fail (CM_IS_CLIENT (cm_client), NULL);
 
   self = g_object_new (CHATTY_TYPE_MA_ACCOUNT, NULL);
   ma_account_set_client (self, g_object_ref (cm_client));
+
+  account = cm_client_get_account (cm_client);
+  g_signal_connect_swapped (account, "changed",
+                            G_CALLBACK (ma_account_changed_cb), self);
 
   return self;
 }
