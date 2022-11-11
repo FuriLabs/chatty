@@ -25,6 +25,8 @@ GPtrArray  *chatty_chat_list_get_selected        (ChattyChatList   *self);
 void        chatty_chat_list_set_selection_mode  (ChattyChatList   *self,
                                                   GtkSelectionMode  mode);
 void        chatty_chat_list_select_first        (ChattyChatList   *self);
+void        chatty_chat_list_select_item         (ChattyChatList   *self,
+                                                  ChattyItem       *item);
 void        chatty_chat_list_filter_protocol     (ChattyChatList   *self,
                                                   ChattyProtocol    protocol);
 void        chatty_chat_list_filter_string       (ChattyChatList   *self,
