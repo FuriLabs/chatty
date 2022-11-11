@@ -106,6 +106,7 @@ message_activate_gesture_cb (ChattyMessageRow *self)
   g_autoptr(GFile) file = NULL;
   g_autofree char *uri = NULL;
   ChattyFileInfo *info = NULL;
+  CmRoomMessageEvent *event;
   GList *file_list;
 
   g_assert (CHATTY_IS_MESSAGE_ROW (self));
@@ -121,8 +122,13 @@ message_activate_gesture_cb (ChattyMessageRow *self)
   if (!info || !info->path)
     return;
 
+  event = (CmRoomMessageEvent *)chatty_message_get_cm_event (self->message);
   if (self->protocol == CHATTY_PROTOCOL_MMS_SMS || self->protocol == CHATTY_PROTOCOL_MMS)
     file = g_file_new_build_filename (g_get_user_data_dir (), "chatty", info->path, NULL);
+  else if (self->protocol == CHATTY_PROTOCOL_MATRIX &&
+           event &&
+           cm_room_message_event_get_file_path (event))
+    file = g_file_new_build_filename (cm_room_message_event_get_file_path (event), NULL);
   else
     file = g_file_new_build_filename (g_get_user_cache_dir (), "chatty", info->path, NULL);
 
