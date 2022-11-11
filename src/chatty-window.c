@@ -223,8 +223,14 @@ window_chat_list_selection_changed (ChattyWindow   *self,
   chat = chat_list->pdata[0];
   g_return_if_fail (CHATTY_IS_CHAT (chat));
 
-  if (chat == (gpointer)chatty_main_view_get_item (CHATTY_MAIN_VIEW (self->content_view)))
+  if (chat == (gpointer)chatty_main_view_get_item (CHATTY_MAIN_VIEW (self->content_view))) {
+    hdy_leaflet_set_visible_child (HDY_LEAFLET (self->content_box), self->content_view);
+
+    if (chatty_window_get_active_chat (self))
+      chatty_chat_set_unread_count (chat, 0);
+
     return;
+  }
 
 #ifdef PURPLE_ENABLED
   if (CHATTY_IS_PP_CHAT (chat))
@@ -250,17 +256,11 @@ notify_fold_cb (ChattyWindow *self)
   folded = hdy_leaflet_get_folded (HDY_LEAFLET (self->content_box));
   chatty_chat_list_set_selection_mode (CHATTY_CHAT_LIST (self->chat_list), !folded);
 
-  if (folded) {
-    window_set_item (self, NULL);
-  }
-}
+  if (!folded) {
+    ChattyItem *item;
 
-static void
-window_content_box_changed (ChattyWindow *self)
-{
-  if (hdy_leaflet_get_folded (HDY_LEAFLET (self->content_box)) &&
-      hdy_leaflet_get_visible_child (HDY_LEAFLET (self->content_box)) == self->sidebar) {
-    window_set_item (self, NULL);
+    item = chatty_main_view_get_item (CHATTY_MAIN_VIEW (self->content_view));
+    chatty_chat_list_select_item (CHATTY_CHAT_LIST (self->chat_list), item);
   }
 }
 
@@ -829,7 +829,6 @@ chatty_window_class_init (ChattyWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyWindow, protocol_list);
 
   gtk_widget_class_bind_template_callback (widget_class, notify_fold_cb);
-  gtk_widget_class_bind_template_callback (widget_class, window_content_box_changed);
   gtk_widget_class_bind_template_callback (widget_class, window_back_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, window_search_enable_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, window_search_changed_cb);
