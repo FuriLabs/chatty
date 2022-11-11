@@ -1,3 +1,17 @@
+chatty (0.7.0~rc3) byzantium; urgency=medium
+
+  * chat-list: Add API to select a chat
+  * window: don't deselect the chat when folded
+  * window: Fix selecting already selected item
+  * window: Restore selection when window is unfolded
+  * ma-buddy: Fix a crash when the user details change
+  * ma-chat: Scale down avatar when loading
+  * ma-buddy: Scale down avatar when loading
+  * Update cmatrix
+  * message-row: Fix opening matrix files
+
+ -- Mohammed Sadiq <sadiq@sadiqpk.org>  Fri, 11 Nov 2022 14:39:40 +0530
+
 chatty (0.7.0~rc2) byzantium; urgency=medium
 
   [ Mohammed Sadiq ]

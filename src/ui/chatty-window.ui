@@ -26,7 +26,6 @@
             <property name="can_focus">False</property>
             <property name="transition-type">slide</property>
             <property name="can-swipe-back">True</property>
-            <signal name="notify::visible-child-name" handler="window_content_box_changed" swapped="yes"/>
             <signal name="notify::folded" handler="notify_fold_cb" after="yes" swapped="yes"/>
             <child>
               <object class="GtkBox" id="sidebar">
