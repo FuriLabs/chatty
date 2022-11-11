@@ -1,3 +1,9 @@
+chatty (0.7.0~rc3-1) unstable; urgency=medium
+
+  * d/gbp.conf: Add upstream-vcs-tag
+
+ -- Evangelos Ribeiro Tzaras <devrtz-debian@fortysixandtwo.eu>  Fri, 11 Nov 2022 13:52:08 +0100
+
 chatty (0.7.0~rc2-1) unstable; urgency=medium
 
   * New upstream release candidate 0.7.0~rc2
