@@ -1,3 +1,11 @@
+chatty (0.7.0~rc4) byzantium; urgency=medium
+
+  * ma-chat: Emit message-added when new events are added
+  * ma-account: Fix a crash when account details are changed
+  * Update cmatrix
+
+ -- Mohammed Sadiq <sadiq@sadiqpk.org>  Wed, 16 Nov 2022 09:31:59 +0530
+
 chatty (0.7.0~rc3) byzantium; urgency=medium
 
   * chat-list: Add API to select a chat
