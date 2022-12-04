@@ -334,8 +334,6 @@ matrix_account_delete_cb (GObject      *object,
 
   if (error)
     g_task_return_error (task, error);
-  else
-    chatty_account_delete (CHATTY_ACCOUNT (account));
 }
 
 void
