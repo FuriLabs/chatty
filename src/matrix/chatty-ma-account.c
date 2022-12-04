@@ -303,14 +303,6 @@ chatty_ma_account_get_remember_password (ChattyAccount *self)
   return TRUE;
 }
 
-static void
-chatty_ma_account_delete (ChattyAccount *account)
-{
-  ChattyMaAccount *self = (ChattyMaAccount *)account;
-
-  g_assert (CHATTY_IS_MA_ACCOUNT (self));
-}
-
 static HdyValueObject *
 chatty_ma_account_get_device_fp (ChattyAccount *account)
 {
@@ -627,7 +619,6 @@ chatty_ma_account_class_init (ChattyMaAccountClass *klass)
   account_class->connect      = chatty_ma_account_connect;
   account_class->disconnect   = chatty_ma_account_disconnect;
   account_class->get_remember_password = chatty_ma_account_get_remember_password;
-  account_class->delete = chatty_ma_account_delete;
   account_class->get_device_fp = chatty_ma_account_get_device_fp;
   account_class->leave_chat_async = chatty_ma_account_leave_chat_async;
 }
