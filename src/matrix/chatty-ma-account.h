@@ -27,7 +27,6 @@ G_DECLARE_FINAL_TYPE (ChattyMaAccount, chatty_ma_account, CHATTY, MA_ACCOUNT, Ch
 
 ChattyMaAccount  *chatty_ma_account_new_from_client    (CmClient        *cm_client);
 CmClient         *chatty_ma_account_get_cm_client      (ChattyMaAccount *self);
-gboolean          chatty_ma_account_can_connect        (ChattyMaAccount *self);
 const char       *chatty_ma_account_get_login_username (ChattyMaAccount *self);
 const char       *chatty_ma_account_get_homeserver     (ChattyMaAccount *self);
 void              chatty_ma_account_set_homeserver     (ChattyMaAccount *self,
@@ -70,9 +69,5 @@ void              chatty_ma_account_delete_3pid_async  (ChattyMaAccount *self,
 gboolean          chatty_ma_account_delete_3pid_finish (ChattyMaAccount *self,
                                                         GAsyncResult    *result,
                                                         GError         **error);
-
-/* For tests */
-void             chatty_ma_account_add_chat            (ChattyMaAccount *self,
-                                                        ChattyChat      *chat);
 
 G_END_DECLS

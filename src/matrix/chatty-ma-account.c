@@ -723,14 +723,6 @@ chatty_ma_account_get_cm_client (ChattyMaAccount *self)
   return self->cm_client;
 }
 
-gboolean
-chatty_ma_account_can_connect (ChattyMaAccount *self)
-{
-  g_return_val_if_fail (CHATTY_IS_MA_ACCOUNT (self), FALSE);
-
-  return cm_client_can_connect (self->cm_client);
-}
-
 /**
  * chatty_ma_account_get_login_username:
  * @self: A #ChattyMaAccount
@@ -1071,16 +1063,4 @@ chatty_ma_account_delete_3pid_finish (ChattyMaAccount  *self,
   g_return_val_if_fail (G_IS_TASK (result), FALSE);
 
   return g_task_propagate_boolean (G_TASK (result), error);
-}
-
-void
-chatty_ma_account_add_chat (ChattyMaAccount *self,
-                            ChattyChat      *chat)
-{
-  g_return_if_fail (CHATTY_IS_MA_ACCOUNT (self));
-  g_return_if_fail (CHATTY_IS_MA_CHAT (chat));
-
-  chatty_ma_chat_set_data (CHATTY_MA_CHAT (chat), CHATTY_ACCOUNT (self),
-                           self->cm_client);
-  g_list_store_append (self->chat_list, chat);
 }
