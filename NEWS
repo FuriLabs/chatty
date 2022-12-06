@@ -1,3 +1,8 @@
+Overview of Changes in Chats 0.7.0~rc4. Wed, 16 November 2022
+=============================================================
+* Fix a crash when loading matrix account avatars
+* Fix a crash when sending encrypted messages
+
 Overview of Changes in Chats 0.7.0~rc3. Fri, 11 November 2022
 =============================================================
 * Fix opening matrix files clicking message row

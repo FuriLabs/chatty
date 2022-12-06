@@ -775,8 +775,9 @@ chatty_ma_account_new_from_client (CmClient *cm_client)
   ma_account_set_client (self, g_object_ref (cm_client));
 
   account = cm_client_get_account (cm_client);
-  g_signal_connect_swapped (account, "changed",
-                            G_CALLBACK (ma_account_changed_cb), self);
+  g_signal_connect_object (account, "changed",
+                           G_CALLBACK (ma_account_changed_cb),
+                           self, G_CONNECT_SWAPPED);
 
   return self;
 }

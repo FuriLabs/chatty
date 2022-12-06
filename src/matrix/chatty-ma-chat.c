@@ -868,6 +868,7 @@ events_list_changed_cb (ChattyMaChat *self,
 
   g_list_store_splice (self->message_list, position, removed,
                        items ? items->pdata : NULL, added);
+  g_signal_emit_by_name (self, "message-added", 0);
   g_signal_emit_by_name (self, "changed", 0);
 }
 
