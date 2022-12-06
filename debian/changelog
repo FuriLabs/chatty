@@ -1,3 +1,10 @@
+chatty (0.7.0~rc4-1) unstable; urgency=medium
+
+  [ Evangelos Ribeiro Tzaras ]
+  * d/watch: Mangle upstream version
+
+ -- Evangelos Ribeiro Tzaras <devrtz-debian@fortysixandtwo.eu>  Tue, 06 Dec 2022 14:54:27 +0100
+
 chatty (0.7.0~rc3-1) unstable; urgency=medium
 
   * d/gbp.conf: Add upstream-vcs-tag
