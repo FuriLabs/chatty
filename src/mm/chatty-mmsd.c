@@ -30,6 +30,7 @@
 #include "chatty-log.h"
 #include "chatty-mmsd.h"
 
+#define MMSD_DELIVERY_TIMEOUT           604800
 #define MMSD_SERVICE	                "org.ofono.mms"
 #define MMSD_PATH	                "/org/ofono/mms"
 #define MMSD_MODEMMANAGER_PATH          MMSD_PATH    "/modemmanager"
@@ -97,6 +98,7 @@ struct _mms_payload {
   char           *objectpath;
   int             delivery_report;
   guint           mmsd_message_proxy_watch_id;
+  guint           mmsd_message_delivery_timeout_id;
 };
 
 #define DEFAULT_MAXIMUM_ATTACHMENT_SIZE 1100000
@@ -119,6 +121,9 @@ mms_payload_free (gpointer data)
     g_dbus_connection_signal_unsubscribe (payload->self->connection,
                                           payload->mmsd_message_proxy_watch_id);
   }
+
+  g_clear_handle_id (&payload->mmsd_message_delivery_timeout_id,
+                     g_source_remove);
 
   g_free (payload->objectpath);
   g_free (payload->sender);
@@ -277,6 +282,66 @@ chatty_mmsd_message_status_changed_cb (GDBusConnection *connection,
   }
 }
 
+static gboolean
+chatty_mmsd_payload_delivery_timeout (gpointer user_data)
+{
+  mms_payload *payload = user_data;
+
+  /* Make sure that g_source_remove () is not called twice */
+  payload->mmsd_message_delivery_timeout_id = 0;
+
+  chatty_mmsd_delete_mms (payload->self, payload->objectpath);
+  return G_SOURCE_REMOVE;
+}
+
+static gboolean
+chatty_mmsd_check_delivery_status (ChattyMmsd  *self,
+                                   mms_payload *payload)
+{
+  ChattyMessage *message = payload->message;
+  ChattySettings *settings;
+  gboolean request_report;
+  time_t mms_time;
+  time_t now;
+
+  settings = chatty_settings_get_default ();
+  request_report = chatty_settings_request_sms_delivery_reports (settings);
+
+  /* Chatty does not care about delivery reports */
+  if (!request_report)
+    return FALSE;
+
+  mms_time = chatty_message_get_time (message);
+  now = time (NULL);
+  /*
+   * Many carriers do not send back a delivery report, so the MMS is
+   * never deleted. Expiry time is typically three days, so I am giving
+   * the MMS a week before I decide to just delete it.
+   * Week in seconds: 60*60*24*7 = 604800
+   */
+  if (now >= (mms_time + MMSD_DELIVERY_TIMEOUT))
+    return FALSE;
+
+  if (payload->delivery_report) {
+    guint delivery_timeout;
+
+    /*
+     * The clock may be wrong and be set to e.g. 1970. If now is greater than
+     * mms_time, we are reasonably sure the clock is right.
+     */
+    if (now > mms_time)
+      delivery_timeout = mms_time + MMSD_DELIVERY_TIMEOUT - now;
+    else
+      delivery_timeout = MMSD_DELIVERY_TIMEOUT;
+
+    payload->mmsd_message_delivery_timeout_id = g_timeout_add_seconds (delivery_timeout,
+                                                                       chatty_mmsd_payload_delivery_timeout,
+                                                                       payload);
+  }
+
+  return payload->delivery_report;
+}
+
 static void
 chatty_mmsd_process_mms (ChattyMmsd  *self,
                          mms_payload *payload)
@@ -303,7 +368,7 @@ chatty_mmsd_process_mms (ChattyMmsd  *self,
    * Monitor the status of the message until it is sent
    */
   if (mms_status == CHATTY_STATUS_SENDING ||
-      (payload->delivery_report && mms_status == CHATTY_STATUS_SENT)) {
+      (chatty_mmsd_check_delivery_status (self, payload) && mms_status == CHATTY_STATUS_SENT)) {
     if (payload->mmsd_message_proxy_watch_id == 0) {
       g_debug ("MMS not finished sending/delivering. Watching it for changes");
       payload->self = self;
