@@ -69,48 +69,6 @@ matrix_ma_account_changed_cb (ChattyMatrix    *self,
 }
 
 static void
-matrix_add_clients_cb (GObject      *object,
-                       GAsyncResult *result,
-                       gpointer      user_data)
-{
-  g_autoptr(ChattyMatrix) self = user_data;
-  g_autoptr(GError) error = NULL;
-
-  cm_matrix_add_clients_finish (self->cm_matrix, result, &error);
-
-  if (error)
-    g_warning ("Error saving accounts: %s", error->message);
-}
-
-static void
-matrix_secret_load_cb (GObject      *object,
-                       GAsyncResult *result,
-                       gpointer      user_data)
-{
-  ChattyMatrix *self = user_data;
-  g_autoptr(GPtrArray) accounts = NULL;
-  g_autoptr(GPtrArray) secrets = NULL;
-  g_autoptr(GError) error = NULL;
-
-  g_assert (CHATTY_IS_MATRIX (self));
-
-  secrets = chatty_secret_load_finish (result, &error);
-  g_info ("Loading accounts from secrets %s", CHATTY_LOG_SUCESS (!error));
-
-  if (error &&
-      !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
-    g_warning ("Error loading secrets: %s", error->message);
-
-  if (!secrets || !secrets->len)
-    return;
-
-  /* ... store the locally loaded accounts to cmatrix store */
-  cm_matrix_add_clients_async (self->cm_matrix, secrets,
-                               matrix_add_clients_cb,
-                               g_object_ref (self));
-}
-
-static void
 chatty_matrix_get_property (GObject    *object,
                             guint       prop_id,
                             GValue     *value,
@@ -205,27 +163,15 @@ matrix_open_cb (GObject      *obj,
 {
   g_autoptr(ChattyMatrix) self = user_data;
   g_autoptr(GError) error = NULL;
-  GListModel *accounts;
-  gboolean success;
 
   g_assert (CHATTY_IS_MATRIX (self));
   g_assert (CM_IS_MATRIX (obj));
 
-  success = cm_matrix_open_finish (CM_MATRIX (obj), result, &error);
+  cm_matrix_open_finish (CM_MATRIX (obj), result, &error);
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ENABLED]);
 
-  if (error) {
+  if (error)
     g_warning ("Error plugging in to the matrix: %s", error->message);
-    return;
-  }
-
-  if (success)
-    {
-      accounts = cm_matrix_get_clients_list (self->cm_matrix);
-      /* If we have no items loaded, load the items stored in chatty secret store... */
-      if (g_list_model_get_n_items (accounts) == 0)
-        chatty_secret_load_async (NULL, matrix_secret_load_cb, self);
-    }
 }
 
 static void
