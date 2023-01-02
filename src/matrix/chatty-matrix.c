@@ -19,7 +19,6 @@
 #define CMATRIX_USE_EXPERIMENTAL_API
 #include "cmatrix.h"
 
-#include "chatty-secret-store.h"
 #include "chatty-settings.h"
 #include "chatty-ma-account.h"
 #include "chatty-ma-buddy.h"

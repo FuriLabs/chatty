@@ -14,7 +14,6 @@
 #include <libsecret/secret.h>
 #include <glib/gi18n.h>
 
-#include "chatty-secret-store.h"
 #include "chatty-history.h"
 #include "chatty-utils.h"
 #include "chatty-ma-chat.h"

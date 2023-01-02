@@ -41,7 +41,6 @@
 #include "chatty-fp-row.h"
 #include "chatty-avatar.h"
 #include "chatty-settings.h"
-#include "chatty-secret-store.h"
 #include "chatty-ma-account-details.h"
 #include "chatty-pp-account-details.h"
 #include "chatty-settings-dialog.h"
