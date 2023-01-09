@@ -1,3 +1,7 @@
+Overview of Changes in Chats 0.7.0~rc5. Wed, 09 January 2023
+============================================================
+* Fix failing to load sessions on device boot
+
 Overview of Changes in Chats 0.7.0~rc4. Wed, 16 November 2022
 =============================================================
 * Fix a crash when loading matrix account avatars
