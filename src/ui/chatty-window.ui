@@ -24,7 +24,7 @@
           <object class="HdyLeaflet" id="content_box">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="transition-type">slide</property>
+            <property name="transition-type">over</property>
             <property name="can-swipe-back">True</property>
             <signal name="notify::folded" handler="notify_fold_cb" after="yes" swapped="yes"/>
             <child>
