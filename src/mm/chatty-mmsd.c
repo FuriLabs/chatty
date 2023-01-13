@@ -1061,6 +1061,9 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
     if (error != NULL) {
       g_clear_error (&error);
       attachment->mime_type = g_strdup (mimetype);
+    } else if (g_str_has_prefix (attachment->mime_type, "text/plain")) {
+      /* If the MMS reports the attachment is text/plain, trust it */
+      attachment->mime_type = g_strdup (mimetype);
     } else if (g_file_info_get_content_type (attachment_info) == NULL) {
       /* If we can't figure out content type, do not trust what the MMS tells it is */
       attachment->mime_type = g_strdup ("application/octet-stream");

@@ -1067,9 +1067,13 @@ get_homeserver_cb (GObject      *obj,
   root = cm_utils_read_uri_finish (result, &error);
 
   if (!root)
-{
-    g_task_return_error (task, error);
-    return;
+    {
+      if (error)
+        g_task_return_error (task, error);
+      else
+        g_task_return_pointer (task, NULL, NULL);
+
+      return;
   }
 
   g_object_set_data_full (G_OBJECT (task), "address",
@@ -1401,6 +1405,7 @@ cm_utils_save_url_to_path_async (CmClient              *client,
   GTask *task;
 
   g_return_if_fail (CM_IS_CLIENT (client));
+  g_return_if_fail (cm_client_get_enc (client));
   g_return_if_fail (uri && *uri);
   g_return_if_fail (file_path && *file_path == '/');
   g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));

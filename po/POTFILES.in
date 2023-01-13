@@ -34,8 +34,6 @@ src/purple/chatty-purple-notify.h
 src/purple/chatty-purple-request.c
 src/purple/chatty-purple-request.h
 src/purple/chatty-purple.c
-src/chatty-secret-store.c
-src/chatty-secret-store.h
 src/chatty-settings.c
 src/chatty-settings.h
 src/chatty-verification-view.c
