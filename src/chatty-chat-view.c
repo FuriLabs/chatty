@@ -528,7 +528,12 @@ chat_view_send_message_button_clicked_cb (ChattyChatView *self)
   }
   chatty_attachments_view_reset (CHATTY_ATTACHMENTS_VIEW (self->attachment_view));
 
-  gtk_text_buffer_delete (self->message_input_buffer, &start, &end);
+  /* We don't send matrix text if there are files.  So instead of
+   * deleting the existing text, simply make the entry sensitive again. */
+  if (CHATTY_IS_MA_CHAT (self->chat) && files)
+    gtk_widget_set_sensitive (self->message_input, TRUE);
+  else
+    gtk_text_buffer_delete (self->message_input_buffer, &start, &end);
 
   if (self->draft_message) {
     g_autofree char *uid = NULL;
