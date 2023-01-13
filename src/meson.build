@@ -58,7 +58,6 @@ libsrc += [
   'chatty-settings.c',
   'chatty-history.c',
   'chatty-notification.c',
-  'chatty-secret-store.c',
   'chatty-utils.c',
   'chatty-phone-utils.cpp',
 ]
@@ -110,7 +109,6 @@ chatty_deps += [
   dependency('gio-2.0', version: '>= 2.66'),
   dependency('gtk+-3.0', version: '>= 3.22'),
   libgd_dep,
-  dependency('libsecret-1'),
   dependency('libhandy-1', version: '>= 1.5.0'),
   dependency('sqlite3', version: '>=3.0.0'),
   dependency('libebook-contacts-1.2'),

@@ -62,6 +62,8 @@
 void chatty_log_init               (void);
 void chatty_log_increase_verbosity (void);
 int  chatty_log_get_verbosity      (void);
+void chaty_log_to_file             (const char     *file_path,
+                                    gboolean        append);
 const char *chatty_log_bool_str    (gboolean value,
                                     gboolean use_success);
 void chatty_log                    (const char     *domain,

@@ -14,7 +14,6 @@
 #include <libsecret/secret.h>
 #include <glib/gi18n.h>
 
-#include "chatty-secret-store.h"
 #include "chatty-history.h"
 #include "chatty-utils.h"
 #include "chatty-ma-chat.h"
@@ -45,7 +44,6 @@ struct _ChattyMaAccount
   ChattyFileInfo *avatar_file;
 
   ChattyStatus   status;
-  guint          connect_id;
 };
 
 G_DEFINE_TYPE (ChattyMaAccount, chatty_ma_account, CHATTY_TYPE_ACCOUNT)
@@ -243,72 +241,10 @@ chatty_ma_account_set_password (ChattyAccount *account,
 }
 
 static gboolean
-account_connect (gpointer user_data)
-{
-  g_autoptr(ChattyMaAccount) self = user_data;
-
-  g_assert (CHATTY_IS_MA_ACCOUNT (self));
-
-  self->connect_id = 0;
-  cm_client_start_sync (self->cm_client);
-
-  return G_SOURCE_REMOVE;
-}
-
-/* XXX: We always delay regardless of the value of @delay */
-static void
-chatty_ma_account_connect (ChattyAccount *account,
-                           gboolean       delay)
-{
-  ChattyMaAccount *self = (ChattyMaAccount *)account;
-  ChattyStatus status;
-
-  g_assert (CHATTY_IS_MA_ACCOUNT (self));
-
-  if (!chatty_account_get_enabled (account)) {
-    CmAccount *cm_account;
-
-    cm_account = cm_client_get_account (self->cm_client);
-    CHATTY_TRACE (cm_account_get_login_id (cm_account),
-                  "Trying to connect disabled account, username:");
-    return;
-  }
-
-  status = chatty_account_get_status (account);
-
-  /* XXX: Check if we can move this to chatty_account_connect() */
-  if (status == CHATTY_CONNECTING ||
-      status == CHATTY_CONNECTED)
-    return;
-
-  g_clear_handle_id (&self->connect_id, g_source_remove);
-  self->connect_id = g_timeout_add (300, account_connect, g_object_ref (account));
-}
-
-static void
-chatty_ma_account_disconnect (ChattyAccount *account)
-{
-  ChattyMaAccount *self = (ChattyMaAccount *)account;
-
-  g_assert (CHATTY_IS_MA_ACCOUNT (self));
-
-  cm_client_stop_sync (self->cm_client);
-  ma_account_update_status (self, CHATTY_DISCONNECTED);
-}
-
-static gboolean
 chatty_ma_account_get_remember_password (ChattyAccount *self)
 {
   /* password is always remembered */
   return TRUE;
-}
-
-static void
-chatty_ma_account_delete (ChattyAccount *account)
-{
-  ChattyMaAccount *self = (ChattyMaAccount *)account;
-
-  g_assert (CHATTY_IS_MA_ACCOUNT (self));
 }
 
 static HdyValueObject *
@@ -588,7 +524,6 @@ chatty_ma_account_finalize (GObject *object)
 {
   ChattyMaAccount *self = (ChattyMaAccount *)object;
 
-  g_clear_handle_id (&self->connect_id, g_source_remove);
   g_list_store_remove_all (self->chat_list);
 
   g_clear_object (&self->device_fp);
@@ -624,10 +559,7 @@ chatty_ma_account_class_init (ChattyMaAccountClass *klass)
   account_class->set_enabled  = chatty_ma_account_set_enabled;
   account_class->get_password = chatty_ma_account_get_password;
   account_class->set_password = chatty_ma_account_set_password;
-  account_class->connect      = chatty_ma_account_connect;
-  account_class->disconnect   = chatty_ma_account_disconnect;
   account_class->get_remember_password = chatty_ma_account_get_remember_password;
-  account_class->delete = chatty_ma_account_delete;
   account_class->get_device_fp = chatty_ma_account_get_device_fp;
   account_class->leave_chat_async = chatty_ma_account_leave_chat_async;
 }
@@ -788,14 +720,6 @@ chatty_ma_account_get_cm_client (ChattyMaAccount *self)
   g_return_val_if_fail (CHATTY_IS_MA_ACCOUNT (self), NULL);
 
   return self->cm_client;
-}
-
-gboolean
-chatty_ma_account_can_connect (ChattyMaAccount *self)
-{
-  g_return_val_if_fail (CHATTY_IS_MA_ACCOUNT (self), FALSE);
-
-  return cm_client_can_connect (self->cm_client);
 }
 
 /**
@@ -1138,16 +1062,4 @@ chatty_ma_account_delete_3pid_finish (ChattyMaAccount  *self,
   g_return_val_if_fail (G_IS_TASK (result), FALSE);
 
   return g_task_propagate_boolean (G_TASK (result), error);
-}
-
-void
-chatty_ma_account_add_chat (ChattyMaAccount *self,
-                            ChattyChat      *chat)
-{
-  g_return_if_fail (CHATTY_IS_MA_ACCOUNT (self));
-  g_return_if_fail (CHATTY_IS_MA_CHAT (chat));
-
-  chatty_ma_chat_set_data (CHATTY_MA_CHAT (chat), CHATTY_ACCOUNT (self),
-                           self->cm_client);
-  g_list_store_append (self->chat_list, chat);
 }

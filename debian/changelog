@@ -1,3 +1,29 @@
+chatty (0.7.0~rc5) byzantium; urgency=medium
+
+  [ Balázs Úr ]
+  * Update Hungarian translation
+
+  [ Mohammed Sadiq ]
+  * ma-account: Don't override delete()
+  * matrix: Remove a no longer needed code
+  * ma-account: Remove connect() and disconnect()
+  * ma-account: Remove unused methods
+  * chat-view: Don't delete existing text on uploading matrix files
+  * log: Add a way to log to files
+  * Update libcmatrix
+  * matrix: Don't load old accounts
+  * Remove no longer used code
+  * application: Update copyright year
+  * Update libcmatrix
+
+  [ AsciiWolf ]
+  * po: Update Czech translation
+
+  [ Chris Talbot ]
+  * mmsd: trust MMS MIME type if it is text/plain
+
+ -- Mohammed Sadiq <sadiq@sadiqpk.org>  Mon, 09 Jan 2023 11:42:42 +0530
+
 chatty (0.7.0~rc4) byzantium; urgency=medium
 
   * ma-chat: Emit message-added when new events are added
