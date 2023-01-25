@@ -30,7 +30,8 @@ struct _ChattyAttachmentsView
 G_DEFINE_TYPE (ChattyAttachmentsView, chatty_attachments_view, GTK_TYPE_BOX)
 
 static void
-attachments_view_item_removed_cb (ChattyAttachmentsView *self)
+attachments_view_item_removed_cb (ChattyAttachmentsView *self,
+                                  GtkWidget             *child)
 {
   g_autoptr(GList) children = NULL;
   g_assert (CHATTY_IS_ATTACHMENTS_VIEW (self));
@@ -38,6 +39,7 @@ attachments_view_item_removed_cb (ChattyAttachmentsView *self)
   if (gtk_widget_in_destruction (GTK_WIDGET (self)))
     return;
 
+  g_debug ("Remove file: %p", child);
   children = gtk_container_get_children (GTK_CONTAINER (self->files_box));
 
   if (!children || (children && !children->data)) {
@@ -108,6 +110,8 @@ chatty_attachments_view_add_file (ChattyAttachmentsView *self,
   g_return_if_fail (file_path && *file_path);
 
   child = chatty_file_item_new (file_path);
+  g_debug ("Add file: %p", child);
+
   gtk_widget_show_all (child);
   gtk_container_add (GTK_CONTAINER (self->files_box), child);
 }

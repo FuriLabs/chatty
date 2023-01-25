@@ -241,7 +241,7 @@ chatty_application_open_chat (GSimpleAction *action,
     g_autoptr(GString) str = NULL;
 
     str = g_string_new (NULL);
-    g_string_append (str, "Opening chat:");
+    g_string_append_printf (str, "Opening chat (%p):", chat);
     chatty_log_anonymize_value (str, room_id);
     g_string_append (str, ", account:");
     chatty_log_anonymize_value (str, account_id);

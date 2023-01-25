@@ -415,6 +415,8 @@ chat_view_show_file_chooser (ChattyChatView *self)
 
   g_assert (CHATTY_IS_CHAT_VIEW (self));
 
+  g_debug ("Show file chooser");
+
   window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
   dialog = gtk_file_chooser_dialog_new (_("Select File..."),
                                         window,

@@ -595,6 +595,8 @@ chatty_window_show_archived (GSimpleAction *action,
 
   g_assert (CHATTY_IS_WINDOW (self));
 
+  g_debug ("Show archived chats");
+
   chatty_header_bar_show_archived (CHATTY_HEADER_BAR (self->header_bar), TRUE);
   chatty_chat_list_show_archived (CHATTY_CHAT_LIST (self->chat_list), TRUE);
 }
@@ -609,6 +611,8 @@ chatty_window_show_chat_details (GSimpleAction *action,
   ChattyChat *chat;
 
   g_assert (CHATTY_IS_WINDOW (self));
+
+  g_debug ("Show chat details");
 
   chat = (ChattyChat *)chatty_main_view_get_item (CHATTY_MAIN_VIEW (self->content_view));
   g_return_if_fail (CHATTY_IS_CHAT (chat));
@@ -627,6 +631,8 @@ chatty_window_show_settings (GSimpleAction *action,
   ChattyWindow *self = user_data;
 
   g_assert (CHATTY_IS_WINDOW (self));
+
+  g_debug ("Show settings");
 
   if (!self->settings_dialog)
     self->settings_dialog = chatty_settings_dialog_new (GTK_WINDOW (self));
@@ -943,7 +949,7 @@ chatty_window_open_chat (ChattyWindow *self,
   g_return_if_fail (CHATTY_IS_CHAT (chat));
 
   CHATTY_INFO (chatty_chat_get_chat_name (chat),
-               "opening chat, type: %s, chat-name:", G_OBJECT_TYPE_NAME (chat));
+               "opening chat (%p), type: %s, chat-name:", chat, G_OBJECT_TYPE_NAME (chat));
 
   window_set_item (self, chat);
 
