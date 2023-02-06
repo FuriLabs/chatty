@@ -41,6 +41,7 @@ libsrc += [
   'users/chatty-account.c',
   'chatty-selectable-row.c',
   'chatty-fp-row.c',
+  'chatty-file.c',
   'chatty-file-item.c',
   'chatty-attachments-view.c',
   'chatty-list-row.c',
