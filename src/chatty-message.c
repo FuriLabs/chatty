@@ -39,7 +39,6 @@ struct _ChattyMessage
   char            *id;
   CmEvent         *cm_event;
 
-  ChattyFileInfo  *preview;
   GList           *files;
 
   ChattyMsgType    type;
@@ -74,7 +73,6 @@ chatty_message_finalize (GObject *object)
   g_free (self->uid);
   g_free (self->user_name);
   g_free (self->id);
-  g_clear_pointer (&self->preview, chatty_file_info_free);
 
   if (self->files)
     g_list_free_full (self->files, (GDestroyNotify)chatty_file_info_free);
@@ -466,24 +464,6 @@ chatty_message_add_file_from_path (ChattyMessage *self,
   file->path = g_strdup (file_path);
 
   self->files = g_list_append (self->files, file);
-}
-
-ChattyFileInfo *
-chatty_message_get_preview (ChattyMessage *self)
-{
-  g_return_val_if_fail (CHATTY_IS_MESSAGE (self), NULL);
-
-  return self->preview;
-}
-
-void
-chatty_message_set_preview (ChattyMessage  *self,
-                            ChattyFileInfo *preview)
-{
-  g_return_if_fail (CHATTY_IS_MESSAGE (self));
-  g_return_if_fail (!self->preview);
-
-  self->preview = preview;
 }
 
 const char *

@@ -56,9 +56,6 @@ void                chatty_message_set_files       (ChattyMessage      *self,
                                                     GList              *files);
 void                chatty_message_add_file_from_path (ChattyMessage   *self,
                                                        const char      *file_path);
-ChattyFileInfo     *chatty_message_get_preview     (ChattyMessage      *self);
-void                chatty_message_set_preview     (ChattyMessage      *self,
-                                                    ChattyFileInfo     *info);
 
 const char         *chatty_message_get_uid         (ChattyMessage      *self);
 void                chatty_message_set_uid         (ChattyMessage      *self,
