@@ -41,7 +41,6 @@ struct _ChattyMaChat
   char                *room_name;
   char                *room_id;
   GdkPixbuf           *avatar;
-  ChattyFileInfo      *avatar_file;
   GCancellable        *avatar_cancellable;
   GListStore          *buddy_list;
   GListStore          *message_list;
@@ -644,16 +643,6 @@ chatty_ma_chat_get_protocols (ChattyItem *item)
   return CHATTY_PROTOCOL_MATRIX;
 }
 
-static ChattyFileInfo *
-chatty_ma_chat_get_avatar_file (ChattyItem *item)
-{
-  ChattyMaChat *self = (ChattyMaChat *)item;
-
-  g_assert (CHATTY_IS_MA_CHAT (self));
-
-  return self->avatar_file;
-}
-
 static void
 ma_chat_get_avatar_cb (GObject      *object,
                        GAsyncResult *result,
@@ -724,7 +713,6 @@ chatty_ma_chat_class_init (ChattyMaChatClass *klass)
   item_class->get_state = chatty_ma_chat_get_state;
   item_class->set_state = chatty_ma_chat_set_state;
   item_class->get_protocols = chatty_ma_chat_get_protocols;
-  item_class->get_avatar_file = chatty_ma_chat_get_avatar_file;
   item_class->get_avatar = chatty_ma_chat_get_avatar;
 
   chat_class->is_im = chatty_ma_chat_is_im;
