@@ -2097,7 +2097,6 @@ get_messages_before_time (ChattyHistory *self,
   history_bind_int (stmt, 3, limit, "binding when getting messages");
 
   while (sqlite3_step (stmt) == SQLITE_ROW) {
-    ChattyFileInfo *preview = NULL;
     ChattyMessage *message;
     const char *msg = NULL, *uid;
     const char *who = NULL, *subject;
@@ -2146,20 +2145,6 @@ get_messages_before_time (ChattyHistory *self,
         continue;
     }
 
-    /* preview is not limitted to media messages */
-    if (sqlite3_column_text (stmt, 7)) {
-      preview = g_new0 (ChattyFileInfo, 1);
-      preview->file_name = g_strdup ((const char *)sqlite3_column_text (stmt, 6));
-      preview->url = g_strdup ((const char *)sqlite3_column_text (stmt, 7));
-      preview->path = g_strdup ((const char *)sqlite3_column_text (stmt, 8));
-      preview->mime_type = g_strdup ((const char *)sqlite3_column_text (stmt, 9));
-      preview->size = sqlite3_column_int (stmt, 10);
-      preview->status = sqlite3_column_int (stmt, 11);
-      preview->width = sqlite3_column_int (stmt, 12);
-      preview->height = sqlite3_column_int (stmt, 13);
-      preview->duration = sqlite3_column_int (stmt, 14);
-    }
-
     if (!chatty_chat_is_im (chat) || CHATTY_IS_MA_CHAT (chat))
       who = (const char *)sqlite3_column_text (stmt, 4);
 
@@ -2182,7 +2167,6 @@ get_messages_before_time (ChattyHistory *self,
     }
 
     chatty_message_set_subject (message, subject);
-    chatty_message_set_preview (message, preview);
     g_ptr_array_insert (messages, 0, message);
   }
 
@@ -2449,7 +2433,7 @@ history_add_message (ChattyHistory *self,
   const char *who, *uid, *msg, *alias;
   ChattyMsgDirection direction;
   ChattyMsgType type;
-  int thread_id = 0, sender_id = 0, preview_id = 0;
+  int thread_id = 0, sender_id = 0;
   int status, msg_status, dir;
   time_t time_stamp;
 
@@ -2552,7 +2536,6 @@ history_add_message (ChattyHistory *self,
     sqlite3_finalize (stmt);
   }
 
-  preview_id = add_file_info (self, chatty_message_get_preview (message));
   sqlite3_prepare_v2 (self->db,
                       "INSERT INTO messages(uid,thread_id,sender_id,body,body_type,direction,time,preview_id,encrypted,status,subject) "
                       "VALUES(?1,?2,?3,?4,"
@@ -2570,8 +2553,6 @@ history_add_message (ChattyHistory *self,
                     "binding when adding message");
   history_bind_int (stmt, 6, dir, "binding when adding message");
   history_bind_int (stmt, 7, time_stamp, "binding when adding message");
-  if (preview_id)
-    history_bind_int (stmt, 9, preview_id, "binding when adding message");
   history_bind_int (stmt, 10, chatty_message_get_encrypted (message),
                     "binding when adding message");
   if (msg_status != MESSAGE_STATUS_UNKNOWN)
