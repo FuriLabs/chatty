@@ -348,32 +348,6 @@ new_message (const char         *account,
     if (size == 0)
       width = height = duration = 0;
 
-    /* add fake preview */
-    file = g_new0 (ChattyFileInfo, 1);
-    file->file_name = g_strdup (chatty_message_get_text (message->message));
-    file->url = g_strdup_printf ("%s.preview", file->file_name);
-    file->size = size / 2;
-
-    if (type == CHATTY_MESSAGE_AUDIO)
-      file->mime_type = g_strdup ("audio/ogg");
-    else if (type == CHATTY_MESSAGE_FILE)
-      file->mime_type = g_strdup ("image/png");
-    else
-      file->mime_type = g_strdup ("image/jpg");
-
-    if (type == CHATTY_MESSAGE_AUDIO)
-      file->duration = duration / 2;
-
-    if (type == CHATTY_MESSAGE_IMAGE ||
-        type == CHATTY_MESSAGE_VIDEO ||
-        type == CHATTY_MESSAGE_FILE) {
-      file->width = width / 2;
-      file->height = height / 2;
-    }
-
-    chatty_message_set_preview (message->message, file);
-
-
     /* add fake file */
     file = g_new0 (ChattyFileInfo, 1);
     file->file_name = g_strdup (chatty_message_get_text (message->message));
@@ -477,8 +451,6 @@ compare_message (Message       *message,
   g_assert_cmpint (message->when, ==, chatty_message_get_time (chatty_message));
   g_assert_cmpint (message->direction, ==, chatty_message_get_msg_direction (chatty_message));
   g_assert_cmpint (type, ==, chatty_message_get_msg_type (chatty_message));
-  compare_file (chatty_message_get_preview (chatty_message),
-                chatty_message_get_preview (message->message));
 
   files = chatty_message_get_files (chatty_message);
   for (int i = g_list_length (files) - 1; i >= 0; i--) {
