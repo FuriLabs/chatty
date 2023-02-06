@@ -821,8 +821,7 @@ insert_or_ignore_thread (ChattyHistory *self,
 {
   sqlite3_stmt *stmt;
   int user_id, account_id;
-  int status, file_id, id = 0;
-  ChattyFileInfo *file;
+  int status, id = 0;
 
   g_assert (CHATTY_IS_HISTORY (self));
   g_assert (G_IS_TASK (task));
@@ -855,14 +854,11 @@ insert_or_ignore_thread (ChattyHistory *self,
   if (!account_id)
     return 0;
 
-  file = chatty_item_get_avatar_file (CHATTY_ITEM (chat));
-  file_id = add_file_info (self, file);
-
   sqlite3_prepare_v2 (self->db,
                       "INSERT INTO threads(name,alias,account_id,type,visibility,encrypted,avatar_id) "
                       "VALUES(?1,?2,?3,?4,?5,?6,?7) "
                       "ON CONFLICT(name,account_id,type) "
-                      "DO UPDATE SET alias=?2, visibility=?5, encrypted=?6, avatar_id=?7",
+                      "DO UPDATE SET alias=?2, visibility=?5, encrypted=?6",
                       -1, &stmt, NULL);
   history_bind_text (stmt, 1, chatty_chat_get_chat_name (chat), "binding when adding thread");
 
@@ -875,9 +871,6 @@ insert_or_ignore_thread (ChattyHistory *self,
                     "binding when adding thread");
   history_bind_int (stmt, 6, chatty_chat_get_encryption (chat) == CHATTY_ENCRYPTION_ENABLED,
                     "binding when adding thread");
-  if (file_id)
-    history_bind_int (stmt, 7, file_id, "binding when adding thread");
-
   sqlite3_step (stmt);
   sqlite3_finalize (stmt);
 
@@ -2796,10 +2789,8 @@ history_update_user (ChattyHistory *self,
 {
   ChattyAccount *account;
   const char *user_name, *name;
-  ChattyFileInfo *file_info;
-  sqlite3_stmt *stmt;
   ChattyProtocol protocol;
-  int id, file_id = 0;
+  int id;
 
   g_assert (CHATTY_IS_HISTORY (self));
   g_assert (G_IS_TASK (task));
@@ -2828,25 +2819,10 @@ history_update_user (ChattyHistory *self,
 
   sqlite3_exec (self->db, "BEGIN TRANSACTION;", NULL, NULL, NULL);
   id = insert_or_ignore_user (self, protocol, user_name, name, task);
-
-  if (!id) {
-    sqlite3_exec (self->db, "END TRANSACTION;", NULL, NULL, NULL);
-    return;
-  }
-
-  file_info = chatty_item_get_avatar_file (CHATTY_ITEM (account));
-  file_id = add_file_info (self, file_info);
-
-  sqlite3_prepare_v2 (self->db,
-                      "UPDATE users SET avatar_id=iif(?1 = 0, null, ?1) "
-                      "WHERE users.id=?2",
-                      -1, &stmt, NULL);
-  history_bind_int (stmt, 1, file_id, "binding when setting avatar");
-  history_bind_int (stmt, 2, id, "binding when settings avatar");
-
-  sqlite3_step (stmt);
-  sqlite3_finalize (stmt);
   sqlite3_exec (self->db, "END TRANSACTION;", NULL, NULL, NULL);
+
+  if (!id)
+    return;
 
   g_task_return_boolean (task, TRUE);
 }
