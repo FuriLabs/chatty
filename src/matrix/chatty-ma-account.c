@@ -40,7 +40,6 @@ struct _ChattyMaAccount
 
   GListStore     *chat_list;
   GdkPixbuf      *avatar;
-  ChattyFileInfo *avatar_file;
 
   ChattyStatus   status;
 };
@@ -399,19 +398,6 @@ chatty_ma_account_get_username (ChattyItem *item)
   return "";
 }
 
-static ChattyFileInfo *
-chatty_ma_account_get_avatar_file (ChattyItem *item)
-{
-  ChattyMaAccount *self = (ChattyMaAccount *)item;
-
-  g_assert (CHATTY_IS_MA_ACCOUNT (self));
-
-  if (self->avatar_file && self->avatar_file->url)
-    return self->avatar_file;
-
-  return NULL;
-}
-
 static void
 ma_account_get_avatar_cb (GObject      *object,
                           GAsyncResult *result,
@@ -474,17 +460,6 @@ ma_account_set_user_avatar_cb (GObject      *object,
     g_task_return_boolean (task, TRUE);
 
   if (!error) {
-    if (self->avatar_file && self->avatar_file->path) {
-      g_autoptr(GFile) file = NULL;
-      g_autofree char *path = NULL;
-
-      path = g_build_filename (g_get_user_cache_dir (), "chatty",
-                               self->avatar_file->path, NULL);
-      file = g_file_new_for_path (path);
-      g_file_delete (file, NULL, NULL);
-    }
-
-    g_clear_pointer (&self->avatar_file, chatty_file_info_free);
     g_clear_object (&self->avatar);
     g_signal_emit_by_name (self, "avatar-changed");
   }
@@ -505,7 +480,7 @@ chatty_ma_account_set_avatar_async (ChattyItem          *item,
 
   task = g_task_new (self, cancellable, callback, user_data);
 
-  if (!file_name && !chatty_item_get_avatar_file (item))
+  if (!file_name)
     {
       g_task_return_boolean (task, TRUE);
       return;
@@ -528,7 +503,6 @@ chatty_ma_account_finalize (GObject *object)
   g_clear_object (&self->device_fp);
   g_clear_object (&self->chat_list);
   g_clear_object (&self->avatar);
-  g_clear_pointer (&self->avatar_file, chatty_file_info_free);
 
   g_free (self->name);
 
@@ -548,7 +522,6 @@ chatty_ma_account_class_init (ChattyMaAccountClass *klass)
   item_class->get_name = chatty_ma_account_get_name;
   item_class->set_name = chatty_ma_account_set_name;
   item_class->get_username = chatty_ma_account_get_username;
-  item_class->get_avatar_file = chatty_ma_account_get_avatar_file;
   item_class->get_avatar = chatty_ma_account_get_avatar;
   item_class->set_avatar_async = chatty_ma_account_set_avatar_async;
 
@@ -820,20 +793,11 @@ ma_get_details_cb (GObject      *object,
   if (error)
     g_task_return_error (task, error);
   else {
-    ChattyFileInfo *file;
-
     CHATTY_TRACE_MSG ("Got user info for %s",
                       cm_client_get_user_id (self->cm_client));
 
     g_free (self->name);
     self->name = g_strdup (cm_user_get_display_name (CM_USER (object)));
-    file = self->avatar_file;
-
-    if (file && g_strcmp0 (file->url, cm_user_get_avatar_url (CM_USER (object))) != 0) {
-      g_clear_pointer (&file->path, g_free);
-      g_free (file->url);
-      file->url = g_strdup (cm_user_get_avatar_url (CM_USER (object)));
-    }
 
     g_object_notify (G_OBJECT (self), "name");
     g_task_return_boolean (task, TRUE);
