@@ -357,7 +357,6 @@ message_event_get_file_stream_cb (GObject      *object,
 
 void
 chatty_message_get_file_stream_async (ChattyMessage       *self,
-                                      ChattyProtocol       protocol,
                                       GCancellable        *cancellable,
                                       GAsyncReadyCallback  callback,
                                       gpointer             user_data)

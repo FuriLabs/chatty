@@ -96,7 +96,7 @@ item_set_image (gpointer user_data)
   if (!self->message)
     return G_SOURCE_REMOVE;
 
-  chatty_message_get_file_stream_async (self->message, self->protocol, NULL,
+  chatty_message_get_file_stream_async (self->message, NULL,
                                         image_item_get_stream_cb,
                                         g_object_ref (self));
   return G_SOURCE_REMOVE;

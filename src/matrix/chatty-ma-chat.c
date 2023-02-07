@@ -542,7 +542,7 @@ chatty_ma_chat_get_files_async (ChattyChat          *chat,
       return;
     }
 
-  chatty_message_get_file_stream_async (message, CHATTY_PROTOCOL_MATRIX, NULL,
+  chatty_message_get_file_stream_async (message, NULL,
                                         ma_chat_download_cb,
                                         g_steal_pointer (&task));
 }
