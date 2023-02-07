@@ -399,11 +399,7 @@ chatty_message_get_file_stream_async (ChattyMessage       *self,
     GFile *gfile;
 
     file_path = chatty_file_get_path (file);
-
-    if (protocol == CHATTY_PROTOCOL_MMS_SMS || protocol == CHATTY_PROTOCOL_MMS)
-      path = g_build_filename (g_get_user_data_dir (), "chatty", file_path, NULL);
-    else
-      path = g_build_filename (g_get_user_cache_dir (), "chatty", file_path, NULL);
+    path = g_build_filename (g_get_user_data_dir (), "chatty", file_path, NULL);
 
     if (!chatty_file_get_file (file))
       chatty_file_set_file (file, g_file_new_for_path (path));
