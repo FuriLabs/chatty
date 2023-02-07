@@ -14,7 +14,7 @@
 # include "config.h"
 #endif
 
-#include "chatty-utils.h"
+#include "chatty-file.h"
 #include "chatty-file-item.h"
 #include "chatty-attachments-view.h"
 
@@ -136,12 +136,12 @@ chatty_attachments_view_get_files (ChattyAttachmentsView *self)
   children = gtk_container_get_children (GTK_CONTAINER (self->files_box));
 
   for (GList *child = children; child; child = child->next) {
-    ChattyFileInfo *attachment;
+    ChattyFile *file;
     const char *name;
 
     name = chatty_file_item_get_file (child->data);
-    attachment = chatty_file_info_new_for_path (name);
-    files = g_list_append (files, attachment);
+    file = chatty_file_new_for_path (name);
+    files = g_list_append (files, file);
   }
 
   return files;

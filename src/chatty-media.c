@@ -44,10 +44,10 @@
  * set.
  */
 
-ChattyFileInfo *
-chatty_media_scale_image_to_size_sync (ChattyFileInfo *input_file,
-                                       gsize           desired_size,
-                                       gboolean        use_temp_file)
+ChattyFile *
+chatty_media_scale_image_to_size_sync (ChattyFile *input_file,
+                                       gsize       desired_size,
+                                       gboolean    use_temp_file)
 {
   g_autoptr(GFileInfo) file_info = NULL;
   g_autoptr(GFile) resized_file = NULL;
@@ -55,20 +55,22 @@ chatty_media_scale_image_to_size_sync (ChattyFileInfo *input_file,
   g_autoptr(GdkPixbuf) src = NULL;
   g_autoptr(GString) path = NULL;
   g_autoptr(GError) error = NULL;
-  ChattyFileInfo *new_attachment;
+  ChattyFile *new_attachment;
   g_autofree char *basename = NULL;
   char *file_extension = NULL;
   int width = -1, height = -1;
   const char *qualities[] = {"80", "70", "60", "40", NULL};
+  const char *mime_type;
   gsize new_size;
 
-  if (!input_file->mime_type || !g_str_has_prefix (input_file->mime_type, "image")) {
+  mime_type = chatty_file_get_mime_type (input_file);
+  if (!mime_type || !g_str_has_prefix (mime_type, "image")) {
     g_warning ("File is not an image! Cannot Resize");
     return NULL;
   }
 
   /* Most gifs are animated, so this cannot resize them */
-  if (strstr (input_file->mime_type, "gif")) {
+  if (strstr (mime_type, "gif")) {
     g_warning ("File is a gif! Cannot resize");
     return NULL;
   }
@@ -79,7 +81,7 @@ chatty_media_scale_image_to_size_sync (ChattyFileInfo *input_file,
    * https://developer.gnome.org/gdk-pixbuf/stable/gdk-pixbuf-File-Loading.html#gdk-pixbuf-new-from-file-at-scale
    */
 
-  src = gdk_pixbuf_new_from_file (input_file->path, &error);
+  src = gdk_pixbuf_new_from_file (chatty_file_get_path (input_file), &error);
   if (error) {
     g_warning ("Error in loading: %s\n", error->message);
     return NULL;
@@ -144,16 +146,10 @@ chatty_media_scale_image_to_size_sync (ChattyFileInfo *input_file,
   for (const char **quality = qualities; *quality != NULL; quality++) {
     g_clear_object (&src);
 
-    src = gdk_pixbuf_new_from_file_at_size (input_file->path, width, height, &error);
+    src = gdk_pixbuf_new_from_file_at_size (chatty_file_get_path (input_file), width, height, &error);
 
     /* Make sure the pixbuf is in the correct orientation */
     dest = gdk_pixbuf_apply_embedded_orientation (src);
-
-    new_attachment = g_try_new0 (ChattyFileInfo, 1);
-    if (new_attachment == NULL) {
-      g_warning ("Error in creating new attachment\n");
-      return NULL;
-    }
 
     if (use_temp_file) {
       path = g_string_new (g_build_filename (g_get_tmp_dir (), "chatty/", NULL));
@@ -168,7 +164,7 @@ chatty_media_scale_image_to_size_sync (ChattyFileInfo *input_file,
       return NULL;
     }
 
-    basename = g_path_get_basename (input_file->path);
+    basename = g_path_get_basename (chatty_file_get_path (input_file));
     file_extension = strrchr (basename, '.');
     if (file_extension) {
       g_string_append_len (path, basename, file_extension - basename);
@@ -209,14 +205,12 @@ chatty_media_scale_image_to_size_sync (ChattyFileInfo *input_file,
   /*
    * https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types
    */
-  new_attachment->file_name = g_file_get_basename (resized_file);
-
-  /* We are saving it as a jpeg, so we know the MIME type */
-  new_attachment->mime_type = g_strdup ("image/jpeg");
-
-  new_attachment->size = g_file_info_get_size (file_info);
-  new_attachment->path = g_file_get_path (resized_file);
-  new_attachment->url  = g_file_get_uri (resized_file);
+  new_attachment = chatty_file_new_full (g_file_get_basename (resized_file),
+                                         g_file_get_uri (resized_file),
+                                         g_file_get_path (resized_file),
+                                         "image/jpeg",
+                                         g_file_info_get_size (file_info),
+                                         0, 0, 0);
 
   return new_attachment;
 }

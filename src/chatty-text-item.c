@@ -19,6 +19,7 @@
 # include <purple.h>
 #endif
 
+#include "chatty-file.h"
 #include "chatty-settings.h"
 #include "chatty-text-item.h"
 
@@ -234,21 +235,25 @@ text_item_update_message (ChattyTextItem *self)
     files = chatty_message_get_files (self->message);
 
     for (GList *item = files; item; item = item->next) {
-      ChattyFileInfo *file = item->data;
+      ChattyFile *file = item->data;
+      const char *url, *path;
 
-      if (!file || !file->url)
+      if (!file || !chatty_file_get_url (file))
         continue;
 
+      url = chatty_file_get_url (file);
+      path = chatty_file_get_path (file);
+
       /* file->path is the path to locally saved file */
-      if (file->path) {
-        if (g_str_has_prefix (file->path, "file://"))
-          g_string_append (str, file->path);
+      if (path) {
+        if (g_str_has_prefix (path, "file://"))
+          g_string_append (str, path);
         else if (self->protocol & (CHATTY_PROTOCOL_MMS_SMS | CHATTY_PROTOCOL_MMS))
-          g_string_append_printf (str, "file://%s/%s/%s", g_get_user_data_dir (), "chatty", file->path);
+          g_string_append_printf (str, "file://%s/%s/%s", g_get_user_data_dir (), "chatty", path);
         else
-          g_string_append_printf (str, "file://%s", file->path);
+          g_string_append_printf (str, "file://%s", path);
       } else {
-        g_string_append (str, file->url);
+        g_string_append (str, url);
       }
 
       if (item->next)

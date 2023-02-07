@@ -25,6 +25,8 @@
 #include "chatty-utils.h"
 #include "chatty-mm-account.h"
 #include "chatty-mm-account-private.h"
+#include "chatty-enums.h"
+#include "chatty-file.h"
 #include "chatty-media.h"
 #include "chatty-mmsd.h"
 #include "chatty-log.h"
@@ -517,21 +519,21 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
      *  and any other attachments
      */
     for (GList *l = files; l != NULL; l = l->next) {
-      ChattyFileInfo *attachment = l->data;
+      ChattyFile *attachment = l->data;
       total_files_count++;
-      attachments_size = attachments_size + attachment->size;
+      attachments_size = attachments_size + chatty_file_get_size (attachment);
 
-      if (g_str_match_string ("image", attachment->mime_type, FALSE)) {
+      if (g_str_match_string ("image", chatty_file_get_mime_type (attachment), FALSE)) {
         /*
          * gifs tend to be animated, and the scaler in chatty-media does not
          * handle animated images
          */
-        if (!g_str_match_string ("gif", attachment->mime_type, FALSE)) {
-          image_attachments_size = image_attachments_size + attachment->size;
+        if (!g_str_match_string ("gif", chatty_file_get_mime_type (attachment), FALSE)) {
+          image_attachments_size = image_attachments_size + chatty_file_get_size (attachment);
           image_attachments++;
         }
-      } else if (g_str_match_string ("video", attachment->mime_type, FALSE)) {
-        video_attachments_size = video_attachments_size + attachment->size;
+      } else if (g_str_match_string ("video", chatty_file_get_mime_type (attachment), FALSE)) {
+        video_attachments_size = video_attachments_size + chatty_file_get_size (attachment);
         video_attachments++;
       }
 
@@ -574,19 +576,19 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
     if (image_attachments)
       image_attachments_size = (self->max_attach_size - other_attachments_size) / image_attachments;
     for (GList *l = files; l != NULL && image_attachments; l = l->next) {
-      ChattyFileInfo *attachment = l->data;
+      ChattyFile *attachment = l->data;
 
-      if (g_str_match_string ("image", attachment->mime_type, FALSE)) {
+      if (g_str_match_string ("image", chatty_file_get_mime_type (attachment), FALSE)) {
         /*
          * gifs tend to be animated, and the scaler in chatty-media does not
          * handle animated images
          */
-        if (!g_str_match_string ("gif", attachment->mime_type, FALSE)) {
-          if (attachment->size > image_attachments_size) {
-            ChattyFileInfo *new_attachment;
+        if (!g_str_match_string ("gif", chatty_file_get_mime_type (attachment), FALSE)) {
+          if (chatty_file_get_size (attachment) > image_attachments_size) {
+            ChattyFile *new_attachment;
             g_debug ("Total Attachment Size %" G_GSIZE_FORMAT ", Image size reduction needed: %" G_GSIZE_FORMAT,
-                     attachment->size,
-                     attachment->size - image_attachments_size);
+                     chatty_file_get_size (attachment),
+                     chatty_file_get_size (attachment) - image_attachments_size);
 
             new_attachment = chatty_media_scale_image_to_size_sync (attachment,
                                                                     image_attachments_size,
@@ -595,7 +597,6 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
               g_warning ("Error Resizing!");
               return NULL;
             }
-            chatty_file_info_free (l->data);
             l->data = new_attachment;
           }
         }
@@ -604,14 +605,14 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
 
     for (GList *l = files; l != NULL; l = l->next) {
       GString *attachment_name_str;
-      ChattyFileInfo *attachment = l->data;
+      ChattyFile *attachment = l->data;
       g_autofree char *attachment_name = NULL;
       char **attachment_name_builder;
       guint attachment_name_segments;
 
       files_count++;
 
-      attachment_name = g_path_get_basename (attachment->path);
+      attachment_name = g_path_get_basename (chatty_file_get_path (attachment));
 
       attachment_name_str = g_string_new (NULL);
       attachment_name_builder = g_strsplit (attachment_name, ".", -1);
@@ -643,8 +644,8 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
 
       g_variant_builder_add (&attachment_builder, "(sss)",
                              attachment_name,
-                             attachment->mime_type,
-                             attachment->path);
+                             chatty_file_get_mime_type (attachment),
+                             chatty_file_get_path (attachment));
     }
   }
 
@@ -726,35 +727,34 @@ chatty_mmsd_process_mms_message_attachments (GList **filesp)
   message_contents = g_string_new (NULL);
 
   for (GList *l = *filesp; l != NULL;) {
-    ChattyFileInfo *attachment = l->data;
+    ChattyFile *attachment = l->data;
 
     l = l->next;
-    if (g_strcmp0(attachment->mime_type, "application/smil") == 0) {
+    if (g_strcmp0 (chatty_file_get_mime_type (attachment), "application/smil") == 0) {
       *filesp = g_list_remove (*filesp, attachment);
-      if (attachment->url) {
+      if (chatty_file_get_url (attachment)) {
         g_autoptr(GFile) file = NULL;
         g_autoptr(GError) error = NULL;
 
-        file = g_file_new_for_uri (attachment->url);
+        file = g_file_new_for_uri (chatty_file_get_url (attachment));
         g_file_delete (file, NULL, &error);
 
         if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND))
           g_warning ("Deleting file failed: %s", error->message);
       }
-      chatty_file_info_free (attachment);
 
       continue;
     }
 
     /* If an MMS has a message, it tends to be the first text/plain attachment */
-    if (!content_set && g_str_match_string ("text/plain", attachment->mime_type, TRUE)) {
+    if (!content_set && g_str_match_string ("text/plain", chatty_file_get_mime_type (attachment), TRUE)) {
       g_autoptr(GFile) text_file = NULL;
       g_autofree char *contents = NULL;
       g_autoptr(GError) error = NULL;
       gsize length;
 
       text_file = g_file_new_build_filename (g_get_user_data_dir (),
-                                             "chatty", attachment->path, NULL);
+                                             "chatty", chatty_file_get_path (attachment), NULL);
       g_file_load_contents (text_file,
                             NULL,
                             &contents,
@@ -772,16 +772,15 @@ chatty_mmsd_process_mms_message_attachments (GList **filesp)
 
       /* We don't want the message content to be saved as a file */
       *filesp = g_list_remove (*filesp, attachment);
-      if (attachment->url) {
+      if (chatty_file_get_url (attachment)) {
         g_autoptr(GFile) file = NULL;
 
-        file = g_file_new_for_uri (attachment->url);
+        file = g_file_new_for_uri (chatty_file_get_url (attachment));
         g_file_delete (file, NULL, &error);
 
         if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND))
           g_warning ("Deleting file failed: %s", error->message);
       }
-      chatty_file_info_free (attachment);
     }
   }
 
@@ -967,18 +966,18 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
     g_variant_iter_init (&iter, attachments);
 
   while (attachments && (attach = g_variant_iter_next_value (&iter))) {
-    ChattyFileInfo *attachment = NULL;
+    ChattyFile *attachment = NULL;
     GFile *new;
     GFileOutputStream *out;
     g_autofree char *containerpath = NULL;
     g_autofree char *filenode = NULL;
     g_autofree char *filename = NULL;
     g_autofree char *mimetype = NULL;
+    g_autofree char *file_mime_type = NULL;
     gulong size, data;
     gsize length, written = 0;
     g_autoptr(GError) error = NULL;
 
-    attachment = g_try_new0 (ChattyFileInfo, 1);
     g_variant_get (attach, "(ssstt)", &filenode,
                    &mimetype,
                    &containerpath,
@@ -1062,16 +1061,15 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
         if (out)
           g_output_stream_close (G_OUTPUT_STREAM (out), NULL, NULL);
 
-        attachment->file_name = g_strdup ("mms.smil");
-        attachment->mime_type = g_strdup ("application/smil");
-        attachment->size      = written;
-        attachment->path      = g_file_get_relative_path (parent, new);
-        attachment->url       = g_file_get_uri (new);
-        attachment->status    = CHATTY_FILE_DOWNLOADED;
+        attachment = chatty_file_new_full ("mms.smil",
+                                           g_file_get_uri (new),
+                                           g_file_get_relative_path (parent, new),
+                                           "application/smil",
+                                           written, 0, 0, 0);
+        chatty_file_set_status (attachment, CHATTY_FILE_DOWNLOADED);
 
         files = g_list_append (files, attachment);
         attachment = NULL;
-        attachment = g_try_new0 (ChattyFileInfo, 1);
         g_clear_object (&new);
       }
     }
@@ -1124,31 +1122,30 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
 
     if (error != NULL) {
       g_clear_error (&error);
-      attachment->mime_type = g_strdup (mimetype);
-    } else if (g_str_has_prefix (attachment->mime_type, "text/plain")) {
+      file_mime_type = g_strdup (mimetype);
+    } else if (file_mime_type && g_str_has_prefix (file_mime_type, "text/plain")) {
       /* If the MMS reports the attachment is text/plain, trust it */
-      attachment->mime_type = g_strdup (mimetype);
+      file_mime_type = g_strdup (mimetype);
     } else if (g_file_info_get_content_type (attachment_info) == NULL) {
       /* If we can't figure out content type, do not trust what the MMS tells it is */
-      attachment->mime_type = g_strdup ("application/octet-stream");
+      file_mime_type = g_strdup ("application/octet-stream");
     } else {
-      attachment->mime_type = g_content_type_get_mime_type (g_file_info_get_content_type (attachment_info));
-      if (attachment->mime_type == NULL) {
+      file_mime_type = g_content_type_get_mime_type (g_file_info_get_content_type (attachment_info));
+      if (file_mime_type == NULL) {
         if (g_file_info_get_content_type (attachment_info) != NULL)
-          attachment->mime_type = g_strdup (g_file_info_get_content_type (attachment_info));
+          file_mime_type = g_strdup (g_file_info_get_content_type (attachment_info));
         else
-          attachment->mime_type = g_strdup ("application/octet-stream");
+          file_mime_type = g_strdup ("application/octet-stream");
       }
     }
 
-    attachment->file_name = g_strdup (filename);
-    attachment->size      = written;
-    attachment->path      = g_file_get_relative_path (parent, new);
-    attachment->url       = g_file_get_uri (new);
-    attachment->status    = CHATTY_FILE_DOWNLOADED;
-
+    attachment = chatty_file_new_full (filename,
+                                       g_file_get_uri (new),
+                                       g_file_get_relative_path (parent, new),
+                                       file_mime_type,
+                                       written, 0, 0, 0);
+    chatty_file_set_status (attachment, CHATTY_FILE_DOWNLOADED);
     files = g_list_prepend (files, attachment);
-    attachment = NULL;
     g_clear_object (&new);
   }
   if (attachments)
@@ -1166,10 +1163,10 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
   }
 
   if (!subject && !mms_message && files && g_list_length (files) == 1) {
-    ChattyFileInfo *attachment = files->data;
+    ChattyFile *attachment = files->data;
 
-    if (attachment && attachment->mime_type &&
-        g_str_has_prefix (attachment->mime_type, "image"))
+    if (attachment && chatty_file_get_mime_type (attachment) &&
+        g_str_has_prefix (chatty_file_get_mime_type (attachment), "image"))
       chatty_msg_type = CHATTY_MESSAGE_IMAGE;
   }
 

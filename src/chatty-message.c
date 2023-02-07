@@ -16,6 +16,8 @@
 
 #include <glib/gi18n.h>
 
+#include "chatty-enums.h"
+#include "chatty-file.h"
 #include "chatty-mm-buddy.h"
 #include "chatty-message.h"
 #include "chatty-utils.h"
@@ -75,7 +77,7 @@ chatty_message_finalize (GObject *object)
   g_free (self->id);
 
   if (self->files)
-    g_list_free_full (self->files, (GDestroyNotify)chatty_file_info_free);
+    g_list_free_full (self->files, (GDestroyNotify)g_object_unref);
 
   G_OBJECT_CLASS (chatty_message_parent_class)->finalize (object);
 }
@@ -320,7 +322,8 @@ message_event_get_file_stream_cb (GObject      *object,
   ChattyMessage *self;
   g_autoptr(GTask) task = user_data;
   GError *error = NULL;
-  ChattyFileInfo *file;
+  GInputStream *stream;
+  ChattyFile *file;
   ChattyFileStatus old_status;
 
   g_assert (G_IS_TASK (task));
@@ -329,36 +332,37 @@ message_event_get_file_stream_cb (GObject      *object,
   g_assert (CHATTY_IS_MESSAGE (self));
 
   file = self->files->data;
-  file->file_stream = cm_room_message_event_get_file_finish (CM_ROOM_MESSAGE_EVENT (object), result, &error);
+  stream = cm_room_message_event_get_file_finish (CM_ROOM_MESSAGE_EVENT (object), result, &error);
+  chatty_file_set_istream (file, stream);
 
-  old_status = file->status;
+  old_status = chatty_file_get_status (file);
 
-  if (file->file_stream)
-    g_atomic_int_set (&file->status, CHATTY_FILE_DOWNLOADED);
+  if (stream)
+    chatty_file_set_status (file, CHATTY_FILE_DOWNLOADED);
   else if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED) ||
            g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NETWORK_UNREACHABLE) ||
            g_error_matches (error, G_IO_ERROR, G_IO_ERROR_HOST_UNREACHABLE))
-    g_atomic_int_set (&file->status, CHATTY_FILE_UNKNOWN);
+    chatty_file_set_status (file, CHATTY_FILE_UNKNOWN);
   else
-    g_atomic_int_set (&file->status, CHATTY_FILE_ERROR);
+    chatty_file_set_status (file, CHATTY_FILE_ERROR);
 
-  if (old_status != file->status)
+  if (old_status != chatty_file_get_status (file))
     chatty_message_emit_updated (self);
 
   if (error)
     g_task_return_error (task, error);
   else
-    g_task_return_pointer (task, g_object_ref (file->file_stream), g_object_unref);
+    g_task_return_pointer (task, g_object_ref (stream), g_object_unref);
 }
 
 void
 chatty_message_get_file_stream_async (ChattyMessage       *self,
-                                      ChattyFileInfo      *file,
                                       ChattyProtocol       protocol,
                                       GCancellable        *cancellable,
                                       GAsyncReadyCallback  callback,
                                       gpointer             user_data)
 {
+  ChattyFile *file;
   GTask *task;
 
   g_return_if_fail (CHATTY_IS_MESSAGE (self));
@@ -366,22 +370,21 @@ chatty_message_get_file_stream_async (ChattyMessage       *self,
 
   task = g_task_new (self, cancellable, callback, user_data);
 
-  if (!file)
-    file = self->files->data;
+  file = self->files->data;
 
-  if (!file || !file->path) {
+  if (!file || !chatty_file_get_path (file)) {
     g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_FAILED,
                              "Message has no file");
     return;
   }
 
-  if (file->file_stream) {
-    g_seekable_seek (G_SEEKABLE (file->file_stream), 0, G_SEEK_SET, NULL, NULL);
-    g_task_return_pointer (task, g_object_ref (file->file_stream), g_object_unref);
+  if (chatty_file_get_istream (file)) {
+    g_seekable_seek (G_SEEKABLE (chatty_file_get_istream (file)), 0, G_SEEK_SET, NULL, NULL);
+    g_task_return_pointer (task, g_object_ref (chatty_file_get_istream (file)), g_object_unref);
     return;
   }
 
-  g_atomic_int_set (&file->status, CHATTY_FILE_DOWNLOADING);
+  chatty_file_set_status (file, CHATTY_FILE_DOWNLOADING);
   chatty_message_emit_updated (self);
 
   if (self->cm_event) {
@@ -391,19 +394,26 @@ chatty_message_get_file_stream_async (ChattyMessage       *self,
                                           message_event_get_file_stream_cb, task);
   } else {
     g_autofree char *path = NULL;
+    const char *file_path;
+    GInputStream *stream;
+    GFile *gfile;
+
+    file_path = chatty_file_get_path (file);
 
     if (protocol == CHATTY_PROTOCOL_MMS_SMS || protocol == CHATTY_PROTOCOL_MMS)
-      path = g_build_filename (g_get_user_data_dir (), "chatty", file->path, NULL);
+      path = g_build_filename (g_get_user_data_dir (), "chatty", file_path, NULL);
     else
-      path = g_build_filename (g_get_user_cache_dir (), "chatty", file->path, NULL);
+      path = g_build_filename (g_get_user_cache_dir (), "chatty", file_path, NULL);
 
-    if (!file->file)
-      file->file = g_file_new_for_path (path);
+    if (!chatty_file_get_file (file))
+      chatty_file_set_file (file, g_file_new_for_path (path));
 
-    file->file_stream = (gpointer)g_file_read (file->file, NULL, NULL);
-    g_task_return_pointer (task, g_object_ref (file->file_stream), g_object_unref);
+    gfile = chatty_file_get_file (file);
+    stream = (gpointer)g_file_read (gfile, NULL, NULL);
+    chatty_file_set_istream (file, stream);
+    g_task_return_pointer (task, g_object_ref (stream), g_object_unref);
 
-    file->status = CHATTY_FILE_DOWNLOADED;
+    chatty_file_set_status (file, CHATTY_FILE_DOWNLOADED);
     chatty_message_emit_updated (self);
   }
 }
@@ -452,7 +462,7 @@ void
 chatty_message_add_file_from_path (ChattyMessage *self,
                                    const char    *file_path)
 {
-  ChattyFileInfo *file;
+  ChattyFile *file;
 
   g_return_if_fail (CHATTY_IS_MESSAGE (self));
   g_return_if_fail (file_path && *file_path);
@@ -460,8 +470,7 @@ chatty_message_add_file_from_path (ChattyMessage *self,
   g_return_if_fail (g_file_test (file_path, G_FILE_TEST_EXISTS));
 
   self->files_are_path = TRUE;
-  file = g_new0 (ChattyFileInfo, 1);
-  file->path = g_strdup (file_path);
+  file = chatty_file_new_for_path (file_path);
 
   self->files = g_list_append (self->files, file);
 }

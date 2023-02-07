@@ -24,6 +24,8 @@
 #include "chatty-ma-account.h"
 #include "chatty-ma-chat.h"
 
+#include "chatty-file.h"
+#include "chatty-message.h"
 #include "chatty-contact.h"
 #include "chatty-settings.h"
 #include "chatty-utils.h"
@@ -337,42 +339,38 @@ new_message (const char         *account,
       type == CHATTY_MESSAGE_IMAGE ||
       type == CHATTY_MESSAGE_VIDEO ||
       type == CHATTY_MESSAGE_AUDIO) {
-    ChattyFileInfo *file;
-    int duration, width, height, size;
+    ChattyFile *file;
+    const char *mime_type;
+    int duration = 0, width = 0, height = 0, size;
 
-    duration = g_random_int_range (1, 1000000);
-    width = g_random_int_range (1, 100000);
-    height = g_random_int_range (1, 100000);
     size = g_random_int_range (0, 10000000);
+
+    if (type == CHATTY_MESSAGE_AUDIO)
+      mime_type = g_strdup ("audio/ogg");
+    else if (type == CHATTY_MESSAGE_FILE)
+      mime_type = g_strdup ("application/pdf");
+    else if (type == CHATTY_MESSAGE_VIDEO)
+      mime_type = g_strdup ("video/ogg");
+    else if (type == CHATTY_MESSAGE_IMAGE)
+      mime_type = g_strdup ("image/png");
+
+    if (type == CHATTY_MESSAGE_VIDEO ||
+        type == CHATTY_MESSAGE_AUDIO)
+      duration = g_random_int_range (1, 1000000);
+
+    if (type == CHATTY_MESSAGE_IMAGE ||
+        type == CHATTY_MESSAGE_VIDEO) {
+      width = g_random_int_range (1, 100000);
+      height = g_random_int_range (1, 100000);
+    }
 
     if (size == 0)
       width = height = duration = 0;
 
     /* add fake file */
-    file = g_new0 (ChattyFileInfo, 1);
-    file->file_name = g_strdup (chatty_message_get_text (message->message));
-    file->url = g_strdup (file->file_name);
-    file->size = size;
-
-    if (type == CHATTY_MESSAGE_AUDIO)
-      file->mime_type = g_strdup ("audio/ogg");
-    else if (type == CHATTY_MESSAGE_FILE)
-      file->mime_type = g_strdup ("application/pdf");
-    else if (type == CHATTY_MESSAGE_VIDEO)
-      file->mime_type = g_strdup ("video/ogg");
-    else if (type == CHATTY_MESSAGE_IMAGE)
-      file->mime_type = g_strdup ("image/png");
-
-    if (type == CHATTY_MESSAGE_VIDEO ||
-        type == CHATTY_MESSAGE_AUDIO)
-      file->duration = duration;
-
-    if (type == CHATTY_MESSAGE_IMAGE ||
-        type == CHATTY_MESSAGE_VIDEO) {
-      file->width = width;
-      file->height = height;
-    }
-
+    file = chatty_file_new_full (chatty_message_get_text (message->message),
+                                 chatty_message_get_text (message->message),
+                                 NULL, mime_type, size, width, height, duration);
     chatty_message_set_files (message->message, g_list_append (NULL, file));
   }
 
@@ -386,12 +384,13 @@ new_message (const char         *account,
 
     for (; i > 0; i--) {
       g_autofree char *uid = NULL;
-      ChattyFileInfo *file;
+      ChattyFile *file;
 
       uid = g_uuid_string_random ();
-      file = g_new0 (ChattyFileInfo, 1);
-      file->url = g_strdup_printf ("http://example.com/some-file/%s", uid);
-      file->size = g_random_int_range (1000, 5000);
+      file = chatty_file_new_full (NULL,
+                                   g_strdup_printf ("http://example.com/some-file/%s", uid),
+                                   NULL, NULL, g_random_int_range (1000, 5000),
+                                   0, 0, 0);
 
       files = g_list_append (files, file);
     }
@@ -411,22 +410,22 @@ new_message (const char         *account,
 }
 
 static void
-compare_file (ChattyFileInfo *file_a,
-              ChattyFileInfo *file_b)
+compare_file (ChattyFile *file_a,
+              ChattyFile *file_b)
 {
   g_assert_true (!!file_a == !!file_b);
 
   if (!file_a)
     return;
 
-  g_assert_cmpstr (file_a->file_name, ==, file_b->file_name);
-  g_assert_cmpstr (file_a->url, ==, file_b->url);
-  g_assert_cmpstr (file_a->path, ==, file_b->path);
-  g_assert_cmpstr (file_a->mime_type, ==, file_b->mime_type);
-  g_assert_cmpint (file_a->width, ==, file_b->width);
-  g_assert_cmpint (file_a->height, ==, file_b->height);
-  g_assert_cmpint (file_a->size, ==, file_b->size);
-  g_assert_cmpint (file_a->duration, ==, file_b->duration);
+  g_assert_cmpstr (chatty_file_get_name (file_a), ==, chatty_file_get_name (file_b));
+  g_assert_cmpstr (chatty_file_get_url (file_a), ==, chatty_file_get_url (file_b));
+  g_assert_cmpstr (chatty_file_get_path (file_a), ==, chatty_file_get_path (file_b));
+  g_assert_cmpstr (chatty_file_get_mime_type (file_a), ==, chatty_file_get_mime_type (file_b));
+  g_assert_cmpint (chatty_file_get_size (file_a), ==, chatty_file_get_size (file_b));
+  g_assert_cmpint (chatty_file_get_width (file_a), ==, chatty_file_get_width (file_b));
+  g_assert_cmpint (chatty_file_get_height (file_a), ==, chatty_file_get_height (file_b));
+  g_assert_cmpint (chatty_file_get_duration (file_a), ==, chatty_file_get_duration (file_b));
 }
 
 static void

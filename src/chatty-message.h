@@ -44,7 +44,6 @@ void                chatty_message_set_encrypted   (ChattyMessage      *self,
 
 GList              *chatty_message_get_files       (ChattyMessage      *self);
 void                chatty_message_get_file_stream_async   (ChattyMessage       *self,
-                                                            ChattyFileInfo      *file,
                                                             ChattyProtocol       protocol,
                                                             GCancellable        *cancellable,
                                                             GAsyncReadyCallback  callback,

@@ -12,6 +12,7 @@
 
 #include <glib/gi18n.h>
 
+#include "chatty-file.h"
 #include "chatty-chat-view.h"
 #include "chatty-image-item.h"
 
@@ -95,7 +96,7 @@ item_set_image (gpointer user_data)
   if (!self->message)
     return G_SOURCE_REMOVE;
 
-  chatty_message_get_file_stream_async (self->message, NULL, self->protocol, NULL,
+  chatty_message_get_file_stream_async (self->message, self->protocol, NULL,
                                         image_item_get_stream_cb,
                                         g_object_ref (self));
   return G_SOURCE_REMOVE;
@@ -104,9 +105,9 @@ item_set_image (gpointer user_data)
 static void
 image_item_update_message (ChattyImageItem *self)
 {
-  ChattyFileInfo *file;
   GtkStack *stack;
   GList *files;
+  ChattyFileStatus status;
 
   g_assert (CHATTY_IS_IMAGE_ITEM (self));
   g_assert (self->message);
@@ -115,22 +116,22 @@ image_item_update_message (ChattyImageItem *self)
   g_return_if_fail (files && files->data);
 
   /* XXX: Currently only first file is handled */
-  file = files->data;
+  status = chatty_file_get_status (files->data);
   stack = GTK_STACK (self->overlay_stack);
 
   g_object_set (self->download_spinner,
-                "active", file->status == CHATTY_FILE_DOWNLOADING,
+                "active", status == CHATTY_FILE_DOWNLOADING,
                 NULL);
 
-  if (file->status == CHATTY_FILE_UNKNOWN)
+  if (status == CHATTY_FILE_UNKNOWN)
     gtk_stack_set_visible_child (stack, self->download_button);
-  else if (file->status == CHATTY_FILE_DOWNLOADING)
+  else if (status == CHATTY_FILE_DOWNLOADING)
     gtk_stack_set_visible_child (stack, self->download_spinner);
   else
     gtk_widget_hide (self->overlay_stack);
 
   /* Update in idle so that self is added to the parent container */
-  if (file->status == CHATTY_FILE_DOWNLOADED)
+  if (status == CHATTY_FILE_DOWNLOADED)
     g_idle_add (item_set_image, self);
 }
 

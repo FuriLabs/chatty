@@ -12,7 +12,7 @@
 #include <glib/gi18n.h>
 
 #include "chatty-avatar.h"
-#include "chatty-utils.h"
+#include "chatty-file.h"
 #include "chatty-image-item.h"
 #include "chatty-text-item.h"
 #include "chatty-clock.h"
@@ -104,9 +104,8 @@ message_activate_gesture_cb (ChattyMessageRow *self)
 {
   g_autoptr(GFile) file = NULL;
   g_autofree char *uri = NULL;
-  ChattyFileInfo *info = NULL;
-  CmRoomMessageEvent *event;
   GList *file_list;
+  const char *path;
 
   g_assert (CHATTY_IS_MESSAGE_ROW (self));
 
@@ -115,21 +114,18 @@ message_activate_gesture_cb (ChattyMessageRow *self)
 
   file_list = chatty_message_get_files (self->message);
 
-  if (file_list)
-    info = file_list->data;
-
-  if (!info || !info->path)
+  if (!file_list || !file_list->data)
     return;
 
-  event = (CmRoomMessageEvent *)chatty_message_get_cm_event (self->message);
+  path = chatty_file_get_path (file_list->data);
+  g_return_if_fail (path);
+
   if (self->protocol == CHATTY_PROTOCOL_MMS_SMS || self->protocol == CHATTY_PROTOCOL_MMS)
-    file = g_file_new_build_filename (g_get_user_data_dir (), "chatty", info->path, NULL);
-  else if (self->protocol == CHATTY_PROTOCOL_MATRIX &&
-           event &&
-           cm_room_message_event_get_file_path (event))
-    file = g_file_new_build_filename (cm_room_message_event_get_file_path (event), NULL);
+    file = g_file_new_build_filename (g_get_user_data_dir (), "chatty", path, NULL);
+  else if (self->protocol == CHATTY_PROTOCOL_MATRIX)
+    file = g_file_new_build_filename (path, NULL);
   else
-    file = g_file_new_build_filename (g_get_user_cache_dir (), "chatty", info->path, NULL);
+    file = g_file_new_build_filename (g_get_user_cache_dir (), "chatty", path, NULL);
 
   uri = g_file_get_uri (file);
 

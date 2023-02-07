@@ -19,7 +19,7 @@
 #include "cmatrix.h"
 
 #include "contrib/gtk.h"
-#include "chatty-utils.h"
+#include "chatty-file.h"
 #include "chatty-ma-buddy.h"
 #include "chatty-ma-chat.h"
 #include "chatty-log.h"
@@ -478,14 +478,8 @@ chatty_ma_chat_send_message_async (ChattyChat          *chat,
 
   files = chatty_message_get_files (message);
 
-  if (files) {
-    ChattyFileInfo *file_info;
-    file_info = files->data;
-
-    if (file_info && file_info->path)
-      file = g_file_new_for_path (file_info->path);
-
-  }
+  if (files && files->data && chatty_file_get_path (files->data))
+    file = g_file_new_for_path (files->data);
 
   if (file)
     event_id = cm_room_send_file_async (self->cm_room, file, NULL,
@@ -525,7 +519,6 @@ chatty_ma_chat_get_files_async (ChattyChat          *chat,
 {
   g_autoptr(GTask) task = NULL;
   ChattyMaChat *self = CHATTY_MA_CHAT (chat);
-  ChattyFileInfo *file;
   GList *files;
 
   g_assert (CHATTY_IS_MESSAGE (message));
@@ -534,7 +527,7 @@ chatty_ma_chat_get_files_async (ChattyChat          *chat,
   g_object_set_data_full (G_OBJECT (task), "message", g_object_ref (message), g_object_unref);
 
   files = chatty_message_get_files (message);
-  if (!files)
+  if (!files || !files->data)
     {
       g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_FAILED,
                                "No file found in message");
@@ -542,17 +535,14 @@ chatty_ma_chat_get_files_async (ChattyChat          *chat,
     }
 
 
-  file = files->data;
-  if (file->status != CHATTY_FILE_UNKNOWN)
+  if (chatty_file_get_status (files->data) != CHATTY_FILE_UNKNOWN)
     {
       g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_FAILED,
                                "File URL missing or invalid file state");
       return;
     }
 
-  g_object_set_data (G_OBJECT (task), "file", file);
-
-  chatty_message_get_file_stream_async (message, NULL, CHATTY_PROTOCOL_MATRIX, NULL,
+  chatty_message_get_file_stream_async (message, CHATTY_PROTOCOL_MATRIX, NULL,
                                         ma_chat_download_cb,
                                         g_steal_pointer (&task));
 }
