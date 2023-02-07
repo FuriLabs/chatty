@@ -378,7 +378,6 @@ chatty_application_startup (GApplication *application)
   ChattyApplication *self = (ChattyApplication *)application;
   g_autoptr(GtkCssProvider) provider = NULL;
   g_autofree char *db_path = NULL;
-  g_autofree char *dir = NULL;
   const char *help_accels[] = { "F1", NULL };
 
   self->daemon = FALSE;
@@ -394,9 +393,6 @@ chatty_application_startup (GApplication *application)
   cm_init (TRUE);
 
   g_set_application_name (_("Chats"));
-
-  dir = g_build_filename (g_get_user_cache_dir (), "chatty", "matrix", "files", "thumbnail", NULL);
-  g_mkdir_with_parents (dir, S_IRWXU);
 
   lfb_init (CHATTY_APP_ID, NULL);
   db_path =  g_build_filename (chatty_utils_get_purple_dir (), "chatty", "db", NULL);
