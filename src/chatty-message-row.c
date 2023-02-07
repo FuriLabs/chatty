@@ -120,12 +120,10 @@ message_activate_gesture_cb (ChattyMessageRow *self)
   path = chatty_file_get_path (file_list->data);
   g_return_if_fail (path);
 
-  if (self->protocol == CHATTY_PROTOCOL_MMS_SMS || self->protocol == CHATTY_PROTOCOL_MMS)
-    file = g_file_new_build_filename (g_get_user_data_dir (), "chatty", path, NULL);
-  else if (self->protocol == CHATTY_PROTOCOL_MATRIX)
+  if (self->protocol == CHATTY_PROTOCOL_MATRIX)
     file = g_file_new_build_filename (path, NULL);
   else
-    file = g_file_new_build_filename (g_get_user_cache_dir (), "chatty", path, NULL);
+    file = g_file_new_build_filename (g_get_user_data_dir (), "chatty", path, NULL);
 
   uri = g_file_get_uri (file);
 
