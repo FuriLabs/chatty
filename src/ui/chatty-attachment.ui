@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="ChattyFileItem" parent="GtkBox">
+  <template class="ChattyAttachment" parent="GtkBox">
     <property name="margin-bottom">9</property>
     <property name="margin-start">9</property>
     <property name="margin-end">9</property>

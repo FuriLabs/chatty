@@ -1,4 +1,4 @@
-/* chatty-file-item.c
+/* chatty-attachment.c
  *
  * Copyright 2021 Purism SPC
  *
@@ -8,17 +8,17 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#define G_LOG_DOMAIN "chatty-file-item"
+#define G_LOG_DOMAIN "chatty-attachment"
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
 
 #include "chatty-utils.h"
-#include "chatty-file-item.h"
+#include "chatty-attachment.h"
 #include "chatty-log.h"
 
-struct _ChattyFileItem
+struct _ChattyAttachment
 {
   GtkBox       parent_instance;
 
@@ -28,20 +28,20 @@ struct _ChattyFileItem
   char        *file_name;
 };
 
-G_DEFINE_TYPE (ChattyFileItem, chatty_file_item, GTK_TYPE_BOX)
+G_DEFINE_TYPE (ChattyAttachment, chatty_attachment, GTK_TYPE_BOX)
 
-typedef struct _FileItemData {
-  ChattyFileItem *self;
+typedef struct _AttachmentData {
+  ChattyAttachment *self;
   GtkWidget *image;
   GFile *file;
-} FileItemData;
+} AttachmentData;
 
-static void file_item_data_free (FileItemData *data);
+static void attachment_data_free (AttachmentData *data);
 
-G_DEFINE_AUTOPTR_CLEANUP_FUNC (FileItemData, file_item_data_free)
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (AttachmentData, attachment_data_free)
 
 static void
-file_item_data_free (FileItemData *data)
+attachment_data_free (AttachmentData *data)
 {
   if (!data)
     return;
@@ -52,15 +52,15 @@ file_item_data_free (FileItemData *data)
 }
 
 static void
-file_item_update_image (ChattyFileItem *self,
-                        GtkWidget      *image,
-                        GFile          *file)
+attachment_update_image (ChattyAttachment *self,
+                         GtkWidget        *image,
+                         GFile            *file)
 {
   g_autoptr(GError) error = NULL;
   GFileInfo *file_info;
   const char *thumbnail;
 
-  g_assert (CHATTY_IS_FILE_ITEM (self));
+  g_assert (CHATTY_IS_ATTACHMENT (self));
   g_assert (image);
   g_assert (file);
 
@@ -102,17 +102,17 @@ file_create_thumbnail_cb (GObject      *object,
                           GAsyncResult *result,
                           gpointer      user_data)
 {
-  g_autoptr(FileItemData) data = user_data;
+  g_autoptr(AttachmentData) data = user_data;
 
   if (gtk_widget_in_destruction (GTK_WIDGET (data->self)))
     return;
 
-  file_item_update_image (data->self, data->image, data->file);
+  attachment_update_image (data->self, data->image, data->file);
 }
 
 static void
-chatty_file_item_set_file (ChattyFileItem *self,
-                           const char     *file_name)
+chatty_attachment_set_file (ChattyAttachment *self,
+                            const char       *file_name)
 {
   g_autoptr(GFileInfo) file_info = NULL;
   g_autoptr(GFile) file = NULL;
@@ -121,7 +121,7 @@ chatty_file_item_set_file (ChattyFileItem *self,
   GtkWidget *image;
   gboolean thumbnail_failed, thumbnail_valid;
 
-  g_assert (CHATTY_IS_FILE_ITEM (self));
+  g_assert (CHATTY_IS_ATTACHMENT (self));
   g_assert (file_name && *file_name);
 
   g_free (self->file_name);
@@ -149,11 +149,11 @@ chatty_file_item_set_file (ChattyFileItem *self,
                     !!thumbnail, thumbnail_failed, thumbnail_valid);
 
   if (thumbnail || (thumbnail_failed && thumbnail_valid)) {
-    file_item_update_image (self, image, file);
+    attachment_update_image (self, image, file);
   } else {
-    FileItemData *data;
+    AttachmentData *data;
 
-    data = g_new0 (FileItemData, 1);
+    data = g_new0 (AttachmentData, 1);
     data->self = g_object_ref (self);
     data->image = g_object_ref (image);
     data->file = g_object_ref (file);
@@ -164,52 +164,52 @@ chatty_file_item_set_file (ChattyFileItem *self,
 }
 
 static void
-chatty_file_item_finalize (GObject *object)
+chatty_attachment_finalize (GObject *object)
 {
-  ChattyFileItem *self = (ChattyFileItem *)object;
+  ChattyAttachment *self = (ChattyAttachment *)object;
 
   g_free (self->file_name);
 
-  G_OBJECT_CLASS (chatty_file_item_parent_class)->finalize (object);
+  G_OBJECT_CLASS (chatty_attachment_parent_class)->finalize (object);
 }
 
 static void
-chatty_file_item_class_init (ChattyFileItemClass *klass)
+chatty_attachment_class_init (ChattyAttachmentClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->finalize = chatty_file_item_finalize;
+  object_class->finalize = chatty_attachment_finalize;
 
   gtk_widget_class_set_template_from_resource (widget_class,
                                                "/sm/puri/Chatty/"
-                                               "ui/chatty-file-item.ui");
+                                               "ui/chatty-attachment.ui");
 
-  gtk_widget_class_bind_template_child (widget_class, ChattyFileItem, overlay);
-  gtk_widget_class_bind_template_child (widget_class, ChattyFileItem, remove_button);
+  gtk_widget_class_bind_template_child (widget_class, ChattyAttachment, overlay);
+  gtk_widget_class_bind_template_child (widget_class, ChattyAttachment, remove_button);
 }
 
 static void
-chatty_file_item_init (ChattyFileItem *self)
+chatty_attachment_init (ChattyAttachment *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
 }
 
 GtkWidget *
-chatty_file_item_new (const char *file_name)
+chatty_attachment_new (const char *file_name)
 {
-  ChattyFileItem *self;
+  ChattyAttachment *self;
 
-  self = g_object_new (CHATTY_TYPE_FILE_ITEM, NULL);
-  chatty_file_item_set_file (self, file_name);
+  self = g_object_new (CHATTY_TYPE_ATTACHMENT, NULL);
+  chatty_attachment_set_file (self, file_name);
 
   return GTK_WIDGET (self);
 }
 
 const char *
-chatty_file_item_get_file (ChattyFileItem *self)
+chatty_attachment_get_file (ChattyAttachment *self)
 {
-  g_return_val_if_fail (CHATTY_IS_FILE_ITEM (self), NULL);
+  g_return_val_if_fail (CHATTY_IS_ATTACHMENT (self), NULL);
 
   return self->file_name;
 }
