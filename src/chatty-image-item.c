@@ -12,8 +12,10 @@
 
 #include <glib/gi18n.h>
 
+#include "chatty-enums.h"
 #include "chatty-file.h"
 #include "chatty-chat-view.h"
+#include "chatty-progress-button.h"
 #include "chatty-image-item.h"
 
 
@@ -24,9 +26,7 @@ struct _ChattyImageItem
   GtkBin         parent_instance;
 
   GtkWidget     *image_overlay;
-  GtkWidget     *overlay_stack;
-  GtkWidget     *download_spinner;
-  GtkWidget     *download_button;
+  GtkWidget     *progress_button;
   GtkWidget     *image;
 
   ChattyMessage *message;
@@ -105,7 +105,6 @@ item_set_image (gpointer user_data)
 static void
 image_item_update_message (ChattyImageItem *self)
 {
-  GtkStack *stack;
   GList *files;
   ChattyFileStatus status;
 
@@ -117,18 +116,13 @@ image_item_update_message (ChattyImageItem *self)
 
   /* XXX: Currently only first file is handled */
   status = chatty_file_get_status (files->data);
-  stack = GTK_STACK (self->overlay_stack);
-
-  g_object_set (self->download_spinner,
-                "active", status == CHATTY_FILE_DOWNLOADING,
-                NULL);
 
   if (status == CHATTY_FILE_UNKNOWN)
-    gtk_stack_set_visible_child (stack, self->download_button);
+    chatty_progress_button_set_fraction (CHATTY_PROGRESS_BUTTON (self->progress_button), 0.0);
   else if (status == CHATTY_FILE_DOWNLOADING)
-    gtk_stack_set_visible_child (stack, self->download_spinner);
+    chatty_progress_button_pulse (CHATTY_PROGRESS_BUTTON (self->progress_button));
   else
-    gtk_widget_hide (self->overlay_stack);
+    gtk_widget_hide (self->progress_button);
 
   /* Update in idle so that self is added to the parent container */
   if (status == CHATTY_FILE_DOWNLOADED)
@@ -136,7 +130,7 @@ image_item_update_message (ChattyImageItem *self)
 }
 
 static void
-chatty_image_download_clicked_cb (ChattyImageItem *self)
+image_progress_button_action_clicked_cb (ChattyImageItem *self)
 {
   GtkWidget *view;
 
@@ -169,13 +163,13 @@ chatty_image_item_class_init (ChattyImageItemClass *klass)
                                                "/sm/puri/Chatty/"
                                                "ui/chatty-image-item.ui");
 
+  gtk_widget_class_bind_template_child (widget_class, ChattyImageItem, progress_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyImageItem, image_overlay);
-  gtk_widget_class_bind_template_child (widget_class, ChattyImageItem, overlay_stack);
-  gtk_widget_class_bind_template_child (widget_class, ChattyImageItem, download_button);
-  gtk_widget_class_bind_template_child (widget_class, ChattyImageItem, download_spinner);
   gtk_widget_class_bind_template_child (widget_class, ChattyImageItem, image);
 
-  gtk_widget_class_bind_template_callback (widget_class, chatty_image_download_clicked_cb);
+  gtk_widget_class_bind_template_callback (widget_class, image_progress_button_action_clicked_cb);
+
+  g_type_ensure (CHATTY_TYPE_PROGRESS_BUTTON);
 }
 
 static void
