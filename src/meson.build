@@ -49,6 +49,7 @@ libsrc += [
   'chatty-message-row.c',
   'chatty-progress-button.c',
   'chatty-text-item.c',
+  'chatty-file-item.c',
   'chatty-image-item.c',
   'chatty-log.c',
   'chatty-avatar.c',

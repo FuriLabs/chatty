@@ -13,6 +13,7 @@
     <file preprocess="xml-stripblanks">ui/chatty-contact-list.ui</file>
     <file preprocess="xml-stripblanks">ui/chatty-contact-row.ui</file>
     <file preprocess="xml-stripblanks">ui/chatty-attachment.ui</file>
+    <file preprocess="xml-stripblanks">ui/chatty-file-item.ui</file>
     <file preprocess="xml-stripblanks">ui/chatty-image-item.ui</file>
     <file preprocess="xml-stripblanks">ui/chatty-progress-button.ui</file>
     <file preprocess="xml-stripblanks">ui/chatty-message-row.ui</file>

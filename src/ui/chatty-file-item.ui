@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="ChattyFileItem" parent="GtkEventBox">
+    <property name="visible">True</property>
+    <property name="halign" bind-source="parent" bind-property="halign" bind-flags="sync-create"/>
+
+    <child>
+      <object class="GtkOverlay" id="file_overlay">
+        <property name="visible">True</property>
+
+        <child type="overlay">
+          <object class="ChattyProgressButton" id="progress_button">
+            <property name="visible">True</property>
+            <signal name="action-clicked" handler="file_progress_button_action_clicked_cb" swapped="yes"/>
+          </object>
+        </child>
+
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkImage">
+                <property name="visible">True</property>
+                <property name="pixel-size">96</property>
+                <property name="icon-name">text-x-generic-symbolic</property>
+                <style>
+                  <class name="dim-label"/>
+                </style>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="file_title">
+                <property name="halign">start</property>
+                <property name="ellipsize">middle</property>
+                <property name="max-width-chars">27</property>
+                <style>
+                  <class name="dim-label"/>
+                </style>
+              </object>
+            </child>
+          </object>
+        </child>
+
+      </object>
+    </child>
+
+  </template>
+</interface>
