@@ -17,7 +17,6 @@
 #include "chatty-file.h"
 #include "chatty-file-item.h"
 #include "chatty-image-item.h"
-#include "chatty-text-item.h"
 #include "chatty-clock.h"
 #include "chatty-message-row.h"
 
