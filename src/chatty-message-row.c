@@ -10,9 +10,12 @@
  */
 
 #include <glib/gi18n.h>
+#include <ctype.h>
 
 #include "chatty-avatar.h"
+#include "chatty-enums.h"
 #include "chatty-file.h"
+#include "chatty-file-item.h"
 #include "chatty-image-item.h"
 #include "chatty-text-item.h"
 #include "chatty-clock.h"
@@ -27,7 +30,14 @@ struct _ChattyMessageRow
   GtkWidget  *avatar_image;
   GtkWidget  *hidden_box;
   GtkWidget  *author_label;
+
   GtkWidget  *message_event_box;
+  GtkWidget  *message_content;
+  GtkWidget  *files_box;
+  GtkWidget  *content_separator;
+  GtkWidget  *message_title;
+  GtkWidget  *message_body;
+
   GtkWidget  *footer_label;
 
   GtkWidget  *content;
@@ -48,6 +58,181 @@ struct _ChattyMessageRow
 
 G_DEFINE_TYPE (ChattyMessageRow, chatty_message_row, GTK_TYPE_LIST_BOX_ROW)
 
+#define URL_WWW "www"
+#define URL_HTTP "http"
+#define URL_HTTPS "https"
+#define URL_FILE "file"
+
+#define get_url_start(_start, _match, _type, _suffix, _out)             \
+  do {                                                                  \
+    char *_uri = _match - strlen (_type);                               \
+    size_t len = strlen (_type _suffix);                                \
+                                                                        \
+    if (*_out)                                                          \
+      break;                                                            \
+                                                                        \
+    if (_match - _start >= strlen (_type) &&                            \
+        g_ascii_strncasecmp (_uri, _type _suffix, len) == 0 &&          \
+        (isalnum (_uri[len]) || _uri[len] == '/'))                      \
+      *_out = match - strlen (_type);                                   \
+  } while (0)
+
+static char *
+find_url (const char  *buffer,
+          char       **end)
+{
+  char *match, *url = NULL;
+  const char *start;
+
+  start = buffer;
+
+  /*
+   * linkify http://,  https://, file://, and www.
+   */
+  while ((match = strpbrk (start, ":."))) {
+    get_url_start (start, match, URL_HTTP, "://", &url);
+    get_url_start (start, match, URL_HTTPS, "://", &url);
+    get_url_start (start, match, URL_FILE, "://", &url);
+    get_url_start (start, match, URL_WWW, ".", &url);
+
+    start = match + 1;
+
+    if (url && url > buffer &&
+        !isspace (url[-1]) && !ispunct (url[-1]))
+      url = NULL;
+
+    if (url)
+      break;
+  }
+
+  if (url) {
+    size_t url_end;
+
+    url_end = strcspn (url, " \n()[],\t\r");
+    if (url_end)
+      *end = url + url_end;
+    else
+      *end = url + strlen (url);
+  }
+
+  return url;
+}
+
+static char *
+text_item_linkify (const char *message)
+{
+  g_autoptr(GString) link_str = NULL;
+  GString *str = NULL;
+  char *start, *end, *url;
+
+  if (!message || !*message)
+    return NULL;
+
+  str = g_string_sized_new (256);
+  link_str = g_string_sized_new (256);
+  start = end = (char *)message;
+
+  while ((url = find_url (start, &end))) {
+    g_autofree char *link = NULL;
+    g_autofree char *escaped_link = NULL;
+    char *escaped = NULL;
+
+    escaped = g_markup_escape_text (start, url - start);
+    g_string_append (str, escaped);
+    g_free (escaped);
+
+    link = g_strndup (url, end - url);
+    escaped_link = g_markup_escape_text (url, end - url);
+    g_string_set_size (link_str, 0);
+    /* Don't escape sub-delims and gen-delims */
+    g_string_append_uri_escaped (link_str, link, ":/?#[]@!$&'()*+,;=", TRUE);
+    escaped = g_markup_escape_text (link_str->str, link_str->len);
+    g_string_append_printf (str, "<a href=\"%s\">%s</a>", escaped, escaped_link);
+    g_free (escaped);
+
+    start = end;
+  }
+
+  /* Append rest of the string, only if we there is already content */
+  if (str->len && start && *start) {
+    g_autofree char *escaped = NULL;
+
+    escaped = g_markup_escape_text (start, -1);
+    g_string_append (str, escaped);
+  }
+
+  return g_string_free (str, FALSE);
+}
+
+static gchar *
+chatty_msg_list_escape_message (const char *message)
+{
+#ifdef PURPLE_ENABLED
+  g_autofree char *nl_2_br = NULL;
+  g_autofree char *striped = NULL;
+  g_autofree char *escaped = NULL;
+  g_autofree char *linkified = NULL;
+  char *result;
+
+  nl_2_br = purple_strdup_withhtml (message);
+  striped = purple_markup_strip_html (nl_2_br);
+  escaped = purple_markup_escape_text (striped, -1);
+  linkified = purple_markup_linkify (escaped);
+  // convert all tags to lowercase for GtkLabel markup parser
+  purple_markup_html_to_xhtml (linkified, &result, NULL);
+
+  return result;
+#endif
+
+  return g_strdup ("");
+}
+
+static void
+text_item_update_quotes (ChattyMessageRow *self)
+{
+  const char *text, *end;
+  char *quote;
+
+  text = gtk_label_get_text (GTK_LABEL (self->message_body));
+  end = text;
+
+  if (!gtk_label_get_attributes (GTK_LABEL (self->message_body))) {
+    PangoAttrList *list;
+
+    list = pango_attr_list_new ();
+    gtk_label_set_attributes (GTK_LABEL (self->message_body), list);
+    pango_attr_list_unref (list);
+
+  }
+
+  if (!text || !*text)
+    return;
+
+  do {
+    quote = strchr (end, '>');
+
+    if (quote &&
+        (quote == text ||
+         *(quote - 1) == '\n')) {
+      PangoAttrList *list;
+      PangoAttribute *attribute;
+
+      list = gtk_label_get_attributes (GTK_LABEL (self->message_body));
+      end = strchr (quote, '\n');
+
+      if (!end)
+        end = quote + strlen (quote);
+
+      attribute = pango_attr_foreground_new (30000, 30000, 30000);
+      attribute->start_index = quote - text;
+      attribute->end_index = end - text + 1;
+      pango_attr_list_insert (list, attribute);
+    } else if (quote && *quote) {
+      /* Move forward one character if '>' happend midst a line */
+      end = end + 1;
+    }
+  } while (quote && *quote);
+}
 
 static void
 copy_clicked_cb (ChattyMessageRow *self)
@@ -58,7 +243,7 @@ copy_clicked_cb (ChattyMessageRow *self)
   g_assert (CHATTY_IS_MESSAGE_ROW (self));
 
   clipboard = gtk_clipboard_get (GDK_SELECTION_CLIPBOARD);
-  text = chatty_text_item_get_text (CHATTY_TEXT_ITEM (self->content));
+  text = gtk_label_get_text (GTK_LABEL (self->message_body));
 
   if (text && *text)
     gtk_clipboard_set_text (clipboard, text, -1);
@@ -264,7 +449,14 @@ chatty_message_row_class_init (ChattyMessageRowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, avatar_image);
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, hidden_box);
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, author_label);
+
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, message_event_box);
+  gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, message_content);
+  gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, files_box);
+  gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, content_separator);
+  gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, message_title);
+  gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, message_body);
+
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, footer_label);
 }
 
@@ -289,6 +481,35 @@ chatty_message_row_init (ChattyMessageRow *self)
                             G_CALLBACK (message_activate_gesture_cb), self);
 }
 
+static void
+message_row_add_files (ChattyMessageRow *self)
+{
+  GList *files;
+
+  g_assert (CHATTY_IS_MESSAGE_ROW (self));
+
+  files = chatty_message_get_files (self->message);
+  gtk_widget_set_visible (self->files_box, files && files->data);
+
+  for (GList *file = files; file && file->data; file = file->next) {
+    const char *mime_type;
+    GtkWidget *child;
+
+    g_assert (CHATTY_IS_FILE (file->data));
+    mime_type = chatty_file_get_mime_type (file->data);
+
+    if ((mime_type && g_str_has_prefix (mime_type, "image")) ||
+        chatty_message_get_msg_type (self->message) == CHATTY_MESSAGE_IMAGE) {
+      child = chatty_image_item_new (self->message, self->protocol);
+    } else {
+      child = chatty_file_item_new (self->message, file->data);
+    }
+
+    gtk_widget_set_visible (child, TRUE);
+    gtk_container_add (GTK_CONTAINER (self->files_box), child);
+  }
+}
+
 GtkWidget *
 chatty_message_row_new (ChattyMessage  *message,
                         ChattyProtocol  protocol,
@@ -296,8 +517,8 @@ chatty_message_row_new (ChattyMessage  *message,
 {
   ChattyMessageRow *self;
   GtkStyleContext *sc;
+  const char *text, *subject;
   ChattyMsgDirection direction;
-  ChattyMsgType type;
 
   g_return_val_if_fail (CHATTY_IS_MESSAGE (message), NULL);
 
@@ -307,19 +528,50 @@ chatty_message_row_new (ChattyMessage  *message,
   self->message = g_object_ref (message);
   self->is_im = !!is_im;
   direction = chatty_message_get_msg_direction (message);
-  type = chatty_message_get_msg_type (message);
+  sc = gtk_widget_get_style_context (self->message_content);
 
-  if (type == CHATTY_MESSAGE_IMAGE) {
-    self->content = chatty_image_item_new (message, protocol);
-    sc = chatty_image_item_get_style (CHATTY_IMAGE_ITEM (self->content));
+  message_row_add_files (self);
+
+  subject = chatty_message_get_subject (message);
+  text = chatty_message_get_text (message);
+  gtk_widget_set_visible (self->message_title, subject && *subject);
+  gtk_widget_set_visible (self->message_body, text && *text);
+
+  if (protocol == CHATTY_PROTOCOL_XMPP ||
+      protocol == CHATTY_PROTOCOL_TELEGRAM) {
+    g_autofree char *content = NULL;
+
+    content = chatty_msg_list_escape_message (text);
+    gtk_label_set_markup (GTK_LABEL (self->message_body), content);
   } else {
-    self->content = chatty_text_item_new (message, protocol);
-    sc = chatty_text_item_get_style (CHATTY_TEXT_ITEM (self->content));
+    if (subject && *subject) {
+      g_autofree char *content = NULL;
+
+      content = text_item_linkify (subject);
+
+      if (content && *content)
+        gtk_label_set_markup (GTK_LABEL (self->message_title), content);
+      else
+        gtk_label_set_text (GTK_LABEL (self->message_title), subject);
+    }
+
+    if (text && *text) {
+      g_autofree char *content = NULL;
+
+      content = text_item_linkify (text);
+
+      if (content && *content)
+        gtk_label_set_markup (GTK_LABEL (self->message_body), content);
+      else
+        gtk_label_set_text (GTK_LABEL (self->message_body), text);
+    }
   }
 
-  gtk_style_context_add_class (sc, "message_bubble");
-  gtk_container_add (GTK_CONTAINER (self->message_event_box), self->content);
-  gtk_widget_show (self->content);
+  if (((text && *text) || (subject && *subject)) &&
+      chatty_message_get_files (message))
+    gtk_widget_set_visible (self->content_separator, TRUE);
+
+  text_item_update_quotes (self);
 
   if (direction == CHATTY_DIRECTION_IN) {
     gtk_style_context_add_class (sc, "bubble_white");

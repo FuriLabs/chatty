@@ -62,7 +62,52 @@
         <child>
           <object class="GtkEventBox" id="message_event_box">
             <property name="visible">True</property>
-          </object>
+            <child>
+              <object class="GtkBox" id="message_content">
+                <property name="visible">True</property>
+                <property name="orientation">vertical</property>
+                <property name="margin-start">3</property>
+                <property name="margin-end">3</property>
+                <property name="margin-top">3</property>
+                <property name="margin-bottom">3</property>
+                <style>
+                  <class name="message_bubble"/>
+                </style>
+
+                <child>
+                  <object class="GtkBox" id="files_box">
+                    <property name="margin-top">5</property>
+                    <property name="orientation">vertical</property>
+                  </object>
+                </child>
+
+                <child>
+                  <object class="GtkSeparator" id="content_separator">
+                    <property name="margin-top">3</property>
+                    <property name="margin-bottom">3</property>
+                    <property name="orientation">vertical</property>
+                  </object>
+                </child>
+
+                <child>
+                  <object class="GtkLabel" id="message_title">
+                    <property name="wrap">True</property>
+                    <property name="xalign" bind-source="footer_label" bind-property="xalign" bind-flags="sync-create"/>
+                    <style>
+                       <class name="heading"/>
+                    </style>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="message_body">
+                    <property name="wrap">True</property>
+                    <property name="xalign" bind-source="footer_label" bind-property="xalign" bind-flags="sync-create"/>
+                  </object>
+                </child>
+
+              </object>
+            </child>
+          </object> <!-- ./GtkEventBox message_event_box -->
           <packing>
             <property name="left-attach">1</property>
             <property name="top-attach">1</property>
