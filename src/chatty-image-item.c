@@ -30,6 +30,7 @@ struct _ChattyImageItem
   GtkWidget     *image;
 
   ChattyMessage *message;
+  ChattyFile    *file;
 };
 
 G_DEFINE_TYPE (ChattyImageItem, chatty_image_item, GTK_TYPE_BIN)
@@ -73,7 +74,7 @@ image_item_get_stream_cb (GObject      *object,
   if (gtk_widget_in_destruction (GTK_WIDGET (self)))
     return;
 
-  stream = chatty_message_get_file_stream_finish (self->message, result, NULL);
+  stream = chatty_file_get_stream_finish (self->file, result, NULL);
 
   if (!stream)
     return;
@@ -92,29 +93,25 @@ item_set_image (gpointer user_data)
   /* It's possible that we get signals after dispose().
    * Fix warning in those cases
    */
-  if (!self->message)
+  if (!self->file)
     return G_SOURCE_REMOVE;
 
-  chatty_message_get_file_stream_async (self->message, NULL,
-                                        image_item_get_stream_cb,
-                                        g_object_ref (self));
+  chatty_file_get_stream_async (self->file, NULL,
+                                image_item_get_stream_cb,
+                                g_object_ref (self));
   return G_SOURCE_REMOVE;
 }
 
 static void
 image_item_update_message (ChattyImageItem *self)
 {
-  GList *files;
   ChattyFileStatus status;
 
   g_assert (CHATTY_IS_IMAGE_ITEM (self));
   g_assert (self->message);
+  g_assert (self->file);
 
-  files = chatty_message_get_files (self->message);
-  g_return_if_fail (files && files->data);
-
-  /* XXX: Currently only first file is handled */
-  status = chatty_file_get_status (files->data);
+  status = chatty_file_get_status (self->file);
 
   if (status == CHATTY_FILE_UNKNOWN)
     chatty_progress_button_set_fraction (CHATTY_PROGRESS_BUTTON (self->progress_button), 0.0);
@@ -146,6 +143,7 @@ chatty_image_item_dispose (GObject *object)
   ChattyImageItem *self = (ChattyImageItem *)object;
 
   g_clear_object (&self->message);
+  g_clear_object (&self->file);
 
   G_OBJECT_CLASS (chatty_image_item_parent_class)->dispose (object);
 }
@@ -178,20 +176,19 @@ chatty_image_item_init (ChattyImageItem *self)
 }
 
 GtkWidget *
-chatty_image_item_new (ChattyMessage *message)
+chatty_image_item_new (ChattyMessage *message,
+                       ChattyFile    *file)
 {
   ChattyImageItem *self;
-  ChattyMsgType type;
 
   g_return_val_if_fail (CHATTY_IS_MESSAGE (message), NULL);
-
-  type = chatty_message_get_msg_type (message);
-  g_return_val_if_fail (type == CHATTY_MESSAGE_IMAGE, NULL);
+  g_return_val_if_fail (CHATTY_IS_FILE (file), NULL);
 
   self = g_object_new (CHATTY_TYPE_IMAGE_ITEM, NULL);
   self->message = g_object_ref (message);
+  self->file = g_object_ref (file);
 
-  g_signal_connect_object (message, "updated",
+  g_signal_connect_object (file, "status-changed",
                            G_CALLBACK (image_item_update_message),
                            self, G_CONNECT_SWAPPED);
   g_signal_connect_object (self, "notify::scale-factor",

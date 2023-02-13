@@ -20,7 +20,8 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (ChattyImageItem, chatty_image_item, CHATTY, IMAGE_ITEM, GtkBin)
 
-GtkWidget       *chatty_image_item_new        (ChattyMessage   *message);
+GtkWidget       *chatty_image_item_new        (ChattyMessage   *message,
+                                               ChattyFile      *file);
 GtkStyleContext *chatty_image_item_get_style  (ChattyImageItem *self);
 ChattyMessage   *chatty_image_item_get_item   (ChattyImageItem *self);
 
