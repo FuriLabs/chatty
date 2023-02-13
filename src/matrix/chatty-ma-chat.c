@@ -508,7 +508,7 @@ ma_chat_download_cb (GObject      *object,
   self = g_task_get_source_object (task);
   g_assert (CHATTY_IS_MA_CHAT (self));
 
-  istream = chatty_message_get_file_stream_finish (CHATTY_MESSAGE (object), result, &error);
+  istream = chatty_file_get_stream_finish (CHATTY_FILE (object), result, &error);
 }
 
 static void
@@ -542,9 +542,9 @@ chatty_ma_chat_get_files_async (ChattyChat          *chat,
       return;
     }
 
-  chatty_message_get_file_stream_async (message, NULL,
-                                        ma_chat_download_cb,
-                                        g_steal_pointer (&task));
+  chatty_file_get_stream_async (files->data, NULL,
+                                ma_chat_download_cb,
+                                g_steal_pointer (&task));
 }
 
 static gboolean
