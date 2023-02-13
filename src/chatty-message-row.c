@@ -499,7 +499,7 @@ message_row_add_files (ChattyMessageRow *self)
 
     if ((mime_type && g_str_has_prefix (mime_type, "image")) ||
         chatty_message_get_msg_type (self->message) == CHATTY_MESSAGE_IMAGE) {
-      child = chatty_image_item_new (self->message, self->protocol);
+      child = chatty_image_item_new (self->message);
     } else {
       child = chatty_file_item_new (self->message, file->data);
     }

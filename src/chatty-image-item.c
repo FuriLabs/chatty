@@ -30,7 +30,6 @@ struct _ChattyImageItem
   GtkWidget     *image;
 
   ChattyMessage *message;
-  ChattyProtocol protocol;
 };
 
 G_DEFINE_TYPE (ChattyImageItem, chatty_image_item, GTK_TYPE_BIN)
@@ -179,8 +178,7 @@ chatty_image_item_init (ChattyImageItem *self)
 }
 
 GtkWidget *
-chatty_image_item_new (ChattyMessage  *message,
-                      ChattyProtocol  protocol)
+chatty_image_item_new (ChattyMessage *message)
 {
   ChattyImageItem *self;
   ChattyMsgType type;
@@ -191,7 +189,6 @@ chatty_image_item_new (ChattyMessage  *message,
   g_return_val_if_fail (type == CHATTY_MESSAGE_IMAGE, NULL);
 
   self = g_object_new (CHATTY_TYPE_IMAGE_ITEM, NULL);
-  self->protocol = protocol;
   self->message = g_object_ref (message);
 
   g_signal_connect_object (message, "updated",
