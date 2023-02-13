@@ -247,8 +247,7 @@ chatty_message_new_from_event (ChattyItem *user,
       type == CHATTY_MESSAGE_FILE ||
       type == CHATTY_MESSAGE_AUDIO ||
       type == CHATTY_MESSAGE_VIDEO) {
-    /* Add some dummy data, we handle files appropriately elsewhere */
-    chatty_message_add_file_from_path (self, "/");
+    self->files = g_list_append (self->files, chatty_file_new_for_cm_event (self->cm_event));
   }
 
   return self;
