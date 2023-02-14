@@ -28,6 +28,7 @@ struct _ChattyImageItem
   GtkWidget     *image_overlay;
   GtkWidget     *progress_button;
   GtkWidget     *image;
+  GtkWidget     *image_title;
 
   ChattyMessage *message;
   ChattyFile    *file;
@@ -163,6 +164,7 @@ chatty_image_item_class_init (ChattyImageItemClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyImageItem, progress_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyImageItem, image_overlay);
   gtk_widget_class_bind_template_child (widget_class, ChattyImageItem, image);
+  gtk_widget_class_bind_template_child (widget_class, ChattyImageItem, image_title);
 
   gtk_widget_class_bind_template_callback (widget_class, image_progress_button_action_clicked_cb);
 
@@ -180,6 +182,7 @@ chatty_image_item_new (ChattyMessage *message,
                        ChattyFile    *file)
 {
   ChattyImageItem *self;
+  const char *file_name;
 
   g_return_val_if_fail (CHATTY_IS_MESSAGE (message), NULL);
   g_return_val_if_fail (CHATTY_IS_FILE (file), NULL);
@@ -187,6 +190,12 @@ chatty_image_item_new (ChattyMessage *message,
   self = g_object_new (CHATTY_TYPE_IMAGE_ITEM, NULL);
   self->message = g_object_ref (message);
   self->file = g_object_ref (file);
+
+  file_name = chatty_file_get_name (file);
+  gtk_widget_set_visible (self->image_title, file_name && *file_name);
+
+  if (file_name)
+    gtk_label_set_text (GTK_LABEL (self->image_title), file_name);
 
   g_signal_connect_object (file, "status-changed",
                            G_CALLBACK (image_item_update_message),

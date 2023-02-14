@@ -16,13 +16,29 @@
         </child>
 
         <child>
-          <object class="GtkImage" id="image">
+          <object class="GtkBox">
             <property name="visible">True</property>
-            <property name="pixel-size">96</property>
-            <property name="icon-name">image-x-generic-symbolic</property>
-            <style>
-              <class name="dim-label"/>
-            </style>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkImage" id="image">
+                <property name="visible">True</property>
+                <property name="pixel-size">96</property>
+                <property name="icon-name">image-x-generic-symbolic</property>
+                <style>
+                  <class name="dim-label"/>
+                </style>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="image_title">
+                <property name="halign">start</property>
+                <property name="ellipsize">middle</property>
+                <property name="max-width-chars">27</property>
+                <style>
+                  <class name="dim-label"/>
+                </style>
+              </object>
+            </child>
           </object>
         </child>
 
