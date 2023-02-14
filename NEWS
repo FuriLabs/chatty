@@ -1,3 +1,9 @@
+Overview of Changes in Chats 0.7.0. Tue, 14 February 2023
+============================================================
+* Matrix - Fix showing notifications
+* Matrix - Avoid listing duplicate events
+* Fix swipe on headerbar
+
 Overview of Changes in Chats 0.7.0~rc5. Wed, 09 January 2023
 ============================================================
 * Fix failing to load sessions on device boot
