@@ -574,6 +574,7 @@ chatty_message_row_new (ChattyMessage  *message,
 
   if (direction == CHATTY_DIRECTION_IN) {
     gtk_style_context_add_class (sc, "bubble_white");
+    gtk_widget_set_halign (self->files_box, GTK_ALIGN_START);
     gtk_widget_set_halign (self->content_grid, GTK_ALIGN_START);
     gtk_widget_set_halign (self->message_event_box, GTK_ALIGN_START);
     gtk_widget_set_halign (self->author_label, GTK_ALIGN_START);
@@ -588,6 +589,7 @@ chatty_message_row_new (ChattyMessage  *message,
 
   if (direction == CHATTY_DIRECTION_OUT) {
     gtk_label_set_xalign (GTK_LABEL (self->footer_label), 1);
+    gtk_widget_set_halign (self->files_box, GTK_ALIGN_END);
     gtk_widget_set_halign (self->content_grid, GTK_ALIGN_END);
     gtk_widget_set_halign (self->message_event_box, GTK_ALIGN_END);
     gtk_widget_set_halign (self->author_label, GTK_ALIGN_END);
