@@ -77,6 +77,7 @@
                 <child>
                   <object class="GtkBox" id="files_box">
                     <property name="margin-top">5</property>
+                    <property name="spacing">6</property>
                     <property name="orientation">vertical</property>
                   </object>
                 </child>
