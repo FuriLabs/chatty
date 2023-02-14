@@ -2,6 +2,7 @@
 <interface>
   <template class="ChattyImageItem" parent="GtkBin">
     <property name="visible">True</property>
+    <property name="halign" bind-source="parent" bind-property="halign" bind-flags="sync-create"/>
 
     <child>
       <object class="GtkOverlay" id="image_overlay">
