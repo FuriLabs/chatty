@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="ChattyImageItem" parent="GtkBin">
+  <template class="ChattyImageItem" parent="GtkEventBox">
     <property name="visible">True</property>
     <property name="halign" bind-source="parent" bind-property="halign" bind-flags="sync-create"/>
 

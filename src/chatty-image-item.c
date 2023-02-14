@@ -23,18 +23,19 @@
 
 struct _ChattyImageItem
 {
-  GtkBin         parent_instance;
+  GtkEventBox    parent_instance;
 
   GtkWidget     *image_overlay;
   GtkWidget     *progress_button;
   GtkWidget     *image;
   GtkWidget     *image_title;
 
+  GtkGesture    *activate_gesture;
   ChattyMessage *message;
   ChattyFile    *file;
 };
 
-G_DEFINE_TYPE (ChattyImageItem, chatty_image_item, GTK_TYPE_BIN)
+G_DEFINE_TYPE (ChattyImageItem, chatty_image_item, GTK_TYPE_EVENT_BOX)
 
 
 static void
@@ -139,6 +140,26 @@ image_progress_button_action_clicked_cb (ChattyImageItem *self)
 }
 
 static void
+image_item_activate_gesture_cb (ChattyImageItem *self)
+{
+  g_autoptr(GFile) file = NULL;
+  g_autofree char *uri = NULL;
+  const char *path;
+
+  g_assert (CHATTY_IS_IMAGE_ITEM (self));
+  g_assert (self->file);
+
+  path = chatty_file_get_path (self->file);
+  if (!path)
+    return;
+
+  file = g_file_new_build_filename (g_get_user_data_dir (), "chatty", path, NULL);
+  uri = g_file_get_uri (file);
+
+  gtk_show_uri_on_window (NULL, uri, GDK_CURRENT_TIME, NULL);
+}
+
+static void
 chatty_image_item_dispose (GObject *object)
 {
   ChattyImageItem *self = (ChattyImageItem *)object;
@@ -175,6 +196,11 @@ static void
 chatty_image_item_init (ChattyImageItem *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  self->activate_gesture = gtk_gesture_multi_press_new (GTK_WIDGET (self));
+  gtk_gesture_single_set_button (GTK_GESTURE_SINGLE (self->activate_gesture), GDK_BUTTON_PRIMARY);
+  g_signal_connect_swapped (self->activate_gesture, "pressed",
+                            G_CALLBACK (image_item_activate_gesture_cb), self);
 }
 
 GtkWidget *
