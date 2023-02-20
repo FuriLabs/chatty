@@ -1,3 +1,19 @@
+chatty (0.7.0) byzantium; urgency=medium
+
+  [ Mohammed Sadiq ]
+  * ma-chat: Show notifications on unread messages
+  * log: Log events from libcmatrix
+  * various: Improve logs
+  * Add .dir-locals.el
+  * Update libcmatrix
+
+  [ Adrien Plazas ]
+  * window: Use the over leaflet transition
+  * window: Merge the header bar into the window
+  * list-row: Vertically align buttons
+
+ -- Mohammed Sadiq <sadiq@sadiqpk.org>  Tue, 14 Feb 2023 20:08:04 +0530
+
 chatty (0.7.0~rc5) byzantium; urgency=medium
 
   [ Balázs Úr ]

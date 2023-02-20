@@ -1,4 +1,3 @@
-/* -*- mode: c; c-basic-offset: 2; indent-tabs-mode: nil; -*- */
 /* chatty-chat-view.c
  *
  * Copyright 2020 Purism SPC
@@ -414,6 +413,8 @@ chat_view_show_file_chooser (ChattyChatView *self)
   int response;
 
   g_assert (CHATTY_IS_CHAT_VIEW (self));
+
+  g_debug ("Show file chooser");
 
   window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
   dialog = gtk_file_chooser_dialog_new (_("Select File..."),
