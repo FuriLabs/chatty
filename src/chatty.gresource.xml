@@ -24,7 +24,6 @@
     <file preprocess="xml-stripblanks">ui/chatty-settings-dialog.ui</file>
     <file preprocess="xml-stripblanks">ui/chatty-dialog-new-chat.ui</file>
     <file preprocess="xml-stripblanks">ui/chatty-dialog-join-muc.ui</file>
-    <file preprocess="xml-stripblanks">ui/chatty-header-bar.ui</file>
     <file preprocess="xml-stripblanks">ui/chatty-window.ui</file>
     <file preprocess="xml-stripblanks">icons/eye-not-looking-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/eye-open-negative-filled-symbolic.svg</file>

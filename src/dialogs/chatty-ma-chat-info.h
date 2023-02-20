@@ -1,4 +1,3 @@
-/* -*- mode: c; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* chatty-ma-chat-info.h
  *
  * Copyright 2021 Purism SPC

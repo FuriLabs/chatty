@@ -1,4 +1,3 @@
-/* -*- mode: c; c-basic-offset: 2; indent-tabs-mode: nil; -*- */
 /* chatty-ma-chat.c
  *
  * Copyright 2020 Purism SPC
@@ -54,9 +53,6 @@ struct _ChattyMaChat
 
   ChattyItemState visibility_state;
   int             unread_count;
-
-  guint          notification_shown : 1;
-
   guint          history_is_loading : 1;
 
   guint          buddy_typing : 1;
@@ -583,20 +579,6 @@ chatty_ma_chat_set_typing (ChattyChat *chat,
   cm_room_set_typing_notice_async (self->cm_room, is_typing, NULL, NULL, NULL);
 }
 
-static void
-chatty_ma_chat_show_notification (ChattyChat *chat,
-                                  const char *name)
-{
-  ChattyMaChat *self = (ChattyMaChat *)chat;
-
-  g_assert (CHATTY_IS_MA_CHAT (self));
-
-  if (!self->unread_count || self->notification_shown)
-    return;
-
-  CHATTY_CHAT_CLASS (chatty_ma_chat_parent_class)->show_notification (chat, name);
-}
-
 static const char *
 chatty_ma_chat_get_name (ChattyItem *item)
 {
@@ -764,7 +746,6 @@ chatty_ma_chat_class_init (ChattyMaChatClass *klass)
   chat_class->get_files_async = chatty_ma_chat_get_files_async;
   chat_class->get_buddy_typing = chatty_ma_chat_get_buddy_typing;
   chat_class->set_typing = chatty_ma_chat_set_typing;
-  chat_class->show_notification = chatty_ma_chat_show_notification;
 }
 
 static void
@@ -868,6 +849,12 @@ events_list_changed_cb (ChattyMaChat *self,
 
   g_list_store_splice (self->message_list, position, removed,
                        items ? items->pdata : NULL, added);
+
+  /* todo: Keep track of unread messages instead of
+   * blindly notifying about the last message
+   */
+  if (chatty_chat_get_unread_count (CHATTY_CHAT (self)))
+    chatty_chat_show_notification (CHATTY_CHAT (self), NULL);
   g_signal_emit_by_name (self, "message-added", 0);
   g_signal_emit_by_name (self, "changed", 0);
 }

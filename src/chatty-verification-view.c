@@ -1,4 +1,3 @@
-/* -*- mode: c; c-basic-offset: 2; indent-tabs-mode: nil; -*- */
 /* chatty-verification-view.c
  *
  * Copyright 2022 Purism SPC

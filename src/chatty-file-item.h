@@ -1,4 +1,3 @@
-/* -*- mode: c; c-basic-offset: 2; indent-tabs-mode: nil; -*- */
 /* chatty-file-item.h
  *
  * Copyright 2021 Purism SPC

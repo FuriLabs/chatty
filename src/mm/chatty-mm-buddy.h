@@ -1,4 +1,3 @@
-/* -*- mode: c; c-basic-offset: 2; indent-tabs-mode: nil; -*- */
 /* chatty-mm-buddy.h
  *
  * Copyright 2020 Purism SPC

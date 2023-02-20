@@ -1,4 +1,3 @@
-/* -*- mode: c; c-basic-offset: 2; indent-tabs-mode: nil; -*- */
 /* chatty-mmsd.c
  *
  * Copyright 2020, 2021 Purism SPC
