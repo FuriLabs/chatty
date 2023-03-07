@@ -76,6 +76,8 @@ struct _ChattyMmsd {
   GDBusProxy       *modemmanager_proxy;
   char             *modem_number;
   char             *default_modem_number;
+  /* The modem number that has been modified in settings */
+  char             *modified_modem_number;
   GPtrArray        *mms_arr;
   GHashTable       *mms_hash_table;
   gsize             max_attach_size;
@@ -1284,7 +1286,7 @@ mmsd_update_settings_cb (GTask        *task,
   GDBusProxy *mm_proxy, *service_proxy;
   g_autoptr(GError) error = NULL;
   GObject *obj;
-  char *apn, *mmsc, *proxy;
+  char *apn, *mmsc, *proxy, *phone_number;
   gboolean use_smil;
 
   obj = G_OBJECT (task);
@@ -1292,6 +1294,7 @@ mmsd_update_settings_cb (GTask        *task,
   mmsc = g_object_steal_data (obj, "mmsc");
   proxy = g_object_steal_data (obj, "proxy");
   mm_proxy = g_object_get_data (obj, "mm-proxy");
+  phone_number = g_object_get_data (obj, "phone-number");
   service_proxy = g_object_get_data (obj, "service-proxy");
   use_smil = GPOINTER_TO_INT (g_object_get_data (obj, "smil"));
 
@@ -1333,6 +1336,19 @@ mmsd_update_settings_cb (GTask        *task,
                                   cancellable, &error);
     g_debug ("Changing proxy to '%s' %s", proxy, CHATTY_LOG_SUCESS (!error));
   }
+
+  if (!error && phone_number) {
+    g_autoptr(GVariant) ret = NULL;
+
+    ret = g_dbus_proxy_call_sync (mm_proxy,
+                                  "ChangeSettings",
+                                  g_variant_new_parsed ("('ModemNumber', <%s>)", *phone_number ? phone_number : "NULL"),
+                                  G_DBUS_CALL_FLAGS_NONE,
+                                  -1,
+                                  cancellable, &error);
+    g_debug ("Changing phone number to '%s' %s", phone_number, CHATTY_LOG_SUCESS (!error));
+  }
+
 
   if (use_smil != self->auto_create_smil) {
     g_autoptr(GVariant) ret = NULL;
@@ -1500,6 +1516,7 @@ clear_chatty_mmsd (ChattyMmsd *self)
   g_clear_pointer (&self->carrier_mmsc, g_free);
   g_clear_pointer (&self->mms_apn, g_free);
   g_clear_pointer (&self->carrier_proxy, g_free);
+  g_clear_pointer (&self->modified_modem_number, g_free);
 
   if (G_IS_DBUS_CONNECTION (self->connection)) {
     g_debug ("Removing any active MMSD connections");
@@ -1738,6 +1755,7 @@ chatty_mmsd_get_mmsd_modemmanager_settings_cb (GObject      *service,
     mmsd_set_value (self, &dict, "MMS_APN", &self->mms_apn);
     mmsd_set_value (self, &dict, "CarrierMMSProxy", &self->carrier_proxy);
     mmsd_set_value (self, &dict, "default_modem_number", &self->default_modem_number);
+    mmsd_set_value (self, &dict, "ModemNumber", &self->modified_modem_number);
 
     /*
      * MMSD will automatically manage sending/recieving MMSes
@@ -2059,6 +2077,7 @@ chatty_mmsd_get_settings (ChattyMmsd  *self,
                           const char **apn,
                           const char **mmsc,
                           const char **proxy,
+                          const char **phone_number,
                           gboolean    *use_smil)
 {
   g_return_val_if_fail (CHATTY_IS_MMSD (self), FALSE);
@@ -2078,6 +2097,10 @@ chatty_mmsd_get_settings (ChattyMmsd  *self,
   *mmsc = self->carrier_mmsc ?: "";
   *proxy = self->carrier_proxy ?: "";
   *use_smil = self->auto_create_smil;
+  *phone_number = self->modified_modem_number ?: "";
+
+  if (!phone_number || !*phone_number)
+    *phone_number = self->modem_number ?: "";
 
   return TRUE;
 }
@@ -2110,6 +2133,7 @@ chatty_mmsd_set_settings_async (ChattyMmsd          *self,
                                 const char          *apn,
                                 const char          *mmsc,
                                 const char          *proxy,
+                                const char          *phone_number,
                                 gboolean             use_smil,
                                 GCancellable        *cancellable,
                                 GAsyncReadyCallback  callback,
@@ -2141,7 +2165,11 @@ chatty_mmsd_set_settings_async (ChattyMmsd          *self,
   if (g_strcmp0 (proxy ?: "", self->carrier_proxy ?: "") == 0)
     proxy = NULL;
 
+  if (g_strcmp0 (phone_number ?: "", self->modified_modem_number ?: "") == 0)
+    phone_number = NULL;
+
   obj = G_OBJECT (task);
+  g_object_set_data_full (obj, "phone-number", g_strdup (phone_number), g_free);
   g_object_set_data_full (obj, "mm-proxy", mm_proxy, g_object_unref);
   g_object_set_data_full (obj, "service-proxy", service_proxy, g_object_unref);
   g_object_set_data_full (obj, "proxy", g_strdup (proxy), g_free);

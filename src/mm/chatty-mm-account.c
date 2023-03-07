@@ -1480,11 +1480,12 @@ chatty_mm_account_get_mms_settings (ChattyMmAccount  *self,
                                     const char      **apn,
                                     const char      **mmsc,
                                     const char      **proxy,
+                                    const char      **phone_number,
                                     gboolean         *use_smil)
 {
   g_return_val_if_fail (CHATTY_MM_ACCOUNT (self), FALSE);
 
-  return chatty_mmsd_get_settings (self->mmsd, apn, mmsc, proxy, use_smil);
+  return chatty_mmsd_get_settings (self->mmsd, apn, mmsc, proxy, phone_number, use_smil);
 }
 
 void
@@ -1492,12 +1493,13 @@ chatty_mm_account_set_mms_settings_async (ChattyMmAccount     *self,
                                           const char          *apn,
                                           const char          *mmsc,
                                           const char          *proxy,
+                                          const char          *phone_number,
                                           gboolean             use_smil,
                                           GCancellable        *cancellable,
                                           GAsyncReadyCallback  callback,
                                           gpointer             user_data)
 {
-  chatty_mmsd_set_settings_async (self->mmsd, apn, mmsc, proxy, use_smil,
+  chatty_mmsd_set_settings_async (self->mmsd, apn, mmsc, proxy, phone_number, use_smil,
                                   cancellable, callback, user_data);
 }
 
