@@ -231,7 +231,7 @@
   </template>
 
   <object class="GtkTextBuffer" id="message_input_buffer">
-    <signal name="changed" handler="chat_view_message_input_changed_cb" swapped="yes"/>
+    <signal name="changed" handler="chat_view_message_input_changed_cb" after="yes" swapped="yes"/>
   </object>
 
   <object class="GtkAdjustment" id="vadjustment">
