@@ -9,11 +9,16 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <glib/gi18n.h>
 #include <ctype.h>
 
 #include "chatty-avatar.h"
 #include "chatty-enums.h"
+#include "chatty-purple.h"
 #include "chatty-file.h"
 #include "chatty-file-item.h"
 #include "chatty-image-item.h"
