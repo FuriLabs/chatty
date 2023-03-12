@@ -1098,6 +1098,9 @@ chatty_conv_write_conversation (PurpleConversation *conv,
         buddy_name = purple_buddy_get_alias (buddy);
         chatty_chat_show_notification (CHATTY_CHAT (chat), buddy_name);
       }
+
+      chatty_chat_set_unread_count (CHATTY_CHAT (chat),
+                                    chatty_chat_get_unread_count (CHATTY_CHAT (chat)) + 1);
     } else if (flags & PURPLE_MESSAGE_SEND && pcm.flags & PURPLE_MESSAGE_SEND) {
       // normal send
       chat_message = chatty_message_new (NULL, message, uuid, 0, CHATTY_MESSAGE_HTML_ESCAPED,
@@ -1125,9 +1128,6 @@ chatty_conv_write_conversation (PurpleConversation *conv,
      */
     if (!(pcm.flags & PURPLE_MESSAGE_NO_LOG) && chat_message)
       chatty_history_add_message (self->history, CHATTY_CHAT (chat), chat_message);
-
-    chatty_chat_set_unread_count (CHATTY_CHAT (chat),
-                                  chatty_chat_get_unread_count (CHATTY_CHAT (chat)) + 1);
   }
 
   if (chat) {
