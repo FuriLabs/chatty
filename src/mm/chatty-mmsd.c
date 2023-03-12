@@ -821,6 +821,7 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
   g_autofree char *mms_message = NULL;
   g_autofree char *contents = NULL;
   g_autofree char *expire_time_string = NULL;
+  const char *known_modem_number = NULL;
   GString *who;
   GVariantIter recipientiter;
   mms_payload *payload;
@@ -911,6 +912,17 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
     }
   }
 
+  /*
+   * Prefer using the modem number from modem manager, else try to use
+   * the one given by the user
+   */
+  if (self->modem_number && *self->modem_number)
+    known_modem_number = self->modem_number;
+  else if (self->modified_modem_number && *self->modified_modem_number)
+    known_modem_number = self->modified_modem_number;
+  else
+    known_modem_number = "";
+
   /* Fill out Sender and All Numbers */
   if (direction == CHATTY_DIRECTION_IN) {
     const char *country_code = chatty_settings_get_country_iso_code (chatty_settings_get_default ());
@@ -919,15 +931,15 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
     if (payload->sender == NULL)
       payload->sender = g_strdup (sender);
   } else {
-    payload->sender = g_strdup (self->modem_number);
+    payload->sender = g_strdup (known_modem_number);
   }
 
   recipients = g_variant_dict_lookup_value (&dict, "Recipients", G_VARIANT_TYPE_STRING_ARRAY);
 
   if (rx_modem_number && *rx_modem_number) {
-    if (g_strcmp0 (self->modem_number, rx_modem_number) != 0) {
+    if (g_strcmp0 (known_modem_number, rx_modem_number) != 0) {
       g_warning ("Receieved Modem Number %s different than current modem number %s",
-                 self->modem_number, rx_modem_number);
+                 known_modem_number, rx_modem_number);
       return NULL;
     }
   }
@@ -949,7 +961,7 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
     temp = chatty_utils_check_phonenumber (temp2, country_code);
     if (temp == NULL)
       temp = g_strdup (temp2);
-    if (g_strcmp0 (self->modem_number, temp) != 0) {
+    if (g_strcmp0 (known_modem_number, temp) != 0) {
       if (who->len > 0) {
         who = g_string_append (who, ",");
       }
@@ -958,7 +970,7 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
     }
   }
   if (!who->len)
-    who = g_string_append (who, self->modem_number);
+    who = g_string_append (who, known_modem_number);
 
   payload->chat = g_string_free (who, FALSE);
 
@@ -1976,7 +1988,6 @@ chatty_mmsd_reload (ChattyMmsd *self)
 
   self->modem_number = chatty_mm_device_get_number (self->mm_device);
 
-  /* TODO: Figure out a way to add back in modem number */
   if (!self->modem_number) {
     self->modem_number = g_strdup ("");
   }
