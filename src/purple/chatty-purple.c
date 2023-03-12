@@ -1108,6 +1108,8 @@ chatty_conv_write_conversation (PurpleConversation *conv,
       chatty_message_set_status (chat_message, CHATTY_STATUS_SENT, 0);
       chatty_pp_chat_append_message (chat, chat_message);
       g_signal_emit_by_name (chat, "message-added");
+
+      chatty_chat_set_unread_count (CHATTY_CHAT (chat), 0);
     } else if (pcm.flags & PURPLE_MESSAGE_SEND) {
       // offline send (from MAM)
       // FIXME: current list_box does not allow ordering rows by timestamp
@@ -1118,6 +1120,9 @@ chatty_conv_write_conversation (PurpleConversation *conv,
       chatty_message_set_status (chat_message, CHATTY_STATUS_SENT, 0);
       chatty_pp_chat_append_message (chat, chat_message);
       g_signal_emit_by_name (chat, "message-added");
+
+      if (mtime > chatty_history_get_last_message_time (self->history, account->username, pcm.who))
+        chatty_chat_set_unread_count (CHATTY_CHAT (chat), 0);
     }
 
     /*
