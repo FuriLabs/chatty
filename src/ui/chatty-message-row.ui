@@ -93,6 +93,7 @@
                 <child>
                   <object class="GtkLabel" id="message_title">
                     <property name="wrap">True</property>
+                    <property name="wrap-mode">word-char</property>
                     <property name="xalign" bind-source="footer_label" bind-property="xalign" bind-flags="sync-create"/>
                     <style>
                        <class name="heading"/>
@@ -102,6 +103,7 @@
                 <child>
                   <object class="GtkLabel" id="message_body">
                     <property name="wrap">True</property>
+                    <property name="wrap-mode">word-char</property>
                     <property name="xalign" bind-source="footer_label" bind-property="xalign" bind-flags="sync-create"/>
                   </object>
                 </child>
