@@ -1,3 +1,11 @@
+Overview of Changes in Chats 0.7.2. Mon, 14 March 2023
+======================================================
+* Fix window size on long messages
+* Fix a crash when replacing emotes
+* Fix empty message content for XMPP messages
+* Update Translations
+  - Turkish 
+
 Overview of Changes in Chats 0.7.1. Mon, 06 March 2023
 ======================================================
 * MMS - rework delivery report logic

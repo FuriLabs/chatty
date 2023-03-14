@@ -1,3 +1,17 @@
+chatty (0.7.2) byzantium; urgency=medium
+
+  [ Mohammed Sadiq ]
+  * chat-view: Fix a crash when replacing emotes
+  * message-row: Include appropriate headers
+  * message-row: Wrap long content
+  * POTFILES.in: Add missing ui file
+  * ci: Check UI files for missing translations
+
+  [ Emin Tufan Çetin ]
+  * Update Turkish translation
+
+ -- Mohammed Sadiq <sadiq@sadiqpk.org>  Tue, 14 Mar 2023 13:59:32 +0530
+
 chatty (0.7.1) byzantium; urgency=medium
 
   [ Chris Talbot ]
