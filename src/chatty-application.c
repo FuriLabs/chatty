@@ -400,9 +400,6 @@ chatty_application_startup (GApplication *application)
                        db_path, "chatty-history.db");
 
   self->settings = chatty_settings_get_default ();
-  if (chatty_settings_get_experimental_features (self->settings))
-    g_warning ("Experimental features enabled");
-
   g_signal_connect_object (self->manager, "open-chat",
                            G_CALLBACK (application_open_chat),
                            self, G_CONNECT_SWAPPED);
