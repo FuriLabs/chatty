@@ -12,7 +12,10 @@
 
 #include <glib/gi18n.h>
 
+#include "chatty-enums.h"
+#include "chatty-file.h"
 #include "chatty-chat-view.h"
+#include "chatty-progress-button.h"
 #include "chatty-image-item.h"
 
 
@@ -20,19 +23,19 @@
 
 struct _ChattyImageItem
 {
-  GtkBin         parent_instance;
+  GtkEventBox    parent_instance;
 
   GtkWidget     *image_overlay;
-  GtkWidget     *overlay_stack;
-  GtkWidget     *download_spinner;
-  GtkWidget     *download_button;
+  GtkWidget     *progress_button;
   GtkWidget     *image;
+  GtkWidget     *image_title;
 
+  GtkGesture    *activate_gesture;
   ChattyMessage *message;
-  ChattyProtocol protocol;
+  ChattyFile    *file;
 };
 
-G_DEFINE_TYPE (ChattyImageItem, chatty_image_item, GTK_TYPE_BIN)
+G_DEFINE_TYPE (ChattyImageItem, chatty_image_item, GTK_TYPE_EVENT_BOX)
 
 
 static void
@@ -73,7 +76,7 @@ image_item_get_stream_cb (GObject      *object,
   if (gtk_widget_in_destruction (GTK_WIDGET (self)))
     return;
 
-  stream = chatty_message_get_file_stream_finish (self->message, result, NULL);
+  stream = chatty_file_get_stream_finish (self->file, result, NULL);
 
   if (!stream)
     return;
@@ -92,50 +95,40 @@ item_set_image (gpointer user_data)
   /* It's possible that we get signals after dispose().
    * Fix warning in those cases
    */
-  if (!self->message)
+  if (!self->file)
     return G_SOURCE_REMOVE;
 
-  chatty_message_get_file_stream_async (self->message, NULL, self->protocol, NULL,
-                                        image_item_get_stream_cb,
-                                        g_object_ref (self));
+  chatty_file_get_stream_async (self->file, NULL,
+                                image_item_get_stream_cb,
+                                g_object_ref (self));
   return G_SOURCE_REMOVE;
 }
 
 static void
 image_item_update_message (ChattyImageItem *self)
 {
-  ChattyFileInfo *file;
-  GtkStack *stack;
-  GList *files;
+  ChattyFileStatus status;
 
   g_assert (CHATTY_IS_IMAGE_ITEM (self));
   g_assert (self->message);
+  g_assert (self->file);
 
-  files = chatty_message_get_files (self->message);
-  g_return_if_fail (files && files->data);
+  status = chatty_file_get_status (self->file);
 
-  /* XXX: Currently only first file is handled */
-  file = files->data;
-  stack = GTK_STACK (self->overlay_stack);
-
-  g_object_set (self->download_spinner,
-                "active", file->status == CHATTY_FILE_DOWNLOADING,
-                NULL);
-
-  if (file->status == CHATTY_FILE_UNKNOWN)
-    gtk_stack_set_visible_child (stack, self->download_button);
-  else if (file->status == CHATTY_FILE_DOWNLOADING)
-    gtk_stack_set_visible_child (stack, self->download_spinner);
+  if (status == CHATTY_FILE_UNKNOWN)
+    chatty_progress_button_set_fraction (CHATTY_PROGRESS_BUTTON (self->progress_button), 0.0);
+  else if (status == CHATTY_FILE_DOWNLOADING)
+    chatty_progress_button_pulse (CHATTY_PROGRESS_BUTTON (self->progress_button));
   else
-    gtk_widget_hide (self->overlay_stack);
+    gtk_widget_hide (self->progress_button);
 
   /* Update in idle so that self is added to the parent container */
-  if (file->status == CHATTY_FILE_DOWNLOADED)
+  if (status == CHATTY_FILE_DOWNLOADED)
     g_idle_add (item_set_image, self);
 }
 
 static void
-chatty_image_download_clicked_cb (ChattyImageItem *self)
+image_progress_button_action_clicked_cb (ChattyImageItem *self)
 {
   GtkWidget *view;
 
@@ -147,11 +140,32 @@ chatty_image_download_clicked_cb (ChattyImageItem *self)
 }
 
 static void
+image_item_activate_gesture_cb (ChattyImageItem *self)
+{
+  g_autoptr(GFile) file = NULL;
+  g_autofree char *uri = NULL;
+  const char *path;
+
+  g_assert (CHATTY_IS_IMAGE_ITEM (self));
+  g_assert (self->file);
+
+  path = chatty_file_get_path (self->file);
+  if (!path)
+    return;
+
+  file = g_file_new_build_filename (g_get_user_data_dir (), "chatty", path, NULL);
+  uri = g_file_get_uri (file);
+
+  gtk_show_uri_on_window (NULL, uri, GDK_CURRENT_TIME, NULL);
+}
+
+static void
 chatty_image_item_dispose (GObject *object)
 {
   ChattyImageItem *self = (ChattyImageItem *)object;
 
   g_clear_object (&self->message);
+  g_clear_object (&self->file);
 
   G_OBJECT_CLASS (chatty_image_item_parent_class)->dispose (object);
 }
@@ -168,38 +182,48 @@ chatty_image_item_class_init (ChattyImageItemClass *klass)
                                                "/sm/puri/Chatty/"
                                                "ui/chatty-image-item.ui");
 
+  gtk_widget_class_bind_template_child (widget_class, ChattyImageItem, progress_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyImageItem, image_overlay);
-  gtk_widget_class_bind_template_child (widget_class, ChattyImageItem, overlay_stack);
-  gtk_widget_class_bind_template_child (widget_class, ChattyImageItem, download_button);
-  gtk_widget_class_bind_template_child (widget_class, ChattyImageItem, download_spinner);
   gtk_widget_class_bind_template_child (widget_class, ChattyImageItem, image);
+  gtk_widget_class_bind_template_child (widget_class, ChattyImageItem, image_title);
 
-  gtk_widget_class_bind_template_callback (widget_class, chatty_image_download_clicked_cb);
+  gtk_widget_class_bind_template_callback (widget_class, image_progress_button_action_clicked_cb);
+
+  g_type_ensure (CHATTY_TYPE_PROGRESS_BUTTON);
 }
 
 static void
 chatty_image_item_init (ChattyImageItem *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  self->activate_gesture = gtk_gesture_multi_press_new (GTK_WIDGET (self));
+  gtk_gesture_single_set_button (GTK_GESTURE_SINGLE (self->activate_gesture), GDK_BUTTON_PRIMARY);
+  g_signal_connect_swapped (self->activate_gesture, "pressed",
+                            G_CALLBACK (image_item_activate_gesture_cb), self);
 }
 
 GtkWidget *
-chatty_image_item_new (ChattyMessage  *message,
-                      ChattyProtocol  protocol)
+chatty_image_item_new (ChattyMessage *message,
+                       ChattyFile    *file)
 {
   ChattyImageItem *self;
-  ChattyMsgType type;
+  const char *file_name;
 
   g_return_val_if_fail (CHATTY_IS_MESSAGE (message), NULL);
-
-  type = chatty_message_get_msg_type (message);
-  g_return_val_if_fail (type == CHATTY_MESSAGE_IMAGE, NULL);
+  g_return_val_if_fail (CHATTY_IS_FILE (file), NULL);
 
   self = g_object_new (CHATTY_TYPE_IMAGE_ITEM, NULL);
-  self->protocol = protocol;
   self->message = g_object_ref (message);
+  self->file = g_object_ref (file);
 
-  g_signal_connect_object (message, "updated",
+  file_name = chatty_file_get_name (file);
+  gtk_widget_set_visible (self->image_title, file_name && *file_name);
+
+  if (file_name)
+    gtk_label_set_text (GTK_LABEL (self->image_title), file_name);
+
+  g_signal_connect_object (file, "status-changed",
                            G_CALLBACK (image_item_update_message),
                            self, G_CONNECT_SWAPPED);
   g_signal_connect_object (self, "notify::scale-factor",

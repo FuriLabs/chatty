@@ -44,10 +44,10 @@
  * set.
  */
 
-ChattyFileInfo *
-chatty_media_scale_image_to_size_sync (ChattyFileInfo *input_file,
-                                       gsize           desired_size,
-                                       gboolean        use_temp_file)
+ChattyFile *
+chatty_media_scale_image_to_size_sync (ChattyFile *input_file,
+                                       gsize       desired_size,
+                                       gboolean    use_temp_file)
 {
   g_autoptr(GFileInfo) file_info = NULL;
   g_autoptr(GFile) resized_file = NULL;
@@ -55,20 +55,22 @@ chatty_media_scale_image_to_size_sync (ChattyFileInfo *input_file,
   g_autoptr(GdkPixbuf) src = NULL;
   g_autoptr(GString) path = NULL;
   g_autoptr(GError) error = NULL;
-  ChattyFileInfo *new_attachment;
+  ChattyFile *new_attachment;
   g_autofree char *basename = NULL;
   char *file_extension = NULL;
   int width = -1, height = -1;
   const char *qualities[] = {"80", "70", "60", "40", NULL};
+  const char *mime_type;
   gsize new_size;
 
-  if (!input_file->mime_type || !g_str_has_prefix (input_file->mime_type, "image")) {
+  mime_type = chatty_file_get_mime_type (input_file);
+  if (!mime_type || !g_str_has_prefix (mime_type, "image")) {
     g_warning ("File is not an image! Cannot Resize");
     return NULL;
   }
 
   /* Most gifs are animated, so this cannot resize them */
-  if (strstr (input_file->mime_type, "gif")) {
+  if (strstr (mime_type, "gif")) {
     g_warning ("File is a gif! Cannot resize");
     return NULL;
   }
@@ -79,7 +81,7 @@ chatty_media_scale_image_to_size_sync (ChattyFileInfo *input_file,
    * https://developer.gnome.org/gdk-pixbuf/stable/gdk-pixbuf-File-Loading.html#gdk-pixbuf-new-from-file-at-scale
    */
 
-  src = gdk_pixbuf_new_from_file (input_file->path, &error);
+  src = gdk_pixbuf_new_from_file (chatty_file_get_path (input_file), &error);
   if (error) {
     g_warning ("Error in loading: %s\n", error->message);
     return NULL;
@@ -144,16 +146,10 @@ chatty_media_scale_image_to_size_sync (ChattyFileInfo *input_file,
   for (const char **quality = qualities; *quality != NULL; quality++) {
     g_clear_object (&src);
 
-    src = gdk_pixbuf_new_from_file_at_size (input_file->path, width, height, &error);
+    src = gdk_pixbuf_new_from_file_at_size (chatty_file_get_path (input_file), width, height, &error);
 
     /* Make sure the pixbuf is in the correct orientation */
     dest = gdk_pixbuf_apply_embedded_orientation (src);
-
-    new_attachment = g_try_new0 (ChattyFileInfo, 1);
-    if (new_attachment == NULL) {
-      g_warning ("Error in creating new attachment\n");
-      return NULL;
-    }
 
     if (use_temp_file) {
       path = g_string_new (g_build_filename (g_get_tmp_dir (), "chatty/", NULL));
@@ -168,7 +164,7 @@ chatty_media_scale_image_to_size_sync (ChattyFileInfo *input_file,
       return NULL;
     }
 
-    basename = g_path_get_basename (input_file->path);
+    basename = g_path_get_basename (chatty_file_get_path (input_file));
     file_extension = strrchr (basename, '.');
     if (file_extension) {
       g_string_append_len (path, basename, file_extension - basename);
@@ -209,96 +205,12 @@ chatty_media_scale_image_to_size_sync (ChattyFileInfo *input_file,
   /*
    * https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types
    */
-  new_attachment->file_name = g_file_get_basename (resized_file);
-
-  /* We are saving it as a jpeg, so we know the MIME type */
-  new_attachment->mime_type = g_strdup ("image/jpeg");
-
-  new_attachment->size = g_file_info_get_size (file_info);
-  new_attachment->path = g_file_get_path (resized_file);
-  new_attachment->url  = g_file_get_uri (resized_file);
+  new_attachment = chatty_file_new_full (g_file_get_basename (resized_file),
+                                         g_file_get_uri (resized_file),
+                                         g_file_get_path (resized_file),
+                                         "image/jpeg",
+                                         g_file_info_get_size (file_info),
+                                         0, 0, 0);
 
   return new_attachment;
-}
-
-typedef struct {
-  ChattyFileInfo *input_file;
-  gsize           desired_size;
-  gboolean        use_temp_file;
-} ChattyMediaScaleData;
-
-static void
-scale_image_thread (GTask        *task,
-                    gpointer      source_object,
-                    gpointer      task_data,
-                    GCancellable *cancellable)
-{
-  ChattyMediaScaleData *scale_data = task_data;
-  ChattyFileInfo *new_file;
-
-  new_file = chatty_media_scale_image_to_size_sync (scale_data->input_file,
-                                                    scale_data->desired_size,
-                                                    scale_data->use_temp_file);
-
-  if (new_file) {
-    g_task_return_pointer (task, new_file, (GDestroyNotify)chatty_file_info_free);
-  } else {
-    g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_FAILED,
-                             "Error in creating scaled image");
-    return;
-  }
-
-}
-
-void
-chatty_media_scale_image_to_size_async (ChattyFileInfo      *input_file,
-                                        gsize                desired_size,
-                                        gboolean             use_temp_file,
-                                        GCancellable        *cancellable,
-                                        GAsyncReadyCallback  callback,
-                                        gpointer             user_data)
-{
-  g_autoptr(GTask) task = NULL;
-  ChattyMediaScaleData *scale_data;
-
-  g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
-  g_return_if_fail (callback);
-
-  task = g_task_new (NULL, cancellable, callback, user_data);
-  if (!input_file->mime_type || !g_str_has_prefix (input_file->mime_type, "image")) {
-    g_warning ("File is not an image! Cannot Resize");
-    g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED,
-                             "File is not an image! Cannot Resize");
-    return;
-  }
-
-  /* Most gifs are animated, so this cannot resize them */
-  if (strstr (input_file->mime_type, "gif")) {
-    g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED,
-                             "File is a gif! Cannot resize");
-    return;
-  }
-
-  scale_data = g_try_new0 (ChattyMediaScaleData, 1);
-  if (scale_data == NULL) {
-    g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_NO_SPACE,
-                             "Error in creating new attachment");
-    return;
-  }
-
-  scale_data->input_file = input_file;
-  scale_data->desired_size = desired_size;
-  scale_data->use_temp_file = use_temp_file;
-
-  g_task_set_task_data (task, scale_data, g_free);
-  g_task_run_in_thread (task, scale_image_thread);
-}
-
-ChattyFileInfo *
-chatty_media_scale_image_to_size_finish (GAsyncResult  *result,
-                                         GError       **error)
-{
-  g_return_val_if_fail (G_IS_TASK (result), NULL);
-
-  return g_task_propagate_pointer (G_TASK (result), error);
 }

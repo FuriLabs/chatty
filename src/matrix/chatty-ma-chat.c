@@ -19,7 +19,7 @@
 #include "cmatrix.h"
 
 #include "contrib/gtk.h"
-#include "chatty-utils.h"
+#include "chatty-file.h"
 #include "chatty-ma-buddy.h"
 #include "chatty-ma-chat.h"
 #include "chatty-log.h"
@@ -41,7 +41,6 @@ struct _ChattyMaChat
   char                *room_name;
   char                *room_id;
   GdkPixbuf           *avatar;
-  ChattyFileInfo      *avatar_file;
   GCancellable        *avatar_cancellable;
   GListStore          *buddy_list;
   GListStore          *message_list;
@@ -479,14 +478,8 @@ chatty_ma_chat_send_message_async (ChattyChat          *chat,
 
   files = chatty_message_get_files (message);
 
-  if (files) {
-    ChattyFileInfo *file_info;
-    file_info = files->data;
-
-    if (file_info && file_info->path)
-      file = g_file_new_for_path (file_info->path);
-
-  }
+  if (files && files->data && chatty_file_get_path (files->data))
+    file = g_file_new_for_path (files->data);
 
   if (file)
     event_id = cm_room_send_file_async (self->cm_room, file, NULL,
@@ -515,7 +508,7 @@ ma_chat_download_cb (GObject      *object,
   self = g_task_get_source_object (task);
   g_assert (CHATTY_IS_MA_CHAT (self));
 
-  istream = chatty_message_get_file_stream_finish (CHATTY_MESSAGE (object), result, &error);
+  istream = chatty_file_get_stream_finish (CHATTY_FILE (object), result, &error);
 }
 
 static void
@@ -526,7 +519,6 @@ chatty_ma_chat_get_files_async (ChattyChat          *chat,
 {
   g_autoptr(GTask) task = NULL;
   ChattyMaChat *self = CHATTY_MA_CHAT (chat);
-  ChattyFileInfo *file;
   GList *files;
 
   g_assert (CHATTY_IS_MESSAGE (message));
@@ -535,7 +527,7 @@ chatty_ma_chat_get_files_async (ChattyChat          *chat,
   g_object_set_data_full (G_OBJECT (task), "message", g_object_ref (message), g_object_unref);
 
   files = chatty_message_get_files (message);
-  if (!files)
+  if (!files || !files->data)
     {
       g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_FAILED,
                                "No file found in message");
@@ -543,19 +535,16 @@ chatty_ma_chat_get_files_async (ChattyChat          *chat,
     }
 
 
-  file = files->data;
-  if (file->status != CHATTY_FILE_UNKNOWN)
+  if (chatty_file_get_status (files->data) != CHATTY_FILE_UNKNOWN)
     {
       g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_FAILED,
                                "File URL missing or invalid file state");
       return;
     }
 
-  g_object_set_data (G_OBJECT (task), "file", file);
-
-  chatty_message_get_file_stream_async (message, NULL, CHATTY_PROTOCOL_MATRIX, NULL,
-                                        ma_chat_download_cb,
-                                        g_steal_pointer (&task));
+  chatty_file_get_stream_async (files->data, NULL,
+                                ma_chat_download_cb,
+                                g_steal_pointer (&task));
 }
 
 static gboolean
@@ -644,16 +633,6 @@ chatty_ma_chat_get_protocols (ChattyItem *item)
   return CHATTY_PROTOCOL_MATRIX;
 }
 
-static ChattyFileInfo *
-chatty_ma_chat_get_avatar_file (ChattyItem *item)
-{
-  ChattyMaChat *self = (ChattyMaChat *)item;
-
-  g_assert (CHATTY_IS_MA_CHAT (self));
-
-  return self->avatar_file;
-}
-
 static void
 ma_chat_get_avatar_cb (GObject      *object,
                        GAsyncResult *result,
@@ -724,7 +703,6 @@ chatty_ma_chat_class_init (ChattyMaChatClass *klass)
   item_class->get_state = chatty_ma_chat_get_state;
   item_class->set_state = chatty_ma_chat_set_state;
   item_class->get_protocols = chatty_ma_chat_get_protocols;
-  item_class->get_avatar_file = chatty_ma_chat_get_avatar_file;
   item_class->get_avatar = chatty_ma_chat_get_avatar;
 
   chat_class->is_im = chatty_ma_chat_is_im;

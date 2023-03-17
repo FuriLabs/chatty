@@ -61,6 +61,7 @@ struct _ChattyChatView
   guint       update_view_id;
   guint       osk_id;
   gboolean    first_scroll_to_bottom;
+  gboolean    is_self_change;
 };
 
 #define SAVE_TIMEOUT      300 /* milliseconds */
@@ -165,27 +166,53 @@ chat_view_indicator_refresh_cb (ChattyChatView *self)
   return G_SOURCE_CONTINUE;
 }
 
+static gboolean
+update_emote (gpointer user_data)
+{
+  ChattyChatView *self = user_data;
+  GtkTextIter pos, end;
+  GtkTextMark *mark;
+  int i;
+
+  i = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (self->message_input_buffer), "emote-index"));
+  mark = gtk_text_buffer_get_insert (self->message_input_buffer);
+  gtk_text_buffer_get_iter_at_mark (self->message_input_buffer, &end, mark);
+  pos = end;
+
+  self->is_self_change = TRUE;
+  gtk_text_iter_backward_chars (&pos, strlen (emoticons[i][0]));
+  gtk_text_buffer_delete (self->message_input_buffer, &pos, &end);
+  gtk_text_buffer_insert (self->message_input_buffer, &pos, emoticons[i][1], -1);
+
+  self->is_self_change = FALSE;
+
+  return G_SOURCE_REMOVE;
+}
+
 static void
 chatty_check_for_emoticon (ChattyChatView *self)
 {
-  GtkTextIter start, end, position;
+  GtkTextIter start, end;
+  GtkTextMark *mark;
   g_autofree char *text = NULL;
 
   g_assert (CHATTY_IS_CHAT_VIEW (self));
 
-  gtk_text_buffer_get_bounds (self->message_input_buffer, &start, &end);
+  mark = gtk_text_buffer_get_insert (self->message_input_buffer);
+  gtk_text_buffer_get_iter_at_mark (self->message_input_buffer, &end, mark);
+  start = end;
+  gtk_text_iter_backward_chars (&start, 7);
   text = gtk_text_buffer_get_text (self->message_input_buffer, &start, &end, FALSE);
 
   for (guint i = 0; i < G_N_ELEMENTS (emoticons); i++)
     if (g_str_has_suffix (text, emoticons[i][0])) {
-      position = end;
-
-      gtk_text_iter_backward_chars (&position, strlen (emoticons[i][0]));
-      gtk_text_buffer_delete (self->message_input_buffer, &position, &end);
-      gtk_text_buffer_insert (self->message_input_buffer, &position, emoticons[i][1], -1);
-
+      g_object_set_data (G_OBJECT (self->message_input_buffer), "emote-index", GINT_TO_POINTER (i));
+      /* xxx: We can't modify the buffer midst a change, so update it after some timeout  */
+      /* fixme: there is likely a better way to handle this */
+      g_timeout_add (1, update_emote, self);
       break;
     }
+
 }
 
 static void
@@ -616,6 +643,9 @@ chat_view_message_input_changed_cb (ChattyChatView *self)
   gboolean has_text, has_files;
 
   g_assert (CHATTY_IS_CHAT_VIEW (self));
+
+  if (self->is_self_change)
+    return;
 
   g_clear_handle_id (&self->save_timeout_id, g_source_remove);
   has_text = gtk_text_buffer_get_char_count (self->message_input_buffer) > 0;

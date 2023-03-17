@@ -43,23 +43,8 @@ void                chatty_message_set_encrypted   (ChattyMessage      *self,
                                                     gboolean            is_encrypted);
 
 GList              *chatty_message_get_files       (ChattyMessage      *self);
-void                chatty_message_get_file_stream_async   (ChattyMessage       *self,
-                                                            ChattyFileInfo      *file,
-                                                            ChattyProtocol       protocol,
-                                                            GCancellable        *cancellable,
-                                                            GAsyncReadyCallback  callback,
-                                                            gpointer             user_data);
-GInputStream       *chatty_message_get_file_stream_finish  (ChattyMessage       *self,
-                                                            GAsyncResult        *result,
-                                                            GError             **error);
 void                chatty_message_set_files       (ChattyMessage      *self,
                                                     GList              *files);
-void                chatty_message_add_file_from_path (ChattyMessage   *self,
-                                                       const char      *file_path);
-ChattyFileInfo     *chatty_message_get_preview     (ChattyMessage      *self);
-void                chatty_message_set_preview     (ChattyMessage      *self,
-                                                    ChattyFileInfo     *info);
-
 const char         *chatty_message_get_uid         (ChattyMessage      *self);
 void                chatty_message_set_uid         (ChattyMessage      *self,
                                                     const char         *uid);
@@ -86,6 +71,5 @@ void                chatty_message_set_status      (ChattyMessage      *self,
                                                     time_t              mtime);
 ChattyMsgType       chatty_message_get_msg_type    (ChattyMessage      *self);
 ChattyMsgDirection  chatty_message_get_msg_direction (ChattyMessage    *self);
-void                chatty_message_emit_updated    (ChattyMessage      *self);
 
 G_END_DECLS
