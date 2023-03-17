@@ -1,3 +1,59 @@
+chatty (0.7.2) byzantium; urgency=medium
+
+  [ Mohammed Sadiq ]
+  * chat-view: Fix a crash when replacing emotes
+  * message-row: Include appropriate headers
+  * message-row: Wrap long content
+  * POTFILES.in: Add missing ui file
+  * ci: Check UI files for missing translations
+
+  [ Emin Tufan Çetin ]
+  * Update Turkish translation
+
+ -- Mohammed Sadiq <sadiq@sadiqpk.org>  Tue, 14 Mar 2023 13:59:32 +0530
+
+chatty (0.7.1) byzantium; urgency=medium
+
+  [ Chris Talbot ]
+  * mmsd: rework delivery report logic
+
+  [ Mohammed Sadiq ]
+  * ma-chat: Remove no longer used code
+  * ma-account: Remove no longer used code
+  * history: Remove no longer used code
+  * ma-account-details: Remove no longer used code
+  * item: Remove no longer used code
+  * media: Remove no longer used code
+  * tests: Don't test for previews
+  * history: Remove loading previews
+  * message: Remove no longer used code
+  * Add ChattyFile
+  * various: Use ChattyFile for files
+  * utils: Remove no longer used code
+  * message: Don't look into cache directory for files
+  * application: Don't create matrix cache directory
+  * message-row: Avoid looking in cache directory
+  * message: Remove an unused parameter for requesting files
+  * Rename file-item to attachment
+  * Add ChattyProgressButton
+  * image-item: Use ProgressButton
+  * Add ChattyFileItem
+  * message-row: Handle message content and file content
+  * tests: Update message row test
+  * Remove ChattyTextItem
+  * image-item: Remove unused parameter
+  * image-item: Use ChattyFile API to load images
+  * message: Add file for cm-event files
+  * ma-chat: Use ChattyFile API to download file
+  * message: Remove no longer used code
+  * message-row: Align file contents
+  * image-item: Align content same as the parent
+  * message-row: Add spacing between files
+  * image-item: Show file name along with image
+  * image-item: Open image on click
+
+ -- Mohammed Sadiq <sadiq@sadiqpk.org>  Mon, 06 Mar 2023 10:11:12 +0530
+
 chatty (0.7.0) byzantium; urgency=medium
 
   [ Mohammed Sadiq ]

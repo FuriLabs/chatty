@@ -1,6 +1,6 @@
 /* chatty-file-item.c
  *
- * Copyright 2021 Purism SPC
+ * Copyright 2023 Purism SPC
  *
  * Author(s):
  *   Mohammed Sadiq <sadiq@sadiqpk.org>
@@ -10,206 +10,216 @@
 
 #define G_LOG_DOMAIN "chatty-file-item"
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
+#include <glib/gi18n.h>
 
-#include "chatty-utils.h"
+#include "chatty-enums.h"
+#include "chatty-file.h"
+#include "chatty-chat-view.h"
+#include "chatty-progress-button.h"
+#include "chatty-message.h"
 #include "chatty-file-item.h"
-#include "chatty-log.h"
+
 
 struct _ChattyFileItem
 {
-  GtkBox       parent_instance;
+  GtkEventBox    parent_instance;
 
-  GtkWidget   *overlay;
-  GtkWidget   *remove_button;
+  GtkWidget     *file_overlay;
+  GtkWidget     *progress_button;
+  GtkWidget     *file_title;
 
-  char        *file_name;
+  GtkGesture    *activate_gesture;
+  ChattyMessage *message;
+  ChattyFile    *file;
 };
 
-G_DEFINE_TYPE (ChattyFileItem, chatty_file_item, GTK_TYPE_BOX)
+G_DEFINE_TYPE (ChattyFileItem, chatty_file_item, GTK_TYPE_EVENT_BOX)
 
-typedef struct _FileItemData {
-  ChattyFileItem *self;
-  GtkWidget *image;
-  GFile *file;
-} FileItemData;
-
-static void file_item_data_free (FileItemData *data);
-
-G_DEFINE_AUTOPTR_CLEANUP_FUNC (FileItemData, file_item_data_free)
 
 static void
-file_item_data_free (FileItemData *data)
-{
-  if (!data)
-    return;
-
-  g_clear_object (&data->image);
-  g_clear_object (&data->self);
-  g_free (data);
-}
-
-static void
-file_item_update_image (ChattyFileItem *self,
-                        GtkWidget      *image,
-                        GFile          *file)
-{
-  g_autoptr(GError) error = NULL;
-  GFileInfo *file_info;
-  const char *thumbnail;
-
-  g_assert (CHATTY_IS_FILE_ITEM (self));
-  g_assert (image);
-  g_assert (file);
-
-  file_info = g_file_query_info (file,
-                                 G_FILE_ATTRIBUTE_STANDARD_ICON ","
-                                 G_FILE_ATTRIBUTE_THUMBNAIL_PATH,
-                                 G_FILE_QUERY_INFO_NONE,
-                                 NULL, &error);
-  if (error)
-    g_warning ("Error querying info: %s", error->message);
-
-  thumbnail = g_file_info_get_attribute_byte_string (file_info, G_FILE_ATTRIBUTE_THUMBNAIL_PATH);
-
-  if (thumbnail) {
-    GtkWidget *frame;
-
-    frame = gtk_frame_new (NULL);
-    gtk_widget_set_margin_end (frame, 6);
-    gtk_widget_set_margin_top (frame, 6);
-    gtk_image_set_from_file (GTK_IMAGE (image), thumbnail);
-    gtk_container_add (GTK_CONTAINER (frame), image);
-    gtk_container_add (GTK_CONTAINER (self->overlay), frame);
-  } else {
-    GIcon *icon;
-
-    gtk_widget_set_margin_end (image, 6);
-    icon = (GIcon *)g_file_info_get_attribute_object (file_info, G_FILE_ATTRIBUTE_STANDARD_ICON);
-    gtk_image_set_from_gicon (GTK_IMAGE (image), icon, GTK_ICON_SIZE_DND);
-    image = gtk_image_new_from_gicon (icon, GTK_ICON_SIZE_DND);
-    gtk_image_set_pixel_size (GTK_IMAGE (image), 96);
-    gtk_container_add (GTK_CONTAINER (self->overlay), image);
-  }
-
-  gtk_widget_show_all (self->overlay);
-}
-
-static void
-file_create_thumbnail_cb (GObject      *object,
+file_item_get_stream_cb (GObject      *object,
                           GAsyncResult *result,
                           gpointer      user_data)
 {
-  g_autoptr(FileItemData) data = user_data;
+  g_autoptr(ChattyFileItem) self = user_data;
+  g_autoptr(GInputStream) stream = NULL;
 
-  if (gtk_widget_in_destruction (GTK_WIDGET (data->self)))
+  if (gtk_widget_in_destruction (GTK_WIDGET (self)))
     return;
 
-  file_item_update_image (data->self, data->image, data->file);
+  stream = chatty_file_get_stream_finish (self->file, result, NULL);
+
+  if (!stream)
+    return;
+}
+
+static gboolean
+item_set_file (gpointer user_data)
+{
+  ChattyFileItem *self = user_data;
+
+  /* It's possible that we get signals after dispose().
+   * Fix warning in those cases
+   */
+  if (!self->file)
+    return G_SOURCE_REMOVE;
+
+  chatty_file_get_stream_async (self->file, NULL,
+                                file_item_get_stream_cb,
+                                g_object_ref (self));
+  return G_SOURCE_REMOVE;
 }
 
 static void
-chatty_file_item_set_file (ChattyFileItem *self,
-                           const char     *file_name)
+file_item_update_message (ChattyFileItem *self)
 {
-  g_autoptr(GFileInfo) file_info = NULL;
-  g_autoptr(GFile) file = NULL;
-  g_autoptr(GError) error = NULL;
-  const char *thumbnail;
-  GtkWidget *image;
-  gboolean thumbnail_failed, thumbnail_valid;
+  ChattyFileStatus status;
 
   g_assert (CHATTY_IS_FILE_ITEM (self));
-  g_assert (file_name && *file_name);
+  g_assert (self->message);
+  g_assert (self->file);
 
-  g_free (self->file_name);
-  self->file_name = g_strdup (file_name);
+  status = chatty_file_get_status (self->file);
 
-  file = g_file_new_for_path (file_name);
-  file_info = g_file_query_info (file,
-                                 G_FILE_ATTRIBUTE_STANDARD_ICON ","
-                                 G_FILE_ATTRIBUTE_THUMBNAIL_PATH ","
-                                 G_FILE_ATTRIBUTE_THUMBNAIL_IS_VALID ","
-                                 G_FILE_ATTRIBUTE_THUMBNAILING_FAILED,
-                                 G_FILE_QUERY_INFO_NONE,
-                                 NULL, &error);
-  if (error)
-    g_warning ("Error querying info: %s", error->message);
+  if (status == CHATTY_FILE_UNKNOWN)
+    chatty_progress_button_set_fraction (CHATTY_PROGRESS_BUTTON (self->progress_button), 0.0);
+  else if (status == CHATTY_FILE_DOWNLOADING)
+    chatty_progress_button_pulse (CHATTY_PROGRESS_BUTTON (self->progress_button));
+  else
+    gtk_widget_hide (self->progress_button);
 
-  image = gtk_image_new ();
-  gtk_widget_set_tooltip_text (image, self->file_name);
-  gtk_widget_set_size_request (image, -1, 96);
-  thumbnail = g_file_info_get_attribute_byte_string (file_info, G_FILE_ATTRIBUTE_THUMBNAIL_PATH);
-  thumbnail_failed = g_file_info_get_attribute_boolean (file_info, G_FILE_ATTRIBUTE_THUMBNAILING_FAILED);
-  thumbnail_valid = g_file_info_get_attribute_boolean (file_info, G_FILE_ATTRIBUTE_THUMBNAIL_IS_VALID);
-
-  CHATTY_TRACE_MSG ("has thumbnail: %d, failed thumbnail: %d, valid thumbnail: %d",
-                    !!thumbnail, thumbnail_failed, thumbnail_valid);
-
-  if (thumbnail || (thumbnail_failed && thumbnail_valid)) {
-    file_item_update_image (self, image, file);
-  } else {
-    FileItemData *data;
-
-    data = g_new0 (FileItemData, 1);
-    data->self = g_object_ref (self);
-    data->image = g_object_ref (image);
-    data->file = g_object_ref (file);
-    chatty_utils_create_thumbnail_async (self->file_name,
-                                         file_create_thumbnail_cb,
-                                         data);
-  }
+  /* Update in idle so that self is added to the parent container */
+  if (status == CHATTY_FILE_DOWNLOADED)
+    g_idle_add (item_set_file, self);
 }
 
 static void
-chatty_file_item_finalize (GObject *object)
+file_progress_button_action_clicked_cb (ChattyFileItem *self)
+{
+  GtkWidget *view;
+
+  g_assert (CHATTY_IS_FILE_ITEM (self));
+
+  view = gtk_widget_get_ancestor (GTK_WIDGET (self), CHATTY_TYPE_CHAT_VIEW);
+
+  g_signal_emit_by_name (view, "file-requested", self->message);
+}
+
+static void
+file_item_activate_gesture_cb (ChattyFileItem *self)
+{
+  g_autoptr(GFile) file = NULL;
+  g_autofree char *uri = NULL;
+  const char *path;
+
+  g_assert (CHATTY_IS_FILE_ITEM (self));
+  g_assert (self->file);
+
+  path = chatty_file_get_path (self->file);
+  if (!path)
+    return;
+
+  file = g_file_new_build_filename (g_get_user_data_dir (), "chatty", path, NULL);
+  uri = g_file_get_uri (file);
+
+  gtk_show_uri_on_window (NULL, uri, GDK_CURRENT_TIME, NULL);
+}
+
+static void
+chatty_file_item_dispose (GObject *object)
 {
   ChattyFileItem *self = (ChattyFileItem *)object;
 
-  g_free (self->file_name);
+  g_clear_object (&self->message);
+  g_clear_object (&self->file);
 
-  G_OBJECT_CLASS (chatty_file_item_parent_class)->finalize (object);
+  G_OBJECT_CLASS (chatty_file_item_parent_class)->dispose (object);
 }
 
 static void
 chatty_file_item_class_init (ChattyFileItemClass *klass)
 {
-  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->finalize = chatty_file_item_finalize;
+  object_class->dispose = chatty_file_item_dispose;
 
   gtk_widget_class_set_template_from_resource (widget_class,
                                                "/sm/puri/Chatty/"
                                                "ui/chatty-file-item.ui");
 
-  gtk_widget_class_bind_template_child (widget_class, ChattyFileItem, overlay);
-  gtk_widget_class_bind_template_child (widget_class, ChattyFileItem, remove_button);
+  gtk_widget_class_bind_template_child (widget_class, ChattyFileItem, file_overlay);
+  gtk_widget_class_bind_template_child (widget_class, ChattyFileItem, progress_button);
+  gtk_widget_class_bind_template_child (widget_class, ChattyFileItem, file_title);
+
+  gtk_widget_class_bind_template_callback (widget_class, file_progress_button_action_clicked_cb);
+
+  g_type_ensure (CHATTY_TYPE_PROGRESS_BUTTON);
 }
 
 static void
 chatty_file_item_init (ChattyFileItem *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  self->activate_gesture = gtk_gesture_multi_press_new (GTK_WIDGET (self));
+  gtk_gesture_single_set_button (GTK_GESTURE_SINGLE (self->activate_gesture), GDK_BUTTON_PRIMARY);
+  g_signal_connect_swapped (self->activate_gesture, "pressed",
+                            G_CALLBACK (file_item_activate_gesture_cb), self);
 }
 
 GtkWidget *
-chatty_file_item_new (const char *file_name)
+chatty_file_item_new (ChattyMessage *message,
+                      ChattyFile    *file)
 {
   ChattyFileItem *self;
+  const char *file_name;
+
+  g_return_val_if_fail (CHATTY_IS_MESSAGE (message), NULL);
+
+  if (!file) {
+    GList *files;
+
+    files = chatty_message_get_files (message);
+    if (files)
+      file = files->data;
+  }
+
+  g_return_val_if_fail (CHATTY_IS_FILE (file), NULL);
 
   self = g_object_new (CHATTY_TYPE_FILE_ITEM, NULL);
-  chatty_file_item_set_file (self, file_name);
+  self->message = g_object_ref (message);
+  self->file = g_object_ref (file);
+
+  file_name = chatty_file_get_name (file);
+  gtk_widget_set_visible (self->file_title, file_name && *file_name);
+
+  if (file_name)
+    gtk_label_set_text (GTK_LABEL (self->file_title), file_name);
+
+  g_signal_connect_object (file, "status-changed",
+                           G_CALLBACK (file_item_update_message),
+                           self, G_CONNECT_SWAPPED);
+  g_signal_connect_object (self, "notify::scale-factor",
+                           G_CALLBACK (file_item_update_message),
+                           self, G_CONNECT_SWAPPED);
+  file_item_update_message (self);
 
   return GTK_WIDGET (self);
 }
 
-const char *
-chatty_file_item_get_file (ChattyFileItem *self)
+GtkStyleContext *
+chatty_file_item_get_style (ChattyFileItem *self)
 {
   g_return_val_if_fail (CHATTY_IS_FILE_ITEM (self), NULL);
 
-  return self->file_name;
+  return gtk_widget_get_style_context (self->file_overlay);
+}
+
+ChattyMessage *
+chatty_file_item_get_item (ChattyFileItem *self)
+{
+  g_return_val_if_fail (CHATTY_IS_FILE_ITEM (self), NULL);
+
+  return self->message;
 }

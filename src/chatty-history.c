@@ -22,6 +22,7 @@
 #include "chatty-ma-chat.h"
 
 #include "chatty-utils.h"
+#include "chatty-file.h"
 #include "chatty-settings.h"
 #include "chatty-mm-account.h"
 #include "chatty-mm-buddy.h"
@@ -127,7 +128,7 @@ struct _ChattyHistory
 typedef void (*ChattyCallback) (ChattyHistory *self,
                                 GTask *task);
 static int     add_file_info   (ChattyHistory  *self,
-                                ChattyFileInfo *file);
+                                ChattyFile     *file);
 
 G_DEFINE_TYPE (ChattyHistory, chatty_history, G_TYPE_OBJECT)
 
@@ -821,8 +822,7 @@ insert_or_ignore_thread (ChattyHistory *self,
 {
   sqlite3_stmt *stmt;
   int user_id, account_id;
-  int status, file_id, id = 0;
-  ChattyFileInfo *file;
+  int status, id = 0;
 
   g_assert (CHATTY_IS_HISTORY (self));
   g_assert (G_IS_TASK (task));
@@ -855,14 +855,11 @@ insert_or_ignore_thread (ChattyHistory *self,
   if (!account_id)
     return 0;
 
-  file = chatty_item_get_avatar_file (CHATTY_ITEM (chat));
-  file_id = add_file_info (self, file);
-
   sqlite3_prepare_v2 (self->db,
                       "INSERT INTO threads(name,alias,account_id,type,visibility,encrypted,avatar_id) "
                       "VALUES(?1,?2,?3,?4,?5,?6,?7) "
                       "ON CONFLICT(name,account_id,type) "
-                      "DO UPDATE SET alias=?2, visibility=?5, encrypted=?6, avatar_id=?7",
+                      "DO UPDATE SET alias=?2, visibility=?5, encrypted=?6",
                       -1, &stmt, NULL);
   history_bind_text (stmt, 1, chatty_chat_get_chat_name (chat), "binding when adding thread");
 
@@ -875,9 +872,6 @@ insert_or_ignore_thread (ChattyHistory *self,
                     "binding when adding thread");
   history_bind_int (stmt, 6, chatty_chat_get_encryption (chat) == CHATTY_ENCRYPTION_ENABLED,
                     "binding when adding thread");
-  if (file_id)
-    history_bind_int (stmt, 7, file_id, "binding when adding thread");
-
   sqlite3_step (stmt);
   sqlite3_finalize (stmt);
 
@@ -2035,18 +2029,17 @@ history_get_files (ChattyHistory *self,
   history_bind_int (stmt, 1, message_id, "binding when getting timestamp");
 
   while (sqlite3_step (stmt) == SQLITE_ROW) {
-    ChattyFileInfo *file;
+    ChattyFile *file;
 
-    file = g_new0 (ChattyFileInfo, 1);
-    file->url = g_strdup ((const char *)sqlite3_column_text (stmt, 0));
-    file->path = g_strdup ((const char *)sqlite3_column_text (stmt, 1));
-    file->file_name = g_strdup ((const char *)sqlite3_column_text (stmt, 2));
-    file->size = sqlite3_column_int (stmt, 3);
-    file->status = sqlite3_column_int (stmt, 4);
-    file->width = sqlite3_column_int (stmt, 5);
-    file->height = sqlite3_column_int (stmt, 6);
-    file->duration = sqlite3_column_int (stmt, 7);
-    file->mime_type = g_strdup ((const char *)sqlite3_column_text (stmt, 8));
+    file = chatty_file_new_full ((const char *)sqlite3_column_text (stmt, 2),
+                                 (const char *)sqlite3_column_text (stmt, 0),
+                                 (const char *)sqlite3_column_text (stmt, 1),
+                                 (const char *)sqlite3_column_text (stmt, 8),
+                                 sqlite3_column_int (stmt, 3),
+                                 sqlite3_column_int (stmt, 5),
+                                 sqlite3_column_int (stmt, 6),
+                                 sqlite3_column_int (stmt, 7));
+    chatty_file_set_status (file, sqlite3_column_int (stmt, 4));
 
     files = g_list_append (files, file);
   }
@@ -2104,7 +2097,6 @@ get_messages_before_time (ChattyHistory *self,
   history_bind_int (stmt, 3, limit, "binding when getting messages");
 
   while (sqlite3_step (stmt) == SQLITE_ROW) {
-    ChattyFileInfo *preview = NULL;
     ChattyMessage *message;
     const char *msg = NULL, *uid;
     const char *who = NULL, *subject;
@@ -2153,20 +2145,6 @@ get_messages_before_time (ChattyHistory *self,
         continue;
     }
 
-    /* preview is not limitted to media messages */
-    if (sqlite3_column_text (stmt, 7)) {
-      preview = g_new0 (ChattyFileInfo, 1);
-      preview->file_name = g_strdup ((const char *)sqlite3_column_text (stmt, 6));
-      preview->url = g_strdup ((const char *)sqlite3_column_text (stmt, 7));
-      preview->path = g_strdup ((const char *)sqlite3_column_text (stmt, 8));
-      preview->mime_type = g_strdup ((const char *)sqlite3_column_text (stmt, 9));
-      preview->size = sqlite3_column_int (stmt, 10);
-      preview->status = sqlite3_column_int (stmt, 11);
-      preview->width = sqlite3_column_int (stmt, 12);
-      preview->height = sqlite3_column_int (stmt, 13);
-      preview->duration = sqlite3_column_int (stmt, 14);
-    }
-
     if (!chatty_chat_is_im (chat) || CHATTY_IS_MA_CHAT (chat))
       who = (const char *)sqlite3_column_text (stmt, 4);
 
@@ -2189,7 +2167,6 @@ get_messages_before_time (ChattyHistory *self,
     }
 
     chatty_message_set_subject (message, subject);
-    chatty_message_set_preview (message, preview);
     g_ptr_array_insert (messages, 0, message);
   }
 
@@ -2301,10 +2278,13 @@ history_get_chat_draft_message (ChattyHistory *self,
 }
 
 static int
-add_file_info (ChattyHistory  *self,
-               ChattyFileInfo *file)
+add_file_info (ChattyHistory *self,
+               ChattyFile    *file)
 {
   sqlite3_stmt *stmt;
+  const char *mime_type;
+  gsize file_size;
+  ChattyFileStatus file_status;
   int file_id = 0, mime_id = 0;
   int status;
 
@@ -2313,33 +2293,37 @@ add_file_info (ChattyHistory  *self,
   if (!file)
     return 0;
 
-  if (file->mime_type) {
+  mime_type = chatty_file_get_mime_type (file);
+  file_size = chatty_file_get_size (file);
+  file_status = chatty_file_get_status (file);
+
+  if (mime_type) {
     sqlite3_prepare_v2 (self->db,
                         "INSERT OR IGNORE INTO mime_type(name) VALUES(?)",
                         -1, &stmt, NULL);
-    history_bind_text (stmt, 1, file->mime_type, "binding when getting timestamp");
+    history_bind_text (stmt, 1, mime_type, "binding when getting timestamp");
     sqlite3_step (stmt);
     sqlite3_finalize (stmt);
 
     sqlite3_prepare_v2 (self->db, "SELECT id FROM mime_type WHERE name=?" ,
                         -1, &stmt, NULL);
-    history_bind_text (stmt, 1, file->mime_type, "binding when getting timestamp");
+    history_bind_text (stmt, 1, mime_type, "binding when getting timestamp");
     if (sqlite3_step (stmt) == SQLITE_ROW)
       mime_id = sqlite3_column_int (stmt, 0);
     sqlite3_finalize (stmt);
   }
 
-  if (file->status == CHATTY_FILE_DOWNLOADED)
+  if (file_status == CHATTY_FILE_DOWNLOADED)
     status = FILE_STATUS_DOWNLOADED;
-  else if (file->status == CHATTY_FILE_DECRYPT_FAILED)
+  else if (file_status == CHATTY_FILE_DECRYPT_FAILED)
     status = FILE_STATUS_DECRYPT_FAILED;
-  else if (file->status == CHATTY_FILE_MISSING)
+  else if (file_status == CHATTY_FILE_MISSING)
     status = FILE_STATUS_MISSING;
   else
     status = 0;
 
   sqlite3_prepare_v2 (self->db, "SELECT id FROM files WHERE url=?", -1, &stmt, NULL);
-  history_bind_text (stmt, 1, file->url, "binding when getting file");
+  history_bind_text (stmt, 1, chatty_file_get_url (file), "binding when getting file");
   if (sqlite3_step (stmt) == SQLITE_ROW)
     file_id = sqlite3_column_int (stmt, 0);
   sqlite3_finalize (stmt);
@@ -2349,13 +2333,13 @@ add_file_info (ChattyHistory  *self,
                       "VALUES(?1,?2,?3,?4,?5,?6) "
                       "ON CONFLICT(url) DO UPDATE SET path=?3, size=?5, status=?6",
                       -1, &stmt, NULL);
-  history_bind_text (stmt, 1, file->file_name, "binding when adding file");
-  history_bind_text (stmt, 2, file->url, "binding when adding file");
-  history_bind_text (stmt, 3, file->path, "binding when adding file");
+  history_bind_text (stmt, 1, chatty_file_get_name (file), "binding when adding file");
+  history_bind_text (stmt, 2, chatty_file_get_url (file), "binding when adding file");
+  history_bind_text (stmt, 3, chatty_file_get_path (file), "binding when adding file");
   if (mime_id)
     history_bind_int (stmt, 4, mime_id, "binding when adding file");
-  if (file->size)
-    history_bind_int (stmt, 5, file->size, "binding when adding file");
+  if (file_size)
+    history_bind_int (stmt, 5, file_size, "binding when adding file");
   if (status)
     history_bind_int (stmt, 6, status, "binding when adding file");
   sqlite3_step (stmt);
@@ -2366,25 +2350,32 @@ add_file_info (ChattyHistory  *self,
 
   file_id = sqlite3_last_insert_rowid (self->db);
 
-  if (!file->width && !file->height && !file->duration)
-    return file_id;
+  if (chatty_file_get_width (file) ||
+      chatty_file_get_height (file) ||
+      chatty_file_get_duration (file)) {
+    gsize width, height, duration;
 
-  sqlite3_prepare_v2 (self->db,
-                      "INSERT INTO file_metadata(file_id,width,height,duration) "
-                      "VALUES(?1,?2,?3,?4)",
-                      -1, &stmt, NULL);
+    width = chatty_file_get_width (file);
+    height = chatty_file_get_height (file);
+    duration = chatty_file_get_duration (file);
 
-  history_bind_int (stmt, 1, file_id, "binding when adding media");
+    sqlite3_prepare_v2 (self->db,
+                        "INSERT INTO file_metadata(file_id,width,height,duration) "
+                        "VALUES(?1,?2,?3,?4)",
+                        -1, &stmt, NULL);
 
-  if (file->width)
-    history_bind_int (stmt, 2, file->width, "binding when adding media");
-  if (file->height)
-    history_bind_int (stmt, 3, file->height, "binding when adding media");
-  if (file->duration)
-    history_bind_int (stmt, 4, file->duration, "binding when adding media");
+    history_bind_int (stmt, 1, file_id, "binding when adding media");
 
-  sqlite3_step (stmt);
-  sqlite3_finalize (stmt);
+    if (width)
+      history_bind_int (stmt, 2, width, "binding when adding media");
+    if (height)
+      history_bind_int (stmt, 3, height, "binding when adding media");
+    if (duration)
+      history_bind_int (stmt, 4, duration, "binding when adding media");
+
+    sqlite3_step (stmt);
+    sqlite3_finalize (stmt);
+  }
 
   return file_id;
 }
@@ -2456,7 +2447,7 @@ history_add_message (ChattyHistory *self,
   const char *who, *uid, *msg, *alias;
   ChattyMsgDirection direction;
   ChattyMsgType type;
-  int thread_id = 0, sender_id = 0, preview_id = 0;
+  int thread_id = 0, sender_id = 0;
   int status, msg_status, dir;
   time_t time_stamp;
 
@@ -2559,7 +2550,6 @@ history_add_message (ChattyHistory *self,
     sqlite3_finalize (stmt);
   }
 
-  preview_id = add_file_info (self, chatty_message_get_preview (message));
   sqlite3_prepare_v2 (self->db,
                       "INSERT INTO messages(uid,thread_id,sender_id,body,body_type,direction,time,preview_id,encrypted,status,subject) "
                       "VALUES(?1,?2,?3,?4,"
@@ -2577,8 +2567,6 @@ history_add_message (ChattyHistory *self,
                     "binding when adding message");
   history_bind_int (stmt, 6, dir, "binding when adding message");
   history_bind_int (stmt, 7, time_stamp, "binding when adding message");
-  if (preview_id)
-    history_bind_int (stmt, 9, preview_id, "binding when adding message");
   history_bind_int (stmt, 10, chatty_message_get_encrypted (message),
                     "binding when adding message");
   if (msg_status != MESSAGE_STATUS_UNKNOWN)
@@ -2717,7 +2705,6 @@ history_get_chats (ChattyHistory *self,
 
   while (sqlite3_step (stmt) == SQLITE_ROW) {
     g_autoptr(GPtrArray) messages = NULL;
-    ChattyFileInfo *file = NULL;
     const char *name, *alias;
     ChattyChat *chat;
     int thread_id, visibility;
@@ -2730,12 +2717,6 @@ history_get_chats (ChattyHistory *self,
     name = (const char *)sqlite3_column_text (stmt, 1);
     alias = (const char *)sqlite3_column_text (stmt, 2);
     visibility = sqlite3_column_int (stmt, 7);
-
-    if (sqlite3_column_text (stmt, 5)) {
-      file = g_new0 (ChattyFileInfo, 1);
-      file->url = g_strdup ((const char *)sqlite3_column_text (stmt, 5));
-      file->path = g_strdup ((const char *)sqlite3_column_text (stmt, 6));
-    }
 
     if (sqlite3_column_int (stmt, 4) == THREAD_GROUP_CHAT) {
       chat = (gpointer)chatty_mm_chat_new (name, alias, CHATTY_PROTOCOL_MMS, FALSE,
@@ -2796,10 +2777,8 @@ history_update_user (ChattyHistory *self,
 {
   ChattyAccount *account;
   const char *user_name, *name;
-  ChattyFileInfo *file_info;
-  sqlite3_stmt *stmt;
   ChattyProtocol protocol;
-  int id, file_id = 0;
+  int id;
 
   g_assert (CHATTY_IS_HISTORY (self));
   g_assert (G_IS_TASK (task));
@@ -2828,25 +2807,10 @@ history_update_user (ChattyHistory *self,
 
   sqlite3_exec (self->db, "BEGIN TRANSACTION;", NULL, NULL, NULL);
   id = insert_or_ignore_user (self, protocol, user_name, name, task);
-
-  if (!id) {
-    sqlite3_exec (self->db, "END TRANSACTION;", NULL, NULL, NULL);
-    return;
-  }
-
-  file_info = chatty_item_get_avatar_file (CHATTY_ITEM (account));
-  file_id = add_file_info (self, file_info);
-
-  sqlite3_prepare_v2 (self->db,
-                      "UPDATE users SET avatar_id=iif(?1 = 0, null, ?1) "
-                      "WHERE users.id=?2",
-                      -1, &stmt, NULL);
-  history_bind_int (stmt, 1, file_id, "binding when setting avatar");
-  history_bind_int (stmt, 2, id, "binding when settings avatar");
-
-  sqlite3_step (stmt);
-  sqlite3_finalize (stmt);
   sqlite3_exec (self->db, "END TRANSACTION;", NULL, NULL, NULL);
+
+  if (!id)
+    return;
 
   g_task_return_boolean (task, TRUE);
 }

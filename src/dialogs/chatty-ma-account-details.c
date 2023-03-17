@@ -83,10 +83,6 @@ update_delete_avatar_button_state (ChattyMaAccountDetails *self)
   ChattyStatus status;
   gboolean has_avatar = FALSE, can_delete;
 
-  if (CHATTY_IS_ITEM (self->account) &&
-      chatty_item_get_avatar_file (CHATTY_ITEM (self->account)))
-    has_avatar = TRUE;
-
   status = chatty_account_get_status (CHATTY_ACCOUNT (self->account));
   can_delete = has_avatar && !self->is_deleting_avatar && status == CHATTY_CONNECTED;
   button_stack = GTK_STACK (self->delete_button_stack);

@@ -15,7 +15,7 @@
 #undef G_DISABLE_CAST_CHECKS
 #undef G_LOG_DOMAIN
 
-#include "chatty-text-item.c"
+#include "chatty-message-row.c"
 
 static void
 test_message_text_markup (void)
@@ -67,15 +67,17 @@ test_message_text_markup (void)
   };
 
   for (guint i = 0; i < G_N_ELEMENTS (array); i++) {
-    g_autoptr(ChattyMessage) message = NULL;
-    g_autoptr(GtkWidget) item = NULL;
+    g_autofree char *content = NULL;
     GtkLabel *label;
     const char *str;
 
-    message = chatty_message_new (NULL, array[i].text, NULL, 0, CHATTY_MESSAGE_TEXT, 0, 0);
-    item = chatty_text_item_new (message, CHATTY_PROTOCOL_MMS_SMS);
-    label = GTK_LABEL (CHATTY_TEXT_ITEM (item)->content_label);
-    g_object_ref_sink (item);
+    label = GTK_LABEL (gtk_label_new (""));
+    content = text_item_linkify (array[i].text);
+
+    if (content && *content)
+      gtk_label_set_markup (label, content);
+    else
+      gtk_label_set_text (label, array[i].text);
 
     str = gtk_label_get_text (label);
     g_assert_cmpstr (str, ==, array[i].text);
