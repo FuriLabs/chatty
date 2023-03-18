@@ -13,20 +13,21 @@
 #include "config.h"
 
 #include <glib/gi18n.h>
-#include <gspell/gspell.h>
 
+#include "gtk3-to-4.h"
 #include "chatty-mm-chat.h"
 #include "chatty-purple.h"
 #include "chatty-settings.h"
 #include "chatty-ma-chat.h"
 #include "chatty-message-row.h"
 #include "chatty-attachments-view.h"
+#include "chatty-utils.h"
 #include "chatty-chat-view.h"
 #include "chatty-log.h"
 
 struct _ChattyChatView
 {
-  GtkStack    parent_instance;
+  AdwBin      parent_instance;
 
   GtkWidget  *message_view;
 
@@ -42,7 +43,6 @@ struct _ChattyChatView
   GtkWidget  *message_input;
   GtkWidget  *send_file_button;
   GtkWidget  *send_message_button;
-  GtkWidget  *send_button_icon;
   GtkWidget  *no_message_status;
   GtkWidget  *scroll_down_button;
   GtkTextBuffer *message_input_buffer;
@@ -70,7 +70,7 @@ struct _ChattyChatView
 #define INDICATOR_MARGIN   2
 #define MSG_BUBBLE_MAX_RATIO .3
 
-G_DEFINE_TYPE (ChattyChatView, chatty_chat_view, GTK_TYPE_STACK)
+G_DEFINE_TYPE (ChattyChatView, chatty_chat_view, ADW_TYPE_BIN)
 
 
 const char *emoticons[][2] = {
@@ -143,17 +143,19 @@ chatty_draw_typing_indicator (cairo_t *cr)
   i++;
 }
 
-
-static gboolean
-chat_view_typing_indicator_draw_cb (ChattyChatView *self,
-                                    cairo_t        *cr)
+static void
+chat_view_typing_indicator_draw_cb (GtkDrawingArea *drawing_area,
+                                    cairo_t        *cr,
+                                    int             width,
+                                    int             height,
+                                    gpointer        user_data)
 {
+  ChattyChatView *self = user_data;
+
   g_assert (CHATTY_IS_CHAT_VIEW (self));
 
   if (self->refresh_typing_id > 0)
     chatty_draw_typing_indicator (cr);
-
-  return TRUE;
 }
 
 static gboolean
@@ -238,22 +240,22 @@ chatty_chat_view_update (ChattyChatView *self)
   gtk_widget_set_visible (self->send_file_button, chatty_chat_has_file_upload (self->chat));
 
   if (protocol == CHATTY_PROTOCOL_MMS_SMS) {
-    hdy_status_page_set_title (HDY_STATUS_PAGE (self->no_message_status),
+    adw_status_page_set_title (ADW_STATUS_PAGE (self->no_message_status),
                                _("This is an SMS conversation"));
-    hdy_status_page_set_description (HDY_STATUS_PAGE (self->no_message_status),
+    adw_status_page_set_description (ADW_STATUS_PAGE (self->no_message_status),
                                      _("Your messages are not encrypted, "
                                        "and carrier rates may apply"));
   } else {
-    hdy_status_page_set_title (HDY_STATUS_PAGE (self->no_message_status),
+    adw_status_page_set_title (ADW_STATUS_PAGE (self->no_message_status),
                                _("This is an IM conversation"));
-    hdy_status_page_set_description (HDY_STATUS_PAGE (self->no_message_status),
+    adw_status_page_set_description (ADW_STATUS_PAGE (self->no_message_status),
                                      _("Your messages are not encrypted, "
                                        "and carrier rates may apply"));
     if (chatty_chat_get_encryption (self->chat) == CHATTY_ENCRYPTION_ENABLED)
-      hdy_status_page_set_description (HDY_STATUS_PAGE (self->no_message_status),
+      adw_status_page_set_description (ADW_STATUS_PAGE (self->no_message_status),
                                        _("Your messages are encrypted"));
     else
-      hdy_status_page_set_description (HDY_STATUS_PAGE (self->no_message_status),
+      adw_status_page_set_description (ADW_STATUS_PAGE (self->no_message_status),
                                        _("Your messages are not encrypted"));
   }
 
@@ -372,7 +374,7 @@ chat_encrypt_changed_cb (ChattyChatView *self)
    else
      icon_name = "send-symbolic";
 
-  gtk_image_set_from_icon_name (GTK_IMAGE (self->send_button_icon), icon_name, 1);
+  gtk_button_set_icon_name (GTK_BUTTON (self->send_message_button), icon_name);
 }
 
 static void
@@ -438,11 +440,36 @@ chat_view_chat_changed_cb (ChattyChatView *self)
 }
 
 static void
+chat_view_file_chooser_response_cb (ChattyChatView *self,
+                                    int             response_id,
+                                    GtkDialog      *dialog)
+{
+  g_assert (CHATTY_IS_CHAT_VIEW (self));
+
+  if (response_id == GTK_RESPONSE_ACCEPT) {
+    g_autofree char *filename = NULL;
+    g_autoptr(GFile) file = NULL;
+
+    file = gtk_file_chooser_get_file (GTK_FILE_CHOOSER (dialog));
+    filename = g_file_get_path (file);
+
+    chatty_attachments_view_add_file (CHATTY_ATTACHMENTS_VIEW (self->attachment_view), filename);
+    gtk_revealer_set_reveal_child (GTK_REVEALER (self->attachment_revealer), TRUE);
+
+    /* Currently multiple files are allowed only for MMS chats */
+    gtk_widget_set_sensitive (self->send_file_button, CHATTY_IS_MM_CHAT (self->chat));
+    /* Files with message content is supported only by MMS chats */
+    gtk_widget_set_sensitive (self->message_input, CHATTY_IS_MM_CHAT (self->chat));
+  }
+
+  gtk_window_destroy (GTK_WINDOW (dialog));
+}
+
+static void
 chat_view_show_file_chooser (ChattyChatView *self)
 {
   GtkWindow *window;
   GtkWidget *dialog;
-  int response;
 
   g_assert (CHATTY_IS_CHAT_VIEW (self));
 
@@ -456,22 +483,11 @@ chat_view_show_file_chooser (ChattyChatView *self)
                                         _("Open"), GTK_RESPONSE_ACCEPT,
                                         NULL);
 
-  response = gtk_dialog_run (GTK_DIALOG (dialog));
+  g_signal_connect_object (dialog, "response",
+                           G_CALLBACK (chat_view_file_chooser_response_cb),
+                           self, G_CONNECT_SWAPPED);
 
-  if (response == GTK_RESPONSE_ACCEPT) {
-    g_autofree char *filename = NULL;
-
-    filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-    chatty_attachments_view_add_file (CHATTY_ATTACHMENTS_VIEW (self->attachment_view), filename);
-    gtk_revealer_set_reveal_child (GTK_REVEALER (self->attachment_revealer), TRUE);
-
-    /* Currently multiple files are allowed only for MMS chats */
-    gtk_widget_set_sensitive (self->send_file_button, CHATTY_IS_MM_CHAT (self->chat));
-    /* Files with message content is supported only by MMS chats */
-    gtk_widget_set_sensitive (self->message_input, CHATTY_IS_MM_CHAT (self->chat));
-  }
-
-  gtk_widget_destroy (dialog);
+  gtk_window_present (GTK_WINDOW (dialog));
 }
 
 static void
@@ -591,25 +607,6 @@ chat_view_send_message_button_clicked_cb (ChattyChatView *self)
 }
 
 static gboolean
-chat_view_input_key_pressed_cb (ChattyChatView *self,
-                                GdkEventKey    *event_key)
-{
-  g_assert (CHATTY_IS_CHAT_VIEW (self));
-
-  if (!(event_key->state & GDK_SHIFT_MASK) && event_key->keyval == GDK_KEY_Return &&
-      chatty_settings_get_return_sends_message (chatty_settings_get_default ())) {
-    if (gtk_text_buffer_get_char_count (self->message_input_buffer) > 0)
-      chat_view_send_message_button_clicked_cb (self);
-    else
-      gtk_widget_error_bell (self->message_input);
-
-    return TRUE;
-  }
-
-  return FALSE;
-}
-
-static gboolean
 chat_view_save_message_to_db (gpointer user_data)
 {
   ChattyChatView *self = user_data;
@@ -726,6 +723,23 @@ chat_view_adjustment_value_changed_cb (ChattyChatView *self)
 }
 
 static void
+chat_view_activate (GtkWidget  *widget,
+                    const char *action_name,
+                    GVariant   *param)
+{
+  ChattyChatView *self = CHATTY_CHAT_VIEW (widget);
+
+  if (chatty_settings_get_return_sends_message (chatty_settings_get_default ())) {
+    if (gtk_text_buffer_get_char_count (self->message_input_buffer) > 0)
+      chat_view_send_message_button_clicked_cb (self);
+    else
+      gtk_widget_error_bell (self->message_input);
+  } else {
+    gtk_text_buffer_insert_at_cursor (self->message_input_buffer, "\n", strlen ("\n"));
+  }
+}
+
+static void
 chat_view_update_header_func (ChattyMessageRow *row,
                               ChattyMessageRow *before,
                               gpointer          user_data)
@@ -806,7 +820,7 @@ osk_properties_changed_cb (ChattyChatView *self,
   GtkWindow *window;
 
   window = (GtkWindow *)gtk_widget_get_ancestor (GTK_WIDGET (self), GTK_TYPE_WINDOW);
-  if (!window || !gtk_window_has_toplevel_focus (window))
+  if (!window || !chatty_utils_window_has_toplevel_focus (window))
     return;
 
   value = g_variant_lookup_value (changed_properties, "Visible", NULL);
@@ -953,7 +967,6 @@ chatty_chat_view_class_init (ChattyChatViewClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, message_input);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, send_file_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, send_message_button);
-  gtk_widget_class_bind_template_child (widget_class, ChattyChatView, send_button_icon);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, no_message_status);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, message_input_buffer);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, vadjustment);
@@ -964,10 +977,11 @@ chatty_chat_view_class_init (ChattyChatViewClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, chat_view_typing_indicator_draw_cb);
   gtk_widget_class_bind_template_callback (widget_class, chat_view_send_file_button_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, chat_view_send_message_button_clicked_cb);
-  gtk_widget_class_bind_template_callback (widget_class, chat_view_input_key_pressed_cb);
   gtk_widget_class_bind_template_callback (widget_class, chat_view_message_input_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, list_page_size_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, chat_view_adjustment_value_changed_cb);
+
+  gtk_widget_class_install_action (widget_class, "view.activate", NULL, chat_view_activate);
 
   g_type_ensure (CHATTY_TYPE_ATTACHMENTS_VIEW);
 }
@@ -975,9 +989,10 @@ chatty_chat_view_class_init (ChattyChatViewClass *klass)
 static void
 chatty_chat_view_init (ChattyChatView *self)
 {
-  GspellTextView *gspell_view;
-
   gtk_widget_init_template (GTK_WIDGET (self));
+  gtk_drawing_area_set_draw_func (GTK_DRAWING_AREA (self->typing_indicator),
+                                  chat_view_typing_indicator_draw_cb,
+                                  g_object_ref (self), g_object_unref);
   gtk_list_box_set_placeholder (GTK_LIST_BOX (self->message_list), self->no_message_status);
 
   g_signal_connect_after (G_OBJECT (self), "file-requested",
@@ -992,9 +1007,6 @@ chatty_chat_view_init (ChattyChatView *self)
                                    osk_vanished_cb,
                                    g_object_ref (self),
                                    g_object_unref);
-
-  gspell_view = gspell_text_view_get_from_gtk_text_view (GTK_TEXT_VIEW (self->message_input));
-  gspell_text_view_basic_setup (gspell_view);
 }
 
 GtkWidget *
@@ -1021,7 +1033,7 @@ chatty_chat_view_set_chat (ChattyChatView *self,
                                     GTK_POLICY_NEVER, GTK_POLICY_NEVER);
 
   if (self->chat && chat != self->chat) {
-    gtk_image_set_from_icon_name (GTK_IMAGE (self->send_button_icon), "send-symbolic", 1);
+    gtk_button_set_icon_name (GTK_BUTTON (self->send_message_button), "send-symbolic");
     g_signal_handlers_disconnect_by_func (chatty_chat_get_account (self->chat),
                                           chat_account_status_changed_cb,
                                           self);

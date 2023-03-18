@@ -14,6 +14,7 @@
 #include <glib/gi18n.h>
 #include <glib-object.h>
 
+#include "gtk3-to-4.h"
 #include "chatty-window.h"
 #include "chatty-purple.h"
 #include "chatty-utils.h"
@@ -23,7 +24,7 @@
 
 struct _ChattyNewMucDialog
 {
-  HdyWindow  parent_instance;
+  AdwWindow  parent_instance;
 
   GtkWidget *accounts_list;
   GtkWidget *button_join_chat;
@@ -37,7 +38,7 @@ struct _ChattyNewMucDialog
 };
 
 
-G_DEFINE_TYPE (ChattyNewMucDialog, chatty_new_muc_dialog, HDY_TYPE_WINDOW)
+G_DEFINE_TYPE (ChattyNewMucDialog, chatty_new_muc_dialog, ADW_TYPE_WINDOW)
 
 
 #ifdef PURPLE_ENABLED
@@ -57,7 +58,7 @@ muc_dialog_cancel_clicked_cb (ChattyNewMucDialog *self)
 {
   g_assert (CHATTY_IS_NEW_MUC_DIALOG (self));
 
-  gtk_widget_destroy (GTK_WIDGET (self));
+  gtk_window_destroy (GTK_WINDOW (self));
 }
 
 static void
@@ -69,15 +70,15 @@ button_join_chat_clicked_cb (ChattyNewMucDialog *self)
   g_assert (CHATTY_IS_NEW_MUC_DIALOG(self));
 
   chat = chatty_pp_account_join_chat (CHATTY_PP_ACCOUNT (self->selected_account),
-                                      gtk_entry_get_text (GTK_ENTRY(self->entry_group_chat_id)),
-                                      gtk_entry_get_text (GTK_ENTRY(self->entry_group_chat_room_alias)),
-                                      gtk_entry_get_text (GTK_ENTRY(self->entry_group_chat_user_alias)),
-                                      gtk_entry_get_text (GTK_ENTRY(self->entry_group_chat_pw)));
+                                      gtk_editable_get_text (GTK_EDITABLE (self->entry_group_chat_id)),
+                                      gtk_editable_get_text (GTK_EDITABLE (self->entry_group_chat_room_alias)),
+                                      gtk_editable_get_text (GTK_EDITABLE (self->entry_group_chat_user_alias)),
+                                      gtk_editable_get_text (GTK_EDITABLE (self->entry_group_chat_pw)));
   chatty_account_join_chat_async (CHATTY_ACCOUNT (self->selected_account), chat,
                                   join_new_chat_cb, g_object_ref (self));
 #endif
 
-  gtk_widget_destroy (GTK_WIDGET (self));
+  gtk_window_destroy (GTK_WINDOW (self));
 }
 
 
@@ -89,7 +90,7 @@ chat_name_changed_cb (ChattyNewMucDialog *self)
 
   g_assert (CHATTY_IS_NEW_MUC_DIALOG(self));
 
-  name = gtk_entry_get_text (GTK_ENTRY (self->entry_group_chat_id));
+  name = gtk_editable_get_text (GTK_EDITABLE (self->entry_group_chat_id));
   buddy_exists = chatty_account_buddy_exists (CHATTY_ACCOUNT (self->selected_account), name);
   gtk_widget_set_sensitive (self->button_join_chat, !buddy_exists);
 }
@@ -110,7 +111,7 @@ account_list_row_activated_cb (ChattyNewMucDialog *self,
 
   self->selected_account = account;
 
-  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(prefix_radio), TRUE);
+  gtk_check_button_set_active (GTK_CHECK_BUTTON (prefix_radio), TRUE);
 }
 
 #ifdef PURPLE_ENABLED
@@ -118,13 +119,13 @@ static void
 chatty_new_muc_add_account_to_list (ChattyNewMucDialog *self,
                                     ChattyPpAccount    *account)
 {
-  HdyActionRow *row;
+  AdwActionRow *row;
   GtkWidget    *prefix_radio_button;
   ChattyProtocol protocol;
 
   g_return_if_fail (CHATTY_IS_NEW_MUC_DIALOG(self));
 
-  row = HDY_ACTION_ROW (hdy_action_row_new ());
+  row = ADW_ACTION_ROW (adw_action_row_new ());
   gtk_list_box_row_set_activatable (GTK_LIST_BOX_ROW (row), TRUE);
   g_object_set_data (G_OBJECT(row),
                      "row-account",
@@ -144,18 +145,19 @@ chatty_new_muc_add_account_to_list (ChattyNewMucDialog *self,
     return;
   }
 
-  prefix_radio_button = gtk_radio_button_new_from_widget (GTK_RADIO_BUTTON(self->dummy_prefix_radio));
-  gtk_widget_show (GTK_WIDGET(prefix_radio_button));
+  prefix_radio_button = gtk_check_button_new ();
+  gtk_check_button_set_group (GTK_CHECK_BUTTON (prefix_radio_button),
+                              GTK_CHECK_BUTTON (self->dummy_prefix_radio));
   gtk_widget_set_sensitive (prefix_radio_button, FALSE);
-  
+
   g_object_set_data (G_OBJECT(row),
                      "row-prefix",
                      (gpointer)prefix_radio_button);
 
-  hdy_action_row_add_prefix (row, GTK_WIDGET(prefix_radio_button ));
-  hdy_preferences_row_set_title (HDY_PREFERENCES_ROW (row), chatty_item_get_username (CHATTY_ITEM (account)));
+  adw_action_row_add_prefix (row, GTK_WIDGET(prefix_radio_button ));
+  adw_preferences_row_set_title (ADW_PREFERENCES_ROW (row), chatty_item_get_username (CHATTY_ITEM (account)));
 
-  gtk_container_add (GTK_CONTAINER(self->accounts_list), GTK_WIDGET(row));
+  gtk_list_box_append (GTK_LIST_BOX (self->accounts_list), GTK_WIDGET (row));
 
   gtk_widget_show (GTK_WIDGET(row));
 }
@@ -166,7 +168,7 @@ static gboolean
 chatty_new_muc_populate_account_list (ChattyNewMucDialog *self)
 {
   gboolean       ret = FALSE;
-  HdyActionRow  *row;
+  AdwActionRow  *row;
 
   g_return_val_if_fail (CHATTY_IS_NEW_MUC_DIALOG(self), FALSE);
 
@@ -182,11 +184,11 @@ chatty_new_muc_populate_account_list (ChattyNewMucDialog *self)
   }
 #endif
 
-  row = HDY_ACTION_ROW(gtk_list_box_get_row_at_index (GTK_LIST_BOX(self->accounts_list), 0));
+  row = ADW_ACTION_ROW (gtk_list_box_get_row_at_index (GTK_LIST_BOX (self->accounts_list), 0));
 
   if (row) {
     account_list_row_activated_cb (self,
-                                   GTK_LIST_BOX_ROW(row), 
+                                   GTK_LIST_BOX_ROW(row),
                                    GTK_LIST_BOX(self->accounts_list));
   }
 
@@ -222,7 +224,7 @@ chatty_new_muc_dialog_init (ChattyNewMucDialog *self)
 {
   gtk_widget_init_template (GTK_WIDGET(self));
 
-  self->dummy_prefix_radio = gtk_radio_button_new_from_widget (GTK_RADIO_BUTTON(NULL));
+  self->dummy_prefix_radio = gtk_check_button_new ();
 
   chatty_new_muc_populate_account_list (self);
 }

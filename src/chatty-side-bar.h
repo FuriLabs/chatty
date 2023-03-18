@@ -13,8 +13,6 @@ G_BEGIN_DECLS
 #define CHATTY_TYPE_SIDE_BAR (chatty_side_bar_get_type ())
 G_DECLARE_FINAL_TYPE (ChattySideBar, chatty_side_bar, CHATTY, SIDE_BAR, GtkBox)
 
-void        chatty_side_bar_add_to_header_group   (ChattySideBar *self,
-                                                   GtkWidget     *header_group);
 GtkWidget  *chatty_side_bar_get_chat_list         (ChattySideBar *self);
 GPtrArray  *chatty_side_bar_get_selected_chats    (ChattySideBar *self);
 void        chatty_side_bar_set_show_archived     (ChattySideBar *self,

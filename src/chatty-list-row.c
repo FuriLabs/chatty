@@ -15,6 +15,7 @@
 
 #include <glib/gi18n.h>
 
+#include "gtk3-to-4.h"
 #include "chatty-purple.h"
 #include "chatty-contact.h"
 #include "chatty-contact-list.h"
@@ -211,12 +212,16 @@ chatty_list_row_update (ChattyListRow *self)
         CHATTY_IS_MA_KEY_CHAT (self->item)) {
       gtk_label_set_text (GTK_LABEL (self->unread_message_count), "⚫︎");
       gtk_widget_show (self->unread_message_count);
-      gtk_container_child_set (GTK_CONTAINER (self->content_grid), self->unread_message_count,
-                               "top-attach", 0, NULL);
+      g_object_ref (self->unread_message_count);
+      gtk_grid_remove (GTK_GRID (self->content_grid), self->unread_message_count);
+      gtk_grid_attach (GTK_GRID (self->content_grid), self->unread_message_count, 2, 0, 1, 1);
+      g_object_unref (self->unread_message_count);
     } else {
-      gtk_container_child_set (GTK_CONTAINER (self->content_grid), self->unread_message_count,
-                               "top-attach", 1, NULL);
-      }
+      g_object_ref (self->unread_message_count);
+      gtk_grid_remove (GTK_GRID (self->content_grid), self->unread_message_count);
+      gtk_grid_attach (GTK_GRID (self->content_grid), self->unread_message_count, 2, 1, 1, 1);
+      g_object_unref (self->unread_message_count);
+    }
 
     chatty_list_row_update_last_modified (self);
   }
@@ -273,7 +278,6 @@ chatty_list_row_add_contact_clicked_cb (ChattyListRow *self)
 static void
 chatty_list_row_call_button_clicked_cb (ChattyListRow *self)
 {
-  g_autoptr(GError) error = NULL;
   g_autofree char *uri = NULL;
 
   g_return_if_fail (CHATTY_IS_CONTACT (self->item));
@@ -281,8 +285,7 @@ chatty_list_row_call_button_clicked_cb (ChattyListRow *self)
   uri = g_strconcat ("tel://", chatty_item_get_username (self->item), NULL);
 
   g_debug ("Calling uri: %s", uri);
-  if (!gtk_show_uri_on_window (NULL, uri, GDK_CURRENT_TIME, &error))
-    g_warning ("Failed to launch call: %s", error->message);
+  gtk_show_uri (NULL, uri, GDK_CURRENT_TIME);
 }
 
 static void
@@ -407,8 +410,7 @@ chatty_list_row_select (ChattyListRow *self, gboolean enable)
 {
   g_return_if_fail (CHATTY_IS_LIST_ROW (self));
 
-  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (self->checkbox),
-                                enable);
+  gtk_check_button_set_active (GTK_CHECK_BUTTON (self->checkbox), enable);
 }
 
 void

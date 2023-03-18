@@ -16,9 +16,8 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 #include <glib-object.h>
-#include <libgd/gd.h>
-#include "contrib/gtk.h"
 
+#include "gtk3-to-4.h"
 #include "chatty-window.h"
 #include "chatty-history.h"
 #include "chatty-avatar.h"
@@ -42,14 +41,13 @@
 
 struct _ChattyWindow
 {
-  HdyApplicationWindow parent_instance;
+  AdwApplicationWindow parent_instance;
 
   ChattySettings *settings;
 
   GtkWidget *chat_list;
   GtkWidget *side_bar;
   GtkWidget *content_header_bar;
-  GtkWidget *header_group;
 
   GtkWidget *content_box;
   GtkWidget *content_view;
@@ -83,7 +81,7 @@ struct _ChattyWindow
 };
 
 
-G_DEFINE_TYPE (ChattyWindow, chatty_window, HDY_TYPE_APPLICATION_WINDOW)
+G_DEFINE_TYPE (ChattyWindow, chatty_window, ADW_TYPE_APPLICATION_WINDOW)
 
 static void
 header_bar_update_item_state_button (ChattyWindow *self,
@@ -142,7 +140,7 @@ chatty_window_set_item (ChattyWindow *self,
   g_set_object (&self->item, item);
 
   g_clear_object (&self->title_binding);
-  gtk_label_set_label (GTK_LABEL (self->content_title), "");
+  adw_window_title_set_title (ADW_WINDOW_TITLE (self->content_title), "");
   gtk_widget_set_visible (self->content_menu_button, !!item);
 
   header_bar_update_item_state_button (self, item);
@@ -180,7 +178,7 @@ chatty_window_set_item (ChattyWindow *self,
 
     chatty_avatar_set_item (CHATTY_AVATAR (self->content_avatar), item);
     self->title_binding = g_object_bind_property (item, "name",
-                                                  self->content_title, "label",
+                                                  self->content_title, "title",
                                                   G_BINDING_SYNC_CREATE);
 
     if (CHATTY_IS_CHAT (item))
@@ -220,7 +218,7 @@ window_set_item (ChattyWindow *self,
   }
 
   if (!chat)
-    hdy_leaflet_set_visible_child_name (HDY_LEAFLET (self->content_box), "sidebar");
+    adw_leaflet_set_visible_child_name (ADW_LEAFLET (self->content_box), "sidebar");
 
   chatty_window_set_item (self, CHATTY_ITEM (chat));
   chatty_main_view_set_item (CHATTY_MAIN_VIEW (self->content_view), CHATTY_ITEM (chat));
@@ -283,7 +281,7 @@ window_chat_list_selection_changed (ChattyWindow   *self,
   g_return_if_fail (CHATTY_IS_CHAT (chat));
 
   if (chat == (gpointer)chatty_main_view_get_item (CHATTY_MAIN_VIEW (self->content_view))) {
-    hdy_leaflet_set_visible_child_name (HDY_LEAFLET (self->content_box), "content");
+    adw_leaflet_set_visible_child_name (ADW_LEAFLET (self->content_box), "content");
 
     if (chatty_window_get_active_chat (self))
       chatty_chat_set_unread_count (chat, 0);
@@ -304,7 +302,7 @@ notify_fold_cb (ChattyWindow *self)
 {
   gboolean folded;
 
-  folded = hdy_leaflet_get_folded (HDY_LEAFLET (self->content_box));
+  folded = adw_leaflet_get_folded (ADW_LEAFLET (self->content_box));
   chatty_chat_list_set_selection_mode (CHATTY_CHAT_LIST (self->chat_list), !folded);
 
   if (!folded) {
@@ -405,11 +403,11 @@ new_chat_selection_changed_cb (ChattyWindow        *self,
 }
 
 static void
-chatty_window_archive_chat (GSimpleAction *action,
-                            GVariant      *parameter,
-                            gpointer       user_data)
+chatty_window_archive_chat (GtkWidget  *widget,
+                            const char *action_name,
+                            GVariant   *param)
 {
-  ChattyWindow *self = user_data;
+  ChattyWindow *self = CHATTY_WINDOW (widget);
   ChattyItem *item;
 
   g_assert (CHATTY_IS_WINDOW (self));
@@ -422,11 +420,11 @@ chatty_window_archive_chat (GSimpleAction *action,
 }
 
 static void
-chatty_window_unarchive_chat (GSimpleAction *action,
-                              GVariant      *parameter,
-                              gpointer       user_data)
+chatty_window_unarchive_chat (GtkWidget  *widget,
+                              const char *action_name,
+                              GVariant   *param)
 {
-  ChattyWindow *self = user_data;
+  ChattyWindow *self = CHATTY_WINDOW (widget);
   ChattyItem *item;
 
   g_assert (CHATTY_IS_WINDOW (self));
@@ -439,14 +437,31 @@ chatty_window_unarchive_chat (GSimpleAction *action,
 }
 
 static void
-chatty_window_block_chat (GSimpleAction *action,
-                          GVariant      *parameter,
-                          gpointer       user_data)
+window_block_chat_response_cb (ChattyWindow *self,
+                               int           response_id,
+                               GtkDialog    *dialog)
 {
-  ChattyWindow *self = user_data;
+
+  g_assert (CHATTY_IS_WINDOW (self));
+
+  gtk_window_destroy (GTK_WINDOW (dialog));
+
+  if (response_id == GTK_RESPONSE_OK) {
+    ChattyItem *item;
+
+    item = chatty_main_view_get_item (CHATTY_MAIN_VIEW (self->content_view));
+    chatty_item_set_state (item, CHATTY_ITEM_BLOCKED);
+  }
+}
+
+static void
+chatty_window_block_chat (GtkWidget  *widget,
+                          const char *action_name,
+                          GVariant   *param)
+{
+  ChattyWindow *self = CHATTY_WINDOW (widget);
   GtkWidget *message;
   ChattyItem *item;
-  int result;
 
   g_assert (CHATTY_IS_WINDOW (self));
 
@@ -460,21 +475,19 @@ chatty_window_block_chat (GSimpleAction *action,
                                     GTK_BUTTONS_OK_CANCEL,
                                     _("You shall no longer be notified for new messages, continue?"));
 
-  result = gtk_dialog_run (GTK_DIALOG (message));
-  gtk_widget_destroy (message);
+  g_signal_connect_object (message, "response",
+                           G_CALLBACK (window_block_chat_response_cb),
+                           self, G_CONNECT_SWAPPED);
 
-  if (result == GTK_RESPONSE_CANCEL)
-    return;
-
-  chatty_item_set_state (item, CHATTY_ITEM_BLOCKED);
+  gtk_window_present (GTK_WINDOW (message));
 }
 
 static void
-chatty_window_unblock_chat (GSimpleAction *action,
-                            GVariant      *parameter,
-                            gpointer       user_data)
+chatty_window_unblock_chat (GtkWidget  *widget,
+                            const char *action_name,
+                            GVariant   *param)
 {
-  ChattyWindow *self = user_data;
+  ChattyWindow *self = CHATTY_WINDOW (widget);
   ChattyItem *item;
 
   g_assert (CHATTY_IS_WINDOW (self));
@@ -488,17 +501,51 @@ chatty_window_unblock_chat (GSimpleAction *action,
 }
 
 static void
-chatty_window_delete_chat (GSimpleAction *action,
-                           GVariant      *parameter,
-                           gpointer       user_data)
+window_delete_chat_response_cb (ChattyWindow *self,
+                                int           response_id,
+                                GtkDialog    *dialog)
 {
-  ChattyWindow *self = user_data;
+  g_assert (CHATTY_IS_WINDOW (self));
+  g_assert (GTK_IS_DIALOG (dialog));
+
+  if (response_id == GTK_RESPONSE_OK) {
+    ChattyChat *chat;
+
+    chat = (ChattyChat *)chatty_main_view_get_item (CHATTY_MAIN_VIEW (self->content_view));
+
+    chatty_history_delete_chat (chatty_manager_get_history (self->manager),
+                                chat);
+#ifdef PURPLE_ENABLED
+    if (CHATTY_IS_PP_CHAT (chat)) {
+      chatty_pp_chat_delete (CHATTY_PP_CHAT (chat));
+    } else
+#endif
+    if (CHATTY_IS_MM_CHAT (chat)) {
+      chatty_mm_chat_delete (CHATTY_MM_CHAT (chat));
+    } else {
+      g_return_if_reached ();
+    }
+
+    window_set_item (self, NULL);
+
+    if (!adw_leaflet_get_folded (ADW_LEAFLET (self->content_box)))
+      chatty_chat_list_select_first (CHATTY_CHAT_LIST (self->chat_list));
+  }
+
+  gtk_window_destroy (GTK_WINDOW (dialog));
+}
+
+static void
+chatty_window_delete_chat (GtkWidget  *widget,
+                           const char *action_name,
+                           GVariant   *param)
+{
+  ChattyWindow *self = CHATTY_WINDOW (widget);
   g_autofree char *text = NULL;
   GtkWidget *dialog;
   ChattyChat *chat;
   const char *name;
   const char *sub_text;
-  int response;
 
   g_assert (CHATTY_IS_WINDOW (self));
 
@@ -529,39 +576,20 @@ chatty_window_delete_chat (GSimpleAction *action,
   gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
                                             "%s", sub_text);
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_CANCEL);
-  gtk_window_set_position (GTK_WINDOW (dialog), GTK_WIN_POS_CENTER_ON_PARENT);
 
-  response = gtk_dialog_run (GTK_DIALOG (dialog));
+  g_signal_connect_object (dialog, "response",
+                           G_CALLBACK (window_delete_chat_response_cb),
+                           self, G_CONNECT_SWAPPED);
 
-  if (response == GTK_RESPONSE_OK) {
-    chatty_history_delete_chat (chatty_manager_get_history (self->manager),
-                                chat);
-#ifdef PURPLE_ENABLED
-    if (CHATTY_IS_PP_CHAT (chat)) {
-      chatty_pp_chat_delete (CHATTY_PP_CHAT (chat));
-    } else
-#endif
-      if (CHATTY_IS_MM_CHAT (chat)) {
-        chatty_mm_chat_delete (CHATTY_MM_CHAT (chat));
-      } else {
-        g_return_if_reached ();
-      }
-
-    window_set_item (self, NULL);
-
-    if (!hdy_leaflet_get_folded (HDY_LEAFLET (self->content_box)))
-      chatty_chat_list_select_first (CHATTY_CHAT_LIST (self->chat_list));
-  }
-
-  gtk_widget_destroy (dialog);
+  gtk_window_present (GTK_WINDOW (dialog));
 }
 
 static void
-chatty_window_leave_chat (GSimpleAction *action,
-                          GVariant      *parameter,
-                          gpointer       user_data)
+chatty_window_leave_chat (GtkWidget  *widget,
+                          const char *action_name,
+                          GVariant   *param)
 {
-  ChattyWindow *self = user_data;
+  ChattyWindow *self = CHATTY_WINDOW (widget);
   ChattyChat *chat;
 
   g_assert (CHATTY_IS_WINDOW (self));
@@ -578,16 +606,16 @@ chatty_window_leave_chat (GSimpleAction *action,
 
   window_set_item (self, NULL);
 
-  if (!hdy_leaflet_get_folded (HDY_LEAFLET (self->content_box)))
+  if (!adw_leaflet_get_folded (ADW_LEAFLET (self->content_box)))
     chatty_chat_list_select_first (CHATTY_CHAT_LIST (self->chat_list));
 }
 
 static void
-chatty_window_show_archived (GSimpleAction *action,
-                             GVariant      *parameter,
-                             gpointer       user_data)
+chatty_window_show_archived (GtkWidget  *widget,
+                             const char *action_name,
+                             GVariant   *param)
 {
-  ChattyWindow *self = user_data;
+  ChattyWindow *self = CHATTY_WINDOW (widget);
 
   g_assert (CHATTY_IS_WINDOW (self));
 
@@ -597,11 +625,11 @@ chatty_window_show_archived (GSimpleAction *action,
 }
 
 static void
-chatty_window_show_chat_details (GSimpleAction *action,
-                                 GVariant      *parameter,
-                                 gpointer       user_data)
+chatty_window_show_chat_details (GtkWidget  *widget,
+                                 const char *action_name,
+                                 GVariant   *param)
 {
-  ChattyWindow *self = user_data;
+  ChattyWindow *self = CHATTY_WINDOW (widget);
   ChattyInfoDialog *dialog;
   ChattyChat *chat;
 
@@ -615,15 +643,15 @@ chatty_window_show_chat_details (GSimpleAction *action,
   dialog = CHATTY_INFO_DIALOG (self->chat_info_dialog);
 
   chatty_info_dialog_set_chat (dialog, chat);
-  gtk_dialog_run (GTK_DIALOG (dialog));
+  gtk_window_present (GTK_WINDOW (dialog));
 }
 
 static void
-chatty_window_show_settings (GSimpleAction *action,
-                             GVariant      *parameter,
-                             gpointer       user_data)
+chatty_window_show_settings (GtkWidget  *widget,
+                             const char *action_name,
+                             GVariant   *param)
 {
-  ChattyWindow *self = user_data;
+  ChattyWindow *self = CHATTY_WINDOW (widget);
 
   g_assert (CHATTY_IS_WINDOW (self));
 
@@ -635,11 +663,11 @@ chatty_window_show_settings (GSimpleAction *action,
 }
 
 static void
-chatty_window_start_new_chat (GSimpleAction *action,
-                              GVariant      *parameter,
-                              gpointer       user_data)
+chatty_window_start_new_chat (GtkWidget  *widget,
+                              const char *action_name,
+                              GVariant   *param)
 {
-  ChattyWindow *self = user_data;
+  ChattyWindow *self = CHATTY_WINDOW (widget);
 
   g_assert (CHATTY_IS_WINDOW (self));
 
@@ -647,11 +675,11 @@ chatty_window_start_new_chat (GSimpleAction *action,
 }
 
 static void
-chatty_window_start_sms_mms_chat (GSimpleAction *action,
-                                  GVariant      *parameter,
-                                  gpointer       user_data)
+chatty_window_start_sms_mms_chat (GtkWidget  *widget,
+                                  const char *action_name,
+                                  GVariant   *param)
 {
-  ChattyWindow *self = user_data;
+  ChattyWindow *self = CHATTY_WINDOW (widget);
 
   g_assert (CHATTY_IS_WINDOW (self));
 
@@ -659,11 +687,11 @@ chatty_window_start_sms_mms_chat (GSimpleAction *action,
 }
 
 static void
-chatty_window_start_group_chat (GSimpleAction *action,
-                                GVariant      *parameter,
-                                gpointer       user_data)
+chatty_window_start_group_chat (GtkWidget  *widget,
+                                const char *action_name,
+                                GVariant   *param)
 {
-  ChattyWindow *self = user_data;
+  ChattyWindow *self = CHATTY_WINDOW (widget);
   GtkWidget *dialog;
 
   g_assert (CHATTY_IS_WINDOW (self));
@@ -673,12 +701,11 @@ chatty_window_start_group_chat (GSimpleAction *action,
 }
 
 static void
-chatty_window_call_user (GSimpleAction *action,
-                         GVariant      *parameter,
-                         gpointer       user_data)
+chatty_window_call_user (GtkWidget  *widget,
+                         const char *action_name,
+                         GVariant   *param)
 {
-  ChattyWindow *self = user_data;
-  g_autoptr(GError) error = NULL;
+  ChattyWindow *self = CHATTY_WINDOW (widget);
   g_autofree char *uri = NULL;
   ChattyChat *chat;
 
@@ -690,8 +717,7 @@ chatty_window_call_user (GSimpleAction *action,
   uri = g_strconcat ("tel://", chatty_chat_get_chat_name (chat), NULL);
 
   CHATTY_INFO (uri, "Calling uri:");
-  if (!gtk_show_uri_on_window (NULL, uri, GDK_CURRENT_TIME, &error))
-    g_warning ("Failed to launch call: %s", error->message);
+  gtk_show_uri (NULL, uri, GDK_CURRENT_TIME);
 }
 
 static void
@@ -705,11 +731,8 @@ chatty_window_unmap (GtkWidget *widget)
   is_maximized = gtk_window_is_maximized (window);
 
   chatty_settings_set_window_maximized (self->settings, is_maximized);
-
-  if (!is_maximized) {
-    gtk_window_get_size (window, &geometry.width, &geometry.height);
-    chatty_settings_set_window_geometry (self->settings, &geometry);
-  }
+  gtk_window_get_default_size (window, &geometry.width, &geometry.height);
+  chatty_settings_set_window_geometry (self->settings, &geometry);
 
   GTK_WIDGET_CLASS (chatty_window_parent_class)->unmap (widget);
 }
@@ -724,31 +747,12 @@ chatty_window_map (GtkWidget *widget)
   GTK_WIDGET_CLASS (chatty_window_parent_class)->map (widget);
 }
 
-static const GActionEntry win_entries[] = {
-  { "archive-chat", chatty_window_archive_chat },
-  { "unarchive-chat", chatty_window_unarchive_chat },
-  { "block-chat", chatty_window_block_chat },
-  { "unblock-chat", chatty_window_unblock_chat },
-  { "delete-chat", chatty_window_delete_chat },
-  { "leave-chat", chatty_window_leave_chat },
-  { "show-archived", chatty_window_show_archived },
-  { "show-chat-details", chatty_window_show_chat_details },
-  { "show-settings", chatty_window_show_settings },
-  { "new-chat", chatty_window_start_new_chat },
-  { "new-sms-mms", chatty_window_start_sms_mms_chat },
-  { "new-group-chat", chatty_window_start_group_chat },
-  { "call-user", chatty_window_call_user },
-};
-
 static void
 chatty_window_constructed (GObject *object)
 {
   ChattyWindow *self = (ChattyWindow *)object;
   GtkWindow    *window = (GtkWindow *)object;
   GdkRectangle  geometry;
-
-  g_action_map_add_action_entries (G_ACTION_MAP (self), win_entries,
-                                   G_N_ELEMENTS (win_entries), self);
 
   self->settings = g_object_ref (chatty_settings_get_default ());
   chatty_settings_get_window_geometry (self->settings, &geometry);
@@ -773,7 +777,7 @@ chatty_window_finalize (GObject *object)
 {
   ChattyWindow *self = (ChattyWindow *)object;
 
-  g_clear_pointer (&self->new_chat_dialog, gtk_widget_destroy);
+  g_clear_pointer ((GtkWindow **)&self->new_chat_dialog, gtk_window_destroy);
   g_clear_object (&self->settings);
 
   G_OBJECT_CLASS (chatty_window_parent_class)->finalize (object);
@@ -830,21 +834,33 @@ chatty_window_class_init (ChattyWindowClass *klass)
 
   gtk_widget_class_bind_template_child (widget_class, ChattyWindow, side_bar);
   gtk_widget_class_bind_template_child (widget_class, ChattyWindow, content_header_bar);
-  gtk_widget_class_bind_template_child (widget_class, ChattyWindow, header_group);
 
   gtk_widget_class_bind_template_callback (widget_class, notify_fold_cb);
   gtk_widget_class_bind_template_callback (widget_class, window_back_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, window_chat_list_selection_changed);
+
+  gtk_widget_class_install_action (widget_class, "win.new-chat", NULL, chatty_window_start_new_chat);
+  gtk_widget_class_install_action (widget_class, "win.new-sms-mms", NULL, chatty_window_start_sms_mms_chat);
+  gtk_widget_class_install_action (widget_class, "win.new-group-chat", NULL, chatty_window_start_group_chat);
+
+  gtk_widget_class_install_action (widget_class, "win.leave-chat", NULL, chatty_window_leave_chat);
+  gtk_widget_class_install_action (widget_class, "win.block-chat", NULL, chatty_window_block_chat);
+  gtk_widget_class_install_action (widget_class, "win.unblock-chat", NULL, chatty_window_unblock_chat);
+  gtk_widget_class_install_action (widget_class, "win.archive-chat", NULL, chatty_window_archive_chat);
+  gtk_widget_class_install_action (widget_class, "win.unarchive-chat", NULL, chatty_window_unarchive_chat);
+  gtk_widget_class_install_action (widget_class, "win.delete-chat", NULL, chatty_window_delete_chat);
+  gtk_widget_class_install_action (widget_class, "win.call-user", NULL, chatty_window_call_user);
+
+  gtk_widget_class_install_action (widget_class, "win.show-archived", NULL, chatty_window_show_archived);
+  gtk_widget_class_install_action (widget_class, "win.show-chat-details", NULL, chatty_window_show_chat_details);
+  gtk_widget_class_install_action (widget_class, "win.show-settings", NULL, chatty_window_show_settings);
+
 }
 
 static void
 chatty_window_init (ChattyWindow *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
-
-  chatty_side_bar_add_to_header_group (CHATTY_SIDE_BAR (self->side_bar), self->header_group);
-  hdy_header_group_add_header_bar (HDY_HEADER_GROUP (self->header_group),
-                                   HDY_HEADER_BAR (self->content_header_bar));
 
   self->chat_list = chatty_side_bar_get_chat_list (CHATTY_SIDE_BAR (self->side_bar));
   self->manager = g_object_ref (chatty_manager_get_default ());
@@ -883,7 +899,7 @@ chatty_window_get_active_chat (ChattyWindow *self)
 
   g_return_val_if_fail (CHATTY_IS_WINDOW (self), NULL);
 
-  if (gtk_window_has_toplevel_focus (GTK_WINDOW (self)))
+  if (chatty_utils_window_has_toplevel_focus (GTK_WINDOW (self)))
     item = chatty_main_view_get_item (CHATTY_MAIN_VIEW (self->content_view));
 
   if (CHATTY_IS_CHAT (item))
@@ -904,7 +920,7 @@ chatty_window_open_chat (ChattyWindow *self,
 
   window_set_item (self, chat);
 
-  hdy_leaflet_set_visible_child_name (HDY_LEAFLET (self->content_box), "content");
+  adw_leaflet_set_visible_child_name (ADW_LEAFLET (self->content_box), "content");
 
   if (chatty_window_get_active_chat (self))
     chatty_chat_set_unread_count (chat, 0);

@@ -14,14 +14,18 @@
 #ifdef PURPLE_ENABLED
 # include <purple.h>
 #endif
+#ifdef HAVE_GNOME_DESKTOP4
+# define GNOME_DESKTOP_USE_UNSTABLE_API
+# include <libgnome-desktop/gnome-desktop-thumbnail.h>
+#endif
 
 #include "chatty-manager.h"
 #include "chatty-settings.h"
 #include "chatty-phone-utils.h"
 #include "chatty-utils.h"
 #include <libebook-contacts/libebook-contacts.h>
-#define GNOME_DESKTOP_USE_UNSTABLE_API
-#include <libgnome-desktop/gnome-desktop-thumbnail.h>
+/* #define GNOME_DESKTOP_USE_UNSTABLE_API */
+/* #include <libgnome-desktop/gnome-desktop-thumbnail.h> */
 
 #include "chatty-log.h"
 
@@ -260,6 +264,22 @@ chatty_utils_groupname_is_valid (const char     *name,
   return valid;
 }
 
+gboolean
+chatty_utils_window_has_toplevel_focus (GtkWindow *window)
+{
+  GdkSurface *surface;
+  GdkToplevelState state;
+
+  g_assert (GTK_IS_WINDOW (window));
+
+  surface = gtk_native_get_surface (GTK_NATIVE (window));
+  g_assert (GDK_IS_TOPLEVEL (surface));
+
+  state = gdk_toplevel_get_state (GDK_TOPLEVEL (surface));
+
+  return !!(state & GDK_TOPLEVEL_STATE_FOCUSED);
+}
+
 const char *
 chatty_utils_get_purple_dir (void)
 {
@@ -422,6 +442,7 @@ utils_create_thumbnail (GTask        *task,
                         gpointer      task_data,
                         GCancellable *cancellable)
 {
+#ifdef HAVE_GNOME_DESKTOP4
   g_autoptr(GnomeDesktopThumbnailFactory) factory = NULL;
   g_autoptr(GdkPixbuf) thumbnail = NULL;
   g_autoptr(GFileInfo) file_info = NULL;
@@ -506,6 +527,10 @@ utils_create_thumbnail (GTask        *task,
     g_warning ("Failed to create thumbnail for file: %s", uri);
   }
 
+  g_task_return_boolean (task, TRUE);
+#endif
+
+#else
   g_task_return_boolean (task, TRUE);
 #endif
 }

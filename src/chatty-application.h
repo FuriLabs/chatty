@@ -23,7 +23,7 @@
 
 #pragma once
 
-#include <gtk/gtk.h>
+#include <adwaita.h>
 
 #include "chatty-window.h"
 
@@ -32,7 +32,7 @@ G_BEGIN_DECLS
 #define CHATTY_APPLICATION_DEFAULT() ((ChattyApplication *)g_application_get_default ())
 #define CHATTY_TYPE_APPLICATION (chatty_application_get_type ())
 
-G_DECLARE_FINAL_TYPE (ChattyApplication, chatty_application, CHATTY, APPLICATION, GtkApplication)
+G_DECLARE_FINAL_TYPE (ChattyApplication, chatty_application, CHATTY, APPLICATION, AdwApplication)
 
 ChattyApplication *chatty_application_new (void);
 ChattyChat        *chatty_application_get_active_chat (ChattyApplication *self);

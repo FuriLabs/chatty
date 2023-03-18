@@ -32,6 +32,6 @@
     <file preprocess="xml-stripblanks">icons/eye-open-negative-filled-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/send-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/send-encrypted-symbolic.svg</file>
-    <file>css/style.css</file>
+    <file alias="style.css">css/style.css</file>
   </gresource>
 </gresources>

@@ -29,6 +29,7 @@
 
 #include <glib/gi18n.h>
 
+#include "gtk3-to-4.h"
 #include "chatty-avatar.h"
 #include "chatty-list-row.h"
 #include "chatty-fp-row.h"
@@ -71,13 +72,31 @@ struct _ChattyPpChatInfo
 G_DEFINE_TYPE (ChattyPpChatInfo, chatty_pp_chat_info, CHATTY_TYPE_CHAT_INFO)
 
 static void
+pp_chat_info_load_avatar_response_cb (ChattyPpChatInfo *self,
+                                      int               response_id,
+                                      GtkDialog        *dialog)
+{
+  g_assert (CHATTY_IS_PP_CHAT_INFO (self));
+
+  if (response_id == GTK_RESPONSE_ACCEPT) {
+    g_autoptr(GFile) file = NULL;
+    g_autofree char *file_name = NULL;
+
+    file = gtk_file_chooser_get_file (GTK_FILE_CHOOSER (dialog));
+    file_name = g_file_get_path (file);
+
+    if (file_name)
+      chatty_item_set_avatar_async (CHATTY_ITEM (self->chat), file_name,
+                                    NULL, NULL, NULL);
+  }
+}
+
+static void
 pp_info_edit_avatar_button_clicked_cb (ChattyPpChatInfo *self)
 {
   g_autoptr(GtkFileChooserNative) dialog = NULL;
   GtkFileFilter *filter;
   GtkWindow *window;
-  g_autofree char *file_name = NULL;
-  int response;
 
   g_assert (CHATTY_IS_PP_CHAT_INFO (self));
 
@@ -95,14 +114,10 @@ pp_info_edit_avatar_button_clicked_cb (ChattyPpChatInfo *self)
   gtk_file_filter_set_name (filter, _("Images"));
   gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dialog), filter);
 
-  response = gtk_native_dialog_run (GTK_NATIVE_DIALOG (dialog));
-
-  if (response == GTK_RESPONSE_ACCEPT)
-    file_name = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-
-  if (file_name)
-    chatty_item_set_avatar_async (CHATTY_ITEM (self->chat), file_name,
-                                  NULL, NULL, NULL);
+  g_signal_connect_object (dialog, "response",
+                           G_CALLBACK (pp_chat_info_load_avatar_response_cb),
+                           self, G_CONNECT_SWAPPED);
+  gtk_native_dialog_show (GTK_NATIVE_DIALOG (dialog));
 }
 
 static void
@@ -367,6 +382,8 @@ chatty_pp_chat_info_set_item (ChattyChatInfo *info,
                               ChattyChat     *chat)
 {
   ChattyPpChatInfo *self = (ChattyPpChatInfo *)info;
+  GtkWidget *child;
+  int index;
 
   g_assert (CHATTY_IS_PP_CHAT_INFO (self));
   g_assert (!chat || CHATTY_IS_CHAT (chat));
@@ -389,8 +406,14 @@ chatty_pp_chat_info_set_item (ChattyChatInfo *info,
   gtk_text_buffer_set_text (self->topic_buffer, "", 0);
   gtk_widget_hide (self->key_list);
 
-  gtk_container_foreach (GTK_CONTAINER (self->key_list),
-                         (GtkCallback)gtk_widget_destroy, NULL);
+  index = 0;
+  do {
+    child = (GtkWidget *)gtk_list_box_get_row_at_index (GTK_LIST_BOX (self->key_list), index);
+
+    if (child)
+      gtk_list_box_remove (GTK_LIST_BOX (self->key_list), child);
+    index++;
+  } while (child);
 
   chatty_pp_chat_info_update (self);
 }
@@ -457,11 +480,11 @@ chatty_pp_chat_info_init (ChattyPpChatInfo *self)
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
-  clamp = gtk_widget_get_ancestor (self->avatar, HDY_TYPE_CLAMP);
+  clamp = gtk_widget_get_ancestor (self->avatar, ADW_TYPE_CLAMP);
 
   if (clamp) {
-    hdy_clamp_set_maximum_size (HDY_CLAMP (clamp), 360);
-    hdy_clamp_set_tightening_threshold (HDY_CLAMP (clamp), 320);
+    adw_clamp_set_maximum_size (ADW_CLAMP (clamp), 360);
+    adw_clamp_set_tightening_threshold (ADW_CLAMP (clamp), 320);
   }
 }
 

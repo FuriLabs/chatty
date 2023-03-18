@@ -15,7 +15,7 @@
 #endif
 
 #include <glib/gi18n.h>
-#include "contrib/gtk.h"
+#include <adwaita.h>
 
 #include "chatty-manager.h"
 #include "chatty-list-row.h"
@@ -46,7 +46,7 @@ struct _ChattyChatList
 
 
   char               *chat_needle;
-  GtkFilter          *filter;
+  GtkCustomFilter    *filter;
   GtkFilterListModel *filter_model;
   GtkFilterListModel *archive_filter_model;
   ChattyProtocol     protocol_filter;
@@ -170,11 +170,11 @@ chat_list_chat_changed_cb (ChattyChatList *self)
   }
 
   if (chatty_manager_get_active_protocols (self->manager))
-    hdy_status_page_set_description (HDY_STATUS_PAGE (self->empty_view),
+    adw_status_page_set_description (ADW_STATUS_PAGE (self->empty_view),
                                      _("Select a contact with the "
                                        "<b>“+”</b> button in the titlebar."));
   else
-    hdy_status_page_set_description (HDY_STATUS_PAGE (self->empty_view),
+    adw_status_page_set_description (ADW_STATUS_PAGE (self->empty_view),
                                      _("Add instant messaging accounts in Preferences."));
 }
 
@@ -182,7 +182,7 @@ static void
 chat_list_filter_changed_cb (ChattyChatList *self)
 {
   GtkWidget *current_view;
-  HdyStatusPage *page;
+  AdwStatusPage *page;
   GListModel *model;
   gboolean search_active, has_child;
 
@@ -207,19 +207,19 @@ chat_list_filter_changed_cb (ChattyChatList *self)
   if (has_child)
     return;
 
-  page = HDY_STATUS_PAGE (self->empty_view);
+  page = ADW_STATUS_PAGE (self->empty_view);
 
   if (search_active) {
-    hdy_status_page_set_icon_name (page, "system-search-symbolic");
-    hdy_status_page_set_title (page, _("No Search Results"));
-    hdy_status_page_set_description (page, _("Try different search"));
+    adw_status_page_set_icon_name (page, "system-search-symbolic");
+    adw_status_page_set_title (page, _("No Search Results"));
+    adw_status_page_set_description (page, _("Try different search"));
   } else {
-    hdy_status_page_set_icon_name (page, "sm.puri.Chatty-symbolic");
+    adw_status_page_set_icon_name (page, "sm.puri.Chatty-symbolic");
     if (self->show_archived)
-      hdy_status_page_set_title (page, _("No archived chats"));
+      adw_status_page_set_title (page, _("No archived chats"));
     else
-      hdy_status_page_set_title (page, _("Start Chatting"));
-    hdy_status_page_set_description (page, NULL);
+      adw_status_page_set_title (page, _("Start Chatting"));
+    adw_status_page_set_description (page, NULL);
   }
 }
 
@@ -228,7 +228,7 @@ chat_list_protocols_changed_cb (ChattyChatList *self)
 {
   g_assert (CHATTY_IS_CHAT_LIST (self));
 
-  gtk_filter_changed (self->filter, GTK_FILTER_CHANGE_DIFFERENT);
+  gtk_filter_changed (GTK_FILTER (self->filter), GTK_FILTER_CHANGE_DIFFERENT);
 }
 
 static void
@@ -319,7 +319,7 @@ chatty_chat_list_class_init (ChattyChatListClass *klass)
 static void
 chatty_chat_list_init (ChattyChatList *self)
 {
-  g_autoptr(GtkFilter) archive_filter = NULL;
+  GtkCustomFilter *archive_filter;
   GListModel *chat_list;
 
   gtk_widget_init_template (GTK_WIDGET (self));
@@ -332,13 +332,15 @@ chatty_chat_list_init (ChattyChatList *self)
   archive_filter = gtk_custom_filter_new ((GtkCustomFilterFunc)chat_list_filter_archived_chat,
                                           g_object_ref (self),
                                           g_object_unref);
-  self->archive_filter_model = gtk_filter_list_model_new (chat_list, archive_filter);
+  self->archive_filter_model = gtk_filter_list_model_new (g_object_ref (chat_list),
+                                                          GTK_FILTER (archive_filter));
 
   self->filter = gtk_custom_filter_new ((GtkCustomFilterFunc)chat_list_filter_chat,
                                         g_object_ref (self),
                                         g_object_unref);
   chat_list = G_LIST_MODEL (self->archive_filter_model);
-  self->filter_model = gtk_filter_list_model_new (chat_list, self->filter);
+  self->filter_model = gtk_filter_list_model_new (g_object_ref (chat_list),
+                                                  GTK_FILTER (self->filter));
 
   gtk_list_box_bind_model (GTK_LIST_BOX (self->chats_listbox),
                            G_LIST_MODEL (self->filter_model),
@@ -431,7 +433,7 @@ chatty_chat_list_filter_protocol (ChattyChatList *self,
   g_return_if_fail (CHATTY_IS_CHAT_LIST (self));
 
   self->protocol_filter = protocol;
-  gtk_filter_changed (self->filter, GTK_FILTER_CHANGE_DIFFERENT);
+  gtk_filter_changed (GTK_FILTER (self->filter), GTK_FILTER_CHANGE_DIFFERENT);
 }
 
 void
@@ -445,7 +447,7 @@ chatty_chat_list_filter_string (ChattyChatList *self,
   if (needle && *needle)
     self->chat_needle = g_utf8_casefold (needle, -1);
 
-  gtk_filter_changed (self->filter, GTK_FILTER_CHANGE_DIFFERENT);
+  gtk_filter_changed (GTK_FILTER (self->filter), GTK_FILTER_CHANGE_DIFFERENT);
 }
 
 void

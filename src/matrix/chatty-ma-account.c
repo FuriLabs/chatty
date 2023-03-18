@@ -13,6 +13,7 @@
 #include <libsecret/secret.h>
 #include <glib/gi18n.h>
 
+#include "gtk3-to-4.h"
 #include "chatty-history.h"
 #include "chatty-utils.h"
 #include "chatty-ma-chat.h"
@@ -36,7 +37,7 @@ struct _ChattyMaAccount
   CmMatrix       *cm_matrix;
   CmClient       *cm_client;
 
-  HdyValueObject *device_fp;
+  GtkStringObject *device_fp;
 
   GListStore     *chat_list;
   GdkPixbuf      *avatar;
@@ -60,6 +61,31 @@ G_DEFINE_TYPE (ChattyMaAccount, chatty_ma_account, CHATTY_TYPE_ACCOUNT)
   } while (0)
 
 static void
+ma_acccount_password_response_cb (ChattyMaAccount *self,
+                                  int              response_id,
+                                  GtkDialog       *dialog)
+{
+  GtkWidget *entry;
+  const char *password;
+
+  g_assert (CHATTY_IS_MA_ACCOUNT (self));
+  g_assert (GTK_IS_DIALOG (dialog));
+
+  entry = g_object_get_data (G_OBJECT (dialog), "entry");
+  password = gtk_editable_get_text (GTK_EDITABLE (entry));
+
+  if (response_id != GTK_RESPONSE_ACCEPT || !password || !*password) {
+    chatty_account_set_enabled (CHATTY_ACCOUNT (self), FALSE);
+  } else {
+    cm_client_set_password (self->cm_client, password);
+    chatty_account_set_enabled (CHATTY_ACCOUNT (self), FALSE);
+    chatty_account_set_enabled (CHATTY_ACCOUNT (self), TRUE);
+  }
+
+  gtk_window_destroy (GTK_WINDOW (dialog));
+}
+
+static void
 handle_password_login (ChattyMaAccount *self,
                        GError          *error)
 {
@@ -69,11 +95,9 @@ handle_password_login (ChattyMaAccount *self,
    * Let’s update matrix_enc & set device keys to upload */
   if (g_error_matches (error, CM_ERROR, CM_ERROR_BAD_PASSWORD)) {
     GtkWidget *dialog, *content, *header_bar, *label;
-    GtkWidget *cancel_btn, *ok_btn, *entry;
+    GtkWidget *cancel_btn, *entry;
     g_autofree char *message = NULL;
-    const char *password;
     CmAccount *cm_account;
-    int response;
 
     dialog = gtk_dialog_new_with_buttons (_("Incorrect password"),
                                           gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ())),
@@ -83,49 +107,34 @@ handle_password_login (ChattyMaAccount *self,
                                           NULL);
 
     content = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
-    gtk_container_set_border_width (GTK_CONTAINER (content), 18);
     gtk_box_set_spacing (GTK_BOX (content), 12);
     cm_account = cm_client_get_account (self->cm_client);
     message = g_strdup_printf (_("Please enter password for “%s”, homeserver: %s"),
                                cm_account_get_login_id (cm_account),
                                cm_client_get_homeserver (self->cm_client));
     label = gtk_label_new (message);
-    gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
-    gtk_container_add (GTK_CONTAINER (content), label);
+    gtk_label_set_wrap (GTK_LABEL (label), TRUE);
+    gtk_box_append (GTK_BOX (content), label);
     entry = gtk_entry_new ();
     gtk_entry_set_activates_default (GTK_ENTRY (entry), TRUE);
     gtk_entry_set_visibility (GTK_ENTRY (entry), FALSE);
-    gtk_container_add (GTK_CONTAINER (content), entry);
-
-    ok_btn = gtk_dialog_get_widget_for_response (GTK_DIALOG (dialog),
-                                                 GTK_RESPONSE_ACCEPT);
-    gtk_widget_set_can_default (ok_btn, TRUE);
-    gtk_widget_grab_default (ok_btn);
-    gtk_widget_show_all (content);
+    gtk_box_append (GTK_BOX (content), entry);
 
     header_bar = gtk_dialog_get_header_bar (GTK_DIALOG (dialog));
-    gtk_header_bar_set_show_close_button (GTK_HEADER_BAR (header_bar), FALSE);
+    gtk_header_bar_set_show_title_buttons (GTK_HEADER_BAR (header_bar), FALSE);
 
     cancel_btn = gtk_dialog_get_widget_for_response (GTK_DIALOG (dialog),
                                                      GTK_RESPONSE_REJECT);
     g_object_ref (cancel_btn);
-    gtk_container_remove (GTK_CONTAINER (header_bar), cancel_btn);
+    gtk_header_bar_remove (GTK_HEADER_BAR (header_bar), cancel_btn);
     gtk_header_bar_pack_start (GTK_HEADER_BAR (header_bar), cancel_btn);
     g_object_unref (cancel_btn);
 
-    response = gtk_dialog_run (GTK_DIALOG (dialog));
-    password = gtk_entry_get_text (GTK_ENTRY (entry));
-
-
-    if (response != GTK_RESPONSE_ACCEPT || !password || !*password) {
-      chatty_account_set_enabled (CHATTY_ACCOUNT (self), FALSE);
-    } else {
-      cm_client_set_password (self->cm_client, password);
-      chatty_account_set_enabled (CHATTY_ACCOUNT (self), FALSE);
-      chatty_account_set_enabled (CHATTY_ACCOUNT (self), TRUE);
-    }
-
-    gtk_widget_destroy (dialog);
+    g_object_set_data (G_OBJECT (dialog), "entry", entry);
+    g_signal_connect_object (dialog, "response",
+                             G_CALLBACK (ma_acccount_password_response_cb),
+                             self, G_CONNECT_SWAPPED);
+    gtk_window_present (GTK_WINDOW (dialog));
   }
 
   if (!error)
@@ -245,7 +254,7 @@ chatty_ma_account_get_remember_password (ChattyAccount *self)
   return TRUE;
 }
 
-static HdyValueObject *
+static GtkStringObject *
 chatty_ma_account_get_device_fp (ChattyAccount *account)
 {
   ChattyMaAccount *self = (ChattyMaAccount *)account;
@@ -270,7 +279,7 @@ chatty_ma_account_get_device_fp (ChattyAccount *account)
       str = str + strlen (chunk);
     }
 
-    self->device_fp = hdy_value_object_new_string (fp->str);
+    self->device_fp = gtk_string_object_new (fp->str);
     g_object_set_data_full (G_OBJECT (self->device_fp), "device-id",
                             g_strdup (device_id), g_free);
   }

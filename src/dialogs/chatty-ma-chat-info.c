@@ -175,11 +175,11 @@ chatty_ma_chat_info_init (ChattyMaChatInfo *self)
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
-  clamp = gtk_widget_get_ancestor (self->avatar, HDY_TYPE_CLAMP);
+  clamp = gtk_widget_get_ancestor (self->avatar, ADW_TYPE_CLAMP);
 
   if (clamp) {
-    hdy_clamp_set_maximum_size (HDY_CLAMP (clamp), 360);
-    hdy_clamp_set_tightening_threshold (HDY_CLAMP (clamp), 320);
+    adw_clamp_set_maximum_size (ADW_CLAMP (clamp), 360);
+    adw_clamp_set_tightening_threshold (ADW_CLAMP (clamp), 320);
   }
 }
 

@@ -19,8 +19,8 @@
 #include <glib/gi18n.h>
 #define CMATRIX_USE_EXPERIMENTAL_API
 #include "cmatrix.h"
-#include "contrib/gtk.h"
 
+#include "gtk3-to-4.h"
 #include "chatty-settings.h"
 #include "chatty-contact-provider.h"
 #include "chatty-utils.h"
@@ -51,7 +51,7 @@ struct _ChattyManager
   GtkFlattenListModel *contact_list;
   GtkFlattenListModel *chat_list;
 
-  GtkFilter           *chat_filter;
+  GtkCustomFilter     *chat_filter;
   GtkFilterListModel  *filtered_chat_list;
   GtkSortListModel    *sorted_chat_list;
 
@@ -86,11 +86,11 @@ static guint signals[N_SIGNALS];
 static GtkFlattenListModel *
 manager_new_flatten_list (GType type)
 {
-  g_autoptr(GListStore) list_of_list = NULL;
+  GListStore *list_of_list;
 
   list_of_list = g_list_store_new (G_TYPE_LIST_MODEL);
 
-  return gtk_flatten_list_model_new (type, G_LIST_MODEL (list_of_list));
+  return gtk_flatten_list_model_new (G_LIST_MODEL (list_of_list));
 }
 
 static void
@@ -170,7 +170,7 @@ manager_active_protocols_changed_cb (ChattyManager *self)
 {
   g_assert (CHATTY_IS_MANAGER (self));
 
-  gtk_filter_changed (self->chat_filter, GTK_FILTER_CHANGE_DIFFERENT);
+  gtk_filter_changed (GTK_FILTER (self->chat_filter), GTK_FILTER_CHANGE_DIFFERENT);
 }
 
 static gboolean
@@ -353,7 +353,7 @@ manager_chat_list_items_changed (ChattyManager *self,
 static void
 chatty_manager_init (ChattyManager *self)
 {
-  g_autoptr(GtkSorter) sorter = NULL;
+  GtkCustomSorter *sorter;
 
   self->chatty_eds = chatty_eds_new (CHATTY_PROTOCOL_MMS_SMS);
   self->mm_account = chatty_mm_account_new ();
@@ -372,11 +372,12 @@ chatty_manager_init (ChattyManager *self)
   manager_add_to_flat_model (self->contact_list, chatty_eds_get_model (self->chatty_eds));
 
   sorter = gtk_custom_sorter_new ((GCompareDataFunc)manager_sort_chat_item, NULL, NULL);
-  self->sorted_chat_list = gtk_sort_list_model_new (G_LIST_MODEL (self->chat_list), sorter);
+  self->sorted_chat_list = gtk_sort_list_model_new (g_object_ref (G_LIST_MODEL (self->chat_list)),
+                                                    GTK_SORTER (sorter));
 
   self->chat_filter = gtk_custom_filter_new ((GtkCustomFilterFunc)manager_filter_chat_item, NULL, NULL);
-  self->filtered_chat_list = gtk_filter_list_model_new (G_LIST_MODEL(self->sorted_chat_list),
-                                                        self->chat_filter);
+  self->filtered_chat_list = gtk_filter_list_model_new (g_object_ref (G_LIST_MODEL (self->sorted_chat_list)),
+                                                        g_object_ref (GTK_FILTER (self->chat_filter)));
 
   g_signal_connect_object (self->chat_list, "items-changed",
                            G_CALLBACK (manager_chat_list_items_changed),
@@ -738,8 +739,7 @@ chatty_manager_set_uri (ChattyManager *self,
                                      GTK_MESSAGE_WARNING,
                                      GTK_BUTTONS_CLOSE,
                                      _("“%s” is not a valid URI"), uri);
-    gtk_dialog_run (GTK_DIALOG (dialog));
-    gtk_widget_destroy (dialog);
+    gtk_window_present (GTK_WINDOW (dialog));
 
     return FALSE;
   }

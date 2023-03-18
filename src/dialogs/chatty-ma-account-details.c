@@ -29,6 +29,7 @@
 
 #include <glib/gi18n.h>
 
+#include "gtk3-to-4.h"
 #include "chatty-avatar.h"
 #include "chatty-ma-account.h"
 #include "chatty-ma-account-details.h"
@@ -36,7 +37,7 @@
 
 struct _ChattyMaAccountDetails
 {
-  HdyPreferencesPage parent_instance;
+  AdwPreferencesPage parent_instance;
 
   ChattyAccount *account;
 
@@ -74,7 +75,7 @@ enum {
 static GParamSpec *properties[N_PROPS];
 static guint signals[N_SIGNALS];
 
-G_DEFINE_TYPE (ChattyMaAccountDetails, chatty_ma_account_details, HDY_TYPE_PREFERENCES_PAGE)
+G_DEFINE_TYPE (ChattyMaAccountDetails, chatty_ma_account_details, ADW_TYPE_PREFERENCES_PAGE)
 
 static void
 update_delete_avatar_button_state (ChattyMaAccountDetails *self)
@@ -95,16 +96,36 @@ update_delete_avatar_button_state (ChattyMaAccountDetails *self)
   gtk_widget_set_visible (self->delete_avatar_button, can_delete || self->is_deleting_avatar);
   gtk_widget_set_sensitive (self->delete_avatar_button, can_delete);
 
-  g_object_set (self->delete_avatar_spinner, "active", self->is_deleting_avatar, NULL);
+  g_object_set (self->delete_avatar_spinner, "spinning", self->is_deleting_avatar, NULL);
 }
 
-static char *
+static void
+ma_account_load_avatar_response_cb (ChattyMaAccountDetails *self,
+                                    int                     response_id,
+                                    GtkDialog              *dialog)
+{
+  g_assert (CHATTY_IS_MA_ACCOUNT_DETAILS (self));
+  g_assert (GTK_IS_DIALOG (dialog));
+
+  if (response_id == GTK_RESPONSE_ACCEPT) {
+    g_autoptr(GFile) file = NULL;
+    g_autofree char *file_name = NULL;
+
+    file = gtk_file_chooser_get_file (GTK_FILE_CHOOSER (dialog));
+    file_name = g_file_get_path (file);
+
+    if (file_name)
+      chatty_item_set_avatar_async (CHATTY_ITEM (self->account),
+                                  file_name, NULL, NULL, NULL);
+  }
+}
+
+static void
 ma_account_show_dialog_load_avatar (ChattyMaAccountDetails *self)
 {
   g_autoptr(GtkFileChooserNative) dialog = NULL;
   GtkFileFilter *filter;
   GtkWidget *window;
-  int response;
 
   window = gtk_widget_get_ancestor (GTK_WIDGET (self), GTK_TYPE_WINDOW);
   dialog = gtk_file_chooser_native_new (_("Set Avatar"),
@@ -120,24 +141,16 @@ ma_account_show_dialog_load_avatar (ChattyMaAccountDetails *self)
   gtk_file_filter_set_name (filter, _("Images"));
   gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dialog), filter);
 
-  response = gtk_native_dialog_run (GTK_NATIVE_DIALOG (dialog));
-
-  if (response == GTK_RESPONSE_ACCEPT)
-    return gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-
-  return NULL;
+  g_signal_connect_object (dialog, "response",
+                           G_CALLBACK (ma_account_load_avatar_response_cb),
+                           self, G_CONNECT_SWAPPED);
+  gtk_native_dialog_show (GTK_NATIVE_DIALOG (dialog));
 }
 
 static void
 ma_details_avatar_button_clicked_cb (ChattyMaAccountDetails *self)
 {
-  g_autofree char *file_name = NULL;
-
-  file_name = ma_account_show_dialog_load_avatar (self);
-
-  if (file_name)
-    chatty_item_set_avatar_async (CHATTY_ITEM (self->account),
-                                  file_name, NULL, NULL, NULL);
+  ma_account_show_dialog_load_avatar (self);
 }
 
 static void
@@ -176,7 +189,7 @@ ma_details_name_entry_changed_cb (ChattyMaAccountDetails *self,
   g_assert (GTK_IS_ENTRY (entry));
 
   old = g_object_get_data (G_OBJECT (entry), "name");
-  new = gtk_entry_get_text (entry);
+  new = gtk_editable_get_text (GTK_EDITABLE (entry));
 
   if (g_strcmp0 (old, new) == 0)
     self->modified = FALSE;
@@ -205,7 +218,7 @@ ma_account_details_update (ChattyMaAccountDetails *self)
 
   g_object_set_data_full (G_OBJECT (self->name_entry),
                           "name", g_strdup (name), g_free);
-  gtk_entry_set_text (GTK_ENTRY (self->name_entry), name);
+  gtk_editable_set_text (GTK_EDITABLE (self->name_entry), name);
   gtk_widget_set_sensitive (self->name_entry, TRUE);
 }
 
@@ -249,12 +262,15 @@ ma_details_delete_3pid_cb (GObject      *object,
   row = gtk_widget_get_parent (button);
   account = CHATTY_MA_ACCOUNT (self->account);
 
-  if (chatty_ma_account_delete_3pid_finish (account, result, &error))
-    gtk_widget_destroy (row);
-  else {
+  if (chatty_ma_account_delete_3pid_finish (account, result, &error)) {
+    GtkWidget *parent;
+
+    parent = gtk_widget_get_parent (row);
+    gtk_box_remove (GTK_BOX (parent), row);
+  } else {
     GtkWidget *stack, *child;
 
-    stack = gtk_bin_get_child (GTK_BIN (button));
+    stack = gtk_button_get_child (GTK_BUTTON (button));
     child = gtk_stack_get_child_by_name (GTK_STACK (stack), "spinner");
     gtk_spinner_stop (GTK_SPINNER (child));
 
@@ -281,7 +297,7 @@ ma_details_delete_3pid_clicked (ChattyMaAccountDetails *self,
   g_assert (value);
   g_assert (type);
 
-  stack = gtk_bin_get_child (GTK_BIN (button));
+  stack = gtk_button_get_child (GTK_BUTTON (button));
   child = gtk_stack_get_child_by_name (GTK_STACK (stack), "spinner");
   gtk_stack_set_visible_child_name (GTK_STACK (stack), "trash-image");
 
@@ -312,11 +328,11 @@ ma_account_details_add_entry (ChattyMaAccountDetails *self,
   gtk_widget_show (entry);
   gtk_widget_set_hexpand (entry, TRUE);
   gtk_widget_set_sensitive (entry, FALSE);
-  gtk_entry_set_text (GTK_ENTRY (entry), value);
-  gtk_container_add (GTK_CONTAINER (row), entry);
+  gtk_editable_set_text (GTK_EDITABLE (entry), value);
+  gtk_box_append (GTK_BOX (row), entry);
 
   stack = gtk_stack_new ();
-  image = gtk_image_new_from_icon_name ("user-trash-symbolic", GTK_ICON_SIZE_BUTTON);
+  image = gtk_image_new_from_icon_name ("user-trash-symbolic");
   gtk_stack_add_named (GTK_STACK (stack), image, "trash-image");
 
   spinner = gtk_spinner_new ();
@@ -328,14 +344,14 @@ ma_account_details_add_entry (ChattyMaAccountDetails *self,
     g_object_set_data (G_OBJECT (button), "type", GINT_TO_POINTER (CHATTY_ID_PHONE));
   else
     g_object_set_data (G_OBJECT (button), "type", GINT_TO_POINTER (CHATTY_ID_EMAIL));
-  gtk_container_add (GTK_CONTAINER (button), stack);
-  gtk_container_add (GTK_CONTAINER (row), button);
+
+  gtk_button_set_child (GTK_BUTTON (button), stack);
+  gtk_box_append (GTK_BOX (row), button);
 
   g_signal_connect_swapped (button, "clicked",
                             (GCallback)ma_details_delete_3pid_clicked, self);
 
-  gtk_widget_show_all (row);
-  gtk_container_add (GTK_CONTAINER (box), row);
+  gtk_box_append (GTK_BOX (box), row);
 }
 
 static void
@@ -486,11 +502,11 @@ chatty_ma_account_details_init (ChattyMaAccountDetails *self)
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
-  clamp = gtk_widget_get_ancestor (self->avatar_image, HDY_TYPE_CLAMP);
+  clamp = gtk_widget_get_ancestor (self->avatar_image, ADW_TYPE_CLAMP);
 
   if (clamp) {
-    hdy_clamp_set_maximum_size (HDY_CLAMP (clamp), 360);
-    hdy_clamp_set_tightening_threshold (HDY_CLAMP (clamp), 320);
+    adw_clamp_set_maximum_size (ADW_CLAMP (clamp), 360);
+    adw_clamp_set_tightening_threshold (ADW_CLAMP (clamp), 320);
   }
 }
 
@@ -548,7 +564,7 @@ chatty_ma_account_details_save_async (ChattyMaAccountDetails *self,
   if (self->modified) {
     const char *name;
 
-    name = gtk_entry_get_text (GTK_ENTRY (self->name_entry));
+    name = gtk_editable_get_text (GTK_EDITABLE (self->name_entry));
     chatty_ma_account_set_name_async (CHATTY_MA_ACCOUNT (self->account),
                                       name, NULL,
                                       ma_details_set_name_cb,
@@ -583,15 +599,26 @@ chatty_ma_account_details_set_item (ChattyMaAccountDetails *self,
   g_return_if_fail (!account || CHATTY_IS_MA_ACCOUNT (account));
 
   if (self->account != account) {
+    GtkWidget *child;
+
     g_clear_signal_handler (&self->status_id, self->account);
-    gtk_entry_set_text (GTK_ENTRY (self->name_entry), "");
+    gtk_editable_set_text (GTK_EDITABLE (self->name_entry), "");
     gtk_widget_hide (self->email_box);
     gtk_widget_hide (self->phone_box);
 
-    gtk_container_foreach (GTK_CONTAINER (self->email_box),
-                           (GtkCallback)gtk_widget_destroy, NULL);
-    gtk_container_foreach (GTK_CONTAINER (self->phone_box),
-                           (GtkCallback)gtk_widget_destroy, NULL);
+    do {
+      child = gtk_widget_get_first_child (GTK_WIDGET (self->email_box));
+
+      if (child)
+        gtk_box_remove (GTK_BOX (self->email_box), child);
+    } while (child);
+
+    do {
+      child = gtk_widget_get_first_child (GTK_WIDGET (self->phone_box));
+
+      if (child)
+        gtk_box_remove (GTK_BOX (self->phone_box), child);
+    } while (child);
   }
 
   if (!g_set_object (&self->account, account) || !account)

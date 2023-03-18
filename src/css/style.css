@@ -43,33 +43,37 @@
 
 /* MESSAGE LIST AND BUBBLES */
 
+.message_author {
+  font-size: 12px;
+}
+
 .message_bubble {
-  font-size: 16px;
-  color: black;
+  font-size: 15px;
+  color: @theme_fg_color;
   border-radius: 9px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
-  padding-top: 3px;
-  padding-bottom: 3px;
-  padding-left: 10px;
-  padding-right: 10px;
+  box-shadow: 0 1px 1px 0 rgba(0,0,0,.05),  0 1px 2px 2px rgba(0,0,0,.05);
+  padding: 6px 12px;
+}
+
+.message_footer {
+  font-size: 12px;
 }
 
 .bubble_white {
-  background-color: white;
+  background-color: mix(@theme_bg_color, @theme_fg_color, .05);
 }
 
 .bubble_blue {
-  background-color: #e4f0fc;
+  background-color: alpha(@accent_bg_color, 0.3);
 }
 
 .bubble_green {
-  background-color: #e2fae7;
+  background-color: alpha(#57e389, .8);
 }
 
 .bubble_purple {
+  background-color: alpha(#c061cb, .8);
   font-size: 14px;
-  color: white;
-  background-color: #862d86;
 }
 
 .label_disclaim {

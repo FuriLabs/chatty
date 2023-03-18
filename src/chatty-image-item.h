@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <gtk/gtk.h>
+#include <adwaita.h>
 
 #include "chatty-message.h"
 
@@ -18,7 +18,7 @@ G_BEGIN_DECLS
 
 #define CHATTY_TYPE_IMAGE_ITEM (chatty_image_item_get_type ())
 
-G_DECLARE_FINAL_TYPE (ChattyImageItem, chatty_image_item, CHATTY, IMAGE_ITEM, GtkEventBox)
+G_DECLARE_FINAL_TYPE (ChattyImageItem, chatty_image_item, CHATTY, IMAGE_ITEM, AdwBin)
 
 GtkWidget       *chatty_image_item_new        (ChattyMessage   *message,
                                                ChattyFile      *file);

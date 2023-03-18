@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
+  <requires lib="gtk" version="4.0"/>
   <template class="ChattyVerificationView" parent="GtkBox">
-
     <child>
-      <object class="HdyClamp">
-        <property name="visible">1</property>
+      <object class="AdwClamp">
         <property name="hexpand">1</property>
         <property name="margin-top">18</property>
         <property name="margin-bottom">18</property>
@@ -15,13 +14,11 @@
 
         <child>
           <object class="GtkBox">
-            <property name="visible">1</property>
             <property name="orientation">vertical</property>
             <property name="spacing">18</property>
 
             <child>
               <object class="GtkLabel">
-                <property name="visible">1</property>
                 <property name="wrap">1</property>
                 <property name="justify">center</property>
                 <property name="label" translatable="yes">Incoming Verification Request</property>
@@ -33,7 +30,6 @@
 
             <child>
               <object class="GtkImage">
-                <property name="visible">1</property>
                 <property name="icon-name">system-lock-screen-symbolic</property>
                 <property name="pixel-size">96</property>
               </object>
@@ -41,7 +37,6 @@
 
             <child>
               <object class="GtkLabel">
-                <property name="visible">1</property>
                 <property name="wrap">1</property>
                 <property name="xalign">0.0</property>
                 <property name="label" translatable="yes">Verify this user to mark them as trusted.</property>
@@ -50,27 +45,21 @@
 
             <child>
               <object class="GtkBox">
-                <property name="visible">1</property>
                 <property name="spacing">12</property>
                 <child>
-                  <object class="ChattyAvatar" id="user_avatar">
-                    <property name="visible">1</property>
-                  </object>
+                  <object class="ChattyAvatar" id="user_avatar"/>
                 </child>
                 <child>
                   <object class="GtkBox">
-                    <property name="visible">1</property>
                     <property name="orientation">vertical</property>
                     <property name="spacing">3</property>
                     <child>
                       <object class="GtkLabel" id="name_label">
-                        <property name="visible">1</property>
                         <property name="xalign">0.0</property>
                       </object>
                     </child>
                     <child>
                       <object class="GtkLabel" id="username_label">
-                        <property name="visible">1</property>
                         <property name="xalign">0.0</property>
                         <style>
                           <class name="dim-label"/>
@@ -79,13 +68,11 @@
                     </child>
                   </object>
                 </child>
-
               </object>
             </child>
 
             <child>
               <object class="GtkLabel">
-                <property name="visible">1</property>
                 <property name="wrap">1</property>
                 <property name="xalign">0.0</property>
                 <property name="label" translatable="yes">Verifying this user will mark their session as trusted, and also mark your session as trusted to them.</property>
@@ -94,76 +81,56 @@
 
             <child>
               <object class="GtkButton" id="continue_button">
-                <property name="visible">1</property>
                 <signal name="clicked" handler="verification_continue_clicked_cb" swapped="yes"/>
                 <style>
                   <class name="suggested-action"/>
                 </style>
-
-                <!-- todo: Use GtkCenterBox when porting to GTK4 -->
                 <child>
-                  <object class="GtkBox">
-                    <property name="visible">1</property>
-                    <property name="spacing">6</property>
+                  <object class="GtkCenterBox">
                     <property name="hexpand">1</property>
                     <child type="center">
-                      <object class="GtkLabel">
-                        <property name="visible">1</property>
-                        <property name="use-underline">1</property>
-                        <property name="label" translatable="yes">C_ontinue</property>
-                      </object>
+                      <object class="GtkBox">
+                        <property name="orientation">vertical</property>
+                        <property name="spacing">6</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="use-underline">1</property>
+                            <property name="label" translatable="yes">C_ontinue</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkImage">
+                            <property name="icon-name">go-next-symbolic</property>
+                            <style>
+                              <class name="dim-label"/>
+                            </style>
+                          </object>
+                        </child>
+                      </object> <!-- ./GtkBox -->
                     </child>
-                    <child>
-                      <object class="GtkImage">
-                        <property name="visible">1</property>
-                        <property name="icon-name">go-next-symbolic</property>
-                        <style>
-                          <class name="dim-label"/>
-                        </style>
-                      </object>
-                      <packing>
-                        <property name="pack-type">end</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkSpinner" id="continue_spinner">
-                        <property name="visible">1</property>
-                      </object>
-                      <packing>
-                        <property name="pack-type">end</property>
-                      </packing>
+                    <child type="end">
+                      <object class="GtkSpinner" id="continue_spinner"/>
                     </child>
                   </object>
                 </child>
-
               </object>
             </child>
 
             <child>
               <object class="GtkButton" id="cancel_button">
-                <property name="visible">1</property>
                 <property name="sensitive" bind-source="continue_button" bind-property="sensitive" bind-flags="sync-create"/>
                 <signal name="clicked" handler="verification_cancel_clicked_cb" swapped="yes"/>
-
                 <child>
-                  <object class="GtkBox">
-                    <property name="visible">1</property>
-                    <property name="spacing">6</property>
+                  <object class="GtkCenterBox">
                     <property name="halign">center</property>
                     <child type="center">
                       <object class="GtkLabel">
-                        <property name="visible">1</property>
                         <property name="use-underline">1</property>
                         <property name="label" translatable="yes">_Cancel</property>
                       </object>
                     </child>
-                    <child>
-                      <object class="GtkSpinner" id="cancel_spinner">
-                        <property name="visible">1</property>
-                      </object>
-                      <packing>
-                        <property name="pack-type">end</property>
-                      </packing>
+                    <child type="end">
+                      <object class="GtkSpinner" id="cancel_spinner"/>
                     </child>
                   </object>
                 </child>
@@ -174,63 +141,51 @@
           </object>
         </child>
 
-      </object> <!-- ./HdyClamp -->
+      </object>
     </child>
-
   </template>
 
   <object class="GtkDialog" id="verification_dialog">
-    <property name="visible">0</property>
     <property name="modal">1</property>
     <property name="use-header-bar">1</property>
 
     <child internal-child="headerbar">
       <object class="GtkHeaderBar">
-        <property name="visible">1</property>
-        <property name="show-close-button">0</property>
-        <child>
+        <property name="show-title-buttons">0</property>
+        <child type="start">
           <object class="GtkButton">
             <property name="label" translatable="yes">_Cancel</property>
-            <property name="visible">1</property>
             <property name="use-underline">1</property>
             <property name="valign">center</property>
             <signal name="clicked" handler="verification_cancel_clicked_cb" swapped="yes"/>
           </object>
-          <packing>
-            <property name="pack-type">start</property>
-          </packing>
         </child>
-        <child>
+
+        <child type="end">
           <object class="GtkButton" id="verification_type_button">
-            <property name="visible">1</property>
             <property name="valign">center</property>
             <signal name="clicked" handler="verification_type_clicked_cb" swapped="yes"/>
           </object>
-          <packing>
-            <property name="pack-type">end</property>
-          </packing>
         </child>
       </object>
     </child>
 
-    <child internal-child="vbox">
+    <child>
       <object class="GtkBox">
-        <property name="visible">1</property>
         <property name="margin-start">12</property>
         <property name="margin-end">12</property>
         <property name="margin-top">12</property>
         <property name="margin-bottom">12</property>
         <property name="spacing">32</property>
         <property name="halign">center</property>
+        <property name="orientation">vertical</property>
 
         <child>
           <object class="GtkStack" id="content_stack">
-            <property name="visible">1</property>
             <signal name="notify::visible-child" handler="verification_content_child_changed_cb" swapped="yes"/>
 
             <child>
               <object class="GtkGrid" id="emoji_content">
-                <property name="visible">1</property>
                 <property name="row-spacing">9</property>
                 <property name="column-spacing">3</property>
                 <property name="column-homogeneous">1</property>
@@ -238,200 +193,171 @@
 
                 <child>
                   <object class="GtkLabel">
-                    <property name="visible">1</property>
                     <property name="xalign">0.0</property>
                     <property name="yalign">0.0</property>
                     <property name="wrap">1</property>
                     <property name="max-width-chars">40</property>
                     <property name="label" translatable="yes">Verify this user by confirming the following emoji appears on their screen</property>
+                    <layout>
+                      <property name="row">0</property>
+                      <property name="column">0</property>
+                      <property name="column-span">8</property>
+                    </layout>
                   </object>
-                  <packing>
-                    <property name="top-attach">0</property>
-                    <property name="left-attach">0</property>
-                    <property name="width">8</property>
-                  </packing>
                 </child>
 
                 <child>
                   <object class="GtkBox">
-                    <property name="visible">1</property>
                     <property name="spacing">3</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkLabel" id="emoji1_label">
-                        <property name="visible">1</property>
                         <style>
                           <class name="large-title"/>
                         </style>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="emoji1_title">
-                        <property name="visible">1</property>
-                      </object>
+                      <object class="GtkLabel" id="emoji1_title"/>
                     </child>
+                    <layout>
+                      <property name="row">1</property>
+                      <property name="column">0</property>
+                      <property name="column-span">2</property>
+                    </layout>
                   </object>
-                  <packing>
-                    <property name="top-attach">1</property>
-                    <property name="left-attach">0</property>
-                    <property name="width">2</property>
-                  </packing>
                 </child>
 
                 <child>
                   <object class="GtkBox">
-                    <property name="visible">1</property>
                     <property name="spacing">3</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkLabel" id="emoji2_label">
-                        <property name="visible">1</property>
                         <style>
                           <class name="large-title"/>
                         </style>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="emoji2_title">
-                        <property name="visible">1</property>
-                      </object>
+                      <object class="GtkLabel" id="emoji2_title"/>
                     </child>
+                    <layout>
+                      <property name="row">1</property>
+                      <property name="column">2</property>
+                      <property name="column-span">2</property>
+                    </layout>
                   </object>
-                  <packing>
-                    <property name="top-attach">1</property>
-                    <property name="left-attach">2</property>
-                    <property name="width">2</property>
-                  </packing>
                 </child>
 
                 <child>
                   <object class="GtkBox">
-                    <property name="visible">1</property>
                     <property name="spacing">3</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkLabel" id="emoji3_label">
-                        <property name="visible">1</property>
                         <style>
                           <class name="large-title"/>
                         </style>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="emoji3_title">
-                        <property name="visible">1</property>
-                      </object>
+                      <object class="GtkLabel" id="emoji3_title"/>
                     </child>
+                    <layout>
+                      <property name="row">1</property>
+                      <property name="column">4</property>
+                      <property name="column-span">2</property>
+                    </layout>
                   </object>
-                  <packing>
-                    <property name="top-attach">1</property>
-                    <property name="left-attach">4</property>
-                    <property name="width">2</property>
-                  </packing>
                 </child>
 
                 <child>
                   <object class="GtkBox">
-                    <property name="visible">1</property>
                     <property name="spacing">3</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkLabel" id="emoji4_label">
-                        <property name="visible">1</property>
                         <style>
                           <class name="large-title"/>
                         </style>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="emoji4_title">
-                        <property name="visible">1</property>
-                      </object>
+                      <object class="GtkLabel" id="emoji4_title"/>
                     </child>
+                    <layout>
+                      <property name="row">1</property>
+                      <property name="column">6</property>
+                      <property name="column-span">2</property>
+                    </layout>
                   </object>
-                  <packing>
-                    <property name="top-attach">1</property>
-                    <property name="left-attach">6</property>
-                    <property name="width">2</property>
-                  </packing>
                 </child>
 
                 <child>
                   <object class="GtkBox">
-                    <property name="visible">1</property>
                     <property name="spacing">3</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkLabel" id="emoji5_label">
-                        <property name="visible">1</property>
                         <style>
                           <class name="large-title"/>
                         </style>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="emoji5_title">
-                        <property name="visible">1</property>
-                      </object>
+                      <object class="GtkLabel" id="emoji5_title"/>
                     </child>
+                    <layout>
+                      <property name="row">2</property>
+                      <property name="column">1</property>
+                      <property name="column-span">2</property>
+                    </layout>
                   </object>
-                  <packing>
-                    <property name="top-attach">2</property>
-                    <property name="left-attach">1</property>
-                    <property name="width">2</property>
-                  </packing>
                 </child>
 
                 <child>
                   <object class="GtkBox">
-                    <property name="visible">1</property>
                     <property name="spacing">3</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkLabel" id="emoji6_label">
-                        <property name="visible">1</property>
                         <style>
                           <class name="large-title"/>
                         </style>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="emoji6_title">
-                        <property name="visible">1</property>
-                      </object>
+                      <object class="GtkLabel" id="emoji6_title"/>
                     </child>
+                    <layout>
+                      <property name="row">2</property>
+                      <property name="column">3</property>
+                      <property name="column-span">2</property>
+                    </layout>
                   </object>
-                  <packing>
-                    <property name="top-attach">2</property>
-                    <property name="left-attach">3</property>
-                    <property name="width">2</property>
-                  </packing>
                 </child>
 
                 <child>
                   <object class="GtkBox">
-                    <property name="visible">1</property>
                     <property name="spacing">3</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkLabel" id="emoji7_label">
-                        <property name="visible">1</property>
                         <style>
                           <class name="large-title"/>
                         </style>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="emoji7_title">
-                        <property name="visible">1</property>
-                      </object>
+                      <object class="GtkLabel" id="emoji7_title"/>
                     </child>
+                    <layout>
+                      <property name="row">2</property>
+                      <property name="column">5</property>
+                      <property name="column-span">2</property>
+                    </layout>
                   </object>
-                  <packing>
-                    <property name="top-attach">2</property>
-                    <property name="left-attach">5</property>
-                    <property name="width">2</property>
-                  </packing>
                 </child>
 
               </object>
@@ -439,13 +365,11 @@
 
             <child>
               <object class="GtkBox" id="decimal_content">
-                <property name="visible">1</property>
                 <property name="orientation">vertical</property>
                 <property name="spacing">32</property>
 
                 <child>
                   <object class="GtkLabel">
-                    <property name="visible">1</property>
                     <property name="xalign">0.0</property>
                     <property name="yalign">0.0</property>
                     <property name="wrap">1</property>
@@ -456,30 +380,21 @@
 
                 <child>
                   <object class="GtkBox">
-                    <property name="visible">1</property>
                     <property name="vexpand">1</property>
                     <property name="halign">center</property>
                     <property name="spacing">24</property>
                     <style>
-                     <class name="large-title"/>
+                      <class name="large-title"/>
                     </style>
-
                     <child>
-                      <object class="GtkLabel" id="decimal1_label">
-                        <property name="visible">1</property>
-                      </object>
+                      <object class="GtkLabel" id="decimal1_label"/>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="decimal2_label">
-                        <property name="visible">1</property>
-                      </object>
+                      <object class="GtkLabel" id="decimal2_label"/>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="decimal3_label">
-                        <property name="visible">1</property>
-                      </object>
+                      <object class="GtkLabel" id="decimal3_label"/>
                     </child>
-
                   </object>
                 </child>
 
@@ -491,7 +406,6 @@
 
         <child>
           <object class="GtkLabel">
-            <property name="visible">1</property>
             <property name="xalign">0.0</property>
             <property name="wrap">1</property>
             <property name="max-width-chars">40</property>
@@ -501,12 +415,10 @@
 
         <child>
           <object class="GtkBox">
-            <property name="visible">1</property>
             <property name="hexpand">1</property>
             <property name="spacing">18</property>
             <child>
               <object class="GtkButton" id="no_match_button">
-                <property name="visible">1</property>
                 <property name="use-underline">1</property>
                 <property name="label" translatable="yes" context="verb, which means 'both items are not the same'">_Don’t Match</property>
                 <signal name="clicked" handler="verification_cancel_clicked_cb" swapped="yes"/>
@@ -514,13 +426,9 @@
                   <class name="destructive-action"/>
                 </style>
               </object>
-              <packing>
-                <property name="pack-type">start</property>
-              </packing>
             </child>
             <child>
               <object class="GtkButton" id="match_button">
-                <property name="visible">1</property>
                 <property name="use-underline">1</property>
                 <property name="label" translatable="yes" context="verb, which means 'both items are the same'">_Match</property>
                 <signal name="clicked" handler="verification_match_clicked_cb" swapped="yes"/>
@@ -528,9 +436,6 @@
                   <class name="suggested-action"/>
                 </style>
               </object>
-              <packing>
-                <property name="pack-type">end</property>
-              </packing>
             </child>
           </object>
         </child>

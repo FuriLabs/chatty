@@ -18,7 +18,6 @@
 #define CMATRIX_USE_EXPERIMENTAL_API
 #include "cmatrix.h"
 
-#include "contrib/gtk.h"
 #include "chatty-file.h"
 #include "chatty-ma-buddy.h"
 #include "chatty-ma-chat.h"
@@ -729,15 +728,15 @@ chatty_ma_chat_class_init (ChattyMaChatClass *klass)
 static void
 chatty_ma_chat_init (ChattyMaChat *self)
 {
-  g_autoptr(GtkFilter) filter = NULL;
+  GtkCustomFilter *filter;
 
   self->message_list = g_list_store_new (CHATTY_TYPE_MESSAGE);
 
   filter = gtk_custom_filter_new ((GtkCustomFilterFunc)ma_chat_filter_event_list,
                                   g_object_ref (self),
                                   g_object_unref);
-  self->filtered_event_list = gtk_filter_list_model_new (G_LIST_MODEL (self->message_list),
-                                                         filter);
+  self->filtered_event_list = gtk_filter_list_model_new (g_object_ref (G_LIST_MODEL (self->message_list)),
+                                                         GTK_FILTER (filter));
   self->buddy_list = g_list_store_new (CHATTY_TYPE_MA_BUDDY);
 }
 

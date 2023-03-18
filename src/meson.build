@@ -21,16 +21,16 @@ if purple_dep.found()
 endif
 
 libsrc += [
-  'contrib/gtktypebuiltins.c',
-  'contrib/gtkflattenlistmodel.c',
-  'contrib/gtkrbtree.c',
-  'contrib/gtkfilter.c',
-  'contrib/gtkcustomfilter.c',
-  'contrib/gtkfilterlistmodel.c',
-  'contrib/gtksorter.c',
-  'contrib/gtkcustomsorter.c',
-  'contrib/gtksortlistmodel.c',
-  'contrib/gtkslicelistmodel.c',
+  # 'contrib/gtktypebuiltins.c',
+  # 'contrib/gtkflattenlistmodel.c',
+  # 'contrib/gtkrbtree.c',
+  # 'contrib/gtkfilter.c',
+  # 'contrib/gtkcustomfilter.c',
+  # 'contrib/gtkfilterlistmodel.c',
+  # 'contrib/gtksorter.c',
+  # 'contrib/gtkcustomsorter.c',
+  # 'contrib/gtksortlistmodel.c',
+  # 'contrib/gtkslicelistmodel.c',
   'dialogs/chatty-ma-account-details.c',
   'dialogs/chatty-pp-account-details.c',
   'dialogs/chatty-chat-info.c',
@@ -148,15 +148,16 @@ libchatty_static = static_library(
   dependencies: chatty_deps,
 )
 
-gtk_builder_tool = find_program('gtk-builder-tool', required: false)
-if gtk_builder_tool.found()
-  preload_env = 'LD_PRELOAD=libhandy-1.so:@0@'.format(libchatty_shared.full_path())
-  foreach file: ui_files
-    test('Validate @0@'.format(file), gtk_builder_tool,
-         env: [preload_env],
-         args: ['validate', file])
-  endforeach
-endif
+# xxx: Requires GTK 4.10, seems to fail with older GTK.  To be enabled in the future
+# gtk_builder_tool = find_program('gtk4-builder-tool', required: false)
+# if gtk_builder_tool.found()
+#   preload_env = 'LD_PRELOAD=libadwaita-1.so:@0@'.format(libchatty_shared.full_path())
+#   foreach file: ui_files
+#     test('Validate @0@'.format(file), gtk_builder_tool,
+#          env: [preload_env],
+#          args: ['validate', file])
+#   endforeach
+# endif
 
 executable('chatty', chatty_sources, resources,
   include_directories: src_inc,

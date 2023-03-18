@@ -10,10 +10,10 @@
 # include "config.h"
 #endif
 
-#include <handy.h>
-#include <libgd/gd.h>
+#include <adwaita.h>
 #include <glib/gi18n.h>
 
+#include "gtk3-to-4.h"
 #include "chatty-manager.h"
 #include "chatty-mm-account.h"
 #include "chatty-purple.h"
@@ -45,7 +45,7 @@ struct _ChattySideBar
   GtkWidget         *protocol_list;
   GtkWidget         *protocol_any_row;
 
-  GdTaggedEntryTag  *protocol_tag;
+  /* GdTaggedEntryTag  *protocol_tag; */
 
   GtkWidget         *selected_protocol_row;
   ChattyProtocol     protocol_filter;
@@ -75,7 +75,7 @@ side_bar_update_search_mode (ChattySideBar *self)
   gtk_widget_set_visible (self->search_button, has_child);
 
   if (!has_child)
-    hdy_search_bar_set_search_mode (HDY_SEARCH_BAR (self->chats_search_bar), FALSE);
+    gtk_search_bar_set_search_mode (GTK_SEARCH_BAR (self->chats_search_bar), FALSE);
 }
 
 static void
@@ -120,12 +120,12 @@ side_bar_search_enable_changed_cb (ChattySideBar *self)
 
   g_assert (CHATTY_IS_SIDE_BAR (self));
 
-  enabled = hdy_search_bar_get_search_mode (HDY_SEARCH_BAR (self->chats_search_bar));
+  /* enabled = adw_search_bar_get_search_mode (ADW_SEARCH_BAR (self->chats_search_bar)); */
 
-  /* Reset protocol filter */
-  if (!enabled &&
-      self->protocol_any_row != self->selected_protocol_row)
-    gtk_widget_activate (self->protocol_any_row);
+  /* /\* Reset protocol filter *\/ */
+  /* if (!enabled && */
+  /*     self->protocol_any_row != self->selected_protocol_row) */
+  /*   gtk_widget_activate (self->protocol_any_row); */
 }
 
 static void
@@ -136,18 +136,18 @@ side_bar_search_changed_cb (ChattySideBar *self,
   g_assert (GTK_IS_ENTRY (entry));
 
   chatty_chat_list_filter_string (CHATTY_CHAT_LIST (self->chat_list),
-                                  gtk_entry_get_text (entry));
+                                  gtk_editable_get_text (GTK_EDITABLE (entry)));
 }
 
 static void
-side_bar_search_tag_clicked_cb (ChattySideBar    *self,
-                                GdTaggedEntryTag *tag,
-                                GdTaggedEntry    *entry)
+side_bar_search_tag_clicked_cb (ChattySideBar    *self/* , */
+                                /* GdTaggedEntryTag *tag, */
+                                /* GdTaggedEntry    *entry */)
 {
   g_assert (CHATTY_IS_SIDE_BAR (self));
-  g_assert (GD_TAGGED_ENTRY_TAG (tag));
+  /* g_assert (GD_TAGGED_ENTRY_TAG (tag)); */
 
-  gtk_widget_activate (self->protocol_any_row);
+  /* gtk_widget_activate (self->protocol_any_row); */
 }
 
 static void
@@ -173,33 +173,33 @@ side_bar_protocol_changed_cb (ChattySideBar *self,
                               GtkWidget     *selected_row,
                               GtkListBox    *box)
 {
-  GdTaggedEntry *entry;
+  /* GdTaggedEntry *entry; */
   GtkWidget *old_row;
 
   g_assert (CHATTY_IS_SIDE_BAR (self));
   g_assert (GTK_IS_LIST_BOX (box));
 
-  entry = GD_TAGGED_ENTRY (self->chats_search_entry);
-  old_row = self->selected_protocol_row;
+  /* entry = GD_TAGGED_ENTRY (self->chats_search_entry); */
+  /* old_row = self->selected_protocol_row; */
 
-  if (old_row == selected_row)
-    return;
+  /* if (old_row == selected_row) */
+  /*   return; */
 
-  self->protocol_filter = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (selected_row), "protocol"));
-  chatty_chat_list_filter_protocol (CHATTY_CHAT_LIST (self->chat_list), self->protocol_filter);
-  chatty_selectable_row_set_selected (CHATTY_SELECTABLE_ROW (old_row), FALSE);
-  chatty_selectable_row_set_selected (CHATTY_SELECTABLE_ROW (selected_row), TRUE);
-  self->selected_protocol_row = selected_row;
+  /* self->protocol_filter = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (selected_row), "protocol")); */
+  /* chatty_chat_list_filter_protocol (CHATTY_CHAT_LIST (self->chat_list), self->protocol_filter); */
+  /* chatty_selectable_row_set_selected (CHATTY_SELECTABLE_ROW (old_row), FALSE); */
+  /* chatty_selectable_row_set_selected (CHATTY_SELECTABLE_ROW (selected_row), TRUE); */
+  /* self->selected_protocol_row = selected_row; */
 
-  if (selected_row == self->protocol_any_row) {
-    gd_tagged_entry_remove_tag (entry, self->protocol_tag);
-  } else {
-    const char *title;
+  /* if (selected_row == self->protocol_any_row) { */
+  /*   gd_tagged_entry_remove_tag (entry, self->protocol_tag); */
+  /* } else { */
+  /*   const char *title; */
 
-    gd_tagged_entry_add_tag (entry, self->protocol_tag);
-    title = chatty_selectable_row_get_title (CHATTY_SELECTABLE_ROW (selected_row));
-    gd_tagged_entry_tag_set_label (self->protocol_tag, title);
-  }
+  /*   gd_tagged_entry_add_tag (entry, self->protocol_tag); */
+  /*   title = chatty_selectable_row_get_title (CHATTY_SELECTABLE_ROW (selected_row)); */
+  /*   gd_tagged_entry_tag_set_label (self->protocol_tag, title); */
+  /* } */
 }
 
 static void
@@ -231,7 +231,7 @@ chatty_side_bar_finalize (GObject *object)
 {
   ChattySideBar *self = (ChattySideBar *)object;
 
-  g_clear_object (&self->protocol_tag);
+  /* g_clear_object (&self->protocol_tag); */
 
   G_OBJECT_CLASS (chatty_side_bar_parent_class)->finalize (object);
 }
@@ -314,7 +314,7 @@ side_bar_add_selectable_row (ChattySideBar  *self,
   row = chatty_selectable_row_new (name);
   g_object_set_data (G_OBJECT (row), "protocol", GINT_TO_POINTER (protocol));
   chatty_selectable_row_set_selected (CHATTY_SELECTABLE_ROW (row), selected);
-  gtk_container_add (GTK_CONTAINER (self->protocol_list), row);
+  gtk_list_box_append (GTK_LIST_BOX (self->protocol_list), row);
 
   if (protocol == CHATTY_PROTOCOL_ANY)
     self->protocol_any_row = self->selected_protocol_row = row;
@@ -326,13 +326,13 @@ chatty_side_bar_init (ChattySideBar *self)
   gtk_widget_init_template (GTK_WIDGET (self));
 
   self->protocol_filter = CHATTY_PROTOCOL_ANY;
-  hdy_search_bar_connect_entry (HDY_SEARCH_BAR (self->chats_search_bar),
-                                GTK_ENTRY (self->chats_search_entry));
+  gtk_search_bar_connect_entry (GTK_SEARCH_BAR (self->chats_search_bar),
+                                GTK_EDITABLE (self->chats_search_entry));
   gtk_list_box_set_header_func (GTK_LIST_BOX (self->protocol_list),
                                 protocol_list_header_func,
                                 NULL, NULL);
-  self->protocol_tag = gd_tagged_entry_tag_new ("");
-  gd_tagged_entry_tag_set_style (self->protocol_tag, "protocol-tag");
+  /* self->protocol_tag = gd_tagged_entry_tag_new (""); */
+  /* gd_tagged_entry_tag_set_style (self->protocol_tag, "protocol-tag"); */
 
   side_bar_add_selectable_row (self, _("Any Protocol"), CHATTY_PROTOCOL_ANY, TRUE);
   side_bar_add_selectable_row (self, _("Matrix"), CHATTY_PROTOCOL_MATRIX, FALSE);
@@ -344,19 +344,6 @@ chatty_side_bar_init (ChattySideBar *self)
   if (chatty_purple_has_telegram_loaded (chatty_purple_get_default ()))
     side_bar_add_selectable_row (self, _("Telegram"), CHATTY_PROTOCOL_TELEGRAM, FALSE);
 #endif
-
-  gtk_widget_show_all (self->protocol_list);
-}
-
-void
-chatty_side_bar_add_to_header_group (ChattySideBar *self,
-                                     GtkWidget     *header_group)
-{
-  g_return_if_fail (CHATTY_IS_SIDE_BAR (self));
-  g_return_if_fail (HDY_IS_HEADER_GROUP (header_group));
-
-  hdy_header_group_add_header_bar (HDY_HEADER_GROUP (header_group),
-                                   HDY_HEADER_BAR (self->header_bar));
 }
 
 GtkWidget *
@@ -379,10 +366,13 @@ void
 chatty_side_bar_set_show_archived (ChattySideBar *self,
                                    gboolean       show_archived)
 {
+  GtkWidget *title;
+
   g_return_if_fail (CHATTY_IS_SIDE_BAR (self));
 
-  hdy_header_bar_set_title (HDY_HEADER_BAR (self->header_bar),
-                            show_archived ? _("Archived") : _("Chats"));
+  title = adw_header_bar_get_title_widget (ADW_HEADER_BAR (self->header_bar));
+  adw_window_title_set_title (ADW_WINDOW_TITLE (title),
+                              show_archived ? _("Archived") : _("Chats"));
   gtk_widget_set_visible (self->back_button, show_archived);
   gtk_widget_set_visible (self->add_chat_button, !show_archived);
   chatty_chat_list_show_archived (CHATTY_CHAT_LIST (self->chat_list), show_archived);

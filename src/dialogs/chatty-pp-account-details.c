@@ -29,6 +29,7 @@
 
 #include <glib/gi18n.h>
 
+#include "gtk3-to-4.h"
 #include "chatty-avatar.h"
 #include "chatty-fp-row.h"
 #include "chatty-pp-account-details.h"
@@ -36,7 +37,7 @@
 
 struct _ChattyPpAccountDetails
 {
-  HdyPreferencesPage parent_instance;
+  AdwPreferencesPage parent_instance;
 
   ChattyAccount *account;
 
@@ -72,15 +73,35 @@ enum {
 static GParamSpec *properties[N_PROPS];
 static guint signals[N_SIGNALS];
 
-G_DEFINE_TYPE (ChattyPpAccountDetails, chatty_pp_account_details, HDY_TYPE_PREFERENCES_PAGE)
+G_DEFINE_TYPE (ChattyPpAccountDetails, chatty_pp_account_details, ADW_TYPE_PREFERENCES_PAGE)
 
-static char *
+static void
+pp_account_load_avatar_response_cb (ChattyPpAccountDetails *self,
+                                    int                     response_id,
+                                    GtkDialog              *dialog)
+{
+  g_assert (CHATTY_IS_PP_ACCOUNT_DETAILS (self));
+  g_assert (GTK_IS_DIALOG (dialog));
+
+  if (response_id == GTK_RESPONSE_ACCEPT) {
+    g_autoptr(GFile) file = NULL;
+    g_autofree char *file_name = NULL;
+
+    file = gtk_file_chooser_get_file (GTK_FILE_CHOOSER (dialog));
+    file_name = g_file_get_path (file);
+
+    if (file_name)
+      chatty_item_set_avatar_async (CHATTY_ITEM (self->account),
+                                    file_name, NULL, NULL, NULL);
+  }
+}
+
+static void
 pp_account_show_dialog_load_avatar (ChattyPpAccountDetails *self)
 {
   g_autoptr(GtkFileChooserNative) dialog = NULL;
   GtkFileFilter *filter;
   GtkWidget *window;
-  int response;
 
   window = gtk_widget_get_ancestor (GTK_WIDGET (self), GTK_TYPE_WINDOW);
   dialog = gtk_file_chooser_native_new (_("Set Avatar"),
@@ -96,12 +117,10 @@ pp_account_show_dialog_load_avatar (ChattyPpAccountDetails *self)
   gtk_file_filter_set_name (filter, _("Images"));
   gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dialog), filter);
 
-  response = gtk_native_dialog_run (GTK_NATIVE_DIALOG (dialog));
-
-  if (response == GTK_RESPONSE_ACCEPT)
-    return gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-
-  return NULL;
+  g_signal_connect_object (dialog, "response",
+                           G_CALLBACK (pp_account_load_avatar_response_cb),
+                           self, G_CONNECT_SWAPPED);
+  gtk_native_dialog_show (GTK_NATIVE_DIALOG (dialog));
 }
 
 static void
@@ -116,34 +135,7 @@ pp_details_delete_avatar_button_clicked_cb (ChattyPpAccountDetails *self)
 static void
 pp_details_edit_avatar_button_clicked_cb (ChattyPpAccountDetails *self)
 {
-  g_autofree char *file_name = NULL;
-
-  file_name = pp_account_show_dialog_load_avatar (self);
-
-  if (file_name)
-    chatty_item_set_avatar_async (CHATTY_ITEM (self->account),
-                                  file_name, NULL, NULL, NULL);
-}
-
-static void
-pa_details_pw_entry_icon_clicked_cb (ChattyPpAccountDetails *self)
-{
-  GtkEntry *entry;
-  const char *icon;
-  gboolean visible;
-
-  g_assert (CHATTY_IS_PP_ACCOUNT_DETAILS (self));
-
-  entry = GTK_ENTRY (self->password_entry);
-  visible = !gtk_entry_get_visibility (entry);
-  gtk_entry_set_visibility (entry, visible);
-
-  if (visible)
-    icon = "eye-open-negative-filled-symbolic";
-  else
-    icon = "eye-not-looking-symbolic";
-
-  gtk_entry_set_icon_from_icon_name (entry, GTK_ENTRY_ICON_SECONDARY, icon);
+  pp_account_show_dialog_load_avatar (self);
 }
 
 static void
@@ -206,7 +198,7 @@ pp_details_get_fingerprints_cb (GObject      *object,
   ChattyAccount *account = CHATTY_ACCOUNT (object);
   g_autoptr(GError) error = NULL;
   GListModel *fp_list;
-  HdyValueObject *device_fp;
+  GtkStringObject *device_fp;
 
   chatty_account_load_fp_finish (account, result, &error);
 
@@ -305,7 +297,6 @@ chatty_pp_account_details_class_init (ChattyPpAccountDetailsClass *klass)
 
   gtk_widget_class_bind_template_callback (widget_class, pp_details_delete_avatar_button_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, pp_details_edit_avatar_button_clicked_cb);
-  gtk_widget_class_bind_template_callback (widget_class, pa_details_pw_entry_icon_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, pa_details_pw_entry_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, pa_details_delete_account_clicked_cb);
 }
@@ -334,12 +325,12 @@ chatty_pp_account_save_async (ChattyPpAccountDetails *self,
   g_return_if_fail (callback);
 
   entry = (GtkEntry *)self->password_entry;
-  chatty_account_set_password (self->account, gtk_entry_get_text (entry));
+  chatty_account_set_password (self->account, gtk_editable_get_text (GTK_EDITABLE (entry)));
 
   chatty_account_set_remember_password (self->account, TRUE);
   chatty_account_set_enabled (self->account, TRUE);
 
-  gtk_entry_set_text (entry, "");
+  gtk_editable_set_text (GTK_EDITABLE (entry), "");
 
   self->modified = FALSE;
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_MODIFIED]);
@@ -375,7 +366,7 @@ chatty_pp_account_details_set_item (ChattyPpAccountDetails *self,
   g_return_if_fail (CHATTY_IS_PP_ACCOUNT_DETAILS (self));
   g_return_if_fail (!account || CHATTY_IS_ACCOUNT (account));
 
-  gtk_entry_set_text (GTK_ENTRY (self->password_entry), "");
+  gtk_editable_set_text (GTK_EDITABLE (self->password_entry), "");
 
   if (self->account != account) {
     g_clear_signal_handler (&self->status_id, self->account);

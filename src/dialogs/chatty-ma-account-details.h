@@ -23,7 +23,7 @@
 
 #pragma once
 
-#include <gtk/gtk.h>
+#include <adwaita.h>
 
 #include "chatty-account.h"
 
@@ -31,7 +31,7 @@ G_BEGIN_DECLS
 
 #define CHATTY_TYPE_MA_ACCOUNT_DETAILS (chatty_ma_account_details_get_type ())
 
-G_DECLARE_FINAL_TYPE (ChattyMaAccountDetails, chatty_ma_account_details, CHATTY, MA_ACCOUNT_DETAILS, HdyPreferencesPage)
+G_DECLARE_FINAL_TYPE (ChattyMaAccountDetails, chatty_ma_account_details, CHATTY, MA_ACCOUNT_DETAILS, AdwPreferencesPage)
 
 GtkWidget       *chatty_ma_account_details_new      (void);
 void             chatty_ma_account_details_save_async  (ChattyMaAccountDetails *self,

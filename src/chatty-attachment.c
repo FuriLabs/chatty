@@ -14,6 +14,7 @@
 # include "config.h"
 #endif
 
+#include "gtk3-to-4.h"
 #include "chatty-utils.h"
 #include "chatty-attachment.h"
 #include "chatty-log.h"
@@ -35,6 +36,13 @@ typedef struct _AttachmentData {
   GtkWidget *image;
   GFile *file;
 } AttachmentData;
+
+enum {
+  DELETED,
+  N_SIGNALS
+};
+
+static guint signals[N_SIGNALS];
 
 static void attachment_data_free (AttachmentData *data);
 
@@ -81,20 +89,21 @@ attachment_update_image (ChattyAttachment *self,
     gtk_widget_set_margin_end (frame, 6);
     gtk_widget_set_margin_top (frame, 6);
     gtk_image_set_from_file (GTK_IMAGE (image), thumbnail);
-    gtk_container_add (GTK_CONTAINER (frame), image);
-    gtk_container_add (GTK_CONTAINER (self->overlay), frame);
+    gtk_image_set_pixel_size (GTK_IMAGE (image), 96);
+    gtk_frame_set_child (GTK_FRAME (frame), image);
+    gtk_overlay_set_child (GTK_OVERLAY (self->overlay), frame);
   } else {
     GIcon *icon;
 
     gtk_widget_set_margin_end (image, 6);
     icon = (GIcon *)g_file_info_get_attribute_object (file_info, G_FILE_ATTRIBUTE_STANDARD_ICON);
-    gtk_image_set_from_gicon (GTK_IMAGE (image), icon, GTK_ICON_SIZE_DND);
-    image = gtk_image_new_from_gicon (icon, GTK_ICON_SIZE_DND);
+    gtk_image_set_from_gicon (GTK_IMAGE (image), icon);
+    image = gtk_image_new_from_gicon (icon);
     gtk_image_set_pixel_size (GTK_IMAGE (image), 96);
-    gtk_container_add (GTK_CONTAINER (self->overlay), image);
+    gtk_overlay_set_child (GTK_OVERLAY (self->overlay), image);
   }
 
-  gtk_widget_show_all (self->overlay);
+  gtk_overlay_add_overlay (GTK_OVERLAY (self->overlay), self->remove_button);
 }
 
 static void
@@ -164,6 +173,14 @@ chatty_attachment_set_file (ChattyAttachment *self,
 }
 
 static void
+attachment_remove_clicked_cb (ChattyAttachment *self)
+{
+  g_assert (CHATTY_IS_ATTACHMENT (self));
+
+  g_signal_emit (self, signals[DELETED], 0);
+}
+
+static void
 chatty_attachment_finalize (GObject *object)
 {
   ChattyAttachment *self = (ChattyAttachment *)object;
@@ -181,12 +198,21 @@ chatty_attachment_class_init (ChattyAttachmentClass *klass)
 
   object_class->finalize = chatty_attachment_finalize;
 
+  signals [DELETED] =
+    g_signal_new ("deleted",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST,
+                  0, NULL, NULL, NULL,
+                  G_TYPE_NONE, 0);
+
   gtk_widget_class_set_template_from_resource (widget_class,
                                                "/sm/puri/Chatty/"
                                                "ui/chatty-attachment.ui");
 
   gtk_widget_class_bind_template_child (widget_class, ChattyAttachment, overlay);
   gtk_widget_class_bind_template_child (widget_class, ChattyAttachment, remove_button);
+
+  gtk_widget_class_bind_template_callback (widget_class, attachment_remove_clicked_cb);
 }
 
 static void

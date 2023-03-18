@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <gtk/gtk.h>
+#include <adwaita.h>
 
 #include "chatty-history.h"
 #include "chatty-chat.h"
@@ -19,7 +19,7 @@ G_BEGIN_DECLS
 
 #define CHATTY_TYPE_CHAT_VIEW (chatty_chat_view_get_type ())
 
-G_DECLARE_FINAL_TYPE (ChattyChatView, chatty_chat_view, CHATTY, CHAT_VIEW, GtkStack)
+G_DECLARE_FINAL_TYPE (ChattyChatView, chatty_chat_view, CHATTY, CHAT_VIEW, AdwBin)
 
 GtkWidget  *chatty_chat_view_new      (void);
 void        chatty_chat_view_set_chat (ChattyChatView *self,

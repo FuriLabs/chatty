@@ -14,7 +14,6 @@
 # include "config.h"
 #endif
 
-#include "contrib/gtk.h"
 #define CMATRIX_USE_EXPERIMENTAL_API
 #include "cmatrix.h"
 
@@ -132,7 +131,7 @@ chatty_matrix_init (ChattyMatrix *self)
   self->list_of_chat_list = g_list_store_new (G_TYPE_LIST_MODEL);
 
   model = G_LIST_MODEL (self->list_of_chat_list);
-  self->chat_list = gtk_flatten_list_model_new (CHATTY_TYPE_CHAT, model);
+  self->chat_list = gtk_flatten_list_model_new (g_object_ref (model));
 }
 
 ChattyMatrix *

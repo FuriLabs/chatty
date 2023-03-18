@@ -1,140 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="ChattySideBar" parent="GtkBox">
-    <property name="visible">1</property>
     <property name="orientation">vertical</property>
+    <property name="width-request">360</property>
 
     <child>
-      <object class="HdyHeaderBar" id="header_bar">
-        <property name="visible">1</property>
-        <property name="show-close-button">1</property>
-        <property name="title" translatable="yes">Chats</property>
+      <object class="AdwHeaderBar" id="header_bar">
+        <binding name="show-end-title-buttons">
+          <lookup name="folded" type="AdwLeaflet">
+            <lookup name="parent">ChattySideBar</lookup>
+          </lookup>
+        </binding>
+        <property name="title-widget">
+          <object class="AdwWindowTitle">
+            <property name="title" translatable="yes">Chats</property>
+          </object>
+        </property>
 
         <child>
           <object class="GtkButton" id="back_button">
-            <property name="can-focus">0</property>
-            <property name="receives-default">0</property>
+            <property name="visible">0</property>
+            <property name="icon-name">go-previous-symbolic</property>
+            <property name="tooltip-text" translatable="yes">Back</property>
             <signal name="clicked" handler="side_bar_back_clicked_cb" swapped="yes"/>
-            <child internal-child="accessible">
-              <object class="AtkObject">
-                <property name="accessible-name" translatable="yes">Back</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkImage">
-                <property name="visible">1</property>
-                <property name="icon-name">go-previous-symbolic</property>
-              </object>
-            </child>
           </object>
         </child>
 
         <child>
           <object class="GtkMenuButton" id="add_chat_button">
-            <property name="visible">1</property>
             <property name="sensitive">0</property>
-            <property name="can-focus">0</property>
-            <property name="receives-default">0</property>
+            <property name="tooltip-text" translatable="yes">Add Chat</property>
+            <property name="icon-name">list-add-symbolic</property>
             <property name="popover">new_message_popover</property>
-            <child internal-child="accessible">
-              <object class="AtkObject">
-                <property name="accessible-name" translatable="yes">Add Chat</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkImage">
-                <property name="visible">1</property>
-                <property name="icon-name">list-add-symbolic</property>
-              </object>
-            </child>
           </object>
         </child>
 
-        <child>
+        <child type="end">
           <object class="GtkMenuButton">
             <property name="visible" bind-source="add_chat_button" bind-property="visible" bind-flags="sync-create"/>
-            <property name="can-focus">0</property>
-            <property name="receives-default">0</property>
+            <property name="tooltip-text" translatable="yes">Menu</property>
+            <property name="icon-name">open-menu-symbolic</property>
             <property name="popover">main_menu_popover</property>
-            <child internal-child="accessible">
-              <object class="AtkObject">
-                <property name="accessible-name" translatable="yes">Menu</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkImage">
-                <property name="visible">1</property>
-                <property name="icon-name">open-menu-symbolic</property>
-              </object>
-            </child>
           </object>
-          <packing>
-            <property name="pack-type">end</property>
-          </packing>
         </child>
 
-        <child>
+        <child type="end">
           <object class="GtkToggleButton" id="search_button">
-            <property name="visible">1</property>
-            <property name="can-focus">0</property>
-            <property name="receives-default">0</property>
+            <property name="tooltip-text" translatable="yes">Search</property>
+            <property name="icon-name">system-search-symbolic</property>
             <property name="active" bind-source="chats_search_bar" bind-property="search-mode-enabled" bind-flags="sync-create|bidirectional"/>
-            <child internal-child="accessible">
-              <object class="AtkObject">
-                <property name="accessible-name" translatable="yes">Search</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkImage">
-                <property name="visible">1</property>
-                <property name="icon-name">system-search-symbolic</property>
-              </object>
-            </child>
           </object>
-          <packing>
-            <property name="pack-type">end</property>
-          </packing>
         </child>
-
       </object>
     </child>
 
-    <!-- Search bar -->
     <child>
-      <object class="HdySearchBar" id="chats_search_bar">
-        <property name="visible">1</property>
-        <property name="hexpand">False</property>
+      <object class="GtkSearchBar" id="chats_search_bar">
+        <property name="hexpand">0</property>
         <signal name="notify::search-mode-enabled" handler="side_bar_search_enable_changed_cb" swapped="yes"/>
         <child>
           <object class="GtkBox">
-            <property name="visible">True</property>
             <style>
-             <class name="linked"/>
+              <class name="linked"/>
             </style>
             <child>
-              <object class="GdTaggedEntry" id="chats_search_entry">
-                <property name="visible">1</property>
-                <property name="hexpand">True</property>
+              <!-- todo GdTaggedEntry -->
+              <object class="GtkSearchEntry" id="chats_search_entry">
+                <property name="hexpand">1</property>
                 <signal name="search-changed" handler="side_bar_search_changed_cb" swapped="yes"/>
-                <signal name="tag-button-clicked" handler="side_bar_search_tag_clicked_cb" swapped="yes"/>
+                <!-- <signal name="tag-button-clicked" handler="side_bar_search_tag_clicked_cb" swapped="yes"/> -->
                 <signal name="activate" handler="side_bar_search_entry_activated_cb" swapped="yes"/>
               </object>
             </child>
-            <child>
-              <object class="GtkMenuButton">
-                <property name="visible">1</property>
-                <property name="popover">protocol_list_popover</property>
-              </object>
-            </child>
+            <!-- <child>
+                 <object class="GtkMenuButton">
+                 <property name="popover">protocol_list_popover</property>
+                 </object>
+                 </child> -->
           </object>
         </child>
       </object>
     </child>
 
-    <!-- Chat list view -->
     <child>
       <object class="ChattyChatList" id="chat_list">
-        <property name="visible">1</property>
         <property name="hexpand">0</property>
         <property name="width_request">300</property>
         <signal name="selection-changed" handler="side_bar_chat_list_selection_changed_cb" swapped="yes"/>
@@ -143,11 +92,16 @@
 
   </template>
 
-  <object class="GtkPopoverMenu" id="main_menu_popover">
-    <child>
+  <object class="GtkPopover" id="main_menu_popover">
+    <style>
+      <class name="menu" />
+    </style>
+    <property name="child">
       <object class="GtkBox">
-        <property name="visible">1</property>
-        <property name="margin">12</property>
+        <property name="margin-start">6</property>
+        <property name="margin-end">6</property>
+        <property name="margin-top">6</property>
+        <property name="margin-bottom">6</property>
         <property name="orientation">vertical</property>
         <child>
           <object class="GtkModelButton">
@@ -176,7 +130,7 @@
           <object class="GtkModelButton">
             <property name="visible">1</property>
             <property name="text" translatable="yes">Help</property>
-	    <property name="action-name">app.help</property>
+            <property name="action-name">app.help</property>
           </object>
         </child>
         <child>
@@ -184,61 +138,56 @@
             <property name="visible">1</property>
             <property name="receives-default">0</property>
             <property name="text" translatable="yes">About Chats</property>
-	    <property name="action-name">app.about</property>
+            <property name="action-name">app.about</property>
           </object>
         </child>
       </object>
-    </child>
+    </property>
   </object>
 
-  <object class="GtkPopoverMenu" id="new_message_popover">
-    <property name="can-focus">0</property>
-    <property name="relative-to">add_chat_button</property>
-    <child>
+  <object class="GtkPopover" id="new_message_popover">
+    <style>
+      <class name="menu" />
+    </style>
+    <property name="child">
       <object class="GtkBox">
-        <property name="visible">1</property>
-        <property name="margin">12</property>
+        <property name="margin-start">6</property>
+        <property name="margin-end">6</property>
+        <property name="margin-top">6</property>
+        <property name="margin-bottom">6</property>
         <property name="orientation">vertical</property>
         <child>
           <object class="GtkModelButton" id="new_chat_button">
-            <property name="visible">1</property>
-            <property name="receives-default">0</property>
             <property name="text" translatable="yes">New Message…</property>
             <property name="action-name">win.new-chat</property>
           </object>
         </child>
         <child>
           <object class="GtkModelButton" id="new_sms_mms_button">
-            <property name="visible">1</property>
-            <property name="receives-default">0</property>
             <property name="text" translatable="yes">New SMS/MMS Message…</property>
             <property name="action-name">win.new-sms-mms</property>
           </object>
         </child>
         <child>
           <object class="GtkModelButton" id="new_group_chat_button">
-            <property name="visible">1</property>
-            <property name="receives-default">0</property>
             <property name="text" translatable="yes">New Group Message…</property>
             <property name="action-name">win.new-group-chat</property>
           </object>
         </child>
       </object>
-    </child>
+    </property>
   </object>
 
   <object class="GtkPopover" id="protocol_list_popover">
-    <property name="position">bottom</property>
     <style>
       <class name="no-padding"/>
     </style>
-    <child>
+    <property name="child">
       <object class="GtkListBox" id="protocol_list">
-        <property name="visible">1</property>
         <property name="selection-mode">none</property>
         <signal name="row-activated" handler="side_bar_protocol_changed_cb" swapped="yes"/>
       </object>
-    </child>
+    </property>
   </object>
 
 </interface>

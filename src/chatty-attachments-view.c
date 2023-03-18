@@ -14,6 +14,7 @@
 # include "config.h"
 #endif
 
+#include "gtk3-to-4.h"
 #include "chatty-file.h"
 #include "chatty-attachment.h"
 #include "chatty-attachments-view.h"
@@ -29,19 +30,43 @@ struct _ChattyAttachmentsView
 G_DEFINE_TYPE (ChattyAttachmentsView, chatty_attachments_view, GTK_TYPE_BOX)
 
 static void
-attachments_view_item_removed_cb (ChattyAttachmentsView *self,
-                                  GtkWidget             *child)
+chatty_attachments_view_class_init (ChattyAttachmentsViewClass *klass)
 {
-  g_autoptr(GList) children = NULL;
+}
+
+static void
+chatty_attachments_view_init (ChattyAttachmentsView *self)
+{
+  GtkStyleContext *st;
+
+  self->scrolled_window = gtk_scrolled_window_new ();
+  gtk_widget_set_size_request (self->scrolled_window, -1, 194);
+  gtk_widget_set_hexpand (self->scrolled_window, TRUE);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (self->scrolled_window),
+                                  GTK_POLICY_AUTOMATIC, GTK_POLICY_NEVER);
+
+  self->files_box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+  gtk_scrolled_window_set_child (GTK_SCROLLED_WINDOW (self->scrolled_window), self->files_box);
+  gtk_box_append (GTK_BOX (self), self->scrolled_window);
+
+  st = gtk_widget_get_style_context (self->scrolled_window);
+  gtk_style_context_add_class (st, "content");
+  gtk_style_context_add_class (st, "view");
+  gtk_style_context_add_class (st, "frame");
+}
+
+GtkWidget *
+chatty_attachments_view_new (void)
+{
+  return g_object_new (CHATTY_TYPE_ATTACHMENTS_VIEW, NULL);
+}
+
+static void
+chatty_attachemnts_view_update_view (ChattyAttachmentsView *self)
+{
   g_assert (CHATTY_IS_ATTACHMENTS_VIEW (self));
 
-  if (gtk_widget_in_destruction (GTK_WIDGET (self)))
-    return;
-
-  g_debug ("Remove file: %p", child);
-  children = gtk_container_get_children (GTK_CONTAINER (self->files_box));
-
-  if (!children || (children && !children->data)) {
+  if (!gtk_widget_get_first_child (self->files_box)) {
     GtkWidget *parent;
 
     parent = gtk_widget_get_parent (GTK_WIDGET (self));
@@ -53,50 +78,38 @@ attachments_view_item_removed_cb (ChattyAttachmentsView *self,
   }
 }
 
-static void
-chatty_attachments_view_class_init (ChattyAttachmentsViewClass *klass)
-{
-}
-
-static void
-chatty_attachments_view_init (ChattyAttachmentsView *self)
-{
-  GtkStyleContext *st;
-
-  self->scrolled_window = gtk_scrolled_window_new (NULL, NULL);
-  gtk_widget_set_size_request (self->scrolled_window, -1, 194);
-  gtk_widget_set_hexpand (self->scrolled_window, TRUE);
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (self->scrolled_window),
-                                  GTK_POLICY_AUTOMATIC, GTK_POLICY_NEVER);
-
-  self->files_box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
-  gtk_container_add (GTK_CONTAINER (self->scrolled_window), self->files_box);
-  gtk_container_add (GTK_CONTAINER (self), self->scrolled_window);
-  gtk_widget_show_all (GTK_WIDGET (self));
-
-  st = gtk_widget_get_style_context (self->scrolled_window);
-  gtk_style_context_add_class (st, "content");
-  gtk_style_context_add_class (st, "view");
-  gtk_style_context_add_class (st, "frame");
-
-  g_signal_connect_object (self->files_box, "remove",
-                           G_CALLBACK (attachments_view_item_removed_cb),
-                           self, G_CONNECT_SWAPPED | G_CONNECT_AFTER);
-}
-
-GtkWidget *
-chatty_attachments_view_new (void)
-{
-  return g_object_new (CHATTY_TYPE_ATTACHMENTS_VIEW, NULL);
-}
-
 void
 chatty_attachments_view_reset (ChattyAttachmentsView *self)
 {
+  GtkWidget *child;
+
   g_return_if_fail (CHATTY_IS_ATTACHMENTS_VIEW (self));
 
-  gtk_container_foreach (GTK_CONTAINER (self->files_box),
-                         (GtkCallback)gtk_widget_destroy, NULL);
+  do {
+    child = gtk_widget_get_first_child (GTK_WIDGET (self->files_box));
+
+    if (child)
+      gtk_box_remove (GTK_BOX (self->files_box), child);
+  } while (child);
+
+  chatty_attachemnts_view_update_view (self);
+}
+
+static void
+attachment_view_file_deleted_cb (ChattyAttachmentsView *self,
+                                 GtkWidget             *child)
+{
+  g_assert (CHATTY_IS_ATTACHMENTS_VIEW (self));
+  g_assert (GTK_IS_WIDGET (child));
+
+  if (gtk_widget_in_destruction (GTK_WIDGET (self)))
+    return;
+
+  gtk_box_remove (GTK_BOX (self->files_box), child);
+  chatty_attachemnts_view_update_view (self);
+
+  g_debug ("Remove file: %p", child);
+
 }
 
 void
@@ -111,8 +124,10 @@ chatty_attachments_view_add_file (ChattyAttachmentsView *self,
   child = chatty_attachment_new (file_path);
   g_debug ("Add file: %p", child);
 
-  gtk_widget_show_all (child);
-  gtk_container_add (GTK_CONTAINER (self->files_box), child);
+  gtk_box_append (GTK_BOX (self->files_box), child);
+  g_signal_connect_object (child, "deleted",
+                           G_CALLBACK (attachment_view_file_deleted_cb),
+                           self, G_CONNECT_SWAPPED);
 }
 
 /**
@@ -128,21 +143,24 @@ chatty_attachments_view_add_file (ChattyAttachmentsView *self,
 GList *
 chatty_attachments_view_get_files (ChattyAttachmentsView *self)
 {
-  g_autoptr(GList) children = NULL;
+  GtkWidget *child;
   GList *files = NULL;
 
   g_return_val_if_fail (CHATTY_IS_ATTACHMENTS_VIEW (self), NULL);
 
-  children = gtk_container_get_children (GTK_CONTAINER (self->files_box));
+  child = gtk_widget_get_first_child (self->files_box);
 
-  for (GList *child = children; child; child = child->next) {
-    ChattyFile *file;
-    const char *name;
+  while (child)
+    {
+      ChattyFile *file;
+      const char *name;
 
-    name = chatty_attachment_get_file (child->data);
-    file = chatty_file_new_for_path (name);
-    files = g_list_append (files, file);
-  }
+      name = chatty_attachment_get_file (CHATTY_ATTACHMENT (child));
+      file = chatty_file_new_for_path (name);
+      files = g_list_append (files, file);
+
+      child = gtk_widget_get_next_sibling (child);
+    }
 
   return files;
 }

@@ -1,90 +1,92 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="ChattyListRow" parent="GtkListBoxRow">
-    <property name="visible">True</property>
-    <child>
+    <property name="child">
       <object class="GtkGrid" id="content_grid">
-        <property name="visible">True</property>
-        <property name="margin">6</property>
-        <property name="column-spacing">9</property>
-        <property name="row-spacing">3</property>
+        <property name="margin-start">12</property>
+        <property name="margin-end">12</property>
+        <property name="margin-top">12</property>
+        <property name="margin-bottom">12</property>
+        <property name="column-spacing">12</property>
+        <property name="row-spacing">6</property>
+        <style>
+          <class name="conversation_list"/>
+        </style>
 
         <!-- Avatar -->
         <child>
           <object class="ChattyAvatar" id="avatar">
-            <property name="visible">True</property>
             <property name="valign">center</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="row">0</property>
+              <property name="row-span">2</property>
+            </layout>
           </object>
-          <packing>
-            <property name="left-attach">0</property>
-            <property name="top-attach">0</property>
-            <property name="height">2</property>
-          </packing>
         </child>
 
         <!-- Row title -->
         <child>
           <object class="GtkLabel" id="title">
-            <property name="visible">True</property>
             <property name="ellipsize">end</property>
-            <property name="hexpand">True</property>
+            <property name="hexpand">1</property>
             <property name="halign">start</property>
             <property name="xalign">0.0</property>
             <style>
               <class name="bold-label"/>
             </style>
+            <layout>
+              <property name="column">1</property>
+              <property name="row">0</property>
+            </layout>
           </object>
-          <packing>
-            <property name="left-attach">1</property>
-            <property name="top-attach">0</property>
-          </packing>
         </child>
 
         <!-- Time since/of last modification -->
         <child>
           <object class="GtkLabel" id="last_modified">
-            <property name="visible">False</property>
-            <attributes>
-              <attribute name="scale" value="0.7"/>
-            </attributes>
+            <property name="visible">0</property>
             <style>
+              <class name="caption"/>
               <class name="dim-label"/>
             </style>
+            <layout>
+              <property name="column">2</property>
+              <property name="row">0</property>
+            </layout>
           </object>
-          <packing>
-            <property name="left-attach">2</property>
-            <property name="top-attach">0</property>
-          </packing>
         </child>
 
         <!-- Subtitle -->
         <child>
           <object class="GtkLabel" id="subtitle">
-            <property name="visible">True</property>
             <property name="halign">start</property>
             <property name="ellipsize">end</property>
             <property name="xalign">0.0</property>
-            <property name="single-line-mode">True</property>
+            <property name="single-line-mode">1</property>
+            <style>
+              <class name="caption"/>
+            </style>
+            <layout>
+              <property name="column">1</property>
+              <property name="row">1</property>
+            </layout>
           </object>
-          <packing>
-            <property name="left-attach">1</property>
-            <property name="top-attach">1</property>
-          </packing>
         </child>
 
         <!-- Unread message count -->
         <child>
           <object class="GtkLabel" id="unread_message_count">
-            <property name="visible">False</property>
+            <property name="visible">0</property>
             <property name="halign">end</property>
             <style>
               <class name="unread-badge"/>
             </style>
+            <layout>
+              <property name="column">2</property>
+              <property name="row">1</property>
+            </layout>
           </object>
-          <packing>
-            <property name="left-attach">2</property>
-            <property name="top-attach">1</property>
-          </packing>
         </child>
 
         <!-- Checkbox -->
@@ -92,10 +94,10 @@
           <object class="GtkCheckButton" id="checkbox">
             <property name="visible">0</property>
             <property name="sensitive">0</property>
+            <layout>
+              <property name="row-span">2</property>
+            </layout>
           </object>
-          <packing>
-            <property name="height">2</property>
-          </packing>
         </child>
 
         <!-- Close Button -->
@@ -109,63 +111,44 @@
             </style>
             <child>
               <object class="GtkImage">
-                <property name="visible">True</property>
                 <property name="width-request">32</property>
                 <property name="height-request">32</property>
                 <property name="icon_name">edit-delete-symbolic</property>
               </object>
             </child>
+            <layout>
+              <property name="row-span">2</property>
+            </layout>
           </object>
-          <packing>
-            <property name="height">2</property>
-          </packing>
         </child>
 
         <!-- Add Contact -->
         <child>
           <object class="GtkButton" id="add_contact_button">
             <property name="visible">0</property>
-            <property name="sensitive">1</property>
             <property name="valign">center</property>
+            <property name="icon_name">contact-new-symbolic</property>
             <signal name="clicked" handler="chatty_list_row_add_contact_clicked_cb" swapped="yes"/>
-            <child>
-              <object class="GtkImage">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="icon_name">contact-new-symbolic</property>
-              </object>
-            </child>
+            <layout>
+              <property name="row-span">2</property>
+            </layout>
           </object>
-          <packing>
-            <property name="height">2</property>
-          </packing>
         </child>
 
         <child>
           <object class="GtkButton" id="call_button">
-            <property name="visible">False</property>
-            <property name="can-focus">False</property>
-            <property name="receives-default">False</property>
+            <property name="visible">0</property>
             <property name="valign">center</property>
+            <property name="icon-name">call-start-symbolic</property>
+            <property name="tooltip-text" translatable="yes">Call</property>
             <signal name="clicked" handler="chatty_list_row_call_button_clicked_cb" swapped="yes"/>
-            <child internal-child="accessible">
-              <object class="AtkObject">
-                <property name="accessible-name" translatable="yes">Call</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkImage">
-                <property name="visible">True</property>
-                <property name="icon-name">call-start-symbolic</property>
-              </object>
-            </child>
+            <layout>
+              <property name="row-span">2</property>
+            </layout>
           </object>
-          <packing>
-            <property name="height">2</property>
-          </packing>
         </child>
 
       </object>
-    </child>
+    </property>
   </template>
 </interface>

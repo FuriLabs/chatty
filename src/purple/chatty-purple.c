@@ -17,9 +17,9 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 #include <purple.h>
-#include "contrib/gtk.h"
 #include "xeps/xeps.h"
 
+#include "gtk3-to-4.h"
 #include "chatty-settings.h"
 #include "chatty-pp-buddy.h"
 #include "chatty-pp-account.h"
@@ -185,14 +185,13 @@ PurpleEventLoopUiOps eventloop_ui_ops =
 static int
 run_dialog_and_destroy (GtkDialog *dialog)
 {
-  int response;
+  int response = 0;
 
   gtk_dialog_set_default_response (dialog, GTK_RESPONSE_CANCEL);
-  gtk_window_set_position (GTK_WINDOW (dialog), GTK_WIN_POS_CENTER_ON_PARENT);
 
   response = gtk_dialog_run (dialog);
 
-  gtk_widget_destroy (GTK_WIDGET (dialog));
+  gtk_window_destroy (GTK_WINDOW (dialog));
 
   return response;
 }
@@ -1822,8 +1821,7 @@ chatty_purple_init (ChattyPurple *self)
 
   self->accounts = g_list_store_new (CHATTY_TYPE_ACCOUNT);
   self->list_of_user_list = g_list_store_new (G_TYPE_LIST_MODEL);
-  self->users_list = gtk_flatten_list_model_new (CHATTY_TYPE_ITEM,
-                                                 G_LIST_MODEL (self->list_of_user_list));
+  self->users_list = gtk_flatten_list_model_new (g_object_ref (G_LIST_MODEL (self->list_of_user_list)));
   self->chat_list = g_list_store_new (CHATTY_TYPE_CHAT);
 }
 

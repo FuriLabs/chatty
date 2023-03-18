@@ -13,8 +13,8 @@
 #endif
 
 #include <glib/gi18n.h>
-#include <handy.h>
 
+#include "gtk3-to-4.h"
 #include "chatty-chat.h"
 #include "chatty-ma-key-chat.h"
 #include "chatty-mm-chat.h"
@@ -30,13 +30,13 @@
 #define DEFAULT_SIZE 32
 struct _ChattyAvatar
 {
-  GtkBin      parent_instance;
+  AdwBin      parent_instance;
 
   GtkWidget  *avatar;
   ChattyItem *item;
 };
 
-G_DEFINE_TYPE (ChattyAvatar, chatty_avatar, GTK_TYPE_BIN)
+G_DEFINE_TYPE (ChattyAvatar, chatty_avatar, ADW_TYPE_BIN)
 
 enum {
   PROP_0,
@@ -49,17 +49,22 @@ static GParamSpec *properties[N_PROPS];
 static void
 avatar_changed_cb (ChattyAvatar *self)
 {
-  GLoadableIcon *avatar = NULL;
+  GdkPixbuf *avatar = NULL;
 
   g_assert (CHATTY_IS_AVATAR (self));
 
   if (self->item)
-    avatar = (GLoadableIcon *)chatty_item_get_avatar (self->item);
+    avatar = chatty_item_get_avatar (self->item);
 
-  if (CHATTY_IS_MA_KEY_CHAT (self->item))
-    hdy_avatar_set_icon_name (HDY_AVATAR (self->avatar), "system-lock-screen-symbolic");
-  else
-    hdy_avatar_set_loadable_icon (HDY_AVATAR (self->avatar), avatar);
+  if (CHATTY_IS_MA_KEY_CHAT (self->item)) {
+    adw_avatar_set_icon_name (ADW_AVATAR (self->avatar), "system-lock-screen-symbolic");
+  } else {
+    g_autoptr(GdkTexture) texture = NULL;
+
+    if (avatar)
+      texture = gdk_texture_new_for_pixbuf (avatar);
+    adw_avatar_set_custom_image (ADW_AVATAR (self->avatar), (GdkPaintable *) texture);
+  }
 }
 
 static void
@@ -69,14 +74,14 @@ item_name_changed_cb (ChattyAvatar *self)
       !chatty_contact_is_dummy (CHATTY_CONTACT (self->item)))
     chatty_avatar_set_title (self, chatty_item_get_name (self->item));
 
-  hdy_avatar_set_show_initials (HDY_AVATAR (self->avatar), !CHATTY_IS_MA_KEY_CHAT (self->item));
+  adw_avatar_set_show_initials (ADW_AVATAR (self->avatar), !CHATTY_IS_MA_KEY_CHAT (self->item));
 
   if (CHATTY_IS_MM_CHAT (self->item)) {
     gboolean has_name;
 
     has_name = !g_str_equal (chatty_item_get_name (self->item),
                              chatty_chat_get_chat_name (CHATTY_CHAT (self->item)));
-    hdy_avatar_set_show_initials (HDY_AVATAR (self->avatar), has_name);
+    adw_avatar_set_show_initials (ADW_AVATAR (self->avatar), has_name);
   }
 }
 
@@ -91,7 +96,7 @@ chatty_avatar_set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_SIZE:
-      hdy_avatar_set_size (HDY_AVATAR (self->avatar), g_value_get_int (value));
+      adw_avatar_set_size (ADW_AVATAR (self->avatar), g_value_get_int (value));
       break;
 
     default:
@@ -130,12 +135,12 @@ chatty_avatar_class_init (ChattyAvatarClass *klass)
 static void
 chatty_avatar_init (ChattyAvatar *self)
 {
-  self->avatar = g_object_new (HDY_TYPE_AVATAR,
+  self->avatar = g_object_new (ADW_TYPE_AVATAR,
                                "visible", TRUE,
                                "show-initials", TRUE,
                                NULL);
 
-  gtk_container_add (GTK_CONTAINER (self), self->avatar);
+  adw_bin_set_child (ADW_BIN (self), self->avatar);
 }
 
 /**
@@ -163,7 +168,7 @@ chatty_avatar_set_title (ChattyAvatar *self,
       g_strcmp0 (chatty_item_get_name (self->item), _("Send To")) == 0)
     title = "+";
 
-  hdy_avatar_set_text (HDY_AVATAR (self->avatar), title);
+  adw_avatar_set_text (ADW_AVATAR (self->avatar), title);
 }
 
 void

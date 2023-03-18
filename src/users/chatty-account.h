@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <handy.h>
+#include <gtk/gtk.h>
 
 #include "chatty-item.h"
 #include "chatty-enums.h"
@@ -44,7 +44,7 @@ struct _ChattyAccountClass
                                          gboolean       remember);
   void         (*save)                  (ChattyAccount *self);
   void         (*delete)                (ChattyAccount *self);
-  HdyValueObject *(*get_device_fp)      (ChattyAccount *self);
+  GtkStringObject *(*get_device_fp)      (ChattyAccount *self);
   GListModel  *(*get_fp_list)           (ChattyAccount *self);
   void         (*load_fp_async)         (ChattyAccount *self,
                                          GAsyncReadyCallback callback,
@@ -95,7 +95,7 @@ void          chatty_account_set_remember_password (ChattyAccount *self,
                                                     gboolean       remember);
 void          chatty_account_save                  (ChattyAccount *self);
 void          chatty_account_delete                (ChattyAccount *self);
-HdyValueObject *chatty_account_get_device_fp       (ChattyAccount *self);
+GtkStringObject *chatty_account_get_device_fp       (ChattyAccount *self);
 GListModel   *chatty_account_get_fp_list           (ChattyAccount *self);
 void          chatty_account_load_fp_async         (ChattyAccount *self,
                                                     GAsyncReadyCallback callback,

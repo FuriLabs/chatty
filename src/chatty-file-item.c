@@ -12,6 +12,7 @@
 
 #include <glib/gi18n.h>
 
+#include "gtk3-to-4.h"
 #include "chatty-enums.h"
 #include "chatty-file.h"
 #include "chatty-chat-view.h"
@@ -22,7 +23,7 @@
 
 struct _ChattyFileItem
 {
-  GtkEventBox    parent_instance;
+  AdwBin         parent_instance;
 
   GtkWidget     *file_overlay;
   GtkWidget     *progress_button;
@@ -33,7 +34,7 @@ struct _ChattyFileItem
   ChattyFile    *file;
 };
 
-G_DEFINE_TYPE (ChattyFileItem, chatty_file_item, GTK_TYPE_EVENT_BOX)
+G_DEFINE_TYPE (ChattyFileItem, chatty_file_item, ADW_TYPE_BIN)
 
 
 static void
@@ -106,23 +107,33 @@ file_progress_button_action_clicked_cb (ChattyFileItem *self)
 }
 
 static void
-file_item_activate_gesture_cb (ChattyFileItem *self)
+file_item_button_clicked (ChattyFileItem *self)
 {
   g_autoptr(GFile) file = NULL;
   g_autofree char *uri = NULL;
+  GList *file_list;
   const char *path;
 
   g_assert (CHATTY_IS_FILE_ITEM (self));
   g_assert (self->file);
 
-  path = chatty_file_get_path (self->file);
+  file_list = chatty_message_get_files (self->message);
+
+  if (!file_list || !file_list->data)
+    return;
+
+  path = chatty_file_get_path (file_list->data);
   if (!path)
     return;
 
-  file = g_file_new_build_filename (g_get_user_data_dir (), "chatty", path, NULL);
+  if (chatty_message_get_cm_event (self->message))
+    file = g_file_new_build_filename (path, NULL);
+  else
+    file = g_file_new_build_filename (g_get_user_data_dir (), "chatty", path, NULL);
+
   uri = g_file_get_uri (file);
 
-  gtk_show_uri_on_window (NULL, uri, GDK_CURRENT_TIME, NULL);
+  gtk_show_uri (NULL, uri, GDK_CURRENT_TIME);
 }
 
 static void
@@ -153,6 +164,7 @@ chatty_file_item_class_init (ChattyFileItemClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyFileItem, file_title);
 
   gtk_widget_class_bind_template_callback (widget_class, file_progress_button_action_clicked_cb);
+  gtk_widget_class_bind_template_callback (widget_class, file_item_button_clicked);
 
   g_type_ensure (CHATTY_TYPE_PROGRESS_BUTTON);
 }
@@ -161,11 +173,6 @@ static void
 chatty_file_item_init (ChattyFileItem *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
-
-  self->activate_gesture = gtk_gesture_multi_press_new (GTK_WIDGET (self));
-  gtk_gesture_single_set_button (GTK_GESTURE_SINGLE (self->activate_gesture), GDK_BUTTON_PRIMARY);
-  g_signal_connect_swapped (self->activate_gesture, "pressed",
-                            G_CALLBACK (file_item_activate_gesture_cb), self);
 }
 
 GtkWidget *
