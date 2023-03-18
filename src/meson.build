@@ -42,6 +42,7 @@ libsrc += [
   'chatty-selectable-row.c',
   'chatty-fp-row.c',
   'chatty-file.c',
+  'gtk3-to-4.c',
   'chatty-attachment.c',
   'chatty-attachments-view.c',
   'chatty-list-row.c',
