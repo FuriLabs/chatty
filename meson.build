@@ -12,10 +12,12 @@ top_inc = include_directories('.')
 src_inc = []
 
 purple_dep = dependency('purple', required: get_option('purple'))
+libgdesktop_dep = dependency('gnome-desktop-4', required: false)
 
 config_h = configuration_data()
 config_h.set10('HAVE_EXPLICIT_BZERO', cc.has_function('explicit_bzero'))
 config_h.set('PURPLE_ENABLED', purple_dep.found())
+config_h.set('HAVE_GNOME_DESKTOP4', libgdesktop_dep.found())
 config_h.set_quoted('GETTEXT_PACKAGE', 'purism-chatty')
 config_h.set_quoted('LOCALEDIR', join_paths(get_option('prefix'), get_option('localedir')))
 config_h.set_quoted('PACKAGE_NAME', meson.project_name())
