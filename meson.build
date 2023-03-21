@@ -99,13 +99,6 @@ configure_file(
 libebook_dep = dependency('libebook-contacts-1.2')
 libfeedback_dep = dependency('libfeedback-0.0')
 libm_dep = cc.find_library('m')
-libgd = subproject('libgd',
-                   default_options: [
-                     'with-tagged-entry=true',
-                     'static=true'
-                   ])
-
-libgd_dep = libgd.get_variable('libgd_dep')
 
 libcmatrix = subproject('libcmatrix',
                         default_options: [
