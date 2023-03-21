@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
+  <gresource prefix="/sm/puri/Chatty/icons/scalable/actions/">
+    <file preprocess="xml-stripblanks" alias="send-symbolic.svg">icons/send-symbolic.svg</file>
+    <file preprocess="xml-stripblanks" alias="send-encrypted-symbolic.svg">icons/send-encrypted-symbolic.svg</file>
+  </gresource>
+
   <gresource prefix="/sm/puri/Chatty">
     <file preprocess="xml-stripblanks" alias="gtk/help-overlay.ui">ui/help-overlay.ui</file>
     <file preprocess="xml-stripblanks">ui/chatty-selectable-row.ui</file>
@@ -28,10 +33,6 @@
     <file preprocess="xml-stripblanks">ui/chatty-dialog-new-chat.ui</file>
     <file preprocess="xml-stripblanks">ui/chatty-dialog-join-muc.ui</file>
     <file preprocess="xml-stripblanks">ui/chatty-window.ui</file>
-    <file preprocess="xml-stripblanks">icons/eye-not-looking-symbolic.svg</file>
-    <file preprocess="xml-stripblanks">icons/eye-open-negative-filled-symbolic.svg</file>
-    <file preprocess="xml-stripblanks">icons/send-symbolic.svg</file>
-    <file preprocess="xml-stripblanks">icons/send-encrypted-symbolic.svg</file>
     <file alias="style.css">css/style.css</file>
   </gresource>
   <gresource>
