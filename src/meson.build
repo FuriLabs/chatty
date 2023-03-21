@@ -21,16 +21,6 @@ if purple_dep.found()
 endif
 
 libsrc += [
-  # 'contrib/gtktypebuiltins.c',
-  # 'contrib/gtkflattenlistmodel.c',
-  # 'contrib/gtkrbtree.c',
-  # 'contrib/gtkfilter.c',
-  # 'contrib/gtkcustomfilter.c',
-  # 'contrib/gtkfilterlistmodel.c',
-  # 'contrib/gtksorter.c',
-  # 'contrib/gtkcustomsorter.c',
-  # 'contrib/gtksortlistmodel.c',
-  # 'contrib/gtkslicelistmodel.c',
   'dialogs/chatty-ma-account-details.c',
   'dialogs/chatty-pp-account-details.c',
   'dialogs/chatty-chat-info.c',
