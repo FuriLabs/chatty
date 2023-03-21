@@ -749,7 +749,7 @@ chatty_mmsd_process_mms_message_attachments (GList **filesp)
     }
 
     /* If an MMS has a message, it tends to be the first text/plain attachment */
-    if (!content_set && g_str_match_string ("text/plain", chatty_file_get_mime_type (attachment), TRUE)) {
+    if (!content_set && g_str_has_prefix (chatty_file_get_mime_type (attachment), "text/plain")) {
       g_autoptr(GFile) text_file = NULL;
       g_autofree char *contents = NULL;
       g_autoptr(GError) error = NULL;
