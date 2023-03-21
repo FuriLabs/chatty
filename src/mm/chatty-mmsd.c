@@ -1134,13 +1134,12 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
                                          NULL,
                                          &error);
 
-    if (error != NULL) {
-      g_clear_error (&error);
-      file_mime_type = g_strdup (mimetype);
-    } else if (file_mime_type && g_str_has_prefix (file_mime_type, "text/plain")) {
+
+    if (mimetype && g_str_has_prefix (mimetype, "text/plain")) {
       /* If the MMS reports the attachment is text/plain, trust it */
       file_mime_type = g_strdup (mimetype);
-    } else if (g_file_info_get_content_type (attachment_info) == NULL) {
+    } else if (error != NULL || g_file_info_get_content_type (attachment_info) == NULL) {
+      g_clear_error (&error);
       /* If we can't figure out content type, do not trust what the MMS tells it is */
       file_mime_type = g_strdup ("application/octet-stream");
     } else {
