@@ -21,6 +21,7 @@ if purple_dep.found()
 endif
 
 libsrc += [
+  'contrib/demotaggedentry.c',
   'dialogs/chatty-ma-account-details.c',
   'dialogs/chatty-pp-account-details.c',
   'dialogs/chatty-chat-info.c',

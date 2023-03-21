@@ -34,4 +34,7 @@
     <file preprocess="xml-stripblanks">icons/send-encrypted-symbolic.svg</file>
     <file alias="style.css">css/style.css</file>
   </gresource>
+  <gresource>
+    <file alias="/tagged_entry/tagstyle.css">contrib/tagstyle.css</file>
+  </gresource>
 </gresources>
