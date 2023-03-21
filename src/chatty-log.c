@@ -25,6 +25,7 @@ gboolean any_domain;
 gboolean no_anonymize;
 gboolean stderr_is_journal;
 gboolean fatal_criticals, fatal_warnings;
+gboolean enable_trace;
 
 /* Copied from GLib, LGPLv2.1+ */
 static void
@@ -348,6 +349,56 @@ chatty_log_finalize (void)
   g_clear_pointer (&domains, g_free);
 }
 
+static void
+show_backtrace (int signum)
+{
+  /* Log only if we have set some verbosity so that the trace
+   * shall be shown only if the user have explicitly asked for.
+   * Thus avoid logging sensitive information to system log
+   * without user's knowledge.
+   */
+  if (chatty_log_get_verbosity () > 0)
+    g_on_error_stack_trace (g_get_prgname ());
+
+  g_print ("signum %d: %s\n", signum, g_strsignal (signum));
+
+  exit (128 + signum);
+}
+
+static void
+enable_backtrace (void)
+{
+  const char *env;
+
+  env = g_getenv ("LD_PRELOAD");
+
+  if (enable_trace)
+    return;
+
+  /* Don't log backtrace if run inside valgrind */
+  if (env && (strstr (env, "/valgrind/") || strstr (env, "/vgpreload")))
+    return;
+
+  enable_trace = TRUE;
+  signal (SIGABRT, show_backtrace);
+  signal (SIGTRAP, show_backtrace);
+
+#ifndef __has_feature
+#  define __has_feature(x) (0)
+#endif
+
+#if __has_feature (address_sanitizer) ||        \
+  defined(__SANITIZE_ADDRESS__) ||              \
+  defined(__SANITIZE_THREAD__)
+  return;
+#endif
+
+  /* Trap SIGSEGV only if not compiled with sanitizers */
+  /* as sanitizers shall handle this better. */
+  /* fixme: How to check if leak sanitizer is enabled? */
+  signal (SIGSEGV, show_backtrace);
+}
+
 void
 chatty_log_init (void)
 {
@@ -386,6 +437,7 @@ void
 chatty_log_increase_verbosity (void)
 {
   verbosity++;
+  enable_backtrace ();
 }
 
 int
