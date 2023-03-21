@@ -397,9 +397,6 @@ chatty_application_startup (GApplication *application)
 
   g_info ("%s %s, git version: %s", PACKAGE_NAME, PACKAGE_VERSION, GIT_VERSION);
 
-  adw_init ();
-  adw_style_manager_set_color_scheme (adw_style_manager_get_default (),
-                                      ADW_COLOR_SCHEME_PREFER_LIGHT);
   cm_init (TRUE);
 
   g_set_application_name (_("Chats"));
