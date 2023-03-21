@@ -64,19 +64,16 @@
               <class name="linked"/>
             </style>
             <child>
-              <!-- todo GdTaggedEntry -->
-              <object class="GtkSearchEntry" id="chats_search_entry">
+              <object class="DemoTaggedEntry" id="chats_search_entry">
                 <property name="hexpand">1</property>
-                <signal name="search-changed" handler="side_bar_search_changed_cb" swapped="yes"/>
-                <!-- <signal name="tag-button-clicked" handler="side_bar_search_tag_clicked_cb" swapped="yes"/> -->
-                <signal name="activate" handler="side_bar_search_entry_activated_cb" swapped="yes"/>
+                <signal name="changed" handler="side_bar_search_changed_cb" swapped="yes"/>
               </object>
             </child>
-            <!-- <child>
-                 <object class="GtkMenuButton">
-                 <property name="popover">protocol_list_popover</property>
-                 </object>
-                 </child> -->
+            <child>
+              <object class="GtkMenuButton">
+                <property name="popover">protocol_list_popover</property>
+              </object>
+            </child>
           </object>
         </child>
       </object>

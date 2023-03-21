@@ -13,6 +13,7 @@
 #include <adwaita.h>
 #include <glib/gi18n.h>
 
+#include "contrib/contrib.h"
 #include "gtk3-to-4.h"
 #include "chatty-manager.h"
 #include "chatty-mm-account.h"
@@ -45,7 +46,7 @@ struct _ChattySideBar
   GtkWidget         *protocol_list;
   GtkWidget         *protocol_any_row;
 
-  /* GdTaggedEntryTag  *protocol_tag; */
+  DemoTaggedEntryTag *protocol_tag;
 
   GtkWidget         *selected_protocol_row;
   ChattyProtocol     protocol_filter;
@@ -120,12 +121,12 @@ side_bar_search_enable_changed_cb (ChattySideBar *self)
 
   g_assert (CHATTY_IS_SIDE_BAR (self));
 
-  /* enabled = adw_search_bar_get_search_mode (ADW_SEARCH_BAR (self->chats_search_bar)); */
+  enabled = gtk_search_bar_get_search_mode (GTK_SEARCH_BAR (self->chats_search_bar));
 
-  /* /\* Reset protocol filter *\/ */
-  /* if (!enabled && */
-  /*     self->protocol_any_row != self->selected_protocol_row) */
-  /*   gtk_widget_activate (self->protocol_any_row); */
+  /* Reset protocol filter */
+  if (!enabled &&
+      self->protocol_any_row != self->selected_protocol_row)
+    gtk_widget_activate (self->protocol_any_row);
 }
 
 static void
@@ -133,29 +134,10 @@ side_bar_search_changed_cb (ChattySideBar *self,
                             GtkEntry      *entry)
 {
   g_assert (CHATTY_IS_SIDE_BAR (self));
-  g_assert (GTK_IS_ENTRY (entry));
+  g_assert (GTK_IS_EDITABLE (entry));
 
   chatty_chat_list_filter_string (CHATTY_CHAT_LIST (self->chat_list),
                                   gtk_editable_get_text (GTK_EDITABLE (entry)));
-}
-
-static void
-side_bar_search_tag_clicked_cb (ChattySideBar    *self/* , */
-                                /* GdTaggedEntryTag *tag, */
-                                /* GdTaggedEntry    *entry */)
-{
-  g_assert (CHATTY_IS_SIDE_BAR (self));
-  /* g_assert (GD_TAGGED_ENTRY_TAG (tag)); */
-
-  /* gtk_widget_activate (self->protocol_any_row); */
-}
-
-static void
-side_bar_search_entry_activated_cb (ChattySideBar *self)
-{
-  g_assert (CHATTY_IS_SIDE_BAR (self));
-
-  chatty_chat_list_select_first (CHATTY_CHAT_LIST (self->chat_list));
 }
 
 static void
@@ -173,33 +155,34 @@ side_bar_protocol_changed_cb (ChattySideBar *self,
                               GtkWidget     *selected_row,
                               GtkListBox    *box)
 {
-  /* GdTaggedEntry *entry; */
+  DemoTaggedEntry *entry;
   GtkWidget *old_row;
 
   g_assert (CHATTY_IS_SIDE_BAR (self));
   g_assert (GTK_IS_LIST_BOX (box));
 
-  /* entry = GD_TAGGED_ENTRY (self->chats_search_entry); */
-  /* old_row = self->selected_protocol_row; */
+  entry = DEMO_TAGGED_ENTRY (self->chats_search_entry);
+  old_row = self->selected_protocol_row;
 
-  /* if (old_row == selected_row) */
-  /*   return; */
+  if (old_row == selected_row)
+    return;
 
-  /* self->protocol_filter = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (selected_row), "protocol")); */
-  /* chatty_chat_list_filter_protocol (CHATTY_CHAT_LIST (self->chat_list), self->protocol_filter); */
-  /* chatty_selectable_row_set_selected (CHATTY_SELECTABLE_ROW (old_row), FALSE); */
-  /* chatty_selectable_row_set_selected (CHATTY_SELECTABLE_ROW (selected_row), TRUE); */
-  /* self->selected_protocol_row = selected_row; */
+  self->protocol_filter = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (selected_row), "protocol"));
+  chatty_chat_list_filter_protocol (CHATTY_CHAT_LIST (self->chat_list), self->protocol_filter);
+  chatty_selectable_row_set_selected (CHATTY_SELECTABLE_ROW (old_row), FALSE);
+  chatty_selectable_row_set_selected (CHATTY_SELECTABLE_ROW (selected_row), TRUE);
+  self->selected_protocol_row = selected_row;
 
-  /* if (selected_row == self->protocol_any_row) { */
-  /*   gd_tagged_entry_remove_tag (entry, self->protocol_tag); */
-  /* } else { */
-  /*   const char *title; */
+  if (selected_row == self->protocol_any_row) {
+    demo_tagged_entry_remove_tag (entry, GTK_WIDGET (self->protocol_tag));
+  } else {
+    const char *title;
 
-  /*   gd_tagged_entry_add_tag (entry, self->protocol_tag); */
-  /*   title = chatty_selectable_row_get_title (CHATTY_SELECTABLE_ROW (selected_row)); */
-  /*   gd_tagged_entry_tag_set_label (self->protocol_tag, title); */
-  /* } */
+    if (!gtk_widget_get_parent (GTK_WIDGET (self->protocol_tag)))
+      demo_tagged_entry_add_tag (entry, GTK_WIDGET (self->protocol_tag));
+    title = chatty_selectable_row_get_title (CHATTY_SELECTABLE_ROW (selected_row));
+    demo_tagged_entry_tag_set_label (self->protocol_tag, title);
+  }
 }
 
 static void
@@ -231,7 +214,7 @@ chatty_side_bar_finalize (GObject *object)
 {
   ChattySideBar *self = (ChattySideBar *)object;
 
-  /* g_clear_object (&self->protocol_tag); */
+  g_clear_object (&self->protocol_tag);
 
   G_OBJECT_CLASS (chatty_side_bar_parent_class)->finalize (object);
 }
@@ -279,8 +262,6 @@ chatty_side_bar_class_init (ChattySideBarClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, side_bar_back_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, side_bar_search_enable_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, side_bar_search_changed_cb);
-  gtk_widget_class_bind_template_callback (widget_class, side_bar_search_tag_clicked_cb);
-  gtk_widget_class_bind_template_callback (widget_class, side_bar_search_entry_activated_cb);
   gtk_widget_class_bind_template_callback (widget_class, side_bar_chat_list_selection_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, side_bar_protocol_changed_cb);
 
@@ -331,8 +312,8 @@ chatty_side_bar_init (ChattySideBar *self)
   gtk_list_box_set_header_func (GTK_LIST_BOX (self->protocol_list),
                                 protocol_list_header_func,
                                 NULL, NULL);
-  /* self->protocol_tag = gd_tagged_entry_tag_new (""); */
-  /* gd_tagged_entry_tag_set_style (self->protocol_tag, "protocol-tag"); */
+  self->protocol_tag = demo_tagged_entry_tag_new ("");
+  g_object_ref_sink (self->protocol_tag);
 
   side_bar_add_selectable_row (self, _("Any Protocol"), CHATTY_PROTOCOL_ANY, TRUE);
   side_bar_add_selectable_row (self, _("Matrix"), CHATTY_PROTOCOL_MATRIX, FALSE);
