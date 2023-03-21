@@ -988,6 +988,8 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
     g_autofree char *filename = NULL;
     g_autofree char *mimetype = NULL;
     g_autofree char *file_mime_type = NULL;
+    g_autofree char *attachment_file_uri = NULL;
+    g_autofree char *attachment_file_relative_path = NULL;
     gulong size, data;
     gsize length, written = 0;
     g_autoptr(GError) error = NULL;
@@ -1037,6 +1039,8 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
       /* create a file containing the smil */
       if (smil != NULL) {
         size_t smil_size = strlen (smil);
+        g_autofree char *smil_file_uri = NULL;
+        g_autofree char *smil_file_relative_path = NULL;
 
         new = g_file_get_child (savepath, "mms.smil");
         out = g_file_create (new, G_FILE_CREATE_PRIVATE, NULL, &error);
@@ -1075,9 +1079,12 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
         if (out)
           g_output_stream_close (G_OUTPUT_STREAM (out), NULL, NULL);
 
+        smil_file_uri = g_file_get_uri (new);
+        smil_file_relative_path = g_file_get_relative_path (parent, new);
+
         attachment = chatty_file_new_full ("mms.smil",
-                                           g_file_get_uri (new),
-                                           g_file_get_relative_path (parent, new),
+                                           smil_file_uri,
+                                           smil_file_relative_path,
                                            "application/smil",
                                            written, 0, 0, 0);
         chatty_file_set_status (attachment, CHATTY_FILE_DOWNLOADED);
@@ -1152,9 +1159,12 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
       }
     }
 
+    attachment_file_uri = g_file_get_uri (new);
+    attachment_file_relative_path = g_file_get_relative_path (parent, new);
+
     attachment = chatty_file_new_full (filename,
-                                       g_file_get_uri (new),
-                                       g_file_get_relative_path (parent, new),
+                                       attachment_file_uri,
+                                       attachment_file_relative_path,
                                        file_mime_type,
                                        written, 0, 0, 0);
     chatty_file_set_status (attachment, CHATTY_FILE_DOWNLOADED);
