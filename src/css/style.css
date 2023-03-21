@@ -153,6 +153,6 @@ button.delete-button {
 }
 
 .no-margin,
-.no-margin > scrolledwindow > viewport > clamp {
+preferencespage.no-margin > scrolledwindow > viewport > clamp > box {
   margin: 0;
 }
