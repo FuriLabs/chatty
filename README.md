@@ -5,12 +5,19 @@ A libpurple messaging client
 
 ## Build and install
 
+### Getting the source
+
+```sh
+git clone https://source.puri.sm/Librem5/chatty
+cd chatty/
+```
+
 ### Install dependencies
 
 On a Debian based system run
 
 ``` bash
-    sudo apt-get -y install build-essential
+    sudo apt-get -y install build-essential ccache
     sudo apt-get -y build-dep .
 ```
 
@@ -18,12 +25,15 @@ For an explicit list of dependencies check the Build-Depends entry in the
 [debian/control](https://source.puri.sm/Librem5/chatty/blob/master/debian/control#5)
 file.
 
-Libhandy (libhandy-1-dev) is available in [PureOS][0] and  Debian's
-[experimental distribution][1].  If you don't want to fetch it from there you
-can [build it from souce][2].
+Plugins are optional and can be often insalled from your distribution sources.
+Installation from source is required only if you want to debug the plugin itself,
+or you have any reason to do so.
 
-### Build and install the 'carbons' plugin
-Message synchronization between devices according to XEP-0280
+### Build and install the 'carbons' plugin (Optional)
+Message synchronization between devices according to XEP-0280.
+On Debian and derivates you can install `purple-xmpp-carbons` package.
+
+To build from source, run:
 
 ``` bash
 git clone https://github.com/gkdr/carbons.git
@@ -32,40 +42,25 @@ make
 make install
 ```
 
-### Build and install the 'lurch' plugin
-Please go to the git page where you'll find information on how to build and use the
-[lurch OMEMO plugin](https://github.com/gkdr/lurch)
+### Build and install the 'lurch' plugin (Optional)
+lurch plugin implements XEP-0384 (OMEMO Encryption).
+On Debian and derivates you can install `purple-lurch` package.
 
-This can be skipped if encrypted messaging is not needed.
+To build from source see [lurch OMEMO plugin](https://github.com/gkdr/lurch)
 
 
-### Build and install the 'purple-telegram' plugin
-Please go to the git page where you'll find information on how to build and install the
-[Telegram messenger plugin](https://github.com/majn/telegram-purple)
+### Build and install mmsd-tng (Optional)
+mmsd-tng provides MMS support.  On debian and derivatives you
+can install `mmsd-tng` package.
 
-This can be skipped if Telegram messaging is not needed.
-
-### Build and install mmsd-tng
-Please go to the git page where you'll find information on how to build and install the
-[mmsd-tng](https://gitlab.com/kop316/mmsd)
+To build from source see [mmsd-tng](https://gitlab.com/kop316/mmsd)
 
 This can be skipped if MMS is not needed.
 
-### Build and install 'libfeedback'
-Please go to the git page where you'll find information on how to build and use
-[Feedbackd and libfeedback](https://source.puri.sm/Librem5/feedbackd)
-
-
 ### Build Chatty
 ``` bash
-meson build
+meson build # From chatty source directory
 ninja -C build
-```
-
-### Enabling Matrix support (optional)
-To enable matrix support, run the following:
-```bash
-gsettings set sm.puri.Chatty experimental-features true
 ```
 
 ## Running from the source tree
@@ -73,9 +68,11 @@ To run Chatty from source tree (without installing) do:
 
 ``` bash
 build/run
+# or
+build/run -vvvv # To run with (verbose) logs
+# or to start Chatty under `gdb`
+CHATTY_GDB=1 build/run -vv
 ```
-
-To start Chatty under `gdb` set `CHATTY_GDB=1` for the run script.
 
 ## Running over ssh
 
@@ -112,21 +109,44 @@ will be shown in a different display:
 # Replace XXX with the value you got in the previous step
 build/run -vvvv --display=XXX
 ```
-## Commands
 
-In a messaging conversation (except SMS conversations) the following commands can be used:
+## Debugging
 
-### lurch plugin
+Chatty stores data in the following locations:
+- `~/.purple` - chat history and libpurple config
+- `~/.purple/chatty/db/chatty-history.db` - XMPP, SMS and MMS chat history
+- `~/.purple/chatty/db/matrix.db` - Matrix chat history and related data
+- `~.local/share/chatty/` - Downloaded files and avatars are stored here
+- `~/.cache/chatty` - Cached data and temporary files are stored here
 
-- '/lurch help': Displays a list with available commands.
-- '/lurch uninstall': Uninstalls this device from OMEMO by removing its device ID from the devicelist.
-- '/lurch blacklist add': Adds conversation partner to blacklist.
-- '/lurch blacklist remove': Removes conversation partner from blacklist.
-- '/lurch show id own': Displays this device's ID.
-- '/lurch show id list': Displays this account's devicelist.
-- '/lurch show fp own': Displays this device's key fingerprint.
-- '/lurch show fp conv': Displays the fingerprints of all participating devices.
-- '/lurch remove id <id>': Removes a device ID from the own devicelist.
+Also, Matrix account secrets are stored with `libsecret`, those details can
+be retrieved using `GNOME Passwords`.
+
+If you want to modify/delete any of the above data or to debug chatty,
+you should first close all running instance of chatty by running
+`killall chatty` multiple times until it says `chatty: no process found`.
+
+To run chatty with verbose logs, you can run `chatty -vvvv`
+(or `./run -vvvv` from the build directory). In case of crashes,
+a `gdb` log is printed if `gdb` debugger is present on the system.
+
+Please note that if you remove `~/.purple/chatty/db/matrix.db`,
+your matrix account token will be renewed, resulting in your
+account been seen as a new device for others.
+
+To get better logs, you should install debug symbols of chatty and related
+packages.  On Debian and derivates, [enable debug repo][0] and run:
+
+```sh
+sudo apt-get install chatty-dbgsym libglib2.0-0-dbgsym libgtk-3-0-dbgsym libsoup-3.0-0-dbgsym
+```
+
+See [GLib][1] and [Gtk][2] documentations to know more debugging details
+related to `GLib` and `Gtk`.
+
+## Translations
+
+You can contribute translations via [GNOME Damned lies][https://l10n.gnome.org/module/chatty/]
 
 
 ## XMPP account
@@ -140,13 +160,6 @@ If you don't have an XMPP account yet and want to subscribe to a service then pl
 - XEP-0313: Message Archive Management
 - XEP-0363: HTTP File Upload
 
-## Known issues
-
-- chatty crashes in OMEMO encrypted chats.  This is due to a symbol conflict between
-  libolm3 and libaxc. A work around is done in [PureOS][3].  A proper fix would
-  be to not export those symbols from libolm at all.
-
-[0]: http://software.pureos.net/search_pkg?term=libhandy-1-dev
-[1]: https://packages.debian.org/search?keywords=libhandy-1-dev
-[2]: https://source.puri.sm/Librem5/libhandy
-[3]: https://source.puri.sm/Librem5/debs/olm/-/merge_requests/2
+[0]: https://wiki.debian.org/HowToGetABacktrace
+[1]: https://docs.gtk.org/glib/running.html
+[2]: https://docs.gtk.org/gtk3/running.html
