@@ -362,7 +362,13 @@ show_backtrace (int signum)
 
   g_print ("signum %d: %s\n", signum, g_strsignal (signum));
 
-  exit (128 + signum);
+  /* Reset signal handlers */
+  signal (SIGABRT, SIG_DFL);
+  signal (SIGTRAP, SIG_DFL);
+  signal (SIGSEGV, SIG_DFL);
+
+  /* Raise the signal again, so that the default handlers are run */
+  raise (signum);
 }
 
 static void
