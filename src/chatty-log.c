@@ -409,9 +409,16 @@ void
 chatty_log_init (void)
 {
   static gsize initialized = 0;
+  const GDebugKey keys[] = {
+    { "gc-friendly", 1 },
+    { "fatal-warnings",  G_LOG_LEVEL_WARNING | G_LOG_LEVEL_CRITICAL },
+    { "fatal-criticals", G_LOG_LEVEL_CRITICAL }
+  };
 
   if (g_once_init_enter (&initialized))
     {
+      GLogLevelFlags flags;
+
       domains = g_strdup (g_getenv ("G_MESSAGES_DEBUG"));
 
       if (domains && !*domains)
@@ -427,9 +434,14 @@ chatty_log_init (void)
           g_clear_pointer (&domains, g_free);
         }
 
-      if (g_strcmp0 (g_getenv ("G_DEBUG"), "fatal-criticals") == 0)
+      flags = g_parse_debug_string (g_getenv ("G_DEBUG"), keys, G_N_ELEMENTS (keys));
+
+      if (flags & 1)
+        g_mem_gc_friendly = TRUE;
+
+      if (flags & G_LOG_LEVEL_WARNING)
         fatal_criticals = TRUE;
-      else if (g_strcmp0 (g_getenv ("G_DEBUG"), "fatal-warnings") == 0)
+      if (flags & G_LOG_LEVEL_CRITICAL)
         fatal_warnings = TRUE;
 
       stderr_is_journal = g_log_writer_is_journald (fileno (stderr));
