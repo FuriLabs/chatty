@@ -25,7 +25,7 @@ For an explicit list of dependencies check the Build-Depends entry in the
 [debian/control](https://source.puri.sm/Librem5/chatty/blob/master/debian/control#5)
 file.
 
-Plugins are optional and can be often insalled from your distribution sources.
+Plugins are optional and can often be installed from your distribution sources.
 Installation from source is required only if you want to debug the plugin itself,
 or you have any reason to do so.
 
@@ -50,7 +50,7 @@ To build from source see [lurch OMEMO plugin](https://github.com/gkdr/lurch)
 
 
 ### Build and install mmsd-tng (Optional)
-mmsd-tng provides MMS support.  On debian and derivatives you
+mmsd-tng provides MMS support.  On Debian and derivatives you
 can install `mmsd-tng` package.
 
 To build from source see [mmsd-tng](https://gitlab.com/kop316/mmsd)
@@ -60,7 +60,7 @@ This can be skipped if MMS is not needed.
 ### Build Chatty
 ``` bash
 meson build # From chatty source directory
-ninja -C build
+meson compile -C build
 ```
 
 ## Running from the source tree
@@ -116,7 +116,7 @@ Chatty stores data in the following locations:
 - `~/.purple` - chat history and libpurple config
 - `~/.purple/chatty/db/chatty-history.db` - XMPP, SMS and MMS chat history
 - `~/.purple/chatty/db/matrix.db` - Matrix chat history and related data
-- `~.local/share/chatty/` - Downloaded files and avatars are stored here
+- `~/.local/share/chatty/` - Downloaded files and avatars are stored here
 - `~/.cache/chatty` - Cached data and temporary files are stored here
 
 Also, Matrix account secrets are stored with `libsecret`, those details can
