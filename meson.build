@@ -20,6 +20,8 @@ config_h.set_quoted('GETTEXT_PACKAGE', 'purism-chatty')
 config_h.set_quoted('LOCALEDIR', join_paths(get_option('prefix'), get_option('localedir')))
 config_h.set_quoted('PACKAGE_NAME', meson.project_name())
 config_h.set_quoted('PACKAGE_VERSION', meson.project_version())
+config_h.set_quoted('BUILD_DIR', meson.current_build_dir())
+config_h.set_quoted('SOURCE_DIR', meson.current_source_dir())
 
 configure_file(
   output: 'config.h',

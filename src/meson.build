@@ -62,6 +62,7 @@ libsrc += [
   'chatty-notification.c',
   'chatty-utils.c',
   'chatty-phone-utils.cpp',
+  'chatty-pgp.c',
 ]
 
 ui_files = files (
@@ -113,6 +114,7 @@ chatty_deps += [
   libgd_dep,
   dependency('libhandy-1', version: '>= 1.5.0'),
   dependency('sqlite3', version: '>=3.0.0'),
+  dependency('camel-1.2'),
   dependency('libebook-contacts-1.2'),
   dependency('libebook-1.2'),
   dependency('gsettings-desktop-schemas'),
