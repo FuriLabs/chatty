@@ -60,10 +60,12 @@ struct _ChattyChatView
   gdouble     last_vadj_upper;
   guint       update_view_id;
   guint       osk_id;
-  gboolean    first_scroll_to_bottom;
+  guint       history_load_id;
   gboolean    is_self_change;
+  gboolean    should_scroll;
 };
 
+#define HISTORY_WAIT_TIMEOUT 100 /* milliseconds */
 #define SAVE_TIMEOUT      300 /* milliseconds */
 #define INDICATOR_WIDTH   60
 #define INDICATOR_HEIGHT  40
@@ -347,6 +349,7 @@ chat_view_message_row_new (ChattyMessage  *message,
 {
   GtkWidget *row;
   ChattyProtocol protocol;
+  gdouble upper, value;
 
   g_assert (CHATTY_IS_MESSAGE (message));
   g_assert (CHATTY_IS_CHAT_VIEW (self));
@@ -355,6 +358,12 @@ chat_view_message_row_new (ChattyMessage  *message,
   row = chatty_message_row_new (message, protocol, chatty_chat_is_im (self->chat));
   chatty_message_row_set_alias (CHATTY_MESSAGE_ROW (row),
                                 chatty_message_get_user_alias (message));
+
+  /* If we are close to bottom, mark as we should scroll after the row is added */
+  value = gtk_adjustment_get_value (self->vadjustment);
+  upper = gtk_adjustment_get_upper (self->vadjustment);
+  if (upper - value <= DBL_EPSILON)
+    self->should_scroll = TRUE;
 
   return GTK_WIDGET (row);
 }
@@ -680,15 +689,20 @@ static void chat_view_adjustment_value_changed_cb (ChattyChatView *self);
 static void
 list_page_size_changed_cb (ChattyChatView *self)
 {
-  gdouble size, upper, value, old_upper;
+  gdouble size, upper, old_upper;
 
   g_assert (CHATTY_IS_CHAT_VIEW (self));
 
   size  = gtk_adjustment_get_page_size (self->vadjustment);
-  value = gtk_adjustment_get_value (self->vadjustment);
   upper = gtk_adjustment_get_upper (self->vadjustment);
   old_upper = self->last_vadj_upper;
   self->last_vadj_upper = upper;
+
+  if (self->should_scroll) {
+    self->should_scroll = FALSE;
+    gtk_adjustment_set_value (self->vadjustment, upper);
+    return;
+  }
 
   /* If the view grew in height, don't do anything. */
   if (old_upper < upper)
@@ -697,11 +711,6 @@ list_page_size_changed_cb (ChattyChatView *self)
   if (upper - size <= DBL_EPSILON)
     return;
 
-  /* If close to bottom, scroll to bottom */
-  if (!self->first_scroll_to_bottom || upper - value < (size * 1.15))
-    gtk_adjustment_set_value (self->vadjustment, upper);
-
-  self->first_scroll_to_bottom = TRUE;
   chat_view_adjustment_value_changed_cb (self);
 }
 
@@ -715,11 +724,7 @@ chat_view_adjustment_value_changed_cb (ChattyChatView *self)
   page_size = gtk_adjustment_get_page_size (self->vadjustment);
 
   gtk_widget_set_visible (self->scroll_down_button,
-                          (upper - value) > page_size + 1.0);
-
-  /* page_size sometimes reports itself as zero */
-  if (page_size < 0.1)
-    gtk_widget_hide (self->scroll_down_button);
+                          (upper - value) > page_size);
 }
 
 static void
@@ -918,6 +923,7 @@ chatty_chat_view_finalize (GObject *object)
 {
   ChattyChatView *self = (ChattyChatView *)object;
 
+  g_clear_handle_id (&self->history_load_id, g_source_remove);
   g_clear_handle_id (&self->osk_id, g_bus_unwatch_name);
   g_clear_handle_id (&self->update_view_id, g_source_remove);
   g_clear_object (&self->osk_proxy);
@@ -1015,6 +1021,21 @@ chatty_chat_view_new (void)
   return g_object_new (CHATTY_TYPE_CHAT_VIEW, NULL);
 }
 
+static gboolean
+chat_view_history_wait_timeout_cb (gpointer user_data)
+{
+  ChattyChatView *self = user_data;
+
+  g_assert (CHATTY_IS_CHAT_VIEW (self));
+
+  self->history_load_id = 0;
+  self->should_scroll = TRUE;
+
+  list_page_size_changed_cb (self);
+
+  return G_SOURCE_REMOVE;
+}
+
 void
 chatty_chat_view_set_chat (ChattyChatView *self,
                            ChattyChat     *chat)
@@ -1054,9 +1075,11 @@ chatty_chat_view_set_chat (ChattyChatView *self,
                                           self);
 
     gtk_widget_hide (self->scroll_down_button);
-    self->first_scroll_to_bottom = FALSE;
+    self->should_scroll = TRUE;
+    self->last_vadj_upper = 0.0;
     g_clear_handle_id (&self->save_timeout_id, g_source_remove);
     g_clear_object (&self->draft_message);
+    g_clear_handle_id (&self->history_load_id, g_source_remove);
   }
 
   gtk_widget_set_sensitive (self->message_input, !!chat);
@@ -1130,6 +1153,9 @@ chatty_chat_view_set_chat (ChattyChatView *self,
   chat_view_loading_history_cb (self);
   chat_view_adjustment_value_changed_cb (self);
 
+  self->history_load_id = g_timeout_add (HISTORY_WAIT_TIMEOUT,
+                                         chat_view_history_wait_timeout_cb,
+                                         self);
   gtk_widget_grab_focus (self->message_input);
 }
 
