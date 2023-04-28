@@ -21,6 +21,7 @@
 #include <glib/gi18n.h>
 #include "chatty-settings.h"
 #include "chatty-account.h"
+#include "chatty-clock.h"
 #include "chatty-mm-chat.h"
 #include "chatty-utils.h"
 #include "chatty-mm-account.h"
@@ -40,6 +41,8 @@
 #define MMSD_SERVICE_INTERFACE	        MMSD_SERVICE ".Service"
 #define MMSD_MESSAGE_INTERFACE	        MMSD_SERVICE ".Message"
 #define MMSD_MODEMMANAGER_INTERFACE	MMSD_SERVICE ".ModemManager"
+/* Not perfect, but close enough in unix time to what we need */
+#define JAN_ONE_2023                    (SECONDS_PER_DAY * (2023 - 1971) * 365)
 
 /**
  * SECTION: chatty-mmsd
@@ -1219,6 +1222,12 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
   if (date_time)
     unix_time = g_date_time_to_unix (date_time);
   if (!unix_time)
+    unix_time = time (NULL);
+  /*
+   * Sometimes MMS have a timestamp of the future
+   * Also make sure the time of day isn't Jan 1, 1970
+   */
+  if (unix_time > time (NULL) && time (NULL) > JAN_ONE_2023)
     unix_time = time (NULL);
 
   {
