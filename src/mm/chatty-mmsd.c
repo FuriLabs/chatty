@@ -270,6 +270,13 @@ chatty_mmsd_message_status_changed_cb (GDBusConnection *connection,
                                0);
     chatty_mmsd_process_mms (payload->self, payload);
 
+  } if (g_strcmp0 (status, "sending_failed") == 0) {
+    g_debug ("Message failed to send. Check mmsd-tng logs to find out why.");
+    chatty_message_set_status (payload->message,
+                               CHATTY_STATUS_SENDING_FAILED,
+                               0);
+    chatty_mmsd_process_mms (payload->self, payload);
+
   } else if (g_strcmp0 (status, "delivered") == 0) {
     g_debug ("Message was Delivered");
     chatty_message_set_status (payload->message,
@@ -862,6 +869,9 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
   } else if (g_strcmp0 (status, "sent") == 0) {
     direction = CHATTY_DIRECTION_OUT;
     mms_status = CHATTY_STATUS_SENT;
+  } else if (g_strcmp0 (status, "sending_failed") == 0) {
+    direction = CHATTY_DIRECTION_OUT;
+    mms_status = CHATTY_STATUS_SENDING_FAILED;
   } else if (g_strcmp0 (status, "delivered") == 0) {
     direction = CHATTY_DIRECTION_OUT;
     mms_status = CHATTY_STATUS_DELIVERED;
