@@ -45,8 +45,9 @@ Recommends:
  purple-xmpp-http-upload,
 Suggests:
  calls,
-Description: SMS, MMS and XMPP messaging
- Chatty is GTK based chat application supporting SMS, MMS and XMPP.
+Description: Messaging application for mobile and desktop
+ Chatty is a simple to use to messaging app for 1:1 communication and small
+ groups supporting SMS, MMS, XMPP and Matrix.
  .
  It works on desktops but also adjusts to small screen sizes like smart phones
  and other mobile devices.
