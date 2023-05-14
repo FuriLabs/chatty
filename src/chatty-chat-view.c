@@ -205,14 +205,19 @@ chatty_check_for_emoticon (ChattyChatView *self)
   text = gtk_text_buffer_get_text (self->message_input_buffer, &start, &end, FALSE);
 
   for (guint i = 0; i < G_N_ELEMENTS (emoticons); i++)
-    if (g_str_has_suffix (text, emoticons[i][0])) {
-      g_object_set_data (G_OBJECT (self->message_input_buffer), "emote-index", GINT_TO_POINTER (i));
-      /* xxx: We can't modify the buffer midst a change, so update it after some timeout  */
-      /* fixme: there is likely a better way to handle this */
-      g_timeout_add (1, update_emote, self);
-      break;
-    }
+    {
+      g_autofree char *match = g_strconcat (" ", emoticons[i][0], NULL);
 
+      /* Convert to emoji only if it is set apart from other text */
+      if (g_str_equal (text, emoticons[i][0]) ||
+          g_str_has_suffix (text, match)) {
+        g_object_set_data (G_OBJECT (self->message_input_buffer), "emote-index", GINT_TO_POINTER (i));
+        /* xxx: We can't modify the buffer midst a change, so update it after some timeout  */
+        /* fixme: there is likely a better way to handle this */
+        g_timeout_add (1, update_emote, self);
+        break;
+      }
+    }
 }
 
 static void

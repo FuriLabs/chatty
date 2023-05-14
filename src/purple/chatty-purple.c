@@ -1098,6 +1098,9 @@ chatty_conv_write_conversation (PurpleConversation *conv,
         buddy_name = purple_buddy_get_alias (buddy);
         chatty_chat_show_notification (CHATTY_CHAT (chat), buddy_name);
       }
+
+      chatty_chat_set_unread_count (CHATTY_CHAT (chat),
+                                    chatty_chat_get_unread_count (CHATTY_CHAT (chat)) + 1);
     } else if (flags & PURPLE_MESSAGE_SEND && pcm.flags & PURPLE_MESSAGE_SEND) {
       // normal send
       chat_message = chatty_message_new (NULL, message, uuid, 0, CHATTY_MESSAGE_HTML_ESCAPED,
@@ -1105,6 +1108,8 @@ chatty_conv_write_conversation (PurpleConversation *conv,
       chatty_message_set_status (chat_message, CHATTY_STATUS_SENT, 0);
       chatty_pp_chat_append_message (chat, chat_message);
       g_signal_emit_by_name (chat, "message-added");
+
+      chatty_chat_set_unread_count (CHATTY_CHAT (chat), 0);
     } else if (pcm.flags & PURPLE_MESSAGE_SEND) {
       // offline send (from MAM)
       // FIXME: current list_box does not allow ordering rows by timestamp
@@ -1115,6 +1120,9 @@ chatty_conv_write_conversation (PurpleConversation *conv,
       chatty_message_set_status (chat_message, CHATTY_STATUS_SENT, 0);
       chatty_pp_chat_append_message (chat, chat_message);
       g_signal_emit_by_name (chat, "message-added");
+
+      if (mtime > chatty_history_get_last_message_time (self->history, account->username, pcm.who))
+        chatty_chat_set_unread_count (CHATTY_CHAT (chat), 0);
     }
 
     /*
@@ -1125,9 +1133,6 @@ chatty_conv_write_conversation (PurpleConversation *conv,
      */
     if (!(pcm.flags & PURPLE_MESSAGE_NO_LOG) && chat_message)
       chatty_history_add_message (self->history, CHATTY_CHAT (chat), chat_message);
-
-    chatty_chat_set_unread_count (CHATTY_CHAT (chat),
-                                  chatty_chat_get_unread_count (CHATTY_CHAT (chat)) + 1);
   }
 
   if (chat) {

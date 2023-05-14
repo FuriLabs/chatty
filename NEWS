@@ -1,3 +1,14 @@
+Overview of Changes in Chats 0.7.3. Wed, 10 May 2023
+======================================================
+* Fix some memory leaks
+* Improve sidebar
+* Fix logging stack traces on crash
+* Fix message counter for XMPP messages
+* Update Translations
+  - Italian
+  - Swedish
+  - Ukrainian
+
 Overview of Changes in Chats 0.7.2. Mon, 14 March 2023
 ======================================================
 * Fix window size on long messages
