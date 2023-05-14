@@ -1,3 +1,9 @@
+chatty (0.7.3-1) UNRELEASED; urgency=medium
+
+  * New upstream release
+
+ -- Evangelos Ribeiro Tzaras <devrtz-debian@fortysixandtwo.eu>  Sun, 14 May 2023 11:50:31 +0200
+
 chatty (0.7.2-1) experimental; urgency=medium
 
   * New upstream release 0.7.2
