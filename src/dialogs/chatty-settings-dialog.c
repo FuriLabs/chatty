@@ -35,11 +35,13 @@
 #include "chatty-utils.h"
 #include "chatty-ma-account.h"
 #include "chatty-mm-account.h"
+#include "chatty-mm-account-private.h"
 #include "chatty-manager.h"
 #include "chatty-purple.h"
 #include "chatty-fp-row.h"
 #include "chatty-avatar.h"
 #include "chatty-settings.h"
+#include "chatty-phone-utils.h"
 #include "chatty-ma-account-details.h"
 #include "chatty-pp-account-details.h"
 #include "chatty-settings-dialog.h"
@@ -91,6 +93,7 @@ struct _ChattySettingsDialog
   GtkWidget      *delivery_reports_switch;
   GtkWidget      *handle_smil_switch;
   GtkWidget      *blocked_list;
+  GtkWidget      *phone_number_entry;
   GtkWidget      *carrier_mmsc_entry;
   GtkWidget      *mms_apn_entry;
   GtkWidget      *mms_proxy_entry;
@@ -466,13 +469,25 @@ settings_pp_details_delete_cb (ChattySettingsDialog *self)
 static void
 settings_dialog_load_mms_settings (ChattySettingsDialog *self)
 {
-  const char *apn, *mmsc, *proxy;
+  g_autoptr(ChattyMmDevice) device = NULL;
+  g_autofree char *device_number = NULL;
+  GListModel *devices;
+  const char *apn, *mmsc, *proxy, *number;
   gboolean use_smil;
 
-  if (chatty_mm_account_get_mms_settings (self->mm_account, &apn, &mmsc, &proxy, &use_smil)) {
+  devices = chatty_mm_account_get_devices (self->mm_account);
+  device = g_list_model_get_item (devices, 0);
+
+  if (device)
+    device_number = chatty_mm_device_get_number (device);
+
+  gtk_widget_set_visible (self->phone_number_entry, !device_number);
+
+  if (chatty_mm_account_get_mms_settings (self->mm_account, &apn, &mmsc, &proxy, &number, &use_smil)) {
     gtk_entry_set_text (GTK_ENTRY (self->mms_apn_entry), apn);
     gtk_entry_set_text (GTK_ENTRY (self->carrier_mmsc_entry), mmsc);
     gtk_entry_set_text (GTK_ENTRY (self->mms_proxy_entry), proxy);
+    gtk_entry_set_text (GTK_ENTRY (self->phone_number_entry), number);
     gtk_switch_set_state (GTK_SWITCH (self->handle_smil_switch), use_smil);
 
     self->mms_settings_loaded = TRUE;
@@ -502,6 +517,44 @@ purple_settings_row_activated_cb (ChattySettingsDialog *self)
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
 
   gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "purple-settings-view");
+}
+
+static void
+settings_phone_number_entry_changed_cb (ChattySettingsDialog *self,
+                                        GtkEntry             *number_entry)
+{
+  GtkStyleContext *context;
+  const char *number;
+  gboolean valid = TRUE;
+
+  g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
+  g_assert (GTK_IS_ENTRY (number_entry));
+
+  if (!gtk_widget_get_visible (GTK_WIDGET (number_entry)))
+    goto end;
+
+  number = gtk_entry_get_text (number_entry);
+
+  if (!number || !*number)
+    goto end;
+
+  if (number && *number == '+')
+    valid = TRUE;
+
+  /* Since the number is supposed to be in E164 fomat, country code shouldn't matter */
+  if (valid && number && *number)
+    valid = chatty_phone_utils_is_valid (number, "+1");
+
+ end:
+  context = gtk_widget_get_style_context (GTK_WIDGET (number_entry));
+
+  if (valid)
+    gtk_style_context_remove_class (context, "error");
+  else
+    gtk_style_context_add_class (context, "error");
+
+
+  gtk_widget_set_sensitive (self->mms_save_button, valid);
 }
 
 static void
@@ -677,7 +730,7 @@ static void
 mms_carrier_settings_apply_button_clicked_cb (ChattySettingsDialog *self)
 {
   ChattyAccount *mm_account;
-  const char *apn, *mmsc, *proxy;
+  const char *apn, *mmsc, *proxy, *phone_number;
   gboolean use_smil;
 
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
@@ -686,10 +739,11 @@ mms_carrier_settings_apply_button_clicked_cb (ChattySettingsDialog *self)
   apn = gtk_entry_get_text (GTK_ENTRY (self->mms_apn_entry));
   mmsc = gtk_entry_get_text (GTK_ENTRY (self->carrier_mmsc_entry));
   proxy = gtk_entry_get_text (GTK_ENTRY (self->mms_proxy_entry));
+  phone_number = gtk_entry_get_text (GTK_ENTRY (self->phone_number_entry));
   use_smil = gtk_switch_get_state (GTK_SWITCH (self->handle_smil_switch));
 
   chatty_mm_account_set_mms_settings_async (CHATTY_MM_ACCOUNT (mm_account),
-                                            apn, mmsc, proxy, use_smil,
+                                            apn, mmsc, proxy, phone_number, use_smil,
                                             NULL, NULL, NULL);
 
   g_object_set (self->settings,
@@ -1141,6 +1195,7 @@ chatty_settings_dialog_class_init (ChattySettingsDialogClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, delivery_reports_switch);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, handle_smil_switch);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, blocked_list);
+  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, phone_number_entry);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, carrier_mmsc_entry);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, mms_apn_entry);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, mms_proxy_entry);
@@ -1164,6 +1219,7 @@ chatty_settings_dialog_class_init (ChattySettingsDialogClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, settings_pp_details_delete_cb);
   gtk_widget_class_bind_template_callback (widget_class, sms_mms_settings_row_activated_cb);
   gtk_widget_class_bind_template_callback (widget_class, purple_settings_row_activated_cb);
+  gtk_widget_class_bind_template_callback (widget_class, settings_phone_number_entry_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, mms_carrier_settings_cancel_button_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, mms_carrier_settings_apply_button_clicked_cb);
 

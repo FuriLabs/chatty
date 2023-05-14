@@ -67,11 +67,13 @@ gboolean         chatty_mm_account_get_mms_settings    (ChattyMmAccount     *sel
                                                         const char         **apn,
                                                         const char         **mmsc,
                                                         const char         **proxy,
+                                                        const char         **phone_number,
                                                         gboolean            *use_smil);
 void             chatty_mm_account_set_mms_settings_async (ChattyMmAccount  *self,
                                                            const char       *apn,
                                                            const char       *mmsc,
                                                            const char       *proxy,
+                                                           const char       *phone_number,
                                                            gboolean          use_smil,
                                                            GCancellable     *cancellable,
                                                            GAsyncReadyCallback callback,

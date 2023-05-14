@@ -28,6 +28,7 @@ src/chatty-message.c
 src/chatty-message.h
 src/chatty-notification.c
 src/chatty-notification.h
+src/chatty-side-bar.c
 src/purple/chatty-purple-notify.c
 src/purple/chatty-purple-notify.h
 src/purple/chatty-purple-request.c
@@ -81,6 +82,7 @@ src/ui/chatty-list-row.ui
 src/ui/chatty-ma-account-details.ui
 src/ui/chatty-pp-account-details.ui
 src/ui/chatty-settings-dialog.ui
+src/ui/chatty-side-bar.ui
 src/ui/chatty-verification-view.ui
 src/ui/chatty-window.ui
 src/ui/help-overlay.ui

@@ -76,6 +76,8 @@ struct _ChattyMmsd {
   GDBusProxy       *modemmanager_proxy;
   char             *modem_number;
   char             *default_modem_number;
+  /* The modem number that has been modified in settings */
+  char             *modified_modem_number;
   GPtrArray        *mms_arr;
   GHashTable       *mms_hash_table;
   gsize             max_attach_size;
@@ -747,7 +749,7 @@ chatty_mmsd_process_mms_message_attachments (GList **filesp)
     }
 
     /* If an MMS has a message, it tends to be the first text/plain attachment */
-    if (!content_set && g_str_match_string ("text/plain", chatty_file_get_mime_type (attachment), TRUE)) {
+    if (!content_set && g_str_has_prefix (chatty_file_get_mime_type (attachment), "text/plain")) {
       g_autoptr(GFile) text_file = NULL;
       g_autofree char *contents = NULL;
       g_autoptr(GError) error = NULL;
@@ -819,6 +821,7 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
   g_autofree char *mms_message = NULL;
   g_autofree char *contents = NULL;
   g_autofree char *expire_time_string = NULL;
+  const char *known_modem_number = NULL;
   GString *who;
   GVariantIter recipientiter;
   mms_payload *payload;
@@ -909,6 +912,17 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
     }
   }
 
+  /*
+   * Prefer using the modem number from modem manager, else try to use
+   * the one given by the user
+   */
+  if (self->modem_number && *self->modem_number)
+    known_modem_number = self->modem_number;
+  else if (self->modified_modem_number && *self->modified_modem_number)
+    known_modem_number = self->modified_modem_number;
+  else
+    known_modem_number = "";
+
   /* Fill out Sender and All Numbers */
   if (direction == CHATTY_DIRECTION_IN) {
     const char *country_code = chatty_settings_get_country_iso_code (chatty_settings_get_default ());
@@ -917,15 +931,15 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
     if (payload->sender == NULL)
       payload->sender = g_strdup (sender);
   } else {
-    payload->sender = g_strdup (self->modem_number);
+    payload->sender = g_strdup (known_modem_number);
   }
 
   recipients = g_variant_dict_lookup_value (&dict, "Recipients", G_VARIANT_TYPE_STRING_ARRAY);
 
   if (rx_modem_number && *rx_modem_number) {
-    if (g_strcmp0 (self->modem_number, rx_modem_number) != 0) {
+    if (g_strcmp0 (known_modem_number, rx_modem_number) != 0) {
       g_warning ("Receieved Modem Number %s different than current modem number %s",
-                 self->modem_number, rx_modem_number);
+                 known_modem_number, rx_modem_number);
       return NULL;
     }
   }
@@ -947,7 +961,7 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
     temp = chatty_utils_check_phonenumber (temp2, country_code);
     if (temp == NULL)
       temp = g_strdup (temp2);
-    if (g_strcmp0 (self->modem_number, temp) != 0) {
+    if (g_strcmp0 (known_modem_number, temp) != 0) {
       if (who->len > 0) {
         who = g_string_append (who, ",");
       }
@@ -956,7 +970,7 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
     }
   }
   if (!who->len)
-    who = g_string_append (who, self->modem_number);
+    who = g_string_append (who, known_modem_number);
 
   payload->chat = g_string_free (who, FALSE);
 
@@ -974,6 +988,8 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
     g_autofree char *filename = NULL;
     g_autofree char *mimetype = NULL;
     g_autofree char *file_mime_type = NULL;
+    g_autofree char *attachment_file_uri = NULL;
+    g_autofree char *attachment_file_relative_path = NULL;
     gulong size, data;
     gsize length, written = 0;
     g_autoptr(GError) error = NULL;
@@ -1023,6 +1039,8 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
       /* create a file containing the smil */
       if (smil != NULL) {
         size_t smil_size = strlen (smil);
+        g_autofree char *smil_file_uri = NULL;
+        g_autofree char *smil_file_relative_path = NULL;
 
         new = g_file_get_child (savepath, "mms.smil");
         out = g_file_create (new, G_FILE_CREATE_PRIVATE, NULL, &error);
@@ -1061,9 +1079,12 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
         if (out)
           g_output_stream_close (G_OUTPUT_STREAM (out), NULL, NULL);
 
+        smil_file_uri = g_file_get_uri (new);
+        smil_file_relative_path = g_file_get_relative_path (parent, new);
+
         attachment = chatty_file_new_full ("mms.smil",
-                                           g_file_get_uri (new),
-                                           g_file_get_relative_path (parent, new),
+                                           smil_file_uri,
+                                           smil_file_relative_path,
                                            "application/smil",
                                            written, 0, 0, 0);
         chatty_file_set_status (attachment, CHATTY_FILE_DOWNLOADED);
@@ -1120,13 +1141,12 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
                                          NULL,
                                          &error);
 
-    if (error != NULL) {
-      g_clear_error (&error);
-      file_mime_type = g_strdup (mimetype);
-    } else if (file_mime_type && g_str_has_prefix (file_mime_type, "text/plain")) {
+
+    if (mimetype && g_str_has_prefix (mimetype, "text/plain")) {
       /* If the MMS reports the attachment is text/plain, trust it */
       file_mime_type = g_strdup (mimetype);
-    } else if (g_file_info_get_content_type (attachment_info) == NULL) {
+    } else if (error != NULL || g_file_info_get_content_type (attachment_info) == NULL) {
+      g_clear_error (&error);
       /* If we can't figure out content type, do not trust what the MMS tells it is */
       file_mime_type = g_strdup ("application/octet-stream");
     } else {
@@ -1139,9 +1159,12 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
       }
     }
 
+    attachment_file_uri = g_file_get_uri (new);
+    attachment_file_relative_path = g_file_get_relative_path (parent, new);
+
     attachment = chatty_file_new_full (filename,
-                                       g_file_get_uri (new),
-                                       g_file_get_relative_path (parent, new),
+                                       attachment_file_uri,
+                                       attachment_file_relative_path,
                                        file_mime_type,
                                        written, 0, 0, 0);
     chatty_file_set_status (attachment, CHATTY_FILE_DOWNLOADED);
@@ -1284,7 +1307,7 @@ mmsd_update_settings_cb (GTask        *task,
   GDBusProxy *mm_proxy, *service_proxy;
   g_autoptr(GError) error = NULL;
   GObject *obj;
-  char *apn, *mmsc, *proxy;
+  char *apn, *mmsc, *proxy, *phone_number;
   gboolean use_smil;
 
   obj = G_OBJECT (task);
@@ -1292,6 +1315,7 @@ mmsd_update_settings_cb (GTask        *task,
   mmsc = g_object_steal_data (obj, "mmsc");
   proxy = g_object_steal_data (obj, "proxy");
   mm_proxy = g_object_get_data (obj, "mm-proxy");
+  phone_number = g_object_get_data (obj, "phone-number");
   service_proxy = g_object_get_data (obj, "service-proxy");
   use_smil = GPOINTER_TO_INT (g_object_get_data (obj, "smil"));
 
@@ -1333,6 +1357,19 @@ mmsd_update_settings_cb (GTask        *task,
                                   cancellable, &error);
     g_debug ("Changing proxy to '%s' %s", proxy, CHATTY_LOG_SUCESS (!error));
   }
+
+  if (!error && phone_number) {
+    g_autoptr(GVariant) ret = NULL;
+
+    ret = g_dbus_proxy_call_sync (mm_proxy,
+                                  "ChangeSettings",
+                                  g_variant_new_parsed ("('ModemNumber', <%s>)", *phone_number ? phone_number : "NULL"),
+                                  G_DBUS_CALL_FLAGS_NONE,
+                                  -1,
+                                  cancellable, &error);
+    g_debug ("Changing phone number to '%s' %s", phone_number, CHATTY_LOG_SUCESS (!error));
+  }
+
 
   if (use_smil != self->auto_create_smil) {
     g_autoptr(GVariant) ret = NULL;
@@ -1500,6 +1537,7 @@ clear_chatty_mmsd (ChattyMmsd *self)
   g_clear_pointer (&self->carrier_mmsc, g_free);
   g_clear_pointer (&self->mms_apn, g_free);
   g_clear_pointer (&self->carrier_proxy, g_free);
+  g_clear_pointer (&self->modified_modem_number, g_free);
 
   if (G_IS_DBUS_CONNECTION (self->connection)) {
     g_debug ("Removing any active MMSD connections");
@@ -1738,6 +1776,7 @@ chatty_mmsd_get_mmsd_modemmanager_settings_cb (GObject      *service,
     mmsd_set_value (self, &dict, "MMS_APN", &self->mms_apn);
     mmsd_set_value (self, &dict, "CarrierMMSProxy", &self->carrier_proxy);
     mmsd_set_value (self, &dict, "default_modem_number", &self->default_modem_number);
+    mmsd_set_value (self, &dict, "ModemNumber", &self->modified_modem_number);
 
     /*
      * MMSD will automatically manage sending/recieving MMSes
@@ -1958,7 +1997,6 @@ chatty_mmsd_reload (ChattyMmsd *self)
 
   self->modem_number = chatty_mm_device_get_number (self->mm_device);
 
-  /* TODO: Figure out a way to add back in modem number */
   if (!self->modem_number) {
     self->modem_number = g_strdup ("");
   }
@@ -2059,6 +2097,7 @@ chatty_mmsd_get_settings (ChattyMmsd  *self,
                           const char **apn,
                           const char **mmsc,
                           const char **proxy,
+                          const char **phone_number,
                           gboolean    *use_smil)
 {
   g_return_val_if_fail (CHATTY_IS_MMSD (self), FALSE);
@@ -2078,6 +2117,10 @@ chatty_mmsd_get_settings (ChattyMmsd  *self,
   *mmsc = self->carrier_mmsc ?: "";
   *proxy = self->carrier_proxy ?: "";
   *use_smil = self->auto_create_smil;
+  *phone_number = self->modified_modem_number ?: "";
+
+  if (!phone_number || !*phone_number)
+    *phone_number = self->modem_number ?: "";
 
   return TRUE;
 }
@@ -2110,6 +2153,7 @@ chatty_mmsd_set_settings_async (ChattyMmsd          *self,
                                 const char          *apn,
                                 const char          *mmsc,
                                 const char          *proxy,
+                                const char          *phone_number,
                                 gboolean             use_smil,
                                 GCancellable        *cancellable,
                                 GAsyncReadyCallback  callback,
@@ -2141,7 +2185,11 @@ chatty_mmsd_set_settings_async (ChattyMmsd          *self,
   if (g_strcmp0 (proxy ?: "", self->carrier_proxy ?: "") == 0)
     proxy = NULL;
 
+  if (g_strcmp0 (phone_number ?: "", self->modified_modem_number ?: "") == 0)
+    phone_number = NULL;
+
   obj = G_OBJECT (task);
+  g_object_set_data_full (obj, "phone-number", g_strdup (phone_number), g_free);
   g_object_set_data_full (obj, "mm-proxy", mm_proxy, g_object_unref);
   g_object_set_data_full (obj, "service-proxy", service_proxy, g_object_unref);
   g_object_set_data_full (obj, "proxy", g_strdup (proxy), g_free);

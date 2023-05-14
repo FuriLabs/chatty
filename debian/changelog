@@ -1,3 +1,38 @@
+chatty (0.7.3) byzantium; urgency=medium
+
+  [ Mohammed Sadiq ]
+  * mmsd: Add settings to modify phone number
+  * application: Remove experimental warning
+  * Add ChattySideBar
+  * window: Use ChattySideBar for side bar
+  * log: Enable backtrace on higher verbosity
+  * main: Don't set signal handlers
+  * chat-view: Convert emoji iff it's set apart from other text
+  * README.md: Update
+  * log: Reset signal handlers once done
+  * log: Properly parse G_DEBUG env variable
+
+  [ Chris Talbot ]
+  * mmsd: Use modified modem number
+  * mmsd: use g_str_has_prefix instead of g_str_match_string
+  * mmsd: clean up mime_type detection
+  * mmsd: fix memory Leak
+
+  [ Sebastian Krzyszkowiak ]
+  * chatty-purple: Only increment unread count on incoming messages
+  * chatty-purple: Reset unread counter on sent messages
+
+  [ Yuri Chornoivan ]
+  * po: Update Ukrainian translation
+
+  [ Anders Jonsson ]
+  * po: Update Swedish translation
+
+  [ Vittorio Monti ]
+  * Update Italian translation
+
+ -- Mohammed Sadiq <sadiq@sadiqpk.org>  Wed, 10 May 2023 13:38:27 +0530
+
 chatty (0.7.2) byzantium; urgency=medium
 
   [ Mohammed Sadiq ]
