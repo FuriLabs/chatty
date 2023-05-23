@@ -327,15 +327,6 @@ window_show_new_chat_dialog (ChattyWindow *self,
 }
 
 static void
-window_back_clicked_cb (ChattyWindow *self)
-{
-  g_assert (CHATTY_IS_WINDOW (self));
-
-  if (!chatty_chat_list_is_archived (CHATTY_CHAT_LIST (self->chat_list)))
-    window_set_item (self, NULL);
-}
-
-static void
 window_chat_deleted_cb (ChattyWindow *self,
                         ChattyChat   *chat)
 {
@@ -663,6 +654,19 @@ chatty_window_show_settings (GtkWidget  *widget,
 }
 
 static void
+chatty_window_go_back (GtkWidget  *widget,
+                       const char *action_name,
+                       GVariant   *param)
+{
+  ChattyWindow *self = CHATTY_WINDOW (widget);
+
+  g_assert (CHATTY_IS_WINDOW (self));
+
+  if (!chatty_chat_list_is_archived (CHATTY_CHAT_LIST (self->chat_list)))
+    window_set_item (self, NULL);
+}
+
+static void
 chatty_window_start_new_chat (GtkWidget  *widget,
                               const char *action_name,
                               GVariant   *param)
@@ -836,7 +840,6 @@ chatty_window_class_init (ChattyWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyWindow, content_header_bar);
 
   gtk_widget_class_bind_template_callback (widget_class, notify_fold_cb);
-  gtk_widget_class_bind_template_callback (widget_class, window_back_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, window_chat_list_selection_changed);
 
   gtk_widget_class_install_action (widget_class, "win.new-chat", NULL, chatty_window_start_new_chat);
@@ -854,7 +857,7 @@ chatty_window_class_init (ChattyWindowClass *klass)
   gtk_widget_class_install_action (widget_class, "win.show-archived", NULL, chatty_window_show_archived);
   gtk_widget_class_install_action (widget_class, "win.show-chat-details", NULL, chatty_window_show_chat_details);
   gtk_widget_class_install_action (widget_class, "win.show-settings", NULL, chatty_window_show_settings);
-
+  gtk_widget_class_install_action (widget_class, "win.go-back", NULL, chatty_window_go_back);
 }
 
 static void
