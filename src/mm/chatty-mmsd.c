@@ -421,6 +421,10 @@ chatty_mmsd_send_mms_create_sender (ChattyChat *chat)
     who = g_string_append (who, ",");
   }
 
+  /* Remove the trailing "," */
+  g_string_truncate (who, who->len - 1);
+
+
   /* Convert the string *who into an array of strings **send */
   send = g_strsplit (who->str, ",", items);
 
