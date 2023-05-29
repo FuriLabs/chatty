@@ -32,7 +32,7 @@ gboolean chatty_utils_remove_list_item  (GListStore *store,
                                          gpointer    item);
 GdkPixbuf           *chatty_utils_get_pixbuf_from_data  (const guchar *buf,
                                                          gsize         count);
-void      chatty_utils_create_thumbnail_async  (const char     *file,
+void      chatty_utils_create_thumbnail_async  (GFile               *file,
                                                 GAsyncReadyCallback callback,
                                                 gpointer       user_data);
 gboolean  chatty_utils_create_thumbnail_finish (GAsyncResult  *result,

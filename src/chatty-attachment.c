@@ -161,7 +161,7 @@ chatty_attachment_set_file (ChattyAttachment *self,
     data = g_new0 (AttachmentData, 1);
     data->self = g_object_ref (self);
     data->image = g_object_ref (image);
-    chatty_utils_create_thumbnail_async (self->file_name,
+    chatty_utils_create_thumbnail_async (self->file,
                                          file_create_thumbnail_cb,
                                          data);
   }

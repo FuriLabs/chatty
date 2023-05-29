@@ -446,15 +446,13 @@ utils_create_thumbnail (GTask        *task,
   g_autoptr(GnomeDesktopThumbnailFactory) factory = NULL;
   g_autoptr(GdkPixbuf) thumbnail = NULL;
   g_autoptr(GFileInfo) file_info = NULL;
-  g_autoptr(GFile) file = NULL;
   g_autofree char *uri = NULL;
-  const char *file_name = task_data;
+  GFile *file = task_data;
   const char *content_type;
   GError *error = NULL;
   gboolean thumbnail_valid, thumbnail_failed;
   time_t mtime;
 
-  file = g_file_new_for_path (file_name);
   file_info = g_file_query_info (file,
                                  G_FILE_ATTRIBUTE_THUMBNAIL_IS_VALID ","
                                  G_FILE_ATTRIBUTE_THUMBNAILING_FAILED ","
@@ -536,17 +534,17 @@ utils_create_thumbnail (GTask        *task,
 }
 
 void
-chatty_utils_create_thumbnail_async (const char          *file,
+chatty_utils_create_thumbnail_async (GFile               *file,
                                      GAsyncReadyCallback  callback,
                                      gpointer             user_data)
 {
   g_autoptr(GTask) task = NULL;
 
-  g_return_if_fail (file && *file);
+  g_return_if_fail (G_IS_FILE (file));
   g_return_if_fail (callback);
 
   task = g_task_new (NULL, NULL, callback, user_data);
-  g_task_set_task_data (task, g_strdup (file), g_free);
+  g_task_set_task_data (task, g_object_ref (file), g_object_unref);
 
   g_task_run_in_thread (task, utils_create_thumbnail);
 }
