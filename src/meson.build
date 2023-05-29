@@ -35,7 +35,7 @@ libsrc += [
   'chatty-file.c',
   'gtk3-to-4.c',
   'chatty-attachment.c',
-  'chatty-attachments-view.c',
+  'chatty-attachments-bar.c',
   'chatty-list-row.c',
   'chatty-chat-view.c',
   'chatty-message-row.c',

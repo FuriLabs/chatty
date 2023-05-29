@@ -20,7 +20,7 @@
 #include "chatty-settings.h"
 #include "chatty-ma-chat.h"
 #include "chatty-message-row.h"
-#include "chatty-attachments-view.h"
+#include "chatty-attachments-bar.h"
 #include "chatty-utils.h"
 #include "chatty-chat-view.h"
 #include "chatty-log.h"
@@ -39,7 +39,7 @@ struct _ChattyChatView
   GtkWidget  *input_frame;
   GtkWidget  *scrolled_window;
   GtkWidget  *attachment_revealer;
-  GtkWidget  *attachment_view;
+  GtkWidget  *attachment_bar;
   GtkWidget  *message_input;
   GtkWidget  *send_file_button;
   GtkWidget  *send_message_button;
@@ -462,7 +462,7 @@ chat_view_file_chooser_response_cb (ChattyChatView *self,
     file = gtk_file_chooser_get_file (GTK_FILE_CHOOSER (dialog));
     filename = g_file_get_path (file);
 
-    chatty_attachments_view_add_file (CHATTY_ATTACHMENTS_VIEW (self->attachment_view), filename);
+    chatty_attachments_bar_add_file (CHATTY_ATTACHMENTS_BAR (self->attachment_bar), filename);
     gtk_revealer_set_reveal_child (GTK_REVEALER (self->attachment_revealer), TRUE);
 
     /* Currently multiple files are allowed only for MMS chats */
@@ -539,7 +539,7 @@ chat_view_send_message_button_clicked_cb (ChattyChatView *self)
 
   g_assert (CHATTY_IS_CHAT_VIEW (self));
 
-  files = chatty_attachments_view_get_files (CHATTY_ATTACHMENTS_VIEW (self->attachment_view));
+  files = chatty_attachments_bar_get_files (CHATTY_ATTACHMENTS_BAR (self->attachment_bar));
 
   gtk_text_buffer_get_bounds (self->message_input_buffer, &start, &end);
   message = gtk_text_buffer_get_text (self->message_input_buffer, &start, &end, FALSE);
@@ -584,7 +584,7 @@ chat_view_send_message_button_clicked_cb (ChattyChatView *self)
 
     gtk_widget_hide (self->send_message_button);
   }
-  chatty_attachments_view_reset (CHATTY_ATTACHMENTS_VIEW (self->attachment_view));
+  chatty_attachments_bar_reset (CHATTY_ATTACHMENTS_BAR (self->attachment_bar));
 
   /* We don't send matrix text if there are files.  So instead of
    * deleting the existing text, simply make the entry sensitive again. */
@@ -969,7 +969,7 @@ chatty_chat_view_class_init (ChattyChatViewClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, input_frame);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, scrolled_window);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, attachment_revealer);
-  gtk_widget_class_bind_template_child (widget_class, ChattyChatView, attachment_view);
+  gtk_widget_class_bind_template_child (widget_class, ChattyChatView, attachment_bar);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, message_input);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, send_file_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatView, send_message_button);
@@ -989,7 +989,7 @@ chatty_chat_view_class_init (ChattyChatViewClass *klass)
 
   gtk_widget_class_install_action (widget_class, "view.activate", NULL, chat_view_activate);
 
-  g_type_ensure (CHATTY_TYPE_ATTACHMENTS_VIEW);
+  g_type_ensure (CHATTY_TYPE_ATTACHMENTS_BAR);
 }
 
 static void
@@ -1105,7 +1105,7 @@ chatty_chat_view_set_chat (ChattyChatView *self,
     return;
   }
 
-  chatty_attachments_view_reset (CHATTY_ATTACHMENTS_VIEW (self->attachment_view));
+  chatty_attachments_bar_reset (CHATTY_ATTACHMENTS_BAR (self->attachment_bar));
   messages = chatty_chat_get_messages (chat);
   account = chatty_chat_get_account (chat);
 

@@ -46,7 +46,7 @@
                     <property name="valign">end</property>
                     <signal name="notify::reveal-child" handler="chat_view_attachment_revealer_notify_cb" swapped="yes"/>
                     <child>
-                      <object class="ChattyAttachmentsView" id="attachment_view"/>
+                      <object class="ChattyAttachmentsBar" id="attachment_bar"/>
                     </child>
                   </object>
                 </child>

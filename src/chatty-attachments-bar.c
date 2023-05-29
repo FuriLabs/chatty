@@ -1,4 +1,4 @@
-/* chatty-attachments-view.c
+/* chatty-attachments-bar.c
  *
  * Copyright 2021 Purism SPC
  *
@@ -8,7 +8,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#define G_LOG_DOMAIN "chatty-attachments-view"
+#define G_LOG_DOMAIN "chatty-attachments-bar"
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -17,9 +17,9 @@
 #include "gtk3-to-4.h"
 #include "chatty-file.h"
 #include "chatty-attachment.h"
-#include "chatty-attachments-view.h"
+#include "chatty-attachments-bar.h"
 
-struct _ChattyAttachmentsView
+struct _ChattyAttachmentsBar
 {
   GtkBox parent_instance;
 
@@ -27,15 +27,15 @@ struct _ChattyAttachmentsView
   GtkWidget *files_box;
 };
 
-G_DEFINE_TYPE (ChattyAttachmentsView, chatty_attachments_view, GTK_TYPE_BOX)
+G_DEFINE_TYPE (ChattyAttachmentsBar, chatty_attachments_bar, GTK_TYPE_BOX)
 
 static void
-chatty_attachments_view_class_init (ChattyAttachmentsViewClass *klass)
+chatty_attachments_bar_class_init (ChattyAttachmentsBarClass *klass)
 {
 }
 
 static void
-chatty_attachments_view_init (ChattyAttachmentsView *self)
+chatty_attachments_bar_init (ChattyAttachmentsBar *self)
 {
   GtkStyleContext *st;
 
@@ -56,15 +56,15 @@ chatty_attachments_view_init (ChattyAttachmentsView *self)
 }
 
 GtkWidget *
-chatty_attachments_view_new (void)
+chatty_attachments_bar_new (void)
 {
-  return g_object_new (CHATTY_TYPE_ATTACHMENTS_VIEW, NULL);
+  return g_object_new (CHATTY_TYPE_ATTACHMENTS_BAR, NULL);
 }
 
 static void
-chatty_attachemnts_view_update_view (ChattyAttachmentsView *self)
+chatty_attachemnts_bar_update_bar (ChattyAttachmentsBar *self)
 {
-  g_assert (CHATTY_IS_ATTACHMENTS_VIEW (self));
+  g_assert (CHATTY_IS_ATTACHMENTS_BAR (self));
 
   if (!gtk_widget_get_first_child (self->files_box)) {
     GtkWidget *parent;
@@ -79,11 +79,11 @@ chatty_attachemnts_view_update_view (ChattyAttachmentsView *self)
 }
 
 void
-chatty_attachments_view_reset (ChattyAttachmentsView *self)
+chatty_attachments_bar_reset (ChattyAttachmentsBar *self)
 {
   GtkWidget *child;
 
-  g_return_if_fail (CHATTY_IS_ATTACHMENTS_VIEW (self));
+  g_return_if_fail (CHATTY_IS_ATTACHMENTS_BAR (self));
 
   do {
     child = gtk_widget_get_first_child (GTK_WIDGET (self->files_box));
@@ -92,33 +92,33 @@ chatty_attachments_view_reset (ChattyAttachmentsView *self)
       gtk_box_remove (GTK_BOX (self->files_box), child);
   } while (child);
 
-  chatty_attachemnts_view_update_view (self);
+  chatty_attachemnts_bar_update_bar (self);
 }
 
 static void
-attachment_view_file_deleted_cb (ChattyAttachmentsView *self,
-                                 GtkWidget             *child)
+attachment_bar_file_deleted_cb (ChattyAttachmentsBar *self,
+                                GtkWidget            *child)
 {
-  g_assert (CHATTY_IS_ATTACHMENTS_VIEW (self));
+  g_assert (CHATTY_IS_ATTACHMENTS_BAR (self));
   g_assert (GTK_IS_WIDGET (child));
 
   if (gtk_widget_in_destruction (GTK_WIDGET (self)))
     return;
 
   gtk_box_remove (GTK_BOX (self->files_box), child);
-  chatty_attachemnts_view_update_view (self);
+  chatty_attachemnts_bar_update_bar (self);
 
   g_debug ("Remove file: %p", child);
 
 }
 
 void
-chatty_attachments_view_add_file (ChattyAttachmentsView *self,
-                                  const char            *file_path)
+chatty_attachments_bar_add_file (ChattyAttachmentsBar *self,
+                                 const char           *file_path)
 {
   GtkWidget *child;
 
-  g_return_if_fail (CHATTY_IS_ATTACHMENTS_VIEW (self));
+  g_return_if_fail (CHATTY_IS_ATTACHMENTS_BAR (self));
   g_return_if_fail (file_path && *file_path);
 
   child = chatty_attachment_new (file_path);
@@ -126,13 +126,13 @@ chatty_attachments_view_add_file (ChattyAttachmentsView *self,
 
   gtk_box_append (GTK_BOX (self->files_box), child);
   g_signal_connect_object (child, "deleted",
-                           G_CALLBACK (attachment_view_file_deleted_cb),
+                           G_CALLBACK (attachment_bar_file_deleted_cb),
                            self, G_CONNECT_SWAPPED);
 }
 
 /**
- * chatty_attachments_view_get_files:
- * @self: A #ChattyAttachmentsView
+ * chatty_attachments_bar_get_files:
+ * @self: A #ChattyAttachmentsBar
  *
  * Get the list of files attached. The list contains
  * ChattyFileInfo and the list should be freed with
@@ -141,12 +141,12 @@ chatty_attachments_view_add_file (ChattyAttachmentsView *self,
  * Returns: (transfer full) (nullable): A List of strings.
  */
 GList *
-chatty_attachments_view_get_files (ChattyAttachmentsView *self)
+chatty_attachments_bar_get_files (ChattyAttachmentsBar *self)
 {
   GtkWidget *child;
   GList *files = NULL;
 
-  g_return_val_if_fail (CHATTY_IS_ATTACHMENTS_VIEW (self), NULL);
+  g_return_val_if_fail (CHATTY_IS_ATTACHMENTS_BAR (self), NULL);
 
   child = gtk_widget_get_first_child (self->files_box);
 
