@@ -37,8 +37,6 @@ chatty_attachments_bar_class_init (ChattyAttachmentsBarClass *klass)
 static void
 chatty_attachments_bar_init (ChattyAttachmentsBar *self)
 {
-  GtkStyleContext *st;
-
   self->scrolled_window = gtk_scrolled_window_new ();
   gtk_widget_set_size_request (self->scrolled_window, -1, 194);
   gtk_widget_set_hexpand (self->scrolled_window, TRUE);
@@ -49,10 +47,9 @@ chatty_attachments_bar_init (ChattyAttachmentsBar *self)
   gtk_scrolled_window_set_child (GTK_SCROLLED_WINDOW (self->scrolled_window), self->files_box);
   gtk_box_append (GTK_BOX (self), self->scrolled_window);
 
-  st = gtk_widget_get_style_context (self->scrolled_window);
-  gtk_style_context_add_class (st, "content");
-  gtk_style_context_add_class (st, "view");
-  gtk_style_context_add_class (st, "frame");
+  gtk_widget_add_css_class (self->scrolled_window, "content");
+  gtk_widget_add_css_class (self->scrolled_window, "view");
+  gtk_widget_add_css_class (self->scrolled_window, "frame");
 }
 
 GtkWidget *
