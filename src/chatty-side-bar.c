@@ -335,14 +335,6 @@ chatty_side_bar_get_chat_list (ChattySideBar *self)
   return self->chat_list;
 }
 
-GPtrArray *
-chatty_side_bar_get_selected_chats (ChattySideBar *self)
-{
-  g_return_val_if_fail (CHATTY_IS_SIDE_BAR (self), NULL);
-
-  return chatty_chat_list_get_selected (CHATTY_CHAT_LIST (self->chat_list));
-}
-
 void
 chatty_side_bar_set_show_archived (ChattySideBar *self,
                                    gboolean       show_archived)

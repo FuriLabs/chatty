@@ -14,7 +14,6 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (ChattySideBar, chatty_side_bar, CHATTY, SIDE_BAR, GtkBox)
 
 GtkWidget  *chatty_side_bar_get_chat_list         (ChattySideBar *self);
-GPtrArray  *chatty_side_bar_get_selected_chats    (ChattySideBar *self);
 void        chatty_side_bar_set_show_archived     (ChattySideBar *self,
                                                    gboolean       show_archived);
 
