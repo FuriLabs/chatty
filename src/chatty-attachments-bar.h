@@ -21,7 +21,7 @@ G_DECLARE_FINAL_TYPE (ChattyAttachmentsBar, chatty_attachments_bar, CHATTY, ATTA
 GtkWidget *chatty_attachments_bar_new       (void);
 void       chatty_attachments_bar_reset     (ChattyAttachmentsBar *self);
 void       chatty_attachments_bar_add_file  (ChattyAttachmentsBar *self,
-                                             const char            *file_path);
+                                             GFile                *file);
 GList     *chatty_attachments_bar_get_files (ChattyAttachmentsBar *self);
 
 G_END_DECLS

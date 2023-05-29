@@ -110,14 +110,14 @@ attachment_bar_file_deleted_cb (ChattyAttachmentsBar *self,
 
 void
 chatty_attachments_bar_add_file (ChattyAttachmentsBar *self,
-                                 const char           *file_path)
+                                 GFile                *file)
 {
   GtkWidget *child;
 
   g_return_if_fail (CHATTY_IS_ATTACHMENTS_BAR (self));
-  g_return_if_fail (file_path && *file_path);
+  g_return_if_fail (G_IS_FILE (file));
 
-  child = chatty_attachment_new (file_path);
+  child = chatty_attachment_new (file);
   g_debug ("Add file: %p", child);
 
   gtk_box_append (GTK_BOX (self->files_box), child);
@@ -148,12 +148,12 @@ chatty_attachments_bar_get_files (ChattyAttachmentsBar *self)
 
   while (child)
     {
-      ChattyFile *file;
-      const char *name;
+      ChattyFile *chatty_file;
+      GFile *file;
 
-      name = chatty_attachment_get_file (CHATTY_ATTACHMENT (child));
-      file = chatty_file_new_for_path (name);
-      files = g_list_append (files, file);
+      file = chatty_attachment_get_file (CHATTY_ATTACHMENT (child));
+      chatty_file = chatty_file_new_for_path (g_file_peek_path (file));
+      files = g_list_append (files, chatty_file);
 
       child = gtk_widget_get_next_sibling (child);
     }

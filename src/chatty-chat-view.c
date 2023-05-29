@@ -456,13 +456,11 @@ chat_view_file_chooser_response_cb (ChattyChatView *self,
   g_assert (CHATTY_IS_CHAT_VIEW (self));
 
   if (response_id == GTK_RESPONSE_ACCEPT) {
-    g_autofree char *filename = NULL;
     g_autoptr(GFile) file = NULL;
 
     file = gtk_file_chooser_get_file (GTK_FILE_CHOOSER (dialog));
-    filename = g_file_get_path (file);
 
-    chatty_attachments_bar_add_file (CHATTY_ATTACHMENTS_BAR (self->attachment_bar), filename);
+    chatty_attachments_bar_add_file (CHATTY_ATTACHMENTS_BAR (self->attachment_bar), file);
     gtk_revealer_set_reveal_child (GTK_REVEALER (self->attachment_revealer), TRUE);
 
     /* Currently multiple files are allowed only for MMS chats */

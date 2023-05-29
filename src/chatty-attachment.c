@@ -26,7 +26,7 @@ struct _ChattyAttachment
   GtkWidget   *overlay;
   GtkWidget   *remove_button;
 
-  char        *file_name;
+  GFile       *file;
 };
 
 G_DEFINE_TYPE (ChattyAttachment, chatty_attachment, GTK_TYPE_BOX)
@@ -34,7 +34,6 @@ G_DEFINE_TYPE (ChattyAttachment, chatty_attachment, GTK_TYPE_BOX)
 typedef struct _AttachmentData {
   ChattyAttachment *self;
   GtkWidget *image;
-  GFile *file;
 } AttachmentData;
 
 enum {
@@ -116,27 +115,24 @@ file_create_thumbnail_cb (GObject      *object,
   if (gtk_widget_in_destruction (GTK_WIDGET (data->self)))
     return;
 
-  attachment_update_image (data->self, data->image, data->file);
+  attachment_update_image (data->self, data->image, data->self->file);
 }
 
 static void
 chatty_attachment_set_file (ChattyAttachment *self,
-                            const char       *file_name)
+                            GFile            *file)
 {
   g_autoptr(GFileInfo) file_info = NULL;
-  g_autoptr(GFile) file = NULL;
   g_autoptr(GError) error = NULL;
   const char *thumbnail;
   GtkWidget *image;
   gboolean thumbnail_failed, thumbnail_valid;
 
   g_assert (CHATTY_IS_ATTACHMENT (self));
-  g_assert (file_name && *file_name);
+  g_assert (G_IS_FILE (file));
 
-  g_free (self->file_name);
-  self->file_name = g_strdup (file_name);
+  g_set_object (&self->file, file);
 
-  file = g_file_new_for_path (file_name);
   file_info = g_file_query_info (file,
                                  G_FILE_ATTRIBUTE_STANDARD_ICON ","
                                  G_FILE_ATTRIBUTE_THUMBNAIL_PATH ","
@@ -148,7 +144,7 @@ chatty_attachment_set_file (ChattyAttachment *self,
     g_warning ("Error querying info: %s", error->message);
 
   image = gtk_image_new ();
-  gtk_widget_set_tooltip_text (image, self->file_name);
+  gtk_widget_set_tooltip_text (image, g_file_peek_path (file));
   gtk_widget_set_size_request (image, -1, 96);
   thumbnail = g_file_info_get_attribute_byte_string (file_info, G_FILE_ATTRIBUTE_THUMBNAIL_PATH);
   thumbnail_failed = g_file_info_get_attribute_boolean (file_info, G_FILE_ATTRIBUTE_THUMBNAILING_FAILED);
@@ -165,7 +161,6 @@ chatty_attachment_set_file (ChattyAttachment *self,
     data = g_new0 (AttachmentData, 1);
     data->self = g_object_ref (self);
     data->image = g_object_ref (image);
-    data->file = g_object_ref (file);
     chatty_utils_create_thumbnail_async (self->file_name,
                                          file_create_thumbnail_cb,
                                          data);
@@ -185,7 +180,7 @@ chatty_attachment_finalize (GObject *object)
 {
   ChattyAttachment *self = (ChattyAttachment *)object;
 
-  g_free (self->file_name);
+  g_clear_object (&self->file);
 
   G_OBJECT_CLASS (chatty_attachment_parent_class)->finalize (object);
 }
@@ -222,20 +217,20 @@ chatty_attachment_init (ChattyAttachment *self)
 }
 
 GtkWidget *
-chatty_attachment_new (const char *file_name)
+chatty_attachment_new (GFile *file)
 {
   ChattyAttachment *self;
 
   self = g_object_new (CHATTY_TYPE_ATTACHMENT, NULL);
-  chatty_attachment_set_file (self, file_name);
+  chatty_attachment_set_file (self, file);
 
   return GTK_WIDGET (self);
 }
 
-const char *
+GFile *
 chatty_attachment_get_file (ChattyAttachment *self)
 {
   g_return_val_if_fail (CHATTY_IS_ATTACHMENT (self), NULL);
 
-  return self->file_name;
+  return self->file;
 }
