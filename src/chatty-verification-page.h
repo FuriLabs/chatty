@@ -1,4 +1,4 @@
-/* chatty-verification-view.h
+/* chatty-verification-page.h
  *
  * Copyright 2022 Purism SPC
  *
@@ -16,11 +16,11 @@
 
 G_BEGIN_DECLS
 
-#define CHATTY_TYPE_VERIFICATION_VIEW (chatty_verification_view_get_type ())
+#define CHATTY_TYPE_VERIFICATION_PAGE (chatty_verification_page_get_type ())
 
-G_DECLARE_FINAL_TYPE (ChattyVerificationView, chatty_verification_view, CHATTY, VERIFICATION_VIEW, GtkBox)
+G_DECLARE_FINAL_TYPE (ChattyVerificationPage, chatty_verification_page, CHATTY, VERIFICATION_PAGE, GtkBox)
 
-void        chatty_verification_view_set_item     (ChattyVerificationView *self,
+void        chatty_verification_page_set_item     (ChattyVerificationPage *self,
                                                    ChattyItem             *item);
 
 G_END_DECLS

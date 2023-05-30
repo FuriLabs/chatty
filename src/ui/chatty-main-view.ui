@@ -97,7 +97,7 @@
               <object class="ChattyInvitePage" id="invite_page"/>
             </child>
             <child>
-              <object class="ChattyVerificationView" id="verification_view"/>
+              <object class="ChattyVerificationPage" id="verification_page"/>
             </child>
             <child>
               <object class="GtkBox" id="empty_view"/>

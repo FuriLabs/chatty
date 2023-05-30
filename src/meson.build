@@ -89,7 +89,7 @@ chatty_sources += [
   'chatty-main-view.c',
   'chatty-side-bar.c',
   'chatty-invite-page.c',
-  'chatty-verification-view.c',
+  'chatty-verification-page.c',
   'chatty-window.c',
   'dialogs/chatty-info-dialog.c',
   'dialogs/chatty-settings-dialog.c',

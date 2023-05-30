@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <requires lib="gtk" version="4.0"/>
-  <template class="ChattyVerificationView" parent="GtkBox">
+  <template class="ChattyVerificationPage" parent="GtkBox">
     <child>
       <object class="AdwClamp">
         <property name="hexpand">1</property>

@@ -1,4 +1,4 @@
-/* chatty-verification-view.c
+/* chatty-verification-page.c
  *
  * Copyright 2022 Purism SPC
  *
@@ -8,7 +8,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#define G_LOG_DOMAIN "chatty-verification-view"
+#define G_LOG_DOMAIN "chatty-verification-page"
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -19,7 +19,7 @@
 #include "chatty-manager.h"
 #include "chatty-avatar.h"
 #include "chatty-ma-key-chat.h"
-#include "chatty-verification-view.h"
+#include "chatty-verification-page.h"
 
 static const char *emojis[][2] = {
   /* TRANSLATORS: You may copy translations from https://github.com/matrix-org/matrix-spec-proposals/blob/old_master/data-definitions/sas-emoji.json
@@ -90,7 +90,7 @@ static const char *emojis[][2] = {
   {"📌", N_("Pin")}, /* "U+1F4CC" */
 };
 
-struct _ChattyVerificationView
+struct _ChattyVerificationPage
 {
   GtkBox            parent_instance;
 
@@ -139,14 +139,14 @@ struct _ChattyVerificationView
   gboolean         emoji_shown;
 };
 
-G_DEFINE_TYPE (ChattyVerificationView, chatty_verification_view, GTK_TYPE_BOX)
+G_DEFINE_TYPE (ChattyVerificationPage, chatty_verification_page, GTK_TYPE_BOX)
 
 static void
-show_verification_dailog (ChattyVerificationView *self)
+show_verification_dailog (ChattyVerificationPage *self)
 {
   GtkWidget *window;
 
-  g_assert (CHATTY_IS_VERIFICATION_VIEW (self));
+  g_assert (CHATTY_IS_VERIFICATION_PAGE (self));
 
   window = gtk_widget_get_ancestor (GTK_WIDGET (self), GTK_TYPE_WINDOW);
   gtk_window_set_transient_for (GTK_WINDOW (self->verification_dialog), GTK_WINDOW (window));
@@ -157,7 +157,7 @@ show_verification_dailog (ChattyVerificationView *self)
 }
 
 static void
-verification_update_emoji (ChattyVerificationView *self)
+verification_update_emoji (ChattyVerificationPage *self)
 {
   g_autoptr(GPtrArray) labels = NULL;
   g_autoptr(GPtrArray) titles = NULL;
@@ -165,7 +165,7 @@ verification_update_emoji (ChattyVerificationView *self)
   GPtrArray *emoji;
   guint16 *decimal;
 
-  g_assert (CHATTY_IS_VERIFICATION_VIEW (self));
+  g_assert (CHATTY_IS_VERIFICATION_PAGE (self));
 
   if (self->emoji_set)
     return;
@@ -231,11 +231,11 @@ verification_update_emoji (ChattyVerificationView *self)
 }
 
 static void
-verification_item_updated_cb (ChattyVerificationView *self)
+verification_item_updated_cb (ChattyVerificationPage *self)
 {
   CmEvent *event;
 
-  g_assert (CHATTY_IS_VERIFICATION_VIEW (self));
+  g_assert (CHATTY_IS_VERIFICATION_PAGE (self));
 
   event = chatty_ma_key_chat_get_event (self->item);
 
@@ -256,9 +256,9 @@ verification_item_updated_cb (ChattyVerificationView *self)
 }
 
 static void
-verification_item_deleted_cb (ChattyVerificationView *self)
+verification_item_deleted_cb (ChattyVerificationPage *self)
 {
-  g_assert (CHATTY_IS_VERIFICATION_VIEW (self));
+  g_assert (CHATTY_IS_VERIFICATION_PAGE (self));
 }
 
 static void
@@ -266,7 +266,7 @@ verification_key_continue_cb (GObject      *object,
                             GAsyncResult *result,
                             gpointer      user_data)
 {
-  g_autoptr(ChattyVerificationView) self = user_data;
+  g_autoptr(ChattyVerificationPage) self = user_data;
   g_autoptr(GError) error = NULL;
 
   g_assert (CHATTY_IS_MA_KEY_CHAT (object));
@@ -281,9 +281,9 @@ verification_key_continue_cb (GObject      *object,
 }
 
 static void
-verification_continue_clicked_cb (ChattyVerificationView *self)
+verification_continue_clicked_cb (ChattyVerificationPage *self)
 {
-  g_assert (CHATTY_IS_VERIFICATION_VIEW (self));
+  g_assert (CHATTY_IS_VERIFICATION_PAGE (self));
 
   gtk_spinner_start (GTK_SPINNER (self->continue_spinner));
   gtk_widget_set_sensitive (self->continue_button, FALSE);
@@ -298,7 +298,7 @@ verification_key_cancel_cb (GObject      *object,
                             GAsyncResult *result,
                             gpointer      user_data)
 {
-  g_autoptr(ChattyVerificationView) self = user_data;
+  g_autoptr(ChattyVerificationPage) self = user_data;
   g_autoptr(GError) error = NULL;
 
   g_assert (CHATTY_IS_MA_KEY_CHAT (object));
@@ -316,10 +316,10 @@ verification_key_cancel_cb (GObject      *object,
 }
 
 static void
-verification_cancel_clicked_cb (ChattyVerificationView *self,
+verification_cancel_clicked_cb (ChattyVerificationPage *self,
                                 GtkWidget              *widget)
 {
-  g_assert (CHATTY_IS_VERIFICATION_VIEW (self));
+  g_assert (CHATTY_IS_VERIFICATION_PAGE (self));
 
   gtk_spinner_start (GTK_SPINNER (self->cancel_spinner));
   gtk_widget_set_sensitive (self->continue_button, FALSE);
@@ -335,7 +335,7 @@ verification_key_match_cb (GObject      *object,
                            GAsyncResult *result,
                            gpointer      user_data)
 {
-  g_autoptr(ChattyVerificationView) self = user_data;
+  g_autoptr(ChattyVerificationPage) self = user_data;
   g_autoptr(GError) error = NULL;
 
   g_assert (CHATTY_IS_MA_KEY_CHAT (object));
@@ -348,11 +348,11 @@ verification_key_match_cb (GObject      *object,
 }
 
 static void
-verification_type_clicked_cb (ChattyVerificationView *self)
+verification_type_clicked_cb (ChattyVerificationPage *self)
 {
   GtkWidget *visible_child;
 
-  g_assert (CHATTY_IS_VERIFICATION_VIEW (self));
+  g_assert (CHATTY_IS_VERIFICATION_PAGE (self));
 
   visible_child = gtk_stack_get_visible_child (GTK_STACK (self->content_stack));
 
@@ -365,9 +365,9 @@ verification_type_clicked_cb (ChattyVerificationView *self)
 }
 
 static void
-verification_match_clicked_cb (ChattyVerificationView *self)
+verification_match_clicked_cb (ChattyVerificationPage *self)
 {
-  g_assert (CHATTY_IS_VERIFICATION_VIEW (self));
+  g_assert (CHATTY_IS_VERIFICATION_PAGE (self));
 
   gtk_widget_set_sensitive (self->continue_button, FALSE);
   gtk_spinner_start (GTK_SPINNER (self->continue_spinner));
@@ -377,11 +377,11 @@ verification_match_clicked_cb (ChattyVerificationView *self)
 }
 
 static void
-verification_content_child_changed_cb (ChattyVerificationView *self)
+verification_content_child_changed_cb (ChattyVerificationPage *self)
 {
   const char *button_label;
 
-  g_assert (CHATTY_IS_VERIFICATION_VIEW (self));
+  g_assert (CHATTY_IS_VERIFICATION_PAGE (self));
 
   if (gtk_stack_get_visible_child (GTK_STACK (self->content_stack)) == self->decimal_content)
     button_label = _("Show Emojis");
@@ -392,61 +392,61 @@ verification_content_child_changed_cb (ChattyVerificationView *self)
 }
 
 static void
-chatty_verification_view_dispose (GObject *object)
+chatty_verification_page_dispose (GObject *object)
 {
-  ChattyVerificationView *self = (ChattyVerificationView *)object;
+  ChattyVerificationPage *self = (ChattyVerificationPage *)object;
 
   g_clear_object (&self->item);
   g_clear_object (&self->name_binding);
 
-  G_OBJECT_CLASS (chatty_verification_view_parent_class)->dispose (object);
+  G_OBJECT_CLASS (chatty_verification_page_parent_class)->dispose (object);
 }
 
 static void
-chatty_verification_view_class_init (ChattyVerificationViewClass *klass)
+chatty_verification_page_class_init (ChattyVerificationPageClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->dispose = chatty_verification_view_dispose;
+  object_class->dispose = chatty_verification_page_dispose;
 
   gtk_widget_class_set_template_from_resource (widget_class,
                                                "/sm/puri/Chatty/"
-                                               "ui/chatty-verification-view.ui");
+                                               "ui/chatty-verification-page.ui");
 
-  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationView, user_avatar);
-  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationView, name_label);
-  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationView, username_label);
+  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationPage, user_avatar);
+  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationPage, name_label);
+  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationPage, username_label);
 
-  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationView, continue_button);
-  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationView, continue_spinner);
-  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationView, cancel_button);
-  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationView, cancel_spinner);
+  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationPage, continue_button);
+  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationPage, continue_spinner);
+  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationPage, cancel_button);
+  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationPage, cancel_spinner);
 
-  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationView, verification_dialog);
-  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationView, verification_type_button);
-  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationView, content_stack);
+  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationPage, verification_dialog);
+  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationPage, verification_type_button);
+  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationPage, content_stack);
 
-  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationView, decimal_content);
-  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationView, decimal1_label);
-  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationView, decimal2_label);
-  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationView, decimal3_label);
+  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationPage, decimal_content);
+  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationPage, decimal1_label);
+  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationPage, decimal2_label);
+  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationPage, decimal3_label);
 
-  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationView, emoji_content);
-  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationView, emoji1_label);
-  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationView, emoji1_title);
-  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationView, emoji2_label);
-  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationView, emoji2_title);
-  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationView, emoji3_label);
-  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationView, emoji3_title);
-  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationView, emoji4_label);
-  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationView, emoji4_title);
-  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationView, emoji5_label);
-  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationView, emoji5_title);
-  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationView, emoji6_label);
-  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationView, emoji6_title);
-  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationView, emoji7_label);
-  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationView, emoji7_title);
+  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationPage, emoji_content);
+  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationPage, emoji1_label);
+  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationPage, emoji1_title);
+  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationPage, emoji2_label);
+  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationPage, emoji2_title);
+  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationPage, emoji3_label);
+  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationPage, emoji3_title);
+  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationPage, emoji4_label);
+  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationPage, emoji4_title);
+  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationPage, emoji5_label);
+  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationPage, emoji5_title);
+  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationPage, emoji6_label);
+  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationPage, emoji6_title);
+  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationPage, emoji7_label);
+  gtk_widget_class_bind_template_child (widget_class, ChattyVerificationPage, emoji7_title);
 
   gtk_widget_class_bind_template_callback (widget_class, verification_continue_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, verification_cancel_clicked_cb);
@@ -456,19 +456,19 @@ chatty_verification_view_class_init (ChattyVerificationViewClass *klass)
 }
 
 static void
-chatty_verification_view_init (ChattyVerificationView *self)
+chatty_verification_page_init (ChattyVerificationPage *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
   verification_content_child_changed_cb (self);
 }
 
 void
-chatty_verification_view_set_item (ChattyVerificationView *self,
+chatty_verification_page_set_item (ChattyVerificationPage *self,
                                    ChattyItem             *item)
 {
   ChattyItem *sender;
 
-  g_return_if_fail (CHATTY_IS_VERIFICATION_VIEW (self));
+  g_return_if_fail (CHATTY_IS_VERIFICATION_PAGE (self));
 
   if (self->item) {
     self->emoji_set = FALSE;
