@@ -6,7 +6,7 @@ src/chatty-application.h
 src/chatty-avatar.c
 src/chatty-avatar.h
 src/chatty-chat-list.c
-src/chatty-chat-view.c
+src/chatty-chat-page.c
 src/chatty-chat.c
 src/chatty-chat.h
 src/chatty-contact-list.c
@@ -66,7 +66,7 @@ src/matrix/chatty-ma-key-chat.c
 src/mm/chatty-mmsd.c
 src/mm/chatty-mmsd.h
 src/ui/chatty-attachment.ui
-src/ui/chatty-chat-view.ui
+src/ui/chatty-chat-page.ui
 src/ui/chatty-contact-row.ui
 src/ui/chatty-dialog-join-muc.ui
 src/ui/chatty-dialog-new-chat.ui

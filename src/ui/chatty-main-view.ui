@@ -91,7 +91,7 @@
             <property name="vhomogeneous">0</property>
             <property name="hhomogeneous">0</property>
             <child>
-              <object class="ChattyChatView" id="content_view"/>
+              <object class="ChattyChatPage" id="chat_page"/>
             </child>
             <child>
               <object class="ChattyInviteView" id="invite_view"/>

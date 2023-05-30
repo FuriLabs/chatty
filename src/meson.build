@@ -37,7 +37,7 @@ libsrc += [
   'chatty-attachment.c',
   'chatty-attachments-bar.c',
   'chatty-list-row.c',
-  'chatty-chat-view.c',
+  'chatty-chat-page.c',
   'chatty-message-row.c',
   'chatty-progress-button.c',
   'chatty-file-item.c',
@@ -58,7 +58,7 @@ libsrc += [
 ]
 
 ui_files = files (
-  'ui/chatty-chat-view.ui',
+  'ui/chatty-chat-page.ui',
   'ui/chatty-contact-row.ui',
   # FIXME: Testing this fails in CI,
   # but works fine locally

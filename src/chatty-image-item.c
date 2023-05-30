@@ -15,7 +15,7 @@
 #include "gtk3-to-4.h"
 #include "chatty-enums.h"
 #include "chatty-file.h"
-#include "chatty-chat-view.h"
+#include "chatty-chat-page.h"
 #include "chatty-progress-button.h"
 #include "chatty-image-item.h"
 
@@ -125,7 +125,7 @@ image_progress_button_action_clicked_cb (ChattyImageItem *self)
 
   g_assert (CHATTY_IS_IMAGE_ITEM (self));
 
-  view = gtk_widget_get_ancestor (GTK_WIDGET (self), CHATTY_TYPE_CHAT_VIEW);
+  view = gtk_widget_get_ancestor (GTK_WIDGET (self), CHATTY_TYPE_CHAT_PAGE);
 
   g_signal_emit_by_name (view, "file-requested", self->message);
 }

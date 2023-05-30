@@ -1,4 +1,4 @@
-/* chatty-chat-view.c
+/* chatty-chat-page.c
  *
  * Copyright 2020 Purism SPC
  *
@@ -8,7 +8,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#define G_LOG_DOMAIN "chatty-chat-view"
+#define G_LOG_DOMAIN "chatty-chat-page"
 
 #include "config.h"
 
@@ -22,10 +22,10 @@
 #include "chatty-message-row.h"
 #include "chatty-attachments-bar.h"
 #include "chatty-utils.h"
-#include "chatty-chat-view.h"
+#include "chatty-chat-page.h"
 #include "chatty-log.h"
 
-struct _ChattyChatView
+struct _ChattyChatPage
 {
   AdwBin      parent_instance;
 
@@ -72,7 +72,7 @@ struct _ChattyChatView
 #define INDICATOR_MARGIN   2
 #define MSG_BUBBLE_MAX_RATIO .3
 
-G_DEFINE_TYPE (ChattyChatView, chatty_chat_view, ADW_TYPE_BIN)
+G_DEFINE_TYPE (ChattyChatPage, chatty_chat_page, ADW_TYPE_BIN)
 
 
 const char *emoticons[][2] = {
@@ -146,24 +146,24 @@ chatty_draw_typing_indicator (cairo_t *cr)
 }
 
 static void
-chat_view_typing_indicator_draw_cb (GtkDrawingArea *drawing_area,
+chat_page_typing_indicator_draw_cb (GtkDrawingArea *drawing_area,
                                     cairo_t        *cr,
                                     int             width,
                                     int             height,
                                     gpointer        user_data)
 {
-  ChattyChatView *self = user_data;
+  ChattyChatPage *self = user_data;
 
-  g_assert (CHATTY_IS_CHAT_VIEW (self));
+  g_assert (CHATTY_IS_CHAT_PAGE (self));
 
   if (self->refresh_typing_id > 0)
     chatty_draw_typing_indicator (cr);
 }
 
 static gboolean
-chat_view_indicator_refresh_cb (ChattyChatView *self)
+chat_page_indicator_refresh_cb (ChattyChatPage *self)
 {
-  g_assert (CHATTY_IS_CHAT_VIEW (self));
+  g_assert (CHATTY_IS_CHAT_PAGE (self));
 
   gtk_widget_queue_draw (self->typing_indicator);
 
@@ -173,7 +173,7 @@ chat_view_indicator_refresh_cb (ChattyChatView *self)
 static gboolean
 update_emote (gpointer user_data)
 {
-  ChattyChatView *self = user_data;
+  ChattyChatPage *self = user_data;
   GtkTextIter pos, end;
   GtkTextMark *mark;
   int i;
@@ -194,13 +194,13 @@ update_emote (gpointer user_data)
 }
 
 static void
-chatty_check_for_emoticon (ChattyChatView *self)
+chatty_check_for_emoticon (ChattyChatPage *self)
 {
   GtkTextIter start, end;
   GtkTextMark *mark;
   g_autofree char *text = NULL;
 
-  g_assert (CHATTY_IS_CHAT_VIEW (self));
+  g_assert (CHATTY_IS_CHAT_PAGE (self));
 
   mark = gtk_text_buffer_get_insert (self->message_input_buffer);
   gtk_text_buffer_get_iter_at_mark (self->message_input_buffer, &end, mark);
@@ -225,12 +225,12 @@ chatty_check_for_emoticon (ChattyChatView *self)
 }
 
 static void
-chatty_chat_view_update (ChattyChatView *self)
+chatty_chat_page_update (ChattyChatPage *self)
 {
   GtkStyleContext *context;
   ChattyProtocol protocol;
 
-  g_assert (CHATTY_IS_CHAT_VIEW (self));
+  g_assert (CHATTY_IS_CHAT_PAGE (self));
 
   protocol = chatty_item_get_protocols (CHATTY_ITEM (self->chat));
 
@@ -273,13 +273,13 @@ chatty_chat_view_update (ChattyChatView *self)
 }
 
 static void
-chatty_update_typing_status (ChattyChatView *self)
+chatty_update_typing_status (ChattyChatPage *self)
 {
   GtkTextIter             start, end;
   g_autofree char         *text = NULL;
   gboolean                empty;
 
-  g_assert (CHATTY_IS_CHAT_VIEW (self));
+  g_assert (CHATTY_IS_CHAT_PAGE (self));
 
   gtk_text_buffer_get_bounds (self->message_input_buffer, &start, &end);
   text = gtk_text_buffer_get_text (self->message_input_buffer, &start, &end, FALSE);
@@ -289,9 +289,9 @@ chatty_update_typing_status (ChattyChatView *self)
 }
 
 static void
-chat_view_scroll_down_clicked_cb (ChattyChatView *self)
+chat_page_scroll_down_clicked_cb (ChattyChatPage *self)
 {
-  g_assert (CHATTY_IS_CHAT_VIEW (self));
+  g_assert (CHATTY_IS_CHAT_PAGE (self));
 
   gtk_adjustment_set_value (self->vadjustment,
                             gtk_adjustment_get_upper (self->vadjustment));
@@ -299,21 +299,21 @@ chat_view_scroll_down_clicked_cb (ChattyChatView *self)
 }
 
 static void
-chat_view_edge_overshot_cb (ChattyChatView  *self,
+chat_page_edge_overshot_cb (ChattyChatPage  *self,
                             GtkPositionType  pos)
 {
-  g_assert (CHATTY_IS_CHAT_VIEW (self));
+  g_assert (CHATTY_IS_CHAT_PAGE (self));
 
   if (pos == GTK_POS_TOP)
     chatty_chat_load_past_messages (self->chat, -1);
 }
 
 static void
-chat_view_attachment_revealer_notify_cb (ChattyChatView *self)
+chat_page_attachment_revealer_notify_cb (ChattyChatPage *self)
 {
   gboolean has_files, has_text;
 
-  g_assert (CHATTY_IS_CHAT_VIEW (self));
+  g_assert (CHATTY_IS_CHAT_PAGE (self));
 
   has_files = gtk_revealer_get_reveal_child (GTK_REVEALER (self->attachment_revealer));
   has_text = gtk_text_buffer_get_char_count (self->message_input_buffer) > 0;
@@ -328,7 +328,7 @@ chat_view_attachment_revealer_notify_cb (ChattyChatView *self)
 }
 
 static void
-chat_account_status_changed_cb (ChattyChatView *self)
+chat_account_status_changed_cb (ChattyChatPage *self)
 {
   ChattyAccount *account;
   gboolean enabled;
@@ -344,15 +344,15 @@ chat_account_status_changed_cb (ChattyChatView *self)
 }
 
 static GtkWidget *
-chat_view_message_row_new (ChattyMessage  *message,
-                           ChattyChatView *self)
+chat_page_message_row_new (ChattyMessage  *message,
+                           ChattyChatPage *self)
 {
   GtkWidget *row;
   ChattyProtocol protocol;
   gdouble upper, value;
 
   g_assert (CHATTY_IS_MESSAGE (message));
-  g_assert (CHATTY_IS_CHAT_VIEW (self));
+  g_assert (CHATTY_IS_CHAT_PAGE (self));
 
   protocol = chatty_item_get_protocols (CHATTY_ITEM (self->chat));
   row = chatty_message_row_new (message, protocol, chatty_chat_is_im (self->chat));
@@ -369,12 +369,12 @@ chat_view_message_row_new (ChattyMessage  *message,
 }
 
 static void
-chat_encrypt_changed_cb (ChattyChatView *self)
+chat_encrypt_changed_cb (ChattyChatPage *self)
 {
   const char *icon_name;
   ChattyEncryption encryption;
 
-  g_assert (CHATTY_IS_CHAT_VIEW (self));
+  g_assert (CHATTY_IS_CHAT_PAGE (self));
 
   encryption = chatty_chat_get_encryption (self->chat);
 
@@ -387,14 +387,14 @@ chat_encrypt_changed_cb (ChattyChatView *self)
 }
 
 static void
-chat_buddy_typing_changed_cb (ChattyChatView *self)
+chat_buddy_typing_changed_cb (ChattyChatPage *self)
 {
-  g_assert (CHATTY_IS_CHAT_VIEW (self));
+  g_assert (CHATTY_IS_CHAT_PAGE (self));
 
   if (chatty_chat_get_buddy_typing (self->chat)) {
     gtk_revealer_set_reveal_child (GTK_REVEALER (self->typing_revealer), TRUE);
     self->refresh_typing_id = g_timeout_add (300,
-                                             (GSourceFunc)chat_view_indicator_refresh_cb,
+                                             (GSourceFunc)chat_page_indicator_refresh_cb,
                                              self);
   } else {
     gtk_revealer_set_reveal_child (GTK_REVEALER (self->typing_revealer), FALSE);
@@ -403,11 +403,11 @@ chat_buddy_typing_changed_cb (ChattyChatView *self)
 }
 
 static void
-chat_view_loading_history_cb (ChattyChatView *self)
+chat_page_loading_history_cb (ChattyChatPage *self)
 {
   gboolean loading;
 
-  g_assert (CHATTY_IS_CHAT_VIEW (self));
+  g_assert (CHATTY_IS_CHAT_PAGE (self));
 
   loading = chatty_chat_is_loading_history (self->chat);
 
@@ -421,11 +421,11 @@ chat_view_loading_history_cb (ChattyChatView *self)
 }
 
 static void
-chat_view_message_items_changed (ChattyChatView *self)
+chat_page_message_items_changed (ChattyChatPage *self)
 {
   GListModel *messages;
 
-  g_assert (CHATTY_IS_CHAT_VIEW (self));
+  g_assert (CHATTY_IS_CHAT_PAGE (self));
 
   if (!self->chat)
     return;
@@ -439,7 +439,7 @@ chat_view_message_items_changed (ChattyChatView *self)
 }
 
 static void
-chat_view_chat_changed_cb (ChattyChatView *self)
+chat_page_chat_changed_cb (ChattyChatPage *self)
 {
   if (!self->chat)
     return;
@@ -449,11 +449,11 @@ chat_view_chat_changed_cb (ChattyChatView *self)
 }
 
 static void
-chat_view_file_chooser_response_cb (ChattyChatView *self,
+chat_page_file_chooser_response_cb (ChattyChatPage *self,
                                     int             response_id,
                                     GtkDialog      *dialog)
 {
-  g_assert (CHATTY_IS_CHAT_VIEW (self));
+  g_assert (CHATTY_IS_CHAT_PAGE (self));
 
   if (response_id == GTK_RESPONSE_ACCEPT) {
     g_autoptr(GFile) file = NULL;
@@ -473,12 +473,12 @@ chat_view_file_chooser_response_cb (ChattyChatView *self,
 }
 
 static void
-chat_view_show_file_chooser (ChattyChatView *self)
+chat_page_show_file_chooser (ChattyChatPage *self)
 {
   GtkWindow *window;
   GtkWidget *dialog;
 
-  g_assert (CHATTY_IS_CHAT_VIEW (self));
+  g_assert (CHATTY_IS_CHAT_PAGE (self));
 
   g_debug ("Show file chooser");
 
@@ -491,24 +491,24 @@ chat_view_show_file_chooser (ChattyChatView *self)
                                         NULL);
 
   g_signal_connect_object (dialog, "response",
-                           G_CALLBACK (chat_view_file_chooser_response_cb),
+                           G_CALLBACK (chat_page_file_chooser_response_cb),
                            self, G_CONNECT_SWAPPED);
 
   gtk_window_present (GTK_WINDOW (dialog));
 }
 
 static void
-chat_view_send_file_button_clicked_cb (ChattyChatView *self,
+chat_page_send_file_button_clicked_cb (ChattyChatPage *self,
                                        GtkButton      *button)
 {
-  g_assert (CHATTY_IS_CHAT_VIEW (self));
+  g_assert (CHATTY_IS_CHAT_PAGE (self));
   g_assert (GTK_IS_BUTTON (button));
   g_return_if_fail (chatty_chat_has_file_upload (self->chat));
 
   if (CHATTY_IS_MM_CHAT (self->chat)) {
-    chat_view_show_file_chooser (self);
+    chat_page_show_file_chooser (self);
   } else if (CHATTY_IS_MA_CHAT (self->chat)) {
-    chat_view_show_file_chooser (self);
+    chat_page_show_file_chooser (self);
   } else {
 #ifdef PURPLE_ENABLED
     chatty_pp_chat_show_file_upload (CHATTY_PP_CHAT (self->chat));
@@ -521,13 +521,13 @@ view_send_message_async_cb (GObject      *object,
                             GAsyncResult *result,
                             gpointer      user_data)
 {
-  g_autoptr(ChattyChatView) self = user_data;
+  g_autoptr(ChattyChatPage) self = user_data;
 
   chatty_chat_set_unread_count (self->chat, 0);
 }
 
 static void
-chat_view_send_message_button_clicked_cb (ChattyChatView *self)
+chat_page_send_message_button_clicked_cb (ChattyChatPage *self)
 {
   ChattyAccount *account;
   g_autoptr(ChattyMessage) msg = NULL;
@@ -535,7 +535,7 @@ chat_view_send_message_button_clicked_cb (ChattyChatView *self)
   GtkTextIter    start, end;
   GList *files;
 
-  g_assert (CHATTY_IS_CHAT_VIEW (self));
+  g_assert (CHATTY_IS_CHAT_PAGE (self));
 
   files = chatty_attachments_bar_get_files (CHATTY_ATTACHMENTS_BAR (self->attachment_bar));
 
@@ -614,12 +614,12 @@ chat_view_send_message_button_clicked_cb (ChattyChatView *self)
 }
 
 static gboolean
-chat_view_save_message_to_db (gpointer user_data)
+chat_page_save_message_to_db (gpointer user_data)
 {
-  ChattyChatView *self = user_data;
+  ChattyChatPage *self = user_data;
   g_autofree char *text = NULL;
 
-  g_assert (CHATTY_IS_CHAT_VIEW (self));
+  g_assert (CHATTY_IS_CHAT_PAGE (self));
 
   g_clear_handle_id (&self->save_timeout_id, g_source_remove);
   g_return_val_if_fail (self->chat, G_SOURCE_REMOVE);
@@ -647,11 +647,11 @@ chat_view_save_message_to_db (gpointer user_data)
 }
 
 static void
-chat_view_message_input_changed_cb (ChattyChatView *self)
+chat_page_message_input_changed_cb (ChattyChatPage *self)
 {
   gboolean has_text, has_files;
 
-  g_assert (CHATTY_IS_CHAT_VIEW (self));
+  g_assert (CHATTY_IS_CHAT_PAGE (self));
 
   if (self->is_self_change)
     return;
@@ -663,7 +663,7 @@ chat_view_message_input_changed_cb (ChattyChatView *self)
 
   if (!self->draft_is_loading)
     self->save_timeout_id = g_timeout_add (SAVE_TIMEOUT,
-                                           chat_view_save_message_to_db,
+                                           chat_page_save_message_to_db,
                                            self);
   if (self->draft_is_loading)
     return;
@@ -683,13 +683,13 @@ chat_view_message_input_changed_cb (ChattyChatView *self)
                                     GTK_POLICY_NEVER, GTK_POLICY_NEVER);
 }
 
-static void chat_view_adjustment_value_changed_cb (ChattyChatView *self);
+static void chat_page_adjustment_value_changed_cb (ChattyChatPage *self);
 static void
-list_page_size_changed_cb (ChattyChatView *self)
+list_page_size_changed_cb (ChattyChatPage *self)
 {
   gdouble size, upper, old_upper;
 
-  g_assert (CHATTY_IS_CHAT_VIEW (self));
+  g_assert (CHATTY_IS_CHAT_PAGE (self));
 
   size  = gtk_adjustment_get_page_size (self->vadjustment);
   upper = gtk_adjustment_get_upper (self->vadjustment);
@@ -709,11 +709,11 @@ list_page_size_changed_cb (ChattyChatView *self)
   if (upper - size <= DBL_EPSILON)
     return;
 
-  chat_view_adjustment_value_changed_cb (self);
+  chat_page_adjustment_value_changed_cb (self);
 }
 
 static void
-chat_view_adjustment_value_changed_cb (ChattyChatView *self)
+chat_page_adjustment_value_changed_cb (ChattyChatPage *self)
 {
   gdouble value, upper, page_size;
 
@@ -726,15 +726,15 @@ chat_view_adjustment_value_changed_cb (ChattyChatView *self)
 }
 
 static void
-chat_view_activate (GtkWidget  *widget,
+chat_page_activate (GtkWidget  *widget,
                     const char *action_name,
                     GVariant   *param)
 {
-  ChattyChatView *self = CHATTY_CHAT_VIEW (widget);
+  ChattyChatPage *self = CHATTY_CHAT_PAGE (widget);
 
   if (chatty_settings_get_return_sends_message (chatty_settings_get_default ())) {
     if (gtk_text_buffer_get_char_count (self->message_input_buffer) > 0)
-      chat_view_send_message_button_clicked_cb (self);
+      chat_page_send_message_button_clicked_cb (self);
     else
       gtk_widget_error_bell (self->message_input);
   } else {
@@ -743,11 +743,11 @@ chat_view_activate (GtkWidget  *widget,
 }
 
 static void
-chat_view_update_header_func (ChattyMessageRow *row,
+chat_page_update_header_func (ChattyMessageRow *row,
                               ChattyMessageRow *before,
                               gpointer          user_data)
 {
-  ChattyChatView *self = user_data;
+  ChattyChatPage *self = user_data;
   ChattyMessage *a, *b;
   time_t a_time, b_time;
 
@@ -775,29 +775,29 @@ chat_view_update_header_func (ChattyMessageRow *row,
 }
 
 static void
-chat_view_get_files_cb (GObject      *object,
+chat_page_get_files_cb (GObject      *object,
                         GAsyncResult *result,
                         gpointer      user_data)
 {
-  g_autoptr(ChattyChatView) self = user_data;
+  g_autoptr(ChattyChatPage) self = user_data;
 }
 
 static void
-chat_view_file_requested_cb (ChattyChatView *self,
+chat_page_file_requested_cb (ChattyChatPage *self,
                              ChattyMessage  *message)
 {
   chatty_chat_get_files_async (self->chat, message,
-                               chat_view_get_files_cb,
+                               chat_page_get_files_cb,
                                g_object_ref (self));
 }
 
 static gboolean
 update_view_scroll (gpointer user_data)
 {
-  ChattyChatView *self = user_data;
+  ChattyChatPage *self = user_data;
   gdouble size, upper, value;
 
-  g_assert (CHATTY_IS_CHAT_VIEW (self));
+  g_assert (CHATTY_IS_CHAT_PAGE (self));
 
   g_clear_handle_id (&self->update_view_id, g_source_remove);
 
@@ -816,7 +816,7 @@ update_view_scroll (gpointer user_data)
 }
 
 static void
-osk_properties_changed_cb (ChattyChatView *self,
+osk_properties_changed_cb (ChattyChatPage *self,
                            GVariant       *changed_properties)
 {
   g_autoptr(GVariant) value = NULL;
@@ -840,7 +840,7 @@ osk_proxy_new_cb (GObject      *service,
                   GAsyncResult *res,
                   gpointer      user_data)
 {
-  g_autoptr(ChattyChatView) self = user_data;
+  g_autoptr(ChattyChatPage) self = user_data;
   g_autoptr(GError) error = NULL;
 
   self->osk_proxy = g_dbus_proxy_new_finish (res, &error);
@@ -861,9 +861,9 @@ osk_appeared_cb (GDBusConnection *connection,
                  const char      *name_owner,
                  gpointer         user_data)
 {
-  ChattyChatView *self = user_data;
+  ChattyChatPage *self = user_data;
 
-  g_assert (CHATTY_IS_CHAT_VIEW (self));
+  g_assert (CHATTY_IS_CHAT_PAGE (self));
 
   g_dbus_proxy_new (connection,
                     G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START_AT_CONSTRUCTION |
@@ -883,9 +883,9 @@ osk_vanished_cb (GDBusConnection *connection,
                  const char      *name,
                  gpointer         user_data)
 {
-  ChattyChatView *self = user_data;
+  ChattyChatPage *self = user_data;
 
-  g_assert (CHATTY_IS_CHAT_VIEW (self));
+  g_assert (CHATTY_IS_CHAT_PAGE (self));
 
   g_clear_object (&self->osk_proxy);
 }
@@ -895,7 +895,7 @@ chat_get_draft_cb (GObject      *object,
                    GAsyncResult *result,
                    gpointer      user_data)
 {
-  g_autoptr(ChattyChatView) self = user_data;
+  g_autoptr(ChattyChatPage) self = user_data;
   g_autofree char *draft = NULL;
 
   draft = chatty_history_get_draft_finish (self->history, result, NULL);
@@ -907,19 +907,19 @@ chat_get_draft_cb (GObject      *object,
 }
 
 static void
-chatty_chat_view_map (GtkWidget *widget)
+chatty_chat_page_map (GtkWidget *widget)
 {
-  ChattyChatView *self = (ChattyChatView *)widget;
+  ChattyChatPage *self = (ChattyChatPage *)widget;
 
-  GTK_WIDGET_CLASS (chatty_chat_view_parent_class)->map (widget);
+  GTK_WIDGET_CLASS (chatty_chat_page_parent_class)->map (widget);
 
   gtk_widget_grab_focus (self->message_input);
 }
 
 static void
-chatty_chat_view_finalize (GObject *object)
+chatty_chat_page_finalize (GObject *object)
 {
-  ChattyChatView *self = (ChattyChatView *)object;
+  ChattyChatPage *self = (ChattyChatPage *)object;
 
   g_clear_handle_id (&self->history_load_id, g_source_remove);
   g_clear_handle_id (&self->osk_id, g_bus_unwatch_name);
@@ -933,18 +933,18 @@ chatty_chat_view_finalize (GObject *object)
   g_clear_object (&self->chat);
   g_clear_object (&self->draft_message);
 
-  G_OBJECT_CLASS (chatty_chat_view_parent_class)->finalize (object);
+  G_OBJECT_CLASS (chatty_chat_page_parent_class)->finalize (object);
 }
 
 static void
-chatty_chat_view_class_init (ChattyChatViewClass *klass)
+chatty_chat_page_class_init (ChattyChatPageClass *klass)
 {
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->finalize = chatty_chat_view_finalize;
+  object_class->finalize = chatty_chat_page_finalize;
 
-  widget_class->map = chatty_chat_view_map;
+  widget_class->map = chatty_chat_page_map;
 
   signals [FILE_REQUESTED] =
     g_signal_new ("file-requested",
@@ -955,54 +955,54 @@ chatty_chat_view_class_init (ChattyChatViewClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class,
                                                "/sm/puri/Chatty/"
-                                               "ui/chatty-chat-view.ui");
+                                               "ui/chatty-chat-page.ui");
 
-  gtk_widget_class_bind_template_child (widget_class, ChattyChatView, message_view);
+  gtk_widget_class_bind_template_child (widget_class, ChattyChatPage, message_view);
 
-  gtk_widget_class_bind_template_child (widget_class, ChattyChatView, scroll_down_button);
-  gtk_widget_class_bind_template_child (widget_class, ChattyChatView, message_list);
-  gtk_widget_class_bind_template_child (widget_class, ChattyChatView, loading_spinner);
-  gtk_widget_class_bind_template_child (widget_class, ChattyChatView, typing_revealer);
-  gtk_widget_class_bind_template_child (widget_class, ChattyChatView, typing_indicator);
-  gtk_widget_class_bind_template_child (widget_class, ChattyChatView, input_frame);
-  gtk_widget_class_bind_template_child (widget_class, ChattyChatView, scrolled_window);
-  gtk_widget_class_bind_template_child (widget_class, ChattyChatView, attachment_revealer);
-  gtk_widget_class_bind_template_child (widget_class, ChattyChatView, attachment_bar);
-  gtk_widget_class_bind_template_child (widget_class, ChattyChatView, message_input);
-  gtk_widget_class_bind_template_child (widget_class, ChattyChatView, send_file_button);
-  gtk_widget_class_bind_template_child (widget_class, ChattyChatView, send_message_button);
-  gtk_widget_class_bind_template_child (widget_class, ChattyChatView, no_message_status);
-  gtk_widget_class_bind_template_child (widget_class, ChattyChatView, message_input_buffer);
-  gtk_widget_class_bind_template_child (widget_class, ChattyChatView, vadjustment);
+  gtk_widget_class_bind_template_child (widget_class, ChattyChatPage, scroll_down_button);
+  gtk_widget_class_bind_template_child (widget_class, ChattyChatPage, message_list);
+  gtk_widget_class_bind_template_child (widget_class, ChattyChatPage, loading_spinner);
+  gtk_widget_class_bind_template_child (widget_class, ChattyChatPage, typing_revealer);
+  gtk_widget_class_bind_template_child (widget_class, ChattyChatPage, typing_indicator);
+  gtk_widget_class_bind_template_child (widget_class, ChattyChatPage, input_frame);
+  gtk_widget_class_bind_template_child (widget_class, ChattyChatPage, scrolled_window);
+  gtk_widget_class_bind_template_child (widget_class, ChattyChatPage, attachment_revealer);
+  gtk_widget_class_bind_template_child (widget_class, ChattyChatPage, attachment_bar);
+  gtk_widget_class_bind_template_child (widget_class, ChattyChatPage, message_input);
+  gtk_widget_class_bind_template_child (widget_class, ChattyChatPage, send_file_button);
+  gtk_widget_class_bind_template_child (widget_class, ChattyChatPage, send_message_button);
+  gtk_widget_class_bind_template_child (widget_class, ChattyChatPage, no_message_status);
+  gtk_widget_class_bind_template_child (widget_class, ChattyChatPage, message_input_buffer);
+  gtk_widget_class_bind_template_child (widget_class, ChattyChatPage, vadjustment);
 
-  gtk_widget_class_bind_template_callback (widget_class, chat_view_scroll_down_clicked_cb);
-  gtk_widget_class_bind_template_callback (widget_class, chat_view_edge_overshot_cb);
-  gtk_widget_class_bind_template_callback (widget_class, chat_view_attachment_revealer_notify_cb);
-  gtk_widget_class_bind_template_callback (widget_class, chat_view_typing_indicator_draw_cb);
-  gtk_widget_class_bind_template_callback (widget_class, chat_view_send_file_button_clicked_cb);
-  gtk_widget_class_bind_template_callback (widget_class, chat_view_send_message_button_clicked_cb);
-  gtk_widget_class_bind_template_callback (widget_class, chat_view_message_input_changed_cb);
+  gtk_widget_class_bind_template_callback (widget_class, chat_page_scroll_down_clicked_cb);
+  gtk_widget_class_bind_template_callback (widget_class, chat_page_edge_overshot_cb);
+  gtk_widget_class_bind_template_callback (widget_class, chat_page_attachment_revealer_notify_cb);
+  gtk_widget_class_bind_template_callback (widget_class, chat_page_typing_indicator_draw_cb);
+  gtk_widget_class_bind_template_callback (widget_class, chat_page_send_file_button_clicked_cb);
+  gtk_widget_class_bind_template_callback (widget_class, chat_page_send_message_button_clicked_cb);
+  gtk_widget_class_bind_template_callback (widget_class, chat_page_message_input_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, list_page_size_changed_cb);
-  gtk_widget_class_bind_template_callback (widget_class, chat_view_adjustment_value_changed_cb);
+  gtk_widget_class_bind_template_callback (widget_class, chat_page_adjustment_value_changed_cb);
 
-  gtk_widget_class_install_action (widget_class, "view.activate", NULL, chat_view_activate);
+  gtk_widget_class_install_action (widget_class, "view.activate", NULL, chat_page_activate);
 
   g_type_ensure (CHATTY_TYPE_ATTACHMENTS_BAR);
 }
 
 static void
-chatty_chat_view_init (ChattyChatView *self)
+chatty_chat_page_init (ChattyChatPage *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
   gtk_drawing_area_set_draw_func (GTK_DRAWING_AREA (self->typing_indicator),
-                                  chat_view_typing_indicator_draw_cb,
+                                  chat_page_typing_indicator_draw_cb,
                                   g_object_ref (self), g_object_unref);
   gtk_list_box_set_placeholder (GTK_LIST_BOX (self->message_list), self->no_message_status);
 
   g_signal_connect_after (G_OBJECT (self), "file-requested",
-                          G_CALLBACK (chat_view_file_requested_cb), self);
+                          G_CALLBACK (chat_page_file_requested_cb), self);
   gtk_list_box_set_header_func (GTK_LIST_BOX (self->message_list),
-                                (GtkListBoxUpdateHeaderFunc)chat_view_update_header_func,
+                                (GtkListBoxUpdateHeaderFunc)chat_page_update_header_func,
                                 g_object_ref (self), g_object_unref);
 
   self->osk_id = g_bus_watch_name (G_BUS_TYPE_SESSION, "sm.puri.OSK0",
@@ -1014,17 +1014,17 @@ chatty_chat_view_init (ChattyChatView *self)
 }
 
 GtkWidget *
-chatty_chat_view_new (void)
+chatty_chat_page_new (void)
 {
-  return g_object_new (CHATTY_TYPE_CHAT_VIEW, NULL);
+  return g_object_new (CHATTY_TYPE_CHAT_PAGE, NULL);
 }
 
 static gboolean
-chat_view_history_wait_timeout_cb (gpointer user_data)
+chat_page_history_wait_timeout_cb (gpointer user_data)
 {
-  ChattyChatView *self = user_data;
+  ChattyChatPage *self = user_data;
 
-  g_assert (CHATTY_IS_CHAT_VIEW (self));
+  g_assert (CHATTY_IS_CHAT_PAGE (self));
 
   self->history_load_id = 0;
   self->should_scroll = TRUE;
@@ -1035,13 +1035,13 @@ chat_view_history_wait_timeout_cb (gpointer user_data)
 }
 
 void
-chatty_chat_view_set_chat (ChattyChatView *self,
+chatty_chat_page_set_chat (ChattyChatPage *self,
                            ChattyChat     *chat)
 {
   ChattyAccount *account;
   GListModel *messages;
 
-  g_return_if_fail (CHATTY_IS_CHAT_VIEW (self));
+  g_return_if_fail (CHATTY_IS_CHAT_PAGE (self));
   g_return_if_fail (!chat || CHATTY_IS_CHAT (chat));
 
   if (gtk_text_buffer_get_line_count (self->message_input_buffer) > 3)
@@ -1063,13 +1063,13 @@ chatty_chat_view_set_chat (ChattyChatView *self,
                                           chat_buddy_typing_changed_cb,
                                           self);
     g_signal_handlers_disconnect_by_func (self->chat,
-                                          chat_view_loading_history_cb,
+                                          chat_page_loading_history_cb,
                                           self);
     g_signal_handlers_disconnect_by_func (chatty_chat_get_messages (self->chat),
-                                          chat_view_message_items_changed,
+                                          chat_page_message_items_changed,
                                           self);
     g_signal_handlers_disconnect_by_func (chatty_chat_get_messages (self->chat),
-                                          chat_view_chat_changed_cb,
+                                          chat_page_chat_changed_cb,
                                           self);
 
     gtk_widget_hide (self->scroll_down_button);
@@ -1108,13 +1108,13 @@ chatty_chat_view_set_chat (ChattyChatView *self,
   account = chatty_chat_get_account (chat);
 
   g_signal_connect_object (messages, "items-changed",
-                           G_CALLBACK (chat_view_message_items_changed),
+                           G_CALLBACK (chat_page_message_items_changed),
                            self, G_CONNECT_SWAPPED);
   g_signal_connect_object (chat, "changed",
-                           G_CALLBACK (chat_view_chat_changed_cb),
+                           G_CALLBACK (chat_page_chat_changed_cb),
                            self, G_CONNECT_SWAPPED);
-  chat_view_message_items_changed (self);
-  chat_view_chat_changed_cb (self);
+  chat_page_message_items_changed (self);
+  chat_page_chat_changed_cb (self);
 
   if (g_list_model_get_n_items (messages) <= 3)
     chatty_chat_load_past_messages (chat, -1);
@@ -1133,7 +1133,7 @@ chatty_chat_view_set_chat (ChattyChatView *self,
 
   gtk_list_box_bind_model (GTK_LIST_BOX (self->message_list),
                            chatty_chat_get_messages (self->chat),
-                           (GtkListBoxCreateWidgetFunc)chat_view_message_row_new,
+                           (GtkListBoxCreateWidgetFunc)chat_page_message_row_new,
                            self, NULL);
   g_signal_connect_object (self->chat, "notify::encrypt",
                            G_CALLBACK (chat_encrypt_changed_cb),
@@ -1142,34 +1142,34 @@ chatty_chat_view_set_chat (ChattyChatView *self,
                            G_CALLBACK (chat_buddy_typing_changed_cb),
                            self, G_CONNECT_SWAPPED);
   g_signal_connect_object (self->chat, "notify::loading-history",
-                           G_CALLBACK (chat_view_loading_history_cb),
+                           G_CALLBACK (chat_page_loading_history_cb),
                            self, G_CONNECT_SWAPPED);
 
   chat_encrypt_changed_cb (self);
   chat_buddy_typing_changed_cb (self);
-  chatty_chat_view_update (self);
-  chat_view_loading_history_cb (self);
-  chat_view_adjustment_value_changed_cb (self);
+  chatty_chat_page_update (self);
+  chat_page_loading_history_cb (self);
+  chat_page_adjustment_value_changed_cb (self);
 
   self->history_load_id = g_timeout_add (HISTORY_WAIT_TIMEOUT,
-                                         chat_view_history_wait_timeout_cb,
+                                         chat_page_history_wait_timeout_cb,
                                          self);
   gtk_widget_grab_focus (self->message_input);
 }
 
 ChattyChat *
-chatty_chat_view_get_chat (ChattyChatView *self)
+chatty_chat_page_get_chat (ChattyChatPage *self)
 {
-  g_return_val_if_fail (CHATTY_IS_CHAT_VIEW (self), NULL);
+  g_return_val_if_fail (CHATTY_IS_CHAT_PAGE (self), NULL);
 
   return self->chat;
 }
 
 void
-chatty_chat_view_set_db (ChattyChatView *self,
+chatty_chat_page_set_db (ChattyChatPage *self,
                          ChattyHistory  *history)
 {
-  g_return_if_fail (CHATTY_IS_CHAT_VIEW (self));
+  g_return_if_fail (CHATTY_IS_CHAT_PAGE (self));
   g_return_if_fail (CHATTY_IS_HISTORY (history));
 
   g_set_object (&self->history, history);

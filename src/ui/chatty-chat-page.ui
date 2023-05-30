@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="ChattyChatView" parent="AdwBin">
+  <template class="ChattyChatPage" parent="AdwBin">
 
     <child>
       <object class="GtkStack">
@@ -24,7 +24,7 @@
                         <property name="visible">0</property>
                         <property name="margin-bottom">18</property>
                         <property name="margin-end">18</property>
-                        <signal name="clicked" handler="chat_view_scroll_down_clicked_cb" swapped="yes"/>
+                        <signal name="clicked" handler="chat_page_scroll_down_clicked_cb" swapped="yes"/>
                         <style>
                           <class name="osd"/>
                           <class name="circular"/>
@@ -44,7 +44,7 @@
                 <child type="overlay">
                   <object class="GtkRevealer" id="attachment_revealer">
                     <property name="valign">end</property>
-                    <signal name="notify::reveal-child" handler="chat_view_attachment_revealer_notify_cb" swapped="yes"/>
+                    <signal name="notify::reveal-child" handler="chat_page_attachment_revealer_notify_cb" swapped="yes"/>
                     <child>
                       <object class="ChattyAttachmentsBar" id="attachment_bar"/>
                     </child>
@@ -54,7 +54,7 @@
                   <object class="GtkScrolledWindow" id="scroll">
                     <property name="hscrollbar-policy">never</property>
                     <property name="vadjustment">vadjustment</property>
-                    <signal name="edge-overshot" handler="chat_view_edge_overshot_cb" swapped="yes"/>
+                    <signal name="edge-overshot" handler="chat_page_edge_overshot_cb" swapped="yes"/>
                     <style>
                       <class name="view"/>
                     </style>
@@ -120,7 +120,7 @@
                         <property name="focus_on_click">0</property>
                         <property name="margin-end">6</property>
                         <property name="icon-name">mail-attachment-symbolic</property>
-                        <signal name="clicked" handler="chat_view_send_file_button_clicked_cb" swapped="yes"/>
+                        <signal name="clicked" handler="chat_page_send_file_button_clicked_cb" swapped="yes"/>
                       </object>
                     </child>
                     <child>
@@ -171,7 +171,7 @@
                         <property name="focus_on_click">0</property>
                         <property name="margin-start">6</property>
                         <property name="icon-name">send-symbolic</property>
-                        <signal name="clicked" handler="chat_view_send_message_button_clicked_cb" swapped="yes"/>
+                        <signal name="clicked" handler="chat_page_send_message_button_clicked_cb" swapped="yes"/>
                       </object>
                     </child>
                   </object>
@@ -186,12 +186,12 @@
   </template>
 
   <object class="GtkTextBuffer" id="message_input_buffer">
-    <signal name="changed" handler="chat_view_message_input_changed_cb" after="yes" swapped="yes"/>
+    <signal name="changed" handler="chat_page_message_input_changed_cb" after="yes" swapped="yes"/>
   </object>
 
   <object class="GtkAdjustment" id="vadjustment">
     <signal name="notify::page-size" handler="list_page_size_changed_cb" swapped="yes"/>
-    <signal name="value-changed" handler="chat_view_adjustment_value_changed_cb" swapped="yes"/>
+    <signal name="value-changed" handler="chat_page_adjustment_value_changed_cb" swapped="yes"/>
   </object>
 
   <object class="AdwStatusPage" id="no_message_status">

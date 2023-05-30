@@ -24,7 +24,7 @@
 #include "chatty-history.h"
 #include "chatty-invite-view.h"
 #include "chatty-verification-view.h"
-#include "chatty-chat-view.h"
+#include "chatty-chat-page.h"
 #include "chatty-main-view.h"
 
 struct _ChattyMainView
@@ -42,7 +42,7 @@ struct _ChattyMainView
   GtkWidget    *close_button;
 
   GtkWidget    *main_stack;
-  GtkWidget    *content_view;
+  GtkWidget    *chat_page;
   GtkWidget    *invite_view;
   GtkWidget    *verification_view;
   GtkWidget    *empty_view;
@@ -177,7 +177,7 @@ chatty_main_view_class_init (ChattyMainViewClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyMainView, close_button);
 
   gtk_widget_class_bind_template_child (widget_class, ChattyMainView, main_stack);
-  gtk_widget_class_bind_template_child (widget_class, ChattyMainView, content_view);
+  gtk_widget_class_bind_template_child (widget_class, ChattyMainView, chat_page);
   gtk_widget_class_bind_template_child (widget_class, ChattyMainView, invite_view);
   gtk_widget_class_bind_template_child (widget_class, ChattyMainView, verification_view);
   gtk_widget_class_bind_template_child (widget_class, ChattyMainView, empty_view);
@@ -193,7 +193,7 @@ chatty_main_view_class_init (ChattyMainViewClass *klass)
 
   gtk_widget_class_bind_template_callback (widget_class, main_view_notification_closed_cb);
 
-  g_type_ensure (CHATTY_TYPE_CHAT_VIEW);
+  g_type_ensure (CHATTY_TYPE_CHAT_PAGE);
   g_type_ensure (CHATTY_TYPE_VERIFICATION_VIEW);
 }
 
@@ -210,7 +210,7 @@ chatty_main_view_set_db (ChattyMainView *self,
   g_return_if_fail (CHATTY_IS_MAIN_VIEW (self));
   g_return_if_fail (CHATTY_IS_HISTORY (db));
 
-  chatty_chat_view_set_db (CHATTY_CHAT_VIEW (self->content_view), db);
+  chatty_chat_page_set_db (CHATTY_CHAT_PAGE (self->chat_page), db);
 }
 
 void
@@ -285,7 +285,7 @@ chatty_main_view_set_item (ChattyMainView *self,
   chatty_verification_view_set_item (CHATTY_VERIFICATION_VIEW (self->verification_view), item);
 
   if (!item || (CHATTY_IS_CHAT (item) && !CHATTY_IS_MA_KEY_CHAT (item)))
-    chatty_chat_view_set_chat (CHATTY_CHAT_VIEW (self->content_view), (ChattyChat *)item);
+    chatty_chat_page_set_chat (CHATTY_CHAT_PAGE (self->chat_page), (ChattyChat *)item);
 
   if (CHATTY_IS_CHAT (item)) {
     ChattyChatState state;
@@ -300,7 +300,7 @@ chatty_main_view_set_item (ChattyMainView *self,
     else if (state == CHATTY_CHAT_VERIFICATION)
       gtk_stack_set_visible_child (GTK_STACK (self->main_stack), self->verification_view);
     else
-      gtk_stack_set_visible_child (GTK_STACK (self->main_stack), self->content_view);
+      gtk_stack_set_visible_child (GTK_STACK (self->main_stack), self->chat_page);
   } else {
     gtk_revealer_set_reveal_child (GTK_REVEALER (self->notification_revealer), FALSE);
     gtk_stack_set_visible_child (GTK_STACK (self->main_stack), self->empty_view);

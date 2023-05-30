@@ -17,15 +17,15 @@
 
 G_BEGIN_DECLS
 
-#define CHATTY_TYPE_CHAT_VIEW (chatty_chat_view_get_type ())
+#define CHATTY_TYPE_CHAT_PAGE (chatty_chat_page_get_type ())
 
-G_DECLARE_FINAL_TYPE (ChattyChatView, chatty_chat_view, CHATTY, CHAT_VIEW, AdwBin)
+G_DECLARE_FINAL_TYPE (ChattyChatPage, chatty_chat_page, CHATTY, CHAT_PAGE, AdwBin)
 
-GtkWidget  *chatty_chat_view_new      (void);
-void        chatty_chat_view_set_chat (ChattyChatView *self,
+GtkWidget  *chatty_chat_page_new      (void);
+void        chatty_chat_page_set_chat (ChattyChatPage *self,
                                        ChattyChat     *chat);
-ChattyChat *chatty_chat_view_get_chat (ChattyChatView *self);
-void        chatty_chat_view_set_db   (ChattyChatView *self,
+ChattyChat *chatty_chat_page_get_chat (ChattyChatPage *self);
+void        chatty_chat_page_set_db   (ChattyChatPage *self,
                                        ChattyHistory  *history);
 
 G_END_DECLS
