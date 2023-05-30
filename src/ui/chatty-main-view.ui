@@ -94,7 +94,7 @@
               <object class="ChattyChatPage" id="chat_page"/>
             </child>
             <child>
-              <object class="ChattyInviteView" id="invite_view"/>
+              <object class="ChattyInvitePage" id="invite_page"/>
             </child>
             <child>
               <object class="ChattyVerificationView" id="verification_view"/>

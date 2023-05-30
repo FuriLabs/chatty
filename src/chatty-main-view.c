@@ -22,7 +22,7 @@
 #include "chatty-ma-chat.h"
 #include "chatty-mm-chat.h"
 #include "chatty-history.h"
-#include "chatty-invite-view.h"
+#include "chatty-invite-page.h"
 #include "chatty-verification-view.h"
 #include "chatty-chat-page.h"
 #include "chatty-main-view.h"
@@ -43,7 +43,7 @@ struct _ChattyMainView
 
   GtkWidget    *main_stack;
   GtkWidget    *chat_page;
-  GtkWidget    *invite_view;
+  GtkWidget    *invite_page;
   GtkWidget    *verification_view;
   GtkWidget    *empty_view;
 
@@ -178,7 +178,7 @@ chatty_main_view_class_init (ChattyMainViewClass *klass)
 
   gtk_widget_class_bind_template_child (widget_class, ChattyMainView, main_stack);
   gtk_widget_class_bind_template_child (widget_class, ChattyMainView, chat_page);
-  gtk_widget_class_bind_template_child (widget_class, ChattyMainView, invite_view);
+  gtk_widget_class_bind_template_child (widget_class, ChattyMainView, invite_page);
   gtk_widget_class_bind_template_child (widget_class, ChattyMainView, verification_view);
   gtk_widget_class_bind_template_child (widget_class, ChattyMainView, empty_view);
 
@@ -293,10 +293,10 @@ chatty_main_view_set_item (ChattyMainView *self,
     state = chatty_chat_get_chat_state (CHATTY_CHAT (item));
 
     if (state == CHATTY_CHAT_INVITED)
-      chatty_invite_view_set_chat (CHATTY_INVITE_VIEW (self->invite_view), (ChattyChat *)item);
+      chatty_invite_page_set_chat (CHATTY_INVITE_PAGE (self->invite_page), (ChattyChat *)item);
 
     if (state == CHATTY_CHAT_INVITED)
-      gtk_stack_set_visible_child (GTK_STACK (self->main_stack), self->invite_view);
+      gtk_stack_set_visible_child (GTK_STACK (self->main_stack), self->invite_page);
     else if (state == CHATTY_CHAT_VERIFICATION)
       gtk_stack_set_visible_child (GTK_STACK (self->main_stack), self->verification_view);
     else

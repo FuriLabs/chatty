@@ -17,11 +17,11 @@
 
 G_BEGIN_DECLS
 
-#define CHATTY_TYPE_INVITE_VIEW (chatty_invite_view_get_type ())
+#define CHATTY_TYPE_INVITE_PAGE (chatty_invite_page_get_type ())
 
-G_DECLARE_FINAL_TYPE (ChattyInviteView, chatty_invite_view, CHATTY, INVITE_VIEW, GtkBox)
+G_DECLARE_FINAL_TYPE (ChattyInvitePage, chatty_invite_page, CHATTY, INVITE_PAGE, GtkBox)
 
-void          chatty_invite_view_set_chat       (ChattyInviteView *self,
+void          chatty_invite_page_set_chat       (ChattyInvitePage *self,
                                                  ChattyChat       *chat);
 
 G_END_DECLS

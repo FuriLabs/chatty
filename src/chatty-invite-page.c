@@ -1,4 +1,4 @@
-/* chatty-invite-view.c
+/* chatty-invite-page.c
  *
  * Copyright 2022 Purism SPC
  *
@@ -8,7 +8,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#define G_LOG_DOMAIN "chatty-invite-view"
+#define G_LOG_DOMAIN "chatty-invite-page"
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -18,9 +18,9 @@
 
 #include "chatty-avatar.h"
 #include "chatty-manager.h"
-#include "chatty-invite-view.h"
+#include "chatty-invite-page.h"
 
-struct _ChattyInviteView
+struct _ChattyInvitePage
 {
   GtkBox         parent_instance;
 
@@ -40,14 +40,14 @@ struct _ChattyInviteView
   gulong         account_handler;
 };
 
-G_DEFINE_TYPE (ChattyInviteView, chatty_invite_view, GTK_TYPE_BOX)
+G_DEFINE_TYPE (ChattyInvitePage, chatty_invite_page, GTK_TYPE_BOX)
 
 static void
-invite_account_status_changed_cb (ChattyInviteView *self)
+invite_account_status_changed_cb (ChattyInvitePage *self)
 {
   gboolean can_connect;
 
-  g_assert (CHATTY_IS_INVITE_VIEW (self));
+  g_assert (CHATTY_IS_INVITE_PAGE (self));
 
   if (!self->chat || chatty_chat_get_chat_state (self->chat) != CHATTY_CHAT_INVITED)
     return;
@@ -57,12 +57,12 @@ invite_account_status_changed_cb (ChattyInviteView *self)
 }
 
 static void
-chat_invite_name_changed_cb (ChattyInviteView *self)
+chat_invite_name_changed_cb (ChattyInvitePage *self)
 {
   g_autofree char *title = NULL;
   const char *name;
 
-  g_assert (CHATTY_IS_INVITE_VIEW (self));
+  g_assert (CHATTY_IS_INVITE_PAGE (self));
 
   if (!self->chat || chatty_chat_get_chat_state (self->chat) != CHATTY_CHAT_INVITED)
     return;
@@ -78,7 +78,7 @@ chat_accept_invite_cb (GObject      *object,
                        GAsyncResult *result,
                        gpointer      user_data)
 {
-  g_autoptr(ChattyInviteView) self = user_data;
+  g_autoptr(ChattyInvitePage) self = user_data;
   g_autoptr(GError) error = NULL;
 
   if (gtk_widget_in_destruction (user_data))
@@ -100,9 +100,9 @@ chat_accept_invite_cb (GObject      *object,
 }
 
 static void
-invite_accept_clicked_cb (ChattyInviteView *self)
+invite_accept_clicked_cb (ChattyInvitePage *self)
 {
-  g_assert (CHATTY_IS_INVITE_VIEW (self));
+  g_assert (CHATTY_IS_INVITE_PAGE (self));
 
   gtk_spinner_start (GTK_SPINNER (self->accept_spinner));
   gtk_widget_set_sensitive (self->accept_button, FALSE);
@@ -116,7 +116,7 @@ chat_reject_invite_cb (GObject      *object,
                        GAsyncResult *result,
                        gpointer      user_data)
 {
-  g_autoptr(ChattyInviteView) self = user_data;
+  g_autoptr(ChattyInvitePage) self = user_data;
   g_autoptr(GError) error = NULL;
 
   if (gtk_widget_in_destruction (user_data))
@@ -137,9 +137,9 @@ chat_reject_invite_cb (GObject      *object,
 }
 
 static void
-invite_reject_clicked_cb (ChattyInviteView *self)
+invite_reject_clicked_cb (ChattyInvitePage *self)
 {
-  g_assert (CHATTY_IS_INVITE_VIEW (self));
+  g_assert (CHATTY_IS_INVITE_PAGE (self));
 
   gtk_spinner_start (GTK_SPINNER (self->reject_spinner));
   gtk_widget_set_sensitive (self->accept_button, FALSE);
@@ -149,51 +149,51 @@ invite_reject_clicked_cb (ChattyInviteView *self)
 }
 
 static void
-chatty_invite_view_dispose (GObject *object)
+chatty_invite_page_dispose (GObject *object)
 {
-  ChattyInviteView *self = (ChattyInviteView *)object;
+  ChattyInvitePage *self = (ChattyInvitePage *)object;
 
   g_clear_object (&self->chat);
 
-  G_OBJECT_CLASS (chatty_invite_view_parent_class)->dispose (object);
+  G_OBJECT_CLASS (chatty_invite_page_parent_class)->dispose (object);
 }
 
 static void
-chatty_invite_view_class_init (ChattyInviteViewClass *klass)
+chatty_invite_page_class_init (ChattyInvitePageClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->dispose = chatty_invite_view_dispose;
+  object_class->dispose = chatty_invite_page_dispose;
 
   gtk_widget_class_set_template_from_resource (widget_class,
                                                "/sm/puri/Chatty/"
-                                               "ui/chatty-invite-view.ui");
+                                               "ui/chatty-invite-page.ui");
 
-  gtk_widget_class_bind_template_child (widget_class, ChattyInviteView, invite_title);
-  gtk_widget_class_bind_template_child (widget_class, ChattyInviteView, chat_avatar);
-  gtk_widget_class_bind_template_child (widget_class, ChattyInviteView, invite_subtitle);
+  gtk_widget_class_bind_template_child (widget_class, ChattyInvitePage, invite_title);
+  gtk_widget_class_bind_template_child (widget_class, ChattyInvitePage, chat_avatar);
+  gtk_widget_class_bind_template_child (widget_class, ChattyInvitePage, invite_subtitle);
 
-  gtk_widget_class_bind_template_child (widget_class, ChattyInviteView, accept_button);
-  gtk_widget_class_bind_template_child (widget_class, ChattyInviteView, accept_spinner);
-  gtk_widget_class_bind_template_child (widget_class, ChattyInviteView, reject_button);
-  gtk_widget_class_bind_template_child (widget_class, ChattyInviteView, reject_spinner);
+  gtk_widget_class_bind_template_child (widget_class, ChattyInvitePage, accept_button);
+  gtk_widget_class_bind_template_child (widget_class, ChattyInvitePage, accept_spinner);
+  gtk_widget_class_bind_template_child (widget_class, ChattyInvitePage, reject_button);
+  gtk_widget_class_bind_template_child (widget_class, ChattyInvitePage, reject_spinner);
 
   gtk_widget_class_bind_template_callback (widget_class, invite_accept_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, invite_reject_clicked_cb);
 }
 
 static void
-chatty_invite_view_init (ChattyInviteView *self)
+chatty_invite_page_init (ChattyInvitePage *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
 }
 
 void
-chatty_invite_view_set_chat (ChattyInviteView *self,
+chatty_invite_page_set_chat (ChattyInvitePage *self,
                              ChattyChat       *chat)
 {
-  g_return_if_fail (CHATTY_IS_INVITE_VIEW (self));
+  g_return_if_fail (CHATTY_IS_INVITE_PAGE (self));
   g_return_if_fail (!chat || CHATTY_IS_CHAT (chat));
 
   if (self->chat) {

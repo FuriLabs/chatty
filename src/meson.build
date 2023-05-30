@@ -88,7 +88,7 @@ chatty_sources += [
   'chatty-contact-list.c',
   'chatty-main-view.c',
   'chatty-side-bar.c',
-  'chatty-invite-view.c',
+  'chatty-invite-page.c',
   'chatty-verification-view.c',
   'chatty-window.c',
   'dialogs/chatty-info-dialog.c',
