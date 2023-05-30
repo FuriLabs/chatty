@@ -119,55 +119,6 @@ file_create_thumbnail_cb (GObject      *object,
 }
 
 static void
-chatty_attachment_set_file (ChattyAttachment *self,
-                            GFile            *file)
-{
-  g_autoptr(GFileInfo) file_info = NULL;
-  g_autoptr(GError) error = NULL;
-  const char *thumbnail;
-  GtkWidget *image;
-  gboolean thumbnail_failed, thumbnail_valid;
-
-  g_assert (CHATTY_IS_ATTACHMENT (self));
-  g_assert (G_IS_FILE (file));
-
-  g_set_object (&self->file, file);
-
-  file_info = g_file_query_info (file,
-                                 G_FILE_ATTRIBUTE_STANDARD_ICON ","
-                                 G_FILE_ATTRIBUTE_THUMBNAIL_PATH ","
-                                 G_FILE_ATTRIBUTE_THUMBNAIL_IS_VALID ","
-                                 G_FILE_ATTRIBUTE_THUMBNAILING_FAILED,
-                                 G_FILE_QUERY_INFO_NONE,
-                                 NULL, &error);
-  if (error)
-    g_warning ("Error querying info: %s", error->message);
-
-  image = gtk_image_new ();
-  gtk_widget_set_tooltip_text (image, g_file_peek_path (file));
-  gtk_widget_set_size_request (image, -1, 96);
-  thumbnail = g_file_info_get_attribute_byte_string (file_info, G_FILE_ATTRIBUTE_THUMBNAIL_PATH);
-  thumbnail_failed = g_file_info_get_attribute_boolean (file_info, G_FILE_ATTRIBUTE_THUMBNAILING_FAILED);
-  thumbnail_valid = g_file_info_get_attribute_boolean (file_info, G_FILE_ATTRIBUTE_THUMBNAIL_IS_VALID);
-
-  CHATTY_TRACE_MSG ("has thumbnail: %d, failed thumbnail: %d, valid thumbnail: %d",
-                    !!thumbnail, thumbnail_failed, thumbnail_valid);
-
-  if (thumbnail || (thumbnail_failed && thumbnail_valid)) {
-    attachment_update_image (self, image, file);
-  } else {
-    AttachmentData *data;
-
-    data = g_new0 (AttachmentData, 1);
-    data->self = g_object_ref (self);
-    data->image = g_object_ref (image);
-    chatty_utils_create_thumbnail_async (self->file,
-                                         file_create_thumbnail_cb,
-                                         data);
-  }
-}
-
-static void
 attachment_remove_clicked_cb (ChattyAttachment *self)
 {
   g_assert (CHATTY_IS_ATTACHMENT (self));
@@ -233,4 +184,53 @@ chatty_attachment_get_file (ChattyAttachment *self)
   g_return_val_if_fail (CHATTY_IS_ATTACHMENT (self), NULL);
 
   return self->file;
+}
+
+void
+chatty_attachment_set_file (ChattyAttachment *self,
+                            GFile            *file)
+{
+  g_autoptr(GFileInfo) file_info = NULL;
+  g_autoptr(GError) error = NULL;
+  const char *thumbnail;
+  GtkWidget *image;
+  gboolean thumbnail_failed, thumbnail_valid;
+
+  g_assert (CHATTY_IS_ATTACHMENT (self));
+  g_assert (G_IS_FILE (file));
+
+  g_set_object (&self->file, file);
+
+  file_info = g_file_query_info (file,
+                                 G_FILE_ATTRIBUTE_STANDARD_ICON ","
+                                 G_FILE_ATTRIBUTE_THUMBNAIL_PATH ","
+                                 G_FILE_ATTRIBUTE_THUMBNAIL_IS_VALID ","
+                                 G_FILE_ATTRIBUTE_THUMBNAILING_FAILED,
+                                 G_FILE_QUERY_INFO_NONE,
+                                 NULL, &error);
+  if (error)
+    g_warning ("Error querying info: %s", error->message);
+
+  image = gtk_image_new ();
+  gtk_widget_set_tooltip_text (image, g_file_peek_path (file));
+  gtk_widget_set_size_request (image, -1, 96);
+  thumbnail = g_file_info_get_attribute_byte_string (file_info, G_FILE_ATTRIBUTE_THUMBNAIL_PATH);
+  thumbnail_failed = g_file_info_get_attribute_boolean (file_info, G_FILE_ATTRIBUTE_THUMBNAILING_FAILED);
+  thumbnail_valid = g_file_info_get_attribute_boolean (file_info, G_FILE_ATTRIBUTE_THUMBNAIL_IS_VALID);
+
+  CHATTY_TRACE_MSG ("has thumbnail: %d, failed thumbnail: %d, valid thumbnail: %d",
+                    !!thumbnail, thumbnail_failed, thumbnail_valid);
+
+  if (thumbnail || (thumbnail_failed && thumbnail_valid)) {
+    attachment_update_image (self, image, file);
+  } else {
+    AttachmentData *data;
+
+    data = g_new0 (AttachmentData, 1);
+    data->self = g_object_ref (self);
+    data->image = g_object_ref (image);
+    chatty_utils_create_thumbnail_async (self->file,
+                                         file_create_thumbnail_cb,
+                                         data);
+  }
 }
