@@ -23,10 +23,63 @@ struct _ChattyAttachmentsBar
   GtkBox parent_instance;
 
   GtkWidget *scrolled_window;
-  GtkWidget *files_box;
+  GtkWidget *files_grid;
+
+  GListStore *files_store;        /* unowned */
+  GtkSelectionModel *files_model; /* unowned */
 };
 
 G_DEFINE_TYPE (ChattyAttachmentsBar, chatty_attachments_bar, GTK_TYPE_BOX)
+
+static void
+attachment_bar_file_deleted_cb (ChattyAttachmentsBar *self,
+                                GtkWidget            *child)
+{
+  GFile *file;
+  guint position;
+
+  g_assert (CHATTY_IS_ATTACHMENTS_BAR (self));
+  g_assert (GTK_IS_WIDGET (child));
+
+  if (gtk_widget_in_destruction (GTK_WIDGET (self)))
+    return;
+
+  file = chatty_attachment_get_file (CHATTY_ATTACHMENT (child));
+  if (g_list_store_find (self->files_store, file, &position))
+    g_list_store_remove (self->files_store, position);
+
+  g_debug ("Removed file: %p", file);
+}
+
+static void
+setup_list_item_cb (GtkListItemFactory   *factory,
+                    GtkListItem          *list_item,
+                    ChattyAttachmentsBar *self)
+{
+  GtkWidget *child;
+
+  g_assert (CHATTY_IS_ATTACHMENTS_BAR (self));
+
+  child = g_object_new (CHATTY_TYPE_ATTACHMENT, NULL);
+  g_signal_connect_object (child, "deleted",
+                           G_CALLBACK (attachment_bar_file_deleted_cb),
+                           self, G_CONNECT_SWAPPED);
+
+  gtk_list_item_set_child (list_item, child);
+  gtk_list_item_set_activatable (list_item, FALSE);
+}
+
+static void
+bind_list_item_cb (GtkListItemFactory *factory,
+                   GtkListItem        *list_item)
+{
+  GtkWidget *attachment;
+  GFile *file;
+
+  attachment = gtk_list_item_get_child (list_item);
+  file = gtk_list_item_get_item (list_item);
+  chatty_attachment_set_file (CHATTY_ATTACHMENT (attachment), file);
+}
 
 static void
 chatty_attachments_bar_class_init (ChattyAttachmentsBarClass *klass)
@@ -36,19 +89,24 @@ chatty_attachments_bar_class_init (ChattyAttachmentsBarClass *klass)
 static void
 chatty_attachments_bar_init (ChattyAttachmentsBar *self)
 {
-  self->scrolled_window = gtk_scrolled_window_new ();
-  gtk_widget_set_size_request (self->scrolled_window, -1, 194);
-  gtk_widget_set_hexpand (self->scrolled_window, TRUE);
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (self->scrolled_window),
-                                  GTK_POLICY_AUTOMATIC, GTK_POLICY_NEVER);
+  GtkListItemFactory *factory;
+  GListModel *files;
 
-  self->files_box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
-  gtk_scrolled_window_set_child (GTK_SCROLLED_WINDOW (self->scrolled_window), self->files_box);
-  gtk_box_append (GTK_BOX (self), self->scrolled_window);
+  self->files_store = g_list_store_new (G_TYPE_FILE);
+  files = G_LIST_MODEL (self->files_store);
+  self->files_model = GTK_SELECTION_MODEL (gtk_no_selection_new (files));
 
-  gtk_widget_add_css_class (self->scrolled_window, "content");
-  gtk_widget_add_css_class (self->scrolled_window, "view");
-  gtk_widget_add_css_class (self->scrolled_window, "frame");
+  factory = gtk_signal_list_item_factory_new ();
+  g_signal_connect (factory, "setup", G_CALLBACK (setup_list_item_cb), self);
+  g_signal_connect (factory, "bind", G_CALLBACK (bind_list_item_cb), NULL);
+
+  self->files_grid = gtk_grid_view_new (self->files_model, factory);
+  gtk_grid_view_set_min_columns (GTK_GRID_VIEW (self->files_grid), 2);
+  gtk_widget_set_margin_top (self->files_grid, 18);
+  gtk_widget_add_css_class (self->files_grid, "frame");
+
+  gtk_box_append (GTK_BOX (self), self->files_grid);
+
 }
 
 GtkWidget *
@@ -57,73 +115,22 @@ chatty_attachments_bar_new (void)
   return g_object_new (CHATTY_TYPE_ATTACHMENTS_BAR, NULL);
 }
 
-static void
-chatty_attachemnts_bar_update_bar (ChattyAttachmentsBar *self)
-{
-  g_assert (CHATTY_IS_ATTACHMENTS_BAR (self));
-
-  if (!gtk_widget_get_first_child (self->files_box)) {
-    GtkWidget *parent;
-
-    parent = gtk_widget_get_parent (GTK_WIDGET (self));
-
-    if (GTK_IS_REVEALER (parent))
-      gtk_revealer_set_reveal_child (GTK_REVEALER (parent), FALSE);
-    else
-      gtk_widget_hide (parent);
-  }
-}
-
 void
 chatty_attachments_bar_reset (ChattyAttachmentsBar *self)
 {
-  GtkWidget *child;
-
   g_return_if_fail (CHATTY_IS_ATTACHMENTS_BAR (self));
 
-  do {
-    child = gtk_widget_get_first_child (GTK_WIDGET (self->files_box));
-
-    if (child)
-      gtk_box_remove (GTK_BOX (self->files_box), child);
-  } while (child);
-
-  chatty_attachemnts_bar_update_bar (self);
-}
-
-static void
-attachment_bar_file_deleted_cb (ChattyAttachmentsBar *self,
-                                GtkWidget            *child)
-{
-  g_assert (CHATTY_IS_ATTACHMENTS_BAR (self));
-  g_assert (GTK_IS_WIDGET (child));
-
-  if (gtk_widget_in_destruction (GTK_WIDGET (self)))
-    return;
-
-  gtk_box_remove (GTK_BOX (self->files_box), child);
-  chatty_attachemnts_bar_update_bar (self);
-
-  g_debug ("Remove file: %p", child);
-
+  g_list_store_remove_all (self->files_store);
 }
 
 void
 chatty_attachments_bar_add_file (ChattyAttachmentsBar *self,
                                  GFile                *file)
 {
-  GtkWidget *child;
-
   g_return_if_fail (CHATTY_IS_ATTACHMENTS_BAR (self));
   g_return_if_fail (G_IS_FILE (file));
 
-  child = chatty_attachment_new (file);
-  g_debug ("Add file: %p", child);
-
-  gtk_box_append (GTK_BOX (self->files_box), child);
-  g_signal_connect_object (child, "deleted",
-                           G_CALLBACK (attachment_bar_file_deleted_cb),
-                           self, G_CONNECT_SWAPPED);
+  g_list_store_append (self->files_store, file);
 }
 
 /**
@@ -139,24 +146,21 @@ chatty_attachments_bar_add_file (ChattyAttachmentsBar *self,
 GList *
 chatty_attachments_bar_get_files (ChattyAttachmentsBar *self)
 {
-  GtkWidget *child;
   GList *files = NULL;
+  guint n_items;
 
   g_return_val_if_fail (CHATTY_IS_ATTACHMENTS_BAR (self), NULL);
 
-  child = gtk_widget_get_first_child (self->files_box);
+  n_items = g_list_model_get_n_items (G_LIST_MODEL (self->files_store));
 
-  while (child)
-    {
-      ChattyFile *chatty_file;
-      GFile *file;
+  for (guint i = 0; i < n_items; i++) {
+    g_autoptr(GFile) file = NULL;
+    ChattyFile *chatty_file;
 
-      file = chatty_attachment_get_file (CHATTY_ATTACHMENT (child));
-      chatty_file = chatty_file_new_for_path (g_file_peek_path (file));
-      files = g_list_append (files, chatty_file);
-
-      child = gtk_widget_get_next_sibling (child);
-    }
+    file = g_list_model_get_item (G_LIST_MODEL (self->files_store), i);
+    chatty_file = chatty_file_new_for_path (g_file_peek_path (file));
+    files = g_list_append (files, chatty_file);
+  }
 
   return files;
 }
