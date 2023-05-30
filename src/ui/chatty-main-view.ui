@@ -100,7 +100,7 @@
               <object class="ChattyVerificationPage" id="verification_page"/>
             </child>
             <child>
-              <object class="GtkBox" id="empty_view"/>
+              <object class="GtkBox" id="empty_page"/>
             </child>
           </object>
         </property>

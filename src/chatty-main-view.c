@@ -45,7 +45,7 @@ struct _ChattyMainView
   GtkWidget    *chat_page;
   GtkWidget    *invite_page;
   GtkWidget    *verification_page;
-  GtkWidget    *empty_view;
+  GtkWidget    *empty_page;
 
   GtkWidget    *menu_popover;
   GtkWidget    *leave_button;
@@ -180,7 +180,7 @@ chatty_main_view_class_init (ChattyMainViewClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyMainView, chat_page);
   gtk_widget_class_bind_template_child (widget_class, ChattyMainView, invite_page);
   gtk_widget_class_bind_template_child (widget_class, ChattyMainView, verification_page);
-  gtk_widget_class_bind_template_child (widget_class, ChattyMainView, empty_view);
+  gtk_widget_class_bind_template_child (widget_class, ChattyMainView, empty_page);
 
   gtk_widget_class_bind_template_child (widget_class, ChattyMainView, menu_popover);
   gtk_widget_class_bind_template_child (widget_class, ChattyMainView, leave_button);
@@ -303,7 +303,7 @@ chatty_main_view_set_item (ChattyMainView *self,
       gtk_stack_set_visible_child (GTK_STACK (self->main_stack), self->chat_page);
   } else {
     gtk_revealer_set_reveal_child (GTK_REVEALER (self->notification_revealer), FALSE);
-    gtk_stack_set_visible_child (GTK_STACK (self->main_stack), self->empty_view);
+    gtk_stack_set_visible_child (GTK_STACK (self->main_stack), self->empty_page);
   }
 
   if (CHATTY_IS_CHAT (item) && chatty_chat_get_account (CHATTY_CHAT (item))) {
