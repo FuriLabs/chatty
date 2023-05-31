@@ -4,9 +4,9 @@
     <metadata_license>CC0-1.0</metadata_license>
     <project_license>GPL-3.0-or-later</project_license>
     <name>Chats</name>
-    <summary>A messaging application</summary>
+    <summary>Messaging application for mobile and desktop</summary>
     <description>
-        <p>Chats is a messaging application supporting XMPP and SMS.</p>
+      <p>Chats is a simple to use to messaging app for 1:1 communication and small groups supporting SMS, MMS, XMPP and Matrix.</p>
     </description>
     <url type="homepage">https://source.puri.sm/Librem5/chatty</url>
     <translation type="gettext">purism-chatty</translation>
@@ -14,7 +14,7 @@
     <screenshots>
         <screenshot type="default">
             <caption>Chats message window</caption>
-            <image type="source" width="906" height="621">https://source.puri.sm/guido.gunther/chatty/raw/fix-test/data/screenshots/message.png?inline=false</image>
+            <image type="source" width="906" height="621">https://source.puri.sm/Librem5/chatty/-/raw/master/data/screenshots/screenshot.png?inline=false</image>
         </screenshot>
     </screenshots>
     <mimetypes>
@@ -24,11 +24,20 @@
         <content_attribute id="social-chat">intense</content_attribute>
     </content_rating>
     <releases>
-      <release version="0.0.1" date="2018-12-04">
+      <release version="0.7.3" date="2023-05-13">
         <description>
-          <p>Initial development release of chatty with support for xmpp and sms.</p>
+          <p>
+            <ul>
+              <li>Fix some memory leaks</li>
+              <li>Improve sidebar</li>
+              <li>Fix logging stack traces on crash</li>
+              <li>Fix message counter for XMPP messages</li>
+              <li>Update Translations</li>
+            </ul>
+          </p>
         </description>
       </release>
+      <!-- todo: Add past releases -->
     </releases>
     <custom>
       <value key="Purism::form_factor">workstation</value>
