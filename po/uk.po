@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://source.puri.sm/Librem5/chatty/issues\n"
-"POT-Creation-Date: 2023-05-16 15:24+0000\n"
-"PO-Revision-Date: 2023-05-16 20:06+0300\n"
+"POT-Creation-Date: 2023-06-01 15:24+0000\n"
+"PO-Revision-Date: 2023-06-01 22:09+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -21,7 +21,7 @@ msgstr ""
 
 #: data/sm.puri.Chatty.desktop.in:3 data/sm.puri.Chatty.metainfo.xml.in:6
 #: src/chatty-application.c:162 src/chatty-application.c:402
-#: src/chatty-side-bar.c:356 src/ui/chatty-side-bar.ui:16
+#: src/chatty-side-bar.c:348 src/ui/chatty-side-bar.ui:16
 msgid "Chats"
 msgstr "Спілкування"
 
@@ -145,13 +145,19 @@ msgid "Window size (width, height)."
 msgstr "Розмір вікна (ширина, висота)."
 
 #: data/sm.puri.Chatty.metainfo.xml.in:7
-msgid "A messaging application"
-msgstr "Програма для обміну повідомленнями"
+msgid "Messaging application for mobile and desktop"
+msgstr ""
+"Програма для обміну повідомленнями для мобільних пристроїв та робочих станцій"
 
 #: data/sm.puri.Chatty.metainfo.xml.in:9
-msgid "Chats is a messaging application supporting XMPP and SMS."
+#| msgid "Chats is a messaging application supporting XMPP and SMS."
+msgid ""
+"Chats is a simple to use to messaging app for 1:1 communication and small "
+"groups supporting SMS, MMS, XMPP and Matrix."
 msgstr ""
-"«Спілкування» — програма для обміну повідомленнями із підтримкою XMPP і SMS."
+"«Спілкування» — проста у користуванні програма для обміну повідомленнями для"
+" спілкування один-на-один і у малих групах з підтримкою SMS, MMS, XMPP та"
+" Matrix."
 
 #: data/sm.puri.Chatty.metainfo.xml.in:16
 msgid "Chats message window"
@@ -223,34 +229,34 @@ msgstr "Немає архівованих спілкувань"
 msgid "Start Chatting"
 msgstr "Почати спілкування"
 
-#: src/chatty-chat-view.c:246
+#: src/chatty-chat-page.c:246
 msgid "This is an SMS conversation"
 msgstr "Це обмін повідомленнями SMS"
 
-#: src/chatty-chat-view.c:248 src/chatty-chat-view.c:254
+#: src/chatty-chat-page.c:248 src/chatty-chat-page.c:254
 msgid "Your messages are not encrypted, and carrier rates may apply"
 msgstr ""
 "Ваші повідомлення не зашифровано, оператор може стягувати сплату за "
 "передавання даних"
 
-#: src/chatty-chat-view.c:252
+#: src/chatty-chat-page.c:252
 msgid "This is an IM conversation"
 msgstr "Це спілкування у службі обміну повідомленнями"
 
-#: src/chatty-chat-view.c:258
+#: src/chatty-chat-page.c:258
 msgid "Your messages are encrypted"
 msgstr "Ваші повідомлення зашифровано"
 
-#: src/chatty-chat-view.c:261
+#: src/chatty-chat-page.c:261
 msgid "Your messages are not encrypted"
 msgstr "Ваші повідомлення не зашифровано"
 
-#: src/chatty-chat-view.c:488
+#: src/chatty-chat-page.c:486
 msgid "Select File..."
 msgstr "Вибір файла…"
 
-#: src/chatty-chat-view.c:491 src/purple/chatty-purple-request.c:179
-#: src/chatty-window.c:572 src/dialogs/chatty-pp-chat-info.c:108
+#: src/chatty-chat-page.c:489 src/purple/chatty-purple-request.c:179
+#: src/chatty-window.c:446 src/dialogs/chatty-pp-chat-info.c:108
 #: src/dialogs/chatty-ma-account-details.c:135
 #: src/dialogs/chatty-pp-account-details.c:111
 #: src/ui/chatty-dialog-join-muc.ui:18 src/ui/chatty-info-dialog.ui:26
@@ -258,7 +264,7 @@ msgstr "Вибір файла…"
 msgid "Cancel"
 msgstr "Скасувати"
 
-#: src/chatty-chat-view.c:492 src/purple/chatty-purple-request.c:181
+#: src/chatty-chat-page.c:490 src/purple/chatty-purple-request.c:181
 #: src/dialogs/chatty-pp-chat-info.c:107
 #: src/dialogs/chatty-ma-account-details.c:134
 #: src/dialogs/chatty-pp-account-details.c:110
@@ -353,7 +359,7 @@ msgid "Device ID %s fingerprint:"
 msgstr "Відбиток ідентифікатора пристрою %s:"
 
 #. TRANSLATORS: %s is the chat room name
-#: src/chatty-invite-view.c:72
+#: src/chatty-invite-page.c:72
 #, c-format
 msgid "Do you want to join “%s”"
 msgstr "Хочете долучитися до «%s»"
@@ -370,11 +376,11 @@ msgstr "Модератор"
 msgid "Member"
 msgstr "Учасник"
 
-#: src/chatty-main-view.c:63
+#: src/chatty-main-view.c:124
 msgid "Account disconnected"
 msgstr "Обліковий запис від'єднано"
 
-#: src/chatty-main-view.c:65
+#: src/chatty-main-view.c:126
 msgid "Account connecting…"
 msgstr "З'єднання з обліковим записом…"
 
@@ -422,11 +428,11 @@ msgstr "XMPP"
 msgid "Telegram"
 msgstr "Telegram"
 
-#: src/chatty-side-bar.c:356
+#: src/chatty-side-bar.c:348
 msgid "Archived"
 msgstr "Архівовано"
 
-#: src/purple/chatty-purple-notify.c:46 src/ui/chatty-main-view.ui:29
+#: src/purple/chatty-purple-notify.c:46 src/ui/chatty-main-view.ui:78
 msgid "Close"
 msgstr "Закрити"
 
@@ -479,356 +485,356 @@ msgstr "Будь ласка, перевірте ідентифікатор і п
 
 #. TRANSLATORS: You may copy translations from https://github.com/matrix-org/matrix-spec-proposals/blob/old_master/data-definitions/sas-emoji.json
 #. * if available
-#: src/chatty-verification-view.c:27
+#: src/chatty-verification-page.c:27
 msgid "Dog"
 msgstr "Собака"
 
 #. "U+1F436"
-#: src/chatty-verification-view.c:28
+#: src/chatty-verification-page.c:28
 msgid "Cat"
 msgstr "Кіт"
 
 #. "U+1F431"
-#: src/chatty-verification-view.c:29
+#: src/chatty-verification-page.c:29
 msgid "Lion"
 msgstr "Лев"
 
 #. "U+1F981"
-#: src/chatty-verification-view.c:30
+#: src/chatty-verification-page.c:30
 msgid "Horse"
 msgstr "Кінь"
 
 #. "U+1F40E"
-#: src/chatty-verification-view.c:31
+#: src/chatty-verification-page.c:31
 msgid "Unicorn"
 msgstr "Одноріг"
 
 #. "U+1F984"
-#: src/chatty-verification-view.c:32
+#: src/chatty-verification-page.c:32
 msgid "Pig"
 msgstr "Свиня"
 
 #. "U+1F437"
-#: src/chatty-verification-view.c:33
+#: src/chatty-verification-page.c:33
 msgid "Elephant"
 msgstr "Слон"
 
 #. "U+1F418"
-#: src/chatty-verification-view.c:34
+#: src/chatty-verification-page.c:34
 msgid "Rabbit"
 msgstr "Кролик"
 
 #. "U+1F430"
-#: src/chatty-verification-view.c:35
+#: src/chatty-verification-page.c:35
 msgid "Panda"
 msgstr "Панда"
 
 #. "U+1F43C"
-#: src/chatty-verification-view.c:36
+#: src/chatty-verification-page.c:36
 msgid "Rooster"
 msgstr "Півень"
 
 #. "U+1F413"
-#: src/chatty-verification-view.c:37
+#: src/chatty-verification-page.c:37
 msgid "Penguin"
 msgstr "Пінгвін"
 
 #. "U+1F427"
-#: src/chatty-verification-view.c:38
+#: src/chatty-verification-page.c:38
 msgid "Turtle"
 msgstr "Черепаха"
 
 #. "U+1F422"
-#: src/chatty-verification-view.c:39
+#: src/chatty-verification-page.c:39
 msgid "Fish"
 msgstr "Риба"
 
 #. "U+1F41F"
-#: src/chatty-verification-view.c:40
+#: src/chatty-verification-page.c:40
 msgid "Octopus"
 msgstr "Восьминіг"
 
 #. "U+1F419"
-#: src/chatty-verification-view.c:41
+#: src/chatty-verification-page.c:41
 msgid "Butterfly"
 msgstr "Метелик"
 
 #. "U+1F98B"
-#: src/chatty-verification-view.c:42
+#: src/chatty-verification-page.c:42
 msgid "Flower"
 msgstr "Квітка"
 
 #. "U+1F337"
-#: src/chatty-verification-view.c:43
+#: src/chatty-verification-page.c:43
 msgid "Tree"
 msgstr "Дерево"
 
 #. "U+1F333"
-#: src/chatty-verification-view.c:44
+#: src/chatty-verification-page.c:44
 msgid "Cactus"
 msgstr "Кактус"
 
 #. "U+1F335"
-#: src/chatty-verification-view.c:45
+#: src/chatty-verification-page.c:45
 msgid "Mushroom"
 msgstr "Гриб"
 
 #. "U+1F344"
-#: src/chatty-verification-view.c:46
+#: src/chatty-verification-page.c:46
 msgid "Globe"
 msgstr "Глобус"
 
 #. "U+1F30F"
-#: src/chatty-verification-view.c:47
+#: src/chatty-verification-page.c:47
 msgid "Moon"
 msgstr "Місяць"
 
 #. "U+1F319"
-#: src/chatty-verification-view.c:48
+#: src/chatty-verification-page.c:48
 msgid "Cloud"
 msgstr "Хмара"
 
 #. "U+2601U+FE0F"
-#: src/chatty-verification-view.c:49
+#: src/chatty-verification-page.c:49
 msgid "Fire"
 msgstr "Вогонь"
 
 #. "U+1F525"
-#: src/chatty-verification-view.c:50
+#: src/chatty-verification-page.c:50
 msgid "Banana"
 msgstr "Банан"
 
 #. "U+1F34C"
-#: src/chatty-verification-view.c:51
+#: src/chatty-verification-page.c:51
 msgid "Apple"
 msgstr "Яблуко"
 
 #. "U+1F34E"
-#: src/chatty-verification-view.c:52
+#: src/chatty-verification-page.c:52
 msgid "Strawberry"
 msgstr "Полуниця"
 
 #. "U+1F353"
-#: src/chatty-verification-view.c:53
+#: src/chatty-verification-page.c:53
 msgid "Corn"
 msgstr "Кукурудза"
 
 #. "U+1F33D"
-#: src/chatty-verification-view.c:54
+#: src/chatty-verification-page.c:54
 msgid "Pizza"
 msgstr "Піца"
 
 #. "U+1F355"
-#: src/chatty-verification-view.c:55
+#: src/chatty-verification-page.c:55
 msgid "Cake"
 msgstr "Торт"
 
 #. "U+1F382"
-#: src/chatty-verification-view.c:56
+#: src/chatty-verification-page.c:56
 msgid "Heart"
 msgstr "Серце"
 
 #. "U+2764U+FE0F"
-#: src/chatty-verification-view.c:57
+#: src/chatty-verification-page.c:57
 msgid "Smiley"
 msgstr "Смайлик"
 
 #. "U+1F600"
-#: src/chatty-verification-view.c:58
+#: src/chatty-verification-page.c:58
 msgid "Robot"
 msgstr "Робот"
 
 #. "U+1F916"
-#: src/chatty-verification-view.c:59
+#: src/chatty-verification-page.c:59
 msgid "Hat"
 msgstr "Аті"
 
 #. "U+1F3A9"
-#: src/chatty-verification-view.c:60
+#: src/chatty-verification-page.c:60
 msgid "Glasses"
 msgstr "Стакани"
 
 #. "U+1F453"
-#: src/chatty-verification-view.c:61
+#: src/chatty-verification-page.c:61
 msgid "Spanner"
 msgstr "Гайковий ключ"
 
 #. "U+1F527"
-#: src/chatty-verification-view.c:62
+#: src/chatty-verification-page.c:62
 msgid "Santa"
 msgstr "Санта"
 
 #. "U+1F385"
-#: src/chatty-verification-view.c:63
+#: src/chatty-verification-page.c:63
 msgid "Thumbs Up"
 msgstr "Палець вгору"
 
 #. "U+1F44D"
-#: src/chatty-verification-view.c:64
+#: src/chatty-verification-page.c:64
 msgid "Umbrella"
 msgstr "Парасолька"
 
 #. "U+2602U+FE0F"
-#: src/chatty-verification-view.c:65
+#: src/chatty-verification-page.c:65
 msgid "Hourglass"
 msgstr "Клепсидра"
 
 #. "U+231B"
-#: src/chatty-verification-view.c:66
+#: src/chatty-verification-page.c:66
 msgid "Clock"
 msgstr "Годинник"
 
 #. "U+23F0"
-#: src/chatty-verification-view.c:67
+#: src/chatty-verification-page.c:67
 msgid "Gift"
 msgstr "Подарунок"
 
 #. "U+1F381"
-#: src/chatty-verification-view.c:68
+#: src/chatty-verification-page.c:68
 msgid "Light Bulb"
 msgstr "Лампочка"
 
 #. "U+1F4A1"
-#: src/chatty-verification-view.c:69
+#: src/chatty-verification-page.c:69
 msgid "Book"
 msgstr "Книга"
 
 #. "U+1F4D5"
-#: src/chatty-verification-view.c:70
+#: src/chatty-verification-page.c:70
 msgid "Pencil"
 msgstr "Олівець"
 
 #. "U+270FU+FE0F"
-#: src/chatty-verification-view.c:71
+#: src/chatty-verification-page.c:71
 msgid "Paperclip"
 msgstr "Затискач для паперу"
 
 #. "U+1F4CE"
-#: src/chatty-verification-view.c:72
+#: src/chatty-verification-page.c:72
 msgid "Scissors"
 msgstr "Ножиці"
 
 #. "U+2702U+FE0F"
-#: src/chatty-verification-view.c:73
+#: src/chatty-verification-page.c:73
 msgid "Lock"
 msgstr "Замок"
 
 #. "U+1F512"
-#: src/chatty-verification-view.c:74
+#: src/chatty-verification-page.c:74
 msgid "Key"
 msgstr "Ключ"
 
 #. "U+1F511"
-#: src/chatty-verification-view.c:75
+#: src/chatty-verification-page.c:75
 msgid "Hammer"
 msgstr "Молот"
 
 #. "U+1F528"
-#: src/chatty-verification-view.c:76
+#: src/chatty-verification-page.c:76
 msgid "Telephone"
 msgstr "Телефон"
 
 #. "U+260EU+FE0F"
-#: src/chatty-verification-view.c:77
+#: src/chatty-verification-page.c:77
 msgid "Flag"
 msgstr "Прапор"
 
 #. "U+1F3C1"
-#: src/chatty-verification-view.c:78
+#: src/chatty-verification-page.c:78
 msgid "Train"
 msgstr "Потяг"
 
 #. "U+1F682"
-#: src/chatty-verification-view.c:79
+#: src/chatty-verification-page.c:79
 msgid "Bicycle"
 msgstr "Велосипед"
 
 #. "U+1F6B2"
-#: src/chatty-verification-view.c:80
+#: src/chatty-verification-page.c:80
 msgid "Aeroplane"
 msgstr "Аероплан"
 
 #. "U+2708U+FE0F"
-#: src/chatty-verification-view.c:81
+#: src/chatty-verification-page.c:81
 msgid "Rocket"
 msgstr "Ракета"
 
 #. "U+1F680"
-#: src/chatty-verification-view.c:82
+#: src/chatty-verification-page.c:82
 msgid "Trophy"
 msgstr "Трофей"
 
 #. "U+1F3C6"
-#: src/chatty-verification-view.c:83
+#: src/chatty-verification-page.c:83
 msgid "Ball"
 msgstr "М’яч"
 
 #. "U+26BD"
-#: src/chatty-verification-view.c:84
+#: src/chatty-verification-page.c:84
 msgid "Guitar"
 msgstr "Гітара"
 
 #. "U+1F3B8"
-#: src/chatty-verification-view.c:85
+#: src/chatty-verification-page.c:85
 msgid "Trumpet"
 msgstr "Труба"
 
 #. "U+1F3BA"
-#: src/chatty-verification-view.c:86
+#: src/chatty-verification-page.c:86
 msgid "Bell"
 msgstr "Дзвінок"
 
 #. "U+1F514"
-#: src/chatty-verification-view.c:87
+#: src/chatty-verification-page.c:87
 msgid "Anchor"
 msgstr "Якір"
 
 #. "U+2693"
-#: src/chatty-verification-view.c:88
+#: src/chatty-verification-page.c:88
 msgid "Headphones"
 msgstr "Навушники"
 
 #. "U+1F3A7"
-#: src/chatty-verification-view.c:89
+#: src/chatty-verification-page.c:89
 msgid "Folder"
 msgstr "Тека"
 
 #. "U+1F4C1"
-#: src/chatty-verification-view.c:90
+#: src/chatty-verification-page.c:90
 msgid "Pin"
 msgstr "Шпилька"
 
-#: src/chatty-verification-view.c:387
+#: src/chatty-verification-page.c:387
 msgid "Show Emojis"
 msgstr "Показати емоційки"
 
-#: src/chatty-verification-view.c:389
+#: src/chatty-verification-page.c:389
 msgid "Show Numbers"
 msgstr "Показувати номери"
 
-#: src/chatty-window.c:476
+#: src/chatty-window.c:350
 msgid "You shall no longer be notified for new messages, continue?"
 msgstr "Програма більше не сповіщатиме вас про нові повідомлення. Продовжити?"
 
-#: src/chatty-window.c:558
+#: src/chatty-window.c:432
 #, c-format
 msgid "Delete chat with “%s”"
 msgstr "Вилучити спілкування з «%s»"
 
-#: src/chatty-window.c:559
+#: src/chatty-window.c:433
 msgid "This deletes the conversation history"
 msgstr "У результаті буде вилучено журнал спілкування"
 
-#: src/chatty-window.c:561
+#: src/chatty-window.c:435
 #, c-format
 msgid "Disconnect group chat “%s”"
 msgstr "Від'єднатися від групового спілкування «%s»"
 
-#: src/chatty-window.c:562
+#: src/chatty-window.c:436
 msgid "This removes chat from chats list"
 msgstr "У результаті спілкування буде вилучено зі списку спілкувань"
 
-#: src/chatty-window.c:573
+#: src/chatty-window.c:447
 msgid "Delete"
 msgstr "Вилучити"
 
@@ -1004,8 +1010,8 @@ msgstr "_Гаразд"
 
 #: src/matrix/chatty-ma-account.c:106 src/ui/chatty-dialog-new-chat.ui:37
 #: src/ui/chatty-settings-dialog.ui:29 src/ui/chatty-settings-dialog.ui:72
-#: src/ui/chatty-verification-view.ui:129
-#: src/ui/chatty-verification-view.ui:157
+#: src/ui/chatty-verification-page.ui:129
+#: src/ui/chatty-verification-page.ui:157
 msgid "_Cancel"
 msgstr "_Скасувати"
 
@@ -1021,16 +1027,16 @@ msgstr "Перевірка ключа"
 #. TRANSLATORS: Timestamp for minute accuracy, e.g. “2020-08-11 15:27”.
 #. See https://developer.gnome.org/glib/stable/glib-GDateTime.html#g-date-time-format
 #.
-#: src/mm/chatty-mmsd.c:893
+#: src/mm/chatty-mmsd.c:907
 msgid "%Y-%m-%d %H∶%M"
 msgstr "%Y.%m.%d %H:%M"
 
-#: src/mm/chatty-mmsd.c:1198
+#: src/mm/chatty-mmsd.c:1212
 #, c-format
 msgid "You received an MMS, but it expired on: %s"
 msgstr "Вами отримано MMS, але строк його дії вичерпано %s"
 
-#: src/mm/chatty-mmsd.c:1201
+#: src/mm/chatty-mmsd.c:1215
 msgid "You received an empty MMS."
 msgstr "Вами отримано порожнє MMS."
 
@@ -1067,7 +1073,6 @@ msgid "Send To:"
 msgstr "Надіслати:"
 
 #: src/ui/chatty-dialog-new-chat.ui:216
-#| msgid "Contact added"
 msgid "Contact ID"
 msgstr "Ід. контакту"
 
@@ -1079,7 +1084,7 @@ msgstr "Назва (необов’язково):"
 msgid "Add to Contacts"
 msgstr "Додати до контактів"
 
-#: src/ui/chatty-info-dialog.ui:8 src/ui/chatty-window.ui:129
+#: src/ui/chatty-info-dialog.ui:8 src/ui/chatty-main-view.ui:129
 msgid "Chat Details"
 msgstr "Подробиці спілкування"
 
@@ -1091,16 +1096,15 @@ msgstr "Застосувати"
 msgid "Invite"
 msgstr "Запросити"
 
-#: src/ui/chatty-invite-view.ui:62
+#: src/ui/chatty-invite-page.ui:62
 msgid "_Accept"
 msgstr "При_йняти"
 
-#: src/ui/chatty-invite-view.ui:86
+#: src/ui/chatty-invite-page.ui:86
 msgid "_Reject"
 msgstr "Від_!мовити"
 
 #: src/ui/chatty-ma-chat-info.ui:32
-#| msgid "Chats"
 msgid "Chat"
 msgstr "Спілкування"
 
@@ -1120,6 +1124,39 @@ msgstr "Шифрування"
 #: src/ui/chatty-ma-chat-info.ui:108 src/ui/chatty-pp-chat-info.ui:293
 msgid "Encrypt Messages"
 msgstr "Шифрувати повідомлення"
+
+#: src/ui/chatty-main-view.ui:17 src/ui/chatty-settings-dialog.ui:18
+#: src/ui/chatty-side-bar.ui:24
+msgid "Back"
+msgstr "Назад"
+
+#: src/ui/chatty-main-view.ui:46 src/ui/chatty-list-row.ui:143
+msgid "Call"
+msgstr "Виклик"
+
+#: src/ui/chatty-main-view.ui:140
+msgid "Leave Chat"
+msgstr "Полишити спілкування"
+
+#: src/ui/chatty-main-view.ui:148
+msgid "Block Contact"
+msgstr "Заблокувати контакт"
+
+#: src/ui/chatty-main-view.ui:156
+msgid "Unblock Contact"
+msgstr "Розблокувати контакт"
+
+#: src/ui/chatty-main-view.ui:164
+msgid "Archive chat"
+msgstr "Архівувати спілкування"
+
+#: src/ui/chatty-main-view.ui:172
+msgid "Unarchive chat"
+msgstr "Скасувати архівування"
+
+#: src/ui/chatty-main-view.ui:180
+msgid "Delete Chat"
+msgstr "Вилучити спілкування"
 
 #: src/ui/chatty-pp-chat-info.ui:34 src/ui/chatty-pp-account-details.ui:38
 msgid "Change Avatar"
@@ -1174,10 +1211,6 @@ msgstr "Типово порожній"
 msgid "Group Members"
 msgstr "Учасники групи"
 
-#: src/ui/chatty-list-row.ui:143 src/ui/chatty-window.ui:87
-msgid "Call"
-msgstr "Виклик"
-
 #: src/ui/chatty-ma-account-details.ui:78
 msgid "Name"
 msgstr "Ім'я"
@@ -1217,11 +1250,6 @@ msgstr "Пароль"
 #: src/ui/chatty-pp-account-details.ui:168
 msgid "Own Fingerprint"
 msgstr "Власний відбиток"
-
-#: src/ui/chatty-settings-dialog.ui:18 src/ui/chatty-side-bar.ui:24
-#: src/ui/chatty-window.ui:58
-msgid "Back"
-msgstr "Назад"
 
 #: src/ui/chatty-settings-dialog.ui:39
 msgid "_Add"
@@ -1382,16 +1410,16 @@ msgstr "Нове повідомлення SMS/MMS…"
 msgid "New Group Message…"
 msgstr "Нове групове повідомлення…"
 
-#: src/ui/chatty-verification-view.ui:24
+#: src/ui/chatty-verification-page.ui:24
 msgid "Incoming Verification Request"
 msgstr "Вхідний запит щодо перевірки"
 
-#: src/ui/chatty-verification-view.ui:42
+#: src/ui/chatty-verification-page.ui:42
 msgid "Verify this user to mark them as trusted."
 msgstr ""
 "Підтвердьте особу цього користувача для позначення його як довіреного."
 
-#: src/ui/chatty-verification-view.ui:78
+#: src/ui/chatty-verification-page.ui:78
 msgid ""
 "Verifying this user will mark their session as trusted, and also mark your "
 "session as trusted to them."
@@ -1399,63 +1427,39 @@ msgstr ""
 "Підтвердження особи цього користувача зробить сеанс довіреним, а також "
 "позначити ваш сеанс як довірений для цього користувача."
 
-#: src/ui/chatty-verification-view.ui:98
+#: src/ui/chatty-verification-page.ui:98
 msgid "C_ontinue"
 msgstr "Пр_одовжити"
 
-#: src/ui/chatty-verification-view.ui:200
+#: src/ui/chatty-verification-page.ui:200
 msgid ""
 "Verify this user by confirming the following emoji appears on their screen"
 msgstr ""
 "Підтвердьте особу цього користувача за допомогою вказаної нижче емоційки, "
 "яка з'явиться на екрані його пристрою"
 
-#: src/ui/chatty-verification-view.ui:377
+#: src/ui/chatty-verification-page.ui:377
 msgid ""
 "Verify this user by confirming the following number appears on their screen."
 msgstr ""
 "Підтвердьте особу цього користувача за допомогою вказаного нижче числа, яке "
 "з'явиться на екрані його пристрою."
 
-#: src/ui/chatty-verification-view.ui:412
+#: src/ui/chatty-verification-page.ui:412
 msgid "To be secure, do this in person or use a trusted way to communicate."
 msgstr ""
 "Заради безпеки, виконайте це у реальному житті або скористайтеся надійним "
 "способом зв'язку."
 
-#: src/ui/chatty-verification-view.ui:423
+#: src/ui/chatty-verification-page.ui:423
 msgctxt "verb, which means 'both items are not the same'"
 msgid "_Don’t Match"
 msgstr "_Різні"
 
-#: src/ui/chatty-verification-view.ui:433
+#: src/ui/chatty-verification-page.ui:433
 msgctxt "verb, which means 'both items are the same'"
 msgid "_Match"
 msgstr "Ві_дповідність"
-
-#: src/ui/chatty-window.ui:140
-msgid "Leave Chat"
-msgstr "Полишити спілкування"
-
-#: src/ui/chatty-window.ui:148
-msgid "Block Contact"
-msgstr "Заблокувати контакт"
-
-#: src/ui/chatty-window.ui:156
-msgid "Unblock Contact"
-msgstr "Розблокувати контакт"
-
-#: src/ui/chatty-window.ui:164
-msgid "Archive chat"
-msgstr "Архівувати спілкування"
-
-#: src/ui/chatty-window.ui:172
-msgid "Unarchive chat"
-msgstr "Скасувати архівування"
-
-#: src/ui/chatty-window.ui:180
-msgid "Delete Chat"
-msgstr "Вилучити спілкування"
 
 #: src/ui/help-overlay.ui:14
 msgctxt "shortcut window"
@@ -1488,6 +1492,9 @@ msgstr "Робочий: "
 #: src/users/chatty-contact.c:328
 msgid "Other: "
 msgstr "Інший: "
+
+#~ msgid "A messaging application"
+#~ msgstr "Програма для обміну повідомленнями"
 
 #~ msgid "Copy"
 #~ msgstr "Копіювати"
