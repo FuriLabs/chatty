@@ -26,15 +26,13 @@
     <releases>
       <release version="0.7.3" date="2023-05-13">
         <description>
-          <p>
-            <ul>
-              <li>Fix some memory leaks</li>
-              <li>Improve sidebar</li>
-              <li>Fix logging stack traces on crash</li>
-              <li>Fix message counter for XMPP messages</li>
-              <li>Update Translations</li>
-            </ul>
-          </p>
+          <ul>
+            <li>Fix some memory leaks</li>
+            <li>Improve sidebar</li>
+            <li>Fix logging stack traces on crash</li>
+            <li>Fix message counter for XMPP messages</li>
+            <li>Update Translations</li>
+          </ul>
         </description>
       </release>
       <!-- todo: Add past releases -->
