@@ -1032,7 +1032,7 @@ chatty_pp_chat_init (ChattyPpChat *self)
 
   sorter = gtk_custom_sorter_new ((GCompareDataFunc)sort_chat_buddy, NULL, NULL);
   self->chat_users = g_list_store_new (CHATTY_TYPE_PP_BUDDY);
-  self->sorted_chat_users = gtk_sort_list_model_new (G_LIST_MODEL (self->chat_users),
+  self->sorted_chat_users = gtk_sort_list_model_new (g_object_ref (G_LIST_MODEL (self->chat_users)),
                                                      GTK_SORTER (sorter));
 
   self->message_store = g_list_store_new (CHATTY_TYPE_MESSAGE);
