@@ -185,6 +185,9 @@ notify_fold_cb (ChattyWindow *self)
 {
   gboolean folded;
 
+  if (!gtk_widget_get_mapped (GTK_WIDGET (self)))
+    return;
+
   folded = adw_leaflet_get_folded (ADW_LEAFLET (self->content_box));
   chatty_chat_list_set_selection_mode (CHATTY_CHAT_LIST (self->chat_list), !folded);
 
