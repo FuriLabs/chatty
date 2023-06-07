@@ -92,6 +92,16 @@ test_mm_account_find_chat (void)
   g_assert_cmpint (g_list_model_get_n_items (users), ==, 3);
   g_object_unref (chat);
 
+  chatty_mm_account_start_chat (account, "123,456,789,123,987");
+  g_assert_cmpint (g_list_model_get_n_items (chat_list), ==, 8);
+
+  /* The name should be a concatenated string of numbers in ascending order */
+  chat = g_list_model_get_item (chat_list, 7);
+  g_assert_cmpstr (chatty_chat_get_chat_name (chat), ==, "123,456,789,987");
+  users = chatty_chat_get_users (chat);
+  g_assert_cmpint (g_list_model_get_n_items (users), ==, 4);
+  g_object_unref (chat);
+
   g_list_store_remove_all (G_LIST_STORE (chat_list));
   g_assert_finalize_object (account);
   g_assert_finalize_object (history);
