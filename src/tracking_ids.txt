@@ -1,0 +1,61 @@
+// NOTE: Only the `//` is used as a comment here.
+// https://github.com/brave/brave-core/blob/5fcad3e35bac6fea795941fd8189a59d79d488bc/browser/net/brave_site_hacks_network_delegate_helper.cc#L29-L67
+// Strip any utm_ based ones
+utm_source
+utm_medium
+utm_campaign
+utm_term
+utm_content
+// https://github.com/brave/brave-browser/issues/4239
+fbclid
+gclid
+msclkid
+mc_eid
+// New Facebook one
+mibexid
+// https://github.com/brave/brave-browser/issues/9879
+dclid
+// https://github.com/brave/brave-browser/issues/13644
+oly_anon_id
+oly_enc_id
+// https://github.com/brave/brave-browser/issues/11579
+_openstat
+// https://github.com/brave/brave-browser/issues/11817
+vero_conv
+vero_id
+// https://github.com/brave/brave-browser/issues/13647
+wickedid
+// https://github.com/brave/brave-browser/issues/11578
+yclid
+// https://github.com/brave/brave-browser/issues/8975
+__s
+// https://github.com/brave/brave-browser/issues/17451
+rb_clickid
+// https://github.com/brave/brave-browser/issues/17452
+s_cid
+// https://github.com/brave/brave-browser/issues/17507
+ml_subscriber
+ml_subscriber_hash
+// https://github.com/brave/brave-browser/issues/18020
+twclid
+// https://github.com/brave/brave-browser/issues/18758
+gbraid
+wbraid
+// https://github.com/brave/brave-browser/issues/9019
+_hsenc
+__hssc
+__hstc
+__hsfp
+hsCtaTracking
+// https://github.com/brave/brave-browser/issues/22082
+oft_id
+oft_k
+oft_lk
+oft_d
+oft_c
+oft_ck
+oft_ids
+oft_sk
+// https://github.com/brave/brave-browser/issues/11580
+igshid
+

@@ -39,4 +39,8 @@
   <gresource>
     <file alias="/tagged_entry/tagstyle.css">contrib/tagstyle.css</file>
   </gresource>
+
+  <gresource prefix="/sm/puri/Chatty/tracking_ids/">
+    <file>tracking_ids.txt</file>
+  </gresource>
 </gresources>
