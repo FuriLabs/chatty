@@ -157,7 +157,7 @@ create_sorted_numbers (const char *numbers,
   g_assert (numbers && *numbers);
 
   strv = g_strsplit (numbers, ",", -1);
-  sorted = g_ptr_array_new ();
+  sorted = g_ptr_array_new_full (1, g_free);
   country_code = chatty_settings_get_country_iso_code (chatty_settings_get_default ());
 
   for (guint i = 0; strv[i]; i++) {
