@@ -86,6 +86,21 @@ item_name_changed_cb (ChattyAvatar *self)
 }
 
 static void
+avatar_item_deleted_cb (ChattyAvatar *self)
+{
+  g_assert (CHATTY_IS_AVATAR (self));
+
+  g_return_if_fail (self->item);
+  g_signal_handlers_disconnect_by_func (self->item,
+                                        avatar_changed_cb,
+                                        self);
+  g_signal_handlers_disconnect_by_func (self->item,
+                                        item_name_changed_cb,
+                                        self);
+  g_clear_object (&self->item);
+}
+
+static void
 chatty_avatar_set_property (GObject      *object,
                             guint         prop_id,
                             const GValue *value,
@@ -180,13 +195,13 @@ chatty_avatar_set_item (ChattyAvatar *self,
 
   if (self->item) {
     g_signal_handlers_disconnect_by_func (self->item,
-                                          g_clear_object,
-                                          &self->item);
-    g_signal_handlers_disconnect_by_func (self->item,
                                           avatar_changed_cb,
                                           self);
     g_signal_handlers_disconnect_by_func (self->item,
                                           item_name_changed_cb,
+                                          self);
+    g_signal_handlers_disconnect_by_func (self->item,
+                                          avatar_item_deleted_cb,
                                           self);
   }
 
@@ -200,13 +215,14 @@ chatty_avatar_set_item (ChattyAvatar *self,
   /* We don’t emit notify signals as we don’t need it */
   if (self->item)
     {
-      g_signal_connect_swapped (self->item, "deleted",
-                                G_CALLBACK (g_clear_object), &self->item);
       g_signal_connect_object (self->item, "notify::name",
                                G_CALLBACK (item_name_changed_cb), self,
                                G_CONNECT_SWAPPED);
       g_signal_connect_object (self->item, "avatar-changed",
                                G_CALLBACK (avatar_changed_cb), self,
+                               G_CONNECT_SWAPPED);
+      g_signal_connect_object (self->item, "deleted",
+                               G_CALLBACK (avatar_item_deleted_cb), self,
                                G_CONNECT_SWAPPED);
       item_name_changed_cb (self);
     }
