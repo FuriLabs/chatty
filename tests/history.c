@@ -346,13 +346,13 @@ new_message (const char         *account,
     size = g_random_int_range (0, 10000000);
 
     if (type == CHATTY_MESSAGE_AUDIO)
-      mime_type = g_strdup ("audio/ogg");
+      mime_type = "audio/ogg";
     else if (type == CHATTY_MESSAGE_FILE)
-      mime_type = g_strdup ("application/pdf");
+      mime_type = "application/pdf";
     else if (type == CHATTY_MESSAGE_VIDEO)
-      mime_type = g_strdup ("video/ogg");
+      mime_type = "video/ogg";
     else if (type == CHATTY_MESSAGE_IMAGE)
-      mime_type = g_strdup ("image/png");
+      mime_type = "image/png";
 
     if (type == CHATTY_MESSAGE_VIDEO ||
         type == CHATTY_MESSAGE_AUDIO)
