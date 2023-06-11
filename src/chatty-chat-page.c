@@ -985,7 +985,7 @@ chatty_chat_page_class_init (ChattyChatPageClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, list_page_size_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, chat_page_adjustment_value_changed_cb);
 
-  gtk_widget_class_install_action (widget_class, "view.activate", NULL, chat_page_activate);
+  gtk_widget_class_install_action (widget_class, "chat-page.activate", NULL, chat_page_activate);
 
   g_type_ensure (CHATTY_TYPE_ATTACHMENTS_BAR);
 }

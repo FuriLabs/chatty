@@ -152,7 +152,7 @@
                                     <child>
                                       <object class="GtkShortcut">
                                         <property name="trigger">Return</property>
-                                        <property name="action">action(view.activate)</property>
+                                        <property name="action">action(chat-page.activate)</property>
                                       </object>
                                     </child>
                                   </object>
