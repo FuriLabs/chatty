@@ -1194,7 +1194,7 @@ mm_get_chats_cb (GObject      *object,
 {
   ChattyMmAccount *self;
   GTask *task = user_data;
-  GPtrArray *chats = NULL;
+  g_autoptr(GPtrArray) chats = NULL;
   GCancellable *cancellable;
   g_autoptr(GError) error = NULL;
 
