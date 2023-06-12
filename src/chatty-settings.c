@@ -56,6 +56,7 @@ enum {
   PROP_SEND_RECEIPTS,
   PROP_MESSAGE_CARBONS,
   PROP_SEND_TYPING,
+  PROP_STRIP_URL_TRACKING_IDS,
   PROP_BLUR_IDLE_BUDDIES,
   PROP_INDICATE_UNKNOWN_CONTACTS,
   PROP_CONVERT_EMOTICONS,
@@ -96,6 +97,10 @@ chatty_settings_get_property (GObject    *object,
 
     case PROP_SEND_TYPING:
       g_value_set_boolean (value, chatty_settings_get_send_typing (self));
+      break;
+
+    case PROP_STRIP_URL_TRACKING_IDS:
+      g_value_set_boolean (value, chatty_settings_get_strip_url_tracking_ids (self));
       break;
 
     case PROP_BLUR_IDLE_BUDDIES:
@@ -164,6 +169,11 @@ chatty_settings_set_property (GObject      *object,
                               g_value_get_boolean (value));
       break;
 
+    case PROP_STRIP_URL_TRACKING_IDS:
+      g_settings_set_boolean (self->settings, "strip-url-tracking-id",
+                              g_value_get_boolean (value));
+      break;
+
     case PROP_BLUR_IDLE_BUDDIES:
       g_settings_set_boolean (self->settings, "blur-idle-buddies",
                               g_value_get_boolean (value));
@@ -217,6 +227,8 @@ chatty_settings_constructed (GObject *object)
                    self, "purple-enabled", G_SETTINGS_BIND_DEFAULT);
   g_settings_bind (self->settings, "send-typing",
                    self, "send-typing", G_SETTINGS_BIND_DEFAULT);
+  g_settings_bind (self->settings, "strip-url-tracking-id",
+                   self, "strip-url-tracking-id", G_SETTINGS_BIND_DEFAULT);
   g_settings_bind (self->settings, "blur-idle-buddies",
                    self, "blur-idle-buddies", G_SETTINGS_BIND_DEFAULT);
   g_settings_bind (self->settings, "indicate-unknown-contacts",
@@ -289,6 +301,13 @@ chatty_settings_class_init (ChattySettingsClass *klass)
     g_param_spec_boolean ("send-typing",
                           "Send Typing",
                           "Send typing notifications",
+                          FALSE,
+                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  properties[PROP_STRIP_URL_TRACKING_IDS] =
+    g_param_spec_boolean ("strip-url-tracking-id",
+                          "Strip Tracking IDs",
+                          "Remove Tracking IDs from URLs",
                           FALSE,
                           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
@@ -452,6 +471,23 @@ chatty_settings_get_send_typing (ChattySettings *self)
   g_return_val_if_fail (CHATTY_IS_SETTINGS (self), FALSE);
 
   return g_settings_get_boolean (self->settings, "send-typing");
+}
+
+/**
+ * chatty_settings_get_send_typing:
+ * @self: A #ChattySettings
+ *
+ * Get if Chattty should automatically strip tracking IDs from URLs.
+ *
+ * Returns: %TRUE if tracking IDs are stripped automatically.
+ * %FALSE otherwise
+ */
+gboolean
+chatty_settings_get_strip_url_tracking_ids (ChattySettings *self)
+{
+  g_return_val_if_fail (CHATTY_IS_SETTINGS (self), FALSE);
+
+  return g_settings_get_boolean (self->settings, "strip-url-tracking-id");
 }
 
 gboolean
