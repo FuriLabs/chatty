@@ -1498,6 +1498,7 @@ chatty_mmsd_get_mmsd_service_settings_cb (GObject      *service,
       self->auto_create_smil = autocreatesmil;
 
     g_debug ("AutoCreateSMIL is set to %d", self->auto_create_smil);
+    g_variant_dict_clear (&dict);
   }
 }
 
@@ -1597,7 +1598,8 @@ chatty_mmsd_connect_to_service (ChattyMmsd *self,
   if (!g_variant_dict_lookup (&dict, "Identity", "s", &serviceidentity)) {
     g_warning ("Could not get Service Identity!");
     serviceidentity = NULL;
-    return;
+
+    goto end;
   }
   g_debug ("Identity: %s", serviceidentity);
   if (g_strcmp0 (servicepath, MMSD_MODEMMANAGER_PATH) == 0)
@@ -1610,6 +1612,9 @@ chatty_mmsd_connect_to_service (ChattyMmsd *self,
                       NULL,
                       chatty_mmsd_get_service_cb,
                       self);
+
+ end:
+  g_variant_dict_clear (&dict);
 }
 
 static void
@@ -1828,6 +1833,8 @@ chatty_mmsd_get_mmsd_modemmanager_settings_cb (GObject      *service,
         g_debug ("AutoProcessSMSWAP is set to True!");
       }
     }
+
+    g_variant_dict_clear (&dict);
   }
 
   g_dbus_proxy_new (self->connection,
