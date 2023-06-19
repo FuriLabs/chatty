@@ -23,6 +23,7 @@ src/chatty-list-row.h
 src/chatty-main-view.c
 src/chatty-manager.c
 src/chatty-manager.h
+src/chatty-message-bar.c
 src/chatty-message-row.c
 src/chatty-message.c
 src/chatty-message.h
