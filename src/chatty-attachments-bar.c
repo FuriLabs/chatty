@@ -102,7 +102,10 @@ chatty_attachments_bar_init (ChattyAttachmentsBar *self)
 
   self->files_grid = gtk_grid_view_new (self->files_model, factory);
   gtk_grid_view_set_min_columns (GTK_GRID_VIEW (self->files_grid), 2);
-  gtk_widget_set_margin_top (self->files_grid, 18);
+  gtk_widget_set_margin_top (self->files_grid, 6);
+  gtk_widget_set_margin_bottom (self->files_grid, 6);
+  gtk_widget_set_margin_start (self->files_grid, 6);
+  gtk_widget_set_margin_end (self->files_grid, 6);
   gtk_widget_add_css_class (self->files_grid, "frame");
 
   gtk_box_append (GTK_BOX (self), self->files_grid);
