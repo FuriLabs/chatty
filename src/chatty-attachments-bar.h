@@ -23,6 +23,6 @@ void       chatty_attachments_bar_reset     (ChattyAttachmentsBar *self);
 void       chatty_attachments_bar_add_file  (ChattyAttachmentsBar *self,
                                              GFile                *file);
 GList     *chatty_attachments_bar_get_files (ChattyAttachmentsBar *self);
+GListModel *chatty_attachments_bar_get_files_list (ChattyAttachmentsBar *self);
 
 G_END_DECLS
-

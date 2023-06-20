@@ -167,3 +167,11 @@ chatty_attachments_bar_get_files (ChattyAttachmentsBar *self)
 
   return files;
 }
+
+GListModel *
+chatty_attachments_bar_get_files_list (ChattyAttachmentsBar *self)
+{
+  g_return_val_if_fail (CHATTY_IS_ATTACHMENTS_BAR (self), NULL);
+
+  return G_LIST_MODEL (self->files_store);
+}
