@@ -41,15 +41,6 @@
                     </property>
                   </object>
                 </child>
-                <child type="overlay">
-                  <object class="GtkRevealer" id="attachment_revealer">
-                    <property name="valign">end</property>
-                    <signal name="notify::reveal-child" handler="chat_page_attachment_revealer_notify_cb" swapped="yes"/>
-                    <child>
-                      <object class="ChattyAttachmentsBar" id="attachment_bar"/>
-                    </child>
-                  </object>
-                </child>
                 <property name="child">
                   <object class="GtkScrolledWindow" id="scroll">
                     <property name="hscrollbar-policy">never</property>
@@ -107,74 +98,9 @@
 
             <child>
               <object class="AdwClamp">
-                <property name="margin-start">6</property>
-                <property name="margin-end">6</property>
-                <property name="margin-top">6</property>
                 <property name="margin-bottom">6</property>
                 <child>
-                  <object class="GtkBox">
-                    <child>
-                      <object class="GtkButton" id="send_file_button">
-                        <property name="visible">0</property>
-                        <property name="valign">end</property>
-                        <property name="focus_on_click">0</property>
-                        <property name="margin-end">6</property>
-                        <property name="icon-name">mail-attachment-symbolic</property>
-                        <signal name="clicked" handler="chat_page_send_file_button_clicked_cb" swapped="yes"/>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkBox" id="input_frame">
-                        <child>
-                          <object class="GtkScrolledWindow" id="scrolled_window">
-                            <property name="max_content_height">96</property>
-                            <property name="propagate_natural_height">1</property>
-                            <style>
-                              <class name="view"/>
-                              <class name="frame"/>
-                            </style>
-                            <property name="child">
-                              <object class="GtkTextView" id="message_input">
-                                <property name="hexpand">1</property>
-                                <property name="valign">center</property>
-                                <property name="sensitive">0</property>
-                                <property name="wrap-mode">word-char</property>
-                                <property name="buffer">message_input_buffer</property>
-                                <property name="left-margin">6</property>
-                                <property name="right-margin">6</property>
-                                <property name="top-margin">6</property>
-                                <property name="bottom-margin">6</property>
-                                <property name="input-hints">word-completion</property>
-                                <child>
-                                  <object class="GtkShortcutController">
-                                    <property name="scope">local</property>
-                                    <property name="propagation-phase">capture</property>
-                                    <child>
-                                      <object class="GtkShortcut">
-                                        <property name="trigger">Return</property>
-                                        <property name="action">action(chat-page.activate)</property>
-                                      </object>
-                                    </child>
-                                  </object>
-                                </child>
-                              </object>
-                            </property>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkButton" id="send_message_button">
-                        <property name="visible">0</property>
-                        <property name="valign">end</property>
-                        <property name="visible">0</property>
-                        <property name="focus_on_click">0</property>
-                        <property name="margin-start">6</property>
-                        <property name="icon-name">send-symbolic</property>
-                        <signal name="clicked" handler="chat_page_send_message_button_clicked_cb" swapped="yes"/>
-                      </object>
-                    </child>
-                  </object>
+                  <object class="ChattyMessageBar" id="message_bar"/>
                 </child>
               </object>
             </child>
@@ -184,10 +110,6 @@
       </object>
     </child>
   </template>
-
-  <object class="GtkTextBuffer" id="message_input_buffer">
-    <signal name="changed" handler="chat_page_message_input_changed_cb" after="yes" swapped="yes"/>
-  </object>
 
   <object class="GtkAdjustment" id="vadjustment">
     <signal name="notify::page-size" handler="list_page_size_changed_cb" swapped="yes"/>
