@@ -43,13 +43,13 @@ struct _ChattyChatPage
   ChattyChat *chat;
   guint       refresh_typing_id;
 
-  gdouble     last_vadj_upper;
-  guint       update_view_id;
+  guint       scroll_bottom_id;
   guint       osk_id;
   guint       history_load_id;
   gboolean    should_scroll;
 };
 
+#define SCROLL_TIMEOUT       60  /* milliseconds */
 #define HISTORY_WAIT_TIMEOUT 100 /* milliseconds */
 #define INDICATOR_WIDTH   60
 #define INDICATOR_HEIGHT  40
@@ -136,6 +136,49 @@ chat_page_indicator_refresh_cb (ChattyChatPage *self)
   return G_SOURCE_CONTINUE;
 }
 
+static gboolean
+chatty_chat_page_scroll_is_bottom (ChattyChatPage *self)
+{
+  double upper, value, page_size;
+
+  value = gtk_adjustment_get_value (self->vadjustment);
+  upper = gtk_adjustment_get_upper (self->vadjustment);
+  page_size = gtk_adjustment_get_page_size (self->vadjustment);
+
+  return ABS (upper - page_size - value) <= DBL_EPSILON;
+}
+
+static gboolean
+update_view_scroll (gpointer user_data)
+{
+  ChattyChatPage *self = user_data;
+  gdouble size, upper, value;
+
+  g_assert (CHATTY_IS_CHAT_PAGE (self));
+
+  g_clear_handle_id (&self->scroll_bottom_id, g_source_remove);
+
+  size  = gtk_adjustment_get_page_size (self->vadjustment);
+  value = gtk_adjustment_get_value (self->vadjustment);
+  upper = gtk_adjustment_get_upper (self->vadjustment);
+
+  if (self->should_scroll) {
+    self->should_scroll = FALSE;
+    gtk_adjustment_set_value (self->vadjustment, upper - size);
+
+    return G_SOURCE_REMOVE;
+  }
+
+  if (upper - size <= DBL_EPSILON)
+    return G_SOURCE_REMOVE;
+
+  /* If close to bottom, scroll to bottom */
+  if (upper - value < (size * 1.75))
+    gtk_adjustment_set_value (self->vadjustment, upper - size);
+
+  return G_SOURCE_REMOVE;
+}
+
 static void
 chatty_chat_page_update (ChattyChatPage *self)
 {
@@ -197,7 +240,6 @@ chat_page_message_row_new (ChattyMessage  *message,
 {
   GtkWidget *row;
   ChattyProtocol protocol;
-  gdouble upper, value;
 
   g_assert (CHATTY_IS_MESSAGE (message));
   g_assert (CHATTY_IS_CHAT_PAGE (self));
@@ -208,9 +250,7 @@ chat_page_message_row_new (ChattyMessage  *message,
                                 chatty_message_get_user_alias (message));
 
   /* If we are close to bottom, mark as we should scroll after the row is added */
-  value = gtk_adjustment_get_value (self->vadjustment);
-  upper = gtk_adjustment_get_upper (self->vadjustment);
-  if (upper - value <= DBL_EPSILON)
+  if (chatty_chat_page_scroll_is_bottom (self))
     self->should_scroll = TRUE;
 
   return GTK_WIDGET (row);
@@ -278,46 +318,18 @@ chat_page_chat_changed_cb (ChattyChatPage *self)
     chatty_chat_set_unread_count (self->chat, 0);
 }
 
-static void chat_page_adjustment_value_changed_cb (ChattyChatPage *self);
-static void
-list_page_size_changed_cb (ChattyChatPage *self)
-{
-  gdouble size, upper, old_upper;
-
-  g_assert (CHATTY_IS_CHAT_PAGE (self));
-
-  size  = gtk_adjustment_get_page_size (self->vadjustment);
-  upper = gtk_adjustment_get_upper (self->vadjustment);
-  old_upper = self->last_vadj_upper;
-  self->last_vadj_upper = upper;
-
-  if (self->should_scroll) {
-    self->should_scroll = FALSE;
-    gtk_adjustment_set_value (self->vadjustment, upper);
-    return;
-  }
-
-  /* If the view grew in height, don't do anything. */
-  if (old_upper < upper)
-    return;
-
-  if (upper - size <= DBL_EPSILON)
-    return;
-
-  chat_page_adjustment_value_changed_cb (self);
-}
-
 static void
 chat_page_adjustment_value_changed_cb (ChattyChatPage *self)
 {
-  gdouble value, upper, page_size;
-
-  upper = gtk_adjustment_get_upper (self->vadjustment);
-  value = gtk_adjustment_get_value (self->vadjustment);
-  page_size = gtk_adjustment_get_page_size (self->vadjustment);
+  g_assert (CHATTY_IS_CHAT_PAGE (self));
 
   gtk_widget_set_visible (self->scroll_down_button,
-                          (upper - value) > page_size);
+                          !chatty_chat_page_scroll_is_bottom (self));
+
+  if (self->should_scroll) {
+    g_clear_handle_id (&self->scroll_bottom_id, g_source_remove);
+    self->scroll_bottom_id = g_timeout_add (SCROLL_TIMEOUT, update_view_scroll, self);
+  }
 }
 
 static void
@@ -369,30 +381,6 @@ chat_page_file_requested_cb (ChattyChatPage *self,
                                g_object_ref (self));
 }
 
-static gboolean
-update_view_scroll (gpointer user_data)
-{
-  ChattyChatPage *self = user_data;
-  gdouble size, upper, value;
-
-  g_assert (CHATTY_IS_CHAT_PAGE (self));
-
-  g_clear_handle_id (&self->update_view_id, g_source_remove);
-
-  size  = gtk_adjustment_get_page_size (self->vadjustment);
-  value = gtk_adjustment_get_value (self->vadjustment);
-  upper = gtk_adjustment_get_upper (self->vadjustment);
-
-  if (upper - size <= DBL_EPSILON)
-    return G_SOURCE_REMOVE;
-
-  /* If close to bottom, scroll to bottom */
-  if (upper - value < (size * 1.75))
-    gtk_adjustment_set_value (self->vadjustment, upper);
-
-  return G_SOURCE_REMOVE;
-}
-
 static void
 osk_properties_changed_cb (ChattyChatPage *self,
                            GVariant       *changed_properties)
@@ -406,10 +394,9 @@ osk_properties_changed_cb (ChattyChatPage *self,
 
   value = g_variant_lookup_value (changed_properties, "Visible", NULL);
 
-  if (value) {
-    g_clear_handle_id (&self->update_view_id, g_source_remove);
-    if (g_variant_get_boolean (value))
-      self->update_view_id = g_timeout_add (60, update_view_scroll, self);
+  if (value && g_variant_get_boolean (value)) {
+    g_clear_handle_id (&self->scroll_bottom_id, g_source_remove);
+    self->scroll_bottom_id = g_timeout_add (SCROLL_TIMEOUT, update_view_scroll, self);
   }
 }
 
@@ -475,7 +462,7 @@ chatty_chat_page_finalize (GObject *object)
 
   g_clear_handle_id (&self->history_load_id, g_source_remove);
   g_clear_handle_id (&self->osk_id, g_bus_unwatch_name);
-  g_clear_handle_id (&self->update_view_id, g_source_remove);
+  g_clear_handle_id (&self->scroll_bottom_id, g_source_remove);
   g_clear_object (&self->osk_proxy);
   g_clear_object (&self->chat);
 
@@ -515,7 +502,6 @@ chatty_chat_page_class_init (ChattyChatPageClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, chat_page_scroll_down_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, chat_page_edge_overshot_cb);
   gtk_widget_class_bind_template_callback (widget_class, chat_page_typing_indicator_draw_cb);
-  gtk_widget_class_bind_template_callback (widget_class, list_page_size_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, chat_page_adjustment_value_changed_cb);
 
   g_type_ensure (CHATTY_TYPE_MESSAGE_BAR);
@@ -560,7 +546,7 @@ chat_page_history_wait_timeout_cb (gpointer user_data)
   self->history_load_id = 0;
   self->should_scroll = TRUE;
 
-  list_page_size_changed_cb (self);
+  chat_page_adjustment_value_changed_cb (self);
 
   return G_SOURCE_REMOVE;
 }
@@ -592,7 +578,6 @@ chatty_chat_page_set_chat (ChattyChatPage *self,
 
     gtk_widget_hide (self->scroll_down_button);
     self->should_scroll = TRUE;
-    self->last_vadj_upper = 0.0;
     g_clear_handle_id (&self->history_load_id, g_source_remove);
   }
 

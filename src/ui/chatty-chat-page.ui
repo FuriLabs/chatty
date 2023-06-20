@@ -112,7 +112,7 @@
   </template>
 
   <object class="GtkAdjustment" id="vadjustment">
-    <signal name="notify::page-size" handler="list_page_size_changed_cb" swapped="yes"/>
+    <signal name="changed" handler="chat_page_adjustment_value_changed_cb" swapped="yes"/>
     <signal name="value-changed" handler="chat_page_adjustment_value_changed_cb" swapped="yes"/>
   </object>
 
