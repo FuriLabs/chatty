@@ -42,7 +42,7 @@
                   </object>
                 </child>
                 <property name="child">
-                  <object class="GtkScrolledWindow" id="scroll">
+                  <object class="GtkScrolledWindow" id="scrolled_window">
                     <property name="hscrollbar-policy">never</property>
                     <property name="vadjustment">vadjustment</property>
                     <signal name="edge-overshot" handler="chat_page_edge_overshot_cb" swapped="yes"/>

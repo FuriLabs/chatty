@@ -27,6 +27,7 @@ struct _ChattyChatPage
 
   GtkWidget  *message_view;
 
+  GtkWidget  *scrolled_window;
   GtkWidget  *message_list;
   GtkWidget  *loading_spinner;
   GtkWidget  *typing_revealer;
@@ -219,9 +220,13 @@ chat_page_scroll_down_clicked_cb (ChattyChatPage *self)
 {
   g_assert (CHATTY_IS_CHAT_PAGE (self));
 
+  /* Temporarily disable kinetic scrolling */
+  /* Otherwise, adjustment value isn't updated if kinetic scrolling is active */
+  gtk_scrolled_window_set_kinetic_scrolling (GTK_SCROLLED_WINDOW (self->scrolled_window), FALSE);
   gtk_adjustment_set_value (self->vadjustment,
-                            gtk_adjustment_get_upper (self->vadjustment));
-  gtk_widget_hide (self->scroll_down_button);
+                            gtk_adjustment_get_upper (self->vadjustment) -
+                            gtk_adjustment_get_page_size (self->vadjustment));
+  gtk_scrolled_window_set_kinetic_scrolling (GTK_SCROLLED_WINDOW (self->scrolled_window), TRUE);
 }
 
 static void
@@ -490,6 +495,7 @@ chatty_chat_page_class_init (ChattyChatPageClass *klass)
 
   gtk_widget_class_bind_template_child (widget_class, ChattyChatPage, message_view);
 
+  gtk_widget_class_bind_template_child (widget_class, ChattyChatPage, scrolled_window);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatPage, scroll_down_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatPage, message_list);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatPage, loading_spinner);
