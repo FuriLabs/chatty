@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://source.puri.sm/Librem5/chatty/issues\n"
-"POT-Creation-Date: 2023-05-20 15:24+0000\n"
-"PO-Revision-Date: 2023-05-21 13:14+0200\n"
+"POT-Creation-Date: 2023-06-26 03:24+0000\n"
+"PO-Revision-Date: 2023-06-26 15:49+0200\n"
 "Last-Translator: antpanlinux <ant.pandolfo@gmail.com>\n"
 "Language-Team: Italian\n"
 "Language: it\n"
@@ -18,7 +18,7 @@ msgstr ""
 
 #: data/sm.puri.Chatty.desktop.in:3 data/sm.puri.Chatty.metainfo.xml.in:6
 #: src/chatty-application.c:162 src/chatty-application.c:402
-#: src/chatty-side-bar.c:356 src/ui/chatty-side-bar.ui:16
+#: src/chatty-side-bar.c:348 src/ui/chatty-side-bar.ui:16
 msgid "Chats"
 msgstr "Chats"
 
@@ -139,12 +139,16 @@ msgid "Window size (width, height)."
 msgstr "Dimensioni della finestra (larghezza, altezza)."
 
 #: data/sm.puri.Chatty.metainfo.xml.in:7
-msgid "A messaging application"
-msgstr "Un'applicazione di messaggistica"
+msgid "Messaging application for mobile and desktop"
+msgstr "Applicazione di messaggistica per cellulari e computer"
 
 #: data/sm.puri.Chatty.metainfo.xml.in:9
-msgid "Chats is a messaging application supporting XMPP and SMS."
-msgstr "Chats è un'applicazione di messaggistica che supporta XMPP e SMS."
+msgid ""
+"Chats is a simple to use to messaging app for 1:1 communication and small "
+"groups supporting SMS, MMS, XMPP and Matrix."
+msgstr ""
+"Chats è un'applicazione di messaggistica SMS, MMS, XMPP e Matrix, semplice "
+"da usare, per la comunicazione 1:1 e per piccoli gruppi."
 
 #: data/sm.puri.Chatty.metainfo.xml.in:16
 msgid "Chats message window"
@@ -189,7 +193,7 @@ msgstr ""
 "Errore nella visualizzazione dell'aiuto:\n"
 "%s"
 
-#: src/chatty-avatar.c:168 src/chatty-contact-list.c:391
+#: src/chatty-avatar.c:183 src/chatty-contact-list.c:391
 msgid "Send To"
 msgstr "Invia a"
 
@@ -218,47 +222,27 @@ msgstr "Nessuna chat archiviata"
 msgid "Start Chatting"
 msgstr "Inizia a chattare"
 
-#: src/chatty-chat-view.c:246
+#: src/chatty-chat-page.c:199
 msgid "This is an SMS conversation"
 msgstr "Questa è una conversazione SMS"
 
-#: src/chatty-chat-view.c:248 src/chatty-chat-view.c:254
+#: src/chatty-chat-page.c:201 src/chatty-chat-page.c:207
 msgid "Your messages are not encrypted, and carrier rates may apply"
 msgstr ""
 "Il tuo messaggio non è cifrato, e possono essere applicate le tariffe del "
 "operatore"
 
-#: src/chatty-chat-view.c:252
+#: src/chatty-chat-page.c:205
 msgid "This is an IM conversation"
 msgstr "Questa è una conversazione IM"
 
-#: src/chatty-chat-view.c:258
+#: src/chatty-chat-page.c:211
 msgid "Your messages are encrypted"
 msgstr "Il tuo messaggio è cifrato"
 
-#: src/chatty-chat-view.c:261
+#: src/chatty-chat-page.c:214
 msgid "Your messages are not encrypted"
 msgstr "Il tuo messaggio non è cifrato"
-
-#: src/chatty-chat-view.c:488
-msgid "Select File..."
-msgstr "Seleziona file..."
-
-#: src/chatty-chat-view.c:491 src/purple/chatty-purple-request.c:179
-#: src/chatty-window.c:572 src/dialogs/chatty-pp-chat-info.c:108
-#: src/dialogs/chatty-ma-account-details.c:135
-#: src/dialogs/chatty-pp-account-details.c:111
-#: src/ui/chatty-dialog-join-muc.ui:18 src/ui/chatty-info-dialog.ui:26
-#: src/ui/chatty-info-dialog.ui:35
-msgid "Cancel"
-msgstr "Annulla"
-
-#: src/chatty-chat-view.c:492 src/purple/chatty-purple-request.c:181
-#: src/dialogs/chatty-pp-chat-info.c:107
-#: src/dialogs/chatty-ma-account-details.c:134
-#: src/dialogs/chatty-pp-account-details.c:110
-msgid "Open"
-msgstr "Apri"
 
 #: src/chatty-chat.c:708
 msgid "Empty room"
@@ -346,7 +330,7 @@ msgid "Device ID %s fingerprint:"
 msgstr "Impronta digitale dell'ID del dispositivo %s:"
 
 #. TRANSLATORS: %s is the chat room name
-#: src/chatty-invite-view.c:72
+#: src/chatty-invite-page.c:72
 #, c-format
 msgid "Do you want to join “%s”"
 msgstr "Vuoi unirti a “%s”"
@@ -363,11 +347,11 @@ msgstr "Moderatore"
 msgid "Member"
 msgstr "Membro"
 
-#: src/chatty-main-view.c:63
+#: src/chatty-main-view.c:124
 msgid "Account disconnected"
 msgstr "Account disconnesso"
 
-#: src/chatty-main-view.c:65
+#: src/chatty-main-view.c:126
 msgid "Account connecting…"
 msgstr "Connessione in corso…"
 
@@ -375,6 +359,26 @@ msgstr "Connessione in corso…"
 #, c-format
 msgid "“%s” is not a valid URI"
 msgstr "“%s” non è un URI valido"
+
+#: src/chatty-message-bar.c:120
+msgid "Select File..."
+msgstr "Seleziona file..."
+
+#: src/chatty-message-bar.c:123 src/purple/chatty-purple-request.c:179
+#: src/chatty-window.c:449 src/dialogs/chatty-pp-chat-info.c:108
+#: src/dialogs/chatty-ma-account-details.c:135
+#: src/dialogs/chatty-pp-account-details.c:111
+#: src/ui/chatty-dialog-join-muc.ui:18 src/ui/chatty-info-dialog.ui:26
+#: src/ui/chatty-info-dialog.ui:35
+msgid "Cancel"
+msgstr "Annulla"
+
+#: src/chatty-message-bar.c:124 src/purple/chatty-purple-request.c:181
+#: src/dialogs/chatty-pp-chat-info.c:107
+#: src/dialogs/chatty-ma-account-details.c:134
+#: src/dialogs/chatty-pp-account-details.c:110
+msgid "Open"
+msgstr "Apri"
 
 #: src/chatty-message.c:232
 msgid "Got an encrypted message, but couldn't decrypt due to missing keys"
@@ -415,11 +419,11 @@ msgstr "XMPP"
 msgid "Telegram"
 msgstr "Telegram"
 
-#: src/chatty-side-bar.c:356
+#: src/chatty-side-bar.c:348
 msgid "Archived"
 msgstr "Archiviata"
 
-#: src/purple/chatty-purple-notify.c:46 src/ui/chatty-main-view.ui:29
+#: src/purple/chatty-purple-notify.c:46 src/ui/chatty-main-view.ui:78
 msgid "Close"
 msgstr "Chiudi"
 
@@ -472,356 +476,356 @@ msgstr "Per favore controlla ID e password"
 
 #. TRANSLATORS: You may copy translations from https://github.com/matrix-org/matrix-spec-proposals/blob/old_master/data-definitions/sas-emoji.json
 #. * if available
-#: src/chatty-verification-view.c:27
+#: src/chatty-verification-page.c:27
 msgid "Dog"
 msgstr "Cane"
 
 #. "U+1F436"
-#: src/chatty-verification-view.c:28
+#: src/chatty-verification-page.c:28
 msgid "Cat"
 msgstr "Gatto"
 
 #. "U+1F431"
-#: src/chatty-verification-view.c:29
+#: src/chatty-verification-page.c:29
 msgid "Lion"
 msgstr "Leone"
 
 #. "U+1F981"
-#: src/chatty-verification-view.c:30
+#: src/chatty-verification-page.c:30
 msgid "Horse"
 msgstr "Cavallo"
 
 #. "U+1F40E"
-#: src/chatty-verification-view.c:31
+#: src/chatty-verification-page.c:31
 msgid "Unicorn"
 msgstr "Unicorno"
 
 #. "U+1F984"
-#: src/chatty-verification-view.c:32
+#: src/chatty-verification-page.c:32
 msgid "Pig"
 msgstr "Maiale"
 
 #. "U+1F437"
-#: src/chatty-verification-view.c:33
+#: src/chatty-verification-page.c:33
 msgid "Elephant"
 msgstr "Elefante"
 
 #. "U+1F418"
-#: src/chatty-verification-view.c:34
+#: src/chatty-verification-page.c:34
 msgid "Rabbit"
 msgstr "Coniglio"
 
 #. "U+1F430"
-#: src/chatty-verification-view.c:35
+#: src/chatty-verification-page.c:35
 msgid "Panda"
 msgstr "Panda"
 
 #. "U+1F43C"
-#: src/chatty-verification-view.c:36
+#: src/chatty-verification-page.c:36
 msgid "Rooster"
 msgstr "Gallo"
 
 #. "U+1F413"
-#: src/chatty-verification-view.c:37
+#: src/chatty-verification-page.c:37
 msgid "Penguin"
 msgstr "Pinguino"
 
 #. "U+1F427"
-#: src/chatty-verification-view.c:38
+#: src/chatty-verification-page.c:38
 msgid "Turtle"
 msgstr "Tartaruga"
 
 #. "U+1F422"
-#: src/chatty-verification-view.c:39
+#: src/chatty-verification-page.c:39
 msgid "Fish"
 msgstr "Pesce"
 
 #. "U+1F41F"
-#: src/chatty-verification-view.c:40
+#: src/chatty-verification-page.c:40
 msgid "Octopus"
 msgstr "Polpo"
 
 #. "U+1F419"
-#: src/chatty-verification-view.c:41
+#: src/chatty-verification-page.c:41
 msgid "Butterfly"
 msgstr "Farfalla"
 
 #. "U+1F98B"
-#: src/chatty-verification-view.c:42
+#: src/chatty-verification-page.c:42
 msgid "Flower"
 msgstr "Fiore"
 
 #. "U+1F337"
-#: src/chatty-verification-view.c:43
+#: src/chatty-verification-page.c:43
 msgid "Tree"
 msgstr "Albero"
 
 #. "U+1F333"
-#: src/chatty-verification-view.c:44
+#: src/chatty-verification-page.c:44
 msgid "Cactus"
 msgstr "Cactus"
 
 #. "U+1F335"
-#: src/chatty-verification-view.c:45
+#: src/chatty-verification-page.c:45
 msgid "Mushroom"
 msgstr "Fungo"
 
 #. "U+1F344"
-#: src/chatty-verification-view.c:46
+#: src/chatty-verification-page.c:46
 msgid "Globe"
 msgstr "Globo"
 
 #. "U+1F30F"
-#: src/chatty-verification-view.c:47
+#: src/chatty-verification-page.c:47
 msgid "Moon"
 msgstr "Luna"
 
 #. "U+1F319"
-#: src/chatty-verification-view.c:48
+#: src/chatty-verification-page.c:48
 msgid "Cloud"
 msgstr "Nuvola"
 
 #. "U+2601U+FE0F"
-#: src/chatty-verification-view.c:49
+#: src/chatty-verification-page.c:49
 msgid "Fire"
 msgstr "Fuoco"
 
 #. "U+1F525"
-#: src/chatty-verification-view.c:50
+#: src/chatty-verification-page.c:50
 msgid "Banana"
 msgstr "Banana"
 
 #. "U+1F34C"
-#: src/chatty-verification-view.c:51
+#: src/chatty-verification-page.c:51
 msgid "Apple"
 msgstr "Mela"
 
 #. "U+1F34E"
-#: src/chatty-verification-view.c:52
+#: src/chatty-verification-page.c:52
 msgid "Strawberry"
 msgstr "Fragola"
 
 #. "U+1F353"
-#: src/chatty-verification-view.c:53
+#: src/chatty-verification-page.c:53
 msgid "Corn"
 msgstr "Mais"
 
 #. "U+1F33D"
-#: src/chatty-verification-view.c:54
+#: src/chatty-verification-page.c:54
 msgid "Pizza"
 msgstr "Pizza"
 
 #. "U+1F355"
-#: src/chatty-verification-view.c:55
+#: src/chatty-verification-page.c:55
 msgid "Cake"
 msgstr "Torta"
 
 #. "U+1F382"
-#: src/chatty-verification-view.c:56
+#: src/chatty-verification-page.c:56
 msgid "Heart"
 msgstr "Cuore"
 
 #. "U+2764U+FE0F"
-#: src/chatty-verification-view.c:57
+#: src/chatty-verification-page.c:57
 msgid "Smiley"
 msgstr "Faccina sorridente"
 
 #. "U+1F600"
-#: src/chatty-verification-view.c:58
+#: src/chatty-verification-page.c:58
 msgid "Robot"
 msgstr "Robot"
 
 #. "U+1F916"
-#: src/chatty-verification-view.c:59
+#: src/chatty-verification-page.c:59
 msgid "Hat"
 msgstr "Cappello"
 
 #. "U+1F3A9"
-#: src/chatty-verification-view.c:60
+#: src/chatty-verification-page.c:60
 msgid "Glasses"
 msgstr "Occhiali"
 
 #. "U+1F453"
-#: src/chatty-verification-view.c:61
+#: src/chatty-verification-page.c:61
 msgid "Spanner"
 msgstr "Chiave inglese"
 
 #. "U+1F527"
-#: src/chatty-verification-view.c:62
+#: src/chatty-verification-page.c:62
 msgid "Santa"
 msgstr "Babbo Natale"
 
 #. "U+1F385"
-#: src/chatty-verification-view.c:63
+#: src/chatty-verification-page.c:63
 msgid "Thumbs Up"
 msgstr "Pollice alzato"
 
 #. "U+1F44D"
-#: src/chatty-verification-view.c:64
+#: src/chatty-verification-page.c:64
 msgid "Umbrella"
 msgstr "Ombrello"
 
 #. "U+2602U+FE0F"
-#: src/chatty-verification-view.c:65
+#: src/chatty-verification-page.c:65
 msgid "Hourglass"
 msgstr "Clessidra"
 
 #. "U+231B"
-#: src/chatty-verification-view.c:66
+#: src/chatty-verification-page.c:66
 msgid "Clock"
 msgstr "Orologio"
 
 #. "U+23F0"
-#: src/chatty-verification-view.c:67
+#: src/chatty-verification-page.c:67
 msgid "Gift"
 msgstr "Regalo"
 
 #. "U+1F381"
-#: src/chatty-verification-view.c:68
+#: src/chatty-verification-page.c:68
 msgid "Light Bulb"
 msgstr "Lampadina"
 
 #. "U+1F4A1"
-#: src/chatty-verification-view.c:69
+#: src/chatty-verification-page.c:69
 msgid "Book"
 msgstr "Libro"
 
 #. "U+1F4D5"
-#: src/chatty-verification-view.c:70
+#: src/chatty-verification-page.c:70
 msgid "Pencil"
 msgstr "Matita"
 
 #. "U+270FU+FE0F"
-#: src/chatty-verification-view.c:71
+#: src/chatty-verification-page.c:71
 msgid "Paperclip"
 msgstr "Graffetta"
 
 #. "U+1F4CE"
-#: src/chatty-verification-view.c:72
+#: src/chatty-verification-page.c:72
 msgid "Scissors"
 msgstr "Forbici"
 
 #. "U+2702U+FE0F"
-#: src/chatty-verification-view.c:73
+#: src/chatty-verification-page.c:73
 msgid "Lock"
 msgstr "Lucchetto"
 
 #. "U+1F512"
-#: src/chatty-verification-view.c:74
+#: src/chatty-verification-page.c:74
 msgid "Key"
 msgstr "Chiave"
 
 #. "U+1F511"
-#: src/chatty-verification-view.c:75
+#: src/chatty-verification-page.c:75
 msgid "Hammer"
 msgstr "Martello"
 
 #. "U+1F528"
-#: src/chatty-verification-view.c:76
+#: src/chatty-verification-page.c:76
 msgid "Telephone"
 msgstr "Telefono"
 
 #. "U+260EU+FE0F"
-#: src/chatty-verification-view.c:77
+#: src/chatty-verification-page.c:77
 msgid "Flag"
 msgstr "Bandiera"
 
 #. "U+1F3C1"
-#: src/chatty-verification-view.c:78
+#: src/chatty-verification-page.c:78
 msgid "Train"
 msgstr "Treno"
 
 #. "U+1F682"
-#: src/chatty-verification-view.c:79
+#: src/chatty-verification-page.c:79
 msgid "Bicycle"
 msgstr "Bicicletta"
 
 #. "U+1F6B2"
-#: src/chatty-verification-view.c:80
+#: src/chatty-verification-page.c:80
 msgid "Aeroplane"
 msgstr "Aeroplano"
 
 #. "U+2708U+FE0F"
-#: src/chatty-verification-view.c:81
+#: src/chatty-verification-page.c:81
 msgid "Rocket"
 msgstr "Razzo"
 
 #. "U+1F680"
-#: src/chatty-verification-view.c:82
+#: src/chatty-verification-page.c:82
 msgid "Trophy"
 msgstr "Trofeo"
 
 #. "U+1F3C6"
-#: src/chatty-verification-view.c:83
+#: src/chatty-verification-page.c:83
 msgid "Ball"
 msgstr "Palla"
 
 #. "U+26BD"
-#: src/chatty-verification-view.c:84
+#: src/chatty-verification-page.c:84
 msgid "Guitar"
 msgstr "Chitarra"
 
 #. "U+1F3B8"
-#: src/chatty-verification-view.c:85
+#: src/chatty-verification-page.c:85
 msgid "Trumpet"
 msgstr "Trombetta"
 
 #. "U+1F3BA"
-#: src/chatty-verification-view.c:86
+#: src/chatty-verification-page.c:86
 msgid "Bell"
 msgstr "Campana"
 
 #. "U+1F514"
-#: src/chatty-verification-view.c:87
+#: src/chatty-verification-page.c:87
 msgid "Anchor"
 msgstr "Ancora"
 
 #. "U+2693"
-#: src/chatty-verification-view.c:88
+#: src/chatty-verification-page.c:88
 msgid "Headphones"
 msgstr "Cuffie"
 
 #. "U+1F3A7"
-#: src/chatty-verification-view.c:89
+#: src/chatty-verification-page.c:89
 msgid "Folder"
 msgstr "Cartella"
 
 #. "U+1F4C1"
-#: src/chatty-verification-view.c:90
+#: src/chatty-verification-page.c:90
 msgid "Pin"
 msgstr "Puntina"
 
-#: src/chatty-verification-view.c:387
+#: src/chatty-verification-page.c:387
 msgid "Show Emojis"
 msgstr "Mostra Emoji"
 
-#: src/chatty-verification-view.c:389
+#: src/chatty-verification-page.c:389
 msgid "Show Numbers"
 msgstr "Mostra i numeri"
 
-#: src/chatty-window.c:476
+#: src/chatty-window.c:353
 msgid "You shall no longer be notified for new messages, continue?"
 msgstr "Non sarai più notificato se riceverai nuovi messaggi. Vuoi continuare?"
 
-#: src/chatty-window.c:558
+#: src/chatty-window.c:435
 #, c-format
 msgid "Delete chat with “%s”"
 msgstr "Elimina chat con “%s”"
 
-#: src/chatty-window.c:559
+#: src/chatty-window.c:436
 msgid "This deletes the conversation history"
 msgstr "Questo elimina la cronologia delle conversazioni"
 
-#: src/chatty-window.c:561
+#: src/chatty-window.c:438
 #, c-format
 msgid "Disconnect group chat “%s”"
 msgstr "Disconnetti la chat di gruppo “%s”"
 
-#: src/chatty-window.c:562
+#: src/chatty-window.c:439
 msgid "This removes chat from chats list"
 msgstr "Questo rimuove la chat dalla lista delle chat"
 
-#: src/chatty-window.c:573
+#: src/chatty-window.c:450
 msgid "Delete"
 msgstr "Elimina"
 
@@ -996,8 +1000,8 @@ msgstr "_OK"
 
 #: src/matrix/chatty-ma-account.c:106 src/ui/chatty-dialog-new-chat.ui:37
 #: src/ui/chatty-settings-dialog.ui:29 src/ui/chatty-settings-dialog.ui:72
-#: src/ui/chatty-verification-view.ui:129
-#: src/ui/chatty-verification-view.ui:157
+#: src/ui/chatty-verification-page.ui:129
+#: src/ui/chatty-verification-page.ui:157
 msgid "_Cancel"
 msgstr "_Annulla"
 
@@ -1013,16 +1017,16 @@ msgstr "Verifica della chiave"
 #. TRANSLATORS: Timestamp for minute accuracy, e.g. “2020-08-11 15:27”.
 #. See https://developer.gnome.org/glib/stable/glib-GDateTime.html#g-date-time-format
 #.
-#: src/mm/chatty-mmsd.c:893
+#: src/mm/chatty-mmsd.c:910
 msgid "%Y-%m-%d %H∶%M"
 msgstr "%Y-%m-%d %H∶%M"
 
-#: src/mm/chatty-mmsd.c:1198
+#: src/mm/chatty-mmsd.c:1215
 #, c-format
 msgid "You received an MMS, but it expired on: %s"
 msgstr "Hai ricevuto un MMS, ma è scaduto il: %s"
 
-#: src/mm/chatty-mmsd.c:1201
+#: src/mm/chatty-mmsd.c:1218
 msgid "You received an empty MMS."
 msgstr "Hai ricevuto un MMS vuoto."
 
@@ -1070,7 +1074,7 @@ msgstr "Nome (opzionale)"
 msgid "Add to Contacts"
 msgstr "Aggiungi ai contatti"
 
-#: src/ui/chatty-info-dialog.ui:8 src/ui/chatty-window.ui:129
+#: src/ui/chatty-info-dialog.ui:8 src/ui/chatty-main-view.ui:129
 msgid "Chat Details"
 msgstr "Dettagli chat"
 
@@ -1082,11 +1086,11 @@ msgstr "Applica"
 msgid "Invite"
 msgstr "Invita"
 
-#: src/ui/chatty-invite-view.ui:62
+#: src/ui/chatty-invite-page.ui:62
 msgid "_Accept"
 msgstr "_Accetta"
 
-#: src/ui/chatty-invite-view.ui:86
+#: src/ui/chatty-invite-page.ui:86
 msgid "_Reject"
 msgstr "_Rifiuta"
 
@@ -1110,6 +1114,39 @@ msgstr "Cifratura"
 #: src/ui/chatty-ma-chat-info.ui:108 src/ui/chatty-pp-chat-info.ui:293
 msgid "Encrypt Messages"
 msgstr "Messaggi cifrati"
+
+#: src/ui/chatty-main-view.ui:17 src/ui/chatty-settings-dialog.ui:18
+#: src/ui/chatty-side-bar.ui:24
+msgid "Back"
+msgstr "Indietro"
+
+#: src/ui/chatty-main-view.ui:46 src/ui/chatty-list-row.ui:143
+msgid "Call"
+msgstr "Chiama"
+
+#: src/ui/chatty-main-view.ui:140
+msgid "Leave Chat"
+msgstr "Lascia la chat"
+
+#: src/ui/chatty-main-view.ui:148
+msgid "Block Contact"
+msgstr "Blocca contatto"
+
+#: src/ui/chatty-main-view.ui:156
+msgid "Unblock Contact"
+msgstr "Sblocca contatto"
+
+#: src/ui/chatty-main-view.ui:164
+msgid "Archive chat"
+msgstr "Archivia la chat"
+
+#: src/ui/chatty-main-view.ui:172
+msgid "Unarchive chat"
+msgstr "Disarchivia la chat"
+
+#: src/ui/chatty-main-view.ui:180
+msgid "Delete Chat"
+msgstr "Elimina la chat"
 
 #: src/ui/chatty-pp-chat-info.ui:34 src/ui/chatty-pp-account-details.ui:38
 msgid "Change Avatar"
@@ -1164,10 +1201,6 @@ msgstr "Vuoto per impostazione predefinita"
 msgid "Group Members"
 msgstr "Membri del gruppo"
 
-#: src/ui/chatty-list-row.ui:143 src/ui/chatty-window.ui:87
-msgid "Call"
-msgstr "Chiama"
-
 #: src/ui/chatty-ma-account-details.ui:78
 msgid "Name"
 msgstr "Nome"
@@ -1207,11 +1240,6 @@ msgstr "Password"
 #: src/ui/chatty-pp-account-details.ui:168
 msgid "Own Fingerprint"
 msgstr "La propria impronta digitale"
-
-#: src/ui/chatty-settings-dialog.ui:18 src/ui/chatty-side-bar.ui:24
-#: src/ui/chatty-window.ui:58
-msgid "Back"
-msgstr "Indietro"
 
 #: src/ui/chatty-settings-dialog.ui:39
 msgid "_Add"
@@ -1371,15 +1399,15 @@ msgstr "Nuovo messaggio SMS/MMS…"
 msgid "New Group Message…"
 msgstr "Nuovo messaggio di gruppo…"
 
-#: src/ui/chatty-verification-view.ui:24
+#: src/ui/chatty-verification-page.ui:24
 msgid "Incoming Verification Request"
 msgstr "Richiesta di verifica in arrivo"
 
-#: src/ui/chatty-verification-view.ui:42
+#: src/ui/chatty-verification-page.ui:42
 msgid "Verify this user to mark them as trusted."
 msgstr "Verifica questo utente per contrassegnarlo come attendibile."
 
-#: src/ui/chatty-verification-view.ui:78
+#: src/ui/chatty-verification-page.ui:78
 msgid ""
 "Verifying this user will mark their session as trusted, and also mark your "
 "session as trusted to them."
@@ -1387,63 +1415,39 @@ msgstr ""
 "La verifica di questo utente contrassegnerà la sua attività come attendibile "
 "e anche la tua attività come attendibile per lui."
 
-#: src/ui/chatty-verification-view.ui:98
+#: src/ui/chatty-verification-page.ui:98
 msgid "C_ontinue"
 msgstr "C_continua"
 
-#: src/ui/chatty-verification-view.ui:200
+#: src/ui/chatty-verification-page.ui:200
 msgid ""
 "Verify this user by confirming the following emoji appears on their screen"
 msgstr ""
 "Verifica questo utente confermando che sul suo schermo appaia la seguente "
 "emoji"
 
-#: src/ui/chatty-verification-view.ui:377
+#: src/ui/chatty-verification-page.ui:377
 msgid ""
 "Verify this user by confirming the following number appears on their screen."
 msgstr ""
 "Verifica questo utente confermando che sul suo schermo appaia il seguente "
 "numero."
 
-#: src/ui/chatty-verification-view.ui:412
+#: src/ui/chatty-verification-page.ui:412
 msgid "To be secure, do this in person or use a trusted way to communicate."
 msgstr ""
 "Per sicurezza, questo dovrebbe essere fatto di persona o utilizzando un "
 "mezzo di comunicazione fidato."
 
-#: src/ui/chatty-verification-view.ui:423
+#: src/ui/chatty-verification-page.ui:423
 msgctxt "verb, which means 'both items are not the same'"
 msgid "_Don’t Match"
 msgstr "_Non coincidono"
 
-#: src/ui/chatty-verification-view.ui:433
+#: src/ui/chatty-verification-page.ui:433
 msgctxt "verb, which means 'both items are the same'"
 msgid "_Match"
 msgstr "_Coincidono"
-
-#: src/ui/chatty-window.ui:140
-msgid "Leave Chat"
-msgstr "Lascia la chat"
-
-#: src/ui/chatty-window.ui:148
-msgid "Block Contact"
-msgstr "Blocca contatto"
-
-#: src/ui/chatty-window.ui:156
-msgid "Unblock Contact"
-msgstr "Sblocca contatto"
-
-#: src/ui/chatty-window.ui:164
-msgid "Archive chat"
-msgstr "Archivia la chat"
-
-#: src/ui/chatty-window.ui:172
-msgid "Unarchive chat"
-msgstr "Disarchivia la chat"
-
-#: src/ui/chatty-window.ui:180
-msgid "Delete Chat"
-msgstr "Elimina la chat"
 
 #: src/ui/help-overlay.ui:14
 msgctxt "shortcut window"
@@ -1467,7 +1471,7 @@ msgstr "Mostra scorciatoie"
 
 #: src/users/chatty-contact.c:324
 msgid "Mobile: "
-msgstr "Mobile: "
+msgstr "Cellulare: "
 
 #: src/users/chatty-contact.c:326
 msgid "Work: "
