@@ -84,7 +84,7 @@ static GOptionEntry cmd_options[] = {
   { "debug", 'd', G_OPTION_FLAG_NONE, G_OPTION_ARG_NONE, NULL, N_("Enable libpurple debug messages"), NULL },
 #endif
   { "verbose", 'v', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_CALLBACK, cmd_verbose_cb,
-    N_("Enable verbose libpurple debug messages"), NULL },
+    N_("Enable verbose debug messages (repeat option for more verbosity)"), NULL },
   { NULL }
 };
 
