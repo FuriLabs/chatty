@@ -13,6 +13,32 @@
           <class name="conversation_list"/>
         </style>
 
+        <child>
+          <object class="GtkPopover" id="popover">
+            <style>
+              <class name="menu" />
+            </style>
+            <property name="child">
+              <object class="GtkBox">
+                <property name="margin-start">6</property>
+                <property name="margin-end">6</property>
+                <property name="margin-top">6</property>
+                <property name="margin-bottom">6</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkModelButton">
+                    <property name="active">0</property>
+                    <property name="can-focus">0</property>
+                    <property name="receives-default">0</property>
+                    <property name="text" translatable="yes">Copy Number</property>
+                    <property name="action-name">win.copy-number</property>
+                  </object>
+                </child>
+              </object>
+            </property>
+          </object>
+        </child>
+
         <!-- Avatar -->
         <child>
           <object class="ChattyAvatar" id="avatar">

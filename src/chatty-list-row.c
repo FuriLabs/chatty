@@ -41,6 +41,7 @@ struct _ChattyListRow
   GtkWidget     *add_contact_button;
   GtkWidget     *call_button;
 
+  GtkPopover    *popover;
   ChattyItem    *item;
   gboolean       hide_chat_details;
   gulong         clock_id;
@@ -135,6 +136,29 @@ list_row_user_flag_to_str (ChattyUserFlag flags)
 #endif
 
 static void
+chatty_list_row_call_copy_number (GtkWidget  *widget,
+                                  const char *action_name,
+                                  GVariant   *param)
+{
+  ChattyListRow *self = CHATTY_LIST_ROW (widget);
+  GdkClipboard *clipboard;
+
+  g_assert (CHATTY_IS_LIST_ROW (self));
+
+  clipboard = gdk_display_get_clipboard (gdk_display_get_default ());
+  gdk_clipboard_set_text (clipboard, gtk_label_get_label (GTK_LABEL (self->subtitle)));
+}
+
+static void
+long_pressed (GtkGestureLongPress *gesture,
+              gdouble              x,
+              gdouble              y,
+              ChattyListRow        *self)
+{
+  gtk_popover_popup (GTK_POPOVER (self->popover));
+}
+
+static void
 chatty_list_row_update (ChattyListRow *self)
 {
   const char *subtitle = NULL;
@@ -173,6 +197,14 @@ chatty_list_row_update (ChattyListRow *self)
       type = g_strconcat (chatty_contact_get_value_type (CHATTY_CONTACT (self->item)), number, NULL);
     gtk_label_set_label (GTK_LABEL (self->subtitle), type);
     chatty_item_get_avatar (self->item);
+
+   if (*number) {
+      GtkGesture    *gesture;
+      gesture = gtk_gesture_long_press_new ();
+      gtk_widget_add_controller (GTK_WIDGET (self), GTK_EVENT_CONTROLLER (gesture));
+      g_signal_connect (gesture, "pressed", G_CALLBACK (long_pressed), self);
+   }
+
   } else if (CHATTY_IS_CHAT (self->item) && !self->hide_chat_details) {
     g_autofree char *unread = NULL;
     const char *last_message;
@@ -320,10 +352,13 @@ chatty_list_row_class_init (ChattyListRowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyListRow, unread_message_count);
   gtk_widget_class_bind_template_child (widget_class, ChattyListRow, add_contact_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyListRow, call_button);
+  gtk_widget_class_bind_template_child (widget_class, ChattyListRow, popover);
 
   gtk_widget_class_bind_template_callback (widget_class, chatty_list_row_delete_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, chatty_list_row_add_contact_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, chatty_list_row_call_button_clicked_cb);
+
+  gtk_widget_class_install_action (widget_class, "win.copy-number", NULL, chatty_list_row_call_copy_number);
 }
 
 static void
