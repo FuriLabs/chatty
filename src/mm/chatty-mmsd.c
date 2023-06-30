@@ -32,6 +32,7 @@
 #include "chatty-mmsd.h"
 #include "chatty-log.h"
 #include "chatty-mmsd.h"
+#include "chatty-mm-notify.h"
 
 #define MMSD_DELIVERY_TIMEOUT           604800
 #define MMSD_SERVICE	                "org.ofono.mms"
