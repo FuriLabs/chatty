@@ -92,6 +92,9 @@ struct _ChattyMmsd {
   gboolean          auto_create_smil;
   gboolean          is_ready;
   guint             mmsd_signal_id;
+  unsigned int      mms_pending_sent;
+  int               mms_notifications;
+  unsigned int      bearer_handler_error;
 };
 
 typedef struct _mms_payload mms_payload;
@@ -245,8 +248,10 @@ chatty_mmsd_process_delivery_status (const char *delivery_status)
 
     number = g_strsplit (numbers[i], "=", 0);
     if ((g_strcmp0 (number[1], "none") != 0) && (g_strcmp0 (number[1], "retrieved") != 0)) {
-      /* TODO: There was an error with delivery. Do we want to raise some sort of flag? */
+      g_autofree char *title = NULL;
       g_warning ("There was an error delivering message. Error: %s", number[1]);
+      title = g_strdup_printf (_("Error Delivering Message to %s"), number[1]);
+      chatty_mm_notify_message (title, _("See logs for more details"));
     }
   }
 }
@@ -404,6 +409,14 @@ chatty_mmsd_process_mms (ChattyMmsd  *self,
   } else {
     g_debug ("MMS is finished sending/delivering/receiving. Deleting....");
     chatty_mmsd_delete_mms (self, payload->objectpath);
+  }
+  if (mms_status == CHATTY_STATUS_SENT) {
+    /* Successfully sent a message, reset the pending sent counter */
+    self->mms_pending_sent = 0;
+  }
+  if (mms_status == CHATTY_STATUS_RECEIVED) {
+    /* Successfully received a message, reset the unreceived notification counter */
+    self->mms_notifications = 0;
   }
 }
 
@@ -1654,7 +1667,9 @@ chatty_mmsd_service_send_error_cb (ChattyMmsd *self,
   g_autofree char *mms_path = NULL;
   g_autofree char *sender = NULL;
   g_autofree char *host = NULL;
+  g_autofree char *body = NULL;
   unsigned int error_type;
+  unsigned int unsent_mmses;
   mms_payload *payload;
   ChattyMessage *message;
   GVariantDict dict;
@@ -1696,8 +1711,70 @@ chatty_mmsd_service_send_error_cb (ChattyMmsd *self,
      g_debug ("Message was deleted!");
      return;
   }
-  /* TODO: Have a user notification that the send failed */
 
+  /* self->mms_hash_table only long term keeps track of pending sent MMSes */
+  unsent_mmses = g_hash_table_size (self->mms_hash_table);
+  /*
+   * To not annoy the user, only notify if there are pending MMSes being sent
+   * or if the number of pending MMSes to send changed
+   */
+  if (unsent_mmses >= 1 && self->mms_pending_sent != unsent_mmses) {
+    body = g_strdup_printf (g_dngettext (GETTEXT_PACKAGE,
+                                         "Automatically Retrying for  %i MMS",
+                                         "Automatically Retrying for  %i MMSes...",
+                                         unsent_mmses),
+                            unsent_mmses);
+
+    chatty_mm_notify_message (_("Temporary Error Sending MMS"), body);
+  }
+
+  self->mms_pending_sent = unsent_mmses;
+}
+
+static void
+chatty_mmsd_rx_notifications_cb (GObject      *service,
+                                 GAsyncResult *res,
+                                 gpointer      user_data)
+{
+  ChattyMmsd *self = user_data;
+  g_autofree char *body = NULL;
+  g_autoptr(GError) error = NULL;
+  g_autoptr(GVariant) ret = NULL;
+  int notifications;
+
+  g_debug ("%s", __func__);
+
+  ret = g_dbus_proxy_call_finish (self->service_proxy,
+                                  res,
+                                  &error);
+
+  if (error != NULL) {
+    notifications = 0;
+  } else {
+    g_autoptr(GVariant) all_settings = NULL;
+    GVariantDict dict;
+
+    g_variant_get (ret, "(@a{?*})", &all_settings);
+    g_variant_dict_init (&dict, all_settings);
+    if (!g_variant_dict_lookup (&dict, "NotificationInds", "i", &notifications))
+      notifications = 0;
+  }
+
+  /*
+   * To not annoy the user, only notify if there are pending MMSes to be downloaded
+   * or if the number of pending MMSes to download changed
+   */
+  if (notifications >= 1 && self->mms_notifications != notifications) {
+    body = g_strdup_printf (g_dngettext (GETTEXT_PACKAGE,
+                                         "Automatically Retrying for  %i MMS",
+                                         "Automatically Retrying for  %i MMSes...",
+                                         notifications),
+                            notifications);
+
+    chatty_mm_notify_message (_("Temporary Error Receiving MMS"), body);
+  }
+
+  self->mms_notifications = notifications;
 }
 
 static void
@@ -1719,11 +1796,19 @@ chatty_mmsd_service_receive_error_cb (ChattyMmsd *self,
   g_variant_dict_lookup (&dict, "Host", "s", &host);
   g_variant_dict_lookup (&dict, "From", "s", &mms_from);
 
-  /* TODO: Notify user of issue */
   g_warning ("Error receiving MMS of type %u, host %s, from %s",
              error_type,
              host,
              mms_from);
+
+  g_dbus_proxy_call (self->service_proxy,
+                     "GetProperties",
+                     NULL,
+                     G_DBUS_CALL_FLAGS_NONE,
+                     -1,
+                     NULL,
+                     (GAsyncReadyCallback)chatty_mmsd_rx_notifications_cb,
+                     self);
 }
 
 static void
@@ -1858,18 +1943,92 @@ chatty_mmsd_get_mmsd_modemmanager_settings_cb (GObject      *service,
                     self);
 }
 
-/*
- * TODO: Is there anything we want to do with chatty_mmsd_bearer_handler_error_cb ()?
- *       This may be useful for user feedback.
- */
+static void
+chatty_mmsd_bearer_handler_notification_cb (GObject      *service,
+                                            GAsyncResult *res,
+                                            gpointer      user_data)
+{
+  ChattyMmsd *self = user_data;
+  const char *body = NULL;
+  g_autofree char *title = NULL;
+  g_autoptr(GError) error = NULL;
+  g_autoptr(GVariant) ret = NULL;
+  int notifications;
+  unsigned int unsent_mmses;
+
+  g_debug ("%s", __func__);
+
+  ret = g_dbus_proxy_call_finish (self->service_proxy,
+                                  res,
+                                  &error);
+
+  if (error != NULL) {
+    notifications = 0;
+  } else {
+    g_autoptr(GVariant) all_settings = NULL;
+    GVariantDict dict;
+
+    g_variant_get (ret, "(@a{?*})", &all_settings);
+    g_variant_dict_init (&dict, all_settings);
+
+    if (!g_variant_dict_lookup (&dict, "NotificationInds", "i", &notifications))
+      notifications = 0;
+  }
+
+  /* self->mms_hash_table only long term keeps track of pending sent MMSes */
+  unsent_mmses = g_hash_table_size (self->mms_hash_table);
+
+  /*
+   * To not annoy the user, only notify if there are pending MMSes to be sent/downloaded
+   * or if the number of pending MMSes to send/download changed
+   */
+  if ((notifications >= 1 && self->mms_notifications != notifications) ||
+      (unsent_mmses >= 1 && self->mms_pending_sent != unsent_mmses)) {
+
+    switch (self->bearer_handler_error) {
+    case MMSD_MM_MODEM_MMSC_MISCONFIGURED:
+      body = _("MMSC is not configured");
+      break;
+    case MMSD_MM_MODEM_INCORRECT_APN_CONNECTED:
+      body = _("APN is not configured correctly");
+      break;
+    case MMSD_MM_MODEM_NO_BEARERS_ACTIVE:
+      body = _("Mobile Data is not confgured");
+      break;
+    case MMSD_MM_MODEM_INTERFACE_DISCONNECTED:
+      body = _("Mobile Data is off");
+      break;
+    default:
+      body = _("Unknown Error");
+      break;
+    }
+
+    title = g_strdup_printf (g_dngettext (GETTEXT_PACKAGE,
+                                          "Chatty cannot process %i MMS",
+                                          "Chatty cannot process %i MMSes...",
+                                          unsent_mmses + notifications),
+                             unsent_mmses + notifications);
+
+    chatty_mm_notify_message (title, body);
+  }
+
+  self->mms_notifications = notifications;
+  self->mms_pending_sent = unsent_mmses;
+}
+
 static void
 chatty_mmsd_bearer_handler_error_cb (ChattyMmsd *self,
                                      GVariant   *parameters)
 {
-  guint error;
 
-  g_variant_get (parameters, "(h)", &error);
-  switch (error) {
+  self->bearer_handler_error = MMSD_MM_MODEM_CONTEXT_ACTIVE;
+
+  g_variant_get (parameters, "(h)", &self->bearer_handler_error);
+
+  if (self->bearer_handler_error == MMSD_MM_MODEM_CONTEXT_ACTIVE)
+    return;
+
+  switch (self->bearer_handler_error) {
   case MMSD_MM_MODEM_MMSC_MISCONFIGURED:
     g_warning ("Bearer Handler emitted an error, the mmsc is not configured right.");
     break;
@@ -1880,12 +2039,21 @@ chatty_mmsd_bearer_handler_error_cb (ChattyMmsd *self,
     g_warning ("Bearer Handler emitted an error, no bearers are active");
     break;
   case MMSD_MM_MODEM_INTERFACE_DISCONNECTED:
-    g_debug ("Bearer Handler emitted an error, the MMS bearer is disconnected");
+    g_warning ("Bearer Handler emitted an error, the MMS bearer is disconnected");
     break;
   default:
-    g_debug ("Bearer Handler emitted an error, but Chatty does not know how to handle it");
+    g_warning ("Bearer Handler emitted an error, but Chatty does not know how to handle it");
     break;
   }
+
+  g_dbus_proxy_call (self->service_proxy,
+                     "GetProperties",
+                     NULL,
+                     G_DBUS_CALL_FLAGS_NONE,
+                     -1,
+                     NULL,
+                     (GAsyncReadyCallback)chatty_mmsd_bearer_handler_notification_cb,
+                     self);
 }
 
 
