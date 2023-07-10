@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://source.puri.sm/Librem5/chatty/issues\n"
-"POT-Creation-Date: 2023-06-26 03:24+0000\n"
-"PO-Revision-Date: 2023-06-26 15:49+0200\n"
+"POT-Creation-Date: 2023-07-09 03:24+0000\n"
+"PO-Revision-Date: 2023-07-09 16:44+0200\n"
 "Last-Translator: antpanlinux <ant.pandolfo@gmail.com>\n"
 "Language-Team: Italian\n"
 "Language: it\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: data/sm.puri.Chatty.desktop.in:3 data/sm.puri.Chatty.metainfo.xml.in:6
-#: src/chatty-application.c:162 src/chatty-application.c:402
+#: src/chatty-application.c:164 src/chatty-application.c:404
 #: src/chatty-side-bar.c:348 src/ui/chatty-side-bar.ui:16
 msgid "Chats"
 msgstr "Chats"
@@ -116,11 +116,11 @@ msgstr "Se richiedere rapporto di consegna per gli SMS inviati"
 
 #: data/sm.puri.Chatty.gschema.xml:79
 msgid "Enable experimental features"
-msgstr "Abilita le caratteristiche sperimentali"
+msgstr "Attiva le caratteristiche sperimentali"
 
 #: data/sm.puri.Chatty.gschema.xml:80
 msgid "Whether to enable experimental features"
-msgstr "Se abilitare le caratteristiche sperimentali"
+msgstr "Se attivare le caratteristiche sperimentali"
 
 #: data/sm.puri.Chatty.gschema.xml:85
 msgid "Window maximized"
@@ -166,25 +166,27 @@ msgstr "Avvia in modalità demone"
 msgid "Disable all accounts"
 msgstr "Disattiva tutti gli account"
 
-#: src/chatty-application.c:83
+#: src/chatty-application.c:84
 msgid "Enable libpurple debug messages"
 msgstr "Attiva i messaggi di debug libpurple"
 
-#: src/chatty-application.c:85
-msgid "Enable verbose libpurple debug messages"
-msgstr "Attiva i messaggi dettagliati di debug libpurple"
+#: src/chatty-application.c:87
+msgid "Enable verbose debug messages (repeat option for more verbosity)"
+msgstr ""
+"Attiva i messaggi dettagliati di debug (ripetere l'opzione per ulteriori "
+"dettagli)"
 
-#: src/chatty-application.c:165
+#: src/chatty-application.c:167
 msgid "An SMS and XMPP messaging client"
 msgstr "Un client di messaggistica SMS e XMPP"
 
-#: src/chatty-application.c:173
+#: src/chatty-application.c:175
 msgid "translator-credits"
 msgstr ""
 "Pandolfo Antonio <ant.pandolfo@gmail.com>\n"
-"Vittorio <postav@pm.me>, 2021"
+"Vittorio Monti <gitlapur dot a8tut at aleeas dot com >, 2021-2023"
 
-#: src/chatty-application.c:196
+#: src/chatty-application.c:198
 #, c-format
 msgid ""
 "There was an error displaying help:\n"
@@ -335,15 +337,15 @@ msgstr "Impronta digitale dell'ID del dispositivo %s:"
 msgid "Do you want to join “%s”"
 msgstr "Vuoi unirti a “%s”"
 
-#: src/chatty-list-row.c:120
+#: src/chatty-list-row.c:121
 msgid "Owner"
 msgstr "Proprietario"
 
-#: src/chatty-list-row.c:123
+#: src/chatty-list-row.c:124
 msgid "Moderator"
 msgstr "Moderatore"
 
-#: src/chatty-list-row.c:126
+#: src/chatty-list-row.c:127
 msgid "Member"
 msgstr "Membro"
 
@@ -1120,7 +1122,7 @@ msgstr "Messaggi cifrati"
 msgid "Back"
 msgstr "Indietro"
 
-#: src/ui/chatty-main-view.ui:46 src/ui/chatty-list-row.ui:143
+#: src/ui/chatty-main-view.ui:46 src/ui/chatty-list-row.ui:169
 msgid "Call"
 msgstr "Chiama"
 
@@ -1200,6 +1202,10 @@ msgstr "Vuoto per impostazione predefinita"
 #: src/ui/chatty-mm-chat-info.ui:32
 msgid "Group Members"
 msgstr "Membri del gruppo"
+
+#: src/ui/chatty-list-row.ui:33
+msgid "Copy Number"
+msgstr "Copia numero"
 
 #: src/ui/chatty-ma-account-details.ui:78
 msgid "Name"
