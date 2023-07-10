@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://source.puri.sm/Librem5/chatty/issues\n"
-"POT-Creation-Date: 2023-06-29 15:24+0000\n"
-"PO-Revision-Date: 2023-06-29 20:41+0300\n"
+"POT-Creation-Date: 2023-07-10 15:24+0000\n"
+"PO-Revision-Date: 2023-07-10 22:48+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -181,8 +181,8 @@ msgstr "Увімкнути діагностичні повідомлення lib
 #: src/chatty-application.c:87
 msgid "Enable verbose debug messages (repeat option for more verbosity)"
 msgstr ""
-"Увімкнути докладні діагностичні повідомлення (повторіть параметр, щоб"
-" збільшити докладність)"
+"Увімкнути докладні діагностичні повідомлення (повторіть параметр, щоб "
+"збільшити докладність)"
 
 #: src/chatty-application.c:167
 msgid "An SMS and XMPP messaging client"
@@ -1025,21 +1025,75 @@ msgstr "Будь ласка, введіть пароль до «%s», домаш
 msgid "Key Verification"
 msgstr "Перевірка ключа"
 
+#: src/mm/chatty-mmsd.c:253
+#, c-format
+msgid "Error Delivering Message to %s"
+msgstr "Помилка під час спроби доставити повідомлення %s"
+
+#: src/mm/chatty-mmsd.c:254
+msgid "See logs for more details"
+msgstr "Див. журнал, щоб дізнатися більше"
+
 #. TRANSLATORS: Timestamp for minute accuracy, e.g. “2020-08-11 15:27”.
 #. See https://developer.gnome.org/glib/stable/glib-GDateTime.html#g-date-time-format
 #.
-#: src/mm/chatty-mmsd.c:910
+#: src/mm/chatty-mmsd.c:924
 msgid "%Y-%m-%d %H∶%M"
 msgstr "%Y.%m.%d %H:%M"
 
-#: src/mm/chatty-mmsd.c:1215
+#: src/mm/chatty-mmsd.c:1229
 #, c-format
 msgid "You received an MMS, but it expired on: %s"
 msgstr "Вами отримано MMS, але строк його дії вичерпано %s"
 
-#: src/mm/chatty-mmsd.c:1218
+#: src/mm/chatty-mmsd.c:1232
 msgid "You received an empty MMS."
 msgstr "Вами отримано порожнє MMS."
+
+#: src/mm/chatty-mmsd.c:1723 src/mm/chatty-mmsd.c:1769
+#, c-format
+msgid "Automatically Retrying for  %i MMS"
+msgid_plural "Automatically Retrying for  %i MMSes..."
+msgstr[0] "Автоматично повторюємо спробу для %i MMS…"
+msgstr[1] "Автоматично повторюємо спробу для %i MMS…"
+msgstr[2] "Автоматично повторюємо спробу для %i MMS…"
+
+#: src/mm/chatty-mmsd.c:1728
+msgid "Temporary Error Sending MMS"
+msgstr "Тимчасова помилка надсилання MMS"
+
+#: src/mm/chatty-mmsd.c:1774
+msgid "Temporary Error Receiving MMS"
+msgstr "Тимчасова помилка отримання MMS"
+
+#: src/mm/chatty-mmsd.c:1990
+msgid "MMSC is not configured"
+msgstr "MMSC не налаштовано"
+
+#: src/mm/chatty-mmsd.c:1993
+msgid "APN is not configured correctly"
+msgstr "APN не налаштовано належним чином"
+
+#: src/mm/chatty-mmsd.c:1996
+msgid "Mobile Data is not confgured"
+msgstr "Мобільний обмін даними не налаштовано"
+
+#: src/mm/chatty-mmsd.c:1999
+msgid "Mobile Data is off"
+msgstr "Мобільний обмін даними вимкнено"
+
+#: src/mm/chatty-mmsd.c:2002
+#| msgid "Unknown Contact"
+msgid "Unknown Error"
+msgstr "Невідома помилка"
+
+#: src/mm/chatty-mmsd.c:2007
+#, c-format
+msgid "Chatty cannot process %i MMS"
+msgid_plural "Chatty cannot process %i MMSes..."
+msgstr[0] "Chatty не вдалося обробити %i MMS…"
+msgstr[1] "Chatty не вдалося обробити %i MMS…"
+msgstr[2] "Chatty не вдалося обробити %i MMS…"
 
 #: src/ui/chatty-attachment.ui:20
 msgid "Remove Attachment"
@@ -1213,7 +1267,6 @@ msgid "Group Members"
 msgstr "Учасники групи"
 
 #: src/ui/chatty-list-row.ui:33
-#| msgid "Show Numbers"
 msgid "Copy Number"
 msgstr "Копіювати номер"
 
