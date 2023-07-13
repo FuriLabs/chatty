@@ -1,3 +1,9 @@
+chatty (0.7.3-2) unstable; urgency=medium
+
+  * Upload to unstable
+
+ -- Evangelos Ribeiro Tzaras <devrtz-debian@fortysixandtwo.eu>  Thu, 13 Jul 2023 11:44:18 +0200
+
 chatty (0.7.3-1) experimental; urgency=medium
 
   * New upstream release
