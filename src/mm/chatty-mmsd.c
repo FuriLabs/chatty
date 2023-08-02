@@ -1993,7 +1993,7 @@ chatty_mmsd_bearer_handler_notification_cb (GObject      *service,
       body = _("APN is not configured correctly");
       break;
     case MMSD_MM_MODEM_NO_BEARERS_ACTIVE:
-      body = _("Mobile Data is not confgured");
+      body = _("Mobile Data is not configured");
       break;
     case MMSD_MM_MODEM_INTERFACE_DISCONNECTED:
       body = _("Mobile Data is off");
