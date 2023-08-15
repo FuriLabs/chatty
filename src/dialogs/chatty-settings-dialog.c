@@ -32,6 +32,7 @@
 #define CMATRIX_USE_EXPERIMENTAL_API
 #include "cmatrix.h"
 
+#include "gtk3-to-4.h"
 #include "chatty-utils.h"
 #include "chatty-ma-account.h"
 #include "chatty-mm-account.h"
@@ -55,7 +56,7 @@
  * which was written by Andrea Schäfer. */
 struct _ChattySettingsDialog
 {
-  HdyWindow      parent_instance;
+  AdwWindow      parent_instance;
 
   GtkWidget      *back_button;
   GtkWidget      *cancel_button;
@@ -121,7 +122,7 @@ struct _ChattySettingsDialog
   guint    revealer_timeout_id;
 };
 
-G_DEFINE_TYPE (ChattySettingsDialog, chatty_settings_dialog, HDY_TYPE_WINDOW)
+G_DEFINE_TYPE (ChattySettingsDialog, chatty_settings_dialog, ADW_TYPE_WINDOW)
 
 static void
 settings_apply_style (GtkWidget  *widget,
@@ -150,20 +151,20 @@ settings_remove_style (GtkWidget  *widget,
 static void
 settings_check_librem_one (ChattySettingsDialog *self)
 {
-  GtkEntry *entry;
+  GtkEditable *editable;
   const char *server, *user_id;
 
-  entry = GTK_ENTRY (self->matrix_homeserver_entry);
-  server = gtk_entry_get_text (entry);
-  user_id = gtk_entry_get_text (GTK_ENTRY (self->new_account_id_entry));
+  editable = GTK_EDITABLE (self->matrix_homeserver_entry);
+  server = gtk_editable_get_text (editable);
+  user_id = gtk_editable_get_text (GTK_EDITABLE (self->new_account_id_entry));
 
   if (!server || !*server) {
     if (g_str_has_suffix (user_id, ":librem.one") ||
         g_str_has_suffix (user_id, "@librem.one"))
-      gtk_entry_set_text (entry, "https://chat.librem.one");
+      gtk_editable_set_text (editable, "https://chat.librem.one");
     else if (g_str_has_suffix (user_id, "talk.puri.sm") ||
              g_str_has_suffix (user_id, "@puri.sm"))
-      gtk_entry_set_text (entry, "https://talk.puri.sm");
+      gtk_editable_set_text (editable, "https://talk.puri.sm");
   }
 }
 
@@ -171,7 +172,7 @@ static void
 settings_dialog_set_save_state (ChattySettingsDialog *self,
                                 gboolean              in_progress)
 {
-  g_object_set (self->matrix_spinner, "active", in_progress, NULL);
+  g_object_set (self->matrix_spinner, "spinning", in_progress, NULL);
   gtk_widget_set_sensitive (self->main_stack, !in_progress);
   gtk_widget_set_sensitive (self->add_button, !in_progress);
   gtk_widget_set_visible (self->back_button, !in_progress);
@@ -199,8 +200,9 @@ settings_save_account_cb (GObject      *object,
                                        GTK_MESSAGE_WARNING,
                                        GTK_BUTTONS_CLOSE,
                                        "Error saving account: %s", error->message);
-      gtk_dialog_run (GTK_DIALOG (dialog));
-      gtk_widget_destroy (dialog);
+      g_signal_connect_swapped (dialog, "response",
+                                G_CALLBACK (gtk_window_destroy), dialog);
+      gtk_window_present (GTK_WINDOW (dialog));
     }
   } else {
     gtk_widget_hide (self->add_button);
@@ -235,7 +237,7 @@ matrix_home_server_verify_cb (GObject      *object,
   /* verified homeserver URL */
   homeserver = cm_client_get_homeserver_finish (CM_CLIENT (object), result, &error);
   /* homeserver URL entered by the user */
-  server = gtk_entry_get_text (GTK_ENTRY (self->matrix_homeserver_entry));
+  server = gtk_editable_get_text (GTK_EDITABLE (self->matrix_homeserver_entry));
 
   if (!homeserver) {
     gtk_widget_set_sensitive (self->add_button, FALSE);
@@ -280,7 +282,7 @@ chatty_settings_save_matrix (ChattySettingsDialog *self,
   g_autoptr(CmClient) cm_client = NULL;
   g_autofree char *uri_prefixed = NULL;
   CmAccount *cm_account;
-  GtkEntry *entry;
+  GtkEditable *editable;
   const char *uri;
   gboolean uri_has_prefix;
 
@@ -292,8 +294,8 @@ chatty_settings_save_matrix (ChattySettingsDialog *self,
 
   g_clear_object (&self->cancellable);
   self->cancellable = g_cancellable_new ();
-  entry = GTK_ENTRY (self->matrix_homeserver_entry);
-  uri = gtk_entry_get_text (entry);
+  editable = GTK_EDITABLE (self->matrix_homeserver_entry);
+  uri = gtk_editable_get_text (editable);
 
   uri_has_prefix = g_str_has_prefix (uri, "http");
 
@@ -322,11 +324,11 @@ chatty_settings_add_clicked_cb (ChattySettingsDialog *self)
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
 
   manager  = chatty_manager_get_default ();
-  user_id  = gtk_entry_get_text (GTK_ENTRY (self->new_account_id_entry));
-  password = gtk_entry_get_text (GTK_ENTRY (self->new_password_entry));
+  user_id  = gtk_editable_get_text (GTK_EDITABLE (self->new_account_id_entry));
+  password = gtk_editable_get_text (GTK_EDITABLE (self->new_password_entry));
 
-  is_matrix = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (self->matrix_radio_button));
-  is_telegram = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (self->telegram_radio_button));
+  is_matrix = gtk_check_button_get_active (GTK_CHECK_BUTTON (self->matrix_radio_button));
+  is_telegram = gtk_check_button_get_active (GTK_CHECK_BUTTON (self->telegram_radio_button));
 
   if (is_matrix)
     settings_check_librem_one (self);
@@ -376,7 +378,7 @@ pp_account_save_cb (GObject      *object,
 
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
 
-  g_object_set (self->matrix_spinner, "active", FALSE, NULL);
+  g_object_set (self->matrix_spinner, "spinning", FALSE, NULL);
   gtk_widget_set_sensitive (self->account_details_stack, TRUE);
 
   gtk_widget_hide (self->save_button);
@@ -392,7 +394,7 @@ chatty_settings_save_clicked_cb (ChattySettingsDialog *self)
 
   stack = GTK_STACK (self->account_details_stack);
 
-  g_object_set (self->matrix_spinner, "active", TRUE, NULL);
+  g_object_set (self->matrix_spinner, "spinning", TRUE, NULL);
   gtk_widget_set_sensitive (self->account_details_stack, FALSE);
 
   if (gtk_stack_get_visible_child (stack) == self->pp_account_details)
@@ -418,11 +420,30 @@ settings_pp_details_changed_cb (ChattySettingsDialog *self,
 }
 
 static void
+settings_delete_account_response_cb (ChattySettingsDialog *self,
+                                     int                   response_id,
+                                     GtkDialog            *dialog)
+{
+  g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
+  g_assert (GTK_IS_DIALOG (dialog));
+
+  if (response_id == GTK_RESPONSE_OK) {
+    chatty_manager_delete_account_async (chatty_manager_get_default (),
+                                         g_steal_pointer (&self->selected_account),
+                                         NULL, NULL, NULL);
+
+    gtk_widget_hide (self->save_button);
+    gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "main-settings");
+  }
+
+  gtk_window_destroy (GTK_WINDOW (dialog));
+}
+
+static void
 settings_delete_account_clicked_cb (ChattySettingsDialog *self)
 {
   GtkWidget *dialog;
   const char *username;
-  int response;
 
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
 
@@ -441,21 +462,11 @@ settings_delete_account_clicked_cb (ChattySettingsDialog *self)
                                             _("Delete account %s?"), username);
 
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_CANCEL);
-  gtk_window_set_position (GTK_WINDOW (dialog), GTK_WIN_POS_CENTER_ON_PARENT);
 
-  response = gtk_dialog_run (GTK_DIALOG (dialog));
-
-  if (response == GTK_RESPONSE_OK)
-    {
-      chatty_manager_delete_account_async (chatty_manager_get_default (),
-                                           g_steal_pointer (&self->selected_account),
-                                           NULL, NULL, NULL);
-
-      gtk_widget_hide (self->save_button);
-      gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "main-settings");
-    }
-
-  gtk_widget_destroy (dialog);
+  g_signal_connect_object (dialog, "response",
+                           G_CALLBACK (settings_delete_account_response_cb),
+                           self, G_CONNECT_SWAPPED);
+  gtk_window_present (GTK_WINDOW (dialog));
 }
 
 static void
@@ -484,10 +495,10 @@ settings_dialog_load_mms_settings (ChattySettingsDialog *self)
   gtk_widget_set_visible (self->phone_number_entry, !device_number);
 
   if (chatty_mm_account_get_mms_settings (self->mm_account, &apn, &mmsc, &proxy, &number, &use_smil)) {
-    gtk_entry_set_text (GTK_ENTRY (self->mms_apn_entry), apn);
-    gtk_entry_set_text (GTK_ENTRY (self->carrier_mmsc_entry), mmsc);
-    gtk_entry_set_text (GTK_ENTRY (self->mms_proxy_entry), proxy);
-    gtk_entry_set_text (GTK_ENTRY (self->phone_number_entry), number);
+    gtk_editable_set_text (GTK_EDITABLE (self->mms_apn_entry), apn);
+    gtk_editable_set_text (GTK_EDITABLE (self->carrier_mmsc_entry), mmsc);
+    gtk_editable_set_text (GTK_EDITABLE (self->mms_proxy_entry), proxy);
+    gtk_editable_set_text (GTK_EDITABLE (self->phone_number_entry), number);
     gtk_switch_set_state (GTK_SWITCH (self->handle_smil_switch), use_smil);
 
     self->mms_settings_loaded = TRUE;
@@ -528,12 +539,12 @@ settings_phone_number_entry_changed_cb (ChattySettingsDialog *self,
   gboolean valid = TRUE;
 
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
-  g_assert (GTK_IS_ENTRY (number_entry));
+  g_assert (GTK_IS_EDITABLE (number_entry));
 
   if (!gtk_widget_get_visible (GTK_WIDGET (number_entry)))
     goto end;
 
-  number = gtk_entry_get_text (number_entry);
+  number = gtk_editable_get_text (GTK_EDITABLE (number_entry));
 
   if (!number || !*number)
     goto end;
@@ -558,30 +569,6 @@ settings_phone_number_entry_changed_cb (ChattySettingsDialog *self,
 }
 
 static void
-settings_pw_entry_icon_clicked_cb (ChattySettingsDialog *self,
-                                   GtkEntryIconPosition  icon_pos,
-                                   GdkEvent             *event,
-                                   GtkEntry             *entry)
-{
-  const char *icon_name = "eye-not-looking-symbolic";
-
-  g_return_if_fail (CHATTY_IS_SETTINGS_DIALOG (self));
-  g_return_if_fail (GTK_IS_ENTRY (entry));
-  g_return_if_fail (icon_pos == GTK_ENTRY_ICON_SECONDARY);
-
-  self->visible = !self->visible;
-
-  gtk_entry_set_visibility (entry, self->visible);
-
-  if (self->visible)
-    icon_name = "eye-open-negative-filled-symbolic";
-
-  gtk_entry_set_icon_from_icon_name (entry,
-                                     GTK_ENTRY_ICON_SECONDARY,
-                                     icon_name);
-}
-
-static void
 settings_homeserver_entry_changed (ChattySettingsDialog *self,
                                    GtkEntry             *entry)
 {
@@ -589,12 +576,12 @@ settings_homeserver_entry_changed (ChattySettingsDialog *self,
   gboolean valid = FALSE;
 
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
-  g_assert (GTK_IS_ENTRY (entry));
+  g_assert (GTK_IS_EDITABLE (entry));
 
   if (!gtk_widget_is_visible (GTK_WIDGET (entry)))
     return;
 
-  server = gtk_entry_get_text (entry);
+  server = gtk_editable_get_text (GTK_EDITABLE (entry));
 
   if (server && *server) {
     g_autoptr(GUri) uri = NULL;
@@ -635,19 +622,19 @@ settings_dialog_purple_changed_cb (ChattySettingsDialog *self)
 {
 #ifdef PURPLE_ENABLED
   ChattyPurple *purple;
-  HdyActionRow *row;
+  AdwActionRow *row;
   gboolean active;
 
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
 
-  row = HDY_ACTION_ROW (self->enable_purple_row);
+  row = ADW_ACTION_ROW (self->enable_purple_row);
   purple = chatty_purple_get_default ();
   active = gtk_switch_get_active (GTK_SWITCH (self->enable_purple_switch));
 
   if (!active && chatty_purple_is_loaded (purple))
-    hdy_action_row_set_subtitle (row, _("Restart chatty to disable purple"));
+    adw_action_row_set_subtitle (row, _("Restart chatty to disable purple"));
   else
-    hdy_action_row_set_subtitle (row, _("Enable purple plugin"));
+    adw_action_row_set_subtitle (row, _("Enable purple plugin"));
 #endif
 }
 
@@ -679,9 +666,9 @@ settings_update_new_account_view (ChattySettingsDialog *self)
 
   gtk_widget_hide (self->matrix_homeserver_entry);
 
-  gtk_entry_set_text (GTK_ENTRY (self->matrix_homeserver_entry), "");
-  gtk_entry_set_text (GTK_ENTRY (self->new_account_id_entry), "");
-  gtk_entry_set_text (GTK_ENTRY (self->new_password_entry), "");
+  gtk_editable_set_text (GTK_EDITABLE (self->matrix_homeserver_entry), "");
+  gtk_editable_set_text (GTK_EDITABLE (self->new_account_id_entry), "");
+  gtk_editable_set_text (GTK_EDITABLE (self->new_password_entry), "");
 
   self->selected_account = NULL;
   gtk_widget_grab_focus (self->new_account_id_entry);
@@ -696,14 +683,14 @@ settings_update_new_account_view (ChattySettingsDialog *self)
   gtk_widget_set_visible (self->telegram_row, purple_find_prpl ("prpl-telegram") != NULL);
 #endif
 
-  hdy_preferences_group_set_title (HDY_PREFERENCES_GROUP (self->protocol_list_group),
+  adw_preferences_group_set_title (ADW_PREFERENCES_GROUP (self->protocol_list_group),
                                    _("Select Protocol"));
   gtk_widget_show (self->protocol_list);
 
   if (gtk_widget_is_visible (self->xmpp_radio_button))
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (self->xmpp_radio_button), TRUE);
+    gtk_check_button_set_active (GTK_CHECK_BUTTON (self->xmpp_radio_button), TRUE);
   else if (gtk_widget_is_visible (self->matrix_radio_button))
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (self->matrix_radio_button), TRUE);
+    gtk_check_button_set_active (GTK_CHECK_BUTTON (self->matrix_radio_button), TRUE);
 
   gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "add-account-view");
 }
@@ -722,7 +709,7 @@ chatty_settings_dialog_update_status (GtkListBoxRow *row)
   status  = chatty_account_get_status (CHATTY_ACCOUNT (account));
 
   g_object_set (spinner,
-                "active", status == CHATTY_CONNECTING,
+                "spinning", status == CHATTY_CONNECTING,
                 NULL);
 }
 
@@ -736,10 +723,10 @@ mms_carrier_settings_apply_button_clicked_cb (ChattySettingsDialog *self)
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
 
   mm_account = chatty_manager_get_mm_account (chatty_manager_get_default ());
-  apn = gtk_entry_get_text (GTK_ENTRY (self->mms_apn_entry));
-  mmsc = gtk_entry_get_text (GTK_ENTRY (self->carrier_mmsc_entry));
-  proxy = gtk_entry_get_text (GTK_ENTRY (self->mms_proxy_entry));
-  phone_number = gtk_entry_get_text (GTK_ENTRY (self->phone_number_entry));
+  apn = gtk_editable_get_text (GTK_EDITABLE (self->mms_apn_entry));
+  mmsc = gtk_editable_get_text (GTK_EDITABLE (self->carrier_mmsc_entry));
+  proxy = gtk_editable_get_text (GTK_EDITABLE (self->mms_proxy_entry));
+  phone_number = gtk_editable_get_text (GTK_EDITABLE (self->phone_number_entry));
   use_smil = gtk_switch_get_state (GTK_SWITCH (self->handle_smil_switch));
 
   chatty_mm_account_set_mms_settings_async (CHATTY_MM_ACCOUNT (mm_account),
@@ -855,7 +842,7 @@ chatty_settings_cancel_clicked_cb (ChattySettingsDialog *self)
   if (self->cancellable)
     g_cancellable_cancel (self->cancellable);
 
-  g_object_set (self->matrix_spinner, "active", FALSE, NULL);
+  g_object_set (self->matrix_spinner, "spinning", FALSE, NULL);
   gtk_widget_set_sensitive (self->main_stack, TRUE);
   gtk_widget_set_sensitive (self->add_button, TRUE);
   gtk_widget_hide (self->cancel_button);
@@ -871,8 +858,8 @@ settings_new_detail_changed_cb (ChattySettingsDialog *self)
 
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
 
-  id = gtk_entry_get_text (GTK_ENTRY (self->new_account_id_entry));
-  password = gtk_entry_get_text (GTK_ENTRY (self->new_password_entry));
+  id = gtk_editable_get_text (GTK_EDITABLE (self->new_account_id_entry));
+  password = gtk_editable_get_text (GTK_EDITABLE (self->new_password_entry));
 
   if (password && *password)
     settings_remove_style (GTK_WIDGET (self->new_password_entry), "error");
@@ -880,26 +867,26 @@ settings_new_detail_changed_cb (ChattySettingsDialog *self)
     settings_apply_style (GTK_WIDGET (self->new_password_entry), "error");
 
   if (!id || !*id) {
-    gtk_entry_set_text (GTK_ENTRY (self->matrix_homeserver_entry), "");
+    gtk_editable_set_text (GTK_EDITABLE (self->matrix_homeserver_entry), "");
     gtk_widget_show (self->matrix_homeserver_entry);
     gtk_widget_hide (self->matrix_homeserver_entry);
   }
 
-  if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (self->matrix_radio_button)))
+  if (gtk_check_button_get_active (GTK_CHECK_BUTTON (self->matrix_radio_button)))
     protocol = CHATTY_PROTOCOL_MATRIX;
-  else if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (self->telegram_radio_button)))
+  else if (gtk_check_button_get_active (GTK_CHECK_BUTTON (self->telegram_radio_button)))
     protocol = CHATTY_PROTOCOL_TELEGRAM;
   else
     protocol = CHATTY_PROTOCOL_XMPP;
 
-  if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (self->matrix_radio_button)))
+  if (gtk_check_button_get_active (GTK_CHECK_BUTTON (self->matrix_radio_button)))
     protocol = CHATTY_PROTOCOL_MATRIX | CHATTY_PROTOCOL_EMAIL;
 
   valid_protocol = chatty_utils_username_is_valid (id, protocol);
   valid = valid && valid_protocol;
 
   if (valid_protocol &&
-      gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (self->matrix_radio_button)))
+      gtk_check_button_get_active (GTK_CHECK_BUTTON (self->matrix_radio_button)))
     valid_protocol = !chatty_manager_has_matrix_with_id (chatty_manager_get_default (), id);
 
   if (valid_protocol)
@@ -932,7 +919,7 @@ settings_protocol_changed_cb (ChattySettingsDialog *self,
                               GtkWidget            *button)
 {
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
-  g_assert (GTK_IS_TOGGLE_BUTTON (button));
+  g_assert (GTK_IS_CHECK_BUTTON (button));
 
   gtk_widget_grab_focus (self->new_account_id_entry);
 
@@ -954,33 +941,32 @@ settings_protocol_changed_cb (ChattySettingsDialog *self,
 static GtkWidget *
 chatty_account_row_new (ChattyAccount *account)
 {
-  HdyActionRow   *row;
+  AdwActionRow   *row;
   GtkWidget      *account_enabled_switch;
   GtkWidget      *spinner;
   const char     *username;
 
-  row = HDY_ACTION_ROW (hdy_action_row_new ());
+  row = ADW_ACTION_ROW (adw_action_row_new ());
   gtk_list_box_row_set_activatable (GTK_LIST_BOX_ROW (row), TRUE);
-  gtk_widget_show (GTK_WIDGET (row));
   g_object_set_data (G_OBJECT(row),
                      "row-account",
                      (gpointer) account);
 
   spinner = gtk_spinner_new ();
   gtk_widget_show (spinner);
-  hdy_action_row_add_prefix (row, spinner);
+  adw_action_row_add_prefix (row, spinner);
 
   g_object_set_data (G_OBJECT(row),
                      "row-prefix",
                      (gpointer)spinner);
 
   account_enabled_switch = gtk_switch_new ();
-  gtk_widget_show (account_enabled_switch);
 
   g_object_set  (G_OBJECT(account_enabled_switch),
                  "valign", GTK_ALIGN_CENTER,
                  "halign", GTK_ALIGN_END,
                  NULL);
+  adw_action_row_add_suffix (ADW_ACTION_ROW (row), account_enabled_switch);
 
   g_object_bind_property (account, "enabled",
                           account_enabled_switch, "active",
@@ -991,10 +977,9 @@ chatty_account_row_new (ChattyAccount *account)
   else
     username = chatty_item_get_username (CHATTY_ITEM (account));
 
-  hdy_preferences_row_set_title (HDY_PREFERENCES_ROW (row), username);
-  hdy_action_row_set_subtitle (row, chatty_account_get_protocol_name (CHATTY_ACCOUNT (account)));
-  gtk_container_add (GTK_CONTAINER (row), account_enabled_switch);
-  hdy_action_row_set_activatable_widget (row, NULL);
+  adw_preferences_row_set_title (ADW_PREFERENCES_ROW (row), username);
+  adw_action_row_set_subtitle (row, chatty_account_get_protocol_name (CHATTY_ACCOUNT (account)));
+  adw_action_row_set_activatable_widget (row, NULL);
 
   g_signal_connect_object (account, "notify::status",
                            G_CALLBACK (chatty_settings_dialog_update_status),
@@ -1019,11 +1004,11 @@ blocked_list_items_changed_cb (ChattySettingsDialog *self)
 }
 
 static void
-row_unblock_button_clicked_cb (HdyActionRow *row)
+row_unblock_button_clicked_cb (AdwActionRow *row)
 {
   ChattyChat *chat;
 
-  g_assert (HDY_IS_ACTION_ROW (row));
+  g_assert (ADW_IS_ACTION_ROW (row));
 
   chat = g_object_get_data (G_OBJECT (row), "chat");
   g_assert (chat);
@@ -1035,35 +1020,24 @@ static GtkWidget *
 chatty_settings_blocked_row_new (ChattyChat           *chat,
                                  ChattySettingsDialog *self)
 {
-  HdyActionRow *row;
-  GtkWidget *button, *image, *popover, *child;
+  AdwActionRow *row;
+  GtkWidget *button;
   const char *username;
 
   g_assert (CHATTY_IS_CHAT (chat));
-  row = HDY_ACTION_ROW (hdy_action_row_new ());
+  row = ADW_ACTION_ROW (adw_action_row_new ());
   g_object_set_data (G_OBJECT (row), "chat", chat);
 
-  button = gtk_menu_button_new ();
-  image = gtk_image_new_from_icon_name ("view-more-symbolic", GTK_ICON_SIZE_BUTTON);
-  gtk_button_set_image (GTK_BUTTON (button), image);
-  gtk_widget_show_all (button);
+  button = gtk_button_new_from_icon_name ("user-trash-symbolic");
   gtk_widget_set_valign (button, GTK_ALIGN_CENTER);
-  gtk_container_add (GTK_CONTAINER (row), button);
+  gtk_list_box_row_set_child (GTK_LIST_BOX_ROW (row), button);
 
-  child = gtk_model_button_new ();
-  gtk_button_set_label (GTK_BUTTON (child), _("Unblock contact"));
-  g_signal_connect_object (child, "clicked",
+  g_signal_connect_object (button, "clicked",
                            G_CALLBACK (row_unblock_button_clicked_cb),
                            row, G_CONNECT_SWAPPED);
-  g_object_set (child, "margin", 12, NULL);
-  gtk_widget_show (child);
-
-  popover = gtk_popover_menu_new ();
-  gtk_container_add (GTK_CONTAINER (popover), child);
-  gtk_menu_button_set_popover (GTK_MENU_BUTTON (button), popover);
 
   username = chatty_chat_get_chat_name (chat);
-  hdy_preferences_row_set_title (HDY_PREFERENCES_ROW (row), username);
+  adw_preferences_row_set_title (ADW_PREFERENCES_ROW (row), username);
 
   return GTK_WIDGET (row);
 }
@@ -1229,7 +1203,6 @@ chatty_settings_dialog_class_init (ChattySettingsDialogClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, chatty_settings_cancel_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, settings_new_detail_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, settings_protocol_changed_cb);
-  gtk_widget_class_bind_template_callback (widget_class, settings_pw_entry_icon_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, settings_homeserver_entry_changed);
 
   gtk_widget_class_bind_template_callback (widget_class, settings_dialog_purple_changed_cb);
@@ -1246,6 +1219,7 @@ chatty_settings_dialog_init (ChattySettingsDialog *self)
   self->mm_account = (ChattyMmAccount *)chatty_manager_get_mm_account (manager);
 
   gtk_widget_init_template (GTK_WIDGET (self));
+  settings_dialog_page_changed_cb (self);
 
 #ifdef PURPLE_ENABLED
   {

@@ -18,7 +18,7 @@ struct _ChattyFpRow
 {
   GtkListBoxRow   parent_instance;
 
-  HdyValueObject *item;
+  GtkStringObject *item;
 
   GtkWidget      *device_id;
   GtkWidget      *device_fp;
@@ -83,11 +83,11 @@ chatty_fp_row_init (ChattyFpRow *self)
 }
 
 GtkWidget *
-chatty_fp_row_new (HdyValueObject *item)
+chatty_fp_row_new (GtkStringObject *item)
 {
   ChattyFpRow *self;
 
-  g_return_val_if_fail (HDY_IS_VALUE_OBJECT (item), NULL);
+  g_return_val_if_fail (GTK_IS_STRING_OBJECT (item), NULL);
 
   self = g_object_new (CHATTY_TYPE_FP_ROW, NULL);
   chatty_fp_row_set_item (self, item);
@@ -96,20 +96,20 @@ chatty_fp_row_new (HdyValueObject *item)
 }
 
 void
-chatty_fp_row_set_item (ChattyFpRow    *self,
-                        HdyValueObject *item)
+chatty_fp_row_set_item (ChattyFpRow     *self,
+                        GtkStringObject *item)
 {
   const char *device_id;
   char *value;
   size_t len;
 
   g_return_if_fail (CHATTY_IS_FP_ROW (self));
-  g_return_if_fail (HDY_IS_VALUE_OBJECT (item));
+  g_return_if_fail (GTK_IS_STRING_OBJECT (item));
 
   if (!g_set_object (&self->item, item))
     return;
 
-  value = hdy_value_object_dup_string (item);
+  value = g_strdup (gtk_string_object_get_string (item));
   len = strlen (value);
   /* If we have at least 4 chunks, split the rest into a new line */
   if (len >= 4 * 8) {

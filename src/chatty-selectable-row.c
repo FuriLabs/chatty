@@ -96,7 +96,7 @@ chatty_selectable_row_get_selected (ChattySelectableRow *self)
 
   g_return_val_if_fail (CHATTY_IS_SELECTABLE_ROW (self), FALSE);
 
-  gtk_image_get_icon_name (GTK_IMAGE (self->icon), &name, NULL);
+  name = gtk_image_get_icon_name (GTK_IMAGE (self->icon));
 
   if (!name || !*name)
     return FALSE;

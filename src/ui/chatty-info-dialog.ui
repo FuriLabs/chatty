@@ -4,134 +4,94 @@
     <property name="modal">1</property>
     <property name="default-width">360</property>
     <property name="default-height">576</property>
-    <signal name="delete-event" handler="gtk_widget_hide_on_delete" swapped="yes"/>
+    <property name="hide-on-close">1</property>
+    <property name="title" translatable="yes">Chat Details</property>
 
     <child type="titlebar">
-      <object class="HdyTitleBar">
-        <property name="visible">1</property>
-        <child>
-          <object class="GtkHeaderBar" id="header_bar">
-            <property name="visible">1</property>
-            <property name="show-close-button" bind-source="invite_button" bind-property="visible"
-                      bind-flags="invert-boolean|sync-create"/>
-            <property name="title" translatable="yes">Chat Details</property>
+      <object class="GtkHeaderBar" id="header_bar">
+        <property name="show-title-buttons" bind-source="invite_button" bind-property="visible" bind-flags="invert-boolean|sync-create"/>
 
-            <!-- New Invite button -->
-            <child>
-              <object class="GtkButton" id="new_invite_button">
-                <property name="visible">1</property>
-                <property name="can-focus">0</property>
-                <property name="receives-default">0</property>
-                <signal name="clicked" handler="info_dialog_new_invite_clicked_cb" swapped="yes"/>
-                <child>
-                  <object class="GtkImage">
-                    <property name="visible">1</property>
-                    <property name="icon_name">contact-new-symbolic</property>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="pack-type">end</property>
-              </packing>
-            </child>
-
-            <!-- Cancel button -->
-            <child>
-              <object class="GtkButton">
-                <property name="visible" bind-source="invite_button" bind-property="visible"
-                          bind-flags="sync-create"/>
-                <property name="sensitive">1</property>
-                <property name="label" translatable="yes">Cancel</property>
-                <signal name="clicked" handler="info_dialog_cancel_clicked_cb" swapped="yes"/>
-              </object>
-            </child>
-
-            <!--MMS Cancel button -->
-            <child>
-              <object class="GtkButton" id="cancel_button">
-                <property name="visible">0</property>
-                <property name="sensitive">1</property>
-                <property name="label" translatable="yes">Cancel</property>
-                <signal name="clicked" handler="cancel_button_clicked_cb" swapped="yes"/>
-              </object>
-            </child>
-
-            <!--MMS Apply button -->
-            <child>
-              <object class="GtkButton" id="apply_button">
-                <property name="visible">0</property>
-                <property name="sensitive">1</property>
-                <property name="label" translatable="yes">Apply</property>
-                <signal name="clicked" handler="apply_button_clicked_cb" swapped="yes"/>
-                <style>
-                  <class name="suggested-action"/>
-                </style>
-              </object>
-              <packing>
-                <property name="pack-type">end</property>
-              </packing>
-            </child>
-
-            <!-- Invite button -->
-            <child>
-              <object class="GtkButton" id="invite_button">
-                <property name="visible">0</property>
-                <property name="sensitive">0</property>
-                <property name="has-default">1</property>
-                <property name="can-default">1</property>
-                <property name="label" translatable="yes">Invite</property>
-                <signal name="clicked" handler="info_dialog_invite_clicked_cb" swapped="yes"/>
-                <style>
-                  <class name="suggested-action"/>
-                </style>
-              </object>
-              <packing>
-                <property name="pack-type">end</property>
-              </packing>
-            </child>
-
+        <!-- New Invite button -->
+        <child type="end">
+          <object class="GtkButton" id="new_invite_button">
+            <property name="icon_name">contact-new-symbolic</property>
+            <signal name="clicked" handler="info_dialog_new_invite_clicked_cb" swapped="yes"/>
           </object>
         </child>
-      </object> <!-- ./HdyTitleBar -->
+
+        <!-- Cancel button -->
+        <child>
+          <object class="GtkButton">
+            <property name="visible" bind-source="invite_button" bind-property="visible" bind-flags="sync-create"/>
+            <property name="label" translatable="yes">Cancel</property>
+            <signal name="clicked" handler="info_dialog_cancel_clicked_cb" swapped="yes"/>
+          </object>
         </child>
 
-    <child internal-child="vbox">
-      <object class="GtkBox">
-        <property name="visible">1</property>
-        <property name="expand">1</property>
-        <property name="border-width">0</property>
+        <!--MMS Cancel button -->
+        <child>
+          <object class="GtkButton" id="cancel_button">
+            <property name="visible">0</property>
+            <property name="label" translatable="yes">Cancel</property>
+            <signal name="clicked" handler="cancel_button_clicked_cb" swapped="yes"/>
+          </object>
+        </child>
 
+        <!--MMS Apply button -->
+        <child type="end">
+          <object class="GtkButton" id="apply_button">
+            <property name="visible">0</property>
+            <property name="label" translatable="yes">Apply</property>
+            <signal name="clicked" handler="apply_button_clicked_cb" swapped="yes"/>
+            <style>
+             <class name="suggested-action"/>
+            </style>
+          </object>
+        </child>
+
+        <!-- Invite button -->
+        <child type="end">
+          <object class="GtkButton" id="invite_button">
+            <property name="visible">0</property>
+            <property name="sensitive">0</property>
+            <property name="label" translatable="yes">Invite</property>
+            <signal name="clicked" handler="info_dialog_invite_clicked_cb" swapped="yes"/>
+            <style>
+             <class name="suggested-action"/>
+            </style>
+          </object>
+        </child>
+
+      </object>
+    </child>
+
+    <child>
+      <object class="GtkBox">
+        <property name="hexpand">1</property>
+        <property name="vexpand">1</property>
         <child>
           <object class="GtkStack" id="main_stack">
-            <property name="visible">1</property>
             <property name="transition-type">slide-left-right</property>
 
             <child>
               <object class="GtkStack" id="chat_type_stack">
-                <property name="visible">1</property>
                 <child>
-                  <object class="ChattyMaChatInfo" id="ma_chat_info">
-                    <property name="visible">1</property>
-                  </object>
+                  <object class="ChattyMaChatInfo" id="ma_chat_info"/>
                 </child>
                 <child>
-                  <object class="ChattyMmChatInfo" id="mm_chat_info">
-                    <property name="visible">1</property>
-                  </object>
+                  <object class="ChattyMmChatInfo" id="mm_chat_info"/>
                 </child>
               </object>
             </child>
 
             <child>
-              <object class="HdyPreferencesPage" id="invite_page">
-                <property name="visible">1</property>
-                <property name="expand">1</property>
+              <object class="AdwPreferencesPage" id="invite_page">
+                <property name="hexpand">1</property>
+                <property name="vexpand">1</property>
                 <child>
-                  <object class="HdyPreferencesGroup">
-                    <property name="visible">1</property>
+                  <object class="AdwPreferencesGroup">
                     <child>
                       <object class="GtkGrid">
-                        <property name="visible">1</property>
                         <property name="halign">center</property>
                         <property name="valign">start</property>
                         <property name="column-spacing">6</property>
@@ -140,65 +100,62 @@
 
                         <child>
                           <object class="GtkImage">
-                            <property name="visible">1</property>
                             <property name="margin-bottom">32</property>
                             <property name="icon_name">avatar-default-symbolic</property>
                             <property name="pixel-size">72</property>
+                            <layout>
+                              <property name="column-span">2</property>
+                            </layout>
                           </object>
-                          <packing>
-                            <property name="width">2</property>
-                          </packing>
                         </child>
 
                         <!-- Contact ID -->
                         <child>
                           <object class="GtkLabel">
-                            <property name="visible">1</property>
                             <property name="xalign">1</property>
-                            <property name="label" translatable="no">Contact ID</property>
+                            <property name="label" translatable="0">Contact ID</property>
                           </object>
                         </child>
                         <child>
                           <object class="GtkEntry" id="contact_id_entry">
-                            <property name="visible">1</property>
-                            <property name="expand">1</property>
+                            <property name="hexpand">1</property>
+                            <property name="vexpand">1</property>
                             <property name="halign">start</property>
-                            <signal name="changed" handler="info_dialog_contact_id_changed_cb" swapped="yes" />
+                            <signal name="changed" handler="info_dialog_contact_id_changed_cb" swapped="yes"/>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">1</property>
+                            </layout>
                           </object>
-                          <packing>
-                            <property name="left-attach">1</property>
-                            <property name="top-attach">1</property>
-                          </packing>
                         </child>
 
                         <!-- Invite message -->
                         <child>
                           <object class="GtkLabel">
-                            <property name="visible">1</property>
                             <property name="xalign">1</property>
-                            <property name="label" translatable="no">Invite message</property>
+                            <property name="label" translatable="0">Invite message</property>
                           </object>
                         </child>
                         <child>
                           <object class="GtkEntry" id="message_entry">
-                            <property name="visible">1</property>
-                            <property name="expand">1</property>
+                            <property name="hexpand">1</property>
+                            <property name="vexpand">1</property>
                             <property name="halign">start</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">2</property>
+                            </layout>
                           </object>
-                          <packing>
-                            <property name="left-attach">1</property>
-                            <property name="top-attach">2</property>
-                          </packing>
                         </child>
 
                       </object>
                     </child>
-                  </object> <!-- ./HdyPreferencesGroup -->
+                  </object> <!-- ./AdwPreferencesGroup -->
                 </child>
               </object>
             </child>
 
-          </object> <!-- GtkStack -->
+          </object> <!-- ./GtkStack -->
         </child>
       </object>
     </child>

@@ -17,6 +17,7 @@
 #define CMATRIX_USE_EXPERIMENTAL_API
 #include <cmatrix.h>
 
+#include "chatty-enums.h"
 #include "chatty-file.h"
 
 /**
@@ -308,6 +309,12 @@ chatty_file_get_stream_async (ChattyFile          *self,
 
   task = g_task_new (self, cancellable, callback, user_data);
 
+  if (chatty_file_get_status (self) == CHATTY_FILE_ERROR) {
+    g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_FAILED,
+                             "File download failed");
+    return;
+  }
+
   if (chatty_file_get_status (self) == CHATTY_FILE_DOWNLOADING) {
     g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_PENDING,
                              "File download already in progress");
@@ -329,6 +336,8 @@ chatty_file_get_stream_async (ChattyFile          *self,
                                           file_get_file_stream_cb,
                                           g_steal_pointer (&task));
   } else {
+    GError *error = NULL;
+
     if (!self->file) {
       g_autofree char *path = NULL;
 
@@ -336,10 +345,14 @@ chatty_file_get_stream_async (ChattyFile          *self,
       self->file = g_file_new_for_path (path);
     }
 
-    self->stream = (gpointer)g_file_read (self->file, NULL, NULL);
-    g_task_return_pointer (task, g_object_ref (self->stream), g_object_unref);
-
-    chatty_file_set_status (self, CHATTY_FILE_DOWNLOADED);
+    self->stream = (gpointer)g_file_read (self->file, NULL, &error);
+    if (self->stream) {
+      g_task_return_pointer (task, g_object_ref (self->stream), g_object_unref);
+      chatty_file_set_status (self, CHATTY_FILE_DOWNLOADED);
+    } else {
+      chatty_file_set_status (self, CHATTY_FILE_ERROR);
+      g_task_return_error (task, error);
+    }
   }
 }
 

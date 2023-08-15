@@ -8,7 +8,7 @@
 
 struct _ChattyProgressButton
 {
-  GtkBin      parent_instance;
+  AdwBin      parent_instance;
 
   GtkWidget  *action_button;
 
@@ -24,7 +24,7 @@ struct _ChattyProgressButton
 };
 
 
-G_DEFINE_TYPE (ChattyProgressButton, chatty_progress_button, GTK_TYPE_BIN)
+G_DEFINE_TYPE (ChattyProgressButton, chatty_progress_button, ADW_TYPE_BIN)
 
 enum {
   ACTION_CLICKED,
@@ -86,26 +86,37 @@ chatty_progress_button_clicked_cb (ChattyProgressButton *self)
   g_signal_emit (self, signals[ACTION_CLICKED], 0);
 }
 
-static gboolean
-chatty_progress_button_draw (GtkWidget *widget,
-			     cairo_t   *cr)
+static void
+chatty_progress_button_snapshot (GtkWidget   *widget,
+                                 GtkSnapshot *snapshot)
 {
   ChattyProgressButton *self = (ChattyProgressButton *)widget;
+  GtkStyleContext *sc;
+  cairo_t *cr;
   int width, height;
+  GdkRGBA color = {0};
 
   width = gtk_widget_get_allocated_width (widget);
   height = gtk_widget_get_allocated_height (widget);
 
+  cr = gtk_snapshot_append_cairo (snapshot,
+                                  &GRAPHENE_RECT_INIT (0, 0, width, height));
   cairo_save (cr);
-  cairo_set_source_rgb (cr, 0.2078, 0.5176, 0.894);
+
+  sc = gtk_widget_get_style_context (widget);
+  if (gtk_style_context_lookup_color (sc, "accent_color", &color))
+    cairo_set_source_rgb (cr, color.red, color.green, color.blue);
+  else
+    cairo_set_source_rgb (cr, 0.2078, 0.5176, 0.894);
   cairo_set_line_width (cr, 6);
 
   cairo_arc (cr, width / 2., height / 2., width / 2. - 4.,
              2 * (self->start_fraction - 0.25) * G_PI, 2 * (self->end_fraction - 0.25) * G_PI);
   cairo_stroke_preserve (cr);
   cairo_restore (cr);
+  cairo_destroy (cr);
 
-  return GTK_WIDGET_CLASS (chatty_progress_button_parent_class)->draw (widget, cr);
+  return GTK_WIDGET_CLASS (chatty_progress_button_parent_class)->snapshot (widget, snapshot);
 }
 
 
@@ -129,7 +140,7 @@ chatty_progress_button_class_init (ChattyProgressButtonClass *klass)
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
   object_class->finalize = chatty_progress_button_finalize;
-  widget_class->draw = chatty_progress_button_draw;
+  widget_class->snapshot = chatty_progress_button_snapshot;
 
   signals [ACTION_CLICKED] =
     g_signal_new ("action-clicked",

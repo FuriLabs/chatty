@@ -24,6 +24,7 @@ test_items = [
   'message-row',
   'mm-account',
   'sms-uri',
+  'pgp',
 ]
 
 foreach item: test_items

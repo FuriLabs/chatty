@@ -14,8 +14,6 @@
 # include "config.h"
 #endif
 
-#include "contrib/gtk.h"
-
 #include "chatty-settings.h"
 #include "chatty-utils.h"
 #include "chatty-mm-account.h"

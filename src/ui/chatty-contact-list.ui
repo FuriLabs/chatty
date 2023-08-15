@@ -1,21 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="ChattyContactList" parent="GtkBox">
-    <property name="visible">1</property>
     <child>
       <object class="GtkScrolledWindow" id="scrolled_window">
         <property name="hscrollbar_policy">never</property>
-        <property name="visible">1</property>
         <signal name="edge-reached" handler="contact_list_edge_reached_cb" swapped="yes"/>
 
-        <child>
+        <property name="child">
           <object class="GtkStack" id="main_stack">
-            <property name="visible">1</property>
 
             <!-- Empty contact list view -->
             <child>
-              <object class="HdyStatusPage" id="empty_view">
-                <property name="visible">1</property>
+              <object class="AdwStatusPage" id="empty_view">
                 <property name="vexpand">1</property>
                 <property name="hexpand">1</property>
               </object>
@@ -24,15 +20,12 @@
             <!-- Contact list view -->
             <child>
               <object class="GtkBox" id="contact_list_view">
-                <property name="visible">1</property>
                 <property name="orientation">vertical</property>
 
                 <!-- List of selected contacts, only when multi select enabled -->
                 <child>
                   <object class="GtkListBox" id="selected_contact_list">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="vexpand">False</property>
+                    <property name="vexpand">0</property>
                     <property name="selection-mode">none</property>
                     <signal name="row-activated" handler="selected_contact_row_activated_cb" swapped="yes"/>
                     <style>
@@ -61,8 +54,7 @@
                 <!-- List of contacts and chats -->
                 <child>
                   <object class="GtkListBox" id="contact_list">
-                    <property name="visible">True</property>
-                    <property name="vexpand">True</property>
+                    <property name="vexpand">1</property>
                     <property name="selection-mode">none</property>
                     <signal name="row-activated" handler="contact_list_row_activated_cb" swapped="yes"/>
                   </object>
@@ -72,7 +64,7 @@
             </child>
 
           </object> <!-- ./GtkStack main_stack -->
-        </child>
+        </property>
       </object>
     </child>
   </template>

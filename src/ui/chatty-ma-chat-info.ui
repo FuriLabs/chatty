@@ -1,29 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="ChattyMaChatInfo" parent="ChattyChatInfo">
-    <property name="visible">1</property>
 
     <child>
-      <object class="HdyPreferencesGroup">
-        <property name="visible">1</property>
-
+      <object class="AdwPreferencesGroup">
         <child>
           <object class="ChattyAvatar" id="avatar">
-            <property name="visible">1</property>
             <property name="size">96</property>
             <property name="margin-bottom">24</property>
           </object>
         </child>
-
       </object>
     </child>
 
     <child>
-      <object class="HdyPreferencesGroup">
-        <property name="visible">1</property>
+      <object class="AdwPreferencesGroup">
         <child>
           <object class="GtkGrid">
-            <property name="visible">1</property>
             <property name="hexpand">1</property>
             <property name="valign">start</property>
             <property name="margin-bottom">24</property>
@@ -34,105 +27,102 @@
             <!-- User Alias -->
             <child>
               <object class="GtkLabel">
-                <property name="visible" bind-source="name_label" bind-property="visible"
-                          bind-flags="sync-create"/>
+                <property name="visible" bind-source="name_label" bind-property="visible" bind-flags="sync-create"/>
                 <property name="xalign">1</property>
-                <property name="label" translatable="no">Chat</property>
+                <property name="label" translatable="yes">Chat</property>
                 <style>
                   <class name="dim-label"/>
                 </style>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="row">0</property>
+                </layout>
               </object>
             </child>
             <child>
               <object class="GtkLabel" id="name_label">
-                <property name="visible">1</property>
-                <property name="expand">1</property>
+                <property name="hexpand">1</property>
+                <property name="vexpand">1</property>
                 <property name="halign">start</property>
                 <property name="ellipsize">end</property>
-                <property name="justify">left</property>
                 <property name="selectable">1</property>
+                <layout>
+                  <property name="column">1</property>
+                  <property name="row">0</property>
+                </layout>
               </object>
-              <packing>
-                <property name="left-attach">1</property>
-                <property name="top-attach">0</property>
-              </packing>
             </child>
 
             <!-- User ID -->
             <child>
               <object class="GtkLabel">
-                <property name="visible" bind-source="matrix_id_label" bind-property="visible"
-                          bind-flags="sync-create"/>
+                <property name="visible" bind-source="matrix_id_label" bind-property="visible" bind-flags="sync-create"/>
                 <property name="xalign">1</property>
                 <property name="label" translatable="yes">Matrix ID</property>
                 <style>
                   <class name="dim-label"/>
                 </style>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="row">1</property>
+                </layout>
               </object>
             </child>
             <child>
               <object class="GtkLabel" id="matrix_id_label">
-                <property name="visible">1</property>
-                <property name="expand">1</property>
+                <property name="hexpand">1</property>
+                <property name="vexpand">1</property>
                 <property name="halign">start</property>
                 <property name="ellipsize">end</property>
-                <property name="justify">left</property>
                 <property name="selectable">1</property>
+                <layout>
+                  <property name="column">1</property>
+                  <property name="row">1</property>
+                </layout>
               </object>
-              <packing>
-                <property name="left-attach">1</property>
-                <property name="top-attach">1</property>
-              </packing>
             </child>
 
             <child>
               <object class="GtkLabel" id="settings_label">
-                <property name="visible">1</property>
                 <property name="halign">start</property>
                 <property name="margin-top">12</property>
                 <property name="label" translatable="yes">Chat settings</property>
                 <attributes>
-                  <attribute name="weight" value="bold"/>
+                  <attribute name="weight" value="bold"></attribute>
                 </attributes>
               </object>
             </child>
 
             <child>
               <object class="GtkListBox">
-                <property name="visible">1</property>
-                <property name="expand">1</property>
+                <property name="hexpand">1</property>
+                <property name="vexpand">1</property>
                 <property name="selection-mode">none</property>
                 <style>
                   <class name="content"/>
                 </style>
                 <child>
-                  <object class="HdyActionRow">
-                    <property name="visible">1</property>
-                    <property name="activatable" bind-source="encryption_switch" bind-property="active"
-                              bind-flags="sync-create|invert-boolean"/>
+                  <object class="AdwActionRow">
+                    <property name="activatable" bind-source="encryption_switch" bind-property="active" bind-flags="sync-create|invert-boolean"/>
                     <property name="title" translatable="yes">Encryption</property>
                     <property name="subtitle" translatable="yes">Encrypt Messages</property>
                     <property name="activatable-widget">encryption_switch</property>
                     <child>
-                      <object class="GtkSpinner" id="encryption_spinner">
-                        <property name="visible">1</property>
-                      </object>
+                      <object class="GtkSpinner" id="encryption_spinner"/>
                     </child>
                     <child>
                       <object class="GtkSwitch" id="encryption_switch">
-                        <property name="visible">1</property>
-                        <property name="sensitive" bind-source="encryption_switch" bind-property="active"
-                                  bind-flags="sync-create|invert-boolean"/>
+                        <property name="sensitive" bind-source="encryption_switch" bind-property="active" bind-flags="sync-create|invert-boolean"/>
                         <property name="valign">center</property>
                         <signal name="notify::active" handler="ma_chat_info_encryption_switch_changed_cb" swapped="yes"/>
                       </object>
                     </child>
                   </object>
                 </child>
+                <layout>
+                  <property name="column-span">2</property>
+                </layout>
               </object>
-              <packing>
-                <property name="width">2</property>
-              </packing>
             </child>
 
           </object>

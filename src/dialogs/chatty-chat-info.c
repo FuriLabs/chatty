@@ -24,7 +24,7 @@ typedef struct
   ChattyChat *chat;
 } ChattyChatInfoPrivate;
 
-G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (ChattyChatInfo, chatty_chat_info, HDY_TYPE_PREFERENCES_PAGE)
+G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (ChattyChatInfo, chatty_chat_info, ADW_TYPE_PREFERENCES_PAGE)
 
 static void
 chatty_info_real_set_item (ChattyChatInfo *self,

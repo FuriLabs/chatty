@@ -1,6 +1,6 @@
 project(
   'chatty', 'c', 'cpp',
-  version: '0.7.3',
+  version: '0.8.0.rc0',
   meson_version: '>= 0.56.0',
 )
 
@@ -12,14 +12,18 @@ top_inc = include_directories('.')
 src_inc = []
 
 purple_dep = dependency('purple', required: get_option('purple'))
+libgdesktop_dep = dependency('gnome-desktop-4', required: false)
 
 config_h = configuration_data()
 config_h.set10('HAVE_EXPLICIT_BZERO', cc.has_function('explicit_bzero'))
 config_h.set('PURPLE_ENABLED', purple_dep.found())
+config_h.set('HAVE_GNOME_DESKTOP4', libgdesktop_dep.found())
 config_h.set_quoted('GETTEXT_PACKAGE', 'purism-chatty')
 config_h.set_quoted('LOCALEDIR', join_paths(get_option('prefix'), get_option('localedir')))
 config_h.set_quoted('PACKAGE_NAME', meson.project_name())
 config_h.set_quoted('PACKAGE_VERSION', meson.project_version())
+config_h.set_quoted('BUILD_DIR', meson.current_build_dir())
+config_h.set_quoted('SOURCE_DIR', meson.current_source_dir())
 
 configure_file(
   output: 'config.h',
@@ -95,13 +99,6 @@ configure_file(
 libebook_dep = dependency('libebook-contacts-1.2')
 libfeedback_dep = dependency('libfeedback-0.0')
 libm_dep = cc.find_library('m')
-libgd = subproject('libgd',
-                   default_options: [
-                     'with-tagged-entry=true',
-                     'static=true'
-                   ])
-
-libgd_dep = libgd.get_variable('libgd_dep')
 
 libcmatrix = subproject('libcmatrix',
                         default_options: [

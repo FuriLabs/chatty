@@ -6,6 +6,8 @@
 
 
 #include <glib/gi18n.h>
+
+#include "gtk3-to-4.h"
 #include "chatty-purple-request.h"
 #include "chatty-manager.h"
 
@@ -28,6 +30,8 @@ cb_file_exists (GtkWidget         *widget,
                 gint               response,
                 ChattyRequestData *data)
 {
+  g_autoptr(GFile) file = NULL;
+
   if (response != GTK_RESPONSE_ACCEPT) {
     if (data->cbs[0] != NULL) {
       ((PurpleRequestFileCb)data->cbs[0])(data->user_data, NULL);
@@ -38,7 +42,9 @@ cb_file_exists (GtkWidget         *widget,
     return;
   }
 
-  data->file_name = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER(data->dialog));
+  file = gtk_file_chooser_get_file (GTK_FILE_CHOOSER (data->dialog));
+
+  data->file_name = g_file_get_path (file);
 
   if (data->cbs[1] != NULL) {
     ((PurpleRequestFileCb)data->cbs[1])(data->user_data, data->file_name);
@@ -115,8 +121,6 @@ chatty_request_action (const char         *title,
   window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
   gtk_window_set_transient_for (GTK_WINDOW(dialog), window);
 
-  gtk_widget_show_all (dialog);
-
   data->dialog = dialog;
 
   return data;
@@ -135,7 +139,7 @@ chatty_request_close (PurpleRequestType  type,
   g_free(data->cbs);
   g_free(data->file_name);
 
-  gtk_widget_destroy (data->dialog);
+  gtk_window_destroy (GTK_WINDOW (data->dialog));
 
   g_free (data);
 }
@@ -184,7 +188,11 @@ chatty_request_file (const char         *title,
     if (save_dialog) {
       gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER(dialog), filename);
     } else if (g_file_test(filename, G_FILE_TEST_EXISTS)) {
-      gtk_file_chooser_set_filename (GTK_FILE_CHOOSER(dialog), filename);
+      g_autoptr(GFile) file = NULL;
+
+      file = g_file_new_for_path (filename);
+
+      gtk_file_chooser_set_file (GTK_FILE_CHOOSER (dialog), file, NULL);
     }
   }
 

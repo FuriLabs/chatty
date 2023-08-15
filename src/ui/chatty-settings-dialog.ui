@@ -1,795 +1,682 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="ChattySettingsDialog" parent="HdyWindow">
+  <template class="ChattySettingsDialog" parent="AdwWindow">
     <property name="default-height">480</property>
     <property name="default-width">360</property>
-    <property name="type-hint">dialog</property>
-    <property name="title" translatable="yes">Preferences</property>
-    <signal name="delete-event" handler="gtk_widget_hide_on_delete"/>
+    <property name="hide-on-close">1</property>
 
     <child>
       <object class="GtkBox">
-        <property name="visible">1</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="HdyHeaderBar">
-            <property name="visible">1</property>
-            <property name="show-close-button">0</property>
-            <property name="title" bind-source="ChattySettingsDialog" bind-property="title" bind-flags="sync-create"/>
+          <object class="AdwHeaderBar">
+            <property name="show-end-title-buttons">0</property>
 
             <!-- Back button -->
-            <child>
+            <child type="start">
               <object class="GtkButton" id="back_button">
-                <property name="visible">1</property>
-                <signal name="clicked" handler="chatty_settings_back_clicked_cb" swapped="yes" />
-                <child internal-child="accessible">
-                  <object class="AtkObject">
-                    <property name="accessible-name" translatable="yes">Back</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkImage">
-                    <property name="visible">1</property>
-                    <property name="icon-name">go-previous-symbolic</property>
-                  </object>
-                </child>
+                <property name="tooltip-text" translatable="yes">Back</property>
+                <property name="icon-name">go-previous-symbolic</property>
+                <signal name="clicked" handler="chatty_settings_back_clicked_cb" swapped="yes"/>
               </object>
-              <packing>
-                <property name="pack-type">start</property>
-              </packing>
             </child>
 
             <!-- Cancel button -->
-            <child>
+            <child type="start">
               <object class="GtkButton" id="cancel_button">
                 <property name="visible">0</property>
                 <property name="use-underline">1</property>
                 <property name="label" translatable="yes">_Cancel</property>
-                <signal name="clicked" handler="chatty_settings_cancel_clicked_cb" swapped="yes" />
+                <signal name="clicked" handler="chatty_settings_cancel_clicked_cb" swapped="yes"/>
               </object>
-              <packing>
-                <property name="pack-type">start</property>
-              </packing>
             </child>
 
             <!-- Add button -->
-            <child>
+            <child type="end">
               <object class="GtkButton" id="add_button">
                 <property name="visible">0</property>
                 <property name="use-underline">1</property>
                 <property name="label" translatable="yes">_Add</property>
-                <signal name="clicked" handler="chatty_settings_add_clicked_cb" swapped="yes" />
+                <signal name="clicked" handler="chatty_settings_add_clicked_cb" swapped="yes"/>
                 <style>
-                  <class name="suggested-action" />
+                  <class name="suggested-action"/>
                 </style>
               </object>
-              <packing>
-                <property name="pack-type">end</property>
-              </packing>
             </child>
 
             <!-- Save button -->
-            <child>
+            <child type="end">
               <object class="GtkButton" id="save_button">
                 <property name="visible">0</property>
                 <property name="use-underline">1</property>
                 <property name="label" translatable="yes">_Save</property>
-                <signal name="clicked" handler="chatty_settings_save_clicked_cb" swapped="yes" />
-                <style>
-                  <class name="default" />
-                </style>
+                <signal name="clicked" handler="chatty_settings_save_clicked_cb" swapped="yes"/>
               </object>
-              <packing>
-                <property name="pack-type">end</property>
-              </packing>
             </child>
 
             <!-- Save button MMS Carrier Settings-->
-            <child>
+            <child type="end">
               <object class="GtkButton" id="mms_save_button">
                 <property name="visible">0</property>
                 <property name="use-underline">1</property>
                 <property name="label" translatable="yes">_Apply</property>
                 <signal name="clicked" handler="mms_carrier_settings_apply_button_clicked_cb" swapped="yes"/>
-                <style>
-                  <class name="default" />
-                </style>
               </object>
-              <packing>
-                <property name="pack-type">end</property>
-              </packing>
             </child>
 
             <!-- Cancel button MMS Carrier Settings-->
-            <child>
+            <child type="start">
               <object class="GtkButton" id="mms_cancel_button">
                 <property name="visible">0</property>
                 <property name="use-underline">1</property>
                 <property name="label" translatable="yes">_Cancel</property>
                 <signal name="clicked" handler="mms_carrier_settings_cancel_button_clicked_cb" swapped="yes"/>
               </object>
-              <packing>
-                <property name="pack-type">start</property>
-              </packing>
             </child>
 
-            <child>
+            <child type="end">
               <object class="GtkSpinner" id="matrix_spinner">
-                <property name="visible">1</property>
                 <property name="halign">start</property>
               </object>
-              <packing>
-                <property name="pack-type">end</property>
-              </packing>
-           </child>
+            </child>
 
           </object>
         </child>
 
         <child>
           <object class="GtkOverlay">
-            <property name="visible">True</property>
             <child type="overlay">
               <object class="GtkRevealer" id="notification_revealer">
-                <property name="visible">1</property>
                 <property name="halign">center</property>
                 <property name="valign">start</property>
-                <child>
+                <property name="child">
                   <object class="GtkBox">
-                    <property name="visible">1</property>
                     <property name="spacing">12</property>
                     <style>
-                      <class name="app-notification" />
+                      <class name="app-notification"/>
                     </style>
                     <child>
                       <object class="GtkLabel" id="notification_label">
-                        <property name="visible">1</property>
                         <property name="use-markup">1</property>
                         <property name="ellipsize">end</property>
                       </object>
                     </child>
                   </object>
-                </child>
+                </property>
               </object>
             </child>
 
-        <child>
-          <object class="GtkStack" id="main_stack">
-            <property name="visible">True</property>
-            <property name="transition_type">slide-left-right</property>
-            <signal name="notify::visible-child" handler="settings_dialog_page_changed_cb" swapped="yes" after="yes"/>
-            <child>
-              <object class="HdyPreferencesPage">
-                <property name="visible">True</property>
-
-                <!-- Account settings -->
-                <child>
-                  <object class="HdyPreferencesGroup">
-                    <property name="visible">True</property>
-                    <property name="title" translatable="yes">Accounts</property>
-                    <property name="visible" bind-source="accounts_list_box" bind-property="visible" bind-flags="sync-create"/>
-
-                    <child>
-                      <object class="GtkListBox" id="accounts_list_box">
-                        <property name="visible">True</property>
-                        <property name="selection-mode">none</property>
-                        <signal name="row-activated" handler="account_list_row_activated_cb" swapped="yes"/>
-                        <style>
-                          <class name="content"/>
-                        </style>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-
-                <!-- Privacy settings -->
-                <child>
-                  <object class="HdyPreferencesGroup">
-                    <property name="visible">True</property>
-                    <property name="title" translatable="yes">Privacy</property>
-
-                    <child>
-                      <object class="HdyActionRow">
-                        <property name="visible">True</property>
-                        <property name="selectable">False</property>
-                        <property name="title" translatable="yes">Message Receipts</property>
-                        <property name="subtitle" translatable="yes">Confirm received messages</property>
-                        <property name="activatable-widget">send_receipts_switch</property>
-                        <child>
-                          <object class="GtkSwitch" id="send_receipts_switch">
-                            <property name="visible">True</property>
-                            <property name="valign">center</property>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
-
-                    <child>
-                      <object class="HdyActionRow">
-                        <property name="visible">True</property>
-                        <property name="selectable">False</property>
-                        <property name="title" translatable="yes">Typing Notification</property>
-                        <property name="subtitle" translatable="yes">Send typing messages</property>
-                        <property name="activatable-widget">typing_notification_switch</property>
-                        <child>
-                          <object class="GtkSwitch" id="typing_notification_switch">
-                            <property name="visible">True</property>
-                            <property name="valign">center</property>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
-
-                  </object>
-                </child>
-
-                <!-- Editor settings -->
-                <child>
-                  <object class="HdyPreferencesGroup">
-                    <property name="visible">True</property>
-                    <property name="title" translatable="yes">Editor</property>
-                    <child>
-                      <object class="HdyActionRow">
-                        <property name="visible">True</property>
-                        <property name="selectable">False</property>
-                        <property name="title" translatable="yes">Graphical Emoticons</property>
-                        <property name="subtitle" translatable="yes">if you type :) it will be changed to 😃</property>
-                        <property name="activatable-widget">convert_smileys_switch</property>
-                        <child>
-                          <object class="GtkSwitch" id="convert_smileys_switch">
-                            <property name="visible">True</property>
-                            <property name="valign">center</property>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="HdyActionRow">
-                        <property name="visible">True</property>
-                        <property name="selectable">False</property>
-                        <!-- TRANSLATORS: Return is the Enter key. -->
-                        <property name="title" translatable="yes">Send Messages with Return</property>
-                        <property name="activatable-widget">return_sends_switch</property>
-                        <child>
-                          <object class="GtkSwitch" id="return_sends_switch">
-                            <property name="visible">True</property>
-                            <property name="valign">center</property>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
-                  </object>
-                </child>
+            <property name="child">
+              <object class="GtkStack" id="main_stack">
+                <property name="transition_type">slide-left-right</property>
+                <signal name="notify::visible-child" handler="settings_dialog_page_changed_cb" swapped="yes" after="yes"/>
 
                 <child>
-                  <object class="HdyPreferencesGroup">
-                    <property name="visible">True</property>
-                    <property name="title" translatable="yes">Protocol Settings</property>
-                    <child>
-                      <object class="GtkListBox">
-                        <property name="visible">True</property>
-                        <style>
-                         <class name="content"/>
-                        </style>
+                  <object class="GtkStackPage">
+                    <property name="name">main-settings</property>
+                    <property name="child">
+                      <object class="AdwPreferencesPage">
+
+                        <!-- Account settings -->
                         <child>
-                          <object class="HdyActionRow">
-                            <property name="visible">True</property>
-                            <property name="activatable">True</property>
-                            <property name="selectable">False</property>
-                            <property name="title" translatable="yes">SMS and MMS Settings</property>
-                            <property name="use-underline">True</property>
-                            <signal name="activated" handler="sms_mms_settings_row_activated_cb" swapped="yes"/>
+                          <object class="AdwPreferencesGroup">
+                            <property name="title" translatable="yes">Accounts</property>
+                            <property name="visible" bind-source="accounts_list_box" bind-property="visible" bind-flags="sync-create"/>
                             <child>
-                              <object class="GtkImage">
-                                <property name="visible">1</property>
-                                <property name="icon-name">go-next-symbolic</property>
+                              <object class="GtkListBox" id="accounts_list_box">
+                                <property name="selection-mode">none</property>
+                                <signal name="row-activated" handler="account_list_row_activated_cb" swapped="yes"/>
                                 <style>
-                                 <class name="dim-label"/>
+                                  <class name="content"/>
+                                </style>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+
+                        <!-- Privacy settings -->
+                        <child>
+                          <object class="AdwPreferencesGroup">
+                            <property name="title" translatable="yes">Privacy</property>
+
+                            <child>
+                              <object class="AdwActionRow">
+                                <property name="selectable">0</property>
+                                <property name="title" translatable="yes">Message Receipts</property>
+                                <property name="subtitle" translatable="yes">Confirm received messages</property>
+                                <property name="activatable-widget">send_receipts_switch</property>
+                                <child>
+                                  <object class="GtkSwitch" id="send_receipts_switch">
+                                    <property name="valign">center</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+
+                            <child>
+                              <object class="AdwActionRow">
+                                <property name="selectable">0</property>
+                                <property name="title" translatable="yes">Typing Notification</property>
+                                <property name="subtitle" translatable="yes">Send typing messages</property>
+                                <property name="activatable-widget">typing_notification_switch</property>
+                                <child>
+                                  <object class="GtkSwitch" id="typing_notification_switch">
+                                    <property name="valign">center</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+
+                          </object>
+                        </child>
+
+                        <!-- Editor settings -->
+                        <child>
+                          <object class="AdwPreferencesGroup">
+                            <property name="title" translatable="yes">Editor</property>
+                            <child>
+                              <object class="AdwActionRow">
+                                <property name="selectable">0</property>
+                                <property name="title" translatable="yes">Graphical Emoticons</property>
+                                <property name="subtitle" translatable="yes">if you type :) it will be changed to 😃</property>
+                                <property name="activatable-widget">convert_smileys_switch</property>
+                                <child>
+                                  <object class="GtkSwitch" id="convert_smileys_switch">
+                                    <property name="valign">center</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="AdwActionRow">
+                                <property name="selectable">0</property>
+                                <!-- TRANSLATORS: Return is the Enter key. -->
+                                <property name="title" translatable="yes">Send Messages with Return</property>
+                                <property name="activatable-widget">return_sends_switch</property>
+                                <child>
+                                  <object class="GtkSwitch" id="return_sends_switch">
+                                    <property name="valign">center</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+
+                        <child>
+                          <object class="AdwPreferencesGroup">
+                            <property name="title" translatable="yes">Protocol Settings</property>
+                            <child>
+                              <object class="GtkListBox">
+                                <style>
+                                  <class name="content"/>
+                                </style>
+                                <child>
+                                  <object class="AdwActionRow">
+                                    <property name="activatable">1</property>
+                                    <property name="selectable">0</property>
+                                    <property name="title" translatable="yes">SMS and MMS Settings</property>
+                                    <property name="use-underline">1</property>
+                                    <signal name="activated" handler="sms_mms_settings_row_activated_cb" swapped="yes"/>
+                                    <child>
+                                      <object class="GtkImage">
+                                        <property name="icon-name">go-next-symbolic</property>
+                                        <style>
+                                          <class name="dim-label"/>
+                                        </style>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="AdwActionRow" id="purple_settings_row">
+                                    <property name="visible">0</property>
+                                    <property name="activatable">1</property>
+                                    <property name="selectable">0</property>
+                                    <property name="title" translatable="yes">Purple Settings</property>
+                                    <property name="use-underline">1</property>
+                                    <signal name="activated" handler="purple_settings_row_activated_cb" swapped="yes"/>
+                                    <child>
+                                      <object class="GtkImage">
+                                        <property name="icon-name">go-next-symbolic</property>
+                                        <style>
+                                          <class name="dim-label"/>
+                                        </style>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+
+                <child>
+                  <object class="GtkStackPage">
+                    <property name="name">message-settings-view</property>
+                    <property name="child">
+                      <object class="AdwPreferencesPage">
+
+                        <child>
+                          <object class="AdwPreferencesGroup">
+                            <child>
+                              <object class="AdwActionRow">
+                                <property name="selectable">0</property>
+                                <property name="title" translatable="yes">Request Delivery Reports</property>
+                                <property name="activatable-widget">delivery_reports_switch</property>
+                                <child>
+                                  <object class="GtkSwitch" id="delivery_reports_switch">
+                                    <property name="valign">center</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="AdwActionRow">
+                                <property name="sensitive" bind-source="handle_smil_switch" bind-property="sensitive" bind-flags="sync-create"/>
+                                <property name="selectable">0</property>
+                                <property name="title" translatable="yes">SMIL for MMS</property>
+                                <property name="subtitle">Enable rich media embedding</property>
+                                <property name="activatable-widget">handle_smil_switch</property>
+                                <child>
+                                  <object class="GtkSwitch" id="handle_smil_switch">
+                                    <property name="valign">center</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="AdwActionRow">
+                                <property name="activatable">1</property>
+                                <property name="selectable">0</property>
+                                <property name="title" translatable="yes">Blocked Contacts</property>
+                                <signal name="activated" handler="blocked_list_action_activated_cb" swapped="yes"/>
+                                <child>
+                                  <object class="GtkImage">
+                                    <property name="icon-name">go-next-symbolic</property>
+                                    <style>
+                                      <class name="dim-label"/>
+                                    </style>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+
+                        <child>
+                          <object class="AdwPreferencesGroup">
+                            <property name="sensitive" bind-source="handle_smil_switch" bind-property="sensitive" bind-flags="sync-create"/>
+                            <property name="title" translatable="yes">MMS Carrier Settings</property>
+                            <child>
+                              <object class="AdwActionRow">
+                                <property name="visible" bind-source="phone_number_entry" bind-property="visible" bind-flags="sync-create"/>
+                                <property name="title" translatable="yes">Phone Number</property>
+                                <child>
+                                  <object class="GtkEntry" id="phone_number_entry">
+                                    <property name="valign">center</property>
+                                    <property name="width-chars">25</property>
+                                    <property name="input-purpose">phone</property>
+                                    <property name="placeholder-text" translatable="yes">Your modem&apos;s phone number</property>
+                                    <signal name="changed" handler="settings_phone_number_entry_changed_cb" swapped="yes"/>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="AdwActionRow">
+                                <property name="title" translatable="yes">MMSC</property>
+                                <child>
+                                  <object class="GtkEntry" id="carrier_mmsc_entry">
+                                    <property name="valign">center</property>
+                                    <property name="width-chars">25</property>
+                                    <property name="placeholder-text">http://carriermmsc.invalid/</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="AdwActionRow">
+                                <property name="title" translatable="yes">APN</property>
+                                <child>
+                                  <object class="GtkEntry" id="mms_apn_entry">
+                                    <property name="valign">center</property>
+                                    <property name="width-chars">25</property>
+                                    <property name="placeholder-text">apn.invalid</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="AdwActionRow">
+                                <property name="title" translatable="yes">Proxy</property>
+                                <child>
+                                  <object class="GtkEntry" id="mms_proxy_entry">
+                                    <property name="width-chars">25</property>
+                                    <property name="valign">center</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+
+                      </object>
+                    </property>
+                  </object>
+                </child>
+
+                <child>
+                  <object class="GtkStackPage">
+                    <property name="name">blocked-list-view</property>
+                    <property name="child">
+                      <object class="AdwPreferencesPage">
+                        <child>
+                          <object class="AdwPreferencesGroup">
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="wrap">1</property>
+                                <property name="label" translatable="yes">You shall not be notified for the messages from blocked contacts</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="AdwPreferencesGroup">
+                            <property name="visible" bind-source="blocked_list" bind-property="visible" bind-flags="sync-create"/>
+                            <child>
+                              <object class="GtkListBox" id="blocked_list">
+                                <property name="selection-mode">none</property>
+                                <style>
+                                  <class name="content"/>
                                 </style>
                               </object>
                             </child>
                           </object>
                         </child>
                         <child>
-                          <object class="HdyActionRow" id="purple_settings_row">
-                            <property name="visible">0</property>
-                            <property name="activatable">True</property>
-                            <property name="selectable">False</property>
-                            <property name="title" translatable="yes">Purple Settings</property>
-                            <property name="use-underline">True</property>
-                            <signal name="activated" handler="purple_settings_row_activated_cb" swapped="yes"/>
+                          <object class="AdwPreferencesGroup">
+                            <property name="visible" bind-source="blocked_list" bind-property="visible" bind-flags="sync-create|invert-boolean"/>
+                            <!-- HACK: We use a different list box for placeholder since "content" style is broken otherwise -->
                             <child>
-                              <object class="GtkImage">
-                                <property name="visible">1</property>
-                                <property name="icon-name">go-next-symbolic</property>
+                              <object class="GtkListBox">
+                                <property name="selection-mode">none</property>
                                 <style>
-                                 <class name="dim-label"/>
+                                  <class name="content"/>
                                 </style>
+                                <child type="placeholder">
+                                  <object class="AdwActionRow">
+                                    <property name="sensitive">0</property>
+                                    <property name="title" translatable="yes">Blocked chat list empty</property>
+                                  </object>
+                                </child>
                               </object>
                             </child>
                           </object>
                         </child>
                       </object>
-                    </child>
+                    </property>
                   </object>
                 </child>
 
-              </object>
-              <packing>
-                <property name="name">main-settings</property>
-              </packing>
-            </child>
-
-            <child>
-              <object class="HdyPreferencesPage">
-                <property name="visible">True</property>
                 <child>
-                  <object class="HdyPreferencesGroup">
-                    <property name="visible">True</property>
-                    <child>
-                      <object class="HdyActionRow">
-                        <property name="visible">True</property>
-                        <property name="selectable">False</property>
-                        <property name="title" translatable="yes">Request Delivery Reports</property>
-                        <property name="activatable-widget">delivery_reports_switch</property>
+                  <object class="GtkStackPage">
+                    <property name="name">purple-settings-view</property>
+                    <property name="child">
+                      <object class="AdwPreferencesPage">
+
                         <child>
-                          <object class="GtkSwitch" id="delivery_reports_switch">
-                            <property name="visible">True</property>
-                            <property name="valign">center</property>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="HdyActionRow">
-                        <property name="visible">True</property>
-                        <property name="sensitive" bind-source="handle_smil_switch" bind-property="sensitive" bind-flags="sync-create"/>
-                        <property name="selectable">False</property>
-                        <property name="title" translatable="yes">SMIL for MMS</property>
-                        <property name="subtitle">Enable rich media embedding</property>
-                        <property name="activatable-widget">handle_smil_switch</property>
-                        <child>
-                          <object class="GtkSwitch" id="handle_smil_switch">
-                            <property name="visible">True</property>
-                            <property name="valign">center</property>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="HdyActionRow">
-                        <property name="visible">True</property>
-                        <property name="activatable">True</property>
-                        <property name="selectable">False</property>
-                        <property name="title" translatable="yes">Blocked Contacts</property>
-                        <signal name="activated" handler="blocked_list_action_activated_cb" swapped="yes"/>
-                        <child>
-                          <object class="GtkImage">
-                            <property name="visible">1</property>
-                            <property name="icon-name">go-next-symbolic</property>
-                            <style>
-                              <class name="dim-label"/>
-                            </style>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-
-                <child>
-                  <object class="HdyPreferencesGroup">
-                    <property name="visible">True</property>
-                    <property name="sensitive" bind-source="handle_smil_switch" bind-property="sensitive" bind-flags="sync-create"/>
-                    <property name="title" translatable="yes">MMS Carrier Settings</property>
-
-                    <child>
-                      <object class="HdyActionRow">
-                        <property name="visible" bind-source="phone_number_entry" bind-property="visible" bind-flags="sync-create"/>
-                        <property name="title" translatable="yes">Phone Number</property>
-                        <child>
-                          <object class="GtkEntry" id="phone_number_entry">
-                            <property name="visible">True</property>
-                            <property name="valign">center</property>
-                            <property name="width-chars">25</property>
-                            <property name="input-purpose">phone</property>
-                            <property name="placeholder-text" translatable="yes">Your modem's phone number</property>
-                            <signal name="changed" handler="settings_phone_number_entry_changed_cb" swapped="yes"/>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
-
-                      <child>
-                        <object class="HdyActionRow">
-                          <property name="visible">True</property>
-                          <property name="title" translatable="yes">MMSC</property>
-                          <child>
-                            <object class="GtkEntry" id="carrier_mmsc_entry">
-                              <property name="visible">True</property>
-                              <property name="valign">center</property>
-                              <property name="width-chars">25</property>
-                              <property name="placeholder-text">http://carriermmsc.invalid/</property>
-                            </object>
-                          </child>
-                        </object>
-                      </child>
-
-                      <child>
-                        <object class="HdyActionRow">
-                          <property name="visible">True</property>
-                          <property name="title" translatable="yes">APN</property>
-                          <child>
-                            <object class="GtkEntry" id="mms_apn_entry">
-                              <property name="visible">True</property>
-                              <property name="valign">center</property>
-                              <property name="width-chars">25</property>
-                              <property name="placeholder-text">apn.invalid</property>
-                            </object>
-                          </child>
-                        </object>
-                      </child>
-
-                      <child>
-                        <object class="HdyActionRow">
-                          <property name="visible">True</property>
-                          <property name="title" translatable="yes">Proxy</property>
-                          <child>
-                            <object class="GtkEntry" id="mms_proxy_entry">
-                              <property name="visible">True</property>
-                              <property name="width-chars">25</property>
-                              <property name="valign">center</property>
-                            </object>
-                          </child>
-                        </object>
-                      </child>
-                  </object>
-                </child>
-
-              </object>
-              <packing>
-                <property name="name">message-settings-view</property>
-              </packing>
-            </child>
-
-            <child>
-              <object class="HdyPreferencesPage">
-                <property name="visible">True</property>
-                <child>
-                  <object class="HdyPreferencesGroup">
-                    <property name="visible">True</property>
-                    <child>
-                      <object class="GtkLabel">
-                        <property name="visible">True</property>
-                        <property name="wrap">True</property>
-                        <property name="label" translatable="yes">You shall not be notified for the messages from blocked contacts</property>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-                <child>
-                  <object class="HdyPreferencesGroup">
-                    <property name="visible" bind-source="blocked_list" bind-property="visible" bind-flags="sync-create"/>
-                    <child>
-                      <object class="GtkListBox" id="blocked_list">
-                        <property name="visible">True</property>
-                        <property name="selection-mode">none</property>
-                        <style>
-                          <class name="content"/>
-                        </style>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-                <child>
-                  <object class="HdyPreferencesGroup">
-                    <property name="visible" bind-source="blocked_list" bind-property="visible" bind-flags="sync-create|invert-boolean"/>
-                    <!-- HACK: We use a different list box for placeholder since "content" style is broken otherwise -->
-                    <child>
-                      <object class="GtkListBox">
-                        <property name="visible">True</property>
-                        <property name="selection-mode">none</property>
-                        <style>
-                          <class name="content"/>
-                        </style>
-                        <child type="placeholder">
-                          <object class="HdyActionRow">
-                            <property name="visible">True</property>
-                            <property name="sensitive">False</property>
-                            <property name="title" translatable="yes">Blocked chat list empty</property>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="name">blocked-list-view</property>
-              </packing>
-            </child>
-
-            <child>
-              <object class="HdyPreferencesPage">
-                <property name="visible">True</property>
-                <child>
-                  <object class="HdyPreferencesGroup">
-                    <property name="visible">True</property>
-                    <child>
-                      <object class="GtkListBox">
-                        <property name="visible">True</property>
-                        <style>
-                          <class name="content"/>
-                        </style>
-                        <child>
-                          <object class="HdyActionRow" id="enable_purple_row">
-                            <property name="visible">True</property>
-                            <property name="activatable">True</property>
-                            <property name="selectable">False</property>
-                            <property name="title" translatable="yes">Enable purple accounts</property>
-                            <property name="subtitle" translatable="yes">Enable purple plugin</property>
-                            <property name="activatable-widget">enable_purple_switch</property>
+                          <object class="AdwPreferencesGroup">
                             <child>
-                              <object class="GtkSwitch" id="enable_purple_switch">
-                                <property name="visible">True</property>
-                                <property name="valign">center</property>
-                                <signal name="notify::active" handler="settings_dialog_purple_changed_cb" swapped="yes"/>
+                              <object class="GtkListBox">
+                                <style>
+                                  <class name="content"/>
+                                </style>
+                                <child>
+                                  <object class="AdwActionRow" id="enable_purple_row">
+                                    <property name="activatable">1</property>
+                                    <property name="selectable">0</property>
+                                    <property name="title" translatable="yes">Enable purple accounts</property>
+                                    <property name="subtitle" translatable="yes">Enable purple plugin</property>
+                                    <property name="activatable-widget">enable_purple_switch</property>
+                                    <child>
+                                      <object class="GtkSwitch" id="enable_purple_switch">
+                                        <property name="valign">center</property>
+                                        <signal name="notify::active" handler="settings_dialog_purple_changed_cb" swapped="yes"/>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
                               </object>
                             </child>
                           </object>
                         </child>
-                      </object>
-                    </child>
-                  </object>
-                </child>
 
-                <child>
-                  <object class="HdyPreferencesGroup">
-                    <property name="visible">True</property>
-                    <property name="title" translatable="yes">Privacy</property>
-
-                    <child>
-                      <object class="HdyActionRow">
-                        <property name="visible" bind-source="message_archive_switch" bind-property="visible" bind-flags="sync-create"/>
-                        <property name="selectable">False</property>
-                        <property name="title" translatable="yes">Message Archive Management</property>
-                        <property name="subtitle" translatable="yes">Sync conversations with chat server</property>
-                        <property name="activatable-widget">message_archive_switch</property>
                         <child>
-                          <object class="GtkSwitch" id="message_archive_switch">
-                            <property name="visible">True</property>
-                            <property name="valign">center</property>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
+                          <object class="AdwPreferencesGroup">
+                            <property name="title" translatable="yes">Privacy</property>
 
-                    <child>
-                      <object class="HdyActionRow" id="message_carbons_row">
-                        <property name="visible" bind-source="message_carbons_switch" bind-property="visible" bind-flags="sync-create"/>
-                        <property name="selectable">False</property>
-                        <property name="title" translatable="yes">Message Carbon Copies</property>
-                        <property name="subtitle" translatable="yes">Share chat history among devices</property>
-                        <property name="activatable-widget">message_carbons_switch</property>
-                        <child>
-                          <object class="GtkSwitch" id="message_carbons_switch">
-                            <property name="visible">True</property>
-                            <property name="valign">center</property>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
-
-                  </object>
-                </child>
-
-              </object>
-              <packing>
-                <property name="name">purple-settings-view</property>
-              </packing>
-            </child>
-
-            <child>
-              <object class="GtkStack" id="account_details_stack">
-                <property name="visible">1</property>
-                <child>
-                  <object class="ChattyPpAccountDetails" id="pp_account_details">
-                    <property name="visible">1</property>
-                    <signal name="notify::modified" handler="settings_pp_details_changed_cb" swapped="yes"/>
-                    <signal name="delete-clicked" handler="settings_pp_details_delete_cb" swapped="yes"/>
-                  </object>
-                </child>
-                <child>
-                  <object class="ChattyMaAccountDetails" id="ma_account_details">
-                    <property name="visible">1</property>
-                    <signal name="notify::modified" handler="settings_pp_details_changed_cb" swapped="yes"/>
-                    <signal name="delete-clicked" handler="settings_pp_details_delete_cb" swapped="yes"/>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="name">edit-account-view</property>
-              </packing>
-            </child>
-
-            <child>
-              <object class="HdyPreferencesPage">
-                <property name="visible">True</property>
-                <child>
-                  <object class="HdyPreferencesGroup" id="protocol_list_group">
-                    <property name="visible">true</property>
-                    <child>
-                      <object class="GtkListBox" id="protocol_list">
-                        <property name="visible">False</property>
-                        <property name="selection-mode">none</property>
-                        <property name="margin-bottom">24</property>
-                        <style>
-                          <class name="content"/>
-                        </style>
-                        <child>
-                          <object class="HdyActionRow">
-                            <property name="visible" bind-source="xmpp_radio_button" bind-property="visible" bind-flags="sync-create"/>
-                            <property name="activatable_widget">xmpp_radio_button</property>
-                            <property name="title" translatable="yes">XMPP</property>
-                            <child type="prefix">
-                              <object class="GtkRadioButton" id="xmpp_radio_button">
-                                <property name="visible">True</property>
-                                <signal name="toggled" handler="settings_protocol_changed_cb" swapped="yes"/>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="HdyActionRow" id="matrix_row">
-                            <property name="activatable_widget">matrix_radio_button</property>
-                            <property name="title" translatable="yes">Matrix</property>
-                            <property name="visible">False</property>
-                            <child type="prefix">
-                              <object class="GtkRadioButton" id="matrix_radio_button">
-                                <property name="visible">True</property>
-                                <property name="group">xmpp_radio_button</property>
-                                <signal name="toggled" handler="settings_protocol_changed_cb" swapped="yes"/>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="HdyActionRow" id="telegram_row">
-                            <property name="activatable_widget">telegram_radio_button</property>
-                            <property name="title" translatable="yes">Telegram</property>
-                            <property name="visible">False</property>
-                            <child type="prefix">
-                              <object class="GtkRadioButton" id="telegram_radio_button">
-                                <property name="visible">True</property>
-                                <property name="group">xmpp_radio_button</property>
-                                <signal name="toggled" handler="settings_protocol_changed_cb" swapped="yes"/>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-                <child>
-                  <object class="HdyPreferencesGroup">
-                    <property name="visible">true</property>
-                    <child>
-                      <object class="GtkListBox" id="new_account_settings_list">
-                        <property name="visible">True</property>
-                        <property name="expand">False</property>
-                        <property name="selection-mode">none</property>
-                        <property name="margin-bottom">6</property>
-                        <style>
-                          <class name="content"/>
-                        </style>
-                        <child>
-                          <object class="HdyActionRow">
-                            <property name="selectable">False</property>
-                            <property name="activatable">False</property>
-                            <property name="visible">True</property>
-                            <child type="prefix">
-                              <object class="GtkLabel">
-                                <property name="label" translatable="no">User ID</property>
-                                <property name="xalign">1</property>
-                                <property name="visible">True</property>
-                                <property name="halign">start</property>
-                              </object>
-                            </child>
                             <child>
-                              <object class="GtkEntry" id="new_account_id_entry">
-                                <property name="activates_default">True</property>
-                                <property name="hexpand">False</property>
-                                <property name="visible">True</property>
-                                <property name="halign">end</property>
-                                <property name="valign">center</property>
-                                <property name="placeholder-text">user@example.com</property>
-                                <signal name="changed" handler="settings_new_detail_changed_cb" swapped="yes"/>
+                              <object class="AdwActionRow">
+                                <property name="visible" bind-source="message_archive_switch" bind-property="visible" bind-flags="sync-create"/>
+                                <property name="selectable">0</property>
+                                <property name="title" translatable="yes">Message Archive Management</property>
+                                <property name="subtitle" translatable="yes">Sync conversations with chat server</property>
+                                <property name="activatable-widget">message_archive_switch</property>
+                                <child>
+                                  <object class="GtkSwitch" id="message_archive_switch">
+                                    <property name="valign">center</property>
+                                  </object>
+                                </child>
                               </object>
                             </child>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="HdyActionRow">
-                            <property name="selectable">False</property>
-                            <property name="activatable">False</property>
-                            <property name="visible">True</property>
-                            <child type="prefix">
-                              <object class="GtkLabel">
-                                <property name="label" translatable="yes">Password</property>
-                                <property name="xalign">1</property>
-                                <property name="visible">True</property>
-                                <property name="halign">start</property>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkEntry" id="new_password_entry">
-                                <property name="visible">True</property>
-                                <property name="halign">end</property>
-                                <property name="valign">center</property>
-                                <property name="input_purpose">password</property>
-                                <property name="activates_default">True</property>
-                                <property name="hexpand">False</property>
-                                <property name="visibility">False</property>
-                                <property name="primary_icon_sensitive">False</property>
-                                <property name="secondary_icon_activatable">True</property>
-                                <property name="secondary_icon_name">eye-not-looking-symbolic</property>
-                                <property name="secondary_icon_sensitive">True</property>
-                                <signal name="icon-press" handler="settings_pw_entry_icon_clicked_cb" swapped="yes"/>
-                                <signal name="changed" handler="settings_new_detail_changed_cb" swapped="yes"/>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
 
-                        <child>
-                          <object class="HdyActionRow">
-                            <property name="visible" bind-source="matrix_homeserver_entry" bind-property="visible" bind-flags="sync-create"/>
-                            <property name="selectable">False</property>
-                            <property name="activatable">False</property>
-                            <child type="prefix">
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="wrap">True</property>
-                                <property name="xalign">0.0</property>
-                                <property name="label" translatable="yes">Home server</property>
-                              </object>
-                            </child>
                             <child>
-                              <object class="GtkEntry" id="matrix_homeserver_entry">
-                                <property name="visible">False</property>
-                                <property name="halign">end</property>
-                                <property name="valign">center</property>
-                                <signal name="changed" handler="settings_homeserver_entry_changed" swapped="yes"/>
+                              <object class="AdwActionRow" id="message_carbons_row">
+                                <property name="visible" bind-source="message_carbons_switch" bind-property="visible" bind-flags="sync-create"/>
+                                <property name="selectable">0</property>
+                                <property name="title" translatable="yes">Message Carbon Copies</property>
+                                <property name="subtitle" translatable="yes">Share chat history among devices</property>
+                                <property name="activatable-widget">message_carbons_switch</property>
+                                <child>
+                                  <object class="GtkSwitch" id="message_carbons_switch">
+                                    <property name="valign">center</property>
+                                  </object>
+                                </child>
                               </object>
                             </child>
+
                           </object>
                         </child>
 
                       </object>
-                    </child>
+                    </property>
+                  </object>
+                </child>
 
+                <child>
+                  <object class="GtkStackPage">
+                    <property name="name">edit-account-view</property>
+                    <property name="child">
+                      <object class="GtkStack" id="account_details_stack">
+                        <child>
+                          <object class="ChattyPpAccountDetails" id="pp_account_details">
+                            <signal name="notify::modified" handler="settings_pp_details_changed_cb" swapped="yes"/>
+                            <signal name="delete-clicked" handler="settings_pp_details_delete_cb" swapped="yes"/>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="ChattyMaAccountDetails" id="ma_account_details">
+                            <signal name="notify::modified" handler="settings_pp_details_changed_cb" swapped="yes"/>
+                            <signal name="delete-clicked" handler="settings_pp_details_delete_cb" swapped="yes"/>
+                          </object>
+                        </child>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+
+                <child>
+                  <object class="GtkStackPage">
+                    <property name="name">add-account-view</property>
+                    <property name="child">
+                      <object class="AdwPreferencesPage">
+                        <child>
+                          <object class="AdwPreferencesGroup" id="protocol_list_group">
+                            <child>
+                              <object class="GtkListBox" id="protocol_list">
+                                <property name="visible">0</property>
+                                <property name="selection-mode">none</property>
+                                <property name="margin-bottom">24</property>
+                                <style>
+                                  <class name="content"/>
+                                </style>
+                                <child>
+                                  <object class="AdwActionRow">
+                                    <property name="visible" bind-source="xmpp_radio_button" bind-property="visible" bind-flags="sync-create"/>
+                                    <property name="activatable_widget">xmpp_radio_button</property>
+                                    <property name="title" translatable="yes">XMPP</property>
+                                    <child type="prefix">
+                                      <object class="GtkCheckButton" id="xmpp_radio_button">
+                                        <signal name="toggled" handler="settings_protocol_changed_cb" swapped="yes"/>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="AdwActionRow" id="matrix_row">
+                                    <property name="activatable_widget">matrix_radio_button</property>
+                                    <property name="title" translatable="yes">Matrix</property>
+                                    <property name="visible">0</property>
+                                    <child type="prefix">
+                                      <object class="GtkCheckButton" id="matrix_radio_button">
+                                        <property name="group">xmpp_radio_button</property>
+                                        <signal name="toggled" handler="settings_protocol_changed_cb" swapped="yes"/>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="AdwActionRow" id="telegram_row">
+                                    <property name="activatable_widget">telegram_radio_button</property>
+                                    <property name="title" translatable="yes">Telegram</property>
+                                    <property name="visible">0</property>
+                                    <child type="prefix">
+                                      <object class="GtkCheckButton" id="telegram_radio_button">
+                                        <property name="group">xmpp_radio_button</property>
+                                        <signal name="toggled" handler="settings_protocol_changed_cb" swapped="yes"/>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="AdwPreferencesGroup">
+                            <child>
+                              <object class="GtkListBox" id="new_account_settings_list">
+                                <property name="hexpand">0</property>
+                                <property name="vexpand">0</property>
+                                <property name="selection-mode">none</property>
+                                <property name="margin-bottom">6</property>
+                                <style>
+                                  <class name="content"/>
+                                </style>
+                                <child>
+                                  <object class="AdwActionRow">
+                                    <property name="selectable">0</property>
+                                    <property name="activatable">0</property>
+                                    <child type="prefix">
+                                      <object class="GtkLabel">
+                                        <property name="label" translatable="0">User ID</property>
+                                        <property name="xalign">1</property>
+                                        <property name="halign">start</property>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkEntry" id="new_account_id_entry">
+                                        <property name="activates_default">1</property>
+                                        <property name="hexpand">0</property>
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <property name="placeholder-text">user@example.com</property>
+                                        <signal name="changed" handler="settings_new_detail_changed_cb" swapped="yes"/>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="AdwActionRow">
+                                    <property name="selectable">0</property>
+                                    <property name="activatable">0</property>
+                                    <child type="prefix">
+                                      <object class="GtkLabel">
+                                        <property name="label" translatable="yes">Password</property>
+                                        <property name="xalign">1</property>
+                                        <property name="halign">start</property>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkPasswordEntry" id="new_password_entry">
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <property name="activates_default">1</property>
+                                        <property name="hexpand">0</property>
+                                        <property name="show-peek-icon">1</property>
+                                        <signal name="changed" handler="settings_new_detail_changed_cb" swapped="yes"/>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="AdwActionRow">
+                                    <property name="visible" bind-source="matrix_homeserver_entry" bind-property="visible" bind-flags="sync-create"/>
+                                    <property name="selectable">0</property>
+                                    <property name="activatable">0</property>
+                                    <child type="prefix">
+                                      <object class="GtkLabel">
+                                        <property name="wrap">1</property>
+                                        <property name="xalign">0.0</property>
+                                        <property name="label" translatable="yes">Home server</property>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkEntry" id="matrix_homeserver_entry">
+                                        <property name="visible">0</property>
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <signal name="changed" handler="settings_homeserver_entry_changed" swapped="yes"/>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </property>
                   </object>
                 </child>
               </object>
-              <packing>
-                <property name="name">add-account-view</property>
-              </packing>
-            </child>
-          </object>
-        </child>
+            </property>
 
-          </object>
+          </object> <!-- ./GtkOverlay -->
         </child>
 
       </object>
     </child>
 
   </template>
-  <object class="HdyActionRow" id="add_account_row">
-    <property name="visible">True</property>
+  <object class="AdwActionRow" id="add_account_row">
     <property name="title" translatable="yes">Add _new account…</property>
-    <property name="use-underline">True</property>
-    <property name="activatable">True</property>
+    <property name="use-underline">1</property>
+    <property name="activatable">1</property>
   </object>
 </interface>

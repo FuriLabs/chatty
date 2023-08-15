@@ -7,6 +7,8 @@
 
 
 #include <glib/gi18n.h>
+
+#include "gtk3-to-4.h"
 #include "chatty-purple-notify.h"
 #include "chatty-application.h"
 #include "chatty-utils.h"
@@ -55,8 +57,6 @@ chatty_notify_message (PurpleNotifyMsgType  type,
 
   gtk_window_set_transient_for (GTK_WINDOW (dialog), window);
 
-  gtk_widget_show_all (dialog);
-
   return dialog;
 }
 
@@ -66,7 +66,7 @@ static void
 chatty_close_notify (PurpleNotifyType  type,
                      void             *ui_handle)
 {
-  gtk_widget_destroy (GTK_WIDGET(ui_handle));
+  gtk_window_destroy (GTK_WINDOW (ui_handle));
 }
 
 

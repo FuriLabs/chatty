@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="ChattyMessageRow" parent="GtkListBoxRow">
-    <property name="visible">True</property>
-    <property name="can-focus">False</property>
-    <property name="selectable">False</property>
-    <property name="activatable">False</property>
+    <property name="selectable">0</property>
+    <property name="activatable">0</property>
 
-    <child>
+    <property name="child">
       <object class="GtkGrid" id="content_grid">
-        <property name="visible">True</property>
         <property name="column-spacing">12</property>
         <property name="row-spacing">3</property>
 
@@ -17,132 +14,126 @@
           <object class="ChattyAvatar" id="avatar_image">
             <property name="visible">True</property>
             <property name="valign">start</property>
-            <property name="no-show-all">True</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="row">0</property>
+              <property name="row-span">2</property>
+            </layout>
           </object>
-          <packing>
-            <property name="left-attach">0</property>
-            <property name="top-attach">0</property>
-            <property name="height">2</property>
-          </packing>
         </child>
 
         <!-- Avatar placeholder -->
         <!-- HACK to keep the width of avatar when hidden -->
         <child>
           <object class="GtkBox" id="hidden_box">
-            <property name="visible">False</property>
-            <property name="no-show-all">True</property>
+            <property name="visible">0</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="row">1</property>
+            </layout>
           </object>
-          <packing>
-            <property name="left-attach">0</property>
-            <property name="top-attach">1</property>
-            <property name="height">1</property>
-          </packing>
         </child>
 
         <!-- Author label -->
         <child>
           <object class="GtkLabel" id="author_label">
-            <property name="visible">False</property>
+            <property name="visible">0</property>
             <property name="valign">start</property>
-            <property name="no-show-all">True</property>
+            <property name="margin-start">3</property>
+            <property name="margin-end">3</property>
             <property name="margin-top">3</property>
             <property name="ellipsize">end</property>
             <style>
               <class name="dim-label"/>
+              <class name="message_author"/>
             </style>
+            <layout>
+              <property name="column">1</property>
+              <property name="row">0</property>
+            </layout>
           </object>
-          <packing>
-            <property name="left-attach">1</property>
-            <property name="top-attach">0</property>
-          </packing>
         </child>
 
         <!-- Message text -->
         <child>
-          <object class="GtkEventBox" id="message_event_box">
-            <property name="visible">True</property>
+          <object class="GtkBox" id="message_content">
+            <property name="orientation">vertical</property>
+            <property name="margin-start">3</property>
+            <property name="margin-end">3</property>
+            <property name="margin-top">3</property>
+            <style>
+             <class name="message_bubble"/>
+            </style>
             <child>
-              <object class="GtkBox" id="message_content">
-                <property name="visible">True</property>
+              <object class="GtkBox" id="files_box">
+                <property name="visible">0</property>
+                <property name="margin-top">5</property>
+                <property name="spacing">6</property>
                 <property name="orientation">vertical</property>
-                <property name="margin-start">3</property>
-                <property name="margin-end">3</property>
-                <property name="margin-top">3</property>
-                <property name="margin-bottom">3</property>
-                <style>
-                  <class name="message_bubble"/>
-                </style>
-
-                <child>
-                  <object class="GtkBox" id="files_box">
-                    <property name="margin-top">5</property>
-                    <property name="spacing">6</property>
-                    <property name="orientation">vertical</property>
-                  </object>
-                </child>
-
-                <child>
-                  <object class="GtkSeparator" id="content_separator">
-                    <property name="margin-top">3</property>
-                    <property name="margin-bottom">3</property>
-                    <property name="orientation">vertical</property>
-                  </object>
-                </child>
-
-                <child>
-                  <object class="GtkLabel" id="message_title">
-                    <property name="wrap">True</property>
-                    <property name="wrap-mode">word-char</property>
-                    <property name="xalign" bind-source="footer_label" bind-property="xalign" bind-flags="sync-create"/>
-                    <style>
-                       <class name="heading"/>
-                    </style>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="message_body">
-                    <property name="wrap">True</property>
-                    <property name="wrap-mode">word-char</property>
-                    <property name="xalign" bind-source="footer_label" bind-property="xalign" bind-flags="sync-create"/>
-                  </object>
-                </child>
-
               </object>
             </child>
-          </object> <!-- ./GtkEventBox message_event_box -->
-          <packing>
-            <property name="left-attach">1</property>
-            <property name="top-attach">1</property>
-          </packing>
+            <child>
+              <object class="GtkSeparator" id="content_separator">
+                <property name="visible">0</property>
+                <property name="margin-top">3</property>
+                <property name="margin-bottom">3</property>
+                <property name="orientation">vertical</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="message_title">
+                <property name="visible">0</property>
+                <property name="wrap">1</property>
+                <property name="wrap-mode">word-char</property>
+                <property name="xalign" bind-source="footer_label" bind-property="xalign" bind-flags="sync-create"/>
+                <style>
+                 <class name="heading"/>
+                </style>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="message_body">
+                <property name="visible">0</property>
+                <property name="wrap">1</property>
+                <property name="wrap-mode">word-char</property>
+                <!-- Selectable interferes with scrolling, also no context menu is triggered on touch, and thus useless -->
+                <!-- <property name="selectable">1</property> -->
+                <property name="xalign" bind-source="footer_label" bind-property="xalign" bind-flags="sync-create"/>
+              </object>
+            </child>
+            <layout>
+              <property name="column">1</property>
+              <property name="row">1</property>
+            </layout>
+          </object>
         </child>
 
         <!-- Message footer -->
         <child>
           <object class="GtkLabel" id="footer_label">
-            <property name="visible">False</property>
-            <property name="no-show-all">True</property>
+            <property name="visible">0</property>
+            <property name="margin-start">3</property>
+            <property name="margin-end">3</property>
+            <property name="margin-top">3</property>
+            <property name="margin-bottom">3</property>
             <property name="ellipsize">end</property>
-            <property name="single-line-mode">True</property>
+            <property name="single-line-mode">1</property>
             <style>
               <class name="dim-label"/>
+              <class name="message_footer"/>
             </style>
-            <attributes>
-              <attribute name="scale" value="0.8333"/>
-            </attributes>
+            <layout>
+              <property name="column">1</property>
+              <property name="row">2</property>
+            </layout>
           </object>
-          <packing>
-            <property name="left-attach">1</property>
-            <property name="top-attach">2</property>
-          </packing>
         </child>
 
       </object>
-    </child>
+    </property>
   </template>
 
   <object class="GtkSizeGroup" id="avatar_size_group">
-    <property name="mode">horizontal</property>
     <widgets>
       <widget name="avatar_image"/>
       <widget name="hidden_box"/>
