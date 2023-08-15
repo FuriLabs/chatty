@@ -1,11 +1,11 @@
 #pragma once
 
-#include <gtk/gtk.h>
+#include <adwaita.h>
 
 G_BEGIN_DECLS
 
 #define CHATTY_TYPE_PROGRESS_BUTTON (chatty_progress_button_get_type ())
-G_DECLARE_FINAL_TYPE (ChattyProgressButton, chatty_progress_button, CHATTY, PROGRESS_BUTTON, GtkBin)
+G_DECLARE_FINAL_TYPE (ChattyProgressButton, chatty_progress_button, CHATTY, PROGRESS_BUTTON, AdwBin)
 
 void       chatty_progress_button_pulse        (ChattyProgressButton *self);
 void       chatty_progress_button_set_fraction (ChattyProgressButton *self,

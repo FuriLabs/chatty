@@ -21,16 +21,7 @@ if purple_dep.found()
 endif
 
 libsrc += [
-  'contrib/gtktypebuiltins.c',
-  'contrib/gtkflattenlistmodel.c',
-  'contrib/gtkrbtree.c',
-  'contrib/gtkfilter.c',
-  'contrib/gtkcustomfilter.c',
-  'contrib/gtkfilterlistmodel.c',
-  'contrib/gtksorter.c',
-  'contrib/gtkcustomsorter.c',
-  'contrib/gtksortlistmodel.c',
-  'contrib/gtkslicelistmodel.c',
+  'contrib/demotaggedentry.c',
   'dialogs/chatty-ma-account-details.c',
   'dialogs/chatty-pp-account-details.c',
   'dialogs/chatty-chat-info.c',
@@ -42,10 +33,12 @@ libsrc += [
   'chatty-selectable-row.c',
   'chatty-fp-row.c',
   'chatty-file.c',
+  'gtk3-to-4.c',
   'chatty-attachment.c',
-  'chatty-attachments-view.c',
+  'chatty-attachments-bar.c',
+  'chatty-message-bar.c',
   'chatty-list-row.c',
-  'chatty-chat-view.c',
+  'chatty-chat-page.c',
   'chatty-message-row.c',
   'chatty-progress-button.c',
   'chatty-file-item.c',
@@ -62,10 +55,11 @@ libsrc += [
   'chatty-notification.c',
   'chatty-utils.c',
   'chatty-phone-utils.cpp',
+  'chatty-pgp.c',
 ]
 
 ui_files = files (
-  'ui/chatty-chat-view.ui',
+  'ui/chatty-chat-page.ui',
   'ui/chatty-contact-row.ui',
   # FIXME: Testing this fails in CI,
   # but works fine locally
@@ -95,8 +89,8 @@ chatty_sources += [
   'chatty-contact-list.c',
   'chatty-main-view.c',
   'chatty-side-bar.c',
-  'chatty-invite-view.c',
-  'chatty-verification-view.c',
+  'chatty-invite-page.c',
+  'chatty-verification-page.c',
   'chatty-window.c',
   'dialogs/chatty-info-dialog.c',
   'dialogs/chatty-settings-dialog.c',
@@ -109,15 +103,14 @@ libphonenumber_dep = cc.find_library('phonenumber', required: true)
 
 chatty_deps += [
   dependency('gio-2.0', version: '>= 2.66'),
-  dependency('gtk+-3.0', version: '>= 3.22'),
-  libgd_dep,
-  dependency('libhandy-1', version: '>= 1.5.0'),
+  dependency('gtk4', version: '>= 4.6'),
+  dependency('libadwaita-1', version: '>= 1.2.0'),
   dependency('sqlite3', version: '>=3.0.0'),
+  dependency('camel-1.2'),
   dependency('libebook-contacts-1.2'),
   dependency('libebook-1.2'),
   dependency('gsettings-desktop-schemas'),
-  dependency('gspell-1'),
-  dependency('gnome-desktop-3.0', version: '>= 3.0.0'),
+  libgdesktop_dep,
   libebook_dep,
   libfeedback_dep,
   libm_dep,
@@ -147,15 +140,16 @@ libchatty_static = static_library(
   dependencies: chatty_deps,
 )
 
-gtk_builder_tool = find_program('gtk-builder-tool', required: false)
-if gtk_builder_tool.found()
-  preload_env = 'LD_PRELOAD=libhandy-1.so:@0@'.format(libchatty_shared.full_path())
-  foreach file: ui_files
-    test('Validate @0@'.format(file), gtk_builder_tool,
-         env: [preload_env],
-         args: ['validate', file])
-  endforeach
-endif
+# xxx: Requires GTK 4.10, seems to fail with older GTK.  To be enabled in the future
+# gtk_builder_tool = find_program('gtk4-builder-tool', required: false)
+# if gtk_builder_tool.found()
+#   preload_env = 'LD_PRELOAD=libadwaita-1.so:@0@'.format(libchatty_shared.full_path())
+#   foreach file: ui_files
+#     test('Validate @0@'.format(file), gtk_builder_tool,
+#          env: [preload_env],
+#          args: ['validate', file])
+#   endforeach
+# endif
 
 executable('chatty', chatty_sources, resources,
   include_directories: src_inc,

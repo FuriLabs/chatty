@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <gtk/gtk.h>
+#include <adwaita.h>
 
 #include "chatty-chat.h"
 
@@ -18,11 +18,11 @@ G_BEGIN_DECLS
 
 #define CHATTY_TYPE_CHAT_INFO (chatty_chat_info_get_type ())
 
-G_DECLARE_DERIVABLE_TYPE (ChattyChatInfo, chatty_chat_info, CHATTY, CHAT_INFO, HdyPreferencesPage)
+G_DECLARE_DERIVABLE_TYPE (ChattyChatInfo, chatty_chat_info, CHATTY, CHAT_INFO, AdwPreferencesPage)
 
 struct _ChattyChatInfoClass
 {
-  HdyPreferencesPageClass parent_class;
+  AdwPreferencesPageClass parent_class;
 
   void         (*set_item)          (ChattyChatInfo *self,
                                      ChattyChat     *chat);

@@ -6,7 +6,7 @@ src/chatty-application.h
 src/chatty-avatar.c
 src/chatty-avatar.h
 src/chatty-chat-list.c
-src/chatty-chat-view.c
+src/chatty-chat-page.c
 src/chatty-chat.c
 src/chatty-chat.h
 src/chatty-contact-list.c
@@ -17,12 +17,13 @@ src/chatty-history.c
 src/chatty-history.h
 src/chatty-fp-row.c
 src/chatty-fp-row.h
-src/chatty-invite-view.c
+src/chatty-invite-page.c
 src/chatty-list-row.c
 src/chatty-list-row.h
 src/chatty-main-view.c
 src/chatty-manager.c
 src/chatty-manager.h
+src/chatty-message-bar.c
 src/chatty-message-row.c
 src/chatty-message.c
 src/chatty-message.h
@@ -36,7 +37,7 @@ src/purple/chatty-purple-request.h
 src/purple/chatty-purple.c
 src/chatty-settings.c
 src/chatty-settings.h
-src/chatty-verification-view.c
+src/chatty-verification-page.c
 src/chatty-window.c
 src/chatty-window.h
 src/dialogs/chatty-info-dialog.c
@@ -66,13 +67,13 @@ src/matrix/chatty-ma-key-chat.c
 src/mm/chatty-mmsd.c
 src/mm/chatty-mmsd.h
 src/ui/chatty-attachment.ui
-src/ui/chatty-chat-view.ui
+src/ui/chatty-chat-page.ui
 src/ui/chatty-contact-row.ui
 src/ui/chatty-dialog-join-muc.ui
 src/ui/chatty-dialog-new-chat.ui
 src/ui/chatty-file-item.ui
 src/ui/chatty-info-dialog.ui
-src/ui/chatty-invite-view.ui
+src/ui/chatty-invite-page.ui
 src/ui/chatty-ma-chat-info.ui
 src/ui/chatty-main-view.ui
 src/ui/chatty-pp-chat-info.ui
@@ -83,7 +84,7 @@ src/ui/chatty-ma-account-details.ui
 src/ui/chatty-pp-account-details.ui
 src/ui/chatty-settings-dialog.ui
 src/ui/chatty-side-bar.ui
-src/ui/chatty-verification-view.ui
+src/ui/chatty-verification-page.ui
 src/ui/chatty-window.ui
 src/ui/help-overlay.ui
 src/users/chatty-account.c

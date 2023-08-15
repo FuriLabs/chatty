@@ -8,8 +8,6 @@
 
 #pragma once
 
-#include <handy.h>
-
 #include "chatty-chat.h"
 #include "chatty-chat-info.h"
 

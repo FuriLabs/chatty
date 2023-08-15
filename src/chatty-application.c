@@ -31,14 +31,16 @@
 #define CMATRIX_USE_EXPERIMENTAL_API
 #include <cmatrix.h>
 #include <glib/gi18n.h>
-#include <handy.h>
+#include <adwaita.h>
 
+#include "gtk3-to-4.h"
 #include "chatty-window.h"
 #include "chatty-manager.h"
 #include "chatty-purple.h"
 #include "chatty-application.h"
 #include "chatty-settings.h"
 #include "chatty-history.h"
+#include "chatty-utils.h"
 #include "chatty-clock.h"
 #include "chatty-log.h"
 
@@ -54,7 +56,7 @@
 
 struct _ChattyApplication
 {
-  GtkApplication  parent_instance;
+  AdwApplication  parent_instance;
 
   GtkWidget      *main_window;
   ChattySettings *settings;
@@ -67,7 +69,7 @@ struct _ChattyApplication
   gboolean show_window;
 };
 
-G_DEFINE_TYPE (ChattyApplication, chatty_application, GTK_TYPE_APPLICATION)
+G_DEFINE_TYPE (ChattyApplication, chatty_application, ADW_TYPE_APPLICATION)
 
 static gboolean    cmd_verbose_cb   (const char *option_name,
                                      const char *value,
@@ -78,9 +80,11 @@ static GOptionEntry cmd_options[] = {
   { "version", 0, G_OPTION_FLAG_NONE, G_OPTION_ARG_NONE, NULL, N_("Show release version"), NULL },
   { "daemon", 'D', G_OPTION_FLAG_NONE, G_OPTION_ARG_NONE, NULL, N_("Start in daemon mode"), NULL },
   { "nologin", 'n', G_OPTION_FLAG_NONE, G_OPTION_ARG_NONE, NULL, N_("Disable all accounts"), NULL },
+#ifdef PURPLE_ENABLED
   { "debug", 'd', G_OPTION_FLAG_NONE, G_OPTION_ARG_NONE, NULL, N_("Enable libpurple debug messages"), NULL },
+#endif
   { "verbose", 'v', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_CALLBACK, cmd_verbose_cb,
-    N_("Enable verbose libpurple debug messages"), NULL },
+    N_("Enable verbose debug messages (repeat option for more verbosity)"), NULL },
   { NULL }
 };
 
@@ -156,38 +160,34 @@ chatty_application_show_about (GSimpleAction *action,
   if (!self->main_window)
     return;
 
-  /*
-   * “program-name” defaults to g_get_application_name().
-   * Don’t set it explicitly so that there is one less
-   * string to translate.
-   */
-  gtk_show_about_dialog (gtk_application_get_active_window (user_data),
-                         "logo-icon-name", CHATTY_APP_ID,
+  adw_show_about_window (gtk_application_get_active_window (user_data),
+                         "application-name", _("Chats"),
+                         "application-icon", CHATTY_APP_ID,
                          "version", GIT_VERSION,
                          "comments", _("An SMS and XMPP messaging client"),
                          "website", "https://source.puri.sm/Librem5/chatty",
                          "copyright", "© 2018–2023 Purism SPC",
+                         "issue-url", "https://gitlab.gnome.org/example/example/-/issues/new",
                          "license-type", GTK_LICENSE_GPL_3_0,
-                         "authors", authors,
-                         "artists", artists,
+                         "developers", authors,
+                         "designers", artists,
                          "documenters", documenters,
                          "translator-credits", _("translator-credits"),
                          NULL);
 }
 
 static void
-chatty_application_show_help (GSimpleAction *action,
-			      GVariant      *parameter,
-			      gpointer       user_data)
+show_help_cb (GObject      *object,
+              GAsyncResult *result,
+              gpointer      user_data)
 {
-  ChattyApplication *self = CHATTY_APPLICATION (user_data);
-  g_autoptr (GError) error = NULL;
-  const char *url = "help:chatty";
+  ChattyApplication *self = user_data;
+  g_autoptr(GError) error = NULL;
 
-  gtk_show_uri_on_window (GTK_WINDOW (self->main_window),
-			  url,
-			  gtk_get_current_event_time (),
-			  &error);
+  g_assert (CHATTY_IS_APPLICATION (self));
+
+  gtk_show_uri_full_finish (GTK_WINDOW (self->main_window), result, &error);
+
   if (error) {
       GtkWidget *message_dialog;
 
@@ -198,11 +198,24 @@ chatty_application_show_help (GSimpleAction *action,
                                                _("There was an error displaying help:\n%s"),
                                                error->message);
       g_signal_connect (message_dialog, "response",
-                        G_CALLBACK (gtk_widget_destroy),
+                        G_CALLBACK (gtk_window_destroy),
                         NULL);
 
       gtk_widget_show (message_dialog);
   }
+}
+
+static void
+chatty_application_show_help (GSimpleAction *action,
+			      GVariant      *parameter,
+			      gpointer       user_data)
+{
+  ChattyApplication *self = CHATTY_APPLICATION (user_data);
+  const char *url = "help:chatty";
+
+  gtk_show_uri_full (GTK_WINDOW (self->main_window), url,
+		     GDK_CURRENT_TIME, NULL,
+                     show_help_cb, self);
 }
 
 
@@ -263,7 +276,7 @@ main_window_focus_changed_cb (ChattyApplication *self)
   g_assert (CHATTY_IS_APPLICATION (self));
 
   window = (GtkWindow *)self->main_window;
-  has_focus = window && gtk_window_has_toplevel_focus (window);
+  has_focus = window && chatty_utils_window_has_toplevel_focus (window);
 
   if (has_focus)
     chatty_clock_start (chatty_clock_get_default ());
@@ -376,7 +389,6 @@ static void
 chatty_application_startup (GApplication *application)
 {
   ChattyApplication *self = (ChattyApplication *)application;
-  g_autoptr(GtkCssProvider) provider = NULL;
   g_autofree char *db_path = NULL;
   const char *help_accels[] = { "F1", NULL };
 
@@ -387,9 +399,6 @@ chatty_application_startup (GApplication *application)
 
   g_info ("%s %s, git version: %s", PACKAGE_NAME, PACKAGE_VERSION, GIT_VERSION);
 
-  hdy_init ();
-  hdy_style_manager_set_color_scheme (hdy_style_manager_get_default (),
-                                      HDY_COLOR_SCHEME_PREFER_LIGHT);
   cm_init (TRUE);
 
   g_set_application_name (_("Chats"));
@@ -407,13 +416,6 @@ chatty_application_startup (GApplication *application)
   g_signal_connect_object (self, "window-removed",
                            G_CALLBACK (app_window_removed_cb),
                            self, G_CONNECT_AFTER);
-
-  provider = gtk_css_provider_new ();
-  gtk_css_provider_load_from_resource (provider,
-                                       "/sm/puri/Chatty/css/style.css");
-  gtk_style_context_add_provider_for_screen (gdk_screen_get_default(),
-                                             GTK_STYLE_PROVIDER (provider),
-                                             GTK_STYLE_PROVIDER_PRIORITY_USER);
 
   g_action_map_add_action_entries (G_ACTION_MAP (self), app_entries,
                                    G_N_ELEMENTS (app_entries), self);

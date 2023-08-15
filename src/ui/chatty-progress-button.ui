@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="ChattyProgressButton" parent="GtkBin">
-    <property name="visible">True</property>
+  <template class="ChattyProgressButton" parent="AdwBin">
     <property name="halign">center</property>
     <property name="valign">center</property>
 
     <child>
       <object class="GtkStack" id="overlay_stack">
-        <property name="visible">True</property>
         <property name="margin-start">6</property>
         <property name="margin-end">6</property>
         <property name="margin-top">6</property>
@@ -15,9 +13,9 @@
 
         <child>
           <object class="GtkButton" id="action_button">
-            <property name="visible">True</property>
             <property name="width-request">40</property>
             <property name="height-request">40</property>
+            <property name="focus-on-click">0</property>
             <signal name="clicked" handler="chatty_progress_button_clicked_cb" swapped="yes"/>
             <style>
               <class name="circular"/>
@@ -25,7 +23,6 @@
             </style>
             <child>
               <object class="GtkImage" id="main_button_icon">
-                <property name="visible">True</property>
                 <property name="icon-name">folder-download-symbolic</property>
               </object>
             </child>

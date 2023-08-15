@@ -1,7 +1,7 @@
 {
     "app-id": "sm.puri.Chatty",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "master",
+    "runtime-version": "44",
     "sdk": "org.gnome.Sdk",
     "command": "chatty",
     "finish-args": [
@@ -82,23 +82,24 @@
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://github.com/libical/libical.git"
+                    "url": "https://github.com/libical/libical.git",
+                    "tag": "v3.0.16"
                 }
             ]
         },
         {
-            "name": "gnome-desktop",
-            "buildsystem": "meson",
+            "name": "abseil",
+            "buildsystem": "cmake-ninja",
             "config-opts": [
-              "-Ddebug_tools=false",
-              "-Dudev=disabled",
-              "-Dgtk_doc=false",
-              "-Ddesktop_docs=false"
+                "-DCMAKE_CXX_STANDARD=17",
+                "-DCMAKE_POSITION_INDEPENDENT_CODE=ON",
+                "-DABSL_PROPAGATE_CXX_STD=ON"
             ],
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://gitlab.gnome.org/GNOME/gnome-desktop.git"
+                    "url": "https://github.com/abseil/abseil-cpp",
+                    "tag": "20230125.3"
                 }
             ]
         },
@@ -119,21 +120,12 @@
             ]
         },
         {
-            "name": "GTest",
-            "buildsystem": "cmake-ninja",
-            "cleanup": [
-                "*"
-            ],
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "http://archive.ubuntu.com/ubuntu/pool/universe/g/googletest/googletest_1.8.0.orig.tar.gz",
-                    "md5": "16877098823401d1bf2ed7891d7dce36"
-                }
-            ]
-        },
-        {
             "name": "protobuf",
+            "buildsystem": "cmake-ninja",
+            "config-opts": [
+                "-DCMAKE_POSITION_INDEPENDENT_CODE=ON",
+                "-Dprotobuf_BUILD_TESTS=OFF"
+            ],
             "cleanup": [
                 "protoc",
                 "/bin",
@@ -142,30 +134,33 @@
             ],
             "sources": [
                 {
-                    "type": "archive",
-                    "url": "https://github.com/protocolbuffers/protobuf/releases/download/v3.6.1/protobuf-cpp-3.6.1.tar.gz",
-                    "sha256": "b3732e471a9bb7950f090fd0457ebd2536a9ba0891b7f3785919c654fe2a2529"
+                    "type": "git",
+                    "url": "https://github.com/protocolbuffers/protobuf",
+                    "tag": "v21.12"
                 }
             ]
         },
         {
             "name": "libphonenumber",
             "buildsystem": "cmake-ninja",
+            "config-opts": [
+                "-DCMAKE_CXX_STANDARD=17",
+                "-DREGENERATE_METADATA=OFF",
+                "-DUSE_BOOST=OFF",
+                "-DBUILD_TESTING=OFF",
+                "-DFETCHCONTENT_FULLY_DISCONNECTED=ON"
+            ],
             "sources": [
                 {
-                    "type": "archive",
-                    "url": "https://github.com/google/libphonenumber/archive/v8.10.22.tar.gz",
-                    "sha256": "1d43a94502c875cb44f9bd464c5898bca6db9a54e18288892921e985268a3fb4"
+                    "type": "git",
+                    "url": "https://github.com/google/libphonenumber",
+                    "tag": "v8.13.12"
                 },
                 {
                     "type": "shell",
                     "commands": [
                         "sed -i -e 's/\${\${NAME}_BIN}-NOTFOUND/\${NAME}_BIN-NOTFOUND/' cpp/CMakeLists.txt"
                     ]
-                },
-                {
-                    "type" : "patch",
-                    "path" : "0001-Remove-java-dep-and-fix-build-issue.patch"
                 }
             ],
             "subdir": "cpp"
@@ -200,7 +195,8 @@
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://gitlab.gnome.org/GNOME/evolution-data-server.git"
+                    "url": "https://gitlab.gnome.org/GNOME/evolution-data-server.git",
+                    "tag": "3.48.1"
                 }
             ]
         },
@@ -214,7 +210,8 @@
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://source.puri.sm/Librem5/feedbackd.git"
+                    "url": "https://source.puri.sm/Librem5/feedbackd.git",
+                    "tag": "v0.0.0+git20220520"
                 }
             ]
         },
@@ -230,27 +227,6 @@
           ]
         },
         {
-            "name" : "gspell",
-            "config-opts" : [
-                "--disable-gtk-doc",
-                "--disable-gtk-doc-html"
-            ],
-            "cleanup" : [
-                "/bin",
-                "/include",
-                "/lib/pkgconfig",
-                "*.la",
-                "/share"
-            ],
-            "sources" : [
-                {
-                    "type" : "archive",
-                    "url" : "https://download.gnome.org/sources/gspell/1.8/gspell-1.8.1.tar.xz",
-                    "sha256" : "819a1d23c7603000e73f5e738bdd284342e0cd345fb0c7650999c31ec741bbe5"
-                }
-            ]
-        },
-        {
             "name" : "gudev",
             "buildsystem" : "meson",
             "config-opts" : [
@@ -260,7 +236,8 @@
             "sources" : [
                 {
                     "type" : "git",
-                    "url" : "https://gitlab.gnome.org/GNOME/libgudev.git"
+                    "url" : "https://gitlab.gnome.org/GNOME/libgudev.git",
+                    "tag" : "237"
                 }
             ]
         },
@@ -278,7 +255,8 @@
             "sources" : [
                 {
                     "type" : "git",
-                    "url" : "git://anongit.freedesktop.org/ModemManager/ModemManager"
+                    "url" : "https://gitlab.freedesktop.org/mobile-broadband/ModemManager",
+                    "tag" : "1.20.6"
                 }
             ]
         },

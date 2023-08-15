@@ -154,7 +154,7 @@ chatty_account_real_delete (ChattyAccount *self)
   /* Do Nothing */
 }
 
-static HdyValueObject *
+static GtkStringObject *
 chatty_account_real_get_device_fp (ChattyAccount *self)
 {
   return NULL;
@@ -527,7 +527,7 @@ chatty_account_delete (ChattyAccount *self)
   CHATTY_ACCOUNT_GET_CLASS (self)->delete (self);
 }
 
-HdyValueObject *
+GtkStringObject *
 chatty_account_get_device_fp (ChattyAccount *self)
 {
   g_return_val_if_fail (CHATTY_IS_ACCOUNT (self), NULL);

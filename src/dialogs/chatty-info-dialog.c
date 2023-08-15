@@ -18,6 +18,7 @@
 # include "chatty-pp-chat-info.h"
 #endif
 
+#include "gtk3-to-4.h"
 #include "chatty-mm-chat.h"
 #include "chatty-ma-chat.h"
 #include "chatty-utils.h"
@@ -112,15 +113,15 @@ info_dialog_invite_clicked_cb (ChattyInfoDialog *self)
   g_assert (CHATTY_IS_INFO_DIALOG (self));
   g_return_if_fail (self->chat);
 
-  name = gtk_entry_get_text (GTK_ENTRY (self->contact_id_entry));
-  invite_message = gtk_entry_get_text (GTK_ENTRY (self->message_entry));
+  name = gtk_editable_get_text (GTK_EDITABLE (self->contact_id_entry));
+  invite_message = gtk_editable_get_text (GTK_EDITABLE (self->message_entry));
 
   if (name && *name)
     chatty_chat_invite_async (CHATTY_CHAT (self->chat), name, invite_message, NULL,
                               chat_invite_cb, g_object_ref (self));
 
-  gtk_entry_set_text (GTK_ENTRY (self->contact_id_entry), "");
-  gtk_entry_set_text (GTK_ENTRY (self->message_entry), "");
+  gtk_editable_set_text (GTK_EDITABLE (self->contact_id_entry), "");
+  gtk_editable_set_text (GTK_EDITABLE (self->message_entry), "");
   info_dialog_cancel_clicked_cb (self);
 }
 
@@ -136,7 +137,7 @@ info_dialog_contact_id_changed_cb (ChattyInfoDialog *self,
   g_return_if_fail (self->chat);
 
   item_protocol = chatty_item_get_protocols (CHATTY_ITEM (self->chat));
-  username = gtk_entry_get_text (entry);
+  username = gtk_editable_get_text (GTK_EDITABLE (entry));
 
   protocol = chatty_utils_username_is_valid (username, item_protocol);
   gtk_widget_set_sensitive (self->invite_button, protocol == item_protocol);
@@ -197,7 +198,7 @@ chatty_info_dialog_init (ChattyInfoDialog *self)
 
 #ifdef PURPLE_ENABLED
   self->pp_chat_info = chatty_pp_chat_info_new ();
-  gtk_container_add (GTK_CONTAINER (self->chat_type_stack), self->pp_chat_info);
+  gtk_stack_add_child (GTK_STACK (self->chat_type_stack), self->pp_chat_info);
 #endif
 }
 
@@ -219,8 +220,8 @@ chatty_info_dialog_set_chat (ChattyInfoDialog *self,
   g_return_if_fail (CHATTY_IS_INFO_DIALOG (self));
   g_return_if_fail (!chat || CHATTY_IS_CHAT (chat));
 
-  gtk_entry_set_text (GTK_ENTRY (self->contact_id_entry), "");
-  gtk_entry_set_text (GTK_ENTRY (self->message_entry), "");
+  gtk_editable_set_text (GTK_EDITABLE (self->contact_id_entry), "");
+  gtk_editable_set_text (GTK_EDITABLE (self->message_entry), "");
 
   if (!g_set_object (&self->chat, chat))
     return;
@@ -228,7 +229,7 @@ chatty_info_dialog_set_chat (ChattyInfoDialog *self,
 
   gtk_widget_hide (self->cancel_button);
   gtk_widget_hide (self->apply_button);
-  gtk_header_bar_set_show_close_button (GTK_HEADER_BAR (self->header_bar), TRUE);
+  gtk_header_bar_set_show_title_buttons (GTK_HEADER_BAR (self->header_bar), TRUE);
 
   if (CHATTY_IS_MA_CHAT (chat)) {
     chatty_chat_info_set_item (CHATTY_CHAT_INFO (self->ma_chat_info), chat);
@@ -244,7 +245,7 @@ chatty_info_dialog_set_chat (ChattyInfoDialog *self,
     if (!chatty_chat_is_im (chat)) {
       gtk_widget_show (self->cancel_button);
       gtk_widget_show (self->apply_button);
-      gtk_header_bar_set_show_close_button (GTK_HEADER_BAR (self->header_bar), FALSE);
+      gtk_header_bar_set_show_title_buttons (GTK_HEADER_BAR (self->header_bar), FALSE);
     }
     gtk_stack_set_visible_child (GTK_STACK (self->chat_type_stack), self->mm_chat_info);
   } else {

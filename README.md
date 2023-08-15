@@ -1,7 +1,7 @@
 # Chatty
 
-A libpurple messaging client
-
+A simple to use messaging app for 1:1 communication and small groups supporting
+SMS, MMS, XMPP and matrix.
 
 ## Build and install
 

@@ -1,86 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <requires lib="gtk+" version="3.16"/>
-  <template class="ChattyNewChatDialog" parent="HdyWindow">
-    <property name="modal">True</property>
-    <property name="can_focus">False</property>
+  <template class="ChattyNewChatDialog" parent="AdwWindow">
+    <property name="modal">1</property>
     <property name="default_width">360</property>
     <property name="default_height">576</property>
-    <property name="type_hint">dialog</property>
-    <signal name="delete-event" handler="gtk_widget_hide_on_delete"/>
+    <property name="hide-on-close">1</property>
+
     <child>
       <object class="GtkBox">
-        <property name="visible">1</property>
         <property name="orientation">vertical</property>
-
         <child>
-          <object class="HdyHeaderBar" id="header_bar">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="show-close-button">0</property>
+          <object class="AdwHeaderBar" id="header_bar">
+            <property name="show-end-title-buttons">1</property>
 
             <!-- New contact button -->
-            <child>
+            <child type="end">
               <object class="GtkButton" id="edit_contact_button">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="receives_default">False</property>
-                <signal name="clicked" handler="edit_contact_button_clicked_cb" swapped="yes" />
-                <style>
-                  <class name="image-button"/>
-                </style>
-                <child>
-                  <object class="GtkImage">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="icon_name">contact-new-symbolic</property>
-                  </object>
-                </child>
+                <property name="icon-name">contact-new-symbolic</property>
+                <signal name="clicked" handler="edit_contact_button_clicked_cb" swapped="yes"/>
               </object>
-              <packing>
-                <property name="pack_type">end</property>
-              </packing>
             </child>
 
             <!-- Back button -->
-            <child>
+            <child type="start">
               <object class="GtkButton" id="back_button">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="receives_default">False</property>
-                <signal name="clicked" handler="back_button_clicked_cb" swapped="yes" />
-                <style>
-                  <class name="image-button"/>
-                </style>
-                <child>
-                  <object class="GtkImage">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="icon_name">go-previous-symbolic</property>
-                    <property name="icon_size">1</property>
-                  </object>
-                </child>
+                <property name="icon-name">go-previous-symbolic</property>
+                <signal name="clicked" handler="back_button_clicked_cb" swapped="yes"/>
               </object>
-              <packing>
-                <property name="pack_type">start</property>
-              </packing>
             </child>
 
             <!-- Cancel button -->
-            <child>
+            <child type="start">
               <object class="GtkButton" id="cancel_button">
                 <property name="visible">0</property>
                 <property name="use-underline">1</property>
                 <property name="label" translatable="yes">_Cancel</property>
                 <signal name="clicked" handler="cancel_button_clicked_cb" swapped="yes"/>
               </object>
-              <packing>
-                <property name="pack-type">start</property>
-              </packing>
             </child>
 
             <!-- Apply/Start/Add button -->
-            <child>
+            <child type="end">
               <object class="GtkButton" id="apply_button">
                 <property name="visible">0</property>
                 <property name="use-underline">1</property>
@@ -89,21 +49,15 @@
                   <class name="suggested-action"/>
                 </style>
               </object>
-              <packing>
-                <property name="pack-type">end</property>
-              </packing>
             </child>
 
             <!-- Progress Spinner -->
-            <child>
+            <child type="end">
               <object class="GtkSpinner" id="progress_spinner">
                 <property name="margin-end">6</property>
-                <property name="visible" bind-source="apply_button" bind-property="visible" bind-flags="invert-boolean"/>
-                <property name="active" bind-source="add_in_contacts_button" bind-property="sensitive" bind-flags="invert-boolean"/>
+                <property name="visible" bind-source="apply_button" bind-flags="invert-boolean"/>
+                <property name="spinning" bind-source="add_in_contacts_button" bind-property="sensitive" bind-flags="invert-boolean"/>
               </object>
-              <packing>
-                <property name="pack_type">end</property>
-              </packing>
             </child>
 
           </object>
@@ -111,52 +65,42 @@
 
         <child>
           <object class="GtkStack" id="main_stack">
-            <property name="visible">True</property>
             <property name="transition_type">slide-left-right</property>
             <signal name="notify::visible-child" handler="new_chat_dialog_page_changed_cb" swapped="yes" after="yes"/>
 
             <child>
-              <object class="HdyPreferencesPage" id="new_group_chat_view">
-                <property name="visible">True</property>
+              <object class="AdwPreferencesPage" id="new_group_chat_view">
 
                 <!-- Group Title/Name -->
                 <child>
-                  <object class="HdyPreferencesGroup">
-                    <property name="visible">True</property>
+                  <object class="AdwPreferencesGroup">
                     <property name="title" translatable="yes">Group Title</property>
                     <child>
-                      <object class="GtkEntry" id="group_title_entry">
-                        <property name="visible">True</property>
-                      </object>
+                      <object class="GtkEntry" id="group_title_entry"/>
                     </child>
                   </object>
                 </child>
 
                 <!-- Group Members -->
                 <child>
-                  <object class="HdyPreferencesGroup">
-                    <property name="visible">True</property>
+                  <object class="AdwPreferencesGroup">
 
                     <!-- Row to refer self -->
                     <child>
                       <object class="GtkListBox">
-                        <property name="visible">True</property>
                         <property name="selection-mode">none</property>
                         <style>
                           <class name="frame"/>
                         </style>
                         <child>
-                          <object class="ChattyListRow" id="self_contact_row">
-                            <property name="visible">True</property>
-                          </object>
+                          <object class="ChattyListRow" id="self_contact_row"/>
                         </child>
                       </object>
                     </child>
 
                     <child>
                       <object class="ChattyContactList" id="selected_contact_list">
-                        <property name="visible">True</property>
-                        <property name="vexpand">False</property>
+                        <property name="vexpand">0</property>
                         <property name="valign">start</property>
                       </object>
                     </child>
@@ -164,16 +108,14 @@
                     <!-- Add more contacts -->
                     <child>
                       <object class="GtkListBox">
-                        <property name="visible">True</property>
                         <property name="selection-mode">none</property>
                         <signal name="row-activated" handler="add_more_contact_row_activated_cb" swapped="yes"/>
                         <style>
                           <class name="frame"/>
                         </style>
                         <child>
-                          <object class="HdyActionRow" id="add_more_row">
-                            <property name="visible">True</property>
-                            <property name="activatable">True</property>
+                          <object class="AdwActionRow" id="add_more_row">
+                            <property name="activatable">1</property>
                             <property name="title" translatable="yes">Add members from contacts…</property>
                           </object>
                         </child>
@@ -187,39 +129,30 @@
             </child>
 
             <child>
-              <object class="HdyPreferencesPage" id="contact_list_view">
-                <property name="visible">True</property>
+              <object class="AdwPreferencesPage" id="contact_list_view">
                 <style>
                   <class name="no-margin"/>
                 </style>
                 <child>
-                  <object class="HdyPreferencesGroup">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="hexpand">True</property>
+                  <object class="AdwPreferencesGroup">
+                    <property name="hexpand">1</property>
                     <property name="valign">fill</property>
                     <style>
                       <class name="no-margin"/>
                     </style>
                     <child>
-                      <object class="HdySearchBar" id="contacts_search_bar">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                      <object class="GtkSearchBar" id="contacts_search_bar">
                         <property name="halign">fill</property>
                         <property name="valign">start</property>
-                        <property name="hexpand">True</property>
-                        <property name="show-close-button">False</property>
-                        <property name="search-mode-enabled">True</property>
+                        <property name="hexpand">0</property>
+                        <property name="show-close-button">0</property>
+                        <property name="search-mode-enabled">1</property>
                         <child>
-                          <object class="HdyClamp">
-                            <property name="visible">True</property>
-                            <property name="hexpand">True</property>
+                          <object class="AdwClamp">
+                            <property name="hexpand">1</property>
                             <child>
                               <object class="GtkSearchEntry" id="contacts_search_entry">
-                                <property name="visible">True</property>
-                                <property name="hexpand">True</property>
-                                <property name="has_focus">True</property>
-                                <property name="receives_default">False</property>
+                                <property name="hexpand">1</property>
                                 <property name="placeholder-text" translatable="yes">Send To:</property>
                                 <signal name="activate" handler="contact_search_entry_activated_cb" swapped="yes"/>
                                 <signal name="search-changed" handler="contact_search_entry_changed_cb" swapped="yes"/>
@@ -228,14 +161,9 @@
                           </object>
                         </child>
                       </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                      </packing>
                     </child>
                     <child>
                       <object class="ChattyContactList" id="contact_list">
-                        <property name="visible">1</property>
                         <signal name="selection-changed" handler="contact_list_selection_changed_cb" swapped="yes"/>
                       </object>
                     </child>
@@ -245,32 +173,26 @@
             </child>
 
             <child>
-              <object class="HdyPreferencesPage" id="add_contact_view">
-                <property name="visible">True</property>
+              <object class="AdwPreferencesPage" id="add_contact_view">
 
                 <child>
-                  <object class="HdyPreferencesGroup">
-                    <property name="visible">True</property>
+                  <object class="AdwPreferencesGroup">
                     <child>
                       <object class="GtkImage">
-                        <property name="visible">True</property>
                         <property name="valign">center</property>
                         <property name="pixel_size">72</property>
                         <property name="icon_name">avatar-default-symbolic</property>
-                        <property name="icon-size">0</property>
                       </object>
                     </child>
                   </object>
                 </child>
 
                 <child>
-                  <object class="HdyPreferencesGroup">
+                  <object class="AdwPreferencesGroup">
                     <property name="visible" bind-source="accounts_list" bind-property="visible" bind-flags="sync-create"/>
                     <property name="title" translatable="yes">Select chat account</property>
                     <child>
                       <object class="GtkListBox" id="accounts_list">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
                         <property name="selection-mode">none</property>
                         <signal name="row-activated" handler="account_list_row_activated_cb" swapped="yes"/>
                         <style>
@@ -282,58 +204,51 @@
                 </child>
 
                 <child>
-                  <object class="HdyPreferencesGroup">
-                    <property name="visible">True</property>
+                  <object class="AdwPreferencesGroup">
                     <child>
                       <object class="GtkGrid" id="contact_edit_grid">
-                        <property name="visible">True</property>
                         <property name="halign">center</property>
                         <property name="row_spacing">12</property>
                         <property name="column_spacing">6</property>
                         <child>
                           <object class="GtkLabel" id="label_contact_id">
-                            <property name="visible">True</property>
                             <property name="xalign">1</property>
-                            <property name="label" translatable="no">Contact ID</property>
+                            <property name="label" translatable="yes">Contact ID</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">0</property>
+                            </layout>
                           </object>
-                          <packing>
-                            <property name="left_attach">0</property>
-                            <property name="top_attach">0</property>
-                          </packing>
                         </child>
                         <child>
                           <object class="GtkLabel" id="label_alias">
-                            <property name="visible">True</property>
                             <property name="xalign">1</property>
                             <property name="label" translatable="yes">Name (optional)</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">1</property>
+                            </layout>
                           </object>
-                          <packing>
-                            <property name="left_attach">0</property>
-                            <property name="top_attach">1</property>
-                          </packing>
                         </child>
                         <child>
                           <object class="GtkEntry" id="contact_name_entry">
-                            <property name="visible">True</property>
                             <property name="max-width-chars">32</property>
-
-                            <signal name="changed" handler="contact_name_text_changed_cb" after="yes" swapped="yes" />
+                            <signal name="changed" handler="contact_name_text_changed_cb" after="yes" swapped="yes"/>
                             <signal name="activate" handler="new_chat_dialog_apply_button_clicked_cb" swapped="yes"/>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">0</property>
+                            </layout>
                           </object>
-                          <packing>
-                            <property name="left_attach">1</property>
-                            <property name="top_attach">0</property>
-                          </packing>
                         </child>
                         <child>
                           <object class="GtkEntry" id="contact_alias_entry">
-                            <property name="visible">True</property>
                             <signal name="activate" handler="new_chat_dialog_apply_button_clicked_cb" swapped="yes"/>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">1</property>
+                            </layout>
                           </object>
-                          <packing>
-                            <property name="left_attach">1</property>
-                            <property name="top_attach">1</property>
-                          </packing>
                         </child>
                       </object>
                     </child>
@@ -341,15 +256,12 @@
                 </child>
 
                 <child>
-                  <object class="HdyPreferencesGroup">
+                  <object class="AdwPreferencesGroup">
                     <property name="visible" bind-source="add_in_contacts_button" bind-property="visible" bind-flags="sync-create"/>
                     <child>
                       <object class="GtkButton" id="add_in_contacts_button">
-                        <property name="visible">True</property>
-                        <property name="has_default">True</property>
-                        <property name="can_default">True</property>
                         <property name="label" translatable="yes">Add to Contacts</property>
-                        <signal name="clicked" handler="add_in_contacts_button_clicked_cb" swapped="yes" />
+                        <signal name="clicked" handler="add_in_contacts_button_clicked_cb" swapped="yes"/>
                         <style>
                           <class name="suggested-action"/>
                         </style>
@@ -357,12 +269,14 @@
                     </child>
                   </object>
                 </child>
+
               </object>
             </child>
 
           </object>
-        </child> <!-- ./GtkStack main_stack -->
-      </object>
+        </child>
+
+      </object> <!-- ./GtkStack main_stack -->
     </child>
   </template>
 

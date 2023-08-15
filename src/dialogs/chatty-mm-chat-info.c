@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Purism SPC
+ * Copyright (C) 2021-2023 Purism SPC
  *               2021 Chris Talbot
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
@@ -13,8 +13,8 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 #include <glib-object.h>
-#include "contrib/gtk.h"
 
+#include "gtk3-to-4.h"
 #include "chatty-avatar.h"
 #include "chatty-chat.h"
 #include "chatty-contact.h"
@@ -43,8 +43,8 @@ chatty_mm_chat_info_cancel_changes (ChattyMmChatInfo *self,
   g_return_if_fail (CHATTY_IS_MM_CHAT_INFO (self));
   g_return_if_fail (!chat || CHATTY_IS_CHAT (chat));
 
-  gtk_entry_set_text (GTK_ENTRY (self->title_entry),
-                      chatty_item_get_name (CHATTY_ITEM (chat)));
+  gtk_editable_set_text (GTK_EDITABLE (self->title_entry),
+                         chatty_item_get_name (CHATTY_ITEM (chat)));
 }
 
 void
@@ -55,15 +55,15 @@ chatty_mm_chat_info_apply_changes (ChattyMmChatInfo *self,
   g_return_if_fail (CHATTY_IS_MM_CHAT_INFO (self));
   g_return_if_fail (!chat || CHATTY_IS_CHAT (chat));
 
-  name = gtk_entry_get_text (GTK_ENTRY (self->title_entry));
+  name = gtk_editable_get_text (GTK_EDITABLE (self->title_entry));
   if (g_strcmp0 (name, chatty_item_get_name (CHATTY_ITEM (chat))) == 0)
     return;
 
   chatty_item_set_name (CHATTY_ITEM (chat), name);
 
   if (!*name)
-    gtk_entry_set_text (GTK_ENTRY (self->title_entry),
-                        chatty_item_get_name (CHATTY_ITEM (chat)));
+    gtk_editable_set_text (GTK_EDITABLE (self->title_entry),
+                           chatty_item_get_name (CHATTY_ITEM (chat)));
 }
 
 static void
@@ -73,14 +73,21 @@ chatty_mm_chat_info_set_item (ChattyChatInfo *info,
   ChattyMmChatInfo *self = (ChattyMmChatInfo *)info;
   g_autoptr(ChattyContact) self_contact = NULL;
   GListModel *users;
-  GtkWidget *contact_row;
+  GtkWidget *contact_row, *child;
   guint n_items = 0;
+  int index;
 
   g_return_if_fail (CHATTY_IS_MM_CHAT_INFO (self));
   g_return_if_fail (!chat || CHATTY_IS_CHAT (chat));
 
-  gtk_container_foreach (GTK_CONTAINER (self->contacts_list_box),
-                         (GtkCallback)gtk_widget_destroy, NULL);
+  index = 0;
+  do {
+    child = (GtkWidget *)gtk_list_box_get_row_at_index (GTK_LIST_BOX (self->contacts_list_box), index);
+
+    if (child)
+      gtk_list_box_remove (GTK_LIST_BOX (self->contacts_list_box), child);
+    index++;
+  } while (child);
 
   if (!chat)
     return;
@@ -89,11 +96,11 @@ chatty_mm_chat_info_set_item (ChattyChatInfo *info,
 
   if (chatty_chat_is_im (chat)) {
     gtk_widget_hide (GTK_WIDGET (self->title_group));
-    gtk_entry_set_text (GTK_ENTRY (self->title_entry), "");
+    gtk_editable_set_text (GTK_EDITABLE (self->title_entry), "");
   } else {
     gtk_widget_show (GTK_WIDGET (self->title_group));
-    gtk_entry_set_text (GTK_ENTRY (self->title_entry),
-                        chatty_item_get_name (CHATTY_ITEM (chat)));
+    gtk_editable_set_text (GTK_EDITABLE (self->title_entry),
+                           chatty_item_get_name (CHATTY_ITEM (chat)));
   }
 
   users = chatty_chat_get_users (chat);
@@ -169,11 +176,11 @@ chatty_mm_chat_info_init (ChattyMmChatInfo *self)
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
-  clamp = gtk_widget_get_ancestor (self->avatar, HDY_TYPE_CLAMP);
+  clamp = gtk_widget_get_ancestor (self->avatar, ADW_TYPE_CLAMP);
 
   if (clamp) {
-    hdy_clamp_set_maximum_size (HDY_CLAMP (clamp), 360);
-    hdy_clamp_set_tightening_threshold (HDY_CLAMP (clamp), 320);
+    adw_clamp_set_maximum_size (ADW_CLAMP (clamp), 360);
+    adw_clamp_set_tightening_threshold (ADW_CLAMP (clamp), 320);
   }
 }
 

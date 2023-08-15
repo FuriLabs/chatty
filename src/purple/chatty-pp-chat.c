@@ -16,7 +16,6 @@
 # include "config.h"
 #endif
 
-#include "contrib/gtk.h"
 #include "chatty-history.h"
 #include "chatty-settings.h"
 #include "chatty-utils.h"
@@ -211,7 +210,7 @@ list_fingerprints_cb (int         error,
   key_list = g_hash_table_get_keys (fp_table);
 
   for (GList *item = key_list; item; item = item->next) {
-    g_autoptr(HdyValueObject) object = NULL;
+    g_autoptr(GtkStringObject) object = NULL;
     const char *fp;
     char *id;
 
@@ -222,7 +221,7 @@ list_fingerprints_cb (int         error,
     if (!fp)
       continue;
 
-    object = hdy_value_object_new_string (fp);
+    object = gtk_string_object_new (fp);
     id = g_strdup_printf ("%u", *((guint32 *) item->data));
     g_object_set_data_full (G_OBJECT (object), "device-id", id, g_free);
     g_list_store_append (self->fp_list, object);
@@ -1029,14 +1028,15 @@ chatty_pp_chat_class_init (ChattyPpChatClass *klass)
 static void
 chatty_pp_chat_init (ChattyPpChat *self)
 {
-  g_autoptr(GtkSorter) sorter = NULL;
+  GtkCustomSorter *sorter;
 
   sorter = gtk_custom_sorter_new ((GCompareDataFunc)sort_chat_buddy, NULL, NULL);
   self->chat_users = g_list_store_new (CHATTY_TYPE_PP_BUDDY);
-  self->sorted_chat_users = gtk_sort_list_model_new (G_LIST_MODEL (self->chat_users), sorter);
+  self->sorted_chat_users = gtk_sort_list_model_new (g_object_ref (G_LIST_MODEL (self->chat_users)),
+                                                     GTK_SORTER (sorter));
 
   self->message_store = g_list_store_new (CHATTY_TYPE_MESSAGE);
-  self->fp_list = g_list_store_new (HDY_TYPE_VALUE_OBJECT);
+  self->fp_list = g_list_store_new (GTK_TYPE_STRING_OBJECT);
   self->encrypt = CHATTY_ENCRYPTION_UNSUPPORTED;
 }
 

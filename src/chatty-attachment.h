@@ -18,7 +18,9 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (ChattyAttachment, chatty_attachment, CHATTY, ATTACHMENT, GtkBox)
 
-GtkWidget   *chatty_attachment_new        (const char        *file_name);
-const char  *chatty_attachment_get_file   (ChattyAttachment  *self);
+GtkWidget   *chatty_attachment_new        (GFile             *file);
+void         chatty_attachment_set_file   (ChattyAttachment  *self,
+                                           GFile             *file);
+GFile       *chatty_attachment_get_file   (ChattyAttachment  *self);
 
 G_END_DECLS

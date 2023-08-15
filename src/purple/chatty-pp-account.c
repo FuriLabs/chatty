@@ -14,7 +14,7 @@
 # include "config.h"
 #endif
 
-#include <handy.h>
+#include <gtk/gtk.h>
 #include <purple.h>
 
 #include "chatty-settings.h"
@@ -43,7 +43,7 @@ struct _ChattyPpAccount
   gchar          *username;
   gchar          *server_url;
   GListStore     *buddy_list;
-  HdyValueObject *device_fp;
+  GtkStringObject *device_fp;
   GListStore     *fp_list;
 
   PurpleAccount  *pp_account;
@@ -358,7 +358,7 @@ chatty_pp_account_delete (ChattyAccount *account)
   purple_accounts_delete (self->pp_account);
 }
 
-static HdyValueObject *
+static GtkStringObject *
 chatty_pp_account_get_device_fp (ChattyAccount *account)
 {
   ChattyPpAccount *self = (ChattyPpAccount *)account;
@@ -417,12 +417,12 @@ get_fp_list_cb (int         error,
       id = g_strdup_printf ("%u", *((guint32 *) item->data));
       /* The first fingerprint is current device fingerprint */
       if (!self->device_fp) {
-        self->device_fp = hdy_value_object_new_string (fp);
+        self->device_fp = gtk_string_object_new (fp);
         g_object_set_data_full (G_OBJECT (self->device_fp), "device-id", id, g_free);
       } else {
-        g_autoptr(HdyValueObject) object = NULL;
+        g_autoptr(GtkStringObject) object = NULL;
 
-        object = hdy_value_object_new_string (fp);
+        object = gtk_string_object_new (fp);
         g_object_set_data_full (G_OBJECT (object), "device-id", id, g_free);
         g_list_store_append (self->fp_list, object);
       }
@@ -804,7 +804,7 @@ static void
 chatty_pp_account_init (ChattyPpAccount *self)
 {
   self->buddy_list = g_list_store_new (CHATTY_TYPE_PP_BUDDY);
-  self->fp_list = g_list_store_new (HDY_TYPE_VALUE_OBJECT);
+  self->fp_list = g_list_store_new (GTK_TYPE_STRING_OBJECT);
 }
 
 /**

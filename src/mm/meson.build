@@ -5,6 +5,7 @@ libsrc += files([
   'chatty-mm-buddy.c',
   'chatty-mm-buddy.c',
   'chatty-mm-chat.c',
+  'chatty-mm-notify.c',
   'chatty-mmsd.c',
   'chatty-sms-uri.c',
 ])

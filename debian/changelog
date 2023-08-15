@@ -1,3 +1,101 @@
+chatty (0.8.0~rc0) byzantium; urgency=medium
+
+  [ Mohammed Sadiq ]
+  * file: Handle missing file errors
+  * meson: Switch to GTK4
+  * d/control: Update Debian build dependencies
+  * ci: Update dependencies
+  * Add gtk3-to-4
+  * Port to GTK4
+  * Remove libgd
+  * contrib: Remove local listmodels
+  * contrib: Add DemoTaggedEntry
+  * side-bar: Use DemoTaggedEntry for search
+  * build: Update flatpak json
+  * application: Don't initialize libadwaita
+  * gresource: Include icons properly
+  * style: Fix new chat dialog contact list spacing
+  * chat-view: Use a different logic to handle scroll on new message
+  * window: Add and use action-name to go to previous view
+  * window: Move main-view specific code to main-view
+  * side-bar: Remove no longer used method
+  * attachements-view: Rename to attachements-bar
+  * attachments-bar: Use GTK4 API to set CSS classes
+  * attachments-bar: Remove unused header
+  * attachment: Use GFile when passing file arguments
+  * utils: Create thumbnail from image GFile
+  * attachment: Make set_file() API public
+  * attachments-bar: Use GtkGridView to list files
+  * chat-page: Rename from chat-view
+  * invite-page: Rename from invite-view
+  * verification-page: Rename from verification-view
+  * main-view: Rename variable empty_view to empty_page
+  * build: Relax appstream validation
+  * mm-account: Don't add duplicate members to the chat list
+  * mm-account: Fix a memory leak
+  * tests: Fix memory leaks
+  * pp-chat: Fix an invalid free
+  * avatar: Properly connect and disconnect signal handlers
+  * mm-account: Fix a memory leak
+  * mmsd: Fix some memory leaks
+  * window: Don't update chat selection before mapping window
+  * chat-page: Rename an action name
+  * attachments-bar: Update grid margins
+  * attachments-bar: Add an API to get the list-model of files
+  * Add message-bar
+  * chat-page: Use ChattyMessageBar as message input box
+  * chat-page: Re-work scrolling logic
+  * chat-page: Fix scroll to buttom when kinetic scroll is active
+  * Update cmatrix
+
+  [ Guido Günther ]
+  * README: Update blurp
+  * d/control: Update blurp
+  * metainfo: Don't wrap <ul> in a paragraph
+  * application: Only add libpurple debug option when building with libpurple support
+  * application: Fix description of `-v`
+
+  [ Chris Talbot ]
+  * Add chatty-pgp
+  * mmsd: don't append comma to end of user list
+  * mmsd: Add support for messages that fail to send
+  * mmsd: adjust MMS times that are in the future
+  * chatty-list-row: Add ability to copy number on long press
+  * Add chatty-mm-notify
+  * mmsd: Add notification if there errors sending/receiving MMSes
+
+  [ Vittorio Monti ]
+  * Update Italian translation
+  * Update Italian translation
+  * Update Italian translation
+
+  [ Pablo Correa Gómez ]
+  * po: update Spanish translation
+  * Update Spanish translation
+
+  [ Anders Jonsson ]
+  * po: Update Swedish translation
+  * po: Update Swedish translation
+
+  [ Yuri Chornoivan ]
+  * po: Update Ukrainian translation
+  * po: Update Ukrainian translation
+  * po: Update Ukrainian translation
+  * po: Update Ukrainian translation
+
+  [ Julian ]
+  * build: Update Flatpak manifest
+  * Update AppStream data and screenshot
+
+  [ AsciiWolf ]
+  * Change AppStream component type to desktop-application
+  * po: Update Czech translation
+
+  [ Daniel Șerbănescu ]
+  * po: Update Romanian translation
+
+ -- Mohammed Sadiq <sadiq@sadiqpk.org>  Mon, 31 Jul 2023 16:39:34 +0530
+
 chatty (0.7.3) byzantium; urgency=medium
 
   [ Mohammed Sadiq ]

@@ -157,7 +157,7 @@ create_sorted_numbers (const char *numbers,
   g_assert (numbers && *numbers);
 
   strv = g_strsplit (numbers, ",", -1);
-  sorted = g_ptr_array_new ();
+  sorted = g_ptr_array_new_full (1, g_free);
   country_code = chatty_settings_get_country_iso_code (chatty_settings_get_default ());
 
   for (guint i = 0; strv[i]; i++) {
@@ -167,8 +167,6 @@ create_sorted_numbers (const char *numbers,
     if (!number)
       number = g_strdup (strv[i]);
 
-    if (members)
-      g_ptr_array_add (members, chatty_mm_buddy_new (number, number));
     g_ptr_array_add (sorted, g_strdup (number));
   }
 
@@ -182,6 +180,16 @@ create_sorted_numbers (const char *numbers,
       g_ptr_array_remove_index (sorted, i);
     else
       i++;
+  }
+
+  /* Create members after duplicate numbers are removed */
+  if (members) {
+    for (guint i = 0; i < sorted->len; i++) {
+      const char *number = sorted->pdata[i];
+
+      if (number)
+        g_ptr_array_add (members, chatty_mm_buddy_new (number, number));
+    }
   }
 
   return g_strjoinv (",", (char **)sorted->pdata);
@@ -1186,7 +1194,7 @@ mm_get_chats_cb (GObject      *object,
 {
   ChattyMmAccount *self;
   GTask *task = user_data;
-  GPtrArray *chats = NULL;
+  g_autoptr(GPtrArray) chats = NULL;
   GCancellable *cancellable;
   g_autoptr(GError) error = NULL;
 

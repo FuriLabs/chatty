@@ -11,7 +11,6 @@
 
 #include <time.h>
 #include <glib/gi18n.h>
-#include <libgd/gd.h>
 
 #include "chatty-application.h"
 #include "chatty-manager.h"
@@ -25,7 +24,6 @@ main (int   argc,
 
   g_set_prgname (CHATTY_APP_ID);
   chatty_log_init ();
-  gd_ensure_types ();
 
   textdomain (GETTEXT_PACKAGE);
   bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);

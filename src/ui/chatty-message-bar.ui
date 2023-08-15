@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="ChattyMessageBar" parent="GtkBox">
+    <property name="orientation">vertical</property>
+
+    <child>
+      <object class="GtkRevealer" id="attachment_revealer">
+        <property name="hexpand">1</property>
+        <signal name="notify::reveal-child" handler="message_bar_attachment_revealer_notify_cb" swapped="yes"/>
+        <property name="child">
+          <object class="ChattyAttachmentsBar" id="attachment_bar"/>
+        </property>
+      </object>
+    </child>
+
+    <child>
+      <object class="GtkBox">
+        <property name="margin-top">6</property>
+
+        <!-- Send file button -->
+        <child>
+          <object class="GtkButton" id="send_file_button">
+            <property name="visible">0</property>
+            <property name="valign">end</property>
+            <property name="focus-on-click">0</property>
+            <property name="margin-end">6</property>
+            <property name="icon-name">mail-attachment-symbolic</property>
+            <signal name="clicked" handler="message_bar_send_file_button_clicked_cb" swapped="yes"/>
+          </object>
+        </child>
+
+        <child>
+          <object class="GtkScrolledWindow" id="scrolled_window">
+            <property name="valign">center</property>
+            <property name="max-content-height">96</property>
+            <property name="propagate-natural-height">1</property>
+            <property name="vscrollbar-policy">never</property>
+            <style>
+              <class name="view"/>
+              <class name="frame"/>
+            </style>
+            <property name="child">
+              <object class="GtkTextView" id="message_input">
+                <property name="hexpand">1</property>
+                <property name="valign">fill</property>
+                <property name="sensitive">0</property>
+                <property name="wrap-mode">word-char</property>
+                <property name="buffer">message_buffer</property>
+                <property name="left-margin">6</property>
+                <property name="right-margin">6</property>
+                <property name="top-margin">6</property>
+                <property name="bottom-margin">6</property>
+                <property name="input-hints">word-completion</property>
+                <child>
+                  <object class="GtkShortcutController">
+                    <property name="scope">local</property>
+                    <property name="propagation-phase">capture</property>
+                    <child>
+                      <object class="GtkShortcut">
+                        <property name="trigger">Return</property>
+                        <property name="action">action(chat-page.activate)</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </property>
+          </object>
+        </child>
+
+        <!-- Send message button -->
+        <child>
+          <object class="GtkButton" id="send_message_button">
+            <property name="visible">0</property>
+            <property name="valign">end</property>
+            <property name="visible">0</property>
+            <property name="focus-on-click">0</property>
+            <property name="margin-start">6</property>
+            <property name="icon-name">send-symbolic</property>
+            <signal name="clicked" handler="message_bar_send_message_button_clicked_cb" swapped="yes"/>
+          </object>
+        </child>
+
+      </object>  <!-- ./GtkBox -->
+    </child>
+
+  </template>
+
+  <object class="GtkTextBuffer" id="message_buffer">
+    <signal name="changed" handler="message_bar_input_changed_cb" after="yes" swapped="yes"/>
+  </object>
+
+</interface>

@@ -8,7 +8,7 @@
 #pragma once
 
 
-#include <gtk/gtk.h>
+#include <adwaita.h>
 
 #include "chatty-chat.h"
 
@@ -16,7 +16,7 @@ G_BEGIN_DECLS
 
 #define CHATTY_TYPE_WINDOW (chatty_window_get_type())
 
-G_DECLARE_FINAL_TYPE (ChattyWindow, chatty_window, CHATTY, WINDOW, HdyApplicationWindow)
+G_DECLARE_FINAL_TYPE (ChattyWindow, chatty_window, CHATTY, WINDOW, AdwApplicationWindow)
 
 GtkWidget  *chatty_window_new             (GtkApplication *application);
 void        chatty_window_set_uri         (ChattyWindow   *self,

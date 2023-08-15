@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <handy.h>
+#include <adwaita.h>
 
 #include "chatty-item.h"
 

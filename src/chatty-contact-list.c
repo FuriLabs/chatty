@@ -12,7 +12,7 @@
 #include "config.h"
 
 #include <glib/gi18n.h>
-#include "contrib/gtk.h"
+#include <adwaita.h>
 
 #include "chatty-chat.h"
 #include "chatty-purple.h"
@@ -39,7 +39,7 @@ struct _ChattyContactList
   ChattyItem         *dummy_contact;
   GListStore         *selection_store;
   GtkSliceListModel  *slice_model;
-  GtkFilter          *filter;
+  GtkCustomFilter    *filter;
   char               *search_str;
 
   ChattyManager      *manager;
@@ -261,7 +261,7 @@ contact_list_row_activated_cb (ChattyContactList *self,
 static void
 contact_list_changed_cb (ChattyContactList *self)
 {
-  HdyStatusPage *page;
+  AdwStatusPage *page;
   gboolean empty;
 
   g_assert (CHATTY_IS_CONTACT_LIST (self));
@@ -276,16 +276,16 @@ contact_list_changed_cb (ChattyContactList *self)
   else
     gtk_stack_set_visible_child (GTK_STACK (self->main_stack), self->contact_list_view);
 
-  page = HDY_STATUS_PAGE (self->empty_view);
+  page = ADW_STATUS_PAGE (self->empty_view);
   if (self->search_str && *self->search_str) {
-    hdy_status_page_set_icon_name (page, "system-search-symbolic");
-    hdy_status_page_set_title (page, _("No Search Results"));
-    hdy_status_page_set_description (page, _("Try different search, or type a valid "
+    adw_status_page_set_icon_name (page, "system-search-symbolic");
+    adw_status_page_set_title (page, _("No Search Results"));
+    adw_status_page_set_description (page, _("Try different search, or type a valid "
                                              "number to create new chat"));
   } else {
-    hdy_status_page_set_icon_name (page, "sm.puri.Chatty-symbolic");
-    hdy_status_page_set_title (page, _("No Contacts"));
-    hdy_status_page_set_description (page, NULL);
+    adw_status_page_set_icon_name (page, "sm.puri.Chatty-symbolic");
+    adw_status_page_set_title (page, _("No Contacts"));
+    adw_status_page_set_description (page, NULL);
   }
 }
 
@@ -299,7 +299,7 @@ contact_list_active_protocols_changed_cb (ChattyContactList *self)
   g_assert (CHATTY_IS_CONTACT_LIST (self));
 
   self->active_protocols = chatty_manager_get_active_protocols (self->manager);
-  gtk_filter_changed (self->filter, GTK_FILTER_CHANGE_DIFFERENT);
+  gtk_filter_changed (GTK_FILTER (self->filter), GTK_FILTER_CHANGE_DIFFERENT);
 
   protocol = CHATTY_PROTOCOL_MMS_SMS;
   valid = protocol == chatty_utils_username_is_valid (self->search_str, protocol);
@@ -379,9 +379,9 @@ chatty_contact_list_class_init (ChattyContactListClass *klass)
 static void
 chatty_contact_list_init (ChattyContactList *self)
 {
-  g_autoptr(GtkFilterListModel) filter_model = NULL;
-  g_autoptr(GtkSortListModel) sort_model = NULL;
-  g_autoptr(GtkSorter) sorter = NULL;
+  GtkFilterListModel *filter_model;
+  GtkSortListModel *sort_model;
+  GtkCustomSorter *sorter;
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
@@ -392,10 +392,12 @@ chatty_contact_list_init (ChattyContactList *self)
   chatty_list_row_set_item (CHATTY_LIST_ROW (self->new_contact_row), self->dummy_contact);
 
   sorter = gtk_custom_sorter_new ((GCompareDataFunc)chatty_item_compare, NULL, NULL);
-  sort_model = gtk_sort_list_model_new (chatty_manager_get_contact_list (self->manager), sorter);
+  sort_model = gtk_sort_list_model_new (g_object_ref (chatty_manager_get_contact_list (self->manager)),
+                                        GTK_SORTER (sorter));
 
   self->filter = gtk_custom_filter_new ((GtkCustomFilterFunc)contact_list_filter_item_cb, self, NULL);
-  filter_model = gtk_filter_list_model_new (G_LIST_MODEL (sort_model), self->filter);
+  filter_model = gtk_filter_list_model_new (G_LIST_MODEL (sort_model),
+                                            g_object_ref (GTK_FILTER (self->filter)));
 
   self->slice_model = gtk_slice_list_model_new (G_LIST_MODEL (filter_model), 0, ITEMS_COUNT);
   g_signal_connect_object (self->slice_model, "items-changed",
@@ -452,11 +454,9 @@ chatty_contact_list_show_selected_only (ChattyContactList *self)
 }
 
 static void
-contact_list_update_selectable (GtkWidget *widget,
-                                gpointer   callback_data)
+contact_list_update_selectable (ChattyContactList *self,
+                                GtkWidget         *widget)
 {
-  ChattyContactList *self = callback_data;
-
   g_assert (CHATTY_IS_CONTACT_LIST (self));
 
   chatty_list_row_set_selectable ((ChattyListRow *)widget, self->can_multi_select);
@@ -466,8 +466,10 @@ void
 chatty_contact_list_can_multi_select (ChattyContactList *self,
                                       gboolean           can_multi_select)
 {
+  GtkListBoxRow *child;
   GListModel *model;
   guint n_items;
+  int index;
 
   g_return_if_fail (CHATTY_IS_CONTACT_LIST (self));
   g_return_if_fail (self->selection_store);
@@ -476,8 +478,16 @@ chatty_contact_list_can_multi_select (ChattyContactList *self,
 
   gtk_widget_set_visible (self->selected_contact_list, can_multi_select);
   chatty_list_row_set_selectable (CHATTY_LIST_ROW (self->new_contact_row), can_multi_select);
-  gtk_container_foreach (GTK_CONTAINER (self->contact_list),
-                         (GtkCallback)contact_list_update_selectable, self);
+
+  index = 0;
+  do {
+    child = gtk_list_box_get_row_at_index (GTK_LIST_BOX (self->contact_list), index);
+
+    if (child)
+      contact_list_update_selectable (self, GTK_WIDGET (child));
+
+    index++;
+  } while (child);
 
   model = G_LIST_MODEL (self->selection_store);
   n_items = g_list_model_get_n_items (model);
@@ -505,5 +515,5 @@ chatty_contact_list_set_filter (ChattyContactList *self,
 
   update_new_contact_row (self);
   gtk_slice_list_model_set_size (self->slice_model, ITEMS_COUNT);
-  gtk_filter_changed (self->filter, GTK_FILTER_CHANGE_DIFFERENT);
+  gtk_filter_changed (GTK_FILTER (self->filter), GTK_FILTER_CHANGE_DIFFERENT);
 }
