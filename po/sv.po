@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty master\n"
 "Report-Msgid-Bugs-To: https://source.puri.sm/Librem5/chatty/issues\n"
-"POT-Creation-Date: 2023-06-29 15:24+0000\n"
-"PO-Revision-Date: 2023-07-05 11:24+0200\n"
+"POT-Creation-Date: 2023-07-10 15:24+0000\n"
+"PO-Revision-Date: 2023-07-10 19:31+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -1016,21 +1016,73 @@ msgstr "Ange lösenordet för ”%s”, hemserver: %s"
 msgid "Key Verification"
 msgstr "Nyckelverifiering"
 
+#: src/mm/chatty-mmsd.c:253
+#, c-format
+msgid "Error Delivering Message to %s"
+msgstr "Fel vid leverans av meddelande till %s"
+
+#: src/mm/chatty-mmsd.c:254
+msgid "See logs for more details"
+msgstr "Se loggar för mer detaljer"
+
 #. TRANSLATORS: Timestamp for minute accuracy, e.g. “2020-08-11 15:27”.
 #. See https://developer.gnome.org/glib/stable/glib-GDateTime.html#g-date-time-format
 #.
-#: src/mm/chatty-mmsd.c:910
+#: src/mm/chatty-mmsd.c:924
 msgid "%Y-%m-%d %H∶%M"
 msgstr "%Y-%m-%d %H∶%M"
 
-#: src/mm/chatty-mmsd.c:1215
+#: src/mm/chatty-mmsd.c:1229
 #, c-format
 msgid "You received an MMS, but it expired on: %s"
 msgstr "Du tog emot ett MMS, men det gick ut: %s"
 
-#: src/mm/chatty-mmsd.c:1218
+#: src/mm/chatty-mmsd.c:1232
 msgid "You received an empty MMS."
 msgstr "Du tog emot ett tomt MMS."
+
+#: src/mm/chatty-mmsd.c:1723 src/mm/chatty-mmsd.c:1769
+#, c-format
+msgid "Automatically Retrying for  %i MMS"
+msgid_plural "Automatically Retrying for  %i MMSes..."
+msgstr[0] "Försöker igen automatiskt för %i MMS"
+msgstr[1] "Försöker igen automatiskt för %i MMS…"
+
+#: src/mm/chatty-mmsd.c:1728
+msgid "Temporary Error Sending MMS"
+msgstr "Tillfälligt fel vid skickande av MMS"
+
+#: src/mm/chatty-mmsd.c:1774
+msgid "Temporary Error Receiving MMS"
+msgstr "Tillfälligt fel vid mottagande av MMS"
+
+#: src/mm/chatty-mmsd.c:1990
+msgid "MMSC is not configured"
+msgstr "MMSC är inte konfigurerat"
+
+#: src/mm/chatty-mmsd.c:1993
+msgid "APN is not configured correctly"
+msgstr "APN är inte korrekt konfigurerat"
+
+# TODO: configured
+#: src/mm/chatty-mmsd.c:1996
+msgid "Mobile Data is not confgured"
+msgstr "Mobildata är inte konfigurerat"
+
+#: src/mm/chatty-mmsd.c:1999
+msgid "Mobile Data is off"
+msgstr "Mobildata är av"
+
+#: src/mm/chatty-mmsd.c:2002
+msgid "Unknown Error"
+msgstr "Okänt fel"
+
+#: src/mm/chatty-mmsd.c:2007
+#, c-format
+msgid "Chatty cannot process %i MMS"
+msgid_plural "Chatty cannot process %i MMSes..."
+msgstr[0] "Chatty kan inte bearbeta %i MMS"
+msgstr[1] "Chatty kan inte bearbeta %i MMS…"
 
 #: src/ui/chatty-attachment.ui:20
 msgid "Remove Attachment"
