@@ -14,6 +14,7 @@
 # include "config.h"
 #endif
 
+#include <glib/gi18n.h>
 #include "chatty-settings.h"
 #include "chatty-history.h"
 #include "chatty-mm-chat.h"
@@ -23,6 +24,7 @@
 #include "chatty-mm-account.h"
 #include "chatty-log.h"
 #include "chatty-mmsd.h"
+#include "chatty-mm-notify.h"
 
 /**
  * SECTION: chatty-mm-account
@@ -319,8 +321,13 @@ sms_send_cb (GObject      *object,
   message = g_task_get_task_data (task);
 
   if (!mm_sms_send_finish (sms, result, &error)) {
+    g_autofree char *title = NULL;
+
     chatty_message_set_status (message, CHATTY_STATUS_SENDING_FAILED, 0);
     chatty_history_add_message (self->history_db, chat, message);
+    title = g_strdup_printf (_("Error Sendng SMS to %s"),
+                              chatty_item_get_name (CHATTY_ITEM (chat)));
+    chatty_mm_notify_message (title, "");
     g_debug ("Failed to send sms: %s", error->message);
     g_task_return_error (task, error);
     return;
@@ -361,6 +368,7 @@ sms_create_cb (GObject      *object,
   if (!sms) {
     ChattyMessage *message;
     ChattyChat *chat;
+    g_autofree char *title = NULL;
 
     chat = g_object_get_data (G_OBJECT (task), "chat");
     message = g_task_get_task_data (task);
@@ -368,6 +376,9 @@ sms_create_cb (GObject      *object,
 
     chatty_message_set_status (message, CHATTY_STATUS_SENDING_FAILED, 0);
     chatty_history_add_message (self->history_db, chat, message);
+    title = g_strdup_printf (_("Error Sendng SMS to %s"),
+                              chatty_item_get_name (CHATTY_ITEM (chat)));
+    chatty_mm_notify_message (title, "");
 
     g_debug ("Failed creating sms: %s", error->message);
     g_task_return_error (task, error);
@@ -454,6 +465,13 @@ chatty_mm_account_recieve_mms_cb (ChattyMmAccount *self,
     } else { /* The MMS was deleted before the update, so just delete the MMS */
       chatty_mmsd_delete_mms (self->mmsd, chatty_message_get_uid (message));
       return FALSE;
+    }
+
+    if (msg_status == CHATTY_STATUS_SENDING_FAILED) {
+      g_autofree char *title = NULL;
+      title = g_strdup_printf (_("Error Sendng MMS to %s"),
+                              chatty_item_get_name (CHATTY_ITEM (chat)));
+      chatty_mm_notify_message (title, "");
     }
 
     return TRUE;
