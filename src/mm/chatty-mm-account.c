@@ -428,12 +428,14 @@ chatty_mm_account_recieve_mms_cb (ChattyMmAccount *self,
 
   /*
    * MMS Messages from Chatty will always start our as a Draft, then will
-   * transition to sent, and if deliver reports is on, to delivered.
+   * transition to sent (or sending failed), and if deliver reports is on, to delivered.
    * Thus, if we get a sent message that is sent or delivered, it is already
    * in the chat
    */
   if (message_dir == CHATTY_DIRECTION_OUT &&
-     (msg_status == CHATTY_STATUS_SENT || msg_status == CHATTY_STATUS_DELIVERED)) {
+      (msg_status == CHATTY_STATUS_SENT ||
+       msg_status == CHATTY_STATUS_DELIVERED ||
+       msg_status == CHATTY_STATUS_SENDING_FAILED )) {
     ChattyMessage  *messagecheck;
 
     chat = chatty_mm_account_find_chat (self, recipientlist);
