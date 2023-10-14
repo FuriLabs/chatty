@@ -140,7 +140,7 @@ chatty_pgp_create_mime_part (const char  *contents,
       CamelMimePart *part;
       CamelDataWrapper *file_dw;
       g_autofree char *file_contents = NULL;
-      unsigned long content_length = 0;
+      gsize content_length = 0;
       g_autoptr(GError) error = NULL;
       CamelStream *file_stream = NULL;
 
@@ -617,7 +617,7 @@ chatty_pgp_get_pub_fingerprint (const char *signing_id)
   g_autoptr(GFile) fingerprint_file = NULL;
   g_autofree char *system_args = NULL;
   g_autofree char *file_contents = NULL;
-  unsigned long content_length = 0;
+  gsize content_length = 0;
   const char *gpg_exec = NULL;
   char **fpr_tokens = NULL;
   char *fingerprint = NULL;
@@ -775,7 +775,7 @@ chatty_pgp_get_content (CamelMimePart *mime_part,
       g_autofree char *decoded = NULL;
       g_autofree char *file_to_save_location = NULL;
       const char *filename = NULL;
-      unsigned long len, written = 0;
+      gsize len, written = 0;
       CamelMimePart *part = camel_multipart_get_part ((CamelMultipart *) dw, i);
       CamelDataWrapper *part_dw = camel_medium_get_content ((CamelMedium *) part);
       /* The message is encoded as the first part */
