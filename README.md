@@ -25,7 +25,7 @@ On a Debian based system run
 ```
 
 For an explicit list of dependencies check the Build-Depends entry in the
-[debian/control](https://source.puri.sm/Librem5/chatty/blob/master/debian/control#5)
+[debian/control](https://source.puri.sm/Librem5/chatty/blob/main/debian/control#5)
 file.
 
 Plugins are optional and can often be installed from your distribution sources.
