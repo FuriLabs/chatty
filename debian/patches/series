@@ -1,1 +1,2 @@
 Disable-clock-test.patch
+Fix-issues-on-i386-build-by-using-gsize.patch

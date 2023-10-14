@@ -1,0 +1,61 @@
+From: Evangelos Ribeiro Tzaras <devrtz@fortysixandtwo.eu>
+Date: Sat, 14 Oct 2023 22:20:07 +0200
+Subject: chatty-pgp: Fix issues on i386 build by using gsize
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+Forwarded: https://source.puri.sm/Librem5/chatty/-/merge_requests/1254/
+
+Salsa CI complains otherwise
+https://salsa.debian.org/devrtz/chatty/-/jobs/4808793#L4033
+
+See the following excerpt (same sort of message for line 645):
+
+../src/chatty-pgp.c: In function ‘chatty_pgp_create_mime_part’:
+../src/chatty-pgp.c:152:61: error: passing argument 4 of ‘g_file_load_contents’ from incompatible pointer type [-Werror=incompatible-pointer-types]
+  152 |       g_file_load_contents (file_ref, NULL, &file_contents, &content_length, NULL, &error);
+      |                                                             ^~~~~~~~~~~~~~~
+      |                                                             |
+      |                                                             long unsigned int *
+In file included from /usr/include/glib-2.0/gio/gio.h:81,
+                 from ../src/chatty-pgp.h:13,
+                 from ../src/chatty-pgp.c:23:
+/usr/include/glib-2.0/gio/gfile.h:1275:71: note: expected ‘gsize *’ {aka ‘unsigned int *’} but argument is of type ‘long unsigned int *’
+ 1275 |                                               gsize                  *length,
+      |                                               ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+---
+ src/chatty-pgp.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/chatty-pgp.c b/src/chatty-pgp.c
+index 857db16..644f2da 100644
+--- a/src/chatty-pgp.c
++++ b/src/chatty-pgp.c
+@@ -140,7 +140,7 @@ chatty_pgp_create_mime_part (const char  *contents,
+       CamelMimePart *part;
+       CamelDataWrapper *file_dw;
+       g_autofree char *file_contents = NULL;
+-      unsigned long content_length = 0;
++      gsize content_length = 0;
+       g_autoptr(GError) error = NULL;
+       CamelStream *file_stream = NULL;
+ 
+@@ -617,7 +617,7 @@ chatty_pgp_get_pub_fingerprint (const char *signing_id)
+   g_autoptr(GFile) fingerprint_file = NULL;
+   g_autofree char *system_args = NULL;
+   g_autofree char *file_contents = NULL;
+-  unsigned long content_length = 0;
++  gsize content_length = 0;
+   const char *gpg_exec = NULL;
+   char **fpr_tokens = NULL;
+   char *fingerprint = NULL;
+@@ -775,7 +775,7 @@ chatty_pgp_get_content (CamelMimePart *mime_part,
+       g_autofree char *decoded = NULL;
+       g_autofree char *file_to_save_location = NULL;
+       const char *filename = NULL;
+-      unsigned long len, written = 0;
++      gsize len, written = 0;
+       CamelMimePart *part = camel_multipart_get_part ((CamelMultipart *) dw, i);
+       CamelDataWrapper *part_dw = camel_medium_get_content ((CamelMedium *) part);
+       /* The message is encoded as the first part */
