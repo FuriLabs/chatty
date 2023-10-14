@@ -1,9 +1,12 @@
 # Chatty
 
 A simple to use messaging app for 1:1 communication and small groups supporting
-SMS, MMS, XMPP and matrix.
+SMS, MMS, matrix and XMPP through libpurple.
 
 ## Build and install
+
+In case you want to disable the libpurple plugin support
+have a look at [meson_options](meson_options)
 
 ### Getting the source
 
@@ -31,9 +34,9 @@ or you have any reason to do so.
 
 ### Build and install the 'carbons' plugin (Optional)
 Message synchronization between devices according to XEP-0280.
-On Debian and derivates you can install `purple-xmpp-carbons` package.
+On Debian and derivates you can install the `purple-xmpp-carbons` package.
 
-To build from source, run:
+Alternativelly, to build from source, run:
 
 ``` bash
 git clone https://github.com/gkdr/carbons.git
