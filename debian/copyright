@@ -6,7 +6,7 @@ Comment: The protocol icons were removed because they had unclear licenses
  and were not actually being used.
 
 Files: *
-Copyright: 2018-2020 Purism SPC
+Copyright: 2018-2023 Purism SPC
 License: GPL-3+
 
 Files: data/icons/*
@@ -15,13 +15,28 @@ Copyright: 2018-2020 Purism SPC
 License: CC-BY-SA-4.0
 
 Files: debian/*
-Copyright: 2018-2020 Purism SPC
-           2020 Evangelos Ribeiro Tzaras <devrtz-debian@fortysixandtwo.eu>
+Copyright: 2018-2023 Purism SPC
+           2020-2023 Evangelos Ribeiro Tzaras <devrtz-debian@fortysixandtwo.eu>
 License: GPL-3+
 
 Files: data/sm.puri.Chatty.metainfo.xml.in
 Copyright: 2018-2020 Purism SPC
 License: CC0-1.0
+
+Files:
+ src/chatty-media*
+ src/dialogs/chatty-mm-chat-info*
+ src/mm/chatty-mmsd*
+ src/mm/chatty-mm-notifty*
+Copyright: 2020-2023 Purism SPC
+           2021-2023 Chris Talbot
+License: GPL-3+
+
+Files: src/chatty-pgp*
+Copyright: 1999-2008 Novell, Inc
+           2023 Purism SPC
+           2023 Chris Talbot
+License: GPL-3+
 
 Files: src/contrib/*
 Copyright: 2018-2019 Benjamin Otte <otte@gnome.org>
@@ -29,6 +44,10 @@ Copyright: 2018-2019 Benjamin Otte <otte@gnome.org>
            1995-1997 Peter Mattis, Spencer Kimball and Josh MacDonald
            2000 Red Hat, Inc., Jonathan Blandford <jrb@redhat.com>
 License: LGPL-2+
+
+Files: subprojects/libcmatrix/
+Copyright: 2022-2023 Purism SPC
+License: LGPL-2.1+
 
 Files: po/*
 Copyright: 2018-2020 Jaroslav Svoboda <multi.flexi@seznam.cz>
@@ -104,6 +123,24 @@ License: LGPL-2+
  02110-1301  USA.
  .
  See /usr/share/common-licenses/LGPL-2 on your debian system.
+
+License: LGPL-2.1+
+ This library is free software; you can redistribute it and/or modify it
+ under the terms of the GNU Lesser General Public License as published by the
+ Free Software Foundation; either version 2.1 of the License, or (at your
+ option) any later version.
+ .
+ This library is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ for more details.
+ .
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the
+ Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ 02110-1301  USA.
+ .
+ See /usr/share/common-licenses/LGPL-2.1 on your debian system.
 
 License: CC-BY-SA-4.0
  Attribution-ShareAlike 4.0 International
