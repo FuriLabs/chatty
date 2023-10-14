@@ -7,9 +7,8 @@
 
   <name>chatty</name>
   <shortname>chatty</shortname>
-  <shortdesc>A libpurple messaging client</shortdesc>
-  <description>SMS, MMS and XMPP messaging via libpurple and
-  Modemmanager.</description>
+  <shortdesc>A messaging client for SMS and more</shortdesc>
+  <description>SMS, MMS and basic Matrix Client for mobile phones. XMPP support via libpurple is a optional build time</description>
   <homepage rdf:resource="https://source.puri.sm/Librem5/chatty" />
   <license rdf:resource="http://usefulinc.com/doap/licenses/gpl" />
 
