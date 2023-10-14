@@ -13,10 +13,10 @@ https://source.puri.sm/Librem5/chatty/-/issues/680
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/tests/meson.build b/tests/meson.build
-index 78069af..04557f4 100644
+index 45995a8..1e87338 100644
 --- a/tests/meson.build
 +++ b/tests/meson.build
-@@ -16,7 +16,7 @@ if purple_dep.found()
+@@ -17,7 +17,7 @@ if purple_dep.found()
  endif
  
  test_items = [
