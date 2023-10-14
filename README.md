@@ -134,11 +134,15 @@ Please note that if you remove `~/.purple/chatty/db/matrix.db`,
 your matrix account token will be renewed, resulting in your
 account been seen as a new device for others.
 
-To get better logs, you should install debug symbols of chatty and related
-packages.  On Debian and derivates, [enable debug repo][0] and run:
+To get better logs,
+you should use debug symbols for chatty and related libraries.
+You can do this either by setting `DEBUGINFOD_URLS=https://debuginfod.debian.net`
+(adjust URL for your distribution)
+which should result in `gdb` prompting you to download the symbols **or**
+on Debian and derivates, [enable debug repo][0] and run:
 
 ```sh
-sudo apt-get install chatty-dbgsym libglib2.0-0-dbgsym libgtk-3-0-dbgsym libsoup-3.0-0-dbgsym
+sudo apt-get install chatty-dbgsym libglib2.0-0-dbgsym libgtk-4-1-dbgsym libsoup-3.0-0-dbgsym
 ```
 
 See [GLib][1] and [Gtk][2] documentations to know more debugging details
