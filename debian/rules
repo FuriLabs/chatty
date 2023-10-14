@@ -8,7 +8,7 @@ export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 # Generate manpage with help2man
 override_dh_installman:
 	mkdir -p debian/chatty/usr/share/man/man1
-	help2man --no-info --name "XMPP and SMS messaging" --section=1 \
+	help2man --no-info --name "SMS/MMS and Matrix messaging" --section=1 \
 		debian/chatty/usr/bin/chatty > \
 		debian/chatty/usr/share/man/man1/chatty.1
 
