@@ -1,0 +1,58 @@
+From: Evangelos Ribeiro Tzaras <devrtz@fortysixandtwo.eu>
+Date: Sun, 15 Oct 2023 14:05:46 +0200
+Subject: tests: Add some logging to pgp.c
+
+This should help diagnosing the segmentation faults we see in CI
+where the actual output does not help us at all sadly:
+
+From https://salsa.debian.org/devrtz/chatty/-/jobs/4809501/raw :
+
+=================================== 16/17 ====================================
+test:         chatty / pgp
+start time:   23:24:50
+duration:     0.43s
+result:       killed by signal 11 SIGSEGV
+command:      GSETTINGS_BACKEND=memory MALLOC_CHECK_=2 GSETTINGS_SCHEMA_DIR=/tmp/reprotest.cpWZVl/const_build_path/const_build_path/_build/data G_TEST_SRCDIR=/tmp/reprotest.cpWZVl/const_build_path/const_build_path/tests MALLOC_PERTURB_=206 G_TEST_BUILDDIR=/tmp/reprotest.cpWZVl/const_build_path/const_build_path/_build/tests /tmp/reprotest.cpWZVl/const_build_path/const_build_path/_build/tests/pgp
+----------------------------------- stdout -----------------------------------
+TAP version 13
+1..4
+==============================================================================
+
+Signed-off-by: Evangelos Ribeiro Tzaras <devrtz@fortysixandtwo.eu>
+---
+ tests/pgp.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/tests/pgp.c b/tests/pgp.c
+index 5d0bdb6..c8b6684 100644
+--- a/tests/pgp.c
++++ b/tests/pgp.c
+@@ -414,8 +414,10 @@ main (int   argc,
+   g_test_init (&argc, &argv, NULL);
+ 
+   gnupg_directory = g_build_filename (PGP_TEST_BUILD_DIR, ".gnupg", NULL);
+-  g_mkdir_with_parents (gnupg_directory, 0700);
++  if (g_mkdir_with_parents (gnupg_directory, 0700) < 0)
++    g_warning ("Could not create directory '%s'", gnupg_directory);
+ 
++  g_print ("Setting environment: 'GNUPGHOME=%s'\n", gnupg_directory);
+   g_setenv ("GNUPGHOME", gnupg_directory, 1);
+ 
+   /* You need to add the private-keys-v1.d for this to work on newer versions of gnupg */
+@@ -426,6 +428,8 @@ main (int   argc,
+   if ((ret = system ("gpg < /dev/null > /dev/null 2>&1")) == -1)
+     return 77;
+ 
++  g_print("Importing keys with 'gpg --import'\n");
++
+   ret = system ("gpg --import " PGP_TEST_DATA_DIR "/chatty-test.gpg.pub > /dev/null 2>&1");
+   if (ret < 0)
+     g_warning ("Inporting key error: %d", ret);
+@@ -451,6 +455,7 @@ main (int   argc,
+   if (ret < 0)
+     g_warning ("Setting owner trust error: %d", ret);
+ 
++  g_print ("GPG setup complete. Starting tests..\n");
+   g_test_add_func ("/pgp/message", test_pgp_message);
+   g_test_add_func ("/pgp/content", test_pgp_encode_decode);
+   g_test_add_func ("/pgp/message and files", test_pgp_message_and_files);
