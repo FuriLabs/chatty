@@ -296,7 +296,6 @@ test_pgp_message_and_files (void)
   g_autofree char *attachment_1_savepath = NULL;
   g_autofree char *attachment_2_savepath = NULL;
   g_autofree char *attachment_3_savepath = NULL;
-  g_autofree char *mime_sha1 = NULL;
   g_autofree char *signed_and_encrypted_msg = NULL;
   g_autofree char *content_message = NULL;
   g_autofree char *save_directory = NULL;
