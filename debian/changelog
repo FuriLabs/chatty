@@ -1,8 +1,18 @@
-chatty (0.8.0~rc0-1) UNRELEASED; urgency=medium
+chatty (0.8.0~rc0-1~exp) experimental; urgency=medium
 
   * New upstream release
+    This releases now uses GTK4 and libadwaita
+    and there might be the odd bug is to be expected
+  * d/copyright: Update to include libcmatrix and other new files
+  * d/control: Update build deps for GTK4
+  * d/control: Update description
+  * Revert "d/rules: Use gsettings memory backend"
+  * d/rules: Update help2man title description
+  * d/rules: Allow GTK4 based tests to pass
+  * d/patches: Fix build issues on i386
+  * d/patches: Add logging to help diagnose reprotest CI failure
 
- -- Evangelos Ribeiro Tzaras <devrtz-debian@fortysixandtwo.eu>  Tue, 15 Aug 2023 17:10:40 +0200
+ -- Evangelos Ribeiro Tzaras <devrtz-debian@fortysixandtwo.eu>  Sun, 15 Oct 2023 20:34:09 +0200
 
 chatty (0.7.3-2) unstable; urgency=medium
 
