@@ -37,6 +37,15 @@
       </release>
       <!-- todo: Add past releases -->
     </releases>
+    <requires>
+      <display_length>360</display_length>
+    </requires>
+    <supports>
+      <control>keyboard</control>
+      <control>pointing</control>
+      <control>touch</control>
+    </supports>
+    <!-- todo: drop this for crimson -->
     <custom>
       <value key="Purism::form_factor">workstation</value>
       <value key="Purism::form_factor">mobile</value>
