@@ -414,8 +414,10 @@ main (int   argc,
   g_test_init (&argc, &argv, NULL);
 
   gnupg_directory = g_build_filename (PGP_TEST_BUILD_DIR, ".gnupg", NULL);
-  g_mkdir_with_parents (gnupg_directory, 0700);
+  if (g_mkdir_with_parents (gnupg_directory, 0700) < 0)
+    g_warning ("Could not create directory '%s'", gnupg_directory);
 
+  g_print ("Setting environment: 'GNUPGHOME=%s'\n", gnupg_directory);
   g_setenv ("GNUPGHOME", gnupg_directory, 1);
 
   /* You need to add the private-keys-v1.d for this to work on newer versions of gnupg */
@@ -425,6 +427,8 @@ main (int   argc,
 
   if ((ret = system ("gpg < /dev/null > /dev/null 2>&1")) == -1)
     return 77;
+
+  g_print("Importing keys with 'gpg --import'\n");
 
   ret = system ("gpg --import " PGP_TEST_DATA_DIR "/chatty-test.gpg.pub > /dev/null 2>&1");
   if (ret < 0)
@@ -451,6 +455,7 @@ main (int   argc,
   if (ret < 0)
     g_warning ("Setting owner trust error: %d", ret);
 
+  g_print ("GPG setup complete. Starting tests..\n");
   g_test_add_func ("/pgp/message", test_pgp_message);
   g_test_add_func ("/pgp/content", test_pgp_encode_decode);
   g_test_add_func ("/pgp/message and files", test_pgp_message_and_files);
