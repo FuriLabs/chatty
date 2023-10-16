@@ -169,4 +169,4 @@ If you don't have an XMPP account yet and want to subscribe to a service then pl
 
 [0]: https://wiki.debian.org/HowToGetABacktrace
 [1]: https://docs.gtk.org/glib/running.html
-[2]: https://docs.gtk.org/gtk3/running.html
+[2]: https://docs.gtk.org/gtk4/running.html
