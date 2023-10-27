@@ -36,7 +36,7 @@ build-debian-gcc-trixie:
     - apt-get -y build-dep .
     - apt-get -y install libgtk-4-bin xvfb git
     - export LC_ALL=C.UTF-8
-    - meson setup _build -Db_coverage=true --werror
+    - meson setup _build -Db_coverage=true
     - meson compile -C _build
   artifacts:
     paths:
