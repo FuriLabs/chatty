@@ -7,6 +7,7 @@ Build-Depends:
  appstream-util,
  debhelper (>= 11),
  desktop-file-utils,
+ itstool,
  libgtk-4-dev,
  libfeedback-dev,
  libadwaita-1-dev (>= 1.2),   
