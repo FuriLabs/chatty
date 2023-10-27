@@ -4,6 +4,7 @@ include:
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
+  IMAGE: debian:trixie
 
 stages:
   - build
@@ -19,8 +20,8 @@ before_script:
   - export DEBIAN_FRONTEND=noninteractive
   - apt-get -y update
 
-build-pureos-gcc-byzantium-no-purple:
-  image: pureos/byzantium
+build-debian-gcc-trixie-no-purple:
+  image: debian:trixie
   stage: build
   script:
     - apt-get -y build-dep .
@@ -29,8 +30,8 @@ build-pureos-gcc-byzantium-no-purple:
     - meson . _build -Dpurple=disabled
     - ninja -C _build
 
-build-pureos-gcc-byzantium:
-  image: pureos/byzantium
+build-debian-gcc-trixie:
+  image: debian:trixie
   stage: build
   script:
     - apt-get -y build-dep .
@@ -44,9 +45,9 @@ build-pureos-gcc-byzantium:
 
 test:debian-gcc:
   stage: test
-  image: pureos/byzantium
+  image: debian:trixie
   dependencies:
-    - build-pureos-gcc-byzantium
+    - build-debian-gcc-trixie
   script:
     - apt-get -y build-dep .
     - apt-get -y install libgtk-4-bin xvfb lcov git
@@ -60,7 +61,7 @@ check-po:
   stage: test
   image: debian:bullseye
   dependencies:
-    - build-pureos-gcc-byzantium
+    - build-debian-gcc-trixie
   before_script:
     - apt-get -y update
     - apt-get -y install intltool git
