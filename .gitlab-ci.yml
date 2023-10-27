@@ -1,6 +1,5 @@
 include:
  - 'https://source.puri.sm/Librem5/librem5-ci/raw/master/librem5-pipeline-definitions.yml'
- - 'https://source.puri.sm/Librem5/librem5-ci/raw/master/librem5-pipeline-byzantium-jobs.yml'
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
@@ -71,3 +70,16 @@ check-po:
     # in this case
     - cd po/
     - intltool-update -m 2>&1 | grep -qs '/.*\.\(c\|ui\)' && { intltool-update -m; exit 1; } || exit 0
+
+package:deb-debian-trixie:arm64:
+  variables:
+    L5_DOCKER_IMAGE: debian:trixie
+    DEB_BUILD_PROFILES: "nodoc nocheck"
+    DEB_BUILD_OPTIONS: nocheck
+  extends: .l5-build-debian-package
+  tags:
+    - aarch64
+  before_script:
+    - export DEBIAN_FRONTEND=noninteractive
+    - apt-get -y update
+    - apt-get -y install eatmydata
