@@ -7,6 +7,7 @@ Build-Depends:
  appstream-util,
  debhelper (>= 11),
  desktop-file-utils,
+ gnupg <!nocheck>,
  itstool,
  libgtk-4-dev,
  libfeedback-dev,
@@ -39,6 +40,7 @@ Depends:
  ${misc:Depends},
  ${shlibs:Depends},
 Recommends:
+ gnupg,
  mmsd-tng,
  purple-xmpp-carbons,
  purple-lurch,
