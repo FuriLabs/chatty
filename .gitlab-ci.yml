@@ -20,7 +20,6 @@ before_script:
   - apt-get -y update
 
 build-pureos-gcc-byzantium-no-purple:
-  <<: *tags
   image: pureos/byzantium
   stage: build
   script:
@@ -31,7 +30,6 @@ build-pureos-gcc-byzantium-no-purple:
     - ninja -C _build
 
 build-pureos-gcc-byzantium:
-  <<: *tags
   image: pureos/byzantium
   stage: build
   script:
@@ -45,7 +43,6 @@ build-pureos-gcc-byzantium:
       - _build
 
 test:debian-gcc:
-  <<: *tags
   stage: test
   image: pureos/byzantium
   dependencies:
@@ -60,7 +57,6 @@ test:debian-gcc:
   coverage: '/^\s+lines\.+:\s+([\d.]+\%)\s+/'
 
 check-po:
-  <<: *tags
   stage: test
   image: debian:bullseye
   dependencies:
