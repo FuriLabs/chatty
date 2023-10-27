@@ -8,13 +8,13 @@
     <description>
       <p>Chats is a simple to use to messaging app for 1:1 communication and small groups supporting SMS, MMS, XMPP and Matrix.</p>
     </description>
-    <url type="homepage">https://source.puri.sm/Librem5/chatty</url>
+    <url type="homepage">https://gitlab.gnome.org/World/Chatty</url>
     <translation type="gettext">purism-chatty</translation>
     <update_contact>librem5-dev@lists.community.puri.sm</update_contact>
     <screenshots>
         <screenshot type="default">
             <caption>Chats message window</caption>
-            <image type="source" width="906" height="621">https://source.puri.sm/Librem5/chatty/-/raw/master/data/screenshots/screenshot.png?inline=false</image>
+            <image type="source" width="906" height="621">https://gitlab.gnome.org/World/Chatty/-/raw/master/data/screenshots/screenshot.png?inline=false</image>
         </screenshot>
     </screenshots>
     <mimetypes>

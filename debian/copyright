@@ -1,7 +1,7 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: chatty
 Upstream-Contact: Mohammed Sadiq <sadiq@sadiqpk.org>
-Source: https://code.puri.sm/Librem5/chatty
+Source: https://gitlab.gnome.org/World/Chatty
 Comment: The protocol icons were removed because they had unclear licenses
  and were not actually being used.
 
