@@ -11,6 +11,11 @@ cc = meson.get_compiler('c')
 top_inc = include_directories('.')
 src_inc = []
 
+gtk_version = '4.6'
+gtk_version_arr = gtk_version.split('.')
+gtk_major = gtk_version_arr[0]
+gtk_minor = gtk_version_arr[1]
+
 purple_dep = dependency('purple', required: get_option('purple'))
 libgdesktop_dep = dependency('gnome-desktop-4', required: false)
 
@@ -34,6 +39,8 @@ add_project_arguments([
   '-DHAVE_CONFIG_H',
   '-DGLIB_DISABLE_DEPRECATION_WARNINGS',
   '-DG_LOG_USE_STRUCTURED',
+  '-DGDK_VERSION_MIN_REQUIRED=GDK_VERSION_@0@_@1@'.format(gtk_major, gtk_minor),
+  '-DGDK_VERSION_MAX_ALLOWED=GDK_VERSION_@0@_@1@'.format(gtk_major, gtk_minor),
 ], language: 'c')
 
 global_c_args = []
