@@ -49,7 +49,7 @@ test:debian-gcc:
     - build-debian-gcc-trixie
   script:
     - apt-get -y build-dep .
-    - apt-get -y install libgtk-4-bin xvfb lcov git
+    - apt-get -y install libgtk-4-bin xvfb gcovr git
     - export G_DEBUG=fatal-warnings
     - export LC_ALL=C.UTF-8
     - xvfb-run -a -s "-screen 0 1024x768x24" ninja -C _build test
