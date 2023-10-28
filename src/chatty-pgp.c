@@ -426,7 +426,6 @@ chatty_pgp_decrypt_stream (const char *data_to_check)
 
   plaintext_stream = camel_stream_mem_new ();
   conpart = camel_mime_part_new ();
-  outpart = camel_mime_part_new ();
   camel_stream_write (plaintext_stream, data_to_check, strlen(data_to_check), NULL, NULL);
   g_seekable_seek (G_SEEKABLE (plaintext_stream), 0, G_SEEK_SET, NULL, NULL);
 
