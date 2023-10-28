@@ -772,7 +772,7 @@ chatty_pgp_get_content (CamelMimePart *mime_part,
     for (int i = 0; camel_multipart_get_part ((CamelMultipart *) dw, i) != NULL; i++) {
       g_autoptr(GError) error = NULL;
       g_autoptr(GFile) file_to_save = NULL;
-      GFileOutputStream *out;
+      g_autoptr(GFileOutputStream) out = NULL;
       g_autofree char *decoded = NULL;
       g_autofree char *file_to_save_location = NULL;
       const char *filename = NULL;
