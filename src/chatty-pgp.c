@@ -206,10 +206,10 @@ chatty_pgp_sign_stream (const char   *contents_to_sign,
                         const char   *signing_id,
                         char        **recipients)
 {
-  CamelSession *session;
-  CamelCipherContext *ctx;
-  CamelMimePart *sigpart = NULL;
-  CamelMimePart *conpart = NULL;
+  g_autoptr(CamelSession) session = NULL;
+  g_autoptr(CamelCipherContext) ctx = NULL;
+  g_autoptr(CamelMimePart) sigpart = NULL;
+  g_autoptr(CamelMimePart) conpart = NULL;
   g_autoptr(GError) error = NULL;
 
   if (!signing_id || !*signing_id)
@@ -232,7 +232,7 @@ chatty_pgp_sign_stream (const char   *contents_to_sign,
                                          TRUE);
 
   if (!conpart)
-    goto out;
+    return NULL;
 
   sigpart = camel_mime_part_new ();
   camel_cipher_context_sign_sync (ctx, signing_id, chatty_pgp_algo_to_camel_hash(DEFAULT_SIGNING_HASH),
@@ -240,17 +240,10 @@ chatty_pgp_sign_stream (const char   *contents_to_sign,
 
   if (error != NULL) {
     g_warning ("PGP signing failed: '%s'", error->message);
-    g_object_unref (sigpart);
-    sigpart = NULL;
-    goto out;
+    return NULL;
   }
 
-out:
-  g_clear_object (&conpart);
-  g_clear_object (&session);
-  g_clear_object (&ctx);
-
-  return sigpart;
+  return g_steal_pointer (&sigpart);
 }
 
 CamelMimePart *
