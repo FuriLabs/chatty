@@ -376,7 +376,7 @@ chatty_pgp_decrypt_mime_part (CamelMimePart *encpart)
   g_autoptr(GError) error = NULL;
   CamelDataWrapper *encrypted_dw = NULL;
   CamelMimePart *outpart = NULL;
-  CamelCipherValidity *valid = NULL;
+  g_autoptr(CamelCipherValidity) valid = NULL;
 
   if (!encpart)
     return NULL;
@@ -401,12 +401,6 @@ chatty_pgp_decrypt_mime_part (CamelMimePart *encpart)
     encpart = NULL;
     goto out;
   }
-
-  /*
-   * Valid doesn't tell us anything useful, but we need to clear it to prevent
-   * a memory leak.
-   */
-  camel_cipher_validity_clear (valid);
 
 out:
   g_clear_object (&session);
