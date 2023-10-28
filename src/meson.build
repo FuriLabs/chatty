@@ -104,7 +104,7 @@ libphonenumber_dep = cc.find_library('phonenumber', required: true)
 chatty_deps += [
   dependency('gio-2.0', version: '>= 2.66'),
   dependency('gtk4', version: '>= @0@'.format(gtk_version)),
-  dependency('libadwaita-1', version: '>= 1.2.0'),
+  dependency('libadwaita-1', version: '>= @0@'.format(adw_version)),
   dependency('sqlite3', version: '>=3.0.0'),
   dependency('camel-1.2'),
   dependency('libebook-contacts-1.2'),

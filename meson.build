@@ -16,6 +16,11 @@ gtk_version_arr = gtk_version.split('.')
 gtk_major = gtk_version_arr[0]
 gtk_minor = gtk_version_arr[1]
 
+adw_version = '1.2'
+adw_version_arr = adw_version.split('.')
+adw_major = adw_version_arr[0]
+adw_minor = adw_version_arr[1]
+
 purple_dep = dependency('purple', required: get_option('purple'))
 libgdesktop_dep = dependency('gnome-desktop-4', required: false)
 
@@ -41,6 +46,9 @@ add_project_arguments([
   '-DG_LOG_USE_STRUCTURED',
   '-DGDK_VERSION_MIN_REQUIRED=GDK_VERSION_@0@_@1@'.format(gtk_major, gtk_minor),
   '-DGDK_VERSION_MAX_ALLOWED=GDK_VERSION_@0@_@1@'.format(gtk_major, gtk_minor),
+  '-DADW_VERSION_MIN_REQUIRED=ADW_VERSION_@0@_@1@'.format(adw_major, adw_minor),
+  '-DADW_VERSION_MAX_ALLOWED=ADW_VERSION_@0@_@1@'.format(adw_major, adw_minor),
+
 ], language: 'c')
 
 global_c_args = []
