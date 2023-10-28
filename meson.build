@@ -42,7 +42,6 @@ configure_file(
 add_project_arguments([
   '-I' + meson.project_build_root(),
   '-DHAVE_CONFIG_H',
-  '-DGLIB_DISABLE_DEPRECATION_WARNINGS',
   '-DG_LOG_USE_STRUCTURED',
   '-DGDK_VERSION_MIN_REQUIRED=GDK_VERSION_@0@_@1@'.format(gtk_major, gtk_minor),
   '-DGDK_VERSION_MAX_ALLOWED=GDK_VERSION_@0@_@1@'.format(gtk_major, gtk_minor),
