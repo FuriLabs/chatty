@@ -331,7 +331,8 @@ chatty_pgp_sign_and_encrypt_stream (const char  *contents_to_sign_and_encrypt,
                                     const char  *signing_id,
                                     char       **recipients)
 {
-  CamelMimePart *sigpart, *encpart;
+  g_autoptr(CamelMimePart) sigpart = NULL;
+  CamelMimePart *encpart;
   CamelDataWrapper *signed_dw = NULL;
 
   /*
