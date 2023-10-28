@@ -491,7 +491,6 @@ test_history_new (void)
   g_clear_object (&task);
 
   task = g_task_new (NULL, NULL, NULL, NULL);
-  g_object_ref (history);
   chatty_history_close_async (history, finish_bool_cb, task);
 
   while (!g_task_get_completed (task))
@@ -501,9 +500,7 @@ test_history_new (void)
   g_assert_false (chatty_history_is_open (history));
   g_assert_true (status);
   g_clear_object (&task);
-  g_object_unref (history);
-  /* FIXME */
-  /* g_assert_finalize_object (history); */
+  g_assert_finalize_object (history);
 
   g_remove (file_name);
   g_assert_false (g_file_test (file_name, G_FILE_TEST_EXISTS));
@@ -515,7 +512,7 @@ test_history_new (void)
 
   chatty_history_close (history);
   g_assert_false (chatty_history_is_open (history));
-  g_object_unref (history);
+  g_assert_finalize_object (history);
 }
 
 static void
