@@ -138,7 +138,7 @@ chatty_pgp_create_mime_part (const char  *contents,
     for (GList *l = files; l != NULL; l = l->next) {
       g_autoptr(GFile) file_ref = NULL;
       CamelMimePart *part;
-      CamelDataWrapper *file_dw;
+      g_autoptr(CamelDataWrapper) file_dw = NULL;
       g_autofree char *file_contents = NULL;
       gsize content_length = 0;
       g_autoptr(GError) error = NULL;
