@@ -1074,6 +1074,7 @@ chatty_mm_account_finalize (GObject *object)
   g_clear_object (&self->device_list);
   g_clear_object (&self->chatty_eds);
   g_clear_object (&self->mmsd);
+  g_clear_object (&self->blocked_chat_list);
   g_hash_table_unref (self->pending_sms);
 
   G_OBJECT_CLASS (chatty_mm_account_parent_class)->finalize (object);
