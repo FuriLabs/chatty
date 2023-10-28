@@ -67,6 +67,21 @@ test:debian-gcc:
     variables:
       - $FP_ONLY == "1"
 
+asan-test:native-debian-trixie:
+  stage: test
+  image: ${IMAGE}
+  tags: [ asan ]
+  needs: []
+  before_script:
+    - export DEBIAN_FRONTEND=noninteractive
+    - apt-get -y update
+    - apt-get -y build-dep .
+    - apt-get -y install libgtk-4-bin xvfb gcovr git
+  script:
+    - meson setup -Db_sanitize=address -Dbuildtype=debug _build-asan
+    - meson compile -C _build-asan
+    - ${XVFB_RUN} meson test -C _build-asan --verbose  clock history settings utils sms-uri mm-account
+
 check-po:
   stage: test
   image: ${IMAGE}
