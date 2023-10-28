@@ -649,9 +649,6 @@ add_chatty_message (ChattyHistory      *history,
   g_clear_pointer (&uuid, g_free);
   g_assert (CHATTY_IS_MESSAGE (message));
 
-  if (status != CHATTY_STATUS_DRAFT)
-    g_ptr_array_add (msg_array, message);
-
   task = g_task_new (NULL, NULL, NULL, NULL);
   chatty_history_add_message_async (history, chat, message, finish_bool_cb, task);
 
@@ -661,6 +658,11 @@ add_chatty_message (ChattyHistory      *history,
   success = g_task_propagate_boolean (task, NULL);
   g_assert_true (success);
   g_clear_object (&task);
+
+  if (status != CHATTY_STATUS_DRAFT)
+    g_ptr_array_add (msg_array, message);
+  else
+    g_clear_object (&message);
 
   message = msg_array->pdata[0];
   task = g_task_new (NULL, NULL, NULL, NULL);
