@@ -185,6 +185,7 @@ test_pgp_message (void)
   content_to_check = chatty_pgp_get_content (decrypt_part, NULL, NULL);
   g_assert_cmpstr (content_to_check, ==, stream_encrypted);
   g_free (content_to_check);
+  g_assert_finalize_object (decrypt_part);
 
   sign_and_encpart = chatty_pgp_sign_and_encrypt_stream (stream_signed_and_encrypted,
                                                          NULL,
@@ -221,6 +222,7 @@ test_pgp_message (void)
   g_assert_cmpint (CHATTY_PGP_UNKNOWN, ==, chatty_pgp_check_pgp_type (NULL));
   g_assert_cmpint (CHATTY_PGP_UNKNOWN, ==, chatty_pgp_check_pgp_type (""));
   g_assert_cmpint (CHATTY_PGP_UNKNOWN, ==, chatty_pgp_check_pgp_type ("This is an example text that isn't PGP encoded."));
+  g_assert_finalize_object (decrypt_part);
 }
 
 static void
