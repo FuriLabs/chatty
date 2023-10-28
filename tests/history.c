@@ -761,8 +761,6 @@ test_history_message (void)
                       CHATTY_MESSAGE_HTML_ESCAPED, CHATTY_DIRECTION_IN, 0);
   add_chatty_message (history, chat, msg_array, "More message", when + 1,
                       CHATTY_MESSAGE_HTML_ESCAPED, CHATTY_DIRECTION_OUT, 0);
-  /* FIXME */
-  /* g_assert_finalize_object (chat); */
 
   add_chatty_message (history, chat, msg_array, "Draft message", when + 1,
                       CHATTY_MESSAGE_HTML_ESCAPED, CHATTY_DIRECTION_OUT, CHATTY_STATUS_DRAFT);
@@ -771,6 +769,7 @@ test_history_message (void)
   add_chatty_message (history, chat, msg_array, "yet another draft", when + 2,
                       CHATTY_MESSAGE_HTML_ESCAPED, CHATTY_DIRECTION_OUT, CHATTY_STATUS_DRAFT);
 
+  g_assert_finalize_object (chat);
   g_ptr_array_unref (msg_array);
   chatty_history_close (history);
 }
