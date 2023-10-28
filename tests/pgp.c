@@ -237,7 +237,7 @@ test_pgp_encode_decode (void)
   g_autofree char *attachment_2_filepath = NULL;
   g_autofree char *attachment_3_filepath = NULL;
   g_autofree char *recipients_to_check = NULL;
-  GList *files = NULL;
+  g_autolist(ChattyFile) files = NULL;
   char *recipients = "recipient1@no.domain,recipient2@no.domain";
   char **recipient_array = NULL;
 
@@ -302,8 +302,8 @@ test_pgp_message_and_files (void)
   g_autofree char *content_message = NULL;
   g_autofree char *save_directory = NULL;
   g_autofree char *recipients_to_check = NULL;
-  GList *files = NULL;
-  GList *saved_files = NULL;
+  g_autolist(ChattyFile) files = NULL;
+  g_autolist(ChattyFile) saved_files = NULL;
   CamelCipherValidity *valid = NULL;
   const char *signing_email = "sender@example.com";
   char *recipients = "recipient1@no.domain,recipient2@no.domain";
