@@ -111,8 +111,8 @@ chatty_file_new_for_path (const char *path)
 {
   g_autoptr(ChattyFile) self = NULL;
   g_autoptr(GError) error = NULL;
-  GFile *file;
-  GFileInfo *file_info;
+  g_autoptr(GFile) file = NULL;
+  g_autoptr(GFileInfo) file_info = NULL;
 
   self = g_object_new (CHATTY_TYPE_FILE, NULL);
   file = g_file_new_for_path (path);
