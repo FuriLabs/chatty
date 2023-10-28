@@ -136,7 +136,7 @@ test_pgp_message (void)
 
   valid = chatty_pgp_check_sig_mime_part (sigpart);
   chatty_test_pgp_assert_valid (valid);
-  camel_cipher_validity_clear (valid);
+  camel_cipher_validity_free (valid);
 
   signature = chatty_pgp_decode_mime_part (sigpart);
   g_assert_nonnull (signature);
@@ -158,7 +158,7 @@ test_pgp_message (void)
   g_free (content_to_check);
   g_assert_finalize_object (sigpart_from_stream);
   chatty_test_pgp_assert_valid (valid);
-  camel_cipher_validity_clear (valid);
+  camel_cipher_validity_free (valid);
 
   encpart = chatty_pgp_encrypt_stream (stream_encrypted,
                                        NULL,
@@ -196,7 +196,7 @@ test_pgp_message (void)
   g_assert_nonnull (decrypt_and_signed_part);
   valid = chatty_pgp_check_sig_mime_part (decrypt_and_signed_part);
   chatty_test_pgp_assert_valid (valid);
-  camel_cipher_validity_clear (valid);
+  camel_cipher_validity_free (valid);
   recipients_to_check = chatty_pgp_get_recipients (decrypt_and_signed_part);
   g_assert_cmpstr (recipients_to_check, ==, recipients);
   g_clear_pointer (&recipients_to_check, g_free);
@@ -212,7 +212,7 @@ test_pgp_message (void)
   decrypt_part = chatty_pgp_decrypt_stream (signed_and_encrypted_msg);
   valid = chatty_pgp_check_sig_mime_part (decrypt_part);
   chatty_test_pgp_assert_valid (valid);
-  camel_cipher_validity_clear (valid);
+  camel_cipher_validity_free (valid);
 
   content_to_check = chatty_pgp_get_content (decrypt_part, NULL, NULL);
   g_assert_cmpstr (content_to_check, ==, stream_signed_and_encrypted);
@@ -345,7 +345,7 @@ test_pgp_message_and_files (void)
   g_assert_nonnull (decrypt_and_signed_part);
   valid = chatty_pgp_check_sig_mime_part (decrypt_and_signed_part);
   chatty_test_pgp_assert_valid (valid);
-  camel_cipher_validity_clear (valid);
+  camel_cipher_validity_free (valid);
   recipients_to_check = chatty_pgp_get_recipients (decrypt_and_signed_part);
   g_assert_cmpstr (recipients_to_check, ==, recipients);
   g_clear_pointer (&recipients_to_check, g_free);
