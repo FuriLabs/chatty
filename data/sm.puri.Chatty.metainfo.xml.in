@@ -14,7 +14,7 @@
     <screenshots>
         <screenshot type="default">
             <caption>Chats message window</caption>
-            <image type="source" width="906" height="621">https://gitlab.gnome.org/World/Chatty/-/raw/master/data/screenshots/screenshot.png?inline=false</image>
+            <image type="source" width="906" height="621">https://gitlab.gnome.org/World/Chatty/-/raw/main/data/screenshots/screenshot.png?inline=false</image>
         </screenshot>
     </screenshots>
     <mimetypes>
