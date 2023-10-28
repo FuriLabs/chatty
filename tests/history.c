@@ -384,11 +384,13 @@ new_message (const char         *account,
 
     for (; i > 0; i--) {
       g_autofree char *uid = NULL;
+      g_autofree char *url = NULL;
       ChattyFile *file;
 
       uid = g_uuid_string_random ();
+      url = g_strdup_printf ("http://example.com/some-file/%s", uid);
       file = chatty_file_new_full (NULL,
-                                   g_strdup_printf ("http://example.com/some-file/%s", uid),
+                                   url,
                                    NULL, NULL, g_random_int_range (1000, 5000),
                                    0, 0, 0);
 
