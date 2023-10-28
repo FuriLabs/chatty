@@ -350,7 +350,8 @@ test_pgp_message_and_files (void)
   g_assert_cmpstr (recipients_to_check, ==, recipients);
   g_clear_pointer (&recipients_to_check, g_free);
 
-  content_message = chatty_pgp_get_content (decrypt_and_signed_part, saved_files, PGP_TEST_BUILD_DIR);
+  content_message = chatty_pgp_get_content (decrypt_and_signed_part, &saved_files, PGP_TEST_BUILD_DIR);
+  g_assert_cmpint (g_list_length (saved_files), ==, 3);
   test_check_sha (attachment_1_filepath, attachment_1_savepath);
   test_check_sha (attachment_2_filepath, attachment_2_savepath);
   test_check_sha (attachment_3_filepath, attachment_3_savepath);

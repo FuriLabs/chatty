@@ -729,7 +729,7 @@ chatty_pgp_get_recipients (CamelMimePart *mime_part)
 
 char *
 chatty_pgp_get_content (CamelMimePart *mime_part,
-                        GList         *files,
+                        GList         **files,
                         const char     *directory_to_save_in)
 {
   GByteArray *stream_decoded = NULL;
@@ -818,7 +818,7 @@ chatty_pgp_get_content (CamelMimePart *mime_part,
                    g_file_peek_path (file_to_save), error->message);
         g_clear_error (&error);
       } else {
-        files = g_list_append (files, chatty_file_new_for_path(file_to_save_location));
+        *files = g_list_append (*files, chatty_file_new_for_path(file_to_save_location));
       }
     }
     return message_to_return;
