@@ -142,7 +142,7 @@ chatty_pgp_create_mime_part (const char  *contents,
       g_autofree char *file_contents = NULL;
       gsize content_length = 0;
       g_autoptr(GError) error = NULL;
-      CamelStream *file_stream = NULL;
+      g_autoptr(CamelStream) file_stream = NULL;
 
       ChattyFile *attachment = l->data;
 
