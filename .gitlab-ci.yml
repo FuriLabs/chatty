@@ -22,7 +22,7 @@ before_script:
   - apt-get -y update
 
 build-debian-gcc-trixie-no-purple:
-  image: debian:trixie
+  image: ${IMAGE}
   stage: build
   script:
     - apt-get -y build-dep .
@@ -35,7 +35,7 @@ build-debian-gcc-trixie-no-purple:
       - $FP_ONLY == "1"
 
 build-debian-gcc-trixie:
-  image: debian:trixie
+  image: ${IMAGE}
   stage: build
   script:
     - apt-get -y build-dep .
@@ -52,7 +52,7 @@ build-debian-gcc-trixie:
 
 test:debian-gcc:
   stage: test
-  image: debian:trixie
+  image: ${IMAGE}
   dependencies:
     - build-debian-gcc-trixie
   script:
@@ -69,7 +69,7 @@ test:debian-gcc:
 
 check-po:
   stage: test
-  image: debian:bullseye
+  image: ${IMAGE}
   dependencies:
     - build-debian-gcc-trixie
   before_script:
