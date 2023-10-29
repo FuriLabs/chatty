@@ -325,7 +325,7 @@ sms_send_cb (GObject      *object,
 
     chatty_message_set_status (message, CHATTY_STATUS_SENDING_FAILED, 0);
     chatty_history_add_message (self->history_db, chat, message);
-    title = g_strdup_printf (_("Error Sendng SMS to %s"),
+    title = g_strdup_printf (_("Error Sending SMS to %s"),
                               chatty_item_get_name (CHATTY_ITEM (chat)));
     chatty_mm_notify_message (title, "");
     g_debug ("Failed to send sms: %s", error->message);
@@ -376,7 +376,7 @@ sms_create_cb (GObject      *object,
 
     chatty_message_set_status (message, CHATTY_STATUS_SENDING_FAILED, 0);
     chatty_history_add_message (self->history_db, chat, message);
-    title = g_strdup_printf (_("Error Sendng SMS to %s"),
+    title = g_strdup_printf (_("Error Sending SMS to %s"),
                               chatty_item_get_name (CHATTY_ITEM (chat)));
     chatty_mm_notify_message (title, "");
 
@@ -469,7 +469,7 @@ chatty_mm_account_recieve_mms_cb (ChattyMmAccount *self,
 
     if (msg_status == CHATTY_STATUS_SENDING_FAILED) {
       g_autofree char *title = NULL;
-      title = g_strdup_printf (_("Error Sendng MMS to %s"),
+      title = g_strdup_printf (_("Error Sending MMS to %s"),
                               chatty_item_get_name (CHATTY_ITEM (chat)));
       chatty_mm_notify_message (title, "");
     }
