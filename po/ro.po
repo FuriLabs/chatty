@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2023-10-29 10:17+0000\n"
-"PO-Revision-Date: 2023-10-29 13:05+0200\n"
+"POT-Creation-Date: 2023-10-30 12:59+0000\n"
+"PO-Revision-Date: 2023-10-31 12:56+0200\n"
 "Last-Translator: Florentina Mușat <florentina [dot] musat [dot] 28 [at] "
 "gmail [dot] com>\n"
 "Language-Team: Romanian <gnomero-list@lists.sourceforge.net>\n"
@@ -1099,12 +1099,12 @@ msgstr[2] "Chatty nu poate prelucra %i de MMS-uri..."
 
 #: src/mm/chatty-mm-account.c:328 src/mm/chatty-mm-account.c:379
 #, c-format
-msgid "Error Sendng SMS to %s"
+msgid "Error Sending SMS to %s"
 msgstr "Eroare la trimiterea SMS-ului către %s"
 
 #: src/mm/chatty-mm-account.c:472
 #, c-format
-msgid "Error Sendng MMS to %s"
+msgid "Error Sending MMS to %s"
 msgstr "Eroare la trimiterea MMS-ului către %s"
 
 #: src/ui/chatty-attachment.ui:20
