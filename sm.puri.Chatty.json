@@ -15,9 +15,9 @@
         "--talk-name=org.gnome.evolution.dataserver.Sources5",
         "--talk-name=im.pidgin.purple.PurpleService",
         "--talk-name=org.gnome.evolution.dataserver.Subprocess.Backend.*",
-        "--env=SSL_CERT_DIR=/etc/ssl/certs"
+        "--env=SSL_CERT_DIR=/etc/ssl/certs",
+        "--filesystem=~/.purple"
     ],
-    "cleanup-commands": [ "rm -rf /app/lib/debug/ /app/include/boost" ],
     "cleanup": [
         "/include",
         "/lib/pkgconfig",
@@ -150,20 +150,14 @@
                 "-DBUILD_TESTING=OFF",
                 "-DFETCHCONTENT_FULLY_DISCONNECTED=ON"
             ],
+            "subdir": "cpp",
             "sources": [
                 {
                     "type": "git",
                     "url": "https://github.com/google/libphonenumber",
                     "tag": "v8.13.12"
-                },
-                {
-                    "type": "shell",
-                    "commands": [
-                        "sed -i -e 's/\${\${NAME}_BIN}-NOTFOUND/\${NAME}_BIN-NOTFOUND/' cpp/CMakeLists.txt"
-                    ]
                 }
-            ],
-            "subdir": "cpp"
+            ]
         },
         {
             "name": "evolution-data-server",
