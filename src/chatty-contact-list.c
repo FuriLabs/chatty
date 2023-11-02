@@ -283,7 +283,9 @@ contact_list_changed_cb (ChattyContactList *self)
     adw_status_page_set_description (page, _("Try different search, or type a valid "
                                              "number to create new chat"));
   } else {
-    adw_status_page_set_icon_name (page, "sm.puri.Chatty-symbolic");
+    g_autofree char *icon = g_strdup_printf ("%s-symbolic", CHATTY_APP_ID);
+
+    adw_status_page_set_icon_name (page, icon);
     adw_status_page_set_title (page, _("No Contacts"));
     adw_status_page_set_description (page, NULL);
   }
