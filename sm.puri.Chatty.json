@@ -227,21 +227,6 @@
           ]
         },
         {
-            "name" : "gudev",
-            "buildsystem" : "meson",
-            "config-opts" : [
-                "-Dtests=disabled",
-                "-Dintrospection=disabled"
-            ],
-            "sources" : [
-                {
-                    "type" : "git",
-                    "url" : "https://gitlab.gnome.org/GNOME/libgudev.git",
-                    "tag" : "237"
-                }
-            ]
-        },
-        {
             "name" : "ModemManager",
             "buildsystem" : "meson",
             "config-opts" : [
