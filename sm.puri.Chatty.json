@@ -221,7 +221,7 @@
           "sources": [
             {
               "type": "git",
-              "tag" : "3.2.6",
+              "tag" : "3.2.15",
               "url": "https://gitlab.matrix.org/matrix-org/olm.git"
             }
           ]
