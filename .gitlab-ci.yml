@@ -30,6 +30,9 @@ build-debian-gcc-trixie-no-purple:
     - export LC_ALL=C.UTF-8
     - meson setup _build -Dpurple=disabled
     - meson compile -C _build
+  except:
+    variables:
+      - $FP_ONLY == "1"
 
 build-debian-gcc-trixie:
   image: debian:trixie
@@ -43,6 +46,9 @@ build-debian-gcc-trixie:
   artifacts:
     paths:
       - _build
+  except:
+    variables:
+      - $FP_ONLY == "1"
 
 test:debian-gcc:
   stage: test
@@ -57,6 +63,9 @@ test:debian-gcc:
     - xvfb-run -a -s "-screen 0 1024x768x24" ninja -C _build test
     - ninja -C _build coverage
   coverage: '/^\s+lines\.+:\s+([\d.]+\%)\s+/'
+  except:
+    variables:
+      - $FP_ONLY == "1"
 
 check-po:
   stage: test
@@ -72,6 +81,9 @@ check-po:
     # in this case
     - cd po/
     - intltool-update -m 2>&1 | grep -qs '/.*\.\(c\|ui\)' && { intltool-update -m; exit 1; } || exit 0
+  except:
+    variables:
+      - $FP_ONLY == "1"
 
 package:deb-debian-trixie:arm64:
   variables:
@@ -85,6 +97,9 @@ package:deb-debian-trixie:arm64:
     - export DEBIAN_FRONTEND=noninteractive
     - apt-get -y update
     - apt-get -y install eatmydata
+  except:
+    variables:
+      - $FP_ONLY == "1"
 
 flatpak:
   before_script: []
