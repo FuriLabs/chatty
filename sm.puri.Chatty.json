@@ -243,20 +243,25 @@
         },
         {
             "name" : "ModemManager",
-            "buildsystem" : "autotools",
+            "buildsystem" : "meson",
             "config-opts" : [
-                "--disable-introspection",
-                "--disable-vala",
-                "--with-udev-base-dir=/app/lib",
-                "--with-systemdsystemunitdir=/app/lib/systemd/system",
-                "--without-mbim",
-                "--without-qmi"
+                "-Dintrospection=false",
+                "-Dvapi=false",
+                "-Dudevdir=/app/lib",
+                "-Dsystemdsystemunitdir=/app/lib/systemd/system",
+                "-Dmbim=false",
+                "-Dqmi=false",
+                "-Dqrtr=false",
+                "-Dman=false",
+		"-Dgtk_doc=false",
+                "-Dexamples=false",
+                "-Dbash_completion=false"
             ],
             "sources" : [
                 {
                     "type" : "git",
                     "url" : "https://gitlab.freedesktop.org/mobile-broadband/ModemManager",
-                    "tag" : "1.20.6"
+                    "tag" : "1.21.8-dev"
                 }
             ]
         },
