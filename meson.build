@@ -24,6 +24,11 @@ adw_minor = adw_version_arr[1]
 purple_dep = dependency('purple', required: get_option('purple'))
 libgdesktop_dep = dependency('gnome-desktop-4', required: false)
 
+app_id = 'sm.puri.Chatty'
+if get_option('profile') == 'devel'
+  app_id = app_id + '.Devel'
+endif
+
 config_h = configuration_data()
 config_h.set10('HAVE_EXPLICIT_BZERO', cc.has_function('explicit_bzero'))
 config_h.set('PURPLE_ENABLED', purple_dep.found())
@@ -34,6 +39,7 @@ config_h.set_quoted('PACKAGE_NAME', meson.project_name())
 config_h.set_quoted('PACKAGE_VERSION', meson.project_version())
 config_h.set_quoted('BUILD_DIR', meson.current_build_dir())
 config_h.set_quoted('SOURCE_DIR', meson.current_source_dir())
+config_h.set_quoted('CHATTY_APP_ID', app_id)
 
 configure_file(
   output: 'config.h',
