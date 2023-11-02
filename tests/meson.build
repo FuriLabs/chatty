@@ -1,3 +1,7 @@
+if not get_option('tests') == true
+  subdir_done()
+endif
+
 tests_inc = [
   top_inc,
   src_inc,
