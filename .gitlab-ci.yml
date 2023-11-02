@@ -1,5 +1,7 @@
 include:
- - 'https://source.puri.sm/Librem5/librem5-ci/raw/master/librem5-pipeline-definitions.yml'
+  - 'https://source.puri.sm/Librem5/librem5-ci/raw/master/librem5-pipeline-definitions.yml'
+  - project: 'gnome/citemplates'
+    file: 'flatpak/flatpak-ci-initiative-sdk-extensions.yml'
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
@@ -83,3 +85,14 @@ package:deb-debian-trixie:arm64:
     - export DEBIAN_FRONTEND=noninteractive
     - apt-get -y update
     - apt-get -y install eatmydata
+
+flatpak:
+  before_script: []
+  extends: ".flatpak"
+  variables:
+    APP_ID: "sm.puri.Chatty.Devel"
+    BUNDLE: "sm.puri.Chatty.Devel.flatpak"
+    FLATPAK_MODULE: "chatty"
+    MANIFEST_PATH: "sm.puri.Chatty.json"
+    RUNTIME_REPO: "https://nightly.gnome.org/gnome-nightly.flatpakrepo"
+

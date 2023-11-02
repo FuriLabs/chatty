@@ -1,7 +1,7 @@
 {
-    "app-id": "sm.puri.Chatty",
+    "app-id": "sm.puri.Chatty.Devel",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "44",
+    "runtime-version": "master",
     "sdk": "org.gnome.Sdk",
     "command": "chatty",
     "finish-args": [
@@ -251,13 +251,16 @@
             ]
         },
         {
-            "name": "purism-chatty",
+            "name": "chatty",
             "buildsystem": "meson",
+            "config-opts": [
+                "-Dprofile=devel"
+            ],
             "builddir": true,
             "sources": [
                 {
-                    "type": "git",
-                    "url": "https://gitlab.gnome.org/World/Chatty.git"
+                    "type": "dir",
+                    "path": "."
                 }
             ]
         }
