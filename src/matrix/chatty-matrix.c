@@ -220,7 +220,7 @@ chatty_matrix_load (ChattyMatrix *self)
 
   data_path = g_build_filename (g_get_user_data_dir (), "chatty", NULL);
   cache_path = g_build_filename (g_get_user_cache_dir (), "chatty", NULL);
-  self->cm_matrix = cm_matrix_new (data_path, cache_path, "sm.puri.Chatty",
+  self->cm_matrix = cm_matrix_new (data_path, cache_path, CHATTY_APP_ID,
                                    self->disable_auto_login);
   client_list = cm_matrix_get_clients_list (self->cm_matrix);
   g_signal_connect_object (client_list, "items-changed",
