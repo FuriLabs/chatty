@@ -254,6 +254,7 @@
             "name": "chatty",
             "buildsystem": "meson",
             "config-opts": [
+                "-Dtests=false",
                 "-Dprofile=devel"
             ],
             "builddir": true,
