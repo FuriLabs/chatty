@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2023-10-29 10:17+0000\n"
+"POT-Creation-Date: 2023-10-30 12:59+0000\n"
 "PO-Revision-Date: 2023-10-29 08:00+0300\n"
 "Last-Translator: Emin Tufan Çetin <etcetin@gmail.com>\n"
 "Language-Team: Turkish <takim@gnome.org.tr>\n"
@@ -1085,12 +1085,12 @@ msgstr[0] "Chatty %i MMSʼi işleyemiyor"
 
 #: src/mm/chatty-mm-account.c:328 src/mm/chatty-mm-account.c:379
 #, c-format
-msgid "Error Sendng SMS to %s"
+msgid "Error Sending SMS to %s"
 msgstr "Şuna SMS Gönderilirken Hata: %s"
 
 #: src/mm/chatty-mm-account.c:472
 #, c-format
-msgid "Error Sendng MMS to %s"
+msgid "Error Sending MMS to %s"
 msgstr "Şuna MMS Gönderilirken Hata: %s"
 
 #: src/ui/chatty-attachment.ui:20
