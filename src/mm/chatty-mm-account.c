@@ -1472,7 +1472,11 @@ chatty_mm_account_send_message_async (ChattyMmAccount     *self,
   mm_sms_properties_set_text (sms_properties, chatty_message_get_text (message));
   mm_sms_properties_set_number (sms_properties, phone);
   mm_sms_properties_set_delivery_report_request (sms_properties, request_report);
-  mm_sms_properties_set_validity_relative (sms_properties, 168);
+  /*
+   * https://gitlab.freedesktop.org/mobile-broadband/ModemManager/-/blob/201c8533e0e51c2f3ec6c64240d8a5705c26c8d3/src/mm-sms-part-3gpp.c#L307
+   * Max Value for validity relative is 635040, value is in minutes
+   */
+  mm_sms_properties_set_validity_relative (sms_properties, 635040);
 
   if (chatty_utils_get_item_position (G_LIST_MODEL (self->chat_list), chat, &position))
     g_list_model_items_changed (G_LIST_MODEL (self->chat_list), position, 1, 1);
