@@ -1671,7 +1671,6 @@ chatty_mmsd_service_send_error_cb (ChattyMmsd *self,
   unsigned int error_type;
   unsigned int unsent_mmses;
   mms_payload *payload;
-  ChattyMessage *message;
   GVariantDict dict;
 
   g_variant_get (parameters, "(@a{?*})", &error_props);
@@ -1695,22 +1694,9 @@ chatty_mmsd_service_send_error_cb (ChattyMmsd *self,
      return;
   }
 
-  message = payload->message;
   sender = g_strdup (payload->sender);
   recipientlist = g_strdup (payload->chat);
   g_return_if_fail (recipientlist && *recipientlist);
-
-  chatty_message_set_status (payload->message,
-                             CHATTY_STATUS_SENDING_FAILED,
-                             0);
-
-  if (!chatty_mm_account_recieve_mms_cb (self->mm_account,
-                                         message,
-                                         sender,
-                                         recipientlist)) {
-     g_debug ("Message was deleted!");
-     return;
-  }
 
   /* self->mms_hash_table only long term keeps track of pending sent MMSes */
   unsent_mmses = g_hash_table_size (self->mms_hash_table);
