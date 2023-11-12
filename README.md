@@ -153,7 +153,7 @@ related to `GLib` and `Gtk`.
 
 ## Translations
 
-You can contribute translations via [GNOME Damned lies][https://l10n.gnome.org/module/chatty/]
+You can contribute translations via [GNOME Damned Lies](https://l10n.gnome.org/module/chatty/).
 
 
 ## XMPP account
