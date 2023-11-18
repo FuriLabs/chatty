@@ -230,15 +230,6 @@ chatty_image_item_new (ChattyMessage *message,
   return GTK_WIDGET (self);
 }
 
-GtkStyleContext *
-chatty_image_item_get_style (ChattyImageItem *self)
-{
-  g_return_val_if_fail (CHATTY_IS_IMAGE_ITEM (self), NULL);
-
-  return gtk_widget_get_style_context (self->image_overlay);
-
-}
-
 ChattyMessage *
 chatty_image_item_get_item (ChattyImageItem *self)
 {
