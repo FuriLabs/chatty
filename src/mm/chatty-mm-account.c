@@ -72,14 +72,6 @@ chatty_mm_device_new (void)
   return g_object_new (CHATTY_TYPE_MM_DEVICE, NULL);
 }
 
-MMObject *
-chatty_mm_device_get_object (ChattyMmDevice *device)
-{
-  g_return_val_if_fail (CHATTY_IS_MM_DEVICE (device), NULL);
-
-  return device->mm_object;
-}
-
 char *
 chatty_mm_device_get_number (ChattyMmDevice *device)
 {
@@ -152,7 +144,6 @@ create_sorted_numbers (const char *numbers,
                        GPtrArray  *members)
 {
   g_autoptr(GPtrArray) sorted = NULL;
-  g_autoptr(GString) str = NULL;
   g_auto(GStrv) strv = NULL;
   const char *country_code;
 
@@ -788,7 +779,6 @@ static void
 mm_object_added_cb (ChattyMmAccount *self,
                     GDBusObject     *object)
 {
-  g_autoptr(ChattyMmAccount) account = NULL;
   g_autoptr(ChattyMmDevice) device = NULL;
   GListModel *chat_list;
   MessagingData *data;
