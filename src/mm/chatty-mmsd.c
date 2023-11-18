@@ -533,7 +533,6 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
     int files_count = 0;
     int total_files_count = 0;
     int image_attachments = 0;
-    int video_attachments = 0;
     gsize attachments_size = size;
     gsize image_attachments_size = 0;
     gsize video_attachments_size = 0;
@@ -564,7 +563,6 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
         }
       } else if (g_str_match_string ("video", chatty_file_get_mime_type (attachment), FALSE)) {
         video_attachments_size = video_attachments_size + chatty_file_get_size (attachment);
-        video_attachments++;
       }
 
       if (total_files_count > self->max_num_attach) {
@@ -1251,7 +1249,6 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
     payload->message = chatty_message_new (NULL, mms_message, basename, unix_time,
                                            chatty_msg_type, direction, mms_status);
     chatty_message_set_subject (payload->message, subject);
-    chatty_message_set_id (payload->message, basename);
     chatty_message_set_files (payload->message, files);
   }
 
