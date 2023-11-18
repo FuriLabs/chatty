@@ -415,8 +415,6 @@ chatty_message_row_update_footer (ChattyMessageRow *self)
 static void
 message_row_update_message (ChattyMessageRow *self)
 {
-  g_autofree char *message = NULL;
-
   g_assert (CHATTY_IS_MESSAGE_ROW (self));
   g_assert (self->message);
 
