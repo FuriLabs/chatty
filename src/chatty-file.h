@@ -40,9 +40,6 @@ gsize             chatty_file_get_size           (ChattyFile          *self);
 void              chatty_file_set_status         (ChattyFile          *self,
                                                   ChattyFileStatus     status);
 ChattyFileStatus  chatty_file_get_status         (ChattyFile          *self);
-void              chatty_file_set_file           (ChattyFile          *self,
-                                                  GFile               *file);
-GFile            *chatty_file_get_file           (ChattyFile          *self);
 void              chatty_file_get_stream_async   (ChattyFile          *self,
                                                   GCancellable        *cancellable,
                                                   GAsyncReadyCallback  callback,
@@ -50,9 +47,6 @@ void              chatty_file_get_stream_async   (ChattyFile          *self,
 GInputStream     *chatty_file_get_stream_finish  (ChattyFile          *self,
                                                   GAsyncResult        *result,
                                                   GError             **error);
-void              chatty_file_set_istream        (ChattyFile          *self,
-                                                  GInputStream        *stream);
-GInputStream     *chatty_file_get_istream        (ChattyFile          *self);
 gsize             chatty_file_get_width          (ChattyFile          *self);
 gsize             chatty_file_get_height         (ChattyFile          *self);
 gsize             chatty_file_get_duration       (ChattyFile          *self);
