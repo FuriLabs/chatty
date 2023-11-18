@@ -23,7 +23,6 @@ G_DECLARE_FINAL_TYPE (ChattyFileItem, chatty_file_item, CHATTY, FILE_ITEM, AdwBi
 
 GtkWidget       *chatty_file_item_new        (ChattyMessage   *message,
                                               ChattyFile      *file);
-GtkStyleContext *chatty_file_item_get_style  (ChattyFileItem  *self);
 ChattyMessage   *chatty_file_item_get_item   (ChattyFileItem  *self);
 
 G_END_DECLS

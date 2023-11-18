@@ -215,14 +215,6 @@ chatty_file_item_new (ChattyMessage *message,
   return GTK_WIDGET (self);
 }
 
-GtkStyleContext *
-chatty_file_item_get_style (ChattyFileItem *self)
-{
-  g_return_val_if_fail (CHATTY_IS_FILE_ITEM (self), NULL);
-
-  return gtk_widget_get_style_context (self->file_overlay);
-}
-
 ChattyMessage *
 chatty_file_item_get_item (ChattyFileItem *self)
 {
