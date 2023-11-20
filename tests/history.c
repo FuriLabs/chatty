@@ -490,7 +490,7 @@ test_history_new (void)
   g_assert_true (g_file_test (file_name, G_FILE_TEST_IS_REGULAR));
   g_assert_true (chatty_history_is_open (history));
   g_assert_true (status);
-  g_clear_object (&task);
+  g_assert_finalize_object (task);
 
   task = g_task_new (NULL, NULL, NULL, NULL);
   chatty_history_close_async (history, finish_bool_cb, task);
@@ -501,7 +501,7 @@ test_history_new (void)
   status = g_task_propagate_boolean (task, NULL);
   g_assert_false (chatty_history_is_open (history));
   g_assert_true (status);
-  g_clear_object (&task);
+  g_assert_finalize_object (task);
   g_assert_finalize_object (history);
 
   g_remove (file_name);
