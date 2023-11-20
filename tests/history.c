@@ -474,7 +474,7 @@ test_history_new (void)
 
   history = chatty_history_new ();
   g_assert (CHATTY_IS_HISTORY (history));
-  g_assert_false (chatty_history_is_open (history));
+  g_assert_true (chatty_history_is_closed (history));
 
   task = g_task_new (NULL, NULL, NULL, NULL);
   dir = g_strdup (g_test_get_dir (G_TEST_BUILT));
@@ -488,7 +488,7 @@ test_history_new (void)
 
   status = g_task_propagate_boolean (task, NULL);
   g_assert_true (g_file_test (file_name, G_FILE_TEST_IS_REGULAR));
-  g_assert_true (chatty_history_is_open (history));
+  g_assert_false (chatty_history_is_closed (history));
   g_assert_true (status);
   g_assert_finalize_object (task);
 
@@ -499,7 +499,7 @@ test_history_new (void)
     g_main_context_iteration (NULL, TRUE);
 
   status = g_task_propagate_boolean (task, NULL);
-  g_assert_false (chatty_history_is_open (history));
+  g_assert_true (chatty_history_is_closed (history));
   g_assert_true (status);
   g_assert_finalize_object (task);
   g_assert_finalize_object (history);
@@ -510,10 +510,10 @@ test_history_new (void)
   history = chatty_history_new ();
   chatty_history_open (history, g_test_get_dir (G_TEST_BUILT), "test-history.db");
   g_assert_true (g_file_test (file_name, G_FILE_TEST_IS_REGULAR));
-  g_assert_true (chatty_history_is_open (history));
+  g_assert_false (chatty_history_is_closed (history));
 
   chatty_history_close (history);
-  g_assert_false (chatty_history_is_open (history));
+  g_assert_true (chatty_history_is_closed (history));
   g_assert_finalize_object (history);
 }
 
@@ -723,7 +723,7 @@ test_history_message (void)
 
   history = chatty_history_new ();
   chatty_history_open (history, g_test_get_dir (G_TEST_BUILT), "test-history.db");
-  g_assert_true (chatty_history_is_open (history));
+  g_assert_false (chatty_history_is_closed (history));
 
   msg_array = g_ptr_array_new ();
   g_ptr_array_set_free_func (msg_array, (GDestroyNotify)g_object_unref);

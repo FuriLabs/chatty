@@ -1980,8 +1980,8 @@ history_close_db (ChattyHistory *self,
   g_assert (self->db);
 
   db = self->db;
-  self->db = NULL;
   status = sqlite3_close (db);
+  self->db = NULL;
 
   if (status == SQLITE_OK) {
     /*
@@ -3292,20 +3292,22 @@ chatty_history_open_finish (ChattyHistory  *self,
 }
 
 /**
- * chatty_history_is_open:
+ * chatty_history_is_closed:
  * @self: a #ChattyHistory
  *
- * Get if the database is open or not
+ * Check if the database is safely closed. This function
+ * will return %FALSE if the database is still open and %TRUE
+ * if it was closed. It also returns %TRUE if the history db
+ * was never opened.
  *
- * Returns: %TRUE if a database is open.
- * %FALSE otherwise.
+ * Returns: %TRUE if a database is closed
  */
 gboolean
-chatty_history_is_open (ChattyHistory *self)
+chatty_history_is_closed (ChattyHistory *self)
 {
   g_return_val_if_fail (CHATTY_IS_HISTORY (self), FALSE);
 
-  return !!self->db;
+  return !self->db;
 }
 
 /**
