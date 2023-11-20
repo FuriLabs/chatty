@@ -3147,21 +3147,20 @@ static gpointer
 chatty_history_worker (gpointer user_data)
 {
   ChattyHistory *self = user_data;
-  GTask *task;
 
   g_assert (CHATTY_IS_HISTORY (self));
 
-  while ((task = g_async_queue_pop (self->queue))) {
+  do {
     ChattyCallback callback;
+    g_autoptr(GTask) task = g_async_queue_pop (self->queue);
 
     g_assert (task);
     callback = g_task_get_task_data (task);
     callback (self, task);
-    g_object_unref (task);
 
     if (callback == history_close_db)
       break;
-  }
+  } while (TRUE);
 
   return NULL;
 }
@@ -4078,4 +4077,3 @@ chatty_history_add_message (ChattyHistory *self,
 
   return g_task_propagate_boolean (task, NULL);
 }
-
