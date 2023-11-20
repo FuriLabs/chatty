@@ -768,9 +768,12 @@ test_history_message (void)
   add_chatty_message (history, chat, msg_array, "yet another draft", when + 2,
                       CHATTY_MESSAGE_HTML_ESCAPED, CHATTY_DIRECTION_OUT, CHATTY_STATUS_DRAFT);
 
+  chatty_history_close (history);
+
+  while (!chatty_history_is_closed (history));
+
   g_assert_finalize_object (chat);
   g_ptr_array_unref (msg_array);
-  chatty_history_close (history);
 }
 
 static void
