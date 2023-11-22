@@ -1,6 +1,6 @@
-data/sm.puri.Chatty.desktop.in
+data/sm.puri.Chatty.desktop.in.in
 data/sm.puri.Chatty.gschema.xml
-data/sm.puri.Chatty.metainfo.xml.in
+data/sm.puri.Chatty.metainfo.xml.in.in
 src/chatty-application.c
 src/chatty-application.h
 src/chatty-avatar.c
