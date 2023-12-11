@@ -155,6 +155,9 @@ related to `GLib` and `Gtk`.
 
 You can contribute translations via [GNOME Damned Lies](https://l10n.gnome.org/module/chatty/).
 
+## Guidelines for Maintainers
+
+We follow [Phosh's Guidelines for Maintainers](https://gitlab.gnome.org/World/Phosh/phosh/-/wikis/Guidelines-for-maintainers).
 
 ## XMPP account
 
