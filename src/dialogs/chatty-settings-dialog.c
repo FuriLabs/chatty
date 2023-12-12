@@ -188,16 +188,12 @@ settings_save_account_cb (GObject      *object,
 
   if (error) {
     if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
-      GtkWidget *dialog;
+      g_autoptr(GtkAlertDialog) dialog = NULL;
+      GtkWindow *window;
 
-      dialog = gtk_message_dialog_new (GTK_WINDOW (self),
-                                       GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                       GTK_MESSAGE_WARNING,
-                                       GTK_BUTTONS_CLOSE,
-                                       "Error saving account: %s", error->message);
-      g_signal_connect_swapped (dialog, "response",
-                                G_CALLBACK (gtk_window_destroy), dialog);
-      gtk_window_present (GTK_WINDOW (dialog));
+      dialog = gtk_alert_dialog_new (_("Error saving account: %s"), error->message);
+      window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
+      gtk_alert_dialog_show (GTK_ALERT_DIALOG (dialog), window);
     }
   } else {
     gtk_widget_set_visible (self->add_button, FALSE);
@@ -415,14 +411,18 @@ settings_pp_details_changed_cb (ChattySettingsDialog *self,
 }
 
 static void
-settings_delete_account_response_cb (ChattySettingsDialog *self,
-                                     int                   response_id,
-                                     GtkDialog            *dialog)
+settings_delete_account_response_cb (GObject         *dialog,
+                                     GAsyncResult    *response,
+                                     gpointer         user_data)
 {
-  g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
-  g_assert (GTK_IS_DIALOG (dialog));
+  g_autoptr(GError) error = NULL;
+  ChattySettingsDialog *self = CHATTY_SETTINGS_DIALOG (user_data);
+  int dialog_response = -1;
 
-  if (response_id == GTK_RESPONSE_OK) {
+  g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
+  dialog_response = gtk_alert_dialog_choose_finish (GTK_ALERT_DIALOG (dialog), response, &error);
+
+  if (!chatty_utils_dialog_response_is_cancel (GTK_ALERT_DIALOG (dialog), dialog_response)) {
     chatty_manager_delete_account_async (chatty_manager_get_default (),
                                          g_steal_pointer (&self->selected_account),
                                          NULL, NULL, NULL);
@@ -430,38 +430,34 @@ settings_delete_account_response_cb (ChattySettingsDialog *self,
     gtk_widget_set_visible (self->save_button, FALSE);
     gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "main-settings");
   }
-
-  gtk_window_destroy (GTK_WINDOW (dialog));
+  g_clear_object (&dialog);
 }
 
 static void
 settings_delete_account_clicked_cb (ChattySettingsDialog *self)
 {
-  GtkWidget *dialog;
   const char *username;
+  GtkWindow *window;
+  GtkAlertDialog *dialog;
+  g_autofree char *secondary_text = NULL;
+  const char *list[] = {_("Cancel"), _("OK"), NULL};
 
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
+  window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
 
   if (CHATTY_IS_MA_ACCOUNT (self->selected_account))
     username = chatty_ma_account_get_login_username (CHATTY_MA_ACCOUNT (self->selected_account));
   else
     username = chatty_item_get_username (CHATTY_ITEM (self->selected_account));
 
-  dialog = gtk_message_dialog_new ((GtkWindow*)self,
-                                   GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                   GTK_MESSAGE_WARNING,
-                                   GTK_BUTTONS_OK_CANCEL,
-                                   _("Delete Account"));
+  dialog = gtk_alert_dialog_new ( _("Delete Account"));
+  secondary_text = g_strdup_printf(_("Delete account %s?"), username);
+  gtk_alert_dialog_set_detail (dialog, secondary_text);
+  gtk_alert_dialog_set_buttons (dialog, list);
+  gtk_alert_dialog_set_cancel_button (dialog, 0);
+  gtk_alert_dialog_set_default_button (dialog, 1);
+  gtk_alert_dialog_choose (dialog, window, NULL, settings_delete_account_response_cb, self);
 
-  gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-                                            _("Delete account %s?"), username);
-
-  gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_CANCEL);
-
-  g_signal_connect_object (dialog, "response",
-                           G_CALLBACK (settings_delete_account_response_cb),
-                           self, G_CONNECT_SWAPPED);
-  gtk_window_present (GTK_WINDOW (dialog));
 }
 
 static void
