@@ -555,7 +555,6 @@ chatty_message_row_new (ChattyMessage  *message,
                         gboolean        is_im)
 {
   ChattyMessageRow *self;
-  GtkStyleContext *sc;
   const char *text, *subject;
   ChattyMsgDirection direction;
 
@@ -567,7 +566,6 @@ chatty_message_row_new (ChattyMessage  *message,
   self->message = g_object_ref (message);
   self->is_im = !!is_im;
   direction = chatty_message_get_msg_direction (message);
-  sc = gtk_widget_get_style_context (self->message_content);
 
   message_row_add_files (self);
 
@@ -625,17 +623,17 @@ chatty_message_row_new (ChattyMessage  *message,
   text_item_update_quotes (self);
 
   if (direction == CHATTY_DIRECTION_IN) {
-    gtk_style_context_add_class (sc, "bubble_white");
+    gtk_widget_add_css_class (self->message_content, "bubble_white");
     gtk_widget_set_halign (self->files_box, GTK_ALIGN_START);
     gtk_widget_set_halign (self->content_grid, GTK_ALIGN_START);
     gtk_widget_set_halign (self->message_content, GTK_ALIGN_START);
     gtk_widget_set_halign (self->author_label, GTK_ALIGN_START);
   } else if (direction == CHATTY_DIRECTION_OUT && protocol == CHATTY_PROTOCOL_MMS_SMS) {
-    gtk_style_context_add_class (sc, "bubble_green");
+    gtk_widget_add_css_class (self->message_content, "bubble_green");
   } else if (direction == CHATTY_DIRECTION_OUT) {
-    gtk_style_context_add_class (sc, "bubble_blue");
+    gtk_widget_add_css_class (self->message_content, "bubble_blue");
   } else { /* System message */
-    gtk_style_context_add_class (sc, "bubble_purple");
+    gtk_widget_add_css_class (self->message_content, "bubble_purple");
     gtk_widget_set_hexpand (self->message_content, TRUE);
   }
 
