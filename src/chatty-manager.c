@@ -729,16 +729,12 @@ chatty_manager_set_uri (ChattyManager *self,
   sms_uri = chatty_sms_uri_new (uri);
 
   if (!chatty_sms_uri_is_valid (sms_uri)) {
-    GtkApplication *app;
-    GtkWidget *dialog;
+    g_autoptr(GtkAlertDialog) dialog = NULL;
+    GtkWindow *window;
 
-    app = GTK_APPLICATION (g_application_get_default ());
-    dialog = gtk_message_dialog_new (gtk_application_get_active_window (app),
-                                     GTK_DIALOG_MODAL,
-                                     GTK_MESSAGE_WARNING,
-                                     GTK_BUTTONS_CLOSE,
-                                     _("“%s” is not a valid URI"), uri);
-    gtk_window_present (GTK_WINDOW (dialog));
+    window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
+    dialog = gtk_alert_dialog_new (_("“%s” is not a valid URI"), uri);
+    gtk_alert_dialog_show (GTK_ALERT_DIALOG (dialog), window);
 
     return FALSE;
   }
