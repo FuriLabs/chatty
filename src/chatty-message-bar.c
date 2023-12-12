@@ -84,51 +84,47 @@ chatty_message_chat_encrypt_changed_cb (ChattyMessageBar *self)
 }
 
 static void
-message_bar_file_chooser_response_cb (ChattyMessageBar *self,
-                                      int               response_id,
-                                      GtkDialog        *dialog)
+message_bar_file_chooser_response_cb (GObject         *dialog,
+                                      GAsyncResult    *response,
+                                      gpointer        user_data)
+
 {
+  ChattyMessageBar *self = CHATTY_MESSAGE_BAR (user_data);
+  g_autoptr(GError) error = NULL;
+  g_autoptr(GFile) open_filename = NULL;
+
   g_assert (CHATTY_IS_MESSAGE_BAR (self));
+  open_filename = gtk_file_dialog_open_finish (GTK_FILE_DIALOG (dialog), response, &error);
+  g_clear_object (&dialog);
 
-  if (response_id == GTK_RESPONSE_ACCEPT) {
-    g_autoptr(GFile) file = NULL;
-
-    file = gtk_file_chooser_get_file (GTK_FILE_CHOOSER (dialog));
-
-    chatty_attachments_bar_add_file (CHATTY_ATTACHMENTS_BAR (self->attachment_bar), file);
-
-    /* Currently multiple files are allowed only for MMS chats */
-    gtk_widget_set_sensitive (self->send_file_button, CHATTY_IS_MM_CHAT (self->chat));
-    /* Files with message content is supported only by MMS chats */
-    gtk_widget_set_sensitive (self->message_input, CHATTY_IS_MM_CHAT (self->chat));
+  if (!open_filename) {
+    if (!g_error_matches (error, GTK_DIALOG_ERROR, GTK_DIALOG_ERROR_DISMISSED))
+      g_warning ("Error getting file: %s", error->message);
+    return;
   }
 
-  gtk_window_destroy (GTK_WINDOW (dialog));
+  chatty_attachments_bar_add_file (CHATTY_ATTACHMENTS_BAR (self->attachment_bar), open_filename);
+
+  /* Currently multiple files are allowed only for MMS chats */
+  gtk_widget_set_sensitive (self->send_file_button, CHATTY_IS_MM_CHAT (self->chat));
+  /* Files with message content is supported only by MMS chats */
+  gtk_widget_set_sensitive (self->message_input, CHATTY_IS_MM_CHAT (self->chat));
 }
 
 static void
 chat_page_show_file_chooser (ChattyMessageBar *self)
 {
   GtkWindow *window;
-  GtkWidget *dialog;
+  GtkFileDialog *dialog;
 
   g_assert (CHATTY_IS_MESSAGE_BAR (self));
 
   g_debug ("Show file chooser");
 
   window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
-  dialog = gtk_file_chooser_dialog_new (_("Select File..."),
-                                        window,
-                                        GTK_FILE_CHOOSER_ACTION_OPEN,
-                                        _("Cancel"), GTK_RESPONSE_CANCEL,
-                                        _("Open"), GTK_RESPONSE_ACCEPT,
-                                        NULL);
+  dialog = gtk_file_dialog_new ();
 
-  g_signal_connect_object (dialog, "response",
-                           G_CALLBACK (message_bar_file_chooser_response_cb),
-                           self, G_CONNECT_SWAPPED);
-
-  gtk_window_present (GTK_WINDOW (dialog));
+  gtk_file_dialog_open (dialog, window, NULL, message_bar_file_chooser_response_cb, self);
 }
 
 static void
