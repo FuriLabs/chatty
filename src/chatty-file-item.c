@@ -107,12 +107,31 @@ file_progress_button_action_clicked_cb (ChattyFileItem *self)
 }
 
 static void
+file_item_button_clicked_cb (GObject         *file_launcher,
+                             GAsyncResult    *response,
+                             gpointer         user_data)
+{
+  ChattyFileItem *self = CHATTY_FILE_ITEM (user_data);
+  g_autoptr(GError) error = NULL;
+
+  g_assert (CHATTY_IS_FILE_ITEM (self));
+
+  if (!gtk_file_launcher_launch_finish (GTK_FILE_LAUNCHER (file_launcher), response, &error)) {
+    if (!g_error_matches (error, GTK_DIALOG_ERROR, GTK_DIALOG_ERROR_DISMISSED))
+      g_warning ("Error getting file: %s", error->message);
+  }
+
+  g_clear_object (&file_launcher);
+}
+
+static void
 file_item_button_clicked (ChattyFileItem *self)
 {
   g_autoptr(GFile) file = NULL;
-  g_autofree char *uri = NULL;
   GList *file_list;
   const char *path;
+  GtkFileLauncher *file_launcher = NULL;
+  GtkWindow *window;
 
   g_assert (CHATTY_IS_FILE_ITEM (self));
   g_assert (self->file);
@@ -131,9 +150,9 @@ file_item_button_clicked (ChattyFileItem *self)
   else
     file = g_file_new_build_filename (g_get_user_data_dir (), "chatty", path, NULL);
 
-  uri = g_file_get_uri (file);
-
-  gtk_show_uri (NULL, uri, GDK_CURRENT_TIME);
+  window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
+  file_launcher = gtk_file_launcher_new (file);
+  gtk_file_launcher_launch (file_launcher, window, NULL, file_item_button_clicked_cb, self);
 }
 
 static void
