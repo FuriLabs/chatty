@@ -44,7 +44,7 @@ gtk_dialog_run (GtkDialog *dialog)
   g_assert (GTK_IS_DIALOG (dialog));
 
   task = g_task_new (dialog, NULL, NULL, NULL);
-  gtk_widget_show (GTK_WIDGET (dialog));
+  gtk_widget_set_visible (GTK_WIDGET (dialog), TRUE);
 
   g_signal_connect_object (dialog, "response",
                            G_CALLBACK (dialog_response_cb),

@@ -80,12 +80,12 @@ header_bar_update_item_state_button (ChattyMainView *self,
   state = chatty_item_get_state (item);
 
   if (state == CHATTY_ITEM_VISIBLE) {
-    gtk_widget_show (self->block_button);
-    gtk_widget_show (self->archive_button);
+    gtk_widget_set_visible (self->block_button, TRUE);
+    gtk_widget_set_visible (self->archive_button, TRUE);
   } else if (state == CHATTY_ITEM_ARCHIVED) {
-    gtk_widget_show (self->unarchive_button);
+    gtk_widget_set_visible (self->unarchive_button, TRUE);
   } else if (state == CHATTY_ITEM_BLOCKED) {
-    gtk_widget_show (self->unblock_button);
+    gtk_widget_set_visible (self->unblock_button, TRUE);
   }
 }
 
@@ -267,7 +267,7 @@ chatty_main_view_set_item (ChattyMainView *self,
         buddy = g_list_model_get_item (users, 0);
 
         if (app_info)
-          gtk_widget_show (self->call_button);
+          gtk_widget_set_visible (self->call_button, TRUE);
       }
     }
 

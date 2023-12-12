@@ -202,7 +202,7 @@ show_help_cb (GObject      *object,
                         G_CALLBACK (gtk_window_destroy),
                         NULL);
 
-      gtk_widget_show (message_dialog);
+      gtk_widget_set_visible (message_dialog, TRUE);
   }
 }
 

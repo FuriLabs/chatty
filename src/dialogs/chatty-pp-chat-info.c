@@ -251,7 +251,7 @@ pp_chat_info_list_fp_cb (GObject      *object,
     gtk_widget_hide (self->key_list);
     gtk_label_set_text (GTK_LABEL (self->encryption_label), _("Encryption not available"));
   } else {
-    gtk_widget_show (self->key_list);
+    gtk_widget_set_visible (self->key_list, TRUE);
     gtk_list_box_bind_model (GTK_LIST_BOX (self->key_list),
                              chatty_pp_chat_get_fp_list (chat),
                              (GtkListBoxCreateWidgetFunc) chatty_fp_row_new,
@@ -307,7 +307,7 @@ chatty_pp_chat_info_update (ChattyPpChatInfo *self)
     gtk_label_set_text (GTK_LABEL (self->user_id_title), _("Phone Number:"));
   } else if (protocol == CHATTY_PROTOCOL_XMPP) {
     gtk_label_set_text (GTK_LABEL (self->user_id_title), _("XMPP ID:"));
-    gtk_widget_show (GTK_WIDGET (self->status_label));
+    gtk_widget_set_visible (GTK_WIDGET (self->status_label), TRUE);
     gtk_label_set_text (GTK_LABEL (self->status_label),
                         chatty_pp_chat_get_status (CHATTY_PP_CHAT (self->chat)));
   } else if (protocol == CHATTY_PROTOCOL_MATRIX) {
@@ -324,12 +324,12 @@ chatty_pp_chat_info_update (ChattyPpChatInfo *self)
                       chatty_item_get_name (CHATTY_ITEM (self->chat)));
 
   if (chatty_chat_is_im (self->chat)) {
-    gtk_widget_show (self->user_id_label);
-    gtk_widget_show (self->name_label);
+    gtk_widget_set_visible (self->user_id_label, TRUE);
+    gtk_widget_set_visible (self->name_label, TRUE);
   } else {
     gtk_widget_hide (self->user_id_label);
     gtk_widget_hide (self->name_label);
-    gtk_widget_show (self->room_name);
+    gtk_widget_set_visible (self->room_name, TRUE);
     gtk_label_set_text (GTK_LABEL (self->room_name),
                         chatty_item_get_name (CHATTY_ITEM (self->chat)));
   }
@@ -339,8 +339,8 @@ chatty_pp_chat_info_update (ChattyPpChatInfo *self)
 
   if (protocol == CHATTY_PROTOCOL_XMPP &&
       chatty_chat_is_im (self->chat)) {
-    gtk_widget_show (self->encryption_label);
-    gtk_widget_show (self->status_label);
+    gtk_widget_set_visible (self->encryption_label, TRUE);
+    gtk_widget_set_visible (self->status_label, TRUE);
     chatty_pp_chat_load_fp_list_async (CHATTY_PP_CHAT (self->chat),
                                        pp_chat_info_list_fp_cb, self);
   } else {
@@ -356,15 +356,15 @@ chatty_pp_chat_info_update (ChattyPpChatInfo *self)
   if ((protocol == CHATTY_PROTOCOL_XMPP ||
        protocol == CHATTY_PROTOCOL_TELEGRAM) &&
       !chatty_chat_is_im (self->chat)) {
-    gtk_widget_show (self->show_status_switch);
+    gtk_widget_set_visible (self->show_status_switch, TRUE);
   } else {
     gtk_widget_hide (self->show_status_switch);
   }
 
   if (protocol == CHATTY_PROTOCOL_XMPP &&
       !chatty_chat_is_im (self->chat)) {
-    gtk_widget_show (self->room_topic_view);
-    gtk_widget_show (self->user_list);
+    gtk_widget_set_visible (self->room_topic_view, TRUE);
+    gtk_widget_set_visible (self->user_list, TRUE);
     chatty_pp_chat_info_list_users (self);
     gtk_switch_set_state (GTK_SWITCH (self->show_status_switch),
                           chatty_pp_chat_get_show_status_msg (CHATTY_PP_CHAT (self->chat)));

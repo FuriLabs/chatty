@@ -654,6 +654,6 @@ chatty_message_row_hide_user_detail (ChattyMessageRow *self)
   gtk_widget_hide (self->author_label);
   if (gtk_widget_get_visible (self->avatar_image)) {
     gtk_widget_hide (self->avatar_image);
-    gtk_widget_show (self->hidden_box);
+    gtk_widget_set_visible (self->hidden_box, TRUE);
   }
 }

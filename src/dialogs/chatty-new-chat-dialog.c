@@ -161,7 +161,7 @@ new_chat_dialog_page_changed_cb (ChattyNewChatDialog *self)
   gtk_widget_hide (self->cancel_button);
   gtk_widget_hide (self->apply_button);
   gtk_widget_hide (self->edit_contact_button);
-  gtk_widget_show (self->apply_button);
+  gtk_widget_set_visible (self->apply_button, TRUE);
   adw_header_bar_set_show_end_title_buttons (ADW_HEADER_BAR (self->header_bar), FALSE);
 
   visible_child = gtk_stack_get_visible_child (GTK_STACK (self->main_stack));
@@ -169,23 +169,23 @@ new_chat_dialog_page_changed_cb (ChattyNewChatDialog *self)
   if (visible_child == self->contact_list_view) {
     if (self->multi_selection) {
       gtk_button_set_label (GTK_BUTTON (self->apply_button), _("Add"));
-      gtk_widget_show (self->back_button);
+      gtk_widget_set_visible (self->back_button, TRUE);
     } else {
       gtk_widget_hide (self->apply_button);
       adw_header_bar_set_show_end_title_buttons (ADW_HEADER_BAR (self->header_bar), TRUE);
-      gtk_widget_show (self->edit_contact_button);
+      gtk_widget_set_visible (self->edit_contact_button, TRUE);
     }
   } else if (visible_child == self->new_group_chat_view) {
     gboolean can_create;
 
     gtk_button_set_label (GTK_BUTTON (self->apply_button), _("Create"));
-    gtk_widget_show (self->cancel_button);
+    gtk_widget_set_visible (self->cancel_button, TRUE);
 
     can_create = g_list_model_get_n_items (G_LIST_MODEL (self->selection_list)) > 0;
     gtk_widget_set_sensitive (self->apply_button, can_create);
   } else {
     gtk_button_set_label (GTK_BUTTON (self->apply_button), _("Add Contact"));
-   gtk_widget_show (self->back_button);
+   gtk_widget_set_visible (self->back_button, TRUE);
   }
 }
 
@@ -395,13 +395,13 @@ chatty_new_chat_set_edit_mode (ChattyNewChatDialog *self,
   g_return_if_fail (CHATTY_IS_NEW_CHAT_DIALOG (self));
 
   if (edit) {
-    gtk_widget_show (GTK_WIDGET (self->contact_edit_grid));
-    gtk_widget_show (GTK_WIDGET (self->apply_button));
+    gtk_widget_set_visible (GTK_WIDGET (self->contact_edit_grid), TRUE);
+    gtk_widget_set_visible (GTK_WIDGET (self->apply_button), TRUE);
     gtk_widget_hide (GTK_WIDGET (self->add_in_contacts_button));
   } else {
     gtk_widget_hide (GTK_WIDGET (self->contact_edit_grid));
     gtk_widget_hide (GTK_WIDGET (self->apply_button));
-    gtk_widget_show (GTK_WIDGET (self->add_in_contacts_button));
+    gtk_widget_set_visible (GTK_WIDGET (self->add_in_contacts_button), TRUE);
   }
 }
 
@@ -457,7 +457,7 @@ chatty_new_chat_add_account_to_list (ChattyNewChatDialog *self,
 
   gtk_list_box_append (GTK_LIST_BOX (self->accounts_list), GTK_WIDGET (row));
 
-  gtk_widget_show (GTK_WIDGET (row));
+  gtk_widget_set_visible (GTK_WIDGET (row), TRUE);
 }
 
 static void

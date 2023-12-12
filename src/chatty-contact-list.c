@@ -215,7 +215,7 @@ selected_contact_row_activated_cb (ChattyContactList *self,
     /* If the deselected item value matches the search string, show new contact row */
     if (self->search_str &&
         g_strcmp0 (chatty_item_get_username (item), self->search_str) == 0)
-      gtk_widget_show (self->new_contact_row);
+      gtk_widget_set_visible (self->new_contact_row, TRUE);
   } else {
     guint position;
 

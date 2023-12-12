@@ -180,7 +180,7 @@ chatty_list_row_update (ChattyListRow *self)
       flag = chatty_pp_buddy_get_flags (CHATTY_PP_BUDDY (self->item));
       markup = list_row_user_flag_to_str (flag);
       gtk_label_set_markup (GTK_LABEL (self->subtitle), markup);
-      gtk_widget_show (self->subtitle);
+      gtk_widget_set_visible (self->subtitle, TRUE);
     }
   } else
 #endif
@@ -243,7 +243,7 @@ chatty_list_row_update (ChattyListRow *self)
     if (chatty_chat_get_chat_state (CHATTY_CHAT (self->item)) == CHATTY_CHAT_INVITED ||
         CHATTY_IS_MA_KEY_CHAT (self->item)) {
       gtk_label_set_text (GTK_LABEL (self->unread_message_count), "⚫︎");
-      gtk_widget_show (self->unread_message_count);
+      gtk_widget_set_visible (self->unread_message_count, TRUE);
       g_object_ref (self->unread_message_count);
       gtk_grid_remove (GTK_GRID (self->content_grid), self->unread_message_count);
       gtk_grid_attach (GTK_GRID (self->content_grid), self->unread_message_count, 2, 0, 1, 1);
@@ -481,6 +481,6 @@ chatty_list_row_show_delete_button (ChattyListRow *self)
 {
   g_return_if_fail (CHATTY_IS_LIST_ROW (self));
 
-  gtk_widget_show (self->close_button);
+  gtk_widget_set_visible (self->close_button, TRUE);
   gtk_widget_hide (self->checkbox);
 }

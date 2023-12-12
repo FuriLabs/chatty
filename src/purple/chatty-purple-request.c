@@ -206,7 +206,7 @@ chatty_request_file (const char         *title,
 
   data->dialog = dialog;
 
-  gtk_widget_show (dialog);
+  gtk_widget_set_visible (dialog, TRUE);
 
   return (void *)data;
 }

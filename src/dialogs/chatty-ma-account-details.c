@@ -325,7 +325,7 @@ ma_account_details_add_entry (ChattyMaAccountDetails *self,
   gtk_style_context_add_class (context, "linked");
 
   entry = gtk_entry_new ();
-  gtk_widget_show (entry);
+  gtk_widget_set_visible (entry, TRUE);
   gtk_widget_set_hexpand (entry, TRUE);
   gtk_widget_set_sensitive (entry, FALSE);
   gtk_editable_set_text (GTK_EDITABLE (entry), value);
