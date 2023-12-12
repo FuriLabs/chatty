@@ -203,8 +203,9 @@ open_contacts_finish_cb (GObject      *object,
 {
   ChattyNewChatDialog *self = user_data;
   ChattyEds *chatty_eds = (ChattyEds *)object;
-  GtkWidget *dialog;
+  GtkWindow *window;
   g_autoptr(GError) error = NULL;
+  g_autoptr (GtkAlertDialog) dialog = NULL;
 
   g_assert (CHATTY_IS_NEW_CHAT_DIALOG (self));
   g_assert (CHATTY_IS_EDS (chatty_eds));
@@ -216,15 +217,9 @@ open_contacts_finish_cb (GObject      *object,
   if (!error)
     return;
 
-  dialog = gtk_message_dialog_new (GTK_WINDOW (self),
-                                   GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                   GTK_MESSAGE_WARNING,
-                                   GTK_BUTTONS_CLOSE,
-                                   _("Error opening GNOME Contacts: %s"),
-                                   error->message);
-  g_signal_connect_swapped (dialog, "response",
-                            G_CALLBACK (gtk_window_destroy), dialog);
-  gtk_window_present (GTK_WINDOW (dialog));
+  dialog = gtk_alert_dialog_new (_("Error opening GNOME Contacts: %s"), error->message);
+  window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
+  gtk_alert_dialog_show (GTK_ALERT_DIALOG (dialog), window);
 }
 
 static void
