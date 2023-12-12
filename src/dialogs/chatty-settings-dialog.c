@@ -129,24 +129,18 @@ static void
 settings_apply_style (GtkWidget  *widget,
                       const char *style)
 {
-  GtkStyleContext *context;
-
   g_assert (style && *style);
 
-  context = gtk_widget_get_style_context (widget);
-  gtk_style_context_add_class (context, style);
+  gtk_widget_add_css_class (widget, style);
 }
 
 static void
 settings_remove_style (GtkWidget  *widget,
                        const char *style)
 {
-  GtkStyleContext *context;
-
   g_assert (style && *style);
 
-  context = gtk_widget_get_style_context (widget);
-  gtk_style_context_remove_class (context, style);
+  gtk_widget_add_css_class (widget, style);
 }
 
 static void
@@ -535,7 +529,6 @@ static void
 settings_phone_number_entry_changed_cb (ChattySettingsDialog *self,
                                         GtkEntry             *number_entry)
 {
-  GtkStyleContext *context;
   const char *number;
   gboolean valid = TRUE;
 
@@ -558,12 +551,10 @@ settings_phone_number_entry_changed_cb (ChattySettingsDialog *self,
     valid = chatty_phone_utils_is_valid (number, "+1");
 
  end:
-  context = gtk_widget_get_style_context (GTK_WIDGET (number_entry));
-
   if (valid)
-    gtk_style_context_remove_class (context, "error");
+    gtk_widget_remove_css_class (GTK_WIDGET (number_entry), "error");
   else
-    gtk_style_context_add_class (context, "error");
+    gtk_widget_add_css_class (GTK_WIDGET (number_entry), "error");
 
 
   gtk_widget_set_sensitive (self->mms_save_button, valid);

@@ -317,11 +317,9 @@ ma_account_details_add_entry (ChattyMaAccountDetails *self,
                               const char             *value)
 {
   GtkWidget *entry, *row, *button, *stack, *spinner, *image;
-  GtkStyleContext *context;
 
   row = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
-  context = gtk_widget_get_style_context (row);
-  gtk_style_context_add_class (context, "linked");
+  gtk_widget_add_css_class (row, "linked");
 
   entry = gtk_entry_new ();
   gtk_widget_set_visible (entry, TRUE);
