@@ -32,7 +32,6 @@
 #define CMATRIX_USE_EXPERIMENTAL_API
 #include "cmatrix.h"
 
-#include "gtk3-to-4.h"
 #include "chatty-utils.h"
 #include "chatty-ma-account.h"
 #include "chatty-mm-account.h"

@@ -29,7 +29,6 @@
 
 #include <glib/gi18n.h>
 
-#include "gtk3-to-4.h"
 #include "chatty-avatar.h"
 #include "chatty-list-row.h"
 #include "chatty-fp-row.h"

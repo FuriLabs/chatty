@@ -14,7 +14,6 @@
 # include "config.h"
 #endif
 
-#include "gtk3-to-4.h"
 #include "chatty-utils.h"
 #include "chatty-attachment.h"
 #include "chatty-log.h"

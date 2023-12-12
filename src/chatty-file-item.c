@@ -12,7 +12,6 @@
 
 #include <glib/gi18n.h>
 
-#include "gtk3-to-4.h"
 #include "chatty-enums.h"
 #include "chatty-file.h"
 #include "chatty-chat-page.h"

@@ -19,7 +19,6 @@
 #include <purple.h>
 #include "xeps/xeps.h"
 
-#include "gtk3-to-4.h"
 #include "chatty-settings.h"
 #include "chatty-pp-buddy.h"
 #include "chatty-pp-account.h"

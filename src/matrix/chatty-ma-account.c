@@ -13,7 +13,6 @@
 #include <libsecret/secret.h>
 #include <glib/gi18n.h>
 
-#include "gtk3-to-4.h"
 #include "chatty-history.h"
 #include "chatty-utils.h"
 #include "chatty-ma-chat.h"

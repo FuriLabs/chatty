@@ -20,7 +20,6 @@
 #define CMATRIX_USE_EXPERIMENTAL_API
 #include "cmatrix.h"
 
-#include "gtk3-to-4.h"
 #include "chatty-settings.h"
 #include "chatty-contact-provider.h"
 #include "chatty-utils.h"

@@ -15,7 +15,6 @@
 
 #include <glib/gi18n.h>
 
-#include "gtk3-to-4.h"
 #include "chatty-purple.h"
 #include "chatty-contact.h"
 #include "chatty-contact-list.h"

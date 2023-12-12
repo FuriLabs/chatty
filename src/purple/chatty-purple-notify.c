@@ -8,7 +8,6 @@
 
 #include <glib/gi18n.h>
 
-#include "gtk3-to-4.h"
 #include "chatty-purple-notify.h"
 #include "chatty-application.h"
 #include "chatty-utils.h"
