@@ -607,7 +607,7 @@ chatty_message_row_new (ChattyMessage  *message,
 
   if ((is_im && protocol != CHATTY_PROTOCOL_MATRIX) || direction == CHATTY_DIRECTION_SYSTEM ||
       direction == CHATTY_DIRECTION_OUT)
-    gtk_widget_hide (self->avatar_image);
+    gtk_widget_set_visible (self->avatar_image, FALSE);
   else
     chatty_avatar_set_item (CHATTY_AVATAR (self->avatar_image),
                             chatty_message_get_user (message));
@@ -634,7 +634,7 @@ chatty_message_row_hide_footer (ChattyMessageRow *self)
   g_return_if_fail (CHATTY_IS_MESSAGE_ROW (self));
 
   self->force_hide_footer = TRUE;
-  gtk_widget_hide (self->footer_label);
+  gtk_widget_set_visible (self->footer_label, FALSE);
 }
 
 void
@@ -651,9 +651,9 @@ chatty_message_row_hide_user_detail (ChattyMessageRow *self)
 {
   g_return_if_fail (CHATTY_IS_MESSAGE_ROW (self));
 
-  gtk_widget_hide (self->author_label);
+  gtk_widget_set_visible (self->author_label, FALSE);
   if (gtk_widget_get_visible (self->avatar_image)) {
-    gtk_widget_hide (self->avatar_image);
+    gtk_widget_set_visible (self->avatar_image, FALSE);
     gtk_widget_set_visible (self->hidden_box, TRUE);
   }
 }

@@ -106,7 +106,7 @@ update_new_contact_row (ChattyContactList *self)
 
   if (!self->search_str || !*self->search_str ||
       !(self->active_protocols & CHATTY_PROTOCOL_MMS_SMS)) {
-    gtk_widget_hide (self->new_contact_row);
+    gtk_widget_set_visible (self->new_contact_row, FALSE);
     return;
   }
 
@@ -130,7 +130,7 @@ update_new_contact_row (ChattyContactList *self)
     value = chatty_item_get_username (item);
 
     if (g_strcmp0 (value, dummy_value) == 0) {
-      gtk_widget_hide (self->new_contact_row);
+      gtk_widget_set_visible (self->new_contact_row, FALSE);
       break;
     }
   }
@@ -253,7 +253,7 @@ contact_list_row_activated_cb (ChattyContactList *self,
   }
 
   if (self->can_multi_select)
-    gtk_widget_hide (GTK_WIDGET (row));
+    gtk_widget_set_visible (GTK_WIDGET (row), FALSE);
 
   g_signal_emit (self, signals[SELECTION_CHANGED], 0);
 }
@@ -451,8 +451,8 @@ chatty_contact_list_show_selected_only (ChattyContactList *self)
   gtk_stack_set_visible_child (GTK_STACK (self->main_stack), self->contact_list_view);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (self->scrolled_window),
                                   GTK_POLICY_NEVER, GTK_POLICY_NEVER);
-  gtk_widget_hide (self->new_contact_row);
-  gtk_widget_hide (self->contact_list);
+  gtk_widget_set_visible (self->new_contact_row, FALSE);
+  gtk_widget_set_visible (self->contact_list, FALSE);
 }
 
 static void

@@ -87,7 +87,7 @@ file_item_update_message (ChattyFileItem *self)
   else if (status == CHATTY_FILE_DOWNLOADING)
     chatty_progress_button_pulse (CHATTY_PROGRESS_BUTTON (self->progress_button));
   else
-    gtk_widget_hide (self->progress_button);
+    gtk_widget_set_visible (self->progress_button, FALSE);
 
   /* Update in idle so that self is added to the parent container */
   if (status == CHATTY_FILE_DOWNLOADED)

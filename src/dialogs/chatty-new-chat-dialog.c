@@ -108,7 +108,7 @@ cancel_button_clicked_cb (ChattyNewChatDialog *self)
 {
   g_assert (CHATTY_IS_NEW_CHAT_DIALOG (self));
 
-  gtk_widget_hide (GTK_WIDGET (self));
+  gtk_widget_set_visible (GTK_WIDGET (self), FALSE);
 }
 
 void
@@ -157,10 +157,10 @@ new_chat_dialog_page_changed_cb (ChattyNewChatDialog *self)
 
   g_assert (CHATTY_IS_NEW_CHAT_DIALOG (self));
 
-  gtk_widget_hide (self->back_button);
-  gtk_widget_hide (self->cancel_button);
-  gtk_widget_hide (self->apply_button);
-  gtk_widget_hide (self->edit_contact_button);
+  gtk_widget_set_visible (self->back_button, FALSE);
+  gtk_widget_set_visible (self->cancel_button, FALSE);
+  gtk_widget_set_visible (self->apply_button, FALSE);
+  gtk_widget_set_visible (self->edit_contact_button, FALSE);
   gtk_widget_set_visible (self->apply_button, TRUE);
   adw_header_bar_set_show_end_title_buttons (ADW_HEADER_BAR (self->header_bar), FALSE);
 
@@ -171,7 +171,7 @@ new_chat_dialog_page_changed_cb (ChattyNewChatDialog *self)
       gtk_button_set_label (GTK_BUTTON (self->apply_button), _("Add"));
       gtk_widget_set_visible (self->back_button, TRUE);
     } else {
-      gtk_widget_hide (self->apply_button);
+      gtk_widget_set_visible (self->apply_button, FALSE);
       adw_header_bar_set_show_end_title_buttons (ADW_HEADER_BAR (self->header_bar), TRUE);
       gtk_widget_set_visible (self->edit_contact_button, TRUE);
     }
@@ -344,7 +344,7 @@ new_chat_dialog_apply_button_clicked_cb (ChattyNewChatDialog *self)
     chatty_account_start_direct_chat_async (self->selected_account, buddies, NULL, NULL);
 #endif
 
-    gtk_widget_hide (GTK_WIDGET (self));
+    gtk_widget_set_visible (GTK_WIDGET (self), FALSE);
   } else if (gtk_stack_get_visible_child (GTK_STACK (self->main_stack)) == self->contact_list_view) {
     GListModel *model;
 
@@ -397,10 +397,10 @@ chatty_new_chat_set_edit_mode (ChattyNewChatDialog *self,
   if (edit) {
     gtk_widget_set_visible (GTK_WIDGET (self->contact_edit_grid), TRUE);
     gtk_widget_set_visible (GTK_WIDGET (self->apply_button), TRUE);
-    gtk_widget_hide (GTK_WIDGET (self->add_in_contacts_button));
+    gtk_widget_set_visible (GTK_WIDGET (self->add_in_contacts_button), FALSE);
   } else {
-    gtk_widget_hide (GTK_WIDGET (self->contact_edit_grid));
-    gtk_widget_hide (GTK_WIDGET (self->apply_button));
+    gtk_widget_set_visible (GTK_WIDGET (self->contact_edit_grid), FALSE);
+    gtk_widget_set_visible (GTK_WIDGET (self->apply_button), FALSE);
     gtk_widget_set_visible (GTK_WIDGET (self->add_in_contacts_button), TRUE);
   }
 }

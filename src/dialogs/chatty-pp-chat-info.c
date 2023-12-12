@@ -248,7 +248,7 @@ pp_chat_info_list_fp_cb (GObject      *object,
   chat = CHATTY_PP_CHAT (self->chat);
 
   if (!chatty_pp_chat_load_fp_list_finish (chat, result, NULL)) {
-    gtk_widget_hide (self->key_list);
+    gtk_widget_set_visible (self->key_list, FALSE);
     gtk_label_set_text (GTK_LABEL (self->encryption_label), _("Encryption not available"));
   } else {
     gtk_widget_set_visible (self->key_list, TRUE);
@@ -312,7 +312,7 @@ chatty_pp_chat_info_update (ChattyPpChatInfo *self)
                         chatty_pp_chat_get_status (CHATTY_PP_CHAT (self->chat)));
   } else if (protocol == CHATTY_PROTOCOL_MATRIX) {
     gtk_label_set_text (GTK_LABEL (self->user_id_title), _("Matrix ID:"));
-    gtk_widget_hide (self->user_id_label);
+    gtk_widget_set_visible (self->user_id_label, FALSE);
   } else if (protocol == CHATTY_PROTOCOL_TELEGRAM) {
     gtk_label_set_text (GTK_LABEL (self->user_id_title), _("Telegram ID:"));
   }
@@ -327,8 +327,8 @@ chatty_pp_chat_info_update (ChattyPpChatInfo *self)
     gtk_widget_set_visible (self->user_id_label, TRUE);
     gtk_widget_set_visible (self->name_label, TRUE);
   } else {
-    gtk_widget_hide (self->user_id_label);
-    gtk_widget_hide (self->name_label);
+    gtk_widget_set_visible (self->user_id_label, FALSE);
+    gtk_widget_set_visible (self->name_label, FALSE);
     gtk_widget_set_visible (self->room_name, TRUE);
     gtk_label_set_text (GTK_LABEL (self->room_name),
                         chatty_item_get_name (CHATTY_ITEM (self->chat)));
@@ -344,8 +344,8 @@ chatty_pp_chat_info_update (ChattyPpChatInfo *self)
     chatty_pp_chat_load_fp_list_async (CHATTY_PP_CHAT (self->chat),
                                        pp_chat_info_list_fp_cb, self);
   } else {
-    gtk_widget_hide (self->encryption_label);
-    gtk_widget_hide (self->status_label);
+    gtk_widget_set_visible (self->encryption_label, FALSE);
+    gtk_widget_set_visible (self->status_label, FALSE);
   }
 
   gtk_widget_set_visible (self->notification_switch, CHATTY_IS_PP_CHAT (self->chat));
@@ -358,7 +358,7 @@ chatty_pp_chat_info_update (ChattyPpChatInfo *self)
       !chatty_chat_is_im (self->chat)) {
     gtk_widget_set_visible (self->show_status_switch, TRUE);
   } else {
-    gtk_widget_hide (self->show_status_switch);
+    gtk_widget_set_visible (self->show_status_switch, FALSE);
   }
 
   if (protocol == CHATTY_PROTOCOL_XMPP &&
@@ -371,9 +371,9 @@ chatty_pp_chat_info_update (ChattyPpChatInfo *self)
     gtk_text_buffer_set_text (self->topic_buffer,
                               chatty_chat_get_topic (self->chat), -1);
   } else {
-    gtk_widget_hide (self->user_list);
-    gtk_widget_hide (self->show_status_switch);
-    gtk_widget_hide (self->room_topic_view);
+    gtk_widget_set_visible (self->user_list, FALSE);
+    gtk_widget_set_visible (self->show_status_switch, FALSE);
+    gtk_widget_set_visible (self->room_topic_view, FALSE);
   }
 }
 
@@ -404,7 +404,7 @@ chatty_pp_chat_info_set_item (ChattyChatInfo *info,
                                                      self, G_CONNECT_SWAPPED);
   pp_info_avatar_changed_cb (self);
   gtk_text_buffer_set_text (self->topic_buffer, "", 0);
-  gtk_widget_hide (self->key_list);
+  gtk_widget_set_visible (self->key_list, FALSE);
 
   index = 0;
   do {

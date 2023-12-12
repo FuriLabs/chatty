@@ -56,7 +56,7 @@ info_dialog_new_invite_clicked_cb (ChattyInfoDialog *self)
 {
   g_assert (CHATTY_IS_INFO_DIALOG (self));
 
-  gtk_widget_hide (self->new_invite_button);
+  gtk_widget_set_visible (self->new_invite_button, FALSE);
   gtk_widget_set_visible (self->invite_button, TRUE);
   gtk_stack_set_visible_child (GTK_STACK (self->main_stack),
                                self->invite_page);
@@ -68,7 +68,7 @@ info_dialog_cancel_clicked_cb (ChattyInfoDialog *self)
 {
   g_assert (CHATTY_IS_INFO_DIALOG (self));
 
-  gtk_widget_hide (self->invite_button);
+  gtk_widget_set_visible (self->invite_button, FALSE);
   gtk_widget_set_visible (self->new_invite_button, TRUE);
   gtk_stack_set_visible_child (GTK_STACK (self->main_stack),
                                self->chat_type_stack);
@@ -78,7 +78,7 @@ static void
 cancel_button_clicked_cb (ChattyInfoDialog *self)
 {
   g_assert (CHATTY_IS_INFO_DIALOG (self));
-  gtk_widget_hide (GTK_WIDGET (self));
+  gtk_widget_set_visible (GTK_WIDGET (self), FALSE);
 
   chatty_mm_chat_info_cancel_changes (CHATTY_MM_CHAT_INFO (self->mm_chat_info),
                                       self->chat);
@@ -89,7 +89,7 @@ apply_button_clicked_cb (ChattyInfoDialog *self)
 {
 
   g_assert (CHATTY_IS_INFO_DIALOG (self));
-  gtk_widget_hide (GTK_WIDGET (self));
+  gtk_widget_set_visible (GTK_WIDGET (self), FALSE);
 
   chatty_mm_chat_info_apply_changes (CHATTY_MM_CHAT_INFO (self->mm_chat_info),
                                      self->chat);
@@ -227,8 +227,8 @@ chatty_info_dialog_set_chat (ChattyInfoDialog *self,
     return;
 
 
-  gtk_widget_hide (self->cancel_button);
-  gtk_widget_hide (self->apply_button);
+  gtk_widget_set_visible (self->cancel_button, FALSE);
+  gtk_widget_set_visible (self->apply_button, FALSE);
   gtk_header_bar_set_show_title_buttons (GTK_HEADER_BAR (self->header_bar), TRUE);
 
   if (CHATTY_IS_MA_CHAT (chat)) {
@@ -260,5 +260,5 @@ chatty_info_dialog_set_chat (ChattyInfoDialog *self,
       !chatty_chat_is_im (self->chat))
     gtk_widget_set_visible (self->new_invite_button, TRUE);
   else
-    gtk_widget_hide (self->new_invite_button);
+    gtk_widget_set_visible (self->new_invite_button, FALSE);
 }

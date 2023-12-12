@@ -323,7 +323,7 @@ verification_cancel_clicked_cb (ChattyVerificationPage *self,
 
   gtk_spinner_start (GTK_SPINNER (self->cancel_spinner));
   gtk_widget_set_sensitive (self->continue_button, FALSE);
-  gtk_widget_hide (self->verification_dialog);
+  gtk_widget_set_visible (self->verification_dialog, FALSE);
 
   chatty_ma_key_cancel_async (CHATTY_MA_KEY_CHAT (self->item),
                               verification_key_cancel_cb,
@@ -340,7 +340,7 @@ verification_key_match_cb (GObject      *object,
 
   g_assert (CHATTY_IS_MA_KEY_CHAT (object));
 
-  gtk_widget_hide (self->verification_dialog);
+  gtk_widget_set_visible (self->verification_dialog, FALSE);
   chatty_ma_key_match_finish (CHATTY_MA_KEY_CHAT (object), result, &error);
 
   if (error)
@@ -479,7 +479,7 @@ chatty_verification_page_set_item (ChattyVerificationPage *self,
     g_clear_signal_handler (&self->delete_handler, self->item);
     gtk_spinner_stop (GTK_SPINNER (self->continue_spinner));
     gtk_spinner_stop (GTK_SPINNER (self->cancel_spinner));
-    gtk_widget_hide (self->verification_dialog);
+    gtk_widget_set_visible (self->verification_dialog, FALSE);
     g_clear_object (&self->item);
   }
 

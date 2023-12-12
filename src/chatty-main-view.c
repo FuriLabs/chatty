@@ -69,10 +69,10 @@ header_bar_update_item_state_button (ChattyMainView *self,
 {
   ChattyItemState state;
 
-  gtk_widget_hide (self->block_button);
-  gtk_widget_hide (self->unblock_button);
-  gtk_widget_hide (self->archive_button);
-  gtk_widget_hide (self->unarchive_button);
+  gtk_widget_set_visible (self->block_button, FALSE);
+  gtk_widget_set_visible (self->unblock_button, FALSE);
+  gtk_widget_set_visible (self->archive_button, FALSE);
+  gtk_widget_set_visible (self->unarchive_button, FALSE);
 
   if (!item || !CHATTY_IS_MM_CHAT (item))
     return;
@@ -240,7 +240,7 @@ chatty_main_view_set_item (ChattyMainView *self,
 
   gtk_widget_set_visible (self->menu_button, !!item);
   gtk_widget_set_visible (self->avatar, !!item);
-  gtk_widget_hide (self->call_button);
+  gtk_widget_set_visible (self->call_button, FALSE);
 
   if (item) {
     gtk_widget_set_visible (self->leave_button, !CHATTY_IS_MM_CHAT (item));

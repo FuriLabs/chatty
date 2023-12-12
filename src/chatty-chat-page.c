@@ -584,7 +584,7 @@ chatty_chat_page_set_chat (ChattyChatPage *self,
                                           chat_page_chat_changed_cb,
                                           self);
 
-    gtk_widget_hide (self->scroll_down_button);
+    gtk_widget_set_visible (self->scroll_down_button, FALSE);
     self->should_scroll = TRUE;
     g_clear_handle_id (&self->history_load_id, g_source_remove);
   }

@@ -271,7 +271,7 @@ write_eds_contact_cb (GObject      *object,
   g_autoptr(GError) error = NULL;
 
   if (chatty_eds_write_contact_finish (result, &error)) {
-    gtk_widget_hide (self->add_contact_button);
+    gtk_widget_set_visible (self->add_contact_button, FALSE);
     return;
   }
 }
@@ -473,7 +473,7 @@ chatty_list_row_set_call (ChattyListRow *self, gboolean enable)
 
     gtk_widget_set_visible (self->call_button, enable && user_valid);
   } else
-    gtk_widget_hide (self->call_button);
+    gtk_widget_set_visible (self->call_button, FALSE);
 }
 
 void
@@ -482,5 +482,5 @@ chatty_list_row_show_delete_button (ChattyListRow *self)
   g_return_if_fail (CHATTY_IS_LIST_ROW (self));
 
   gtk_widget_set_visible (self->close_button, TRUE);
-  gtk_widget_hide (self->checkbox);
+  gtk_widget_set_visible (self->checkbox, FALSE);
 }

@@ -276,7 +276,7 @@ new_chat_selection_changed_cb (ChattyWindow        *self,
   chatty_window_set_uri (self, users->str, name);
 
  end:
-  gtk_widget_hide (GTK_WIDGET (dialog));
+  gtk_widget_set_visible (GTK_WIDGET (dialog), FALSE);
 }
 
 static void
@@ -764,7 +764,7 @@ chatty_window_set_uri (ChattyWindow *self,
   if (!chatty_manager_set_uri (self->manager, uri, name))
     return;
 
-  gtk_widget_hide (self->new_chat_dialog);
+  gtk_widget_set_visible (self->new_chat_dialog, FALSE);
 }
 
 ChattyChat *
