@@ -186,22 +186,18 @@ show_help_cb (GObject      *object,
 
   g_assert (CHATTY_IS_APPLICATION (self));
 
-  gtk_show_uri_full_finish (GTK_WINDOW (self->main_window), result, &error);
+  gtk_uri_launcher_launch_finish (GTK_URI_LAUNCHER (object), result, &error);
+
+  g_clear_object (&object);
 
   if (error) {
-      GtkWidget *message_dialog;
+    g_autoptr(GtkAlertDialog) dialog = NULL;
+    GtkWindow *window;
 
-      message_dialog = gtk_message_dialog_new (GTK_WINDOW (self->main_window),
-                                               GTK_DIALOG_DESTROY_WITH_PARENT,
-                                               GTK_MESSAGE_ERROR,
-                                               GTK_BUTTONS_CLOSE,
-                                               _("There was an error displaying help:\n%s"),
-                                               error->message);
-      g_signal_connect (message_dialog, "response",
-                        G_CALLBACK (gtk_window_destroy),
-                        NULL);
+    window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
+    dialog = gtk_alert_dialog_new (_("There was an error displaying help:\n%s"), error->message);
 
-      gtk_widget_set_visible (message_dialog, TRUE);
+    gtk_alert_dialog_show (GTK_ALERT_DIALOG (dialog), window);
   }
 }
 
@@ -211,11 +207,14 @@ chatty_application_show_help (GSimpleAction *action,
 			      gpointer       user_data)
 {
   ChattyApplication *self = CHATTY_APPLICATION (user_data);
+  GtkUriLauncher *uri_launcher = NULL;
+  GtkWindow *window;
+
   const char *url = "help:chatty";
 
-  gtk_show_uri_full (GTK_WINDOW (self->main_window), url,
-		     GDK_CURRENT_TIME, NULL,
-                     show_help_cb, self);
+  window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
+  uri_launcher = gtk_uri_launcher_new (url);
+  gtk_uri_launcher_launch (uri_launcher, window, NULL, show_help_cb, self);
 }
 
 
