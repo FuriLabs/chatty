@@ -314,13 +314,17 @@ static void
 chatty_list_row_call_button_clicked_cb (ChattyListRow *self)
 {
   g_autofree char *uri = NULL;
+  g_autoptr(GtkUriLauncher) uri_launcher = NULL;
+  GtkWindow *window;
 
   g_return_if_fail (CHATTY_IS_CONTACT (self->item));
 
   uri = g_strconcat ("tel://", chatty_item_get_username (self->item), NULL);
 
   g_debug ("Calling uri: %s", uri);
-  gtk_show_uri (NULL, uri, GDK_CURRENT_TIME);
+  window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
+  uri_launcher = gtk_uri_launcher_new (uri);
+  gtk_uri_launcher_launch (uri_launcher, window, NULL, NULL, NULL);
 }
 
 static void
