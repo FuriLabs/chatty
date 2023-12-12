@@ -96,8 +96,8 @@ chatty_progress_button_snapshot (GtkWidget   *widget,
   int width, height;
   GdkRGBA color = {0};
 
-  width = gtk_widget_get_allocated_width (widget);
-  height = gtk_widget_get_allocated_height (widget);
+  width = gtk_widget_get_width (widget);
+  height = gtk_widget_get_height (widget);
 
   cr = gtk_snapshot_append_cairo (snapshot,
                                   &GRAPHENE_RECT_INIT (0, 0, width, height));
