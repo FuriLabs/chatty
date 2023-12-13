@@ -100,23 +100,33 @@ chatty_sources += [
 ]
 
 libphonenumber_dep = cc.find_library('phonenumber', required: true)
+libadwaita_dep = dependency('libadwaita-1', version: '>= @0@'.format(adw_version))
+libgtk_dep = dependency('gtk4', version: '>= @0@'.format(gtk_version))
 
 chatty_deps += [
   dependency('gio-2.0', version: '>= 2.66'),
   dependency('gnome-desktop-4', version: '>= 43'),
-  dependency('gtk4', version: '>= @0@'.format(gtk_version)),
-  dependency('libadwaita-1', version: '>= @0@'.format(adw_version)),
   dependency('sqlite3', version: '>=3.0.0'),
   dependency('camel-1.2'),
   dependency('libebook-contacts-1.2'),
   dependency('libebook-1.2'),
   dependency('gsettings-desktop-schemas'),
+  libadwaita_dep,
+  libgtk_dep,
   libebook_dep,
   libfeedback_dep,
   libm_dep,
   libphonenumber_dep,
   libcmatrix_dep,
 ]
+
+summary({
+    'GTK matches machine version': libgtk_dep.version().version_compare('== @0@'.format(gtk_version)),
+    'Libadwaita matches machine version': libadwaita_dep.version().version_compare('== @0@'.format(adw_version))
+  },
+  bool_yn: true,
+  section: 'Versions',
+)
 
 gnome = import('gnome')
 
