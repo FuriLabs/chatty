@@ -50,6 +50,12 @@
       <description>Whether to Remove Tracking IDs from URLs Automatically</description>
     </key>
 
+    <key name="render-attachments" type="b">
+      <default>true</default>
+      <summary>Render Attachments</summary>
+      <description>Whether to Render Attachments or not</description>
+    </key>
+
     <key name="blur-idle-buddies" type="b">
       <default>true</default>
       <summary>Mark Idle users differently</summary>

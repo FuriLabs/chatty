@@ -181,6 +181,20 @@
                               </object>
                             </child>
 
+                            <child>
+                              <object class="AdwActionRow">
+                                <property name="selectable">0</property>
+                                <property name="title" translatable="yes">Render Attachments</property>
+                                <property name="subtitle" translatable="yes">Render Attachments from Messages</property>
+                                <property name="activatable-widget">render_attachments_switch</property>
+                                <child>
+                                  <object class="GtkSwitch" id="render_attachments_switch">
+                                    <property name="valign">center</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+
                           </object>
                         </child>
 

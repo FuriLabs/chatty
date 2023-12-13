@@ -105,6 +105,7 @@ struct _ChattySettingsDialog
   GtkWidget      *message_carbons_switch;
   GtkWidget      *typing_notification_switch;
   GtkWidget      *strip_url_tracking_id_switch;
+  GtkWidget      *render_attachments_switch;
 
   GtkWidget      *convert_smileys_switch;
   GtkWidget      *return_sends_switch;
@@ -1101,6 +1102,9 @@ chatty_settings_dialog_constructed (GObject *object)
   g_object_bind_property (settings, "strip-url-tracking-id",
                           self->strip_url_tracking_id_switch, "active",
                           G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
+  g_object_bind_property (settings, "render-attachments",
+                          self->render_attachments_switch, "active",
+                          G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
 
   g_object_bind_property (settings, "convert-emoticons",
                           self->convert_smileys_switch, "active",
@@ -1184,6 +1188,7 @@ chatty_settings_dialog_class_init (ChattySettingsDialogClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, message_carbons_switch);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, typing_notification_switch);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, strip_url_tracking_id_switch);
+  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, render_attachments_switch);
 
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, convert_smileys_switch);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, return_sends_switch);

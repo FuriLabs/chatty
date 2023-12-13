@@ -57,6 +57,7 @@ enum {
   PROP_MESSAGE_CARBONS,
   PROP_SEND_TYPING,
   PROP_STRIP_URL_TRACKING_IDS,
+  PROP_RENDER_ATTACHMENTS,
   PROP_BLUR_IDLE_BUDDIES,
   PROP_INDICATE_UNKNOWN_CONTACTS,
   PROP_CONVERT_EMOTICONS,
@@ -101,6 +102,10 @@ chatty_settings_get_property (GObject    *object,
 
     case PROP_STRIP_URL_TRACKING_IDS:
       g_value_set_boolean (value, chatty_settings_get_strip_url_tracking_ids (self));
+      break;
+
+    case PROP_RENDER_ATTACHMENTS:
+      g_value_set_boolean (value, chatty_settings_get_render_attachments (self));
       break;
 
     case PROP_BLUR_IDLE_BUDDIES:
@@ -174,6 +179,11 @@ chatty_settings_set_property (GObject      *object,
                               g_value_get_boolean (value));
       break;
 
+    case PROP_RENDER_ATTACHMENTS:
+      g_settings_set_boolean (self->settings, "render-attachments",
+                              g_value_get_boolean (value));
+      break;
+
     case PROP_BLUR_IDLE_BUDDIES:
       g_settings_set_boolean (self->settings, "blur-idle-buddies",
                               g_value_get_boolean (value));
@@ -229,6 +239,8 @@ chatty_settings_constructed (GObject *object)
                    self, "send-typing", G_SETTINGS_BIND_DEFAULT);
   g_settings_bind (self->settings, "strip-url-tracking-id",
                    self, "strip-url-tracking-id", G_SETTINGS_BIND_DEFAULT);
+  g_settings_bind (self->settings, "render-attachments",
+                   self, "render-attachments", G_SETTINGS_BIND_DEFAULT);
   g_settings_bind (self->settings, "blur-idle-buddies",
                    self, "blur-idle-buddies", G_SETTINGS_BIND_DEFAULT);
   g_settings_bind (self->settings, "indicate-unknown-contacts",
@@ -308,6 +320,13 @@ chatty_settings_class_init (ChattySettingsClass *klass)
     g_param_spec_boolean ("strip-url-tracking-id",
                           "Strip Tracking IDs",
                           "Remove Tracking IDs from URLs",
+                          FALSE,
+                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  properties[PROP_RENDER_ATTACHMENTS] =
+    g_param_spec_boolean ("render-attachments",
+                          "Render Attachments",
+                          "Render Attachments for Messages",
                           FALSE,
                           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
@@ -488,6 +507,23 @@ chatty_settings_get_strip_url_tracking_ids (ChattySettings *self)
   g_return_val_if_fail (CHATTY_IS_SETTINGS (self), FALSE);
 
   return g_settings_get_boolean (self->settings, "strip-url-tracking-id");
+}
+
+/**
+ * chatty_settings_get_render_attachments:
+ * @self: A #ChattySettings
+ *
+ * Get if Chattty should render attachments from messages.
+ *
+ * Returns: %TRUE if attachments are rendered.
+ * %FALSE otherwise
+ */
+gboolean
+chatty_settings_get_render_attachments (ChattySettings *self)
+{
+  g_return_val_if_fail (CHATTY_IS_SETTINGS (self), FALSE);
+
+  return g_settings_get_boolean (self->settings, "render-attachments");
 }
 
 gboolean

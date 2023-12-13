@@ -60,6 +60,7 @@ check_settings_true (ChattySettings *settings)
   g_assert_true (chatty_settings_get_blur_idle_buddies (settings));
   g_assert_true (chatty_settings_get_indicate_unknown_contacts (settings));
   g_assert_true (chatty_settings_get_return_sends_message (settings));
+  g_assert_true (chatty_settings_get_render_attachments (settings));
 }
 
 static void
