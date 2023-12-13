@@ -474,7 +474,7 @@ chatty_settings_get_send_typing (ChattySettings *self)
 }
 
 /**
- * chatty_settings_get_send_typing:
+ * chatty_settings_get_strip_url_tracking_ids:
  * @self: A #ChattySettings
  *
  * Get if Chattty should automatically strip tracking IDs from URLs.
