@@ -507,7 +507,7 @@ message_row_add_files (ChattyMessageRow *self)
         chatty_message_get_msg_type (self->message) == CHATTY_MESSAGE_IMAGE) {
       child = chatty_image_item_new (self->message, file->data);
     } else {
-      child = chatty_file_item_new (self->message, file->data);
+      child = chatty_file_item_new (self->message, file->data, mime_type);
     }
 
     gtk_widget_set_visible (child, TRUE);

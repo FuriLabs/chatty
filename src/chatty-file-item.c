@@ -26,6 +26,7 @@ struct _ChattyFileItem
   AdwBin         parent_instance;
 
   GtkWidget     *file_overlay;
+  GtkWidget     *file_icon;
   GtkWidget     *progress_button;
   GtkWidget     *file_title;
 
@@ -160,6 +161,7 @@ chatty_file_item_class_init (ChattyFileItemClass *klass)
                                                "ui/chatty-file-item.ui");
 
   gtk_widget_class_bind_template_child (widget_class, ChattyFileItem, file_overlay);
+  gtk_widget_class_bind_template_child (widget_class, ChattyFileItem, file_icon);
   gtk_widget_class_bind_template_child (widget_class, ChattyFileItem, progress_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyFileItem, file_title);
 
@@ -177,7 +179,8 @@ chatty_file_item_init (ChattyFileItem *self)
 
 GtkWidget *
 chatty_file_item_new (ChattyMessage *message,
-                      ChattyFile    *file)
+                      ChattyFile    *file,
+                      const char    *file_mime_type)
 {
   ChattyFileItem *self;
   const char *file_name;
@@ -200,6 +203,19 @@ chatty_file_item_new (ChattyMessage *message,
 
   file_name = chatty_file_get_name (file);
   gtk_widget_set_visible (self->file_title, file_name && *file_name);
+
+  if (file_mime_type && *file_mime_type) {
+    /* gtk_image_set_from_gicon () thinks vcards and vcalendars are text files */
+    if (strstr (file_mime_type, "vcard"))
+      gtk_image_set_from_icon_name (GTK_IMAGE (self->file_icon), "x-office-address-book-symbolic");
+    else if (strstr (file_mime_type, "calendar"))
+      gtk_image_set_from_icon_name (GTK_IMAGE (self->file_icon), "x-office-calendar-symbolic");
+    else {
+      g_autoptr(GIcon) new_file_icon = NULL;
+      new_file_icon = g_content_type_get_icon (file_mime_type);
+      gtk_image_set_from_gicon (GTK_IMAGE (self->file_icon), new_file_icon);
+    }
+  }
 
   if (file_name)
     gtk_label_set_text (GTK_LABEL (self->file_title), file_name);
