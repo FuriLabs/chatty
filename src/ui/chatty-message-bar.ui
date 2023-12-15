@@ -16,6 +16,8 @@
     <child>
       <object class="GtkBox">
         <property name="margin-top">6</property>
+        <property name="margin-start">6</property>
+        <property name="margin-end">6</property>
 
         <!-- Send file button -->
         <child>
