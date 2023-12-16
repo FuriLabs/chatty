@@ -1,7 +1,7 @@
 {
     "app-id": "sm.puri.Chatty.Devel",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "45",
+    "runtime-version": "master",
     "sdk": "org.gnome.Sdk",
     "command": "chatty",
     "finish-args": [
@@ -241,6 +241,17 @@
                     "type" : "git",
                     "url" : "https://gitlab.freedesktop.org/mobile-broadband/ModemManager",
                     "tag" : "1.21.8-dev"
+                }
+            ]
+        },
+        {
+            "name": "gnome-desktop",
+            "buildsystem": "meson",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://gitlab.gnome.org/GNOME/gnome-desktop",
+                    "tag": "44.0"
                 }
             ]
         },
