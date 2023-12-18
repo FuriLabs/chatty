@@ -1,3 +1,153 @@
+chatty (0.8.0) byzantium; urgency=medium
+
+  [ Anders Jonsson ]
+  * po: Update Swedish translation
+  * mm-account: Fix string typo
+  * Update Swedish translation
+
+  [ Sabri Ünal ]
+  * po: Update Turkish translation
+
+  [ Evangelos Ribeiro Tzaras ]
+  * Update d/copyright
+  * README: Refer to debuginfod debugging as an alternative
+  * README: reword and make matrix more promanent than XMPP
+  * README: Point to GTK4 docs (not GTK3)
+  * README: Point to main branch from now on
+  * pgp: Fix issues on i386 build by using gsize
+  * tests: Remove unused variable in pgp.c
+  * tests: Add some logging to pgp.c
+  * metainfo: Add device compatibility according AppStream spec
+  * doap: Update descriptions
+  * doap: Add Sadiq's userid
+  * doap: Add myself as maintainer
+  * application: Add myself as author
+
+  [ Chris Talbot ]
+  * mmsd: Fix typo
+  * mm-account: Account for SENDING_FAILED MMS
+  * mm-account: Notify user if SMS or MMS sending failed
+  * settings: Add setting to strip out Tracking ID from URLs
+  * Message-row: Strip out tracking ID links
+  * test/meson: Compile message row with shared library to access gresources
+  * src/*: Fix gtk_widget_show depreciation warnings
+  * src/*: Fix gtk_widget_hide depreciation warnings
+  * mmsd: don't make a sending message failed if it's a temporary error
+  * README: Add guidelines for maintainers
+  * build: depend on GNOME 43 or higher
+  * Flatpak: use GNOME 45
+  * utils: Remove support for GNOME < 43
+  * chatty-file-item: change icon based on mimetype
+  * message-bar: add margins to start and end
+  * settings: correct documentation
+  * settings: Add setting to render attachments
+  * message-row: add option to not render attachments if setting not active
+
+  [ Balázs Úr ]
+  * po: Update Hungarian translation
+
+  [ Guido Günther ]
+  * ci: Drop tags
+  * ci: Switch to newer image
+  * ci: Drop PureOS QA
+  * packaging: Add itstool
+  * packaging: Make sure we have gnupg
+  * ci: Modernize meson invocations
+  * ci: meson uses gcovr nowadays
+  * ci: Drop -Werror until deprecations are cleaned up
+  * treewide: Update URLs
+  * metainfo: Switch branch to main
+  * tests/pgp: Don't leak test objects
+  * tests/pgp: Use camel_cipher_validity_free to free validity
+  * tests/pgp: Make sure the list elements are cleared too
+  * pgp: Don't leak in chatty_pgp_sign_and_encrypt_stream
+  * pgp: Don't leak in chatty_pgp_create_mime_part
+  * pgp: Don't leak in chatty_pgp_get_content
+  * pgp: Don't leak in chatty_pgp_create_mime_part
+  * pgp: Don't leak in chatty_pgp_decrypt_stream
+  * pgp: Don't leak in chatty_pgp_decrypt_mime_part
+  * pgp: Use automatic cleanup in chatty_pgp_sign_stream
+  * pgp: Make saved_files a proper out parameter in chatty_pgp_decrypt_stream
+  * file: Don't leak in chatty_file_new_for_path
+  * build: Specify required GTK version
+  * build: Switch go GTK 4.8
+  * build: Specify required libadwaita version
+  * Revert "ci: Drop -Werror until deprecations are cleaned up"
+  * build: Don't disable glib deprecation warnings completely
+  * build: Use gnome.post_install
+  * matrix: Use CHATTY_APP_ID instead of hardcoding it
+  * chat-list: Use CHATTY_APP_ID instead of hardcoding it
+  * contact-list: Use CHATTY_APP_ID instead of hardcoding it
+  * chat-page: Use CHATTY_APP_ID instead of hardcoding it
+  * build: Add development build profile
+  * build: Allow to skip tests
+  * flatpak: Use newer olm
+  * flatpak: Use newer modemmanager
+  * ci: Build flatpak (Closes: #848)
+  * flatpak: Skip tests
+  * ci: Allow flatpak only build
+  * ci: Use image consistently
+  * tests/history: Don't forget to unref draft message
+  * tests/history: Don't forget to free chat
+  * tests/history: Don't forget to unref history
+  * tests/history: Don't leak url
+  * mm-account: Don't leak blocked chat list
+  * ci: Run some tests under asan
+  * tests/history: Check if task gets finalized too
+  * ci: po-check .in files as well
+  * po: Update translatable files
+  * history: Simplify worker task
+  * history: Clarify close status
+  * tests/history: Close database in message tests too
+  * history: Don't unref object from thread
+
+  [ Florentina Mușat ]
+  * Update Romanian translation
+  * Update Romanian translation
+
+  [ Emin Tufan Çetin ]
+  * Update Turkish translation
+  * Update Turkish translation
+
+  [ Alexandre Franke ]
+  * Update French translation
+  * Fix link and title case
+
+  [ Yuri Chornoivan ]
+  * Update Ukrainian translation
+
+  [ Vittorio Monti ]
+  * Update Italian translation
+
+  [ Julian ]
+  * flatpak: Drop gudev
+  * flatpak: Update manifest
+  * Fix Flatpak
+
+  [ Artur S0 ]
+  * Update Russian translation
+
+  [ Daniel Rusek ]
+  * Update Czech translation
+
+  [ Anson Anstee ]
+  * mm-account: Change SMS validity from 168 minutes to max. allowed value (635040)
+
+  [ Mohammed Sadiq ]
+  * mm-account: Remove unused code
+  * mm-chat: Remove unused code
+  * contact-provider: Remove no longer used code
+  * file-item: Remove no longer used code
+  * image-item: Remove no longer used code
+  * message-row: Remove no longer used
+  * ma-buddy: Remove unused code
+  * ma-chat: Remove unused code
+  * mmsd: Remove unused code
+  * message: Remove unused methods
+  * file: Remove unused methods
+
+ -- Mohammed Sadiq <sadiq@sadiqpk.org>  Mon, 18 Dec 2023 11:45:58 +0530
+
 chatty (0.8.0~rc0) byzantium; urgency=medium
 
   [ Mohammed Sadiq ]
