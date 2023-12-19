@@ -22,7 +22,7 @@ Build-Depends:
  libglib2.0-dev (>= 2.66),
  libgnome-desktop-4-dev,
  libgspell-1-dev,
- libgtk-4-dev (>= 4.6),
+ libgtk-4-dev (>= 4.8),
  libjson-glib-dev,
  libmm-glib-dev (>= 1.12.0),
  libolm-dev,
