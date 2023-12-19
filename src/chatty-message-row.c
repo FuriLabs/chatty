@@ -25,6 +25,7 @@
 #include "chatty-image-item.h"
 #include "chatty-clock.h"
 #include "chatty-message-row.h"
+#include "chatty-settings.h"
 
 
 struct _ChattyMessageRow
@@ -119,6 +120,102 @@ find_url (const char  *buffer,
   return url;
 }
 
+static char **
+load_tracking_ids (void)
+{
+  GBytes *resource_data;
+  char **lines;
+  g_autoptr(GError) error = NULL;
+  resource_data = g_resources_lookup_data ("/sm/puri/Chatty/tracking_ids/tracking_ids.txt",
+                                          G_RESOURCE_LOOKUP_FLAGS_NONE,
+                                          &error);
+  if (error) {
+    g_warning ("Failed to load resource %s", error->message);
+    return NULL;
+  }
+
+  lines = g_strsplit_set (g_bytes_get_data (resource_data, NULL), "\r\n", 0);
+
+  g_bytes_unref(resource_data);
+
+  return lines;
+}
+
+/*
+ * https://datatracker.ietf.org/doc/html/rfc1738#section-3.3
+ * An URL takes the form: http://<host>:<port>/<path>?<searchpart>
+ *
+ */
+static char *
+strip_utm (const char *url_to_parse)
+{
+  g_autoptr(GError) error = NULL;
+  GUri *url = NULL;
+  GString *str = NULL;
+  char *stripped_url, *unowned_attr, *unowned_value;
+  GUriParamsIter iter;
+  char **tracking_ids = NULL;
+
+  if (!url_to_parse || !strstr (url_to_parse, "?"))
+    return g_strdup (url_to_parse);
+
+  url = g_uri_parse (url_to_parse, G_URI_FLAGS_NONE, NULL);
+  if (!url)
+    return g_strdup (url_to_parse);
+
+  tracking_ids = load_tracking_ids ();
+  if (!tracking_ids)
+    return g_strdup (url_to_parse);
+
+  str = g_string_new (NULL);
+  g_uri_params_iter_init (&iter, g_uri_get_query (url), -1, "&", G_URI_PARAMS_NONE);
+  while (g_uri_params_iter_next (&iter, &unowned_attr, &unowned_value, &error)) {
+    g_autofree char *attr = g_steal_pointer (&unowned_attr);
+    g_autofree char *value = g_steal_pointer (&unowned_value);
+    gboolean tracking_id = FALSE;
+
+    for (unsigned int j = 0; tracking_ids[j] != NULL; j++) {
+       /* The g_resource has "//" as comments, ignore those */
+       if (g_str_has_prefix (tracking_ids[j], "//"))
+          continue;
+
+       if (g_strcmp0 ((char *) attr, tracking_ids[j]) == 0) {
+         tracking_id = TRUE;
+         break;
+       }
+    }
+
+    if (!tracking_id) {
+      str = g_string_append (str, attr);
+      str = g_string_append (str, "=");
+      str = g_string_append (str, value);
+      str = g_string_append (str, "&");
+    }
+
+  }
+  if (error)
+    str = g_string_append (str, g_uri_get_query (url));
+
+  /* Remove trailing "&" */
+  if (str->len > 1 && str->str[str->len - 1] == '&')
+    g_string_truncate (str, str->len - 1);
+
+  stripped_url = g_uri_join (G_URI_FLAGS_NONE,
+                             g_uri_get_scheme (url),
+                             g_uri_get_userinfo (url),
+                             g_uri_get_host (url),
+                             g_uri_get_port (url),
+                             g_uri_get_path (url),
+                             str->str,
+                             g_uri_get_fragment (url));
+
+  g_uri_unref (url);
+  g_string_free (str, TRUE);
+  g_strfreev (tracking_ids);
+
+  return stripped_url;
+}
+
 static char *
 text_item_linkify (const char *message)
 {
@@ -134,19 +231,27 @@ text_item_linkify (const char *message)
   start = end = (char *)message;
 
   while ((url = find_url (start, &end))) {
+    ChattySettings *settings;
     g_autofree char *link = NULL;
     g_autofree char *escaped_link = NULL;
+    g_autofree char *utm_stripped_link = NULL;
     char *escaped = NULL;
 
+    settings = chatty_settings_get_default ();
     escaped = g_markup_escape_text (start, url - start);
     g_string_append (str, escaped);
     g_free (escaped);
 
     link = g_strndup (url, end - url);
-    escaped_link = g_markup_escape_text (url, end - url);
+    if (chatty_settings_get_strip_url_tracking_ids (settings))
+      utm_stripped_link = strip_utm (link);
+    else
+      utm_stripped_link = g_strdup (link);
+
+    escaped_link = g_markup_escape_text (utm_stripped_link, -1);
     g_string_set_size (link_str, 0);
     /* Don't escape sub-delims and gen-delims */
-    g_string_append_uri_escaped (link_str, link, ":/?#[]@!$&'()*+,;=", TRUE);
+    g_string_append_uri_escaped (link_str, utm_stripped_link, ":/?#[]@!$&'()*+,;=", TRUE);
     escaped = g_markup_escape_text (link_str->str, link_str->len);
     g_string_append_printf (str, "<a href=\"%s\">%s</a>", escaped, escaped_link);
     g_free (escaped);
@@ -310,8 +415,6 @@ chatty_message_row_update_footer (ChattyMessageRow *self)
 static void
 message_row_update_message (ChattyMessageRow *self)
 {
-  g_autofree char *message = NULL;
-
   g_assert (CHATTY_IS_MESSAGE_ROW (self));
   g_assert (self->message);
 
@@ -387,9 +490,11 @@ static void
 message_row_add_files (ChattyMessageRow *self)
 {
   GList *files;
+  ChattySettings *settings;
 
   g_assert (CHATTY_IS_MESSAGE_ROW (self));
 
+  settings = chatty_settings_get_default ();
   files = chatty_message_get_files (self->message);
   gtk_widget_set_visible (self->files_box, files && files->data);
 
@@ -400,11 +505,13 @@ message_row_add_files (ChattyMessageRow *self)
     g_assert (CHATTY_IS_FILE (file->data));
     mime_type = chatty_file_get_mime_type (file->data);
 
-    if ((mime_type && g_str_has_prefix (mime_type, "image")) ||
+    if (!chatty_settings_get_render_attachments (settings)) {
+      child = chatty_file_item_new (self->message, file->data, mime_type);
+    } else if ((mime_type && g_str_has_prefix (mime_type, "image")) ||
         chatty_message_get_msg_type (self->message) == CHATTY_MESSAGE_IMAGE) {
       child = chatty_image_item_new (self->message, file->data);
     } else {
-      child = chatty_file_item_new (self->message, file->data);
+      child = chatty_file_item_new (self->message, file->data, mime_type);
     }
 
     gtk_widget_set_visible (child, TRUE);
@@ -502,7 +609,7 @@ chatty_message_row_new (ChattyMessage  *message,
 
   if ((is_im && protocol != CHATTY_PROTOCOL_MATRIX) || direction == CHATTY_DIRECTION_SYSTEM ||
       direction == CHATTY_DIRECTION_OUT)
-    gtk_widget_hide (self->avatar_image);
+    gtk_widget_set_visible (self->avatar_image, FALSE);
   else
     chatty_avatar_set_item (CHATTY_AVATAR (self->avatar_image),
                             chatty_message_get_user (message));
@@ -529,7 +636,7 @@ chatty_message_row_hide_footer (ChattyMessageRow *self)
   g_return_if_fail (CHATTY_IS_MESSAGE_ROW (self));
 
   self->force_hide_footer = TRUE;
-  gtk_widget_hide (self->footer_label);
+  gtk_widget_set_visible (self->footer_label, FALSE);
 }
 
 void
@@ -546,9 +653,9 @@ chatty_message_row_hide_user_detail (ChattyMessageRow *self)
 {
   g_return_if_fail (CHATTY_IS_MESSAGE_ROW (self));
 
-  gtk_widget_hide (self->author_label);
+  gtk_widget_set_visible (self->author_label, FALSE);
   if (gtk_widget_get_visible (self->avatar_image)) {
-    gtk_widget_hide (self->avatar_image);
-    gtk_widget_show (self->hidden_box);
+    gtk_widget_set_visible (self->avatar_image, FALSE);
+    gtk_widget_set_visible (self->hidden_box, TRUE);
   }
 }

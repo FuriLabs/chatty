@@ -167,6 +167,34 @@
                               </object>
                             </child>
 
+                            <child>
+                              <object class="AdwActionRow">
+                                <property name="selectable">0</property>
+                                <property name="title" translatable="yes">Strip Tracking IDs</property>
+                                <property name="subtitle" translatable="yes">Strip Tracking IDs from URLs</property>
+                                <property name="activatable-widget">strip_url_tracking_id_switch</property>
+                                <child>
+                                  <object class="GtkSwitch" id="strip_url_tracking_id_switch">
+                                    <property name="valign">center</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+
+                            <child>
+                              <object class="AdwActionRow">
+                                <property name="selectable">0</property>
+                                <property name="title" translatable="yes">Render Attachments</property>
+                                <property name="subtitle" translatable="yes">Render Attachments from Messages</property>
+                                <property name="activatable-widget">render_attachments_switch</property>
+                                <child>
+                                  <object class="GtkSwitch" id="render_attachments_switch">
+                                    <property name="valign">center</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+
                           </object>
                         </child>
 

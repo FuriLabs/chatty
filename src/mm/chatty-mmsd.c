@@ -533,7 +533,6 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
     int files_count = 0;
     int total_files_count = 0;
     int image_attachments = 0;
-    int video_attachments = 0;
     gsize attachments_size = size;
     gsize image_attachments_size = 0;
     gsize video_attachments_size = 0;
@@ -564,7 +563,6 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
         }
       } else if (g_str_match_string ("video", chatty_file_get_mime_type (attachment), FALSE)) {
         video_attachments_size = video_attachments_size + chatty_file_get_size (attachment);
-        video_attachments++;
       }
 
       if (total_files_count > self->max_num_attach) {
@@ -1251,7 +1249,6 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
     payload->message = chatty_message_new (NULL, mms_message, basename, unix_time,
                                            chatty_msg_type, direction, mms_status);
     chatty_message_set_subject (payload->message, subject);
-    chatty_message_set_id (payload->message, basename);
     chatty_message_set_files (payload->message, files);
   }
 
@@ -1671,7 +1668,6 @@ chatty_mmsd_service_send_error_cb (ChattyMmsd *self,
   unsigned int error_type;
   unsigned int unsent_mmses;
   mms_payload *payload;
-  ChattyMessage *message;
   GVariantDict dict;
 
   g_variant_get (parameters, "(@a{?*})", &error_props);
@@ -1695,22 +1691,9 @@ chatty_mmsd_service_send_error_cb (ChattyMmsd *self,
      return;
   }
 
-  message = payload->message;
   sender = g_strdup (payload->sender);
   recipientlist = g_strdup (payload->chat);
   g_return_if_fail (recipientlist && *recipientlist);
-
-  chatty_message_set_status (payload->message,
-                             CHATTY_STATUS_SENDING_FAILED,
-                             0);
-
-  if (!chatty_mm_account_recieve_mms_cb (self->mm_account,
-                                         message,
-                                         sender,
-                                         recipientlist)) {
-     g_debug ("Message was deleted!");
-     return;
-  }
 
   /* self->mms_hash_table only long term keeps track of pending sent MMSes */
   unsent_mmses = g_hash_table_size (self->mms_hash_table);
@@ -1993,7 +1976,7 @@ chatty_mmsd_bearer_handler_notification_cb (GObject      *service,
       body = _("APN is not configured correctly");
       break;
     case MMSD_MM_MODEM_NO_BEARERS_ACTIVE:
-      body = _("Mobile Data is not confgured");
+      body = _("Mobile Data is not configured");
       break;
     case MMSD_MM_MODEM_INTERFACE_DISCONNECTED:
       body = _("Mobile Data is off");

@@ -23,8 +23,6 @@ struct _ChattyMaBuddy
   CmUser         *cm_user;
   GdkPixbuf      *avatar;
 
-  /* generated using g_str_hash for faster comparison */
-  guint           id_hash;
   gboolean        is_self;
 };
 
@@ -221,15 +219,4 @@ chatty_ma_buddy_matches_cm_user (ChattyMaBuddy *self,
   g_return_val_if_fail (CM_IS_USER (user), FALSE);
 
   return user == self->cm_user;
-}
-
-guint
-chatty_ma_buddy_get_id_hash (ChattyMaBuddy *self)
-{
-  g_return_val_if_fail (CHATTY_IS_MA_BUDDY (self), 0);
-
-  if (!self->id_hash && self->cm_user)
-    self->id_hash = g_str_hash (cm_user_get_id (self->cm_user));
-
-  return self->id_hash;
 }

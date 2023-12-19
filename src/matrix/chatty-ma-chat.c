@@ -657,7 +657,6 @@ static GdkPixbuf *
 chatty_ma_chat_get_avatar (ChattyItem *item)
 {
   ChattyMaChat *self = (ChattyMaChat *)item;
-  g_autofree char *path = NULL;
 
   g_assert (CHATTY_IS_MA_CHAT (self));
 

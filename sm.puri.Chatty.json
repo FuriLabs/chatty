@@ -1,7 +1,7 @@
 {
-    "app-id": "sm.puri.Chatty",
+    "app-id": "sm.puri.Chatty.Devel",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "44",
+    "runtime-version": "master",
     "sdk": "org.gnome.Sdk",
     "command": "chatty",
     "finish-args": [
@@ -15,9 +15,9 @@
         "--talk-name=org.gnome.evolution.dataserver.Sources5",
         "--talk-name=im.pidgin.purple.PurpleService",
         "--talk-name=org.gnome.evolution.dataserver.Subprocess.Backend.*",
-        "--env=SSL_CERT_DIR=/etc/ssl/certs"
+        "--env=SSL_CERT_DIR=/etc/ssl/certs",
+        "--filesystem=~/.purple"
     ],
-    "cleanup-commands": [ "rm -rf /app/lib/debug/ /app/include/boost" ],
     "cleanup": [
         "/include",
         "/lib/pkgconfig",
@@ -150,20 +150,14 @@
                 "-DBUILD_TESTING=OFF",
                 "-DFETCHCONTENT_FULLY_DISCONNECTED=ON"
             ],
+            "subdir": "cpp",
             "sources": [
                 {
                     "type": "git",
                     "url": "https://github.com/google/libphonenumber",
                     "tag": "v8.13.12"
-                },
-                {
-                    "type": "shell",
-                    "commands": [
-                        "sed -i -e 's/\${\${NAME}_BIN}-NOTFOUND/\${NAME}_BIN-NOTFOUND/' cpp/CMakeLists.txt"
-                    ]
                 }
-            ],
-            "subdir": "cpp"
+            ]
         },
         {
             "name": "evolution-data-server",
@@ -221,53 +215,58 @@
           "sources": [
             {
               "type": "git",
-              "tag" : "3.2.6",
+              "tag" : "3.2.15",
               "url": "https://gitlab.matrix.org/matrix-org/olm.git"
             }
           ]
         },
         {
-            "name" : "gudev",
+            "name" : "ModemManager",
             "buildsystem" : "meson",
             "config-opts" : [
-                "-Dtests=disabled",
-                "-Dintrospection=disabled"
-            ],
-            "sources" : [
-                {
-                    "type" : "git",
-                    "url" : "https://gitlab.gnome.org/GNOME/libgudev.git",
-                    "tag" : "237"
-                }
-            ]
-        },
-        {
-            "name" : "ModemManager",
-            "buildsystem" : "autotools",
-            "config-opts" : [
-                "--disable-introspection",
-                "--disable-vala",
-                "--with-udev-base-dir=/app/lib",
-                "--with-systemdsystemunitdir=/app/lib/systemd/system",
-                "--without-mbim",
-                "--without-qmi"
+                "-Dintrospection=false",
+                "-Dvapi=false",
+                "-Dudevdir=/app/lib",
+                "-Dsystemdsystemunitdir=/app/lib/systemd/system",
+                "-Dmbim=false",
+                "-Dqmi=false",
+                "-Dqrtr=false",
+                "-Dman=false",
+		"-Dgtk_doc=false",
+                "-Dexamples=false",
+                "-Dbash_completion=false"
             ],
             "sources" : [
                 {
                     "type" : "git",
                     "url" : "https://gitlab.freedesktop.org/mobile-broadband/ModemManager",
-                    "tag" : "1.20.6"
+                    "tag" : "1.21.8-dev"
                 }
             ]
         },
         {
-            "name": "purism-chatty",
+            "name": "gnome-desktop",
             "buildsystem": "meson",
-            "builddir": true,
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://source.puri.sm/Librem5/chatty.git"
+                    "url": "https://gitlab.gnome.org/GNOME/gnome-desktop",
+                    "tag": "44.0"
+                }
+            ]
+        },
+        {
+            "name": "chatty",
+            "buildsystem": "meson",
+            "config-opts": [
+                "-Dtests=false",
+                "-Dprofile=devel"
+            ],
+            "builddir": true,
+            "sources": [
+                {
+                    "type": "dir",
+                    "path": "."
                 }
             ]
         }

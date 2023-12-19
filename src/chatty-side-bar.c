@@ -279,7 +279,7 @@ protocol_list_header_func (GtkListBoxRow *row,
     GtkWidget *separator;
 
     separator = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
-    gtk_widget_show (separator);
+    gtk_widget_set_visible (separator, TRUE);
     gtk_list_box_row_set_header (row, separator);
   }
 }

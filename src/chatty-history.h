@@ -30,7 +30,7 @@ void           chatty_history_open_async          (ChattyHistory        *self,
 gboolean       chatty_history_open_finish         (ChattyHistory        *self,
                                                    GAsyncResult         *result,
                                                    GError              **error);
-gboolean       chatty_history_is_open             (ChattyHistory        *self);
+gboolean       chatty_history_is_closed           (ChattyHistory        *self);
 void           chatty_history_close_async         (ChattyHistory        *self,
                                                    GAsyncReadyCallback   callback,
                                                    gpointer              user_data);

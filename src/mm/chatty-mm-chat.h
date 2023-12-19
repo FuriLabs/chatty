@@ -38,12 +38,8 @@ void              chatty_mm_chat_set_eds                (ChattyMmChat   *self,
                                                          ChattyEds      *chatty_eds);
 void              chatty_mm_chat_append_message         (ChattyMmChat   *self,
                                                          ChattyMessage  *message);
-void              chatty_mm_chat_prepend_message        (ChattyMmChat   *self,
-                                                         ChattyMessage  *message);
 void              chatty_mm_chat_prepend_messages       (ChattyMmChat   *self,
                                                          GPtrArray      *messages);
-ChattyMessage    *chatty_mm_chat_find_message_with_id   (ChattyMmChat   *self,
-                                                         const char     *id);
 ChattyMessage    *chatty_mm_chat_find_message_with_uid  (ChattyMmChat   *self,
                                                          const char     *uid);
 ChattyMmBuddy    *chatty_mm_chat_find_user              (ChattyMmChat   *self,

@@ -184,6 +184,7 @@ static void
 chatty_chat_page_update (ChattyChatPage *self)
 {
   ChattyProtocol protocol;
+  g_autofree char *icon = g_strdup_printf ("%s-symbolic", CHATTY_APP_ID);
 
   g_assert (CHATTY_IS_CHAT_PAGE (self));
 
@@ -194,6 +195,7 @@ chatty_chat_page_update (ChattyChatPage *self)
     chatty_pp_chat_load_encryption_status (CHATTY_PP_CHAT (self->chat));
 #endif
 
+  adw_status_page_set_icon_name (ADW_STATUS_PAGE (self->no_message_status), icon);
   if (protocol == CHATTY_PROTOCOL_MMS_SMS) {
     adw_status_page_set_title (ADW_STATUS_PAGE (self->no_message_status),
                                _("This is an SMS conversation"));
@@ -582,7 +584,7 @@ chatty_chat_page_set_chat (ChattyChatPage *self,
                                           chat_page_chat_changed_cb,
                                           self);
 
-    gtk_widget_hide (self->scroll_down_button);
+    gtk_widget_set_visible (self->scroll_down_button, FALSE);
     self->should_scroll = TRUE;
     g_clear_handle_id (&self->history_load_id, g_source_remove);
   }

@@ -18,8 +18,6 @@
 
 G_BEGIN_DECLS
 
-#define CHATTY_APP_ID       "sm.puri.Chatty"
-
 #define CHATTY_TYPE_MANAGER (chatty_manager_get_type ())
 
 G_DECLARE_FINAL_TYPE (ChattyManager, chatty_manager, CHATTY, MANAGER, GObject)

@@ -325,7 +325,7 @@ ma_account_details_add_entry (ChattyMaAccountDetails *self,
   gtk_style_context_add_class (context, "linked");
 
   entry = gtk_entry_new ();
-  gtk_widget_show (entry);
+  gtk_widget_set_visible (entry, TRUE);
   gtk_widget_set_hexpand (entry, TRUE);
   gtk_widget_set_sensitive (entry, FALSE);
   gtk_editable_set_text (GTK_EDITABLE (entry), value);
@@ -603,8 +603,8 @@ chatty_ma_account_details_set_item (ChattyMaAccountDetails *self,
 
     g_clear_signal_handler (&self->status_id, self->account);
     gtk_editable_set_text (GTK_EDITABLE (self->name_entry), "");
-    gtk_widget_hide (self->email_box);
-    gtk_widget_hide (self->phone_box);
+    gtk_widget_set_visible (self->email_box, FALSE);
+    gtk_widget_set_visible (self->phone_box, FALSE);
 
     do {
       child = gtk_widget_get_first_child (GTK_WIDGET (self->email_box));

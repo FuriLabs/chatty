@@ -104,6 +104,8 @@ struct _ChattySettingsDialog
   GtkWidget      *message_carbons_row;
   GtkWidget      *message_carbons_switch;
   GtkWidget      *typing_notification_switch;
+  GtkWidget      *strip_url_tracking_id_switch;
+  GtkWidget      *render_attachments_switch;
 
   GtkWidget      *convert_smileys_switch;
   GtkWidget      *return_sends_switch;
@@ -205,7 +207,7 @@ settings_save_account_cb (GObject      *object,
       gtk_window_present (GTK_WINDOW (dialog));
     }
   } else {
-    gtk_widget_hide (self->add_button);
+    gtk_widget_set_visible (self->add_button, FALSE);
     gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "main-settings");
   }
 }
@@ -259,7 +261,7 @@ matrix_home_server_verify_cb (GObject      *object,
       settings_dialog_set_save_state (self, FALSE);
       gtk_label_set_text (GTK_LABEL (self->notification_label),
                           _("Couldn't get Home server address"));
-      gtk_widget_show (self->matrix_homeserver_entry);
+      gtk_widget_set_visible (self->matrix_homeserver_entry, TRUE);
       gtk_entry_grab_focus_without_selecting (GTK_ENTRY (self->matrix_homeserver_entry));
       gtk_editable_set_position (GTK_EDITABLE (self->matrix_homeserver_entry), -1);
     }
@@ -365,7 +367,7 @@ chatty_settings_add_clicked_cb (ChattySettingsDialog *self)
   if (!chatty_manager_get_disable_auto_login (manager))
     chatty_account_set_enabled (CHATTY_ACCOUNT (account), TRUE);
 
-  gtk_widget_hide (self->add_button);
+  gtk_widget_set_visible (self->add_button, FALSE);
   gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "main-settings");
 }
 
@@ -381,7 +383,7 @@ pp_account_save_cb (GObject      *object,
   g_object_set (self->matrix_spinner, "spinning", FALSE, NULL);
   gtk_widget_set_sensitive (self->account_details_stack, TRUE);
 
-  gtk_widget_hide (self->save_button);
+  gtk_widget_set_visible (self->save_button, FALSE);
   gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "main-settings");
 }
 
@@ -432,7 +434,7 @@ settings_delete_account_response_cb (ChattySettingsDialog *self,
                                          g_steal_pointer (&self->selected_account),
                                          NULL, NULL, NULL);
 
-    gtk_widget_hide (self->save_button);
+    gtk_widget_set_visible (self->save_button, FALSE);
     gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "main-settings");
   }
 
@@ -510,9 +512,9 @@ sms_mms_settings_row_activated_cb (ChattySettingsDialog *self)
 {
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
 
-  gtk_widget_show (self->mms_save_button);
-  gtk_widget_show (self->mms_cancel_button);
-  gtk_widget_hide (self->back_button);
+  gtk_widget_set_visible (self->mms_save_button, TRUE);
+  gtk_widget_set_visible (self->mms_cancel_button, TRUE);
+  gtk_widget_set_visible (self->back_button, FALSE);
 
   settings_dialog_load_mms_settings (self);
 
@@ -664,7 +666,7 @@ settings_update_new_account_view (ChattySettingsDialog *self)
 {
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
 
-  gtk_widget_hide (self->matrix_homeserver_entry);
+  gtk_widget_set_visible (self->matrix_homeserver_entry, FALSE);
 
   gtk_editable_set_text (GTK_EDITABLE (self->matrix_homeserver_entry), "");
   gtk_editable_set_text (GTK_EDITABLE (self->new_account_id_entry), "");
@@ -672,7 +674,7 @@ settings_update_new_account_view (ChattySettingsDialog *self)
 
   self->selected_account = NULL;
   gtk_widget_grab_focus (self->new_account_id_entry);
-  gtk_widget_show (self->add_button);
+  gtk_widget_set_visible (self->add_button, TRUE);
 
   gtk_widget_set_visible (self->matrix_row, TRUE);
 
@@ -685,7 +687,7 @@ settings_update_new_account_view (ChattySettingsDialog *self)
 
   adw_preferences_group_set_title (ADW_PREFERENCES_GROUP (self->protocol_list_group),
                                    _("Select Protocol"));
-  gtk_widget_show (self->protocol_list);
+  gtk_widget_set_visible (self->protocol_list, TRUE);
 
   if (gtk_widget_is_visible (self->xmpp_radio_button))
     gtk_check_button_set_active (GTK_CHECK_BUTTON (self->xmpp_radio_button), TRUE);
@@ -738,9 +740,9 @@ mms_carrier_settings_apply_button_clicked_cb (ChattySettingsDialog *self)
                 gtk_switch_get_state (GTK_SWITCH (self->delivery_reports_switch)),
                 NULL);
 
-  gtk_widget_hide (self->mms_cancel_button);
-  gtk_widget_hide (self->mms_save_button);
-  gtk_widget_show (self->back_button);
+  gtk_widget_set_visible (self->mms_cancel_button, FALSE);
+  gtk_widget_set_visible (self->mms_save_button, FALSE);
+  gtk_widget_set_visible (self->back_button, TRUE);
   gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "main-settings");
 }
 
@@ -749,9 +751,9 @@ mms_carrier_settings_cancel_button_clicked_cb (ChattySettingsDialog *self)
 {
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
 
-  gtk_widget_hide (self->mms_cancel_button);
-  gtk_widget_hide (self->mms_save_button);
-  gtk_widget_show (self->back_button);
+  gtk_widget_set_visible (self->mms_cancel_button, FALSE);
+  gtk_widget_set_visible (self->mms_save_button, FALSE);
+  gtk_widget_set_visible (self->back_button, TRUE);
   gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "main-settings");
 }
 
@@ -773,7 +775,7 @@ account_list_row_activated_cb (ChattySettingsDialog *self,
     }
   else
     {
-      gtk_widget_show (self->save_button);
+      gtk_widget_set_visible (self->save_button, TRUE);
       self->selected_account = g_object_get_data (G_OBJECT (row), "row-account");
       g_assert (self->selected_account != NULL);
 
@@ -800,9 +802,9 @@ blocked_list_action_activated_cb (ChattySettingsDialog *self)
 {
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
 
-  gtk_widget_hide (self->mms_save_button);
-  gtk_widget_hide (self->mms_cancel_button);
-  gtk_widget_show (self->back_button);
+  gtk_widget_set_visible (self->mms_save_button, FALSE);
+  gtk_widget_set_visible (self->mms_cancel_button, FALSE);
+  gtk_widget_set_visible (self->back_button, TRUE);
 
   gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "blocked-list-view");
 }
@@ -816,20 +818,20 @@ chatty_settings_back_clicked_cb (ChattySettingsDialog *self)
 
   if (g_str_equal (visible_child, "blocked-list-view"))
     {
-      gtk_widget_show (self->mms_save_button);
-      gtk_widget_show (self->mms_cancel_button);
-      gtk_widget_hide (self->back_button);
+      gtk_widget_set_visible (self->mms_save_button, TRUE);
+      gtk_widget_set_visible (self->mms_cancel_button, TRUE);
+      gtk_widget_set_visible (self->back_button, FALSE);
 
       gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "message-settings-view");
     }
   else if (g_str_equal (visible_child, "main-settings"))
     {
-        gtk_widget_hide (GTK_WIDGET (self));
+        gtk_widget_set_visible (GTK_WIDGET (self), FALSE);
     }
   else
     {
-      gtk_widget_hide (self->add_button);
-      gtk_widget_hide (self->save_button);
+      gtk_widget_set_visible (self->add_button, FALSE);
+      gtk_widget_set_visible (self->save_button, FALSE);
       gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "main-settings");
     }
 }
@@ -845,8 +847,8 @@ chatty_settings_cancel_clicked_cb (ChattySettingsDialog *self)
   g_object_set (self->matrix_spinner, "spinning", FALSE, NULL);
   gtk_widget_set_sensitive (self->main_stack, TRUE);
   gtk_widget_set_sensitive (self->add_button, TRUE);
-  gtk_widget_hide (self->cancel_button);
-  gtk_widget_show (self->back_button);
+  gtk_widget_set_visible (self->cancel_button, FALSE);
+  gtk_widget_set_visible (self->back_button, TRUE);
 }
 
 static void
@@ -868,8 +870,8 @@ settings_new_detail_changed_cb (ChattySettingsDialog *self)
 
   if (!id || !*id) {
     gtk_editable_set_text (GTK_EDITABLE (self->matrix_homeserver_entry), "");
-    gtk_widget_show (self->matrix_homeserver_entry);
-    gtk_widget_hide (self->matrix_homeserver_entry);
+    gtk_widget_set_visible (self->matrix_homeserver_entry, TRUE);
+    gtk_widget_set_visible (self->matrix_homeserver_entry, FALSE);
   }
 
   if (gtk_check_button_get_active (GTK_CHECK_BUTTON (self->matrix_radio_button)))
@@ -897,7 +899,7 @@ settings_new_detail_changed_cb (ChattySettingsDialog *self)
   /* If user tried to login to matrix via email, ask for homeserver details */
   if (protocol & CHATTY_PROTOCOL_MATRIX &&
       valid_protocol & CHATTY_PROTOCOL_EMAIL) {
-    gtk_widget_show (self->matrix_homeserver_entry);
+    gtk_widget_set_visible (self->matrix_homeserver_entry, TRUE);
     settings_check_librem_one (self);
     settings_homeserver_entry_changed (self, GTK_ENTRY (self->matrix_homeserver_entry));
   }
@@ -953,7 +955,7 @@ chatty_account_row_new (ChattyAccount *account)
                      (gpointer) account);
 
   spinner = gtk_spinner_new ();
-  gtk_widget_show (spinner);
+  gtk_widget_set_visible (spinner, TRUE);
   adw_action_row_add_prefix (row, spinner);
 
   g_object_set_data (G_OBJECT(row),
@@ -1097,6 +1099,12 @@ chatty_settings_dialog_constructed (GObject *object)
   g_object_bind_property (settings, "send-typing",
                           self->typing_notification_switch, "active",
                           G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
+  g_object_bind_property (settings, "strip-url-tracking-id",
+                          self->strip_url_tracking_id_switch, "active",
+                          G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
+  g_object_bind_property (settings, "render-attachments",
+                          self->render_attachments_switch, "active",
+                          G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
 
   g_object_bind_property (settings, "convert-emoticons",
                           self->convert_smileys_switch, "active",
@@ -1179,6 +1187,8 @@ chatty_settings_dialog_class_init (ChattySettingsDialogClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, message_carbons_row);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, message_carbons_switch);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, typing_notification_switch);
+  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, strip_url_tracking_id_switch);
+  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, render_attachments_switch);
 
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, convert_smileys_switch);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, return_sends_switch);
@@ -1226,7 +1236,7 @@ chatty_settings_dialog_init (ChattySettingsDialog *self)
     ChattyPurple *purple;
 
     purple = chatty_purple_get_default ();
-    gtk_widget_show (self->purple_settings_row);
+    gtk_widget_set_visible (self->purple_settings_row, TRUE);
     gtk_widget_set_visible (self->message_carbons_row,
                             chatty_purple_has_carbon_plugin (purple));
     g_object_bind_property (purple, "enabled",
@@ -1239,7 +1249,7 @@ chatty_settings_dialog_init (ChattySettingsDialog *self)
       show_account_box = TRUE;
   }
 #else
-  gtk_widget_hide (self->xmpp_radio_button);
+  gtk_widget_set_visible (self->xmpp_radio_button, FALSE);
 #endif
 
   show_account_box = TRUE;

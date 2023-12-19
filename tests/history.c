@@ -384,11 +384,13 @@ new_message (const char         *account,
 
     for (; i > 0; i--) {
       g_autofree char *uid = NULL;
+      g_autofree char *url = NULL;
       ChattyFile *file;
 
       uid = g_uuid_string_random ();
+      url = g_strdup_printf ("http://example.com/some-file/%s", uid);
       file = chatty_file_new_full (NULL,
-                                   g_strdup_printf ("http://example.com/some-file/%s", uid),
+                                   url,
                                    NULL, NULL, g_random_int_range (1000, 5000),
                                    0, 0, 0);
 
@@ -472,7 +474,7 @@ test_history_new (void)
 
   history = chatty_history_new ();
   g_assert (CHATTY_IS_HISTORY (history));
-  g_assert_false (chatty_history_is_open (history));
+  g_assert_true (chatty_history_is_closed (history));
 
   task = g_task_new (NULL, NULL, NULL, NULL);
   dir = g_strdup (g_test_get_dir (G_TEST_BUILT));
@@ -486,24 +488,21 @@ test_history_new (void)
 
   status = g_task_propagate_boolean (task, NULL);
   g_assert_true (g_file_test (file_name, G_FILE_TEST_IS_REGULAR));
-  g_assert_true (chatty_history_is_open (history));
+  g_assert_false (chatty_history_is_closed (history));
   g_assert_true (status);
-  g_clear_object (&task);
+  g_assert_finalize_object (task);
 
   task = g_task_new (NULL, NULL, NULL, NULL);
-  g_object_ref (history);
   chatty_history_close_async (history, finish_bool_cb, task);
 
   while (!g_task_get_completed (task))
     g_main_context_iteration (NULL, TRUE);
 
   status = g_task_propagate_boolean (task, NULL);
-  g_assert_false (chatty_history_is_open (history));
+  g_assert_true (chatty_history_is_closed (history));
   g_assert_true (status);
-  g_clear_object (&task);
-  g_object_unref (history);
-  /* FIXME */
-  /* g_assert_finalize_object (history); */
+  g_assert_finalize_object (task);
+  g_assert_finalize_object (history);
 
   g_remove (file_name);
   g_assert_false (g_file_test (file_name, G_FILE_TEST_EXISTS));
@@ -511,11 +510,11 @@ test_history_new (void)
   history = chatty_history_new ();
   chatty_history_open (history, g_test_get_dir (G_TEST_BUILT), "test-history.db");
   g_assert_true (g_file_test (file_name, G_FILE_TEST_IS_REGULAR));
-  g_assert_true (chatty_history_is_open (history));
+  g_assert_false (chatty_history_is_closed (history));
 
   chatty_history_close (history);
-  g_assert_false (chatty_history_is_open (history));
-  g_object_unref (history);
+  g_assert_true (chatty_history_is_closed (history));
+  g_assert_finalize_object (history);
 }
 
 static void
@@ -649,9 +648,6 @@ add_chatty_message (ChattyHistory      *history,
   g_clear_pointer (&uuid, g_free);
   g_assert (CHATTY_IS_MESSAGE (message));
 
-  if (status != CHATTY_STATUS_DRAFT)
-    g_ptr_array_add (msg_array, message);
-
   task = g_task_new (NULL, NULL, NULL, NULL);
   chatty_history_add_message_async (history, chat, message, finish_bool_cb, task);
 
@@ -661,6 +657,11 @@ add_chatty_message (ChattyHistory      *history,
   success = g_task_propagate_boolean (task, NULL);
   g_assert_true (success);
   g_clear_object (&task);
+
+  if (status != CHATTY_STATUS_DRAFT)
+    g_ptr_array_add (msg_array, message);
+  else
+    g_clear_object (&message);
 
   message = msg_array->pdata[0];
   task = g_task_new (NULL, NULL, NULL, NULL);
@@ -722,7 +723,7 @@ test_history_message (void)
 
   history = chatty_history_new ();
   chatty_history_open (history, g_test_get_dir (G_TEST_BUILT), "test-history.db");
-  g_assert_true (chatty_history_is_open (history));
+  g_assert_false (chatty_history_is_closed (history));
 
   msg_array = g_ptr_array_new ();
   g_ptr_array_set_free_func (msg_array, (GDestroyNotify)g_object_unref);
@@ -759,8 +760,6 @@ test_history_message (void)
                       CHATTY_MESSAGE_HTML_ESCAPED, CHATTY_DIRECTION_IN, 0);
   add_chatty_message (history, chat, msg_array, "More message", when + 1,
                       CHATTY_MESSAGE_HTML_ESCAPED, CHATTY_DIRECTION_OUT, 0);
-  /* FIXME */
-  /* g_assert_finalize_object (chat); */
 
   add_chatty_message (history, chat, msg_array, "Draft message", when + 1,
                       CHATTY_MESSAGE_HTML_ESCAPED, CHATTY_DIRECTION_OUT, CHATTY_STATUS_DRAFT);
@@ -769,8 +768,12 @@ test_history_message (void)
   add_chatty_message (history, chat, msg_array, "yet another draft", when + 2,
                       CHATTY_MESSAGE_HTML_ESCAPED, CHATTY_DIRECTION_OUT, CHATTY_STATUS_DRAFT);
 
-  g_ptr_array_unref (msg_array);
   chatty_history_close (history);
+
+  while (!chatty_history_is_closed (history));
+
+  g_assert_finalize_object (chat);
+  g_ptr_array_unref (msg_array);
 }
 
 static void

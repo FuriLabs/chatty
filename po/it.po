@@ -1,23 +1,25 @@
-#
-# antpanlinux <ant.pandolfo@gmail.com>, 2019. #zanata-2023.
+# Italian translation for chatty.
+# Copyright © 2020-2023 chatty's COPYRIGHT HOLDER
+# This file is distributed under the same license as the chatty package.
+# Vittorio Monti <gitlapur.a8tut@aleeas.com>, 2020-2023.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
-"Report-Msgid-Bugs-To: https://source.puri.sm/Librem5/chatty/issues\n"
-"POT-Creation-Date: 2023-07-11 03:24+0000\n"
-"PO-Revision-Date: 2023-07-11 16:41+0200\n"
-"Last-Translator: antpanlinux <ant.pandolfo@gmail.com>\n"
-"Language-Team: Italian\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
+"POT-Creation-Date: 2023-11-06 23:39+0000\n"
+"PO-Revision-Date: 2023-11-12 14:03+0100\n"
+"Last-Translator: Vittorio Monti <gitlapur.a8tut@aleeas.com>\n"
+"Language-Team: Italian <gnome-it-list@gnome.org>\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Gtranslator 3.38.0\n"
+"X-Generator: Gtranslator 45.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: data/sm.puri.Chatty.desktop.in:3 data/sm.puri.Chatty.metainfo.xml.in:6
-#: src/chatty-application.c:164 src/chatty-application.c:404
+#: src/chatty-application.c:165 src/chatty-application.c:405
 #: src/chatty-side-bar.c:348 src/ui/chatty-side-bar.ui:16
 msgid "Chats"
 msgstr "Chats"
@@ -54,7 +56,7 @@ msgstr "Se inviare che il messaggio è stato letto"
 msgid "Message carbon copies"
 msgstr "Copie carbone dei messaggi"
 
-#: data/sm.puri.Chatty.gschema.xml:26 src/ui/chatty-settings-dialog.ui:483
+#: data/sm.puri.Chatty.gschema.xml:26 src/ui/chatty-settings-dialog.ui:497
 msgid "Share chat history among devices"
 msgstr "Condividi la cronologia chat tra i dispositivi"
 
@@ -70,7 +72,7 @@ msgstr "Attiva la sincronizzazione dell'archivio GAM dal server"
 msgid "Enable purple"
 msgstr "Attiva purple"
 
-#: data/sm.puri.Chatty.gschema.xml:38 src/ui/chatty-settings-dialog.ui:443
+#: data/sm.puri.Chatty.gschema.xml:38 src/ui/chatty-settings-dialog.ui:457
 msgid "Enable purple accounts"
 msgstr "Attiva gli account purple"
 
@@ -82,59 +84,67 @@ msgstr "Invia notifiche di scrittura"
 msgid "Whether to Send typing notifications"
 msgstr "Se inviare le notifiche di scrittura"
 
-#: data/sm.puri.Chatty.gschema.xml:49 data/sm.puri.Chatty.gschema.xml:50
+#: data/sm.puri.Chatty.gschema.xml:49 src/ui/chatty-settings-dialog.ui:173
+msgid "Strip Tracking IDs"
+msgstr "Elimina gli ID di tracciamento"
+
+#: data/sm.puri.Chatty.gschema.xml:50
+msgid "Whether to Remove Tracking IDs from URLs Automatically"
+msgstr "Se rimuovere automaticamente gli ID di tracciamento dagli URL"
+
+#: data/sm.puri.Chatty.gschema.xml:55 data/sm.puri.Chatty.gschema.xml:56
 msgid "Mark Idle users differently"
 msgstr "Segna in modo diverso gli utenti inattivi"
 
-#: data/sm.puri.Chatty.gschema.xml:55 data/sm.puri.Chatty.gschema.xml:56
+#: data/sm.puri.Chatty.gschema.xml:61 data/sm.puri.Chatty.gschema.xml:62
 msgid "Indicate unknown contacts"
 msgstr "Indica contatti sconosciuti"
 
-#: data/sm.puri.Chatty.gschema.xml:61
+#: data/sm.puri.Chatty.gschema.xml:67
 msgid "Convert text to emoticons"
 msgstr "Converti il testo in faccine "
 
-#: data/sm.puri.Chatty.gschema.xml:62
+#: data/sm.puri.Chatty.gschema.xml:68
 msgid "Convert text matching emoticons as real emoticons"
 msgstr "Converti il testo che corrisponde alle faccine in faccine reali"
 
-#: data/sm.puri.Chatty.gschema.xml:67
+#: data/sm.puri.Chatty.gschema.xml:73
 msgid "Enter key sends the message"
 msgstr "Il tasto Invio invia il messaggio"
 
-#: data/sm.puri.Chatty.gschema.xml:68
+#: data/sm.puri.Chatty.gschema.xml:74
 msgid "Whether pressing Enter key sends the message"
 msgstr "Se premendo il tasto Invio si invia il messaggio"
 
-#: data/sm.puri.Chatty.gschema.xml:73
+#: data/sm.puri.Chatty.gschema.xml:79
 msgid "Request SMS delivery reports"
 msgstr "Richiedi rapporto di consegna SMS"
 
-#: data/sm.puri.Chatty.gschema.xml:74
+#: data/sm.puri.Chatty.gschema.xml:80
 msgid "Whether to request delivery reports for outgoing SMS"
 msgstr "Se richiedere rapporto di consegna per gli SMS inviati"
 
-#: data/sm.puri.Chatty.gschema.xml:79
+#: data/sm.puri.Chatty.gschema.xml:85
 msgid "Enable experimental features"
 msgstr "Attiva le caratteristiche sperimentali"
 
-#: data/sm.puri.Chatty.gschema.xml:80
+#: data/sm.puri.Chatty.gschema.xml:86
 msgid "Whether to enable experimental features"
 msgstr "Se attivare le caratteristiche sperimentali"
 
-#: data/sm.puri.Chatty.gschema.xml:85
+#: data/sm.puri.Chatty.gschema.xml:91
 msgid "Window maximized"
 msgstr "Finestra massimizzata"
 
-#: data/sm.puri.Chatty.gschema.xml:86
+#: data/sm.puri.Chatty.gschema.xml:92
 msgid "Window maximized state"
 msgstr "Stato della finestra massimizzata"
 
-#: data/sm.puri.Chatty.gschema.xml:91
+#: data/sm.puri.Chatty.gschema.xml:97
 msgid "Window size"
 msgstr "Dimensioni della finestra"
 
-#: data/sm.puri.Chatty.gschema.xml:92
+#: data/sm.puri.Chatty.gschema.xml:98
 msgid "Window size (width, height)."
 msgstr "Dimensioni della finestra (larghezza, altezza)."
 
@@ -176,17 +186,17 @@ msgstr ""
 "Attiva i messaggi dettagliati di debug (ripetere l'opzione per ulteriori "
 "dettagli)"
 
-#: src/chatty-application.c:167
+#: src/chatty-application.c:168
 msgid "An SMS and XMPP messaging client"
 msgstr "Un client di messaggistica SMS e XMPP"
 
-#: src/chatty-application.c:175
+#: src/chatty-application.c:176
 msgid "translator-credits"
 msgstr ""
 "Pandolfo Antonio <ant.pandolfo@gmail.com>\n"
 "Vittorio Monti <gitlapur dot a8tut at aleeas dot com >, 2021-2023"
 
-#: src/chatty-application.c:198
+#: src/chatty-application.c:199
 #, c-format
 msgid ""
 "There was an error displaying help:\n"
@@ -405,7 +415,7 @@ msgstr "Messaggio ricevuto"
 msgid "Any Protocol"
 msgstr "Qualsiasi Protocollo"
 
-#: src/chatty-side-bar.c:319 src/ui/chatty-settings-dialog.ui:553
+#: src/chatty-side-bar.c:319 src/ui/chatty-settings-dialog.ui:567
 msgid "Matrix"
 msgstr "Matrix"
 
@@ -413,11 +423,11 @@ msgstr "Matrix"
 msgid "SMS/MMS"
 msgstr "SMS/MMS"
 
-#: src/chatty-side-bar.c:323 src/ui/chatty-settings-dialog.ui:542
+#: src/chatty-side-bar.c:323 src/ui/chatty-settings-dialog.ui:556
 msgid "XMPP"
 msgstr "XMPP"
 
-#: src/chatty-side-bar.c:326 src/ui/chatty-settings-dialog.ui:566
+#: src/chatty-side-bar.c:326 src/ui/chatty-settings-dialog.ui:580
 msgid "Telegram"
 msgstr "Telegram"
 
@@ -927,68 +937,68 @@ msgstr "connessione in corso…"
 msgid "disconnected"
 msgstr "disconnesso"
 
-#: src/dialogs/chatty-settings-dialog.c:253
+#: src/dialogs/chatty-settings-dialog.c:254
 #, c-format
 msgid "Failed to verify server: %s"
 msgstr "Impossibile verificare il server: %s"
 
-#: src/dialogs/chatty-settings-dialog.c:255
+#: src/dialogs/chatty-settings-dialog.c:256
 msgid "Failed to verify server"
 msgstr "Impossibile verificare il server"
 
-#: src/dialogs/chatty-settings-dialog.c:261
+#: src/dialogs/chatty-settings-dialog.c:262
 msgid "Couldn't get Home server address"
 msgstr "Impossibile ottenere l'indirizzo del server personale"
 
-#: src/dialogs/chatty-settings-dialog.c:459
+#: src/dialogs/chatty-settings-dialog.c:460
 #: src/ui/chatty-ma-account-details.ui:162
 #: src/ui/chatty-pp-account-details.ui:154
 msgid "Delete Account"
 msgstr "Elimina l'account"
 
-#: src/dialogs/chatty-settings-dialog.c:462
+#: src/dialogs/chatty-settings-dialog.c:463
 #, c-format
 msgid "Delete account %s?"
 msgstr "Eliminare l'account %s?"
 
-#: src/dialogs/chatty-settings-dialog.c:635
+#: src/dialogs/chatty-settings-dialog.c:636
 msgid "Restart chatty to disable purple"
 msgstr "Riavvia Chatty per disattivare purple"
 
-#: src/dialogs/chatty-settings-dialog.c:637
-#: src/ui/chatty-settings-dialog.ui:444
+#: src/dialogs/chatty-settings-dialog.c:638
+#: src/ui/chatty-settings-dialog.ui:458
 msgid "Enable purple plugin"
 msgstr "Attiva il plugin purple"
 
-#: src/dialogs/chatty-settings-dialog.c:651
-#: src/ui/chatty-settings-dialog.ui:218
+#: src/dialogs/chatty-settings-dialog.c:652
+#: src/ui/chatty-settings-dialog.ui:232
 msgid "SMS and MMS Settings"
 msgstr "Impostazioni SMS e MMS"
 
-#: src/dialogs/chatty-settings-dialog.c:653
-#: src/ui/chatty-settings-dialog.ui:236
+#: src/dialogs/chatty-settings-dialog.c:654
+#: src/ui/chatty-settings-dialog.ui:250
 msgid "Purple Settings"
 msgstr "Impostazioni purple"
 
-#: src/dialogs/chatty-settings-dialog.c:655
+#: src/dialogs/chatty-settings-dialog.c:656
 msgid "New Account"
 msgstr "Nuovo account"
 
-#: src/dialogs/chatty-settings-dialog.c:657
-#: src/ui/chatty-settings-dialog.ui:296
+#: src/dialogs/chatty-settings-dialog.c:658
+#: src/ui/chatty-settings-dialog.ui:310
 msgid "Blocked Contacts"
 msgstr "Contatti bloccati"
 
-#: src/dialogs/chatty-settings-dialog.c:659 src/ui/chatty-side-bar.ui:115
+#: src/dialogs/chatty-settings-dialog.c:660 src/ui/chatty-side-bar.ui:115
 msgid "Preferences"
 msgstr "Preferenze"
 
-#: src/dialogs/chatty-settings-dialog.c:687
+#: src/dialogs/chatty-settings-dialog.c:688
 msgid "Select Protocol"
 msgstr "Seleziona Protocollo"
 
 #. TRANSLATORS: Only translate 'or'
-#: src/dialogs/chatty-settings-dialog.c:932
+#: src/dialogs/chatty-settings-dialog.c:933
 msgid "@user:matrix.org or user@example.com"
 msgstr "@user:matrix.org oppure user@example.com"
 
@@ -1065,7 +1075,7 @@ msgid "APN is not configured correctly"
 msgstr "APN non è configurato correttamente"
 
 #: src/mm/chatty-mmsd.c:1996
-msgid "Mobile Data is not confgured"
+msgid "Mobile Data is not configured"
 msgstr "I dati mobili non sono configurati"
 
 #: src/mm/chatty-mmsd.c:1999
@@ -1082,6 +1092,16 @@ msgid "Chatty cannot process %i MMS"
 msgid_plural "Chatty cannot process %i MMSes..."
 msgstr[0] "Chatty non può elaborare %i MMS"
 msgstr[1] "Chatty non può elaborare %i MMS..."
+
+#: src/mm/chatty-mm-account.c:328 src/mm/chatty-mm-account.c:379
+#, c-format
+msgid "Error Sending SMS to %s"
+msgstr "Errore nell'invio dell'SMS a %s"
+
+#: src/mm/chatty-mm-account.c:472
+#, c-format
+msgid "Error Sending MMS to %s"
+msgstr "Errore nell'invio dell'MMS a %s"
 
 #: src/ui/chatty-attachment.ui:20
 msgid "Remove Attachment"
@@ -1290,7 +1310,7 @@ msgstr "ID Account"
 msgid "Protocol"
 msgstr "Protocollo"
 
-#: src/ui/chatty-pp-account-details.ui:129 src/ui/chatty-settings-dialog.ui:620
+#: src/ui/chatty-pp-account-details.ui:129 src/ui/chatty-settings-dialog.ui:634
 msgid "Password"
 msgstr "Password"
 
@@ -1314,7 +1334,7 @@ msgstr "_Applica"
 msgid "Accounts"
 msgstr "Account"
 
-#: src/ui/chatty-settings-dialog.ui:140 src/ui/chatty-settings-dialog.ui:461
+#: src/ui/chatty-settings-dialog.ui:140 src/ui/chatty-settings-dialog.ui:475
 msgid "Privacy"
 msgstr "Privacy"
 
@@ -1334,84 +1354,88 @@ msgstr "Notifica di scrittura "
 msgid "Send typing messages"
 msgstr "Invia notifiche di scrittura"
 
-#: src/ui/chatty-settings-dialog.ui:176
+#: src/ui/chatty-settings-dialog.ui:174
+msgid "Strip Tracking IDs from URLs"
+msgstr "Elimina gli ID di tracciamento dagli URL"
+
+#: src/ui/chatty-settings-dialog.ui:190
 msgid "Editor"
 msgstr "Editor"
 
-#: src/ui/chatty-settings-dialog.ui:180
+#: src/ui/chatty-settings-dialog.ui:194
 msgid "Graphical Emoticons"
 msgstr "Faccine grafiche"
 
-#: src/ui/chatty-settings-dialog.ui:181
+#: src/ui/chatty-settings-dialog.ui:195
 msgid "if you type :) it will be changed to 😃"
 msgstr "se scrivi :) sarà cambiato in 😃"
 
 #. TRANSLATORS: Return is the Enter key.
-#: src/ui/chatty-settings-dialog.ui:194
+#: src/ui/chatty-settings-dialog.ui:208
 msgid "Send Messages with Return"
 msgstr "Invia messaggi col tasto invio"
 
-#: src/ui/chatty-settings-dialog.ui:208
+#: src/ui/chatty-settings-dialog.ui:222
 msgid "Protocol Settings"
 msgstr "Impostazioni Protocollo"
 
-#: src/ui/chatty-settings-dialog.ui:269
+#: src/ui/chatty-settings-dialog.ui:283
 msgid "Request Delivery Reports"
 msgstr "Richiedi rapporto di consegna"
 
-#: src/ui/chatty-settings-dialog.ui:282
+#: src/ui/chatty-settings-dialog.ui:296
 msgid "SMIL for MMS"
 msgstr "SMIL per gli MMS"
 
-#: src/ui/chatty-settings-dialog.ui:314
+#: src/ui/chatty-settings-dialog.ui:328
 msgid "MMS Carrier Settings"
 msgstr "Impostazioni MMS"
 
-#: src/ui/chatty-settings-dialog.ui:318
+#: src/ui/chatty-settings-dialog.ui:332
 msgid "Phone Number"
 msgstr "Numero di telefono"
 
-#: src/ui/chatty-settings-dialog.ui:324
+#: src/ui/chatty-settings-dialog.ui:338
 msgid "Your modem's phone number"
 msgstr "Numero di telefono del tuo modem"
 
-#: src/ui/chatty-settings-dialog.ui:332
+#: src/ui/chatty-settings-dialog.ui:346
 msgid "MMSC"
 msgstr "MMSC"
 
-#: src/ui/chatty-settings-dialog.ui:344
+#: src/ui/chatty-settings-dialog.ui:358
 msgid "APN"
 msgstr "APN"
 
-#: src/ui/chatty-settings-dialog.ui:356
+#: src/ui/chatty-settings-dialog.ui:370
 msgid "Proxy"
 msgstr "Proxy"
 
-#: src/ui/chatty-settings-dialog.ui:383
+#: src/ui/chatty-settings-dialog.ui:397
 msgid "You shall not be notified for the messages from blocked contacts"
 msgstr "Non sarai più notificato se riceverai messaggi dai contatti bloccati"
 
-#: src/ui/chatty-settings-dialog.ui:414
+#: src/ui/chatty-settings-dialog.ui:428
 msgid "Blocked chat list empty"
 msgstr "La lista delle chat bloccate è vuota"
 
-#: src/ui/chatty-settings-dialog.ui:467
+#: src/ui/chatty-settings-dialog.ui:481
 msgid "Message Archive Management"
 msgstr "Gestione dell'Archivio dei Messaggi"
 
-#: src/ui/chatty-settings-dialog.ui:468
+#: src/ui/chatty-settings-dialog.ui:482
 msgid "Sync conversations with chat server"
 msgstr "Sincronizza le conversazioni con il server di chat"
 
-#: src/ui/chatty-settings-dialog.ui:482
+#: src/ui/chatty-settings-dialog.ui:496
 msgid "Message Carbon Copies"
 msgstr "Copie carbone del messaggio"
 
-#: src/ui/chatty-settings-dialog.ui:646
+#: src/ui/chatty-settings-dialog.ui:660
 msgid "Home server"
 msgstr "Server personale"
 
-#: src/ui/chatty-settings-dialog.ui:678
+#: src/ui/chatty-settings-dialog.ui:692
 msgid "Add _new account…"
 msgstr "Aggiungi _nuovo account…"
 
@@ -1537,3 +1561,4 @@ msgstr "Lavoro: "
 #: src/users/chatty-contact.c:328
 msgid "Other: "
 msgstr "Altro: "
+

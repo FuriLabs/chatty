@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Chats
 Exec=chatty %u
-Icon=sm.puri.Chatty
+Icon=@APP_ID@
 Comment=SMS and XMPP chat application
 Keywords=XMPP;SMS;chat;jabber;messaging;modem
 Terminal=false

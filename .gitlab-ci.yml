@@ -1,9 +1,11 @@
 include:
- - 'https://source.puri.sm/Librem5/librem5-ci/raw/master/librem5-pipeline-definitions.yml'
- - 'https://source.puri.sm/Librem5/librem5-ci/raw/master/librem5-pipeline-byzantium-jobs.yml'
+  - 'https://source.puri.sm/Librem5/librem5-ci/raw/master/librem5-pipeline-definitions.yml'
+  - project: 'gnome/citemplates'
+    file: 'flatpak/flatpak-ci-initiative-sdk-extensions.yml'
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
+  IMAGE: debian:trixie
 
 stages:
   - build
@@ -19,52 +21,72 @@ before_script:
   - export DEBIAN_FRONTEND=noninteractive
   - apt-get -y update
 
-build-pureos-gcc-byzantium-no-purple:
-  <<: *tags
-  image: pureos/byzantium
+build-debian-gcc-trixie-no-purple:
+  image: ${IMAGE}
   stage: build
   script:
     - apt-get -y build-dep .
     - apt-get -y install git
     - export LC_ALL=C.UTF-8
-    - meson . _build -Dpurple=disabled
-    - ninja -C _build
+    - meson setup _build -Dpurple=disabled
+    - meson compile -C _build
+  except:
+    variables:
+      - $FP_ONLY == "1"
 
-build-pureos-gcc-byzantium:
-  <<: *tags
-  image: pureos/byzantium
+build-debian-gcc-trixie:
+  image: ${IMAGE}
   stage: build
   script:
     - apt-get -y build-dep .
     - apt-get -y install libgtk-4-bin xvfb git
     - export LC_ALL=C.UTF-8
-    - meson . _build -Db_coverage=true --werror
-    - ninja -C _build
+    - meson setup _build -Db_coverage=true --werror
+    - meson compile -C _build
   artifacts:
     paths:
       - _build
+  except:
+    variables:
+      - $FP_ONLY == "1"
 
 test:debian-gcc:
-  <<: *tags
   stage: test
-  image: pureos/byzantium
+  image: ${IMAGE}
   dependencies:
-    - build-pureos-gcc-byzantium
+    - build-debian-gcc-trixie
   script:
     - apt-get -y build-dep .
-    - apt-get -y install libgtk-4-bin xvfb lcov git
+    - apt-get -y install libgtk-4-bin xvfb gcovr git
     - export G_DEBUG=fatal-warnings
     - export LC_ALL=C.UTF-8
     - xvfb-run -a -s "-screen 0 1024x768x24" ninja -C _build test
     - ninja -C _build coverage
   coverage: '/^\s+lines\.+:\s+([\d.]+\%)\s+/'
+  except:
+    variables:
+      - $FP_ONLY == "1"
+
+asan-test:native-debian-trixie:
+  stage: test
+  image: ${IMAGE}
+  tags: [ asan ]
+  needs: []
+  before_script:
+    - export DEBIAN_FRONTEND=noninteractive
+    - apt-get -y update
+    - apt-get -y build-dep .
+    - apt-get -y install libgtk-4-bin xvfb gcovr git
+  script:
+    - meson setup -Db_sanitize=address -Dbuildtype=debug _build-asan
+    - meson compile -C _build-asan
+    - ${XVFB_RUN} meson test -C _build-asan --verbose  clock history settings utils sms-uri mm-account
 
 check-po:
-  <<: *tags
   stage: test
-  image: debian:bullseye
+  image: ${IMAGE}
   dependencies:
-    - build-pureos-gcc-byzantium
+    - build-debian-gcc-trixie
   before_script:
     - apt-get -y update
     - apt-get -y install intltool git
@@ -73,4 +95,34 @@ check-po:
     # can't be told to exit with non-zero exit status
     # in this case
     - cd po/
-    - intltool-update -m 2>&1 | grep -qs '/.*\.\(c\|ui\)' && { intltool-update -m; exit 1; } || exit 0
+    - intltool-update -m 2>&1 | grep -qs '/.*\.\(c\|ui\|in\)' && { intltool-update -m; exit 1; } || exit 0
+  except:
+    variables:
+      - $FP_ONLY == "1"
+
+package:deb-debian-trixie:arm64:
+  variables:
+    L5_DOCKER_IMAGE: debian:trixie
+    DEB_BUILD_PROFILES: "nodoc nocheck"
+    DEB_BUILD_OPTIONS: nocheck
+  extends: .l5-build-debian-package
+  tags:
+    - aarch64
+  before_script:
+    - export DEBIAN_FRONTEND=noninteractive
+    - apt-get -y update
+    - apt-get -y install eatmydata
+  except:
+    variables:
+      - $FP_ONLY == "1"
+
+flatpak:
+  before_script: []
+  extends: ".flatpak"
+  variables:
+    APP_ID: "sm.puri.Chatty.Devel"
+    BUNDLE: "sm.puri.Chatty.Devel.flatpak"
+    FLATPAK_MODULE: "chatty"
+    MANIFEST_PATH: "sm.puri.Chatty.json"
+    RUNTIME_REPO: "https://nightly.gnome.org/gnome-nightly.flatpakrepo"
+

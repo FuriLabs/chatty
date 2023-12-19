@@ -39,8 +39,6 @@ void                chatty_message_set_subject     (ChattyMessage      *self,
                                                     const char         *subject);
 
 gboolean            chatty_message_get_encrypted   (ChattyMessage      *self);
-void                chatty_message_set_encrypted   (ChattyMessage      *self,
-                                                    gboolean            is_encrypted);
 
 GList              *chatty_message_get_files       (ChattyMessage      *self);
 void                chatty_message_set_files       (ChattyMessage      *self,
@@ -48,15 +46,10 @@ void                chatty_message_set_files       (ChattyMessage      *self,
 const char         *chatty_message_get_uid         (ChattyMessage      *self);
 void                chatty_message_set_uid         (ChattyMessage      *self,
                                                     const char         *uid);
-const char         *chatty_message_get_id          (ChattyMessage      *self);
-void                chatty_message_set_id          (ChattyMessage      *self,
-                                                    const char         *id);
 guint               chatty_message_get_sms_id      (ChattyMessage      *self);
 void                chatty_message_set_sms_id      (ChattyMessage      *self,
                                                     guint               id);
 const char         *chatty_message_get_text        (ChattyMessage      *self);
-void                chatty_message_set_text        (ChattyMessage      *self,
-                                                    const char         *text);
 void                chatty_message_set_user        (ChattyMessage      *self,
                                                     ChattyItem         *sender);
 ChattyItem         *chatty_message_get_user        (ChattyMessage      *self);

@@ -25,6 +25,5 @@ G_DECLARE_FINAL_TYPE (ChattyMaBuddy, chatty_ma_buddy, CHATTY, MA_BUDDY, ChattyIt
 ChattyMaBuddy   *chatty_ma_buddy_new_with_user     (CmUser        *user);
 gboolean         chatty_ma_buddy_matches_cm_user   (ChattyMaBuddy *self,
                                                     CmUser        *user);
-guint            chatty_ma_buddy_get_id_hash       (ChattyMaBuddy *self);
 
 G_END_DECLS

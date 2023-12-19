@@ -627,26 +627,6 @@ chatty_eds_new (ChattyProtocol protocols)
                        NULL);
 }
 
-
-/**
- * chatty_eds_is_ready:
- * @self: A #ChattyEds
- *
- * Get if the contact provider is ready and loading
- * of at least one provider is complete.
- *
- * Returns: %TRUE if @self is ready for use.
- * %FALSE otherwise
- */
-gboolean
-chatty_eds_is_ready (ChattyEds  *self)
-{
-  g_return_val_if_fail (CHATTY_IS_EDS (self), FALSE);
-
-  return self->is_ready;
-}
-
-
 /**
  * chatty_eds_get_model:
  * @self: A #ChattyEds

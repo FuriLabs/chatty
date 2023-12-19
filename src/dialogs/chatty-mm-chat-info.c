@@ -95,10 +95,10 @@ chatty_mm_chat_info_set_item (ChattyChatInfo *info,
   chatty_avatar_set_item (CHATTY_AVATAR (self->avatar), CHATTY_ITEM (chat));
 
   if (chatty_chat_is_im (chat)) {
-    gtk_widget_hide (GTK_WIDGET (self->title_group));
+    gtk_widget_set_visible (GTK_WIDGET (self->title_group), FALSE);
     gtk_editable_set_text (GTK_EDITABLE (self->title_entry), "");
   } else {
-    gtk_widget_show (GTK_WIDGET (self->title_group));
+    gtk_widget_set_visible (GTK_WIDGET (self->title_group), TRUE);
     gtk_editable_set_text (GTK_EDITABLE (self->title_entry),
                            chatty_item_get_name (CHATTY_ITEM (chat)));
   }

@@ -1,6 +1,6 @@
 project(
   'chatty', 'c', 'cpp',
-  version: '0.8.0.rc0',
+  version: '0.8.0',
   meson_version: '>= 0.56.0',
 )
 
@@ -11,19 +11,33 @@ cc = meson.get_compiler('c')
 top_inc = include_directories('.')
 src_inc = []
 
+gtk_version = '4.8'
+gtk_version_arr = gtk_version.split('.')
+gtk_major = gtk_version_arr[0]
+gtk_minor = gtk_version_arr[1]
+
+adw_version = '1.2'
+adw_version_arr = adw_version.split('.')
+adw_major = adw_version_arr[0]
+adw_minor = adw_version_arr[1]
+
 purple_dep = dependency('purple', required: get_option('purple'))
-libgdesktop_dep = dependency('gnome-desktop-4', required: false)
+
+app_id = 'sm.puri.Chatty'
+if get_option('profile') == 'devel'
+  app_id = app_id + '.Devel'
+endif
 
 config_h = configuration_data()
 config_h.set10('HAVE_EXPLICIT_BZERO', cc.has_function('explicit_bzero'))
 config_h.set('PURPLE_ENABLED', purple_dep.found())
-config_h.set('HAVE_GNOME_DESKTOP4', libgdesktop_dep.found())
 config_h.set_quoted('GETTEXT_PACKAGE', 'purism-chatty')
 config_h.set_quoted('LOCALEDIR', join_paths(get_option('prefix'), get_option('localedir')))
 config_h.set_quoted('PACKAGE_NAME', meson.project_name())
 config_h.set_quoted('PACKAGE_VERSION', meson.project_version())
 config_h.set_quoted('BUILD_DIR', meson.current_build_dir())
 config_h.set_quoted('SOURCE_DIR', meson.current_source_dir())
+config_h.set_quoted('CHATTY_APP_ID', app_id)
 
 configure_file(
   output: 'config.h',
@@ -32,8 +46,12 @@ configure_file(
 add_project_arguments([
   '-I' + meson.project_build_root(),
   '-DHAVE_CONFIG_H',
-  '-DGLIB_DISABLE_DEPRECATION_WARNINGS',
   '-DG_LOG_USE_STRUCTURED',
+  '-DGDK_VERSION_MIN_REQUIRED=GDK_VERSION_@0@_@1@'.format(gtk_major, gtk_minor),
+  '-DGDK_VERSION_MAX_ALLOWED=GDK_VERSION_@0@_@1@'.format(gtk_major, gtk_minor),
+  '-DADW_VERSION_MIN_REQUIRED=ADW_VERSION_@0@_@1@'.format(adw_major, adw_minor),
+  '-DADW_VERSION_MAX_ALLOWED=ADW_VERSION_@0@_@1@'.format(adw_major, adw_minor),
+
 ], language: 'c')
 
 global_c_args = []
@@ -130,4 +148,12 @@ summary({'Build type': get_option('buildtype'),
          'libpurple': purple_dep.found(),
         }, section: 'Configuration')
 
-meson.add_install_script('build-aux/meson/postinstall.py')
+# gnome.post_install() is available since meson 0.59.0
+# Distributions use their own tooling (e.g. postinst, triggers, etc)
+# so it is okay if the post_install() is not run on distro builds
+if meson.version().version_compare('>=0.59.0')
+  gnome.post_install(
+    glib_compile_schemas: true,
+    gtk_update_icon_cache: true,
+  )
+endif
