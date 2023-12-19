@@ -8,7 +8,7 @@ downloaded an upstream tarball first.
 
 Currently, there are copyright issues with few files which led us to create
 a +dfsg variant version.  This is handled using a tag upstream/<version>+dfsg0
-which need to be set manually on the dedicated branch (upstream/dfsg-clean). 
+which need to be set manually on the dedicated branch (upstream/dfsg-clean).
 This setup requires few manual steps documented hereunder:
 - merging of upstream/dfsg-clean branch from upstream/latest
 - setting the tag upstream/<version>+dfsg0 from the upstream/dfsg-clean branch
@@ -35,4 +35,10 @@ git-pbuilder(1) manpage. In short:
     cd <project>
     gbp buildpackage --git-pbuilder
 
- -- Guido Günther <agx@sigxcpu.org>, Wed,  2 Dec 2015 18:51:15 +0100
+Right now libcmatrix is a subproject in chatty, but the tarbal on gitlab does
+not include it. To include it, you need to download the upstream, then run
+"meson dist". This will give you a tarball with the subproject. Import that
+with "gbp import-orig <the-generated-tarball>".
+
+
+ -- Guido Günther <agx@sigxcpu.org>,  Tue, 19 Dec 2023 10:09:19 -0700
