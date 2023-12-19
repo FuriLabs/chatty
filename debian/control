@@ -31,6 +31,7 @@ Build-Depends:
  libsecret-1-dev,
  libsoup2.4-dev,
  libsqlite3-dev (>= 3.0.0),
+ libxml2-utils,
  meson (>= 0.56),
  xauth,
  xvfb,
