@@ -1,3 +1,16 @@
+chatty (0.8.0-1) unstable; urgency=medium
+
+  * New upstream release 0.8.0
+  * d/watch: Point to new location of Chatty
+  * d/control: update libgtk-4-dev dependency
+  * d/README.source: Update to include subproject
+  * d/copyright: Clean up copyrights to make lintian happy
+  * d/control: add libxml2-utils as build dependency
+  * d/patches: Clean up patches
+  * d/control: Update standards to 4.6.2
+
+ -- Christopher Talbot <chris@talbothome.com>  Tue, 19 Dec 2023 10:09:19 -0700
+
 chatty (0.8.0~rc0-1~exp) experimental; urgency=medium
 
   * New upstream release
