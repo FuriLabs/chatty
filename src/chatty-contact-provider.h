@@ -22,7 +22,6 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (ChattyEds, chatty_eds, CHATTY, EDS, GObject)
 
 ChattyEds     *chatty_eds_new            (ChattyProtocol protocols);
-gboolean       chatty_eds_is_ready       (ChattyEds  *self);
 GListModel    *chatty_eds_get_model      (ChattyEds  *self);
 ChattyContact *chatty_eds_find_by_number (ChattyEds  *self,
                                           const char *phone_number);

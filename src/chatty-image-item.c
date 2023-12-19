@@ -111,7 +111,7 @@ image_item_update_message (ChattyImageItem *self)
   else if (status == CHATTY_FILE_DOWNLOADING)
     chatty_progress_button_pulse (CHATTY_PROGRESS_BUTTON (self->progress_button));
   else
-    gtk_widget_hide (self->progress_button);
+    gtk_widget_set_visible (self->progress_button, FALSE);
 
   /* Update in idle so that self is added to the parent container */
   if (status == CHATTY_FILE_DOWNLOADED)
@@ -228,15 +228,6 @@ chatty_image_item_new (ChattyMessage *message,
   image_item_update_message (self);
 
   return GTK_WIDGET (self);
-}
-
-GtkStyleContext *
-chatty_image_item_get_style (ChattyImageItem *self)
-{
-  g_return_val_if_fail (CHATTY_IS_IMAGE_ITEM (self), NULL);
-
-  return gtk_widget_get_style_context (self->image_overlay);
-
 }
 
 ChattyMessage *

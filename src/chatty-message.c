@@ -38,7 +38,6 @@ struct _ChattyMessage
   char            *subject;
   char            *message;
   char            *uid;
-  char            *id;
   CmEvent         *cm_event;
 
   GList           *files;
@@ -74,7 +73,6 @@ chatty_message_finalize (GObject *object)
   g_free (self->subject);
   g_free (self->uid);
   g_free (self->user_name);
-  g_free (self->id);
 
   if (self->files)
     g_list_free_full (self->files, (GDestroyNotify)g_object_unref);
@@ -287,15 +285,6 @@ chatty_message_get_encrypted (ChattyMessage *self)
   return self->encrypted;
 }
 
-void
-chatty_message_set_encrypted (ChattyMessage *self,
-                              gboolean       is_encrypted)
-{
-  g_return_if_fail (CHATTY_IS_MESSAGE (self));
-
-  self->encrypted = !!is_encrypted;
-}
-
 /**
  * chatty_message_set_files:
  * @self: A #ChattyMessage
@@ -346,24 +335,6 @@ chatty_message_set_uid (ChattyMessage *self,
   self->uid = g_strdup (uid);
 }
 
-const char *
-chatty_message_get_id (ChattyMessage *self)
-{
-  g_return_val_if_fail (CHATTY_IS_MESSAGE (self), "");
-
-  return self->id;
-}
-
-void
-chatty_message_set_id (ChattyMessage *self,
-                       const char    *id)
-{
-  g_return_if_fail (CHATTY_IS_MESSAGE (self));
-
-  g_free (self->id);
-  self->id = g_strdup (id);
-}
-
 guint
 chatty_message_get_sms_id (ChattyMessage *self)
 {
@@ -391,25 +362,6 @@ chatty_message_get_text (ChattyMessage *self)
     return "";
 
   return self->message;
-}
-
-/**
- * chatty_message_set_text:
- * @self: A #ChattyMessage
- * @text: A string to set as message text
- *
- * Set @self message text.  message text can be
- * modified only if the message is a draft.
- */
-void
-chatty_message_set_text (ChattyMessage *self,
-                         const char    *text)
-{
-  g_return_if_fail (CHATTY_IS_MESSAGE (self));
-  g_return_if_fail (self->status == CHATTY_STATUS_DRAFT);
-
-  g_free (self->message);
-  self->message = g_strdup (text);
 }
 
 void

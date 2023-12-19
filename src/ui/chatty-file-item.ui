@@ -27,7 +27,7 @@
                   <class name="flat"/>
                 </style>
                 <child>
-                  <object class="GtkImage">
+                  <object class="GtkImage" id="file_icon">
                     <property name="pixel-size">96</property>
                     <property name="icon-name">text-x-generic-symbolic</property>
                     <style>

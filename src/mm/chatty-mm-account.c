@@ -14,6 +14,7 @@
 # include "config.h"
 #endif
 
+#include <glib/gi18n.h>
 #include "chatty-settings.h"
 #include "chatty-history.h"
 #include "chatty-mm-chat.h"
@@ -23,6 +24,7 @@
 #include "chatty-mm-account.h"
 #include "chatty-log.h"
 #include "chatty-mmsd.h"
+#include "chatty-mm-notify.h"
 
 /**
  * SECTION: chatty-mm-account
@@ -68,14 +70,6 @@ static ChattyMmDevice *
 chatty_mm_device_new (void)
 {
   return g_object_new (CHATTY_TYPE_MM_DEVICE, NULL);
-}
-
-MMObject *
-chatty_mm_device_get_object (ChattyMmDevice *device)
-{
-  g_return_val_if_fail (CHATTY_IS_MM_DEVICE (device), NULL);
-
-  return device->mm_object;
 }
 
 char *
@@ -150,7 +144,6 @@ create_sorted_numbers (const char *numbers,
                        GPtrArray  *members)
 {
   g_autoptr(GPtrArray) sorted = NULL;
-  g_autoptr(GString) str = NULL;
   g_auto(GStrv) strv = NULL;
   const char *country_code;
 
@@ -319,8 +312,13 @@ sms_send_cb (GObject      *object,
   message = g_task_get_task_data (task);
 
   if (!mm_sms_send_finish (sms, result, &error)) {
+    g_autofree char *title = NULL;
+
     chatty_message_set_status (message, CHATTY_STATUS_SENDING_FAILED, 0);
     chatty_history_add_message (self->history_db, chat, message);
+    title = g_strdup_printf (_("Error Sending SMS to %s"),
+                              chatty_item_get_name (CHATTY_ITEM (chat)));
+    chatty_mm_notify_message (title, "");
     g_debug ("Failed to send sms: %s", error->message);
     g_task_return_error (task, error);
     return;
@@ -361,6 +359,7 @@ sms_create_cb (GObject      *object,
   if (!sms) {
     ChattyMessage *message;
     ChattyChat *chat;
+    g_autofree char *title = NULL;
 
     chat = g_object_get_data (G_OBJECT (task), "chat");
     message = g_task_get_task_data (task);
@@ -368,6 +367,9 @@ sms_create_cb (GObject      *object,
 
     chatty_message_set_status (message, CHATTY_STATUS_SENDING_FAILED, 0);
     chatty_history_add_message (self->history_db, chat, message);
+    title = g_strdup_printf (_("Error Sending SMS to %s"),
+                              chatty_item_get_name (CHATTY_ITEM (chat)));
+    chatty_mm_notify_message (title, "");
 
     g_debug ("Failed creating sms: %s", error->message);
     g_task_return_error (task, error);
@@ -428,12 +430,14 @@ chatty_mm_account_recieve_mms_cb (ChattyMmAccount *self,
 
   /*
    * MMS Messages from Chatty will always start our as a Draft, then will
-   * transition to sent, and if deliver reports is on, to delivered.
+   * transition to sent (or sending failed), and if deliver reports is on, to delivered.
    * Thus, if we get a sent message that is sent or delivered, it is already
    * in the chat
    */
   if (message_dir == CHATTY_DIRECTION_OUT &&
-     (msg_status == CHATTY_STATUS_SENT || msg_status == CHATTY_STATUS_DELIVERED)) {
+      (msg_status == CHATTY_STATUS_SENT ||
+       msg_status == CHATTY_STATUS_DELIVERED ||
+       msg_status == CHATTY_STATUS_SENDING_FAILED )) {
     ChattyMessage  *messagecheck;
 
     chat = chatty_mm_account_find_chat (self, recipientlist);
@@ -452,6 +456,13 @@ chatty_mm_account_recieve_mms_cb (ChattyMmAccount *self,
     } else { /* The MMS was deleted before the update, so just delete the MMS */
       chatty_mmsd_delete_mms (self->mmsd, chatty_message_get_uid (message));
       return FALSE;
+    }
+
+    if (msg_status == CHATTY_STATUS_SENDING_FAILED) {
+      g_autofree char *title = NULL;
+      title = g_strdup_printf (_("Error Sending MMS to %s"),
+                              chatty_item_get_name (CHATTY_ITEM (chat)));
+      chatty_mm_notify_message (title, "");
     }
 
     return TRUE;
@@ -768,7 +779,6 @@ static void
 mm_object_added_cb (ChattyMmAccount *self,
                     GDBusObject     *object)
 {
-  g_autoptr(ChattyMmAccount) account = NULL;
   g_autoptr(ChattyMmDevice) device = NULL;
   GListModel *chat_list;
   MessagingData *data;
@@ -1054,6 +1064,7 @@ chatty_mm_account_finalize (GObject *object)
   g_clear_object (&self->device_list);
   g_clear_object (&self->chatty_eds);
   g_clear_object (&self->mmsd);
+  g_clear_object (&self->blocked_chat_list);
   g_hash_table_unref (self->pending_sms);
 
   G_OBJECT_CLASS (chatty_mm_account_parent_class)->finalize (object);
@@ -1451,7 +1462,11 @@ chatty_mm_account_send_message_async (ChattyMmAccount     *self,
   mm_sms_properties_set_text (sms_properties, chatty_message_get_text (message));
   mm_sms_properties_set_number (sms_properties, phone);
   mm_sms_properties_set_delivery_report_request (sms_properties, request_report);
-  mm_sms_properties_set_validity_relative (sms_properties, 168);
+  /*
+   * https://gitlab.freedesktop.org/mobile-broadband/ModemManager/-/blob/201c8533e0e51c2f3ec6c64240d8a5705c26c8d3/src/mm-sms-part-3gpp.c#L307
+   * Max Value for validity relative is 635040, value is in minutes
+   */
+  mm_sms_properties_set_validity_relative (sms_properties, 635040);
 
   if (chatty_utils_get_item_position (G_LIST_MODEL (self->chat_list), chat, &position))
     g_list_model_items_changed (G_LIST_MODEL (self->chat_list), position, 1, 1);

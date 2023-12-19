@@ -343,7 +343,7 @@ message_bar_send_message_button_clicked_cb (ChattyMessageBar *self)
       chatty_pp_chat_run_command (CHATTY_PP_CHAT (self->chat), message)) {
     g_clear_handle_id (&self->save_timeout_id, g_source_remove);
 
-    gtk_widget_hide (self->send_message_button);
+    gtk_widget_set_visible (self->send_message_button, FALSE);
     gtk_text_buffer_delete (self->message_buffer, &start, &end);
 
     return;
@@ -375,7 +375,7 @@ message_bar_send_message_button_clicked_cb (ChattyMessageBar *self)
                                     view_send_message_async_cb,
                                     g_object_ref (self));
 
-    gtk_widget_hide (self->send_message_button);
+    gtk_widget_set_visible (self->send_message_button, FALSE);
   }
   chatty_attachments_bar_reset (CHATTY_ATTACHMENTS_BAR (self->attachment_bar));
 

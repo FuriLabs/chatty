@@ -159,7 +159,7 @@ chatty_new_muc_add_account_to_list (ChattyNewMucDialog *self,
 
   gtk_list_box_append (GTK_LIST_BOX (self->accounts_list), GTK_WIDGET (row));
 
-  gtk_widget_show (GTK_WIDGET(row));
+  gtk_widget_set_visible (GTK_WIDGET(row), TRUE);
 }
 #endif
 

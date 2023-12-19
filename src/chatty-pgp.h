@@ -59,7 +59,7 @@ CamelMimePart       *chatty_pgp_decrypt_stream (const char *data_to_check);
 ChattyPgpMessage     chatty_pgp_check_pgp_type (const char *data_to_check);
 char                *chatty_pgp_decode_mime_part (CamelMimePart *mime_part);
 char                *chatty_pgp_get_content (CamelMimePart *mime_part,
-                                             GList         *files,
+                                             GList        **files,
                                              const char    *directory_to_save_in);
 
 char                *chatty_pgp_get_recipients (CamelMimePart *mime_part);

@@ -44,6 +44,18 @@
       <description>Whether to Send typing notifications</description>
     </key>
 
+    <key name="strip-url-tracking-id" type="b">
+      <default>false</default>
+      <summary>Strip Tracking IDs</summary>
+      <description>Whether to Remove Tracking IDs from URLs Automatically</description>
+    </key>
+
+    <key name="render-attachments" type="b">
+      <default>true</default>
+      <summary>Render Attachments</summary>
+      <description>Whether to Render Attachments or not</description>
+    </key>
+
     <key name="blur-idle-buddies" type="b">
       <default>true</default>
       <summary>Mark Idle users differently</summary>

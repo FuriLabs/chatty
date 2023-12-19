@@ -111,8 +111,8 @@ chatty_file_new_for_path (const char *path)
 {
   g_autoptr(ChattyFile) self = NULL;
   g_autoptr(GError) error = NULL;
-  GFile *file;
-  GFileInfo *file_info;
+  g_autoptr(GFile) file = NULL;
+  g_autoptr(GFileInfo) file_info = NULL;
 
   self = g_object_new (CHATTY_TYPE_FILE, NULL);
   file = g_file_new_for_path (path);
@@ -246,24 +246,6 @@ chatty_file_get_status (ChattyFile *self)
   return self->status;
 }
 
-void
-chatty_file_set_file (ChattyFile *self,
-                      GFile      *file)
-{
-  g_return_if_fail (CHATTY_IS_FILE (self));
-  g_return_if_fail (G_IS_FILE (file));
-
-  g_set_object (&self->file, file);
-}
-
-GFile *
-chatty_file_get_file (ChattyFile *self)
-{
-  g_return_val_if_fail (CHATTY_IS_FILE (self), NULL);
-
-  return self->file;
-}
-
 static void
 file_get_file_stream_cb (GObject      *object,
                          GAsyncResult *result,
@@ -368,23 +350,6 @@ chatty_file_get_stream_finish (ChattyFile    *self,
   return g_task_propagate_pointer (G_TASK (result), error);
 }
 
-void
-chatty_file_set_istream (ChattyFile   *self,
-                         GInputStream *stream)
-{
-  g_return_if_fail (CHATTY_IS_FILE (self));
-  g_return_if_fail (G_IS_INPUT_STREAM (stream));
-
-  g_set_object (&self->stream, stream);
-}
-
-GInputStream *
-chatty_file_get_istream (ChattyFile *self)
-{
-  g_return_val_if_fail (CHATTY_IS_FILE (self), NULL);
-
-  return self->stream;
-}
 gsize
 chatty_file_get_width (ChattyFile *self)
 {

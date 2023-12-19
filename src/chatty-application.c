@@ -137,6 +137,7 @@ chatty_application_show_about (GSimpleAction *action,
     "Andrea Schäfer <mosibasu@me.com>",
     "Benedikt Wildenhain <benedikt.wildenhain@hs-bochum.de>",
     "Chris Talbot (kop316) <chris@talbothome.com>",
+    "Evangelos Ribeiro Tzaras <devrtz@fortysixandtwo.eu>",
     "Guido Günther <agx@sigxcpu.org>",
     "Julian Sparber <jsparber@gnome.org>",
     "Leland Carlye <leland.carlye@protonmail.com>",
@@ -165,7 +166,7 @@ chatty_application_show_about (GSimpleAction *action,
                          "application-icon", CHATTY_APP_ID,
                          "version", GIT_VERSION,
                          "comments", _("An SMS and XMPP messaging client"),
-                         "website", "https://source.puri.sm/Librem5/chatty",
+                         "website", "https://gitlab.gnome.org/World/Chatty",
                          "copyright", "© 2018–2023 Purism SPC",
                          "issue-url", "https://gitlab.gnome.org/example/example/-/issues/new",
                          "license-type", GTK_LICENSE_GPL_3_0,
@@ -201,7 +202,7 @@ show_help_cb (GObject      *object,
                         G_CALLBACK (gtk_window_destroy),
                         NULL);
 
-      gtk_widget_show (message_dialog);
+      gtk_widget_set_visible (message_dialog, TRUE);
   }
 }
 

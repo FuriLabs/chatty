@@ -700,42 +700,6 @@ chatty_mm_chat_set_eds (ChattyMmChat *self,
 }
 
 ChattyMessage *
-chatty_mm_chat_find_message_with_id (ChattyMmChat *self,
-                                     const char   *id)
-{
-  guint n_items;
-
-  g_return_val_if_fail (CHATTY_IS_MM_CHAT (self), NULL);
-  g_return_val_if_fail (id, NULL);
-
-  n_items = g_list_model_get_n_items (G_LIST_MODEL (self->message_store));
-
-  if (n_items == 0)
-    return NULL;
-
-  /* Search from end, the item is more likely to be at the end */
-  for (guint i = n_items; i > 0; i--) {
-    g_autoptr(ChattyMessage) message = NULL;
-    const char *message_id;
-
-    message = g_list_model_get_item (G_LIST_MODEL (self->message_store), i - 1);
-    message_id = chatty_message_get_id (message);
-
-    /*
-     * Once we have a message with no id, all preceding items shall likely
-     * have loaded from database, and thus no id, so don’t bother searching.
-     */
-    if (!message_id)
-      break;
-
-    if (g_str_equal (id, message_id))
-      return message;
-  }
-
-  return NULL;
-}
-
-ChattyMessage *
 chatty_mm_chat_find_message_with_uid (ChattyMmChat *self,
                                       const char   *uid)
 {
@@ -801,18 +765,6 @@ chatty_mm_chat_append_message (ChattyMmChat  *self,
   g_return_if_fail (CHATTY_IS_MESSAGE (message));
 
   g_list_store_append (self->message_store, message);
-  g_signal_emit_by_name (self, "changed", 0);
-  g_signal_emit_by_name (self, "message-added");
-}
-
-void
-chatty_mm_chat_prepend_message (ChattyMmChat  *self,
-                                ChattyMessage *message)
-{
-  g_return_if_fail (CHATTY_IS_MM_CHAT (self));
-  g_return_if_fail (CHATTY_IS_MESSAGE (message));
-
-  g_list_store_insert (self->message_store, 0, message);
   g_signal_emit_by_name (self, "changed", 0);
   g_signal_emit_by_name (self, "message-added");
 }

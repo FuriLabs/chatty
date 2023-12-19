@@ -14,18 +14,14 @@
 #ifdef PURPLE_ENABLED
 # include <purple.h>
 #endif
-#ifdef HAVE_GNOME_DESKTOP4
-# define GNOME_DESKTOP_USE_UNSTABLE_API
-# include <libgnome-desktop/gnome-desktop-thumbnail.h>
-#endif
 
 #include "chatty-manager.h"
 #include "chatty-settings.h"
 #include "chatty-phone-utils.h"
 #include "chatty-utils.h"
 #include <libebook-contacts/libebook-contacts.h>
-/* #define GNOME_DESKTOP_USE_UNSTABLE_API */
-/* #include <libgnome-desktop/gnome-desktop-thumbnail.h> */
+#define GNOME_DESKTOP_USE_UNSTABLE_API
+#include <libgnome-desktop/gnome-desktop-thumbnail.h>
 
 #include "chatty-log.h"
 
@@ -442,7 +438,6 @@ utils_create_thumbnail (GTask        *task,
                         gpointer      task_data,
                         GCancellable *cancellable)
 {
-#ifdef HAVE_GNOME_DESKTOP4
   g_autoptr(GnomeDesktopThumbnailFactory) factory = NULL;
   g_autoptr(GdkPixbuf) thumbnail = NULL;
   g_autoptr(GFileInfo) file_info = NULL;
@@ -494,7 +489,6 @@ utils_create_thumbnail (GTask        *task,
     return;
   }
 
-#if defined(GNOME_DESKTOP_PLATFORM_VERSION) && GNOME_DESKTOP_PLATFORM_VERSION >= 43
   thumbnail = gnome_desktop_thumbnail_factory_generate_thumbnail (factory, uri, content_type, NULL, &error);
   if (!thumbnail) {
     g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_FAILED, "Failed to create thumbnail for file: %s (%s)", uri, error->message);
@@ -513,24 +507,6 @@ utils_create_thumbnail (GTask        *task,
   }
 
   g_task_return_boolean (task, TRUE);
-#else
-  thumbnail = gnome_desktop_thumbnail_factory_generate_thumbnail (factory, uri, content_type);
-
-  if (thumbnail) {
-    gnome_desktop_thumbnail_factory_save_thumbnail (factory, thumbnail, uri, mtime);
-  } else {
-    /* TODO: seems to fail always on Librem5/pinephone.  So fix it instead of
-     * creating a failed thumbnail */
-    /* gnome_desktop_thumbnail_factory_create_failed_thumbnail (factory, uri, mtime); */
-    g_warning ("Failed to create thumbnail for file: %s", uri);
-  }
-
-  g_task_return_boolean (task, TRUE);
-#endif
-
-#else
-  g_task_return_boolean (task, TRUE);
-#endif
 }
 
 void
@@ -557,3 +533,4 @@ chatty_utils_create_thumbnail_finish (GAsyncResult  *result,
 
   return g_task_propagate_boolean (G_TASK (result), error);
 }
+

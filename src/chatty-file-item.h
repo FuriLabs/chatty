@@ -22,8 +22,8 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (ChattyFileItem, chatty_file_item, CHATTY, FILE_ITEM, AdwBin)
 
 GtkWidget       *chatty_file_item_new        (ChattyMessage   *message,
-                                              ChattyFile      *file);
-GtkStyleContext *chatty_file_item_get_style  (ChattyFileItem  *self);
+                                              ChattyFile      *file,
+                                              const char    *file_mime_type);
 ChattyMessage   *chatty_file_item_get_item   (ChattyFileItem  *self);
 
 G_END_DECLS

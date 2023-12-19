@@ -1,3 +1,7 @@
+if not get_option('tests') == true
+  subdir_done()
+endif
+
 tests_inc = [
   top_inc,
   src_inc,
@@ -21,7 +25,6 @@ test_items = [
   'history',
   'settings',
   'utils',
-  'message-row',
   'mm-account',
   'sms-uri',
   'pgp',
@@ -33,6 +36,21 @@ foreach item: test_items
     item + '.c',
     include_directories: tests_inc,
     link_with: libchatty_static,
+    dependencies: chatty_deps,
+  )
+  test(item, t, env: env, timeout: 300)
+endforeach
+
+test_items_shared_lib = [
+  'message-row',
+]
+
+foreach item: test_items_shared_lib
+  t = executable(
+    item,
+    item + '.c',
+    include_directories: tests_inc,
+    link_with: libchatty_shared,
     dependencies: chatty_deps,
   )
   test(item, t, env: env, timeout: 300)

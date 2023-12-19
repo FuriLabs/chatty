@@ -373,8 +373,8 @@ chatty_pp_account_details_set_item (ChattyPpAccountDetails *self,
     g_clear_signal_handler (&self->avatar_changed_id, self->account);
     gtk_list_box_bind_model (GTK_LIST_BOX (self->device_fp_list),
                              NULL, NULL, NULL, NULL);
-    gtk_widget_hide (self->device_fp_list);
-    gtk_widget_hide (self->device_fp);
+    gtk_widget_set_visible (self->device_fp_list, FALSE);
+    gtk_widget_set_visible (self->device_fp, FALSE);
   }
 
   if (!g_set_object (&self->account, account) || !account)

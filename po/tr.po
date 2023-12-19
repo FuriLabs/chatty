@@ -1,26 +1,26 @@
 # Turkish translation of chatty.
 #
-# Emin Tufan Çetin <etcetin@gmail.com>, 2019, 2020, 2021, 2022.
 # Sabri Ünal <libreajans@gmail.com>, 2023.
+# Emin Tufan Çetin <etcetin@gmail.com>, 2019, 2020, 2021, 2022, 2023.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
-"Report-Msgid-Bugs-To: https://source.puri.sm/Librem5/chatty/issues\n"
-"POT-Creation-Date: 2023-03-12 03:24+0000\n"
-"PO-Revision-Date: 2023-03-12 09:08+0300\n"
-"Last-Translator: Sabri Ünal <libreajans@gmail.com>\n"
-"Language-Team: Turkish <gnome-turk@gnome.org>\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
+"POT-Creation-Date: 2023-10-30 12:59+0000\n"
+"PO-Revision-Date: 2023-10-29 08:00+0300\n"
+"Last-Translator: Emin Tufan Çetin <etcetin@gmail.com>\n"
+"Language-Team: Turkish <takim@gnome.org.tr>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Poedit 3.2.2\n"
 
 #: data/sm.puri.Chatty.desktop.in:3 data/sm.puri.Chatty.metainfo.xml.in:6
-#: src/chatty-application.c:395 src/chatty-window.c:110
-#: src/ui/chatty-window.ui:32
+#: src/chatty-application.c:165 src/chatty-application.c:405
+#: src/chatty-side-bar.c:348 src/ui/chatty-side-bar.ui:16
 msgid "Chats"
 msgstr "Konuşmalar"
 
@@ -58,7 +58,7 @@ msgstr "İletinin okunma durumununun gönderilip gönderilmeyeceği"
 msgid "Message carbon copies"
 msgstr "İleti karbon kopyaları"
 
-#: data/sm.puri.Chatty.gschema.xml:26 src/ui/chatty-settings-dialog.ui:554
+#: data/sm.puri.Chatty.gschema.xml:26 src/ui/chatty-settings-dialog.ui:497
 msgid "Share chat history among devices"
 msgstr "Konuşma geçmişini aygıtlar arası paylaş"
 
@@ -74,7 +74,7 @@ msgstr "Sunucudan İAY arşiv eşzamanlamasını etkinleştir"
 msgid "Enable purple"
 msgstr "Purple’ı etkinleştir"
 
-#: data/sm.puri.Chatty.gschema.xml:38 src/ui/chatty-settings-dialog.ui:511
+#: data/sm.puri.Chatty.gschema.xml:38 src/ui/chatty-settings-dialog.ui:457
 msgid "Enable purple accounts"
 msgstr "Purple hesaplarını etkinleştir"
 
@@ -86,103 +86,117 @@ msgstr "Yazış bildirimleri gönder"
 msgid "Whether to Send typing notifications"
 msgstr "Yazış bildirimlerinin gönderilip gönderilmeyeceği"
 
-#: data/sm.puri.Chatty.gschema.xml:49 data/sm.puri.Chatty.gschema.xml:50
+#: data/sm.puri.Chatty.gschema.xml:49 src/ui/chatty-settings-dialog.ui:173
+msgid "Strip Tracking IDs"
+msgstr "İzleme Kimliklerinden Arındır"
+
+#: data/sm.puri.Chatty.gschema.xml:50
+msgid "Whether to Remove Tracking IDs from URLs Automatically"
+msgstr "URL’lerden İzleme Kimliklerinin Kendiliğinden Kaldırılması"
+
+#: data/sm.puri.Chatty.gschema.xml:55 data/sm.puri.Chatty.gschema.xml:56
 msgid "Mark Idle users differently"
 msgstr "Eylemsiz kullanıcıları başka imle"
 
-#: data/sm.puri.Chatty.gschema.xml:55 data/sm.puri.Chatty.gschema.xml:56
+#: data/sm.puri.Chatty.gschema.xml:61 data/sm.puri.Chatty.gschema.xml:62
 msgid "Indicate unknown contacts"
 msgstr "Bilinmeyen kişileri imle"
 
-#: data/sm.puri.Chatty.gschema.xml:61
+#: data/sm.puri.Chatty.gschema.xml:67
 msgid "Convert text to emoticons"
 msgstr "Metinleri yüz ifadelerine dönüştür"
 
-#: data/sm.puri.Chatty.gschema.xml:62
+#: data/sm.puri.Chatty.gschema.xml:68
 msgid "Convert text matching emoticons as real emoticons"
 msgstr "Eşleşen metin yüz ifadelerini gerçek yüz ifadelerine dönüştür"
 
-#: data/sm.puri.Chatty.gschema.xml:67
+#: data/sm.puri.Chatty.gschema.xml:73
 msgid "Enter key sends the message"
 msgstr "Enter tuşu iletiyi gönderir"
 
-#: data/sm.puri.Chatty.gschema.xml:68
+#: data/sm.puri.Chatty.gschema.xml:74
 msgid "Whether pressing Enter key sends the message"
 msgstr "Enter tuşunun iletiyi gönderip göndermeyeceği"
 
-#: data/sm.puri.Chatty.gschema.xml:73
+#: data/sm.puri.Chatty.gschema.xml:79
 msgid "Request SMS delivery reports"
 msgstr "SMS teslim raporları iste"
 
-#: data/sm.puri.Chatty.gschema.xml:74
+#: data/sm.puri.Chatty.gschema.xml:80
 msgid "Whether to request delivery reports for outgoing SMS"
 msgstr "Giden SMS için teslim raporları istenmesi"
 
-#: data/sm.puri.Chatty.gschema.xml:79
+#: data/sm.puri.Chatty.gschema.xml:85
 msgid "Enable experimental features"
 msgstr "Deneysel özellikleri etkinleştir"
 
-#: data/sm.puri.Chatty.gschema.xml:80
+#: data/sm.puri.Chatty.gschema.xml:86
 msgid "Whether to enable experimental features"
 msgstr "Deneysel özelliklerin etkinleştirilmesi"
 
-#: data/sm.puri.Chatty.gschema.xml:85
+#: data/sm.puri.Chatty.gschema.xml:91
 msgid "Window maximized"
 msgstr "Pencere ekranı kaplamış"
 
-#: data/sm.puri.Chatty.gschema.xml:86
+#: data/sm.puri.Chatty.gschema.xml:92
 msgid "Window maximized state"
 msgstr "Pencerenin ekranı kaplama durumu"
 
-#: data/sm.puri.Chatty.gschema.xml:91
+#: data/sm.puri.Chatty.gschema.xml:97
 msgid "Window size"
 msgstr "Pencere boyutu"
 
-#: data/sm.puri.Chatty.gschema.xml:92
+#: data/sm.puri.Chatty.gschema.xml:98
 msgid "Window size (width, height)."
 msgstr "Pencere boyutu (genişlik, yükseklik)."
 
 #: data/sm.puri.Chatty.metainfo.xml.in:7
-msgid "A messaging application"
-msgstr "Mesajlaşma uygulaması"
+msgid "Messaging application for mobile and desktop"
+msgstr "Mobil ve masaüstü için mesajlaşma uygulaması"
 
 #: data/sm.puri.Chatty.metainfo.xml.in:9
-msgid "Chats is a messaging application supporting XMPP and SMS."
-msgstr "Konuşmalar, XMPP ve SMS’i destekleyen mesajlaşma uygulamasıdır."
+msgid ""
+"Chats is a simple to use to messaging app for 1:1 communication and small "
+"groups supporting SMS, MMS, XMPP and Matrix."
+msgstr ""
+"Konuşmalar, birebir ve küçük grupların iletişimi için SMS, MMS, XMPP ve "
+"Matrix’i destekleyen kullanımı basit mesajlaşma uygulamasıdır."
 
 #: data/sm.puri.Chatty.metainfo.xml.in:16
 msgid "Chats message window"
 msgstr "Konuşmalar ileti penceresi"
 
-#: src/chatty-application.c:78
+#: src/chatty-application.c:80
 msgid "Show release version"
 msgstr "Dağıtım sürümünü göster"
 
-#: src/chatty-application.c:79
+#: src/chatty-application.c:81
 msgid "Start in daemon mode"
-msgstr "Art alan kipinde başlat"
+msgstr "Art alan hizmeti kipinde başlat"
 
-#: src/chatty-application.c:80
+#: src/chatty-application.c:82
 msgid "Disable all accounts"
 msgstr "Tüm hesapları devre dışı bırak"
 
-#: src/chatty-application.c:81
+#: src/chatty-application.c:84
 msgid "Enable libpurple debug messages"
 msgstr "libpurple hata ayıklama iletilerini etkinleştir"
 
-#: src/chatty-application.c:83
-msgid "Enable verbose libpurple debug messages"
-msgstr "Ayrıntılı libpurple hata ayıklama iletilerini etkinleştir"
+#: src/chatty-application.c:87
+msgid "Enable verbose debug messages (repeat option for more verbosity)"
+msgstr ""
+"Ayrıntılı hata ayıklama iletilerini etkinleştir (daha çok ayrıntı için "
+"yineleme seçeneği)"
 
-#: src/chatty-application.c:167
+#: src/chatty-application.c:168
 msgid "An SMS and XMPP messaging client"
 msgstr "SMS ve XMPP mesajlaşma istemcisi"
 
-#: src/chatty-application.c:174
+#: src/chatty-application.c:176
 msgid "translator-credits"
 msgstr "Emin Tufan Çetin <etcetin@gmail.com>"
 
-#: src/chatty-application.c:198
+#: src/chatty-application.c:199
 #, c-format
 msgid ""
 "There was an error displaying help:\n"
@@ -191,7 +205,7 @@ msgstr ""
 "Yardım gösterilirken hata oluştu:\n"
 "%s"
 
-#: src/chatty-avatar.c:163 src/chatty-contact-list.c:391
+#: src/chatty-avatar.c:183 src/chatty-contact-list.c:391
 msgid "Send To"
 msgstr "Şuna Gönder"
 
@@ -219,45 +233,25 @@ msgstr "Arşivlenmiş konuşma yok"
 msgid "Start Chatting"
 msgstr "Konuşma Başlat"
 
-#: src/chatty-chat-view.c:237
+#: src/chatty-chat-page.c:199
 msgid "This is an SMS conversation"
 msgstr "Bu, SMS konuşmasıdır"
 
-#: src/chatty-chat-view.c:239 src/chatty-chat-view.c:245
+#: src/chatty-chat-page.c:201 src/chatty-chat-page.c:207
 msgid "Your messages are not encrypted, and carrier rates may apply"
 msgstr "İletileriniz şifrelenmiyor ve ulak ücretleri uygulanabilir"
 
-#: src/chatty-chat-view.c:243
+#: src/chatty-chat-page.c:205
 msgid "This is an IM conversation"
 msgstr "Bu, anında mesajlaşma konuşmasıdır"
 
-#: src/chatty-chat-view.c:249
+#: src/chatty-chat-page.c:211
 msgid "Your messages are encrypted"
 msgstr "İletileriniz şifreleniyor"
 
-#: src/chatty-chat-view.c:252
+#: src/chatty-chat-page.c:214
 msgid "Your messages are not encrypted"
 msgstr "İletileriniz şifrelenmiyor"
-
-#: src/chatty-chat-view.c:447
-msgid "Select File..."
-msgstr "Dosyayı Seç…"
-
-#: src/chatty-chat-view.c:450 src/purple/chatty-purple-request.c:175
-#: src/chatty-window.c:691 src/dialogs/chatty-pp-chat-info.c:89
-#: src/dialogs/chatty-ma-account-details.c:114
-#: src/dialogs/chatty-pp-account-details.c:90
-#: src/ui/chatty-dialog-join-muc.ui:21 src/ui/chatty-info-dialog.ui:44
-#: src/ui/chatty-info-dialog.ui:54
-msgid "Cancel"
-msgstr "İptal Et"
-
-#: src/chatty-chat-view.c:451 src/purple/chatty-purple-request.c:177
-#: src/dialogs/chatty-pp-chat-info.c:88
-#: src/dialogs/chatty-ma-account-details.c:113
-#: src/dialogs/chatty-pp-account-details.c:89
-msgid "Open"
-msgstr "Aç"
 
 #: src/chatty-chat.c:708
 msgid "Empty room"
@@ -275,7 +269,7 @@ msgid "%s and %u other"
 msgid_plural "%s and %u others"
 msgstr[0] "%s ve diğer %u"
 
-#: src/chatty-contact-list.c:247 src/dialogs/chatty-mm-chat-info.c:121
+#: src/chatty-contact-list.c:247 src/dialogs/chatty-mm-chat-info.c:128
 msgid "Unknown Contact"
 msgstr "Bilinmeyen Kişi"
 
@@ -341,39 +335,55 @@ msgid "Device ID %s fingerprint:"
 msgstr "Aygıt kimliği %s parmak izi:"
 
 #. TRANSLATORS: %s is the chat room name
-#: src/chatty-invite-view.c:72
+#: src/chatty-invite-page.c:72
 #, c-format
 msgid "Do you want to join “%s”"
 msgstr "“%s” odasına katılmak istiyor musunuz?"
 
-#: src/chatty-list-row.c:119
+#: src/chatty-list-row.c:121
 msgid "Owner"
 msgstr "Sahip"
 
-#: src/chatty-list-row.c:122
+#: src/chatty-list-row.c:124
 msgid "Moderator"
 msgstr "Moderatör"
 
-#: src/chatty-list-row.c:125
+#: src/chatty-list-row.c:127
 msgid "Member"
 msgstr "Üye"
 
-#: src/chatty-main-view.c:63
+#: src/chatty-main-view.c:124
 msgid "Account disconnected"
 msgstr "Hesap bağlantısı kesildi"
 
-#: src/chatty-main-view.c:65
+#: src/chatty-main-view.c:126
 msgid "Account connecting…"
 msgstr "Hesap bağlanıyor…"
 
-#: src/chatty-manager.c:740
+#: src/chatty-manager.c:741
 #, c-format
 msgid "“%s” is not a valid URI"
 msgstr "“%s” geçerli URI değil"
 
-#: src/chatty-message-row.c:270
-msgid "Copy"
-msgstr "Kopyala"
+#: src/chatty-message-bar.c:120
+msgid "Select File..."
+msgstr "Dosyayı Seç…"
+
+#: src/chatty-message-bar.c:123 src/purple/chatty-purple-request.c:179
+#: src/chatty-window.c:449 src/dialogs/chatty-pp-chat-info.c:108
+#: src/dialogs/chatty-ma-account-details.c:135
+#: src/dialogs/chatty-pp-account-details.c:111
+#: src/ui/chatty-dialog-join-muc.ui:18 src/ui/chatty-info-dialog.ui:26
+#: src/ui/chatty-info-dialog.ui:35
+msgid "Cancel"
+msgstr "İptal Et"
+
+#: src/chatty-message-bar.c:124 src/purple/chatty-purple-request.c:181
+#: src/dialogs/chatty-pp-chat-info.c:107
+#: src/dialogs/chatty-ma-account-details.c:134
+#: src/dialogs/chatty-pp-account-details.c:110
+msgid "Open"
+msgstr "Aç"
 
 #: src/chatty-message.c:232
 msgid "Got an encrypted message, but couldn't decrypt due to missing keys"
@@ -393,489 +403,489 @@ msgstr "%s kişisinden ileti"
 msgid "Message Received"
 msgstr "İleti Alındı"
 
-#: src/purple/chatty-purple-notify.c:44 src/ui/chatty-main-view.ui:34
+#: src/chatty-side-bar.c:318
+msgid "Any Protocol"
+msgstr "Herhangi Bir İletişim Kuralı"
+
+#: src/chatty-side-bar.c:319 src/ui/chatty-settings-dialog.ui:567
+msgid "Matrix"
+msgstr "Matrix"
+
+#: src/chatty-side-bar.c:320
+msgid "SMS/MMS"
+msgstr "SMS/MMS"
+
+#: src/chatty-side-bar.c:323 src/ui/chatty-settings-dialog.ui:556
+msgid "XMPP"
+msgstr "XMPP"
+
+#: src/chatty-side-bar.c:326 src/ui/chatty-settings-dialog.ui:580
+msgid "Telegram"
+msgstr "Telegram"
+
+#: src/chatty-side-bar.c:348
+msgid "Archived"
+msgstr "Arşivlendi"
+
+#: src/purple/chatty-purple-notify.c:46 src/ui/chatty-main-view.ui:78
 msgid "Close"
 msgstr "Kapat"
 
-#: src/purple/chatty-purple-request.c:170
+#: src/purple/chatty-purple-request.c:174
 msgid "Save File..."
 msgstr "Dosyayı Kaydet…"
 
-#: src/purple/chatty-purple-request.c:171
+#: src/purple/chatty-purple-request.c:175
 msgid "Open File..."
 msgstr "Dosyayı Aç…"
 
-#: src/purple/chatty-purple-request.c:177
+#: src/purple/chatty-purple-request.c:181
 msgid "Save"
 msgstr "Kaydet"
 
-#: src/purple/chatty-purple.c:239
+#: src/purple/chatty-purple.c:238
 msgid "Contact added"
 msgstr "Kişi eklendi"
 
-#: src/purple/chatty-purple.c:241
+#: src/purple/chatty-purple.c:240
 #, c-format
 msgid "User %s has added %s to the contacts"
 msgstr "%s kullanıcısı, %s kişisini kişilerine ekledi"
 
-#: src/purple/chatty-purple.c:261
+#: src/purple/chatty-purple.c:260
 #, c-format
 msgid "Authorize %s?"
 msgstr "Yetkilendir: %s?"
 
-#: src/purple/chatty-purple.c:263
+#: src/purple/chatty-purple.c:262
 msgid "Reject"
 msgstr "Reddet"
 
-#: src/purple/chatty-purple.c:264
+#: src/purple/chatty-purple.c:263
 msgid "Accept"
 msgstr "Kabul Et"
 
-#: src/purple/chatty-purple.c:267
+#: src/purple/chatty-purple.c:266
 #, c-format
 msgid "Add %s to contact list"
 msgstr "%s kişisini kişi listesine ekle"
 
-#: src/purple/chatty-purple.c:585
+#: src/purple/chatty-purple.c:584
 msgid "Login failed"
 msgstr "Giriş başarısız"
 
-#: src/purple/chatty-purple.c:590
+#: src/purple/chatty-purple.c:589
 msgid "Please check ID and password"
 msgstr "Lütfen kimliği ve parolayı denetleyin"
 
 #. TRANSLATORS: You may copy translations from https://github.com/matrix-org/matrix-spec-proposals/blob/old_master/data-definitions/sas-emoji.json
 #. * if available
-#: src/chatty-verification-view.c:27
+#: src/chatty-verification-page.c:27
 msgid "Dog"
 msgstr "Köpek"
 
 #. "U+1F436"
-#: src/chatty-verification-view.c:28
+#: src/chatty-verification-page.c:28
 msgid "Cat"
 msgstr "Kedi"
 
 #. "U+1F431"
-#: src/chatty-verification-view.c:29
+#: src/chatty-verification-page.c:29
 msgid "Lion"
 msgstr "Aslan"
 
 #. "U+1F981"
-#: src/chatty-verification-view.c:30
+#: src/chatty-verification-page.c:30
 msgid "Horse"
 msgstr "At"
 
 #. "U+1F40E"
-#: src/chatty-verification-view.c:31
+#: src/chatty-verification-page.c:31
 msgid "Unicorn"
 msgstr "Tek Boynuzlu At"
 
 #. "U+1F984"
-#: src/chatty-verification-view.c:32
+#: src/chatty-verification-page.c:32
 msgid "Pig"
 msgstr "Domuz"
 
 #. "U+1F437"
-#: src/chatty-verification-view.c:33
+#: src/chatty-verification-page.c:33
 msgid "Elephant"
 msgstr "Fil"
 
 #. "U+1F418"
-#: src/chatty-verification-view.c:34
+#: src/chatty-verification-page.c:34
 msgid "Rabbit"
 msgstr "Tavşan"
 
 #. "U+1F430"
-#: src/chatty-verification-view.c:35
+#: src/chatty-verification-page.c:35
 msgid "Panda"
 msgstr "Panda"
 
 #. "U+1F43C"
-#: src/chatty-verification-view.c:36
+#: src/chatty-verification-page.c:36
 msgid "Rooster"
 msgstr "Horoz"
 
 #. "U+1F413"
-#: src/chatty-verification-view.c:37
+#: src/chatty-verification-page.c:37
 msgid "Penguin"
 msgstr "Penguen"
 
 #. "U+1F427"
-#: src/chatty-verification-view.c:38
+#: src/chatty-verification-page.c:38
 msgid "Turtle"
 msgstr "Kaplumbağa"
 
 #. "U+1F422"
-#: src/chatty-verification-view.c:39
+#: src/chatty-verification-page.c:39
 msgid "Fish"
 msgstr "Balık"
 
 #. "U+1F41F"
-#: src/chatty-verification-view.c:40
+#: src/chatty-verification-page.c:40
 msgid "Octopus"
 msgstr "Ahtapot"
 
 #. "U+1F419"
-#: src/chatty-verification-view.c:41
+#: src/chatty-verification-page.c:41
 msgid "Butterfly"
 msgstr "Kelebek"
 
 #. "U+1F98B"
-#: src/chatty-verification-view.c:42
+#: src/chatty-verification-page.c:42
 msgid "Flower"
 msgstr "Çiçek"
 
 #. "U+1F337"
-#: src/chatty-verification-view.c:43
+#: src/chatty-verification-page.c:43
 msgid "Tree"
 msgstr "Ağaç"
 
 #. "U+1F333"
-#: src/chatty-verification-view.c:44
+#: src/chatty-verification-page.c:44
 msgid "Cactus"
 msgstr "Kaktüs"
 
 #. "U+1F335"
-#: src/chatty-verification-view.c:45
+#: src/chatty-verification-page.c:45
 msgid "Mushroom"
 msgstr "Mantar"
 
 #. "U+1F344"
-#: src/chatty-verification-view.c:46
+#: src/chatty-verification-page.c:46
 msgid "Globe"
 msgstr "Küre"
 
 #. "U+1F30F"
-#: src/chatty-verification-view.c:47
+#: src/chatty-verification-page.c:47
 msgid "Moon"
 msgstr "Ay"
 
 #. "U+1F319"
-#: src/chatty-verification-view.c:48
+#: src/chatty-verification-page.c:48
 msgid "Cloud"
 msgstr "Bulut"
 
 #. "U+2601U+FE0F"
-#: src/chatty-verification-view.c:49
+#: src/chatty-verification-page.c:49
 msgid "Fire"
 msgstr "Ateş"
 
 #. "U+1F525"
-#: src/chatty-verification-view.c:50
+#: src/chatty-verification-page.c:50
 msgid "Banana"
 msgstr "Muz"
 
 #. "U+1F34C"
-#: src/chatty-verification-view.c:51
+#: src/chatty-verification-page.c:51
 msgid "Apple"
 msgstr "Elma"
 
 #. "U+1F34E"
-#: src/chatty-verification-view.c:52
+#: src/chatty-verification-page.c:52
 msgid "Strawberry"
 msgstr "Çilek"
 
 #. "U+1F353"
-#: src/chatty-verification-view.c:53
+#: src/chatty-verification-page.c:53
 msgid "Corn"
 msgstr "Mısır"
 
 #. "U+1F33D"
-#: src/chatty-verification-view.c:54
+#: src/chatty-verification-page.c:54
 msgid "Pizza"
 msgstr "Pizza"
 
 #. "U+1F355"
-#: src/chatty-verification-view.c:55
+#: src/chatty-verification-page.c:55
 msgid "Cake"
 msgstr "Kek"
 
 #. "U+1F382"
-#: src/chatty-verification-view.c:56
+#: src/chatty-verification-page.c:56
 msgid "Heart"
 msgstr "Kalp"
 
 #. "U+2764U+FE0F"
-#: src/chatty-verification-view.c:57
+#: src/chatty-verification-page.c:57
 msgid "Smiley"
 msgstr "Gülümseme"
 
 #. "U+1F600"
-#: src/chatty-verification-view.c:58
+#: src/chatty-verification-page.c:58
 msgid "Robot"
 msgstr "Robot"
 
 #. "U+1F916"
-#: src/chatty-verification-view.c:59
+#: src/chatty-verification-page.c:59
 msgid "Hat"
 msgstr "Şapka"
 
 #. "U+1F3A9"
-#: src/chatty-verification-view.c:60
+#: src/chatty-verification-page.c:60
 msgid "Glasses"
 msgstr "Gözlük"
 
 # Key anlamındaki anahtar değil de tamircilerin kullandığı numaralı anahtar. 13-14 anahtarı vs.
 #. "U+1F453"
-#: src/chatty-verification-view.c:61
+#: src/chatty-verification-page.c:61
 msgid "Spanner"
 msgstr "İngiliz Anahtarı"
 
 #. "U+1F527"
-#: src/chatty-verification-view.c:62
+#: src/chatty-verification-page.c:62
 msgid "Santa"
 msgstr "Noel Baba"
 
 #. "U+1F385"
-#: src/chatty-verification-view.c:63
+#: src/chatty-verification-page.c:63
 msgid "Thumbs Up"
 msgstr "Parmak Yukarı"
 
 #. "U+1F44D"
-#: src/chatty-verification-view.c:64
+#: src/chatty-verification-page.c:64
 msgid "Umbrella"
 msgstr "Şemsiye"
 
 #. "U+2602U+FE0F"
-#: src/chatty-verification-view.c:65
+#: src/chatty-verification-page.c:65
 msgid "Hourglass"
 msgstr "Kum Saati"
 
 #. "U+231B"
-#: src/chatty-verification-view.c:66
+#: src/chatty-verification-page.c:66
 msgid "Clock"
 msgstr "Saat"
 
 #. "U+23F0"
-#: src/chatty-verification-view.c:67
+#: src/chatty-verification-page.c:67
 msgid "Gift"
 msgstr "Hediye"
 
 #. "U+1F381"
-#: src/chatty-verification-view.c:68
+#: src/chatty-verification-page.c:68
 msgid "Light Bulb"
 msgstr "Ampül"
 
 #. "U+1F4A1"
-#: src/chatty-verification-view.c:69
+#: src/chatty-verification-page.c:69
 msgid "Book"
 msgstr "Kitap"
 
 #. "U+1F4D5"
-#: src/chatty-verification-view.c:70
+#: src/chatty-verification-page.c:70
 msgid "Pencil"
 msgstr "Kalem"
 
 #. "U+270FU+FE0F"
-#: src/chatty-verification-view.c:71
+#: src/chatty-verification-page.c:71
 msgid "Paperclip"
 msgstr "Ataç"
 
 #. "U+1F4CE"
-#: src/chatty-verification-view.c:72
+#: src/chatty-verification-page.c:72
 msgid "Scissors"
 msgstr "Makas"
 
 #. "U+2702U+FE0F"
-#: src/chatty-verification-view.c:73
+#: src/chatty-verification-page.c:73
 msgid "Lock"
 msgstr "Kilit"
 
 #. "U+1F512"
-#: src/chatty-verification-view.c:74
+#: src/chatty-verification-page.c:74
 msgid "Key"
 msgstr "Anahtar"
 
 #. "U+1F511"
-#: src/chatty-verification-view.c:75
+#: src/chatty-verification-page.c:75
 msgid "Hammer"
 msgstr "Çekiç"
 
 #. "U+1F528"
-#: src/chatty-verification-view.c:76
+#: src/chatty-verification-page.c:76
 msgid "Telephone"
 msgstr "Telefon"
 
 #. "U+260EU+FE0F"
-#: src/chatty-verification-view.c:77
+#: src/chatty-verification-page.c:77
 msgid "Flag"
 msgstr "Bayrak"
 
 #. "U+1F3C1"
-#: src/chatty-verification-view.c:78
+#: src/chatty-verification-page.c:78
 msgid "Train"
 msgstr "Tren"
 
 #. "U+1F682"
-#: src/chatty-verification-view.c:79
+#: src/chatty-verification-page.c:79
 msgid "Bicycle"
 msgstr "Bisiklet"
 
 #. "U+1F6B2"
-#: src/chatty-verification-view.c:80
+#: src/chatty-verification-page.c:80
 msgid "Aeroplane"
 msgstr "Uçak"
 
 #. "U+2708U+FE0F"
-#: src/chatty-verification-view.c:81
+#: src/chatty-verification-page.c:81
 msgid "Rocket"
 msgstr "Roket"
 
 #. "U+1F680"
-#: src/chatty-verification-view.c:82
+#: src/chatty-verification-page.c:82
 msgid "Trophy"
 msgstr "Kupa"
 
 #. "U+1F3C6"
-#: src/chatty-verification-view.c:83
+#: src/chatty-verification-page.c:83
 msgid "Ball"
 msgstr "Top"
 
 #. "U+26BD"
-#: src/chatty-verification-view.c:84
+#: src/chatty-verification-page.c:84
 msgid "Guitar"
 msgstr "Gitar"
 
 #. "U+1F3B8"
-#: src/chatty-verification-view.c:85
+#: src/chatty-verification-page.c:85
 msgid "Trumpet"
 msgstr "Trampet"
 
 #. "U+1F3BA"
-#: src/chatty-verification-view.c:86
+#: src/chatty-verification-page.c:86
 msgid "Bell"
 msgstr "Zil"
 
 #. "U+1F514"
-#: src/chatty-verification-view.c:87
+#: src/chatty-verification-page.c:87
 msgid "Anchor"
 msgstr "Çapa"
 
 #. "U+2693"
-#: src/chatty-verification-view.c:88
+#: src/chatty-verification-page.c:88
 msgid "Headphones"
 msgstr "Kulaklık"
 
 #. "U+1F3A7"
-#: src/chatty-verification-view.c:89
+#: src/chatty-verification-page.c:89
 msgid "Folder"
 msgstr "Klasör"
 
 #. "U+1F4C1"
-#: src/chatty-verification-view.c:90
+#: src/chatty-verification-page.c:90
 msgid "Pin"
 msgstr "İğne"
 
-#: src/chatty-verification-view.c:387
+#: src/chatty-verification-page.c:387
 msgid "Show Emojis"
 msgstr "Emojileri Göster"
 
-#: src/chatty-verification-view.c:389
+#: src/chatty-verification-page.c:389
 msgid "Show Numbers"
 msgstr "Numaraları Göster"
 
-#: src/chatty-window.c:110
-msgid "Archived"
-msgstr "Arşivlendi"
-
-#: src/chatty-window.c:627
+#: src/chatty-window.c:353
 msgid "You shall no longer be notified for new messages, continue?"
 msgstr "Bundan sonra yeni iletiler bildirilmeyecek, sürdürülsün mü?"
 
-#: src/chatty-window.c:677
+#: src/chatty-window.c:435
 #, c-format
 msgid "Delete chat with “%s”"
 msgstr "“%s” ile konuşmayı sil"
 
-#: src/chatty-window.c:678
+#: src/chatty-window.c:436
 msgid "This deletes the conversation history"
 msgstr "Bu, konuşma geçmişini siler"
 
-#: src/chatty-window.c:680
+#: src/chatty-window.c:438
 #, c-format
 msgid "Disconnect group chat “%s”"
 msgstr "“%s” küme konuşmasından ayrıl"
 
-#: src/chatty-window.c:681
+#: src/chatty-window.c:439
 msgid "This removes chat from chats list"
 msgstr "Bu, konuşmayı konuşma listesinden kaldırır"
 
-#: src/chatty-window.c:692
+#: src/chatty-window.c:450
 msgid "Delete"
 msgstr "Sil"
 
-#: src/chatty-window.c:1078
-msgid "Any Protocol"
-msgstr "Herhangi Bir İletişim Kuralı"
-
-#: src/chatty-window.c:1079 src/ui/chatty-settings-dialog.ui:627
-msgid "Matrix"
-msgstr "Matrix"
-
-#: src/chatty-window.c:1080
-msgid "SMS/MMS"
-msgstr "SMS/MMS"
-
-#: src/chatty-window.c:1083 src/ui/chatty-settings-dialog.ui:615
-msgid "XMPP"
-msgstr "XMPP"
-
-#: src/chatty-window.c:1086 src/ui/chatty-settings-dialog.ui:641
-msgid "Telegram"
-msgstr "Telegram"
-
-#: src/dialogs/chatty-mm-chat-info.c:140
+#: src/dialogs/chatty-mm-chat-info.c:147
 msgctxt "Refer to self in contact list"
 msgid "You"
 msgstr "Siz"
 
-#: src/dialogs/chatty-pp-chat-info.c:85
-#: src/dialogs/chatty-ma-account-details.c:110
-#: src/dialogs/chatty-pp-account-details.c:86
+#: src/dialogs/chatty-pp-chat-info.c:104
+#: src/dialogs/chatty-ma-account-details.c:131
+#: src/dialogs/chatty-pp-account-details.c:107
 msgid "Set Avatar"
 msgstr "Avatar Belirle"
 
-#: src/dialogs/chatty-pp-chat-info.c:95
-#: src/dialogs/chatty-ma-account-details.c:120
-#: src/dialogs/chatty-pp-account-details.c:96
+#: src/dialogs/chatty-pp-chat-info.c:114
+#: src/dialogs/chatty-ma-account-details.c:141
+#: src/dialogs/chatty-pp-account-details.c:117
 msgid "Images"
 msgstr "Resimler"
 
-#: src/dialogs/chatty-pp-chat-info.c:205
+#: src/dialogs/chatty-pp-chat-info.c:220
 msgid "Encryption is not available"
 msgstr "Şifreleme kullanılamıyor"
 
-#: src/dialogs/chatty-pp-chat-info.c:209
+#: src/dialogs/chatty-pp-chat-info.c:224
 msgid "This chat is encrypted"
 msgstr "Bu konuşma şifrelendi"
 
-#: src/dialogs/chatty-pp-chat-info.c:213
+#: src/dialogs/chatty-pp-chat-info.c:228
 msgid "This chat is not encrypted"
 msgstr "Bu konuşma şifrelenmedi"
 
-#: src/dialogs/chatty-pp-chat-info.c:237
+#: src/dialogs/chatty-pp-chat-info.c:252
 msgid "Encryption not available"
 msgstr "Şifreleme kullanılamıyor"
 
-#: src/dialogs/chatty-pp-chat-info.c:258
+#: src/dialogs/chatty-pp-chat-info.c:273
 #, c-format
 msgid "%u Member"
 msgid_plural "%u Members"
 msgstr[0] "%u Üye"
 
-#: src/dialogs/chatty-pp-chat-info.c:292
+#: src/dialogs/chatty-pp-chat-info.c:307
 msgid "Phone Number:"
 msgstr "Telefon Numarası:"
 
-#: src/dialogs/chatty-pp-chat-info.c:294
+#: src/dialogs/chatty-pp-chat-info.c:309
 msgid "XMPP ID:"
 msgstr "XMPP Kimliği:"
 
-#: src/dialogs/chatty-pp-chat-info.c:299
+#: src/dialogs/chatty-pp-chat-info.c:314
 msgid "Matrix ID:"
 msgstr "Matrix Kimliği:"
 
-#: src/dialogs/chatty-pp-chat-info.c:302
+#: src/dialogs/chatty-pp-chat-info.c:317
 msgid "Telegram ID:"
 msgstr "Telegram Kimliği:"
 
@@ -896,115 +906,110 @@ msgstr "Kişi Ekle"
 msgid "Error opening GNOME Contacts: %s"
 msgstr "GNOME Kişiler açılırken hata: %s"
 
-#: src/dialogs/chatty-new-chat-dialog.c:452
+#: src/dialogs/chatty-new-chat-dialog.c:453
 msgid "SMS"
 msgstr "SMS"
 
-#: src/dialogs/chatty-new-chat-dialog.c:640
+#: src/dialogs/chatty-new-chat-dialog.c:631
 msgid "You"
 msgstr "Siz"
 
-#: src/dialogs/chatty-ma-account-details.c:380
-#: src/dialogs/chatty-pp-account-details.c:177
+#: src/dialogs/chatty-ma-account-details.c:396
+#: src/dialogs/chatty-pp-account-details.c:169
 msgid "connected"
 msgstr "bağlandı"
 
-#: src/dialogs/chatty-ma-account-details.c:382
-#: src/dialogs/chatty-pp-account-details.c:179
+#: src/dialogs/chatty-ma-account-details.c:398
+#: src/dialogs/chatty-pp-account-details.c:171
 msgid "connecting…"
 msgstr "bağlanıyor…"
 
-#: src/dialogs/chatty-ma-account-details.c:384
-#: src/dialogs/chatty-pp-account-details.c:181
+#: src/dialogs/chatty-ma-account-details.c:400
+#: src/dialogs/chatty-pp-account-details.c:173
 msgid "disconnected"
 msgstr "bağlantı kesildi"
 
-#: src/dialogs/chatty-settings-dialog.c:248
+#: src/dialogs/chatty-settings-dialog.c:254
 #, c-format
 msgid "Failed to verify server: %s"
 msgstr "Sunucu doğrulanamadı: %s"
 
-#: src/dialogs/chatty-settings-dialog.c:250
+#: src/dialogs/chatty-settings-dialog.c:256
 msgid "Failed to verify server"
 msgstr "Sunucu doğrulanamadı"
 
-#: src/dialogs/chatty-settings-dialog.c:256
+#: src/dialogs/chatty-settings-dialog.c:262
 msgid "Couldn't get Home server address"
 msgstr "Ev sunucusu adresi alınamadı."
 
-#: src/dialogs/chatty-settings-dialog.c:435
-#: src/ui/chatty-ma-account-details.ui:182
-#: src/ui/chatty-pp-account-details.ui:199
+#: src/dialogs/chatty-settings-dialog.c:460
+#: src/ui/chatty-ma-account-details.ui:162
+#: src/ui/chatty-pp-account-details.ui:154
 msgid "Delete Account"
 msgstr "Hesabı Sil"
 
-#: src/dialogs/chatty-settings-dialog.c:438
+#: src/dialogs/chatty-settings-dialog.c:463
 #, c-format
 msgid "Delete account %s?"
 msgstr "%s hesabını sil?"
 
-#: src/dialogs/chatty-settings-dialog.c:595
+#: src/dialogs/chatty-settings-dialog.c:636
 msgid "Restart chatty to disable purple"
 msgstr "Purple’ı devre dışı bırakmak için chatty’yi yeniden başlat"
 
-#: src/dialogs/chatty-settings-dialog.c:597
-#: src/ui/chatty-settings-dialog.ui:512
+#: src/dialogs/chatty-settings-dialog.c:638
+#: src/ui/chatty-settings-dialog.ui:458
 msgid "Enable purple plugin"
 msgstr "Purple eklentisini etkinleştir"
 
-#: src/dialogs/chatty-settings-dialog.c:611
-#: src/ui/chatty-settings-dialog.ui:279
+#: src/dialogs/chatty-settings-dialog.c:652
+#: src/ui/chatty-settings-dialog.ui:232
 msgid "SMS and MMS Settings"
 msgstr "SMS ve MMS Ayarları"
 
-#: src/dialogs/chatty-settings-dialog.c:613
-#: src/ui/chatty-settings-dialog.ui:298
+#: src/dialogs/chatty-settings-dialog.c:654
+#: src/ui/chatty-settings-dialog.ui:250
 msgid "Purple Settings"
 msgstr "Purple Ayarları"
 
-#: src/dialogs/chatty-settings-dialog.c:615
+#: src/dialogs/chatty-settings-dialog.c:656
 msgid "New Account"
 msgstr "Yeni Hesap"
 
-#: src/dialogs/chatty-settings-dialog.c:617
-#: src/ui/chatty-settings-dialog.ui:364
+#: src/dialogs/chatty-settings-dialog.c:658
+#: src/ui/chatty-settings-dialog.ui:310
 msgid "Blocked Contacts"
 msgstr "Engellenen Kişiler"
 
-#: src/dialogs/chatty-settings-dialog.c:619 src/ui/chatty-settings-dialog.ui:7
-#: src/ui/chatty-window.ui:339
+#: src/dialogs/chatty-settings-dialog.c:660 src/ui/chatty-side-bar.ui:115
 msgid "Preferences"
 msgstr "Tercihler"
 
-#: src/dialogs/chatty-settings-dialog.c:647
+#: src/dialogs/chatty-settings-dialog.c:688
 msgid "Select Protocol"
 msgstr "İletişim Kuralı Seç"
 
 #. TRANSLATORS: Only translate 'or'
-#: src/dialogs/chatty-settings-dialog.c:891
+#: src/dialogs/chatty-settings-dialog.c:933
 msgid "@user:matrix.org or user@example.com"
 msgstr "@kullanici:matrix.org veya kullanici@ornek.com"
 
-#: src/dialogs/chatty-settings-dialog.c:1000
-msgid "Unblock contact"
-msgstr "Engeli kaldır"
-
-#: src/matrix/chatty-ma-account.c:78
+#: src/matrix/chatty-ma-account.c:102
 msgid "Incorrect password"
 msgstr "Geçersiz parola"
 
-#: src/matrix/chatty-ma-account.c:81
+#: src/matrix/chatty-ma-account.c:105
 msgid "_OK"
 msgstr "_Tamam"
 
-#: src/matrix/chatty-ma-account.c:82 src/ui/chatty-dialog-new-chat.ui:74
-#: src/ui/chatty-settings-dialog.ui:47 src/ui/chatty-settings-dialog.ui:108
-#: src/ui/chatty-verification-view.ui:157
-#: src/ui/chatty-verification-view.ui:193
+#: src/matrix/chatty-ma-account.c:106 src/ui/chatty-dialog-new-chat.ui:37
+#: src/ui/chatty-settings-dialog.ui:29 src/ui/chatty-settings-dialog.ui:72
+#: src/ui/chatty-verification-page.ui:129
+#: src/ui/chatty-verification-page.ui:157
 msgid "_Cancel"
 msgstr "İptal _Et"
 
-#: src/matrix/chatty-ma-account.c:89
+#: src/matrix/chatty-ma-account.c:112
 #, c-format
 msgid "Please enter password for “%s”, homeserver: %s"
 msgstr "Lütfen “%s” için parola girin, ana sunucu: %s"
@@ -1013,311 +1018,467 @@ msgstr "Lütfen “%s” için parola girin, ana sunucu: %s"
 msgid "Key Verification"
 msgstr "Anahtar Doğrulama"
 
+#: src/mm/chatty-mmsd.c:253
+#, c-format
+msgid "Error Delivering Message to %s"
+msgstr "İleti Şuna Teslim Edilirken Hata: %s"
+
+#: src/mm/chatty-mmsd.c:254
+msgid "See logs for more details"
+msgstr "Daha çok ayrıntı için günlüklere bakın"
+
 #. TRANSLATORS: Timestamp for minute accuracy, e.g. “2020-08-11 15:27”.
 #. See https://developer.gnome.org/glib/stable/glib-GDateTime.html#g-date-time-format
 #.
-#: src/mm/chatty-mmsd.c:890
+#: src/mm/chatty-mmsd.c:924
 msgid "%Y-%m-%d %H∶%M"
 msgstr "%Y-%m-%d %H∶%M"
 
-#: src/mm/chatty-mmsd.c:1175
+#: src/mm/chatty-mmsd.c:1229
 #, c-format
 msgid "You received an MMS, but it expired on: %s"
 msgstr "MMS aldınız ancak şunda süresi doldu: %s"
 
-#: src/mm/chatty-mmsd.c:1178
+#: src/mm/chatty-mmsd.c:1232
 msgid "You received an empty MMS."
 msgstr "Boş MMS aldınız."
 
-#: src/ui/chatty-dialog-join-muc.ui:17
+#: src/mm/chatty-mmsd.c:1723 src/mm/chatty-mmsd.c:1769
+#, c-format
+msgid "Automatically Retrying for  %i MMS"
+msgid_plural "Automatically Retrying for  %i MMSes..."
+msgstr[0] "%i MMS İçin Kendiliğinden Yeniden Deneniyor"
+
+#: src/mm/chatty-mmsd.c:1728
+msgid "Temporary Error Sending MMS"
+msgstr "MMS Gönderilirken Geçici Hata"
+
+#: src/mm/chatty-mmsd.c:1774
+msgid "Temporary Error Receiving MMS"
+msgstr "MMS Alınırken Geçici Hata"
+
+#: src/mm/chatty-mmsd.c:1990
+msgid "MMSC is not configured"
+msgstr "MMSC yapılandırılmamış"
+
+#: src/mm/chatty-mmsd.c:1993
+msgid "APN is not configured correctly"
+msgstr "APN doğru yapılandırılmamış"
+
+#: src/mm/chatty-mmsd.c:1996
+msgid "Mobile Data is not configured"
+msgstr "Mobil Veri yapılandırılmamış"
+
+#: src/mm/chatty-mmsd.c:1999
+msgid "Mobile Data is off"
+msgstr "Mobil Veri kapalı"
+
+#: src/mm/chatty-mmsd.c:2002
+msgid "Unknown Error"
+msgstr "Bilinmeyen Hata"
+
+#: src/mm/chatty-mmsd.c:2007
+#, c-format
+msgid "Chatty cannot process %i MMS"
+msgid_plural "Chatty cannot process %i MMSes..."
+msgstr[0] "Chatty %i MMSʼi işleyemiyor"
+
+#: src/mm/chatty-mm-account.c:328 src/mm/chatty-mm-account.c:379
+#, c-format
+msgid "Error Sending SMS to %s"
+msgstr "Şuna SMS Gönderilirken Hata: %s"
+
+#: src/mm/chatty-mm-account.c:472
+#, c-format
+msgid "Error Sending MMS to %s"
+msgstr "Şuna MMS Gönderilirken Hata: %s"
+
+#: src/ui/chatty-attachment.ui:20
+msgid "Remove Attachment"
+msgstr "Eki Kaldır"
+
+#: src/ui/chatty-dialog-join-muc.ui:7
 msgid "New Group Chat"
 msgstr "Yeni Küme Konuşması"
 
-#: src/ui/chatty-dialog-join-muc.ui:34
+#: src/ui/chatty-dialog-join-muc.ui:24
 msgid "Join Chat"
 msgstr "Konuşmaya Katıl"
 
-#: src/ui/chatty-dialog-join-muc.ui:82 src/ui/chatty-dialog-new-chat.ui:269
+#: src/ui/chatty-dialog-join-muc.ui:64 src/ui/chatty-dialog-new-chat.ui:193
 msgid "Select chat account"
 msgstr "Konuşma hesabı seç"
 
-#: src/ui/chatty-dialog-join-muc.ui:152
+#: src/ui/chatty-dialog-join-muc.ui:122
 msgid "Password (optional)"
 msgstr "Parola (isteğe bağlı)"
 
-#: src/ui/chatty-dialog-new-chat.ui:126
+#: src/ui/chatty-dialog-new-chat.ui:77
 msgid "Group Title"
 msgstr "Küme Başlığı"
 
-#: src/ui/chatty-dialog-new-chat.ui:177
+#: src/ui/chatty-dialog-new-chat.ui:119
 msgid "Add members from contacts…"
 msgstr "Kişilerden üye ekle…"
 
-#: src/ui/chatty-dialog-new-chat.ui:223
+#: src/ui/chatty-dialog-new-chat.ui:156
 msgid "Send To:"
 msgstr "Şuna Gönder:"
 
-#: src/ui/chatty-dialog-new-chat.ui:308
+#: src/ui/chatty-dialog-new-chat.ui:216
+msgid "Contact ID"
+msgstr "Kişi Kimliği"
+
+#: src/ui/chatty-dialog-new-chat.ui:226
 msgid "Name (optional)"
 msgstr "Ad (isteğe bağlı)"
 
-#: src/ui/chatty-dialog-new-chat.ui:351
+#: src/ui/chatty-dialog-new-chat.ui:263
 msgid "Add to Contacts"
 msgstr "Kişilere Ekle"
 
-#: src/ui/chatty-info-dialog.ui:17 src/ui/chatty-window.ui:417
+#: src/ui/chatty-info-dialog.ui:8 src/ui/chatty-main-view.ui:129
 msgid "Chat Details"
 msgstr "Konuşma Ayrıntıları"
 
-#: src/ui/chatty-info-dialog.ui:64
+#: src/ui/chatty-info-dialog.ui:44
 msgid "Apply"
 msgstr "Uygula"
 
-#: src/ui/chatty-info-dialog.ui:82
+#: src/ui/chatty-info-dialog.ui:57
 msgid "Invite"
 msgstr "Davet Et"
 
-#: src/ui/chatty-invite-view.ui:71
+#: src/ui/chatty-invite-page.ui:62
 msgid "_Accept"
 msgstr "_Kabul Et"
 
-#: src/ui/chatty-invite-view.ui:100
+#: src/ui/chatty-invite-page.ui:86
 msgid "_Reject"
 msgstr "_Reddet"
 
-#: src/ui/chatty-ma-chat-info.ui:67 src/ui/chatty-ma-account-details.ui:233
+#: src/ui/chatty-ma-chat-info.ui:32
+msgid "Chat"
+msgstr "Konuşma"
+
+#: src/ui/chatty-ma-chat-info.ui:61 src/ui/chatty-ma-account-details.ui:210
 msgid "Matrix ID"
 msgstr "Matrix Kimliği"
 
-#: src/ui/chatty-ma-chat-info.ui:93 src/ui/chatty-pp-chat-info.ui:289
+#: src/ui/chatty-ma-chat-info.ui:89 src/ui/chatty-pp-chat-info.ui:242
 msgid "Chat settings"
 msgstr "Konuşma ayarları"
 
-#: src/ui/chatty-ma-chat-info.ui:113 src/ui/chatty-pp-chat-info.ui:238
-#: src/ui/chatty-pp-chat-info.ui:344
+#: src/ui/chatty-ma-chat-info.ui:107 src/ui/chatty-pp-chat-info.ui:193
+#: src/ui/chatty-pp-chat-info.ui:292
 msgid "Encryption"
 msgstr "Şifreleme"
 
-#: src/ui/chatty-ma-chat-info.ui:114 src/ui/chatty-pp-chat-info.ui:345
+#: src/ui/chatty-ma-chat-info.ui:108 src/ui/chatty-pp-chat-info.ui:293
 msgid "Encrypt Messages"
 msgstr "İletileri Şifrele"
 
-#: src/ui/chatty-pp-chat-info.ui:43 src/ui/chatty-pp-account-details.ui:60
-msgid "Change Avatar"
-msgstr "Avatarı Değiştir"
-
-#: src/ui/chatty-pp-chat-info.ui:69 src/ui/chatty-pp-account-details.ui:34
-msgid "Delete Avatar"
-msgstr "Avatarı Sil"
-
-#: src/ui/chatty-pp-chat-info.ui:108
-msgid "Room topic"
-msgstr "Oda konusu"
-
-#: src/ui/chatty-pp-chat-info.ui:211
-msgid "XMPP ID"
-msgstr "XMPP Kimliği"
-
-#: src/ui/chatty-pp-chat-info.ui:264 src/ui/chatty-ma-account-details.ui:67
-#: src/ui/chatty-pp-account-details.ui:142
-msgid "Status"
-msgstr "Durum"
-
-#: src/ui/chatty-pp-chat-info.ui:310
-msgid "Notifications"
-msgstr "Bildirimler"
-
-#: src/ui/chatty-pp-chat-info.ui:327
-msgid "Status Messages"
-msgstr "Durum İletileri"
-
-#: src/ui/chatty-pp-chat-info.ui:328
-msgid "Show status messages in chat"
-msgstr "Durum iletilerini konuşmada göster"
-
-#: src/ui/chatty-pp-chat-info.ui:367
-msgid "Fingerprints"
-msgstr "Parmak İzleri"
-
-#: src/ui/chatty-mm-chat-info.ui:29
-msgid "Title"
-msgstr "Başlık"
-
-#: src/ui/chatty-mm-chat-info.ui:33
-msgid "Blank for default"
-msgstr "Öntanımlı için boş"
-
-#: src/ui/chatty-mm-chat-info.ui:43
-msgid "Group Members"
-msgstr "Küme Üyeleri"
-
-#: src/ui/chatty-list-row.ui:153 src/ui/chatty-window.ui:269
-msgid "Call"
-msgstr "Ara"
-
-#: src/ui/chatty-ma-account-details.ui:93
-msgid "Name"
-msgstr "Ad"
-
-#: src/ui/chatty-ma-account-details.ui:123
-msgid "Email"
-msgstr "E-posta"
-
-#: src/ui/chatty-ma-account-details.ui:152
-msgid "Phone"
-msgstr "Telefon"
-
-#: src/ui/chatty-ma-account-details.ui:196
-msgid "Advanced information"
-msgstr "Gelişmiş bilgi"
-
-#: src/ui/chatty-ma-account-details.ui:207
-msgid "Homeserver"
-msgstr "Ev Sunucusu"
-
-#: src/ui/chatty-ma-account-details.ui:259
-msgid "Device ID"
-msgstr "Aygıt kimliği"
-
-#: src/ui/chatty-pp-account-details.ui:92
-msgid "Account ID"
-msgstr "Kullanıcı Kimliği"
-
-#: src/ui/chatty-pp-account-details.ui:116
-msgid "Protocol"
-msgstr "İletişim Kuralı"
-
-#: src/ui/chatty-pp-account-details.ui:168 src/ui/chatty-settings-dialog.ui:701
-msgid "Password"
-msgstr "Parola"
-
-#: src/ui/chatty-pp-account-details.ui:213
-msgid "Own Fingerprint"
-msgstr "Kendi Parmak İzi"
-
-#: src/ui/chatty-settings-dialog.ui:27 src/ui/chatty-window.ui:41
-#: src/ui/chatty-window.ui:204
+#: src/ui/chatty-main-view.ui:17 src/ui/chatty-settings-dialog.ui:18
+#: src/ui/chatty-side-bar.ui:24
 msgid "Back"
 msgstr "Geri"
 
-#: src/ui/chatty-settings-dialog.ui:60
+#: src/ui/chatty-main-view.ui:46 src/ui/chatty-list-row.ui:169
+msgid "Call"
+msgstr "Ara"
+
+#: src/ui/chatty-main-view.ui:140
+msgid "Leave Chat"
+msgstr "Konuşmadan Ayrıl"
+
+#: src/ui/chatty-main-view.ui:148
+msgid "Block Contact"
+msgstr "Kişiyi Engelle"
+
+#: src/ui/chatty-main-view.ui:156
+msgid "Unblock Contact"
+msgstr "Engeli Kaldır"
+
+#: src/ui/chatty-main-view.ui:164
+msgid "Archive chat"
+msgstr "Konuşmayı Arşivle"
+
+#: src/ui/chatty-main-view.ui:172
+msgid "Unarchive chat"
+msgstr "Arşivden Çıkar"
+
+#: src/ui/chatty-main-view.ui:180
+msgid "Delete Chat"
+msgstr "Konuşmayı Sil"
+
+#: src/ui/chatty-pp-chat-info.ui:34 src/ui/chatty-pp-account-details.ui:38
+msgid "Change Avatar"
+msgstr "Avatarı Değiştir"
+
+#: src/ui/chatty-pp-chat-info.ui:47 src/ui/chatty-pp-account-details.ui:25
+msgid "Delete Avatar"
+msgstr "Avatarı Sil"
+
+#: src/ui/chatty-pp-chat-info.ui:76
+msgid "Room topic"
+msgstr "Oda konusu"
+
+#: src/ui/chatty-pp-chat-info.ui:143
+msgid "User"
+msgstr "Kullanıcı"
+
+#: src/ui/chatty-pp-chat-info.ui:168
+msgid "XMPP ID"
+msgstr "XMPP Kimliği"
+
+#: src/ui/chatty-pp-chat-info.ui:218 src/ui/chatty-ma-account-details.ui:54
+#: src/ui/chatty-pp-account-details.ui:105
+msgid "Status"
+msgstr "Durum"
+
+#: src/ui/chatty-pp-chat-info.ui:262
+msgid "Notifications"
+msgstr "Bildirimler"
+
+#: src/ui/chatty-pp-chat-info.ui:277
+msgid "Status Messages"
+msgstr "Durum İletileri"
+
+#: src/ui/chatty-pp-chat-info.ui:278
+msgid "Show status messages in chat"
+msgstr "Durum iletilerini konuşmada göster"
+
+#: src/ui/chatty-pp-chat-info.ui:313
+msgid "Fingerprints"
+msgstr "Parmak İzleri"
+
+#: src/ui/chatty-mm-chat-info.ui:20
+msgid "Title"
+msgstr "Başlık"
+
+#: src/ui/chatty-mm-chat-info.ui:23
+msgid "Blank for default"
+msgstr "Öntanımlı için boş"
+
+#: src/ui/chatty-mm-chat-info.ui:32
+msgid "Group Members"
+msgstr "Küme Üyeleri"
+
+#: src/ui/chatty-list-row.ui:33
+msgid "Copy Number"
+msgstr "Numarayı Kopyala"
+
+#: src/ui/chatty-ma-account-details.ui:78
+msgid "Name"
+msgstr "Ad"
+
+#: src/ui/chatty-ma-account-details.ui:106
+msgid "Email"
+msgstr "E-posta"
+
+#: src/ui/chatty-ma-account-details.ui:134
+msgid "Phone"
+msgstr "Telefon"
+
+#: src/ui/chatty-ma-account-details.ui:174
+msgid "Advanced information"
+msgstr "Gelişmiş bilgi"
+
+#: src/ui/chatty-ma-account-details.ui:186
+msgid "Homeserver"
+msgstr "Ev Sunucusu"
+
+#: src/ui/chatty-ma-account-details.ui:234
+msgid "Device ID"
+msgstr "Aygıt kimliği"
+
+#: src/ui/chatty-pp-account-details.ui:59
+msgid "Account ID"
+msgstr "Kullanıcı Kimliği"
+
+#: src/ui/chatty-pp-account-details.ui:81
+msgid "Protocol"
+msgstr "İletişim Kuralı"
+
+#: src/ui/chatty-pp-account-details.ui:129 src/ui/chatty-settings-dialog.ui:634
+msgid "Password"
+msgstr "Parola"
+
+#: src/ui/chatty-pp-account-details.ui:168
+msgid "Own Fingerprint"
+msgstr "Kendi Parmak İzi"
+
+#: src/ui/chatty-settings-dialog.ui:39
 msgid "_Add"
 msgstr "_Ekle"
 
-#: src/ui/chatty-settings-dialog.ui:76
+#: src/ui/chatty-settings-dialog.ui:52
 msgid "_Save"
 msgstr "_Kaydet"
 
-#: src/ui/chatty-settings-dialog.ui:92
+#: src/ui/chatty-settings-dialog.ui:62
 msgid "_Apply"
 msgstr "_Uygula"
 
-#: src/ui/chatty-settings-dialog.ui:169
+#: src/ui/chatty-settings-dialog.ui:123
 msgid "Accounts"
 msgstr "Hesaplar"
 
-#: src/ui/chatty-settings-dialog.ui:189 src/ui/chatty-settings-dialog.ui:531
+#: src/ui/chatty-settings-dialog.ui:140 src/ui/chatty-settings-dialog.ui:475
 msgid "Privacy"
 msgstr "Gizlilik"
 
-#: src/ui/chatty-settings-dialog.ui:195
+#: src/ui/chatty-settings-dialog.ui:145
 msgid "Message Receipts"
 msgstr "İleti Okundu Bilgileri"
 
-#: src/ui/chatty-settings-dialog.ui:196
+#: src/ui/chatty-settings-dialog.ui:146
 msgid "Confirm received messages"
 msgstr "Alınan iletileri doğrula"
 
-#: src/ui/chatty-settings-dialog.ui:211
+#: src/ui/chatty-settings-dialog.ui:159
 msgid "Typing Notification"
 msgstr "Yazış Bildirimi"
 
-#: src/ui/chatty-settings-dialog.ui:212
+#: src/ui/chatty-settings-dialog.ui:160
 msgid "Send typing messages"
 msgstr "İleti yazışını gönder"
 
-#: src/ui/chatty-settings-dialog.ui:230
+#: src/ui/chatty-settings-dialog.ui:174
+msgid "Strip Tracking IDs from URLs"
+msgstr "URL’lerden İzleme Kimliklerini Arındır"
+
+#: src/ui/chatty-settings-dialog.ui:190
 msgid "Editor"
 msgstr "Düzenleyici"
 
-#: src/ui/chatty-settings-dialog.ui:235
+#: src/ui/chatty-settings-dialog.ui:194
 msgid "Graphical Emoticons"
 msgstr "Grafiksel Yüz İfadeleri"
 
-#: src/ui/chatty-settings-dialog.ui:236
+#: src/ui/chatty-settings-dialog.ui:195
 msgid "if you type :) it will be changed to 😃"
 msgstr "eğer :) yazarsanız 😃 olarak değiştirilecektir"
 
 #. TRANSLATORS: Return is the Enter key.
-#: src/ui/chatty-settings-dialog.ui:251
+#: src/ui/chatty-settings-dialog.ui:208
 msgid "Send Messages with Return"
 msgstr "İletileri Enter İle Gönder"
 
-#: src/ui/chatty-settings-dialog.ui:267
+#: src/ui/chatty-settings-dialog.ui:222
 msgid "Protocol Settings"
 msgstr "İletişim Kuralı Ayarları"
 
-#: src/ui/chatty-settings-dialog.ui:333
+#: src/ui/chatty-settings-dialog.ui:283
 msgid "Request Delivery Reports"
 msgstr "Teslim Raporları İste"
 
-#: src/ui/chatty-settings-dialog.ui:348
+#: src/ui/chatty-settings-dialog.ui:296
 msgid "SMIL for MMS"
 msgstr "MMS için SMIL"
 
-#: src/ui/chatty-settings-dialog.ui:384
+#: src/ui/chatty-settings-dialog.ui:328
 msgid "MMS Carrier Settings"
 msgstr "MMS Ulak Ayarları"
 
-#: src/ui/chatty-settings-dialog.ui:388
+#: src/ui/chatty-settings-dialog.ui:332
+msgid "Phone Number"
+msgstr "Telefon Numarası"
+
+#: src/ui/chatty-settings-dialog.ui:338
+msgid "Your modem's phone number"
+msgstr "Modeminizin telefon numarası"
+
+#: src/ui/chatty-settings-dialog.ui:346
 msgid "MMSC"
 msgstr "MMSC"
 
-#: src/ui/chatty-settings-dialog.ui:403
+#: src/ui/chatty-settings-dialog.ui:358
 msgid "APN"
 msgstr "APN"
 
-#: src/ui/chatty-settings-dialog.ui:418
+#: src/ui/chatty-settings-dialog.ui:370
 msgid "Proxy"
 msgstr "Vekil"
 
-#: src/ui/chatty-settings-dialog.ui:447
+#: src/ui/chatty-settings-dialog.ui:397
 msgid "You shall not be notified for the messages from blocked contacts"
 msgstr "Bundan sonra engelli kişilerden iletiler bildirilmeyecek"
 
-#: src/ui/chatty-settings-dialog.ui:481
+#: src/ui/chatty-settings-dialog.ui:428
 msgid "Blocked chat list empty"
 msgstr "Engelli konuşma listesi boş"
 
-#: src/ui/chatty-settings-dialog.ui:537
+#: src/ui/chatty-settings-dialog.ui:481
 msgid "Message Archive Management"
 msgstr "İleti Arşiv Yönetimi"
 
-#: src/ui/chatty-settings-dialog.ui:538
+#: src/ui/chatty-settings-dialog.ui:482
 msgid "Sync conversations with chat server"
 msgstr "Konuşmaları konuşma sunucusuyla eşzamanlandır"
 
-#: src/ui/chatty-settings-dialog.ui:553
+#: src/ui/chatty-settings-dialog.ui:496
 msgid "Message Carbon Copies"
 msgstr "İleti Karbon Kopyaları"
 
-#: src/ui/chatty-settings-dialog.ui:737
+#: src/ui/chatty-settings-dialog.ui:660
 msgid "Home server"
 msgstr "Ev sunucusu"
 
-#: src/ui/chatty-settings-dialog.ui:773
+#: src/ui/chatty-settings-dialog.ui:692
 msgid "Add _new account…"
 msgstr "_Yeni hesap ekle…"
 
-#: src/ui/chatty-verification-view.ui:27
+#: src/ui/chatty-side-bar.ui:32
+msgid "Add Chat"
+msgstr "Sohbet Ekle"
+
+#: src/ui/chatty-side-bar.ui:41
+msgid "Menu"
+msgstr "Menü"
+
+#: src/ui/chatty-side-bar.ui:49
+msgid "Search"
+msgstr "Ara"
+
+#: src/ui/chatty-side-bar.ui:107
+msgctxt "show archived chat list when clicked"
+msgid "Archived"
+msgstr "Arşivli"
+
+#: src/ui/chatty-side-bar.ui:122
+msgid "Keyboard _Shortcuts"
+msgstr "Klavye _Kısayolları"
+
+#: src/ui/chatty-side-bar.ui:129
+msgid "Help"
+msgstr "Yardım"
+
+#: src/ui/chatty-side-bar.ui:137
+msgid "About Chats"
+msgstr "Konuşmalar Hakkında"
+
+#: src/ui/chatty-side-bar.ui:158
+msgid "New Message…"
+msgstr "İletiyi Aç…"
+
+#: src/ui/chatty-side-bar.ui:164
+msgid "New SMS/MMS Message…"
+msgstr "Yeni SMS/MMS İletisi…"
+
+#: src/ui/chatty-side-bar.ui:170
+msgid "New Group Message…"
+msgstr "Yeni Küme Konuşması…"
+
+#: src/ui/chatty-verification-page.ui:24
 msgid "Incoming Verification Request"
 msgstr "Gelen Doğrulama İsteği"
 
-#: src/ui/chatty-verification-view.ui:47
+#: src/ui/chatty-verification-page.ui:42
 msgid "Verify this user to mark them as trusted."
 msgstr "Güvenilir olarak imlemek için bu kullanıcıyı doğrula."
 
-#: src/ui/chatty-verification-view.ui:91
+#: src/ui/chatty-verification-page.ui:78
 msgid ""
 "Verifying this user will mark their session as trusted, and also mark your "
 "session as trusted to them."
@@ -1325,103 +1486,38 @@ msgstr ""
 "Bu kullanıcıyı doğrulamak, onların oturumunu ve sizin oturumunuzu da onlar "
 "için güvenilir olarak imleyecek."
 
-#: src/ui/chatty-verification-view.ui:113
+#: src/ui/chatty-verification-page.ui:98
 msgid "C_ontinue"
 msgstr "_Sürdür"
 
-#: src/ui/chatty-verification-view.ui:246
+#: src/ui/chatty-verification-page.ui:200
 msgid ""
 "Verify this user by confirming the following emoji appears on their screen"
 msgstr ""
 "Bu kullanıcıyı, ekranında aşağıdaki emojinin göründüğünü onaylayarak doğrula"
 
-#: src/ui/chatty-verification-view.ui:453
+#: src/ui/chatty-verification-page.ui:377
 msgid ""
 "Verify this user by confirming the following number appears on their screen."
 msgstr ""
 "Bu kullanıcıyı, ekranında aşağıdaki numaranın göründüğünü onaylayarak "
 "doğrula."
 
-#: src/ui/chatty-verification-view.ui:498
+#: src/ui/chatty-verification-page.ui:412
 msgid "To be secure, do this in person or use a trusted way to communicate."
 msgstr ""
 "Güvenli olması için bunu yüz yüze yap ya da iletişim için güvenilir yol "
 "kullan."
 
-#: src/ui/chatty-verification-view.ui:511
+#: src/ui/chatty-verification-page.ui:423
 msgctxt "verb, which means 'both items are not the same'"
 msgid "_Don’t Match"
 msgstr "Eşleştir_me"
 
-#: src/ui/chatty-verification-view.ui:525
+#: src/ui/chatty-verification-page.ui:433
 msgctxt "verb, which means 'both items are the same'"
 msgid "_Match"
 msgstr "_Eşleştir"
-
-#: src/ui/chatty-window.ui:62
-msgid "Add Chat"
-msgstr "Sohbet Ekle"
-
-#: src/ui/chatty-window.ui:82
-msgid "Menu"
-msgstr "Menü"
-
-#: src/ui/chatty-window.ui:105
-msgid "Search"
-msgstr "Ara"
-
-#: src/ui/chatty-window.ui:331
-msgctxt "show archived chat list when clicked"
-msgid "Archived"
-msgstr "Arşivli"
-
-#: src/ui/chatty-window.ui:346
-msgid "Keyboard _Shortcuts"
-msgstr "Klavye _Kısayolları"
-
-#: src/ui/chatty-window.ui:353
-msgid "Help"
-msgstr "Yardım"
-
-#: src/ui/chatty-window.ui:361
-msgid "About Chats"
-msgstr "Konuşmalar Hakkında"
-
-#: src/ui/chatty-window.ui:381
-msgid "New Message…"
-msgstr "İletiyi Aç…"
-
-#: src/ui/chatty-window.ui:389
-msgid "New SMS/MMS Message…"
-msgstr "Yeni SMS/MMS İletisi…"
-
-#: src/ui/chatty-window.ui:397
-msgid "New Group Message…"
-msgstr "Yeni Küme Konuşması…"
-
-#: src/ui/chatty-window.ui:433
-msgid "Leave Chat"
-msgstr "Konuşmadan Ayrıl"
-
-#: src/ui/chatty-window.ui:441
-msgid "Block Contact"
-msgstr "Kişiyi Engelle"
-
-#: src/ui/chatty-window.ui:449
-msgid "Unblock Contact"
-msgstr "Engeli Kaldır"
-
-#: src/ui/chatty-window.ui:458
-msgid "Archive chat"
-msgstr "Konuşmayı Arşivle"
-
-#: src/ui/chatty-window.ui:466
-msgid "Unarchive chat"
-msgstr "Arşivden Çıkar"
-
-#: src/ui/chatty-window.ui:475
-msgid "Delete Chat"
-msgstr "Konuşmayı Sil"
 
 #: src/ui/help-overlay.ui:14
 msgctxt "shortcut window"
@@ -1454,6 +1550,3 @@ msgstr "İş: "
 #: src/users/chatty-contact.c:328
 msgid "Other: "
 msgstr "Diğer: "
-
-#~ msgid "Remove Attachment"
-#~ msgstr "Eki Kaldır"

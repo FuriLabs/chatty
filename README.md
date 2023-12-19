@@ -1,15 +1,18 @@
 # Chatty
 
 A simple to use messaging app for 1:1 communication and small groups supporting
-SMS, MMS, XMPP and matrix.
+SMS, MMS, matrix and XMPP through libpurple.
 
 ## Build and install
+
+In case you want to disable the libpurple plugin support
+have a look at [meson_options](meson_options)
 
 ### Getting the source
 
 ```sh
-git clone https://source.puri.sm/Librem5/chatty
-cd chatty/
+git clone https://gitlab.gnome.org/World/Chatty
+cd Chatty/
 ```
 
 ### Install dependencies
@@ -22,7 +25,7 @@ On a Debian based system run
 ```
 
 For an explicit list of dependencies check the Build-Depends entry in the
-[debian/control](https://source.puri.sm/Librem5/chatty/blob/master/debian/control#5)
+[debian/control](https://gitlab.gnome.org/World/Chatty/blob/main/debian/control#5)
 file.
 
 Plugins are optional and can often be installed from your distribution sources.
@@ -31,9 +34,9 @@ or you have any reason to do so.
 
 ### Build and install the 'carbons' plugin (Optional)
 Message synchronization between devices according to XEP-0280.
-On Debian and derivates you can install `purple-xmpp-carbons` package.
+On Debian and derivates you can install the `purple-xmpp-carbons` package.
 
-To build from source, run:
+Alternativelly, to build from source, run:
 
 ``` bash
 git clone https://github.com/gkdr/carbons.git
@@ -134,11 +137,15 @@ Please note that if you remove `~/.purple/chatty/db/matrix.db`,
 your matrix account token will be renewed, resulting in your
 account been seen as a new device for others.
 
-To get better logs, you should install debug symbols of chatty and related
-packages.  On Debian and derivates, [enable debug repo][0] and run:
+To get better logs,
+you should use debug symbols for chatty and related libraries.
+You can do this either by setting `DEBUGINFOD_URLS=https://debuginfod.debian.net`
+(adjust URL for your distribution)
+which should result in `gdb` prompting you to download the symbols **or**
+on Debian and derivates, [enable debug repo][0] and run:
 
 ```sh
-sudo apt-get install chatty-dbgsym libglib2.0-0-dbgsym libgtk-3-0-dbgsym libsoup-3.0-0-dbgsym
+sudo apt-get install chatty-dbgsym libglib2.0-0-dbgsym libgtk-4-1-dbgsym libsoup-3.0-0-dbgsym
 ```
 
 See [GLib][1] and [Gtk][2] documentations to know more debugging details
@@ -146,8 +153,11 @@ related to `GLib` and `Gtk`.
 
 ## Translations
 
-You can contribute translations via [GNOME Damned lies][https://l10n.gnome.org/module/chatty/]
+You can contribute translations via [GNOME Damned Lies](https://l10n.gnome.org/module/chatty/).
 
+## Guidelines for Maintainers
+
+We follow [Phosh's Guidelines for Maintainers](https://gitlab.gnome.org/World/Phosh/phosh/-/wikis/Guidelines-for-maintainers).
 
 ## XMPP account
 
@@ -162,4 +172,4 @@ If you don't have an XMPP account yet and want to subscribe to a service then pl
 
 [0]: https://wiki.debian.org/HowToGetABacktrace
 [1]: https://docs.gtk.org/glib/running.html
-[2]: https://docs.gtk.org/gtk3/running.html
+[2]: https://docs.gtk.org/gtk4/running.html

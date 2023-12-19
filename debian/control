@@ -7,12 +7,14 @@ Build-Depends:
  appstream-util,
  debhelper (>= 11),
  desktop-file-utils,
+ gnupg <!nocheck>,
+ itstool,
  libgtk-4-dev,
  libfeedback-dev,
- libadwaita-1-dev (>= 1.2),   
- libgnome-desktop-3-dev,
+ libadwaita-1-dev (>= 1.2),
  libebook-contacts1.2-dev,
  libgcrypt20-dev,
+ libgnome-desktop-4-dev (>= 43),
  libjson-glib-dev,
  libmm-glib-dev (>= 1.12.0),
  libphonenumber-dev,
@@ -30,7 +32,7 @@ Build-Depends:
  xvfb,
  xauth,
 Standards-Version: 4.2.1
-Homepage: https://source.puri.sm/Librem5/chatty
+Homepage: https://gitlab.gnome.org/World/Chatty
 
 Package: chatty
 Architecture: any
@@ -38,6 +40,7 @@ Depends:
  ${misc:Depends},
  ${shlibs:Depends},
 Recommends:
+ gnupg,
  mmsd-tng,
  purple-xmpp-carbons,
  purple-lurch,

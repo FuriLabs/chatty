@@ -1,6 +1,13 @@
+config_data = configuration_data()
+config_data.set('APP_ID', app_id)
+
 desktop_file = i18n.merge_file(
-  input: 'sm.puri.Chatty.desktop.in',
-  output: 'sm.puri.Chatty.desktop',
+  input: configure_file(
+    input: 'sm.puri.Chatty.desktop.in.in',
+    output: '@0@.desktop.in'.format(app_id),
+    configuration: config_data,
+  ),
+  output: '@0@.desktop'.format(app_id),
   type: 'desktop',
   po_dir: '../po',
   install: true,
@@ -8,18 +15,17 @@ desktop_file = i18n.merge_file(
 )
 
 desktop_file = i18n.merge_file(
-  input: 'sm.puri.Chatty-daemon.desktop.in',
-  output: 'sm.puri.Chatty-daemon.desktop',
+  input: configure_file(
+    input: 'sm.puri.Chatty-daemon.desktop.in.in',
+    output: '@0@-daemon.desktop.in'.format(app_id),
+    configuration: config_data,
+  ),
+  output: '@0@-daemon.desktop'.format(app_id),
   type: 'desktop',
   po_dir: '../po',
   install: true,
   install_dir: join_paths(get_option('sysconfdir'), 'xdg/autostart')
 )
-
-iconsdir = join_paths(get_option('datadir'), 'icons', 'hicolor')
-foreach size: ['scalable', 'symbolic']
-  install_subdir('icons/hicolor/' + size, install_dir: iconsdir)
-endforeach
 
 desktop_utils = find_program('desktop-file-validate', required: false)
 if desktop_utils.found()
@@ -29,8 +35,12 @@ if desktop_utils.found()
 endif
 
 appstream_file = i18n.merge_file(
-  input: 'sm.puri.Chatty.metainfo.xml.in',
-  output: 'sm.puri.Chatty.metainfo.xml',
+  input: configure_file(
+    input: 'sm.puri.Chatty.metainfo.xml.in.in',
+    output: '@0@.metainfo.xml.in'.format(app_id),
+    configuration: config_data,
+  ),
+  output: '@0@.metainfo.xml'.format(app_id),
   po_dir: '../po',
   install: true,
   install_dir: join_paths(get_option('datadir'), 'metainfo')
@@ -57,3 +67,5 @@ if compile_schemas.found()
     args: ['--strict', '--dry-run', meson.current_source_dir()]
   )
 endif
+
+subdir('icons')

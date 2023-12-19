@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Chats (daemon)
 Exec=chatty --daemon
-Icon=sm.puri.Chatty
+Icon=@APP_ID@
 Comment=SMS and XMPP chat application (daemon mode)
 Keywords=XMPP;SMS;chat;jabber;messaging;modem
 Terminal=false

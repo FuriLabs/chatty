@@ -1,3 +1,21 @@
+Overview of Changes in Chats 0.8.0. Won, 18 December 2023
+=========================================================
+* Fix flaky tests
+* Fix various memory leaks
+* Fix flatpak
+* Replace some deprecated GTK4 methods
+* Update Translations
+  - Czech
+  - French
+  - Hungarian
+  - Italian
+  - Romanian
+  - Romanian
+  - Russian
+  - Swedish
+  - Turkish
+  - Ukrainian
+
 Overview of Changes in Chats 0.8.0.rc0. Won, 31 July 2023
 ========================================================
 * Port to GTK4

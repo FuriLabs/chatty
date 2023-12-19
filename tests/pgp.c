@@ -136,7 +136,7 @@ test_pgp_message (void)
 
   valid = chatty_pgp_check_sig_mime_part (sigpart);
   chatty_test_pgp_assert_valid (valid);
-  camel_cipher_validity_clear (valid);
+  camel_cipher_validity_free (valid);
 
   signature = chatty_pgp_decode_mime_part (sigpart);
   g_assert_nonnull (signature);
@@ -158,7 +158,7 @@ test_pgp_message (void)
   g_free (content_to_check);
   g_assert_finalize_object (sigpart_from_stream);
   chatty_test_pgp_assert_valid (valid);
-  camel_cipher_validity_clear (valid);
+  camel_cipher_validity_free (valid);
 
   encpart = chatty_pgp_encrypt_stream (stream_encrypted,
                                        NULL,
@@ -185,6 +185,7 @@ test_pgp_message (void)
   content_to_check = chatty_pgp_get_content (decrypt_part, NULL, NULL);
   g_assert_cmpstr (content_to_check, ==, stream_encrypted);
   g_free (content_to_check);
+  g_assert_finalize_object (decrypt_part);
 
   sign_and_encpart = chatty_pgp_sign_and_encrypt_stream (stream_signed_and_encrypted,
                                                          NULL,
@@ -195,7 +196,7 @@ test_pgp_message (void)
   g_assert_nonnull (decrypt_and_signed_part);
   valid = chatty_pgp_check_sig_mime_part (decrypt_and_signed_part);
   chatty_test_pgp_assert_valid (valid);
-  camel_cipher_validity_clear (valid);
+  camel_cipher_validity_free (valid);
   recipients_to_check = chatty_pgp_get_recipients (decrypt_and_signed_part);
   g_assert_cmpstr (recipients_to_check, ==, recipients);
   g_clear_pointer (&recipients_to_check, g_free);
@@ -211,7 +212,7 @@ test_pgp_message (void)
   decrypt_part = chatty_pgp_decrypt_stream (signed_and_encrypted_msg);
   valid = chatty_pgp_check_sig_mime_part (decrypt_part);
   chatty_test_pgp_assert_valid (valid);
-  camel_cipher_validity_clear (valid);
+  camel_cipher_validity_free (valid);
 
   content_to_check = chatty_pgp_get_content (decrypt_part, NULL, NULL);
   g_assert_cmpstr (content_to_check, ==, stream_signed_and_encrypted);
@@ -221,6 +222,7 @@ test_pgp_message (void)
   g_assert_cmpint (CHATTY_PGP_UNKNOWN, ==, chatty_pgp_check_pgp_type (NULL));
   g_assert_cmpint (CHATTY_PGP_UNKNOWN, ==, chatty_pgp_check_pgp_type (""));
   g_assert_cmpint (CHATTY_PGP_UNKNOWN, ==, chatty_pgp_check_pgp_type ("This is an example text that isn't PGP encoded."));
+  g_assert_finalize_object (decrypt_part);
 }
 
 static void
@@ -235,7 +237,7 @@ test_pgp_encode_decode (void)
   g_autofree char *attachment_2_filepath = NULL;
   g_autofree char *attachment_3_filepath = NULL;
   g_autofree char *recipients_to_check = NULL;
-  GList *files = NULL;
+  g_autolist(ChattyFile) files = NULL;
   char *recipients = "recipient1@no.domain,recipient2@no.domain";
   char **recipient_array = NULL;
 
@@ -296,13 +298,12 @@ test_pgp_message_and_files (void)
   g_autofree char *attachment_1_savepath = NULL;
   g_autofree char *attachment_2_savepath = NULL;
   g_autofree char *attachment_3_savepath = NULL;
-  g_autofree char *mime_sha1 = NULL;
   g_autofree char *signed_and_encrypted_msg = NULL;
   g_autofree char *content_message = NULL;
   g_autofree char *save_directory = NULL;
   g_autofree char *recipients_to_check = NULL;
-  GList *files = NULL;
-  GList *saved_files = NULL;
+  g_autolist(ChattyFile) files = NULL;
+  g_autolist(ChattyFile) saved_files = NULL;
   CamelCipherValidity *valid = NULL;
   const char *signing_email = "sender@example.com";
   char *recipients = "recipient1@no.domain,recipient2@no.domain";
@@ -344,12 +345,13 @@ test_pgp_message_and_files (void)
   g_assert_nonnull (decrypt_and_signed_part);
   valid = chatty_pgp_check_sig_mime_part (decrypt_and_signed_part);
   chatty_test_pgp_assert_valid (valid);
-  camel_cipher_validity_clear (valid);
+  camel_cipher_validity_free (valid);
   recipients_to_check = chatty_pgp_get_recipients (decrypt_and_signed_part);
   g_assert_cmpstr (recipients_to_check, ==, recipients);
   g_clear_pointer (&recipients_to_check, g_free);
 
-  content_message = chatty_pgp_get_content (decrypt_and_signed_part, saved_files, PGP_TEST_BUILD_DIR);
+  content_message = chatty_pgp_get_content (decrypt_and_signed_part, &saved_files, PGP_TEST_BUILD_DIR);
+  g_assert_cmpint (g_list_length (saved_files), ==, 3);
   test_check_sha (attachment_1_filepath, attachment_1_savepath);
   test_check_sha (attachment_2_filepath, attachment_2_savepath);
   test_check_sha (attachment_3_filepath, attachment_3_savepath);
@@ -415,8 +417,10 @@ main (int   argc,
   g_test_init (&argc, &argv, NULL);
 
   gnupg_directory = g_build_filename (PGP_TEST_BUILD_DIR, ".gnupg", NULL);
-  g_mkdir_with_parents (gnupg_directory, 0700);
+  if (g_mkdir_with_parents (gnupg_directory, 0700) < 0)
+    g_warning ("Could not create directory '%s'", gnupg_directory);
 
+  g_print ("Setting environment: 'GNUPGHOME=%s'\n", gnupg_directory);
   g_setenv ("GNUPGHOME", gnupg_directory, 1);
 
   /* You need to add the private-keys-v1.d for this to work on newer versions of gnupg */
@@ -426,6 +430,8 @@ main (int   argc,
 
   if ((ret = system ("gpg < /dev/null > /dev/null 2>&1")) == -1)
     return 77;
+
+  g_print("Importing keys with 'gpg --import'\n");
 
   ret = system ("gpg --import " PGP_TEST_DATA_DIR "/chatty-test.gpg.pub > /dev/null 2>&1");
   if (ret < 0)
@@ -452,6 +458,7 @@ main (int   argc,
   if (ret < 0)
     g_warning ("Setting owner trust error: %d", ret);
 
+  g_print ("GPG setup complete. Starting tests..\n");
   g_test_add_func ("/pgp/message", test_pgp_message);
   g_test_add_func ("/pgp/content", test_pgp_encode_decode);
   g_test_add_func ("/pgp/message and files", test_pgp_message_and_files);

@@ -214,7 +214,8 @@ chat_list_filter_changed_cb (ChattyChatList *self)
     adw_status_page_set_title (page, _("No Search Results"));
     adw_status_page_set_description (page, _("Try different search"));
   } else {
-    adw_status_page_set_icon_name (page, "sm.puri.Chatty-symbolic");
+    g_autofree char *icon = g_strdup_printf ("%s-symbolic", CHATTY_APP_ID);
+    adw_status_page_set_icon_name (page, icon);
     if (self->show_archived)
       adw_status_page_set_title (page, _("No archived chats"));
     else

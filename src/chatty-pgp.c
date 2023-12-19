@@ -138,11 +138,11 @@ chatty_pgp_create_mime_part (const char  *contents,
     for (GList *l = files; l != NULL; l = l->next) {
       g_autoptr(GFile) file_ref = NULL;
       CamelMimePart *part;
-      CamelDataWrapper *file_dw;
+      g_autoptr(CamelDataWrapper) file_dw = NULL;
       g_autofree char *file_contents = NULL;
-      unsigned long content_length = 0;
+      gsize content_length = 0;
       g_autoptr(GError) error = NULL;
-      CamelStream *file_stream = NULL;
+      g_autoptr(CamelStream) file_stream = NULL;
 
       ChattyFile *attachment = l->data;
 
@@ -206,10 +206,10 @@ chatty_pgp_sign_stream (const char   *contents_to_sign,
                         const char   *signing_id,
                         char        **recipients)
 {
-  CamelSession *session;
-  CamelCipherContext *ctx;
-  CamelMimePart *sigpart = NULL;
-  CamelMimePart *conpart = NULL;
+  g_autoptr(CamelSession) session = NULL;
+  g_autoptr(CamelCipherContext) ctx = NULL;
+  g_autoptr(CamelMimePart) sigpart = NULL;
+  g_autoptr(CamelMimePart) conpart = NULL;
   g_autoptr(GError) error = NULL;
 
   if (!signing_id || !*signing_id)
@@ -232,7 +232,7 @@ chatty_pgp_sign_stream (const char   *contents_to_sign,
                                          TRUE);
 
   if (!conpart)
-    goto out;
+    return NULL;
 
   sigpart = camel_mime_part_new ();
   camel_cipher_context_sign_sync (ctx, signing_id, chatty_pgp_algo_to_camel_hash(DEFAULT_SIGNING_HASH),
@@ -240,17 +240,10 @@ chatty_pgp_sign_stream (const char   *contents_to_sign,
 
   if (error != NULL) {
     g_warning ("PGP signing failed: '%s'", error->message);
-    g_object_unref (sigpart);
-    sigpart = NULL;
-    goto out;
+    return NULL;
   }
 
-out:
-  g_clear_object (&conpart);
-  g_clear_object (&session);
-  g_clear_object (&ctx);
-
-  return sigpart;
+  return g_steal_pointer (&sigpart);
 }
 
 CamelMimePart *
@@ -331,7 +324,8 @@ chatty_pgp_sign_and_encrypt_stream (const char  *contents_to_sign_and_encrypt,
                                     const char  *signing_id,
                                     char       **recipients)
 {
-  CamelMimePart *sigpart, *encpart;
+  g_autoptr(CamelMimePart) sigpart = NULL;
+  CamelMimePart *encpart;
   CamelDataWrapper *signed_dw = NULL;
 
   /*
@@ -375,7 +369,7 @@ chatty_pgp_decrypt_mime_part (CamelMimePart *encpart)
   g_autoptr(GError) error = NULL;
   CamelDataWrapper *encrypted_dw = NULL;
   CamelMimePart *outpart = NULL;
-  CamelCipherValidity *valid = NULL;
+  g_autoptr(CamelCipherValidity) valid = NULL;
 
   if (!encpart)
     return NULL;
@@ -401,12 +395,6 @@ chatty_pgp_decrypt_mime_part (CamelMimePart *encpart)
     goto out;
   }
 
-  /*
-   * Valid doesn't tell us anything useful, but we need to clear it to prevent
-   * a memory leak.
-   */
-  camel_cipher_validity_clear (valid);
-
 out:
   g_clear_object (&session);
   g_clear_object (&ctx);
@@ -425,7 +413,6 @@ chatty_pgp_decrypt_stream (const char *data_to_check)
 
   plaintext_stream = camel_stream_mem_new ();
   conpart = camel_mime_part_new ();
-  outpart = camel_mime_part_new ();
   camel_stream_write (plaintext_stream, data_to_check, strlen(data_to_check), NULL, NULL);
   g_seekable_seek (G_SEEKABLE (plaintext_stream), 0, G_SEEK_SET, NULL, NULL);
 
@@ -617,7 +604,7 @@ chatty_pgp_get_pub_fingerprint (const char *signing_id)
   g_autoptr(GFile) fingerprint_file = NULL;
   g_autofree char *system_args = NULL;
   g_autofree char *file_contents = NULL;
-  unsigned long content_length = 0;
+  gsize content_length = 0;
   const char *gpg_exec = NULL;
   char **fpr_tokens = NULL;
   char *fingerprint = NULL;
@@ -742,7 +729,7 @@ chatty_pgp_get_recipients (CamelMimePart *mime_part)
 
 char *
 chatty_pgp_get_content (CamelMimePart *mime_part,
-                        GList         *files,
+                        GList         **files,
                         const char     *directory_to_save_in)
 {
   GByteArray *stream_decoded = NULL;
@@ -771,11 +758,11 @@ chatty_pgp_get_content (CamelMimePart *mime_part,
     for (int i = 0; camel_multipart_get_part ((CamelMultipart *) dw, i) != NULL; i++) {
       g_autoptr(GError) error = NULL;
       g_autoptr(GFile) file_to_save = NULL;
-      GFileOutputStream *out;
+      g_autoptr(GFileOutputStream) out = NULL;
       g_autofree char *decoded = NULL;
       g_autofree char *file_to_save_location = NULL;
       const char *filename = NULL;
-      unsigned long len, written = 0;
+      gsize len, written = 0;
       CamelMimePart *part = camel_multipart_get_part ((CamelMultipart *) dw, i);
       CamelDataWrapper *part_dw = camel_medium_get_content ((CamelMedium *) part);
       /* The message is encoded as the first part */
@@ -831,7 +818,7 @@ chatty_pgp_get_content (CamelMimePart *mime_part,
                    g_file_peek_path (file_to_save), error->message);
         g_clear_error (&error);
       } else {
-        files = g_list_append (files, chatty_file_new_for_path(file_to_save_location));
+        *files = g_list_append (*files, chatty_file_new_for_path(file_to_save_location));
       }
     }
     return message_to_return;
