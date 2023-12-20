@@ -1,16 +1,16 @@
 # Romanian translation for chatty.
 # Copyright (C) 2020 chatty's COPYRIGHT HOLDER
 # This file is distributed under the same license as the chatty package.
-# Florentina Mușat <florentina.musat.28@gmail.com>, 2020-2023.
+# Antonio Marin (libre) <gnmer.6qxyg@slmail.me>, 2020-2023.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: chatty master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
 "POT-Creation-Date: 2023-12-18 05:32+0000\n"
-"PO-Revision-Date: 2023-12-19 18:07+0200\n"
-"Last-Translator: Florentina Mușat <florentina [dot] musat [dot] 28 [at] "
-"gmail [dot] com>\n"
+"PO-Revision-Date: 2023-12-19 18:09+0100\n"
+"Last-Translator: Antonio Marin <gnmer [dot] 6qxyg [at] "
+"slmail [dot] me>\n"
 "Language-Team: Romanian <gnomero-list@lists.sourceforge.net>\n"
 "Language: ro\n"
 "MIME-Version: 1.0\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n==0 || (n!=1 && n%100>=1 && "
 "n%100<=19) ? 1 : 2);\n"
-"X-Generator: Poedit 3.4.1\n"
+"X-Generator: Poedit 3.4\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
 #: data/sm.puri.Chatty.desktop.in.in:3 data/sm.puri.Chatty.metainfo.xml.in.in:6
@@ -97,11 +97,11 @@ msgstr "Dacă să se elimine automat ID-urile de urmărire din URL-uri"
 
 #: data/sm.puri.Chatty.gschema.xml:55 src/ui/chatty-settings-dialog.ui:187
 msgid "Render Attachments"
-msgstr "Randează atașamentele"
+msgstr "Redă fișiere atașate"
 
 #: data/sm.puri.Chatty.gschema.xml:56
 msgid "Whether to Render Attachments or not"
-msgstr "Dacă se randează sau nu atașamentele"
+msgstr "Dacă să fie redate sau nu fișierele atașate"
 
 #: data/sm.puri.Chatty.gschema.xml:61 data/sm.puri.Chatty.gschema.xml:62
 msgid "Mark Idle users differently"
@@ -204,9 +204,7 @@ msgstr "Aplicație de mesagerie SMS și XMPP"
 
 #: src/chatty-application.c:176
 msgid "translator-credits"
-msgstr ""
-"Florentina Mușat <florentina [dot] musat [dot] 28 [at] gmail [dot] com>, "
-"2020-2021, 2023"
+msgstr "libre <gnmer dot 6qxyg at slmail dot me>, 2020-2023"
 
 #: src/chatty-application.c:199
 #, c-format
@@ -1066,8 +1064,8 @@ msgstr "Ai primit un MMS gol."
 msgid "Automatically Retrying for  %i MMS"
 msgid_plural "Automatically Retrying for  %i MMSes..."
 msgstr[0] "Se reîncearcă automat pentru %i MMS"
-msgstr[1] "Se reîncercă automat pentru %i MMS-uri..."
-msgstr[2] "Se reîncercă automat pentru %i de MMS-uri..."
+msgstr[1] "Se reîncearcă automat pentru %i MMS-uri..."
+msgstr[2] "Se reîncearcă automat pentru %i de MMS-uri..."
 
 #: src/mm/chatty-mmsd.c:1711
 msgid "Temporary Error Sending MMS"
@@ -1368,11 +1366,11 @@ msgstr "Trimite mesaje de tastare"
 
 #: src/ui/chatty-settings-dialog.ui:174
 msgid "Strip Tracking IDs from URLs"
-msgstr "Eliminați ID-urile de urmărire din URL-uri"
+msgstr "Elimină ID-urile de urmărire din URL-uri"
 
 #: src/ui/chatty-settings-dialog.ui:188
 msgid "Render Attachments from Messages"
-msgstr "Randează atașamentele din mesaje"
+msgstr "Redă fișierele atașate din mesaje"
 
 #: src/ui/chatty-settings-dialog.ui:204
 msgid "Editor"
