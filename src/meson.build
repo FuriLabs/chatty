@@ -27,6 +27,7 @@ libsrc += [
   'dialogs/chatty-chat-info.c',
   'dialogs/chatty-ma-chat-info.c',
   'dialogs/chatty-mm-chat-info.c',
+  'dialogs/chatty-wrong-pw-dialog.c',
   'users/chatty-item.c',
   'users/chatty-contact.c',
   'users/chatty-account.c',
@@ -64,6 +65,7 @@ ui_files = files (
   # but works fine locally
   'ui/chatty-info-dialog.ui',
   'ui/chatty-dialog-join-muc.ui',
+  'ui/chatty-dialog-wrong-pw.ui',
   # Can't test as this requires chatty-contact-list,
   # 'ui/chatty-dialog-new-chat.ui',
   'ui/chatty-fp-row.ui',
