@@ -115,7 +115,11 @@ chatty_request_action (const char         *title,
     // for certificates
     return NULL;
   }
-
+/*
+ * TODO: Fix this depreciation
+ * https://gitlab.gnome.org/World/Chatty/-/issues/842
+ */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   data            = g_new0 (ChattyRequestData, 1);
   data->type      = PURPLE_REQUEST_ACTION;
   data->user_data = user_data;
@@ -159,6 +163,7 @@ chatty_request_action (const char         *title,
 
   data->dialog = dialog;
 
+G_GNUC_END_IGNORE_DEPRECATIONS
   return data;
 }
 
