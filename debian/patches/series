@@ -1,4 +1,3 @@
-Disable-clock-test.patch
-Fix-issues-on-i386-build-by-using-gsize.patch
-tests-Remove-unused-variable-in-pgp.c.patch
-tests-Add-some-logging-to-pgp.c.patch
+0001-Disable-clock-test.patch
+0002-test-Disable-history-test.patch
+0003-tests-Disable-pgp.patch

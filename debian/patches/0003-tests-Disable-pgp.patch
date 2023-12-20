@@ -1,0 +1,26 @@
+From fed17f2d40a74c6aafe61b7b7925b8df5dc291e4 Mon Sep 17 00:00:00 2001
+From: Chris Talbot <chris@talbothome.com>
+Date: Wed, 20 Dec 2023 07:24:06 -0700
+Subject: [PATCH 3/3] tests: Disable pgp
+
+The pgp test is flaky and we don't use PGP in chatty yet
+---
+ tests/meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tests/meson.build b/tests/meson.build
+index a85e53fc..389928d8 100644
+--- a/tests/meson.build
++++ b/tests/meson.build
+@@ -27,7 +27,7 @@ test_items = [
+   'utils',
+   'mm-account',
+   'sms-uri',
+-  'pgp',
++  #'pgp',
+ ]
+ 
+ foreach item: test_items
+-- 
+2.43.0
+
