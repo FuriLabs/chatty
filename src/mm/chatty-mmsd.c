@@ -967,7 +967,7 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
 
   if (rx_modem_number && *rx_modem_number) {
     if (g_strcmp0 (known_modem_number, rx_modem_number) != 0) {
-      g_warning ("Receieved Modem Number %s different than current modem number %s",
+      g_warning ("Received Modem Number %s different than current modem number %s",
                  known_modem_number, rx_modem_number);
       return NULL;
     }
