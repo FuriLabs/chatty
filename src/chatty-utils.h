@@ -37,3 +37,5 @@ void      chatty_utils_create_thumbnail_async  (GFile               *file,
                                                 gpointer       user_data);
 gboolean  chatty_utils_create_thumbnail_finish (GAsyncResult  *result,
                                                 GError       **error);
+gboolean chatty_utils_dialog_response_is_cancel (GtkAlertDialog *alertdialog,
+                                                 int             response);
