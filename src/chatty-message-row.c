@@ -56,7 +56,6 @@ struct _ChattyMessageRow
   gulong         clock_id;
   gboolean       is_im;
   gboolean       force_hide_footer;
-  GtkGesture    *gesture;
 };
 
 G_DEFINE_TYPE (ChattyMessageRow, chatty_message_row, GTK_TYPE_LIST_BOX_ROW)
@@ -481,7 +480,6 @@ chatty_message_row_dispose (GObject *object)
   ChattyMessageRow *self = (ChattyMessageRow *)object;
 
   g_clear_object (&self->message);
-  g_clear_object (&self->gesture);
 
   G_OBJECT_CLASS (chatty_message_row_parent_class)->dispose (object);
 }
@@ -578,9 +576,14 @@ chatty_message_row_new (ChattyMessage  *message,
   text = chatty_message_get_text (message);
 
   if (text && *text) {
-     self->gesture = gtk_gesture_long_press_new ();
-     gtk_widget_add_controller (GTK_WIDGET (self), GTK_EVENT_CONTROLLER (self->gesture));
-     g_signal_connect (self->gesture, "pressed", G_CALLBACK (long_pressed), self);
+    GtkGesture *gesture;
+    gesture = gtk_gesture_long_press_new ();
+    /*
+     * gtk_widget_add_controller () transfers ownership of the gesture to
+     * ChattyMessageRow so you will not have to worry about freeing it manually
+     */
+    gtk_widget_add_controller (GTK_WIDGET (self), GTK_EVENT_CONTROLLER (gesture));
+    g_signal_connect (gesture, "pressed", G_CALLBACK (long_pressed), self);
   }
 
   gtk_widget_set_visible (self->message_title, subject && *subject);

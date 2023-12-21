@@ -40,7 +40,6 @@ struct _ChattyListRow
   GtkWidget     *close_button;
   GtkWidget     *add_contact_button;
   GtkWidget     *call_button;
-  GtkGesture    *gesture;
 
   GtkPopover    *popover;
   ChattyItem    *item;
@@ -200,9 +199,14 @@ chatty_list_row_update (ChattyListRow *self)
     chatty_item_get_avatar (self->item);
 
    if (*number) {
-      self->gesture = gtk_gesture_long_press_new ();
-      gtk_widget_add_controller (GTK_WIDGET (self), GTK_EVENT_CONTROLLER (self->gesture));
-      g_signal_connect (self->gesture, "pressed", G_CALLBACK (long_pressed), self);
+     GtkGesture *gesture;
+     gesture = gtk_gesture_long_press_new ();
+     /*
+      * gtk_widget_add_controller () transfers ownership of the gesture to
+      * ChattyListRow so you will not have to worry about freeing it manually
+      */
+     gtk_widget_add_controller (GTK_WIDGET (self), GTK_EVENT_CONTROLLER (gesture));
+     g_signal_connect (gesture, "pressed", G_CALLBACK (long_pressed), self);
    }
 
   } else if (CHATTY_IS_CHAT (self->item) && !self->hide_chat_details) {
@@ -326,7 +330,6 @@ chatty_list_row_finalize (GObject *object)
   ChattyListRow *self = (ChattyListRow *)object;
 
   g_clear_object (&self->item);
-  g_clear_object (&self->gesture);
 
   G_OBJECT_CLASS (chatty_list_row_parent_class)->finalize (object);
 }
