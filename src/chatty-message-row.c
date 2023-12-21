@@ -56,6 +56,7 @@ struct _ChattyMessageRow
   gulong         clock_id;
   gboolean       is_im;
   gboolean       force_hide_footer;
+  GtkGesture    *gesture;
 };
 
 G_DEFINE_TYPE (ChattyMessageRow, chatty_message_row, GTK_TYPE_LIST_BOX_ROW)
@@ -413,6 +414,35 @@ chatty_message_row_update_footer (ChattyMessageRow *self)
 }
 
 static void
+chatty_message_row_call_copy_message_text (GtkWidget  *widget,
+                                           const char *action_name,
+                                           GVariant   *param)
+{
+  ChattyMessageRow *self = CHATTY_MESSAGE_ROW (widget);
+  GdkClipboard *clipboard;
+  const char *text;
+
+  g_assert (CHATTY_IS_MESSAGE_ROW (self));
+
+  text = chatty_message_get_text (self->message);
+
+  if (!text || !*text)
+    return;
+
+  clipboard = gdk_display_get_clipboard (gdk_display_get_default ());
+  gdk_clipboard_set_text (clipboard, text);
+}
+
+static void
+long_pressed (GtkGestureLongPress *gesture,
+              gdouble              x,
+              gdouble              y,
+              ChattyMessageRow    *self)
+{
+  gtk_popover_popup (GTK_POPOVER (self->popover));
+}
+
+static void
 message_row_update_message (ChattyMessageRow *self)
 {
   g_assert (CHATTY_IS_MESSAGE_ROW (self));
@@ -451,6 +481,7 @@ chatty_message_row_dispose (GObject *object)
   ChattyMessageRow *self = (ChattyMessageRow *)object;
 
   g_clear_object (&self->message);
+  g_clear_object (&self->gesture);
 
   G_OBJECT_CLASS (chatty_message_row_parent_class)->dispose (object);
 }
@@ -470,14 +501,16 @@ chatty_message_row_class_init (ChattyMessageRowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, avatar_image);
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, hidden_box);
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, author_label);
+  gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, popover);
 
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, message_content);
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, files_box);
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, content_separator);
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, message_title);
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, message_body);
-
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, footer_label);
+
+  gtk_widget_class_install_action (widget_class, "win.copy-text", NULL, chatty_message_row_call_copy_message_text);
 }
 
 static void
@@ -543,6 +576,13 @@ chatty_message_row_new (ChattyMessage  *message,
 
   subject = chatty_message_get_subject (message);
   text = chatty_message_get_text (message);
+
+  if (text && *text) {
+     self->gesture = gtk_gesture_long_press_new ();
+     gtk_widget_add_controller (GTK_WIDGET (self), GTK_EVENT_CONTROLLER (self->gesture));
+     g_signal_connect (self->gesture, "pressed", G_CALLBACK (long_pressed), self);
+  }
+
   gtk_widget_set_visible (self->message_title, subject && *subject);
   gtk_widget_set_visible (self->message_body, text && *text);
 
