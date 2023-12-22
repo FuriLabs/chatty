@@ -24,6 +24,8 @@ test_message_text_markup (void)
     char *text;
     char *markup;
   } data;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wbidi-chars"
   data array[] = {
     {"",""},
     {"abc","abc"},
@@ -67,8 +69,11 @@ test_message_text_markup (void)
     {
      "http://www.example.com/user's-image.png?blah",
      "<a href=\"http://www.example.com/user&apos;s-image.png?blah\">http://www.example.com/user&apos;s-image.png?blah</a>"},
+    {//https://00xbyte.github.io/posts/Don%27t-Believe-Your-Eyes-A-WhatsApp-Clickjacking-Vulnerability/ Make sure that Chatty isn't vulnerable to this
+     "‮https://moc.margatsni.nl//:sptth",
+     "‮https://moc.margatsni.nl//:sptth"},
   };
-
+#pragma GCC diagnostic pop
   for (guint i = 0; i < G_N_ELEMENTS (array); i++) {
     g_autofree char *content = NULL;
     GtkLabel *label;
