@@ -44,7 +44,7 @@ image_item_paint (ChattyImageItem *self,
   if (pixbuf) {
     gtk_widget_remove_css_class (self->image, "dim-label");
     gtk_image_set_from_gicon (GTK_IMAGE (self->image), G_ICON (pixbuf));
-    gtk_image_set_pixel_size (GTK_IMAGE (self->image), 256);
+    gtk_image_set_pixel_size (GTK_IMAGE (self->image), 220);
   } else {
     gtk_widget_add_css_class (self->image, "dim-label");
     gtk_image_set_from_icon_name (GTK_IMAGE (self->image),
@@ -72,7 +72,7 @@ image_item_get_stream_cb (GObject      *object,
     return;
 
   scale_factor = gtk_widget_get_scale_factor (GTK_WIDGET (self));
-  pixbuf = gdk_pixbuf_new_from_stream_at_scale (stream, 240 * scale_factor,
+  pixbuf = gdk_pixbuf_new_from_stream_at_scale (stream, 200 * scale_factor,
                                                 -1, TRUE, NULL, NULL);
   image_item_paint (self, pixbuf);
 }
