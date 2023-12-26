@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: chatty master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
 "POT-Creation-Date: 2023-12-21 17:14+0000\n"
-"PO-Revision-Date: 2023-12-26 09:30+0200\n"
+"PO-Revision-Date: 2023-12-26 09:54+0200\n"
 "Last-Translator: Yosef Or Boczko <yoseforb@gmail.com>\n"
 "Language-Team: Hebrew\n"
 "Language: he\n"
@@ -92,7 +92,7 @@ msgstr ""
 
 #: data/sm.puri.Chatty.gschema.xml:50
 msgid "Whether to Remove Tracking IDs from URLs Automatically"
-msgstr ""
+msgstr "Whether to Remove Tracking IDs from URLs Automatically"
 
 #: data/sm.puri.Chatty.gschema.xml:55 src/ui/chatty-settings-dialog.ui:187
 #, fuzzy
@@ -102,7 +102,7 @@ msgstr "הסרת צרופה"
 
 #: data/sm.puri.Chatty.gschema.xml:56
 msgid "Whether to Render Attachments or not"
-msgstr ""
+msgstr "Whether to Render Attachments or not"
 
 #: data/sm.puri.Chatty.gschema.xml:61 data/sm.puri.Chatty.gschema.xml:62
 msgid "Mark Idle users differently"
@@ -162,15 +162,15 @@ msgstr "גודל חלון (רוחב, גובה)."
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:7
 msgid "Messaging application for mobile and desktop"
-msgstr ""
+msgstr "יישום שליחת הודעות לנייד ולשולחן העבודה"
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:9
-#, fuzzy
-#| msgid "Chats is a messaging application supporting XMPP and SMS."
 msgid ""
 "Chats is a simple to use to messaging app for 1:1 communication and small "
 "groups supporting SMS, MMS, XMPP and Matrix."
-msgstr "התכתבויות הוא יישומון התכתבות שתומך ב־XMPP ובמסרונים."
+msgstr ""
+"התכתבויות הוא יישום התכתבות לשיחות 1:1 ושיחות קבוצתיות קטנות התומך ב־SMS, "
+"MMS, XMPP ו־Matrix."
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:16
 msgid "Chats message window"
@@ -194,7 +194,7 @@ msgstr "לאפשר הודעות ניפוי שגיאות של libpurple"
 
 #: src/chatty-application.c:87
 msgid "Enable verbose debug messages (repeat option for more verbosity)"
-msgstr ""
+msgstr "Enable verbose debug messages (repeat option for more verbosity)"
 
 #: src/chatty-application.c:168
 msgid "An SMS and XMPP messaging client"
@@ -204,7 +204,8 @@ msgstr "לקוח התכתבות במסרונים וב־XMPP"
 msgid "translator-credits"
 msgstr ""
 "ירון שהרבני <sh.yaron@gmail.com>\n"
-"יוסף אור בוצ׳קו <yoseforb@gmail.com>"
+"יוסף אור בוצ׳קו <yoseforb@gmail.com>\n"
+"מיזם תרגום GNOME לעברית https://l10n.gnome.org/teams/he/"
 
 #: src/chatty-application.c:199
 #, c-format
@@ -507,7 +508,7 @@ msgstr "חתול"
 #. "U+1F431"
 #: src/chatty-verification-page.c:29
 msgid "Lion"
-msgstr ""
+msgstr "אריה"
 
 #. "U+1F981"
 #: src/chatty-verification-page.c:30
@@ -517,308 +518,306 @@ msgstr "סוס"
 #. "U+1F40E"
 #: src/chatty-verification-page.c:31
 msgid "Unicorn"
-msgstr ""
+msgstr "חד־קרן"
 
 #. "U+1F984"
 #: src/chatty-verification-page.c:32
 msgid "Pig"
-msgstr ""
+msgstr "חזיר"
 
 #. "U+1F437"
 #: src/chatty-verification-page.c:33
 msgid "Elephant"
-msgstr ""
+msgstr "פיל"
 
 #. "U+1F418"
 #: src/chatty-verification-page.c:34
 msgid "Rabbit"
-msgstr ""
+msgstr "ארנב"
 
 #. "U+1F430"
 #: src/chatty-verification-page.c:35
 msgid "Panda"
-msgstr ""
+msgstr "דב פנדה"
 
 #. "U+1F43C"
 #: src/chatty-verification-page.c:36
 msgid "Rooster"
-msgstr ""
+msgstr "תרנגול"
 
 #. "U+1F413"
 #: src/chatty-verification-page.c:37
 msgid "Penguin"
-msgstr ""
+msgstr "פינגווין"
 
 #. "U+1F427"
 #: src/chatty-verification-page.c:38
 msgid "Turtle"
-msgstr ""
+msgstr "צב"
 
 #. "U+1F422"
 #: src/chatty-verification-page.c:39
 msgid "Fish"
-msgstr ""
+msgstr "דג"
 
 #. "U+1F41F"
 #: src/chatty-verification-page.c:40
 msgid "Octopus"
-msgstr ""
+msgstr "תמנון"
 
 #. "U+1F419"
 #: src/chatty-verification-page.c:41
 msgid "Butterfly"
-msgstr ""
+msgstr "פרפר"
 
 #. "U+1F98B"
 #: src/chatty-verification-page.c:42
 msgid "Flower"
-msgstr ""
+msgstr "פרח"
 
 #. "U+1F337"
 #: src/chatty-verification-page.c:43
 msgid "Tree"
-msgstr ""
+msgstr "עץ"
 
 #. "U+1F333"
 #: src/chatty-verification-page.c:44
 msgid "Cactus"
-msgstr ""
+msgstr "קקטוס"
 
 #. "U+1F335"
 #: src/chatty-verification-page.c:45
 msgid "Mushroom"
-msgstr ""
+msgstr "פטריה"
 
 #. "U+1F344"
 #: src/chatty-verification-page.c:46
 msgid "Globe"
-msgstr ""
+msgstr "כדור הארץ"
 
 #. "U+1F30F"
 #: src/chatty-verification-page.c:47
 msgid "Moon"
-msgstr ""
+msgstr "ירח"
 
 #. "U+1F319"
 #: src/chatty-verification-page.c:48
 msgid "Cloud"
-msgstr ""
+msgstr "ענן"
 
 #. "U+2601U+FE0F"
 #: src/chatty-verification-page.c:49
 msgid "Fire"
-msgstr ""
+msgstr "אש"
 
 #. "U+1F525"
 #: src/chatty-verification-page.c:50
 msgid "Banana"
-msgstr ""
+msgstr "בננה"
 
 #. "U+1F34C"
 #: src/chatty-verification-page.c:51
-#, fuzzy
-#| msgid "Apply"
 msgid "Apple"
-msgstr "החלה"
+msgstr "תפוח"
 
 #. "U+1F34E"
 #: src/chatty-verification-page.c:52
 msgid "Strawberry"
-msgstr ""
+msgstr "תות שדה"
 
 #. "U+1F353"
 #: src/chatty-verification-page.c:53
 msgid "Corn"
-msgstr ""
+msgstr "תירס"
 
 #. "U+1F33D"
 #: src/chatty-verification-page.c:54
 msgid "Pizza"
-msgstr ""
+msgstr "פיצה"
 
 #. "U+1F355"
 #: src/chatty-verification-page.c:55
 msgid "Cake"
-msgstr ""
+msgstr "עוגה"
 
 #. "U+1F382"
 #: src/chatty-verification-page.c:56
 msgid "Heart"
-msgstr ""
+msgstr "לב"
 
 #. "U+2764U+FE0F"
 #: src/chatty-verification-page.c:57
 msgid "Smiley"
-msgstr ""
+msgstr "חייכן"
 
 #. "U+1F600"
 #: src/chatty-verification-page.c:58
 msgid "Robot"
-msgstr ""
+msgstr "רובוט"
 
 #. "U+1F916"
 #: src/chatty-verification-page.c:59
 msgid "Hat"
-msgstr ""
+msgstr "כובע"
 
 #. "U+1F3A9"
 #: src/chatty-verification-page.c:60
 msgid "Glasses"
-msgstr ""
+msgstr "משקפיים"
 
 #. "U+1F453"
 #: src/chatty-verification-page.c:61
 msgid "Spanner"
-msgstr ""
+msgstr "מפתח ברגים"
 
 #. "U+1F527"
 #: src/chatty-verification-page.c:62
 msgid "Santa"
-msgstr ""
+msgstr "סנטה"
 
 #. "U+1F385"
 #: src/chatty-verification-page.c:63
 msgid "Thumbs Up"
-msgstr ""
+msgstr "אגודל כלפי מעלה"
 
 #. "U+1F44D"
 #: src/chatty-verification-page.c:64
 msgid "Umbrella"
-msgstr ""
+msgstr "מטרייה"
 
 #. "U+2602U+FE0F"
 #: src/chatty-verification-page.c:65
 msgid "Hourglass"
-msgstr ""
+msgstr "שעון חול"
 
 #. "U+231B"
 #: src/chatty-verification-page.c:66
 msgid "Clock"
-msgstr ""
+msgstr "שעון"
 
 #. "U+23F0"
 #: src/chatty-verification-page.c:67
 msgid "Gift"
-msgstr ""
+msgstr "מתנה"
 
 #. "U+1F381"
 #: src/chatty-verification-page.c:68
 msgid "Light Bulb"
-msgstr ""
+msgstr "נורה"
 
 #. "U+1F4A1"
 #: src/chatty-verification-page.c:69
 msgid "Book"
-msgstr ""
+msgstr "ספר"
 
 #. "U+1F4D5"
 #: src/chatty-verification-page.c:70
 msgid "Pencil"
-msgstr ""
+msgstr "עט"
 
 #. "U+270FU+FE0F"
 #: src/chatty-verification-page.c:71
 msgid "Paperclip"
-msgstr ""
+msgstr "אטב"
 
 #. "U+1F4CE"
 #: src/chatty-verification-page.c:72
 msgid "Scissors"
-msgstr ""
+msgstr "מספריים"
 
 #. "U+2702U+FE0F"
 #: src/chatty-verification-page.c:73
 msgid "Lock"
-msgstr ""
+msgstr "מנעול"
 
 #. "U+1F512"
 #: src/chatty-verification-page.c:74
 msgid "Key"
-msgstr ""
+msgstr "מפתח"
 
 #. "U+1F511"
 #: src/chatty-verification-page.c:75
 msgid "Hammer"
-msgstr ""
+msgstr "פטיש"
 
 #. "U+1F528"
 #: src/chatty-verification-page.c:76
 msgid "Telephone"
-msgstr ""
+msgstr "טלפון"
 
 #. "U+260EU+FE0F"
 #: src/chatty-verification-page.c:77
 msgid "Flag"
-msgstr ""
+msgstr "דגל"
 
 #. "U+1F3C1"
 #: src/chatty-verification-page.c:78
 msgid "Train"
-msgstr ""
+msgstr "רכבת"
 
 #. "U+1F682"
 #: src/chatty-verification-page.c:79
 msgid "Bicycle"
-msgstr ""
+msgstr "אופניים"
 
 #. "U+1F6B2"
 #: src/chatty-verification-page.c:80
 msgid "Aeroplane"
-msgstr ""
+msgstr "מטוס"
 
 #. "U+2708U+FE0F"
 #: src/chatty-verification-page.c:81
 msgid "Rocket"
-msgstr ""
+msgstr "טיל"
 
 #. "U+1F680"
 #: src/chatty-verification-page.c:82
 msgid "Trophy"
-msgstr ""
+msgstr "גביע"
 
 #. "U+1F3C6"
 #: src/chatty-verification-page.c:83
 msgid "Ball"
-msgstr ""
+msgstr "כדור"
 
 #. "U+26BD"
 #: src/chatty-verification-page.c:84
 msgid "Guitar"
-msgstr ""
+msgstr "גיטרה"
 
 #. "U+1F3B8"
 #: src/chatty-verification-page.c:85
 msgid "Trumpet"
-msgstr ""
+msgstr "חצוצרה"
 
 #. "U+1F3BA"
 #: src/chatty-verification-page.c:86
 msgid "Bell"
-msgstr ""
+msgstr "פעמון"
 
 #. "U+1F514"
 #: src/chatty-verification-page.c:87
 msgid "Anchor"
-msgstr ""
+msgstr "עוגן"
 
 #. "U+2693"
 #: src/chatty-verification-page.c:88
 msgid "Headphones"
-msgstr ""
+msgstr "אזניות"
 
 #. "U+1F3A7"
 #: src/chatty-verification-page.c:89
 msgid "Folder"
-msgstr ""
+msgstr "תיקייה"
 
 #. "U+1F4C1"
 #: src/chatty-verification-page.c:90
 msgid "Pin"
-msgstr ""
+msgstr "נעץ"
 
 #: src/chatty-verification-page.c:387
 msgid "Show Emojis"
-msgstr ""
+msgstr "הצגת סמלילים"
 
 #: src/chatty-verification-page.c:389
 msgid "Show Numbers"
@@ -1034,19 +1033,17 @@ msgid "Please enter password for “%s”, homeserver: %s"
 msgstr "נא למלא ססמה עבור „%s”, שרת בית: %s"
 
 #: src/matrix/chatty-ma-key-chat.c:62
-#, fuzzy
-#| msgid "Typing Notification"
 msgid "Key Verification"
-msgstr "התראות הקלדה"
+msgstr "מפתח אימות"
 
 #: src/mm/chatty-mmsd.c:253
 #, c-format
 msgid "Error Delivering Message to %s"
-msgstr ""
+msgstr "שגיאה בהעברה הודעה אל %s"
 
 #: src/mm/chatty-mmsd.c:254
 msgid "See logs for more details"
-msgstr ""
+msgstr "יש לעיין ביומנים למידע נוסף"
 
 #. TRANSLATORS: Timestamp for minute accuracy, e.g. “2020-08-11 15:27”.
 #. See https://developer.gnome.org/glib/stable/glib-GDateTime.html#g-date-time-format
@@ -1075,27 +1072,27 @@ msgstr[3] ""
 
 #: src/mm/chatty-mmsd.c:1711
 msgid "Temporary Error Sending MMS"
-msgstr ""
+msgstr "שגיאה זמנית בשליחת MMS"
 
 #: src/mm/chatty-mmsd.c:1757
 msgid "Temporary Error Receiving MMS"
-msgstr ""
+msgstr "שגיאה זמנית בקבלת MMS"
 
 #: src/mm/chatty-mmsd.c:1973
 msgid "MMSC is not configured"
-msgstr ""
+msgstr "‏MMSC לא מוגדר"
 
 #: src/mm/chatty-mmsd.c:1976
 msgid "APN is not configured correctly"
-msgstr ""
+msgstr "‏APN לא מוגדר כראוי"
 
 #: src/mm/chatty-mmsd.c:1979
 msgid "Mobile Data is not configured"
-msgstr ""
+msgstr "נתונים סלולריים לא מוגדרים"
 
 #: src/mm/chatty-mmsd.c:1982
 msgid "Mobile Data is off"
-msgstr ""
+msgstr "נתונים סלולריים כבויים"
 
 #: src/mm/chatty-mmsd.c:1985
 msgid "Unknown Error"
@@ -1153,10 +1150,8 @@ msgid "Send To:"
 msgstr "לשלוח אל:"
 
 #: src/ui/chatty-dialog-new-chat.ui:216
-#, fuzzy
-#| msgid "Contact added"
 msgid "Contact ID"
-msgstr "איש הקשר נוסף"
+msgstr "מזהה איש קשר"
 
 #: src/ui/chatty-dialog-new-chat.ui:226
 msgid "Name (optional)"
@@ -1183,16 +1178,12 @@ msgid "_Accept"
 msgstr "ל_קבל"
 
 #: src/ui/chatty-invite-page.ui:86
-#, fuzzy
-#| msgid "Reject"
 msgid "_Reject"
-msgstr "לדחות"
+msgstr "ל_דחות"
 
 #: src/ui/chatty-ma-chat-info.ui:32
-#, fuzzy
-#| msgid "Chats"
 msgid "Chat"
-msgstr "התכתבויות"
+msgstr "התכתבות"
 
 #: src/ui/chatty-ma-chat-info.ui:61 src/ui/chatty-ma-account-details.ui:210
 msgid "Matrix ID"
@@ -1245,10 +1236,8 @@ msgid "Delete Chat"
 msgstr "למחוק התכתבות"
 
 #: src/ui/chatty-message-row.ui:30
-#, fuzzy
-#| msgid "Copy"
 msgid "Copy Text"
-msgstr "העתקה"
+msgstr "העתקת טקסט"
 
 #: src/ui/chatty-pp-chat-info.ui:34 src/ui/chatty-pp-account-details.ui:38
 msgid "Change Avatar"
@@ -1264,7 +1253,7 @@ msgstr "נושא החדר"
 
 #: src/ui/chatty-pp-chat-info.ui:143
 msgid "User"
-msgstr ""
+msgstr "משתמש"
 
 #: src/ui/chatty-pp-chat-info.ui:168
 msgid "XMPP ID"
@@ -1304,10 +1293,8 @@ msgid "Group Members"
 msgstr "חברי הקבוצה"
 
 #: src/ui/chatty-list-row.ui:33
-#, fuzzy
-#| msgid "Phone Number:"
 msgid "Copy Number"
-msgstr "מספר טלפון:"
+msgstr "העתקת מספר"
 
 #: src/ui/chatty-ma-account-details.ui:78
 msgid "Name"
@@ -1391,7 +1378,7 @@ msgstr ""
 
 #: src/ui/chatty-settings-dialog.ui:188
 msgid "Render Attachments from Messages"
-msgstr ""
+msgstr "עיבוד צרופות מהודעות"
 
 #: src/ui/chatty-settings-dialog.ui:204
 msgid "Editor"
@@ -1427,14 +1414,12 @@ msgid "MMS Carrier Settings"
 msgstr "הגדרות חברה ל־MMS"
 
 #: src/ui/chatty-settings-dialog.ui:346
-#, fuzzy
-#| msgid "Phone Number:"
 msgid "Phone Number"
-msgstr "מספר טלפון:"
+msgstr "מספר טלפון"
 
 #: src/ui/chatty-settings-dialog.ui:352
 msgid "Your modem's phone number"
-msgstr ""
+msgstr "מספר הטלפון של המודם שלך"
 
 #: src/ui/chatty-settings-dialog.ui:360
 msgid "MMSC"
@@ -1477,24 +1462,18 @@ msgid "Add _new account…"
 msgstr "הוספת חשבון _חדש…"
 
 #: src/ui/chatty-side-bar.ui:32
-#, fuzzy
-#| msgid "Add Contact"
 msgid "Add Chat"
-msgstr "הוספת איש קשר"
+msgstr "הוספת התכתבות"
 
 #: src/ui/chatty-side-bar.ui:41
-#, fuzzy
-#| msgctxt "shortcut window"
-#| msgid "Open Menu"
+# msgctxt "shortcut window"
 msgid "Menu"
-msgstr "פתיחת תפריט"
+msgstr "תפריט"
 
 #: src/ui/chatty-side-bar.ui:49
-#, fuzzy
-#| msgctxt "shortcut window"
-#| msgid "Open Search"
+# msgctxt "shortcut window"
 msgid "Search"
-msgstr "פתיחת חיפוש"
+msgstr "חיפוש"
 
 #: src/ui/chatty-side-bar.ui:107
 msgctxt "show archived chat list when clicked"
@@ -1527,35 +1506,39 @@ msgstr "הודעה קבוצתית חדשה…"
 
 #: src/ui/chatty-verification-page.ui:24
 msgid "Incoming Verification Request"
-msgstr ""
+msgstr "בקשת אימות חדשה"
 
 #: src/ui/chatty-verification-page.ui:42
 msgid "Verify this user to mark them as trusted."
-msgstr ""
+msgstr "אימות משתמש זה לסימונו כמהימן."
 
 #: src/ui/chatty-verification-page.ui:78
 msgid ""
 "Verifying this user will mark their session as trusted, and also mark your "
 "session as trusted to them."
 msgstr ""
+"אימות משתמש זה יסמן את ההתכתבויות אתו כמהימנות, וגם יסמן אותך משתמש זה "
+"כמהימן."
 
 #: src/ui/chatty-verification-page.ui:98
 msgid "C_ontinue"
-msgstr ""
+msgstr "ה_משך"
 
 #: src/ui/chatty-verification-page.ui:200
 msgid ""
 "Verify this user by confirming the following emoji appears on their screen"
-msgstr ""
+msgstr "אימות משתמש זה באמצעות אישור שהרגשון הבא מופיע על המסך שלו"
 
 #: src/ui/chatty-verification-page.ui:377
 msgid ""
 "Verify this user by confirming the following number appears on their screen."
-msgstr ""
+msgstr "אימות משתמש זה באמצעות אישור שהמספר הבא מופיע על המסך שלו."
 
 #: src/ui/chatty-verification-page.ui:412
 msgid "To be secure, do this in person or use a trusted way to communicate."
 msgstr ""
+"על מנת לשמור על אבטחה, יש לעשות זאת באופן אישי או להשתמש באמצעי תקשורת "
+"מאובטח."
 
 #: src/ui/chatty-verification-page.ui:423
 msgctxt "verb, which means 'both items are not the same'"
