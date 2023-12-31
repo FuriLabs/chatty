@@ -829,7 +829,7 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
   g_autoptr(GDateTime) date_time = NULL;
   ChattyMsgDirection direction = CHATTY_DIRECTION_UNKNOWN;
   ChattyMsgStatus mms_status = CHATTY_STATUS_UNKNOWN;
-  ChattyMsgType chatty_msg_type = CHATTY_MESSAGE_TEXT;
+  ChattyMsgType chatty_msg_type = CHATTY_MESSAGE_MMS;
   g_autoptr(GVariant) properties = NULL;
   g_autoptr(GFileInfo) attachment_info = NULL;
   GVariant *reciever, *attach;
@@ -1208,6 +1208,8 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
   if ((!files || !files->data) && savepath) {
     g_autoptr(GError) error = NULL;
 
+    /* If there are no files, then there is a text message */
+    chatty_msg_type = CHATTY_MESSAGE_TEXT;
     g_file_delete (savepath, NULL, &error);
 
     if (error)
@@ -1217,9 +1219,16 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
   if (!subject && !mms_message && files && g_list_length (files) == 1) {
     ChattyFile *attachment = files->data;
 
-    if (attachment && chatty_file_get_mime_type (attachment) &&
-        g_str_has_prefix (chatty_file_get_mime_type (attachment), "image"))
-      chatty_msg_type = CHATTY_MESSAGE_IMAGE;
+    if (attachment && chatty_file_get_mime_type (attachment)) {
+      if (g_str_has_prefix (chatty_file_get_mime_type (attachment), "image"))
+        chatty_msg_type = CHATTY_MESSAGE_IMAGE;
+      else if (g_str_has_prefix (chatty_file_get_mime_type (attachment), "audio"))
+        chatty_msg_type = CHATTY_MESSAGE_AUDIO;
+      else if (g_str_has_prefix (chatty_file_get_mime_type (attachment), "video"))
+        chatty_msg_type = CHATTY_MESSAGE_VIDEO;
+      else
+        chatty_msg_type = CHATTY_MESSAGE_FILE;
+    }
   }
 
   if (!mms_message && !files) {
