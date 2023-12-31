@@ -19,7 +19,9 @@
 #include "chatty-contact.h"
 #include "chatty-contact-list.h"
 #include "chatty-chat.h"
+#include "chatty-enums.h"
 #include "chatty-ma-key-chat.h"
+#include "chatty-message.h"
 #include "chatty-avatar.h"
 #include "chatty-clock.h"
 #include "chatty-list-row.h"
@@ -230,6 +232,62 @@ chatty_list_row_update (ChattyListRow *self)
       g_strstrip (message_stripped);
 
       gtk_label_set_label (GTK_LABEL (self->subtitle), message_stripped);
+    } else {
+      GListModel *model;
+      guint n_items;
+
+      model = chatty_chat_get_messages (item);
+      n_items = g_list_model_get_n_items (model);
+      if (n_items > 0) {
+        g_autoptr(ChattyMessage) message = NULL;
+        ChattyMsgType message_type = CHATTY_MESSAGE_UNKNOWN;
+        const char *message_text = "";
+
+        message = g_list_model_get_item (model, n_items - 1);
+        message_type = chatty_message_get_msg_type (message);
+        switch (message_type) {
+          case CHATTY_MESSAGE_IMAGE:
+            message_text = _("Picture");
+          break;
+          case CHATTY_MESSAGE_VIDEO:
+            message_text = _("Video");
+          break;
+          case CHATTY_MESSAGE_AUDIO:
+            message_text = _("Audio");
+          break;
+          case CHATTY_MESSAGE_LOCATION:
+            message_text = _("Location");
+          break;
+          case CHATTY_MESSAGE_FILE:
+            message_text = _("File");
+          break;
+          case CHATTY_MESSAGE_MMS:
+            message_text = _("MMS Message");
+          break;
+          case CHATTY_MESSAGE_UNKNOWN:
+          case CHATTY_MESSAGE_TEXT:
+          case CHATTY_MESSAGE_HTML:
+          case CHATTY_MESSAGE_HTML_ESCAPED:
+          case CHATTY_MESSAGE_MATRIX_HTML:
+          default:
+          break;
+        }
+        if (!*message_text) {
+          GList *files = NULL;
+          files = chatty_message_get_files (message);
+          if (files && g_list_length (files) == 1)
+            message_text = _("File");
+          else if (files)
+            message_text = _("Multiple Files");
+        }
+        if (*message_text) {
+          g_autofree char *markup = NULL;
+
+          markup = g_strdup_printf ("<span style=\"italic\">\%s</span>", message_text);
+          gtk_widget_set_visible (self->subtitle, TRUE);
+          gtk_label_set_markup (GTK_LABEL (self->subtitle), markup);
+        }
+      }
     }
 
     unread_count = chatty_chat_get_unread_count (item);
