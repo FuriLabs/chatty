@@ -110,10 +110,34 @@ find_url (const char  *buffer,
     size_t url_end;
 
     url_end = strcspn (url, " \n()[],\t\r");
-    if (url_end)
+    if (url_end == strlen (url))
       *end = url + url_end;
-    else
-      *end = url + strlen (url);
+    else {
+      char *ptr = url + url_end + 1;
+
+      while (ptr[-1] == '(') {
+        size_t count = 0;
+        size_t other_count = 0;
+
+        count = strcspn (ptr, ")");
+        other_count = strcspn (ptr, " \n([],\t\r");
+        if (count < strlen (ptr) && count < other_count)
+          ptr += count + 2;
+        else
+          break;
+      }
+
+      while (!isspace(ptr[-1]) && !isspace(ptr[0]) &&
+             ptr[-1] != '(' && ptr[-1] != ')') {
+        size_t count = 0;
+
+        count = strcspn (ptr, " \n()[],\t\r");
+        ptr += count + 1;
+        if (count == strlen (ptr - count - 1))
+          break;
+      }
+      *end = ptr - 1;
+    }
   }
 
   return url;
