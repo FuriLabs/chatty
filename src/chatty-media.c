@@ -202,6 +202,9 @@ chatty_media_scale_image_to_size_sync (ChattyFile *input_file,
     }
   }
 
+    if (new_size >= desired_size)
+      g_warning ("Resized to size %" G_GSIZE_FORMAT " above size %" G_GSIZE_FORMAT, new_size, desired_size);
+
   /*
    * https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types
    */

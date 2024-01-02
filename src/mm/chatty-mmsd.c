@@ -569,6 +569,8 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
         g_warning ("Total Number of attachment %d greater then maximum number of attachments %d",
                    total_files_count,
                    self->max_num_attach);
+        chatty_mm_notify_message (_("MMS cannot be sent"),
+                                  _("Please send less attachments"));
         return NULL;
       }
     }
@@ -626,8 +628,32 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
               return NULL;
             }
             l->data = new_attachment;
+            if (chatty_file_get_size (new_attachment) > self->max_attach_size) {
+              chatty_mm_notify_message (_("MMS cannot be sent"),
+                                        _("Could not resize image to be small enough"));
+              return NULL;
+            }
           }
         }
+      }
+    }
+
+    for (GList *l = files; l != NULL; l = l->next) {
+      ChattyFile *attachment = l->data;
+      gsize total_size = 0;
+      total_size = total_size + chatty_file_get_size (attachment);
+      if (total_size > self->max_attach_size) {
+        g_autofree char *body = NULL;
+        g_warning ("Size of attachments %" G_GSIZE_FORMAT
+                   " greater then maximum attachment size %" G_GSIZE_FORMAT,
+                   total_size, self->max_attach_size);
+        body = g_strdup_printf (g_dngettext (GETTEXT_PACKAGE,
+                                             "The attachment is too large",
+                                             "Attachments are too large",
+                                             total_files_count));
+        chatty_mm_notify_message (_("MMS cannot be sent"),
+                                  body);
+        return NULL;
       }
     }
 
