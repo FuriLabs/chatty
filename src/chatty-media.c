@@ -99,14 +99,13 @@ chatty_media_scale_image_to_size_sync (ChattyFile *input_file,
 
     /*
      * Image size scales about linearly with either width or height changes
-     * Some (conservative) experimental figures for jpeg quality 80%:
-     * 2560 by 2560: ~750000 Bytes
-     * 2048 by 2048: ~500000 Bytes
-     * 1600 by 1600: ~300000 Bytes
-     * 1080 by 1080: ~150000 Bytes
-     * 720 by 720:   ~ 80000 Bytes
-     * 480 by 480:   ~ 50000 Bytes
-     * 320 by 320:   ~ 25000 Bytes
+     * Some experimental figures for jpeg quality 80%:
+     * 2048 by 2048: ~1,000,000 Bytes at 60 quality
+     * 1600 by 1600: ~  500,000 Bytes at 40 quality
+     * 1080 by 1080: ~  150,000 Bytes at 80 quality
+     * 720 by 720:   ~   80,000 Bytes at 80 quality
+     * 480 by 480:   ~   50,000 Bytes at 80 quality
+     * 320 by 320:   ~   25,000 Bytes at 80 quality
      */
 
     if (desired_size < 25000 * aspect_ratio) {
@@ -124,10 +123,8 @@ chatty_media_scale_image_to_size_sync (ChattyFile *input_file,
       size = 1080;
     else if (desired_size < 500000 * aspect_ratio)
       size = 1600;
-    else if (desired_size < 750000 * aspect_ratio)
-      size = 2048;
     else
-      size = 2560;
+      size = 2048;
 
     /* Don't grow image more than the available size */
     if (width > height) {
@@ -146,6 +143,7 @@ chatty_media_scale_image_to_size_sync (ChattyFile *input_file,
   for (const char **quality = qualities; *quality != NULL; quality++) {
     g_clear_object (&src);
 
+    g_debug ("Quality %s", *quality);
     src = gdk_pixbuf_new_from_file_at_size (chatty_file_get_path (input_file), width, height, &error);
 
     /* Make sure the pixbuf is in the correct orientation */
