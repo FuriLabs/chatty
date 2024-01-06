@@ -53,6 +53,7 @@
                 <property name="top-margin">6</property>
                 <property name="bottom-margin">6</property>
                 <property name="input-hints">word-completion</property>
+                <signal name="preedit-changed" handler="message_bar_text_view_preddit_changed_cb" swapped="yes"/>
                 <child>
                   <object class="GtkShortcutController">
                     <property name="scope">local</property>

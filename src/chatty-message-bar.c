@@ -45,6 +45,7 @@ struct _ChattyMessageBar
   guint          save_timeout_id;
   gboolean       draft_is_loading;
   gboolean       is_self_change;
+  char          *preedit;
 };
 
 
@@ -202,7 +203,9 @@ chat_page_save_message_to_db (gpointer user_data)
   ChattyMessageBar *self = user_data;
   g_autoptr(ChattyMessage) draft = NULL;
   g_autofree char *text = NULL;
+  g_autofree char *message_buffer_text = NULL;
   g_autofree char *uid = NULL;
+  int cursor_location = 0;
 
   g_assert (CHATTY_IS_MESSAGE_BAR (self));
 
@@ -211,7 +214,19 @@ chat_page_save_message_to_db (gpointer user_data)
 
   CHATTY_TRACE (chatty_chat_get_chat_name (self->chat), "Saving draft to");
 
-  g_object_get (self->message_buffer, "text", &text, NULL);
+  g_object_get (self->message_buffer,
+                "text",
+                &message_buffer_text,
+                "cursor-position",
+                &cursor_location,
+                NULL);
+  if (self->preedit && *self->preedit) {
+    GString *message_string = NULL;
+    message_string = g_string_new (message_buffer_text);
+    message_string = g_string_insert (message_string, cursor_location, self->preedit);
+    text = g_string_free (message_string, false);
+  } else
+    text = g_strdup (message_buffer_text);
 
   uid = g_uuid_string_random ();
   draft = chatty_message_new (NULL, text, uid, time (NULL),
@@ -324,15 +339,28 @@ message_bar_send_message_button_clicked_cb (ChattyMessageBar *self)
   ChattyAccount *account;
   g_autoptr(ChattyMessage) msg = NULL;
   g_autofree char *message = NULL;
+  g_autofree char *message_buffer_text = NULL;
   GtkTextIter    start, end;
   GList *files;
+  int cursor_location = 0;
 
   g_assert (CHATTY_IS_MESSAGE_BAR (self));
 
   files = chatty_attachments_bar_get_files (CHATTY_ATTACHMENTS_BAR (self->attachment_bar));
 
   gtk_text_buffer_get_bounds (self->message_buffer, &start, &end);
-  message = gtk_text_buffer_get_text (self->message_buffer, &start, &end, FALSE);
+  message_buffer_text = gtk_text_buffer_get_text (self->message_buffer, &start, &end, FALSE);
+  g_object_get (self->message_buffer,
+                "cursor-position",
+                &cursor_location,
+                NULL);
+  if (self->preedit && *self->preedit) {
+    GString *message_string = NULL;
+    message_string = g_string_new (message_buffer_text);
+    message_string = g_string_insert (message_string, cursor_location, self->preedit);
+    message = g_string_free (message_string, false);
+  } else
+    message = g_strdup (message_buffer_text);
 
 #ifdef PURPLE_ENABLED
   if (CHATTY_IS_PP_CHAT (self->chat) &&
@@ -341,6 +369,11 @@ message_bar_send_message_button_clicked_cb (ChattyMessageBar *self)
 
     gtk_widget_set_visible (self->send_message_button, FALSE);
     gtk_text_buffer_delete (self->message_buffer, &start, &end);
+    /* Make sure the text view things is necessary to reset the im context */
+    gtk_text_view_set_editable (GTK_TEXT_VIEW (self->message_input), FALSE);
+    gtk_text_view_set_editable (GTK_TEXT_VIEW (self->message_input), TRUE);
+    /* This clears preedit */
+    gtk_text_view_reset_im_context (GTK_TEXT_VIEW (self->message_input));
 
     return;
   }
@@ -352,7 +385,7 @@ message_bar_send_message_button_clicked_cb (ChattyMessageBar *self)
 
   gtk_widget_grab_focus (self->message_input);
 
-  if (gtk_text_buffer_get_char_count (self->message_buffer) || files) {
+  if (gtk_text_buffer_get_char_count (self->message_buffer) || (self->preedit && *self->preedit) || files) {
     g_autofree char *escaped = NULL;
 
 #ifdef PURPLE_ENABLED
@@ -379,8 +412,14 @@ message_bar_send_message_button_clicked_cb (ChattyMessageBar *self)
    * deleting the existing text, simply make the entry sensitive again. */
   if (CHATTY_IS_MA_CHAT (self->chat) && files)
     gtk_widget_set_sensitive (self->message_input, TRUE);
-  else
+  else {
     gtk_text_buffer_delete (self->message_buffer, &start, &end);
+    /* Make sure the text view things is necessary to reset the im context */
+    gtk_text_view_set_editable (GTK_TEXT_VIEW (self->message_input), FALSE);
+    gtk_text_view_set_editable (GTK_TEXT_VIEW (self->message_input), TRUE);
+    /* This clears preedit */
+    gtk_text_view_reset_im_context (GTK_TEXT_VIEW (self->message_input));
+  }
 
   {
     g_autoptr(ChattyMessage) draft = NULL;
@@ -395,6 +434,26 @@ message_bar_send_message_button_clicked_cb (ChattyMessageBar *self)
 
  end:
   g_clear_handle_id (&self->save_timeout_id, g_source_remove);
+}
+
+static void
+message_bar_text_view_preddit_changed_cb (ChattyMessageBar *self,
+                                          char             *preedit)
+{
+  gboolean has_text, has_files;
+  g_clear_pointer (&self->preedit, g_free);
+  if (preedit && *preedit)
+    self->preedit = g_strdup (preedit);
+
+  has_text = (gtk_text_buffer_get_char_count (self->message_buffer) > 0) || (self->preedit && *self->preedit);
+  has_files = gtk_revealer_get_reveal_child (GTK_REVEALER (self->attachment_revealer));
+  gtk_widget_set_visible (self->send_message_button, has_text || has_files);
+
+  g_clear_handle_id (&self->save_timeout_id, g_source_remove);
+  if (!self->draft_is_loading)
+    self->save_timeout_id = g_timeout_add (SAVE_TIMEOUT,
+                                           chat_page_save_message_to_db,
+                                           self);
 }
 
 static void
@@ -463,6 +522,7 @@ chatty_message_bar_class_init (ChattyMessageBarClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, message_bar_input_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, message_bar_send_file_button_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, message_bar_send_message_button_clicked_cb);
+  gtk_widget_class_bind_template_callback (widget_class, message_bar_text_view_preddit_changed_cb);
 
   gtk_widget_class_install_action (widget_class, "message-bar.activate", NULL, message_bar_activate);
 }
