@@ -423,6 +423,7 @@ pp_chat_load_db_messages_cb (GObject      *object,
       chatty_pp_chat_get_auto_join (self)) {
     g_list_store_splice (self->message_store, 0, 0, messages->pdata, messages->len);
     g_signal_emit_by_name (self, "changed", 0);
+    g_object_notify (G_OBJECT (self), "last-message-time");
   } else if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
    g_warning ("Error fetching messages: %s,", error->message);
  }
@@ -1368,6 +1369,7 @@ chatty_pp_chat_append_message (ChattyPpChat  *self,
   g_list_store_append (self->message_store, message);
   g_signal_emit_by_name (self, "changed", 0);
   g_signal_emit_by_name (self, "message-added");
+  g_object_notify (G_OBJECT (self), "last-message-time");
 }
 
 void
@@ -1384,6 +1386,7 @@ chatty_pp_chat_prepend_messages (ChattyPpChat *self,
   g_list_store_splice (self->message_store, 0, 0, messages->pdata, messages->len);
   g_signal_emit_by_name (self, "changed", 0);
   g_signal_emit_by_name (self, "message-added");
+  g_object_notify (G_OBJECT (self), "last-message-time");
 }
 
 /**
