@@ -1085,7 +1085,6 @@ chatty_conv_write_conversation (PurpleConversation *conv,
       chat_message = chatty_message_new (NULL, message, uuid, 0, CHATTY_MESSAGE_HTML_ESCAPED,
                                          CHATTY_DIRECTION_SYSTEM, 0);
       chatty_pp_chat_append_message (chat, chat_message);
-      g_signal_emit_by_name (chat, "message-added");
     } else if (pcm.flags & PURPLE_MESSAGE_RECV) {
       g_autoptr(ChattyContact) contact = NULL;
       ChattyPpChat *active_chat;
@@ -1098,7 +1097,6 @@ chatty_conv_write_conversation (PurpleConversation *conv,
       chat_message = chatty_message_new (CHATTY_ITEM (contact), message, uuid, mtime,
                                          CHATTY_MESSAGE_HTML_ESCAPED, CHATTY_DIRECTION_IN, 0);
       chatty_pp_chat_append_message (chat, chat_message);
-      g_signal_emit_by_name (chat, "message-added");
 
       if (buddy && purple_blist_node_get_bool (node, "chatty-notifications") &&
           active_chat != chat) {
@@ -1114,7 +1112,6 @@ chatty_conv_write_conversation (PurpleConversation *conv,
                                          CHATTY_DIRECTION_OUT, 0);
       chatty_message_set_status (chat_message, CHATTY_STATUS_SENT, 0);
       chatty_pp_chat_append_message (chat, chat_message);
-      g_signal_emit_by_name (chat, "message-added");
 
       chatty_chat_set_unread_count (CHATTY_CHAT (chat), 0);
     } else if (pcm.flags & PURPLE_MESSAGE_SEND) {
@@ -1126,7 +1123,6 @@ chatty_conv_write_conversation (PurpleConversation *conv,
                                          CHATTY_DIRECTION_OUT, 0);
       chatty_message_set_status (chat_message, CHATTY_STATUS_SENT, 0);
       chatty_pp_chat_append_message (chat, chat_message);
-      g_signal_emit_by_name (chat, "message-added");
 
       if (mtime > chatty_history_get_last_message_time (self->history, account->username, pcm.who))
         chatty_chat_set_unread_count (CHATTY_CHAT (chat), 0);

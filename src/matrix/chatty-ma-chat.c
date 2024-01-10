@@ -831,7 +831,6 @@ events_list_changed_cb (ChattyMaChat *self,
    */
   if (chatty_chat_get_unread_count (CHATTY_CHAT (self)))
     chatty_chat_show_notification (CHATTY_CHAT (self), NULL);
-  g_signal_emit_by_name (self, "message-added", 0);
   g_signal_emit_by_name (self, "changed", 0);
   g_object_notify (G_OBJECT (self), "last-message-time");
 }

@@ -169,7 +169,6 @@ mm_chat_load_db_messages_cb (GObject      *object,
   if (messages && messages->len) {
     g_list_store_splice (self->message_store, 0, 0, messages->pdata, messages->len);
     g_signal_emit_by_name (self, "changed", 0);
-    g_signal_emit_by_name (self, "message-added");
     g_object_notify (G_OBJECT (self), "last-message-time");
   } else if (error &&
              !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED) &&
@@ -768,7 +767,6 @@ chatty_mm_chat_append_message (ChattyMmChat  *self,
   g_list_store_append (self->message_store, message);
   g_signal_emit_by_name (self, "changed", 0);
   g_object_notify (G_OBJECT (self), "last-message-time");
-  g_signal_emit_by_name (self, "message-added");
 }
 
 void
@@ -784,7 +782,6 @@ chatty_mm_chat_prepend_messages (ChattyMmChat *self,
 
   g_list_store_splice (self->message_store, 0, 0, messages->pdata, messages->len);
   g_signal_emit_by_name (self, "changed", 0);
-  g_signal_emit_by_name (self, "message-added");
   g_object_notify (G_OBJECT (self), "last-message-time");
 }
 
