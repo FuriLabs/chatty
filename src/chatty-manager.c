@@ -102,35 +102,6 @@ manager_add_to_flat_model (GtkFlattenListModel *flatten_model,
   g_list_store_append (G_LIST_STORE (parent), model);
 }
 
-static int
-manager_sort_chat_item (ChattyChat *a,
-                        ChattyChat *b,
-                        gpointer    user_data)
-{
-  ChattyChatState a_state, b_state;
-  time_t a_time, b_time;
-
-  g_assert (CHATTY_IS_CHAT (a));
-  g_assert (CHATTY_IS_CHAT (b));
-
-  a_state = chatty_chat_get_chat_state (a);
-  b_state = chatty_chat_get_chat_state (b);
-
-  if (a_state == CHATTY_CHAT_VERIFICATION ||
-      b_state == CHATTY_CHAT_VERIFICATION)
-    return a_state == CHATTY_CHAT_VERIFICATION ? -1 : 1;
-
-  if (a_state != b_state &&
-      (a_state == CHATTY_CHAT_INVITED ||
-       b_state == CHATTY_CHAT_INVITED))
-    return a_state == CHATTY_CHAT_INVITED ? -1 : 1;
-
-  a_time = chatty_chat_get_last_msg_time (a);
-  b_time = chatty_chat_get_last_msg_time (b);
-
-  return difftime (b_time, a_time);
-}
-
 static gboolean
 manager_filter_chat_item (ChattyItem *item)
 {
@@ -308,52 +279,8 @@ manager_mm_account_changed_cb (ChattyManager *self)
 }
 
 static void
-manager_chat_message_added_cb (ChattyManager *self,
-                               ChattyChat    *chat)
-{
-  GListModel *model;
-  guint position;
-
-  g_assert (CHATTY_IS_MANAGER (self));
-
-  model = gtk_sort_list_model_get_model (self->sorted_chat_list);
-
-  if (chatty_utils_get_item_position (model, chat, &position))
-    g_list_model_items_changed (model, position, 1, 1);
-}
-
-static void
-manager_chat_list_items_changed (ChattyManager *self,
-                                 guint          position,
-                                 guint          removed,
-                                 guint          added,
-                                 GListModel    *model)
-{
-  if (!added)
-    return;
-
-  g_assert (CHATTY_IS_MANAGER (self));
-
-  for (guint i = position; i < position + added; i++) {
-    g_autoptr(ChattyChat) chat = NULL;
-    gulong signal;
-
-    chat = g_list_model_get_item (model, i);
-    if (g_object_get_data (G_OBJECT (chat), "message-added-id"))
-      continue;
-
-    signal = g_signal_connect_object (chat, "message-added",
-                                      G_CALLBACK (manager_chat_message_added_cb),
-                                      self, G_CONNECT_SWAPPED);
-    g_object_set_data (G_OBJECT (chat), "message-added-id", GINT_TO_POINTER (signal));
-  }
-}
-
-static void
 chatty_manager_init (ChattyManager *self)
 {
-  GtkCustomSorter *sorter;
-
   self->chatty_eds = chatty_eds_new (CHATTY_PROTOCOL_MMS_SMS);
   self->mm_account = chatty_mm_account_new ();
 
@@ -367,20 +294,35 @@ chatty_manager_init (ChattyManager *self)
 
   self->accounts = manager_new_flatten_list (CHATTY_TYPE_ACCOUNT);
   self->contact_list = manager_new_flatten_list (G_TYPE_OBJECT);
-  self->chat_list = manager_new_flatten_list (G_TYPE_OBJECT);
+  self->chat_list = manager_new_flatten_list (CHATTY_TYPE_CHAT);
   manager_add_to_flat_model (self->contact_list, chatty_eds_get_model (self->chatty_eds));
 
-  sorter = gtk_custom_sorter_new ((GCompareDataFunc)manager_sort_chat_item, NULL, NULL);
-  self->sorted_chat_list = gtk_sort_list_model_new (g_object_ref (G_LIST_MODEL (self->chat_list)),
-                                                    GTK_SORTER (sorter));
-
   self->chat_filter = gtk_custom_filter_new ((GtkCustomFilterFunc)manager_filter_chat_item, NULL, NULL);
-  self->filtered_chat_list = gtk_filter_list_model_new (g_object_ref (G_LIST_MODEL (self->sorted_chat_list)),
+  self->filtered_chat_list = gtk_filter_list_model_new (g_object_ref (G_LIST_MODEL (self->chat_list)),
                                                         g_object_ref (GTK_FILTER (self->chat_filter)));
+  {
+    GtkMultiSorter *multi_sorter;
+    GtkNumericSorter *sorter;
+    GtkExpression *exp;
+    GListModel *chats;
 
-  g_signal_connect_object (self->chat_list, "items-changed",
-                           G_CALLBACK (manager_chat_list_items_changed),
-                           self, G_CONNECT_SWAPPED);
+    multi_sorter = gtk_multi_sorter_new ();
+
+    /* The order if sorters added matters */
+    /* We need to sort by chat-state first and then the message time */
+    exp = gtk_property_expression_new (CHATTY_TYPE_CHAT, NULL, "chat-state");
+    sorter = gtk_numeric_sorter_new (exp);
+    gtk_multi_sorter_append (multi_sorter, GTK_SORTER (sorter));
+
+    exp = gtk_property_expression_new (CHATTY_TYPE_CHAT, NULL, "last-message-time");
+    sorter = gtk_numeric_sorter_new (exp);
+    gtk_numeric_sorter_set_sort_order (sorter, GTK_SORT_DESCENDING);
+    gtk_multi_sorter_append (multi_sorter, GTK_SORTER (sorter));
+
+    chats = g_object_ref (G_LIST_MODEL (self->filtered_chat_list));
+    self->sorted_chat_list = gtk_sort_list_model_new (chats, GTK_SORTER (multi_sorter));
+  }
+
   g_signal_connect_object (self, "notify::active-protocols",
                            G_CALLBACK (manager_active_protocols_changed_cb),
                            self, G_CONNECT_SWAPPED);
@@ -470,7 +412,7 @@ chatty_manager_get_chat_list (ChattyManager *self)
 {
   g_return_val_if_fail (CHATTY_IS_MANAGER (self), NULL);
 
-  return G_LIST_MODEL (self->filtered_chat_list);
+  return G_LIST_MODEL (self->sorted_chat_list);
 }
 
 /**
