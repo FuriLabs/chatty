@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-01-07 12:01+0000\n"
-"PO-Revision-Date: 2024-01-08 15:00+0300\n"
+"POT-Creation-Date: 2024-01-09 04:00+0000\n"
+"PO-Revision-Date: 2024-01-09 21:01+0300\n"
 "Last-Translator: Artur So <arturios2005@mail.ru>\n"
 "Language-Team: Russian\n"
 "Language: ru\n"
@@ -1047,23 +1047,44 @@ msgstr "Ошибка при доставке сообщения в %s"
 msgid "See logs for more details"
 msgstr "Смотрите журналы для получения более подробной информации"
 
+#: src/mm/chatty-mmsd.c:572 src/mm/chatty-mmsd.c:632 src/mm/chatty-mmsd.c:654
+msgid "MMS cannot be sent"
+msgstr "Невозможно отправить MMS"
+
+#: src/mm/chatty-mmsd.c:573
+msgid "Please send less attachments"
+msgstr "Отправьте меньше вложений"
+
+#: src/mm/chatty-mmsd.c:633
+msgid "Could not resize image to be small enough"
+msgstr ""
+"Не удалось изменить размер изображения, чтобы оно стало достаточно маленьким"
+
+#: src/mm/chatty-mmsd.c:651
+#, c-format
+msgid "The attachment is too large"
+msgid_plural "Attachments are too large"
+msgstr[0] "Вложение слишком большое"
+msgstr[1] "Вложения слишком большие"
+msgstr[2] "Вложения слишком большие"
+
 #. TRANSLATORS: Timestamp for minute accuracy, e.g. “2020-08-11 15:27”.
 #. See https://developer.gnome.org/glib/stable/glib-GDateTime.html#g-date-time-format
 #.
-#: src/mm/chatty-mmsd.c:922
+#: src/mm/chatty-mmsd.c:948
 msgid "%Y-%m-%d %H∶%M"
 msgstr "%H∶%M %Y-%m-%d"
 
-#: src/mm/chatty-mmsd.c:1236
+#: src/mm/chatty-mmsd.c:1262
 #, c-format
 msgid "You received an MMS, but it expired on: %s"
 msgstr "Вы получили MMS, но срок его действия истек: %s"
 
-#: src/mm/chatty-mmsd.c:1239
+#: src/mm/chatty-mmsd.c:1265
 msgid "You received an empty MMS."
 msgstr "Вы получили пустое MMS."
 
-#: src/mm/chatty-mmsd.c:1715 src/mm/chatty-mmsd.c:1761
+#: src/mm/chatty-mmsd.c:1741 src/mm/chatty-mmsd.c:1787
 #, c-format
 msgid "Automatically Retrying for  %i MMS"
 msgid_plural "Automatically Retrying for  %i MMSes..."
@@ -1071,35 +1092,35 @@ msgstr[0] "Автоматическая повторная попытка для
 msgstr[1] "Автоматическая повторная попытка для %i MMSes..."
 msgstr[2] "Автоматическая повторная попытка для %i MMSes..."
 
-#: src/mm/chatty-mmsd.c:1720
+#: src/mm/chatty-mmsd.c:1746
 msgid "Temporary Error Sending MMS"
 msgstr "Временная ошибка при отправке MMS"
 
-#: src/mm/chatty-mmsd.c:1766
+#: src/mm/chatty-mmsd.c:1792
 msgid "Temporary Error Receiving MMS"
 msgstr "Временная ошибка при получении MMS"
 
-#: src/mm/chatty-mmsd.c:1982
+#: src/mm/chatty-mmsd.c:2008
 msgid "MMSC is not configured"
 msgstr "MMSC не настроен"
 
-#: src/mm/chatty-mmsd.c:1985
+#: src/mm/chatty-mmsd.c:2011
 msgid "APN is not configured correctly"
 msgstr "APN настроен неправильно"
 
-#: src/mm/chatty-mmsd.c:1988
+#: src/mm/chatty-mmsd.c:2014
 msgid "Mobile Data is not configured"
 msgstr "Мобильные данные не настроены"
 
-#: src/mm/chatty-mmsd.c:1991
+#: src/mm/chatty-mmsd.c:2017
 msgid "Mobile Data is off"
 msgstr "Мобильные данные отключены"
 
-#: src/mm/chatty-mmsd.c:1994
+#: src/mm/chatty-mmsd.c:2020
 msgid "Unknown Error"
 msgstr "Неизвестная ошибка"
 
-#: src/mm/chatty-mmsd.c:1999
+#: src/mm/chatty-mmsd.c:2025
 #, c-format
 msgid "Chatty cannot process %i MMS"
 msgid_plural "Chatty cannot process %i MMSes..."
