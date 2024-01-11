@@ -1,14 +1,14 @@
 # Chatty Creole Haitian translation
-# Copyright (C) 2021 Purism
-# This file is distributed under the same license as the Chatty package.
-# Pierre Michel Augustin <augustinpierremichel@hotmail.com>, 2021.
+# Copyright (C) 2024 Purism
+# This file is distributed under the same license as the chatty package.
+# Pierre Michel Augustin <pierremichelaugustin@gnuhealth.org>, 2024.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-01-09 04:00+0000\n"
-"PO-Revision-Date: 2024-01-10 23:25-0500\n"
+"POT-Creation-Date: 2024-01-11 05:21+0000\n"
+"PO-Revision-Date: 2024-01-11 10:36-0500\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ht_HT\n"
@@ -22,7 +22,7 @@ msgstr ""
 #: src/chatty-application.c:164 src/chatty-application.c:403
 #: src/chatty-side-bar.c:347 src/ui/chatty-side-bar.ui:16
 msgid "Chats"
-msgstr "Chat"
+msgstr "Chat yo"
 
 #: data/sm.puri.Chatty.desktop.in.in:6
 msgid "SMS and XMPP chat application"
@@ -34,7 +34,7 @@ msgstr "XMPP; SMS; chat; jabber; mesaj; modèm"
 
 #: data/sm.puri.Chatty.gschema.xml:7 data/sm.puri.Chatty.gschema.xml:8
 msgid "Whether the application is launching the first time"
-msgstr "Si ou vle aplikasyon an lanse premye fwa"
+msgstr "Fòk aplikasyon an lanse premye fwa"
 
 #: data/sm.puri.Chatty.gschema.xml:13
 msgid "Country code in ISO 3166-1 alpha-2 format"
@@ -58,7 +58,7 @@ msgstr "Kopi mesaj kabòn yo"
 
 #: data/sm.puri.Chatty.gschema.xml:26 src/ui/chatty-settings-dialog.ui:511
 msgid "Share chat history among devices"
-msgstr "Pataje dewoulman chat ant plizyè  aparèy"
+msgstr "Pataje dewoulman chat ant plizyè aparèy yo"
 
 #: data/sm.puri.Chatty.gschema.xml:31
 msgid "Enable Message Archive Management"
@@ -78,19 +78,19 @@ msgstr "Aktive tout kont wouj violèt yo"
 
 #: data/sm.puri.Chatty.gschema.xml:43
 msgid "Send typing notifications"
-msgstr "Voye notifikasyon tape"
+msgstr "Voye notifikasyon ekri"
 
 #: data/sm.puri.Chatty.gschema.xml:44
 msgid "Whether to Send typing notifications"
-msgstr "Si ou vle voye notifikasyon tape"
+msgstr "Fòk voye notifikasyon ekri"
 
 #: data/sm.puri.Chatty.gschema.xml:49 src/ui/chatty-settings-dialog.ui:173
 msgid "Strip Tracking IDs"
-msgstr "Tras bann ID"
+msgstr "Tras bann ID yo"
 
 #: data/sm.puri.Chatty.gschema.xml:50
 msgid "Whether to Remove Tracking IDs from URLs Automatically"
-msgstr "Fok yo retire tras bann ID nan URL yo Otomatikman"
+msgstr "Fòk yo retire tras bann ID yo nan URL yo Otomatikman"
 
 #: data/sm.puri.Chatty.gschema.xml:55 src/ui/chatty-settings-dialog.ui:187
 msgid "Render Attachments"
@@ -98,7 +98,7 @@ msgstr "Rèmèt atachman yo"
 
 #: data/sm.puri.Chatty.gschema.xml:56
 msgid "Whether to Render Attachments or not"
-msgstr "Fok yo rèmèt atachman oswa non"
+msgstr "Fòk yo rèmèt atachman oswa non"
 
 #: data/sm.puri.Chatty.gschema.xml:61 data/sm.puri.Chatty.gschema.xml:62
 msgid "Mark Idle users differently"
@@ -122,7 +122,7 @@ msgstr "Peze bouton antre pou voye mesaj la"
 
 #: data/sm.puri.Chatty.gschema.xml:80
 msgid "Whether pressing Enter key sends the message"
-msgstr "Si ou vle peze bouton antre pou oye mesaj la"
+msgstr "Fòk peze bouton antre pou voye mesaj la"
 
 #: data/sm.puri.Chatty.gschema.xml:85
 msgid "Request SMS delivery reports"
@@ -130,7 +130,7 @@ msgstr "Mande rapò livrezon SMS"
 
 #: data/sm.puri.Chatty.gschema.xml:86
 msgid "Whether to request delivery reports for outgoing SMS"
-msgstr "Fok rapò livrezon pou mande pou SMS sortan"
+msgstr "Fòk rapò livrezon mande pou SMS sortan"
 
 #: data/sm.puri.Chatty.gschema.xml:91
 msgid "Enable experimental features"
@@ -158,7 +158,7 @@ msgstr "Gwosè fenèt (lajè, wotè)."
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:7
 msgid "Messaging application for mobile and desktop"
-msgstr "Aplikasyon mesaj pou mobil ak Desktop"
+msgstr "Aplikasyon mesaj pou mobil ak desktop"
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:9
 msgid ""
@@ -186,11 +186,11 @@ msgstr "Dezaktive tout kont yo"
 
 #: src/chatty-application.c:83
 msgid "Enable libpurple debug messages"
-msgstr "Aktive korije mesaj libpurple"
+msgstr "Aktive mesaj debug libpurple"
 
 #: src/chatty-application.c:86
 msgid "Enable verbose debug messages (repeat option for more verbosity)"
-msgstr "Pèmèt mesaj debug detaye (opsyon repete pou plis detay)"
+msgstr "Aktive mesaj debug detaye (opsyon repete pou plis detay)"
 
 #: src/chatty-application.c:167
 msgid "An SMS and XMPP messaging client"
@@ -198,7 +198,7 @@ msgstr "Yon mesaj kliyan SMS ak XMPP"
 
 #: src/chatty-application.c:175
 msgid "translator-credits"
-msgstr "tradiktè-kredi"
+msgstr "tradiktè-kredi yo"
 
 #: src/chatty-application.c:198
 #, c-format
@@ -233,7 +233,7 @@ msgstr "Eseye rechèch diferan"
 
 #: src/chatty-chat-list.c:220
 msgid "No archived chats"
-msgstr "Pa gen achiv chat"
+msgstr "Pa gen achiv chats"
 
 #: src/chatty-chat-list.c:222
 msgid "Start Chatting"
@@ -246,15 +246,15 @@ msgstr "Sa a se yon konvèsasyon pa SMS"
 #: src/chatty-chat-page.c:203 src/chatty-chat-page.c:218
 #: src/chatty-chat-page.c:224
 msgid "Your messages are not encrypted, and carrier rates may apply"
-msgstr "Mesaj ou yo pa chifre, epi konpayi asirans yo ka aplike"
+msgstr "Mesaj ou yo pa chifre, epi konpayi telefòn yo ka pran pousantaj"
 
 #: src/chatty-chat-page.c:213
 msgid "This is an SMS/MMS conversation"
-msgstr "Sa a se yon konvèsasyon pa SMS"
+msgstr "Sa a se yon konvèsasyon SMS/MMS"
 
 #: src/chatty-chat-page.c:216
 msgid "This is an SMS conversation"
-msgstr "Sa a se yon konvèsasyon pa SMS"
+msgstr "Sa a se yon konvèsasyon SMS"
 
 #: src/chatty-chat-page.c:222
 msgid "This is an IM conversation"
@@ -384,7 +384,7 @@ msgstr "Odyo"
 
 #: src/chatty-list-row.c:259
 msgid "Location"
-msgstr "Kote"
+msgstr "Lokasyon"
 
 #: src/chatty-list-row.c:262 src/chatty-list-row.c:279
 msgid "File"
@@ -431,7 +431,7 @@ msgstr "Resevwa Mesaj"
 
 #: src/chatty-side-bar.c:317
 msgid "Any Protocol"
-msgstr "Nenpòt pwotokòl"
+msgstr "Nenpòt Pwotokòl"
 
 #: src/chatty-side-bar.c:318 src/ui/chatty-settings-dialog.ui:581
 msgid "Matrix"
@@ -547,7 +547,7 @@ msgstr "Pengwen"
 #. "U+1F427"
 #: src/chatty-verification-page.c:38
 msgid "Turtle"
-msgstr "Toti"
+msgstr "Tòti"
 
 #. "U+1F422"
 #: src/chatty-verification-page.c:39
@@ -612,7 +612,7 @@ msgstr "Bannann"
 #. "U+1F34C"
 #: src/chatty-verification-page.c:51
 msgid "Apple"
-msgstr "Pom"
+msgstr "Pòm"
 
 #. "U+1F34E"
 #: src/chatty-verification-page.c:52
@@ -787,12 +787,12 @@ msgstr "Twonpèt"
 #. "U+1F3BA"
 #: src/chatty-verification-page.c:86
 msgid "Bell"
-msgstr "Kloch"
+msgstr "Klòch"
 
 #. "U+1F514"
 #: src/chatty-verification-page.c:87
 msgid "Anchor"
-msgstr "Ancre"
+msgstr "Ank"
 
 #. "U+2693"
 #: src/chatty-verification-page.c:88
@@ -895,7 +895,7 @@ msgstr[1] "%u Manm yo"
 
 #: src/dialogs/chatty-pp-chat-info.c:308
 msgid "Phone Number:"
-msgstr "Nimewo telefòn:"
+msgstr "Nimewo Telefòn:"
 
 #: src/dialogs/chatty-pp-chat-info.c:310
 msgid "XMPP ID:"
@@ -957,11 +957,11 @@ msgstr "Erè nan anrejistreman kont: %s"
 #: src/dialogs/chatty-settings-dialog.c:244
 #, c-format
 msgid "Failed to verify server: %s"
-msgstr "Echwe nan verifye sèvè: %s"
+msgstr "Te echwe nan verifye sèvè: %s"
 
 #: src/dialogs/chatty-settings-dialog.c:246
 msgid "Failed to verify server"
-msgstr "Echwe nan verifye sèvè a"
+msgstr "Te echwe nan verifye sèvè a"
 
 #: src/dialogs/chatty-settings-dialog.c:252
 msgid "Couldn't get Home server address"
@@ -994,12 +994,12 @@ msgstr "Aktive plugin koulè wouj violèt"
 #: src/dialogs/chatty-settings-dialog.c:639
 #: src/ui/chatty-settings-dialog.ui:246
 msgid "SMS and MMS Settings"
-msgstr "Paramet SMS ak MMS"
+msgstr "Paramèt SMS ak MMS"
 
 #: src/dialogs/chatty-settings-dialog.c:641
 #: src/ui/chatty-settings-dialog.ui:264
 msgid "Purple Settings"
-msgstr "Paramet koulè wouj violèt"
+msgstr "Paramèt koulè wouj violèt"
 
 #: src/dialogs/chatty-settings-dialog.c:643
 msgid "New Account"
@@ -1008,11 +1008,11 @@ msgstr "Nouvo Kont"
 #: src/dialogs/chatty-settings-dialog.c:645
 #: src/ui/chatty-settings-dialog.ui:324
 msgid "Blocked Contacts"
-msgstr "Bloke Kontak yo"
+msgstr "Te bloke Kontak yo"
 
 #: src/dialogs/chatty-settings-dialog.c:647 src/ui/chatty-side-bar.ui:115
 msgid "Preferences"
-msgstr "Preferans"
+msgstr "Preferans yo"
 
 #: src/dialogs/chatty-settings-dialog.c:675
 msgid "Select Protocol"
@@ -1051,7 +1051,7 @@ msgstr "Tanpri voye mwens atachman"
 
 #: src/mm/chatty-mmsd.c:633
 msgid "Could not resize image to be small enough"
-msgstr "Pa te kapab redimensionner imaj yo dwe piti ase"
+msgstr "Pa te kapab redimansyone imaj yo dwe piti ase"
 
 #: src/mm/chatty-mmsd.c:651
 #, c-format
@@ -1101,11 +1101,11 @@ msgstr "APN pa konfigire kòrèkteman"
 
 #: src/mm/chatty-mmsd.c:2014
 msgid "Mobile Data is not configured"
-msgstr "Done mobil yo pa konfigire"
+msgstr "Done Mobil pa konfigire"
 
 #: src/mm/chatty-mmsd.c:2017
 msgid "Mobile Data is off"
-msgstr "Done mobil yo dezaktive"
+msgstr "Done Mobil yo fèmen"
 
 #: src/mm/chatty-mmsd.c:2020
 msgid "Unknown Error"
@@ -1170,7 +1170,7 @@ msgstr "Chwazi kont chat"
 
 #: src/ui/chatty-dialog-join-muc.ui:122
 msgid "Password (optional)"
-msgstr "Mo de pas (si ou vle)"
+msgstr "Mo de pas (opsyonel)"
 
 #: src/ui/chatty-dialog-new-chat.ui:77
 msgid "Group Title"
@@ -1190,7 +1190,7 @@ msgstr "ID Kontak"
 
 #: src/ui/chatty-dialog-new-chat.ui:226
 msgid "Name (optional)"
-msgstr "Non (si ou vle)"
+msgstr "Non (opsyonel)"
 
 #: src/ui/chatty-dialog-new-chat.ui:263
 msgid "Add to Contacts"
@@ -1226,7 +1226,7 @@ msgstr "ID Matrix"
 
 #: src/ui/chatty-ma-chat-info.ui:89 src/ui/chatty-pp-chat-info.ui:242
 msgid "Chat settings"
-msgstr "Paramet Chat yo"
+msgstr "Paramèt Chat yo"
 
 #: src/ui/chatty-ma-chat-info.ui:107 src/ui/chatty-pp-chat-info.ui:193
 #: src/ui/chatty-pp-chat-info.ui:292
@@ -1305,7 +1305,7 @@ msgstr "Estati"
 
 #: src/ui/chatty-pp-chat-info.ui:262
 msgid "Notifications"
-msgstr "Notifikasyon"
+msgstr "Notifikasyon yo"
 
 #: src/ui/chatty-pp-chat-info.ui:277
 msgid "Status Messages"
@@ -1313,11 +1313,11 @@ msgstr "Estati Mesaj yo"
 
 #: src/ui/chatty-pp-chat-info.ui:278
 msgid "Show status messages in chat"
-msgstr "Montre estati  mesaj nan chat"
+msgstr "Montre estati mesaj yo nan chat"
 
 #: src/ui/chatty-pp-chat-info.ui:313
 msgid "Fingerprints"
-msgstr "Anprent"
+msgstr "Anprent yo"
 
 #: src/ui/chatty-mm-chat-info.ui:20
 msgid "Title"
@@ -1333,7 +1333,7 @@ msgstr "Gwoup manm yo"
 
 #: src/ui/chatty-list-row.ui:33
 msgid "Copy Number"
-msgstr "Kopye nimewo"
+msgstr "Kopye Nimewo"
 
 #: src/ui/chatty-ma-account-details.ui:78
 msgid "Name"
@@ -1369,7 +1369,7 @@ msgstr "Pwotokòl"
 
 #: src/ui/chatty-pp-account-details.ui:168
 msgid "Own Fingerprint"
-msgstr "Anprent pèsonèl"
+msgstr "Anprent Pèsonèl"
 
 #: src/ui/chatty-settings-dialog.ui:39
 msgid "_Add"
@@ -1393,7 +1393,7 @@ msgstr "Vi prive"
 
 #: src/ui/chatty-settings-dialog.ui:145
 msgid "Message Receipts"
-msgstr "Resi mesaj"
+msgstr "Resi mesaj yo"
 
 #: src/ui/chatty-settings-dialog.ui:146
 msgid "Confirm received messages"
@@ -1401,15 +1401,15 @@ msgstr "Konfime lè yo resevwa mesaj yo"
 
 #: src/ui/chatty-settings-dialog.ui:159
 msgid "Typing Notification"
-msgstr "Ap tape Notifikasyon"
+msgstr "Ap ekri Notifikasyon"
 
 #: src/ui/chatty-settings-dialog.ui:160
 msgid "Send typing messages"
-msgstr "Voye mesaj tape"
+msgstr "Voye mesaj ekri"
 
 #: src/ui/chatty-settings-dialog.ui:174
 msgid "Strip Tracking IDs from URLs"
-msgstr "Retire ID tras soti nan URL yo"
+msgstr "Retire tras ID yo ki soti nan URL yo"
 
 #: src/ui/chatty-settings-dialog.ui:188
 msgid "Render Attachments from Messages"
@@ -1421,11 +1421,11 @@ msgstr "Editè"
 
 #: src/ui/chatty-settings-dialog.ui:208
 msgid "Graphical Emoticons"
-msgstr "Emotikòn grafik"
+msgstr "Emotikòn grafik yo"
 
 #: src/ui/chatty-settings-dialog.ui:209
 msgid "if you type :) it will be changed to 😃"
-msgstr "si w tape :) li pral chanje an 😃"
+msgstr "si w ekri :) li pral chanje an 😃"
 
 #. TRANSLATORS: Return is the Enter key.
 #: src/ui/chatty-settings-dialog.ui:222
@@ -1523,7 +1523,7 @@ msgstr "Ede"
 
 #: src/ui/chatty-side-bar.ui:137
 msgid "About Chats"
-msgstr "Konsènan Chat yo"
+msgstr "Konsènan Chats"
 
 #: src/ui/chatty-side-bar.ui:158
 msgid "New Message…"
