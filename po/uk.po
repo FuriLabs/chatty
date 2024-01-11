@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-01-01 04:19+0000\n"
-"PO-Revision-Date: 2024-01-01 13:07+0200\n"
+"POT-Creation-Date: 2024-01-11 04:31+0000\n"
+"PO-Revision-Date: 2024-01-11 21:27+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -16,8 +16,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Lokalize 23.04.1\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<"
+"=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 
 #: data/sm.puri.Chatty.desktop.in.in:3 data/sm.puri.Chatty.metainfo.xml.in.in:6
 #: src/chatty-application.c:164 src/chatty-application.c:403
@@ -93,8 +93,7 @@ msgstr "Вилучити ідентифікатори стеження"
 
 #: data/sm.puri.Chatty.gschema.xml:50
 msgid "Whether to Remove Tracking IDs from URLs Automatically"
-msgstr ""
-"Визначає, чи слід автоматично вилучати з адрес ідентифікатори стеження"
+msgstr "Визначає, чи слід автоматично вилучати з адрес ідентифікатори стеження"
 
 #: data/sm.puri.Chatty.gschema.xml:55 src/ui/chatty-settings-dialog.ui:187
 msgid "Render Attachments"
@@ -248,7 +247,6 @@ msgid "Start Chatting"
 msgstr "Почати спілкування"
 
 #: src/chatty-chat-page.c:201 src/chatty-chat-page.c:210
-#| msgid "This is an SMS conversation"
 msgid "This is an MMS conversation"
 msgstr "Це обмін повідомленнями MMS"
 
@@ -260,7 +258,6 @@ msgstr ""
 "передавання даних"
 
 #: src/chatty-chat-page.c:213
-#| msgid "This is an SMS conversation"
 msgid "This is an SMS/MMS conversation"
 msgstr "Це обмін повідомленнями SMS/MMS"
 
@@ -398,7 +395,6 @@ msgid "Audio"
 msgstr "Звук"
 
 #: src/chatty-list-row.c:259
-#| msgid "Notifications"
 msgid "Location"
 msgstr "Місце"
 
@@ -407,7 +403,6 @@ msgid "File"
 msgstr "Файл"
 
 #: src/chatty-list-row.c:265
-#| msgid "Open Message"
 msgid "MMS Message"
 msgstr "Повідомлення MMS"
 
@@ -842,7 +837,6 @@ msgid "Cancel"
 msgstr "Скасувати"
 
 #: src/chatty-window.c:348
-#| msgid "C_ontinue"
 msgid "Continue"
 msgstr "Продовжити"
 
@@ -971,7 +965,6 @@ msgstr "від'єднано"
 
 #: src/dialogs/chatty-settings-dialog.c:194
 #, c-format
-#| msgid "Error opening GNOME Contacts: %s"
 msgid "Error saving account: %s"
 msgstr "Помилка під час спроби зберегти обліковий запис: %s"
 
@@ -989,7 +982,6 @@ msgid "Couldn't get Home server address"
 msgstr "Не вдалося отримати адресу домашнього сервера."
 
 #: src/dialogs/chatty-settings-dialog.c:443
-#| msgid "_OK"
 msgid "OK"
 msgstr "Гаразд"
 
@@ -1063,23 +1055,45 @@ msgstr "Помилка під час спроби доставити повід�
 msgid "See logs for more details"
 msgstr "Див. журнал, щоб дізнатися більше"
 
+#: src/mm/chatty-mmsd.c:572 src/mm/chatty-mmsd.c:632 src/mm/chatty-mmsd.c:654
+msgid "MMS cannot be sent"
+msgstr "Не вдалося надіслати MMS"
+
+#: src/mm/chatty-mmsd.c:573
+#| msgid "Render Attachments"
+msgid "Please send less attachments"
+msgstr "Будь ласка, зменшіть об'єм долучень"
+
+#: src/mm/chatty-mmsd.c:633
+msgid "Could not resize image to be small enough"
+msgstr "Не вдалося змінити розміри зображення на достатньо малі"
+
+#: src/mm/chatty-mmsd.c:651
+#, c-format
+#| msgid "Render Attachments from Messages"
+msgid "The attachment is too large"
+msgid_plural "Attachments are too large"
+msgstr[0] "Долучення є надто великими"
+msgstr[1] "Долучення є надто великими"
+msgstr[2] "Долучення є надто великими"
+
 #. TRANSLATORS: Timestamp for minute accuracy, e.g. “2020-08-11 15:27”.
 #. See https://developer.gnome.org/glib/stable/glib-GDateTime.html#g-date-time-format
 #.
-#: src/mm/chatty-mmsd.c:922
+#: src/mm/chatty-mmsd.c:948
 msgid "%Y-%m-%d %H∶%M"
 msgstr "%Y.%m.%d %H:%M"
 
-#: src/mm/chatty-mmsd.c:1227
+#: src/mm/chatty-mmsd.c:1262
 #, c-format
 msgid "You received an MMS, but it expired on: %s"
 msgstr "Вами отримано MMS, але строк його дії вичерпано %s"
 
-#: src/mm/chatty-mmsd.c:1230
+#: src/mm/chatty-mmsd.c:1265
 msgid "You received an empty MMS."
 msgstr "Вами отримано порожнє MMS."
 
-#: src/mm/chatty-mmsd.c:1706 src/mm/chatty-mmsd.c:1752
+#: src/mm/chatty-mmsd.c:1741 src/mm/chatty-mmsd.c:1787
 #, c-format
 msgid "Automatically Retrying for  %i MMS"
 msgid_plural "Automatically Retrying for  %i MMSes..."
@@ -1087,35 +1101,35 @@ msgstr[0] "Автоматично повторюємо спробу для %i MM
 msgstr[1] "Автоматично повторюємо спробу для %i MMS…"
 msgstr[2] "Автоматично повторюємо спробу для %i MMS…"
 
-#: src/mm/chatty-mmsd.c:1711
+#: src/mm/chatty-mmsd.c:1746
 msgid "Temporary Error Sending MMS"
 msgstr "Тимчасова помилка надсилання MMS"
 
-#: src/mm/chatty-mmsd.c:1757
+#: src/mm/chatty-mmsd.c:1792
 msgid "Temporary Error Receiving MMS"
 msgstr "Тимчасова помилка отримання MMS"
 
-#: src/mm/chatty-mmsd.c:1973
+#: src/mm/chatty-mmsd.c:2008
 msgid "MMSC is not configured"
 msgstr "MMSC не налаштовано"
 
-#: src/mm/chatty-mmsd.c:1976
+#: src/mm/chatty-mmsd.c:2011
 msgid "APN is not configured correctly"
 msgstr "APN не налаштовано належним чином"
 
-#: src/mm/chatty-mmsd.c:1979
+#: src/mm/chatty-mmsd.c:2014
 msgid "Mobile Data is not configured"
 msgstr "Мобільний обмін даними не налаштовано"
 
-#: src/mm/chatty-mmsd.c:1982
+#: src/mm/chatty-mmsd.c:2017
 msgid "Mobile Data is off"
 msgstr "Мобільний обмін даними вимкнено"
 
-#: src/mm/chatty-mmsd.c:1985
+#: src/mm/chatty-mmsd.c:2020
 msgid "Unknown Error"
 msgstr "Невідома помилка"
 
-#: src/mm/chatty-mmsd.c:1990
+#: src/mm/chatty-mmsd.c:2025
 #, c-format
 msgid "Chatty cannot process %i MMS"
 msgid_plural "Chatty cannot process %i MMSes..."
@@ -1549,8 +1563,7 @@ msgstr "Вхідний запит щодо перевірки"
 
 #: src/ui/chatty-verification-page.ui:42
 msgid "Verify this user to mark them as trusted."
-msgstr ""
-"Підтвердьте особу цього користувача для позначення його як довіреного."
+msgstr "Підтвердьте особу цього користувача для позначення його як довіреного."
 
 #: src/ui/chatty-verification-page.ui:78
 msgid ""
