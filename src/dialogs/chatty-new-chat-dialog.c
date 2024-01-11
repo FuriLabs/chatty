@@ -622,7 +622,7 @@ chatty_new_chat_dialog_init (ChattyNewChatDialog *self)
   gtk_widget_init_template (GTK_WIDGET (self));
   self->cancellable = g_cancellable_new ();
 
-  self->self_contact = CHATTY_ITEM (chatty_contact_dummy_new (_("You"), "MMS"));
+  self->self_contact = CHATTY_ITEM (chatty_contact_dummy_new (_("You"), _("SMS/MMS")));
   chatty_list_row_set_item (CHATTY_LIST_ROW (self->self_contact_row), self->self_contact);
 
   self->selection_list = g_list_store_new (CHATTY_TYPE_ITEM);
