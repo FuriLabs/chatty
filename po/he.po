@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-01-01 04:19+0000\n"
-"PO-Revision-Date: 2024-01-03 00:15+0200\n"
+"POT-Creation-Date: 2024-01-11 04:31+0000\n"
+"PO-Revision-Date: 2024-01-17 10:58+0200\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language-Team: Hebrew\n"
 "Language: he\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=(n==1 ? 0 : n==2 ? 1 : n>10 && n%10==0 ? "
 "2 : 3);\n"
-"X-Generator: Poedit 3.4.1\n"
+"X-Generator: Poedit 3.4.2\n"
 
 #: data/sm.puri.Chatty.desktop.in.in:3 data/sm.puri.Chatty.metainfo.xml.in.in:6
 #: src/chatty-application.c:164 src/chatty-application.c:403
@@ -1048,23 +1048,44 @@ msgstr "שגיאה בהעברה הודעה אל %s"
 msgid "See logs for more details"
 msgstr "יש לעיין ביומנים למידע נוסף"
 
+#: src/mm/chatty-mmsd.c:572 src/mm/chatty-mmsd.c:632 src/mm/chatty-mmsd.c:654
+msgid "MMS cannot be sent"
+msgstr "אי אפשר לשלוח הודעת מולטימדיה"
+
+#: src/mm/chatty-mmsd.c:573
+msgid "Please send less attachments"
+msgstr "נא לשלוח פחות צרופות"
+
+#: src/mm/chatty-mmsd.c:633
+msgid "Could not resize image to be small enough"
+msgstr "לא ניתן לשנות את התמונה כך שתהיה קטנה מספיק"
+
+#: src/mm/chatty-mmsd.c:651
+#, c-format
+msgid "The attachment is too large"
+msgid_plural "Attachments are too large"
+msgstr[0] "הצרופה גדולה מדי"
+msgstr[1] "הצרופות גדולות מדי"
+msgstr[2] "הצרופות גדולות מדי"
+msgstr[3] "הצרופות גדולות מדי"
+
 #. TRANSLATORS: Timestamp for minute accuracy, e.g. “2020-08-11 15:27”.
 #. See https://developer.gnome.org/glib/stable/glib-GDateTime.html#g-date-time-format
 #.
-#: src/mm/chatty-mmsd.c:922
+#: src/mm/chatty-mmsd.c:948
 msgid "%Y-%m-%d %H∶%M"
-msgstr "%m-%d-%Y %H:%M"
+msgstr "‫‎%Y-%m-%d %H∶%M"
 
-#: src/mm/chatty-mmsd.c:1227
+#: src/mm/chatty-mmsd.c:1262
 #, c-format
 msgid "You received an MMS, but it expired on: %s"
 msgstr "קיבלת הודעת MMS, אך תוקפה פג: %s"
 
-#: src/mm/chatty-mmsd.c:1230
+#: src/mm/chatty-mmsd.c:1265
 msgid "You received an empty MMS."
 msgstr "קיבלת הודעת MMS ריקה."
 
-#: src/mm/chatty-mmsd.c:1706 src/mm/chatty-mmsd.c:1752
+#: src/mm/chatty-mmsd.c:1741 src/mm/chatty-mmsd.c:1787
 #, c-format
 msgid "Automatically Retrying for  %i MMS"
 msgid_plural "Automatically Retrying for  %i MMSes..."
@@ -1073,35 +1094,35 @@ msgstr[1] "מתבצע ניסיון חוזר לשתי הודעות מולטימד
 msgstr[2] "מתבצע ניסיון חוזר ל־%i הודעות מולטימדיה…"
 msgstr[3] "מתבצע ניסיון חוזר ל־%i הודעות מולטימדיה…"
 
-#: src/mm/chatty-mmsd.c:1711
+#: src/mm/chatty-mmsd.c:1746
 msgid "Temporary Error Sending MMS"
 msgstr "שגיאה זמנית בשליחת MMS"
 
-#: src/mm/chatty-mmsd.c:1757
+#: src/mm/chatty-mmsd.c:1792
 msgid "Temporary Error Receiving MMS"
 msgstr "שגיאה זמנית בקבלת MMS"
 
-#: src/mm/chatty-mmsd.c:1973
+#: src/mm/chatty-mmsd.c:2008
 msgid "MMSC is not configured"
 msgstr "‏MMSC לא מוגדר"
 
-#: src/mm/chatty-mmsd.c:1976
+#: src/mm/chatty-mmsd.c:2011
 msgid "APN is not configured correctly"
 msgstr "‏APN לא מוגדר כראוי"
 
-#: src/mm/chatty-mmsd.c:1979
+#: src/mm/chatty-mmsd.c:2014
 msgid "Mobile Data is not configured"
 msgstr "נתונים סלולריים לא מוגדרים"
 
-#: src/mm/chatty-mmsd.c:1982
+#: src/mm/chatty-mmsd.c:2017
 msgid "Mobile Data is off"
 msgstr "נתונים סלולריים כבויים"
 
-#: src/mm/chatty-mmsd.c:1985
+#: src/mm/chatty-mmsd.c:2020
 msgid "Unknown Error"
 msgstr "שגיאה לא ידועה"
 
-#: src/mm/chatty-mmsd.c:1990
+#: src/mm/chatty-mmsd.c:2025
 #, c-format
 msgid "Chatty cannot process %i MMS"
 msgid_plural "Chatty cannot process %i MMSes..."
