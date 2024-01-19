@@ -36,6 +36,7 @@
     <file preprocess="xml-stripblanks">ui/chatty-dialog-join-muc.ui</file>
     <file preprocess="xml-stripblanks">ui/chatty-window.ui</file>
     <file alias="style.css">css/style.css</file>
+    <file alias="style-dark.css">css/style-dark.css</file>
   </gresource>
   <gresource>
     <file alias="/tagged_entry/tagstyle.css">contrib/tagstyle.css</file>
