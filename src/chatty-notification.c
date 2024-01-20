@@ -68,48 +68,6 @@ notification_chat_changed_cb (ChattyNotification *self)
     g_application_withdraw_notification (app, self->chat_name);
 }
 
-static GdkPixbuf *
-chatty_manager_round_pixbuf (GdkPixbuf *pixbuf)
-{
-  g_autoptr(GdkPixbuf) image = NULL;
-  cairo_surface_t *surface;
-  GdkPixbuf *round;
-  cairo_t *cr;
-  int width, height, size;
-
-  if (!pixbuf)
-    return NULL;
-
-  g_assert (GDK_IS_PIXBUF (pixbuf));
-
-  width  = gdk_pixbuf_get_width (pixbuf);
-  height = gdk_pixbuf_get_height (pixbuf);
-  size   = MIN (width, height);
-  image  = gdk_pixbuf_new (GDK_COLORSPACE_RGB, TRUE, 8, size, size);
-
-  gdk_pixbuf_scale (pixbuf, image, 0, 0,
-                    size, size,
-                    0, 0,
-                    (double)size / width,
-                    (double)size / height,
-                    GDK_INTERP_BILINEAR);
-
-  surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, size, size);
-  cr = cairo_create (surface);
-  gdk_cairo_set_source_pixbuf (cr, image, 0, 0);
-
-  cairo_arc (cr, size / 2.0, size / 2.0, size / 2.0, 0, 2 * G_PI);
-  cairo_clip (cr);
-  cairo_paint (cr);
-
-  round = gdk_pixbuf_get_from_surface (surface, 0, 0, size, size);
-
-  cairo_surface_destroy (surface);
-  cairo_destroy (cr);
-
-  return round;
-}
-
 static void
 feedback_triggered_cb (GObject      *object,
 		       GAsyncResult *result,
@@ -182,17 +140,6 @@ chatty_notification_new (ChattyChat *chat)
                                          chatty_item_get_username (CHATTY_ITEM (chat)),
                                          chatty_item_get_protocols (CHATTY_ITEM (chat)));
 
-  if (chatty_item_get_avatar (CHATTY_ITEM (chat))) {
-    g_autoptr(GdkPixbuf) image = NULL;
-    GdkPixbuf *avatar;
-
-    avatar = chatty_item_get_avatar (CHATTY_ITEM (chat));
-    image = chatty_manager_round_pixbuf (avatar);
-
-    if (image)
-      g_notification_set_icon (self->notification, G_ICON (image));
-  }
-
   return self;
 }
 
@@ -203,7 +150,6 @@ chatty_notification_show_message (ChattyNotification *self,
 {
   g_autofree char *title = NULL;
   g_autoptr(LfbEvent) event = NULL;
-  ChattyItem *item;
   ChattyMsgType type;
 
   g_return_if_fail (CHATTY_IS_NOTIFICATION (self));
@@ -213,19 +159,6 @@ chatty_notification_show_message (ChattyNotification *self,
     title = g_strdup_printf (_("New message from %s"), name);
   else
     title = g_strdup (_("Message Received"));
-
-  item = chatty_message_get_user (message);
-
-  if (item) {
-    g_autoptr(GdkPixbuf) image = NULL;
-    GdkPixbuf *avatar;
-
-    avatar = chatty_item_get_avatar (item);
-    image = chatty_manager_round_pixbuf (avatar);
-
-    if (image)
-      g_notification_set_icon (self->notification, G_ICON (image));
-  }
 
   type = chatty_message_get_msg_type (message);
 
