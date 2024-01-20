@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-01-01 08:45+0000\n"
-"PO-Revision-Date: 2024-01-01 14:34+0100\n"
+"POT-Creation-Date: 2024-01-03 11:17+0000\n"
+"PO-Revision-Date: 2024-01-03 13:04+0100\n"
 "Last-Translator: Tim Sabsch <tim@sabsch.com>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -20,7 +20,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.4\n"
 
 #: data/sm.puri.Chatty.desktop.in.in:3 data/sm.puri.Chatty.metainfo.xml.in.in:6
 #: src/chatty-application.c:164 src/chatty-application.c:403
@@ -166,12 +166,12 @@ msgid "Messaging application for mobile and desktop"
 msgstr "Nachrichten-Anwendung für Handy und Desktop"
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:9
-#, fuzzy
-#| msgid "Chats is a messaging application supporting XMPP and SMS."
 msgid ""
 "Chats is a simple to use to messaging app for 1:1 communication and small "
 "groups supporting SMS, MMS, XMPP and Matrix."
-msgstr "Chats ist ein Anwendung für Textnachrichten via XMPP und SMS"
+msgstr ""
+"Chats ist ein einfach zu bedienende Anwendung für Direktkommunikation und "
+"kleine Gruppen, die SMS, MMS, XMPP und Matrix unterstützt."
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:16
 msgid "Chats message window"
@@ -206,7 +206,7 @@ msgstr "Ein Programm für Textnachrichten via SMS und XMPP"
 #: src/chatty-application.c:175
 msgid "translator-credits"
 msgstr ""
-"Christian Kirbach <christian.kirbach@gmail.com>, 2023\n"
+"Christian Kirbach <christian.kirbach@gmail.com>, 2023, 2024\n"
 "Tim Sabsch <tim@sabsch.com>, 2024"
 
 #: src/chatty-application.c:198
@@ -227,14 +227,8 @@ msgid "Select a contact with the <b>“+”</b> button in the titlebar."
 msgstr "Wähle einen Kontakt mit dem <b>\"+\"</b>-Knopf in der Titelleiste."
 
 #: src/chatty-chat-list.c:178
-#, fuzzy
-#| msgid ""
-#| "For <b>Instant Messaging</b> add or activate an account in "
-#| "<i>\"preferences\"</i>."
 msgid "Add instant messaging accounts in Preferences."
-msgstr ""
-"Für <b>Direktnachrichten</b> Konto in <i>\"Einstellungen\"</i> hinzufügen "
-"oder aktivieren"
+msgstr "Fügen Sie Konten für Sofortnachrichten in den Einstellungen hinzu."
 
 #: src/chatty-chat-list.c:214 src/chatty-contact-list.c:282
 msgid "No Search Results"
@@ -258,10 +252,10 @@ msgstr "Dies ist eine MMS-Unterhaltung"
 
 #: src/chatty-chat-page.c:203 src/chatty-chat-page.c:218
 #: src/chatty-chat-page.c:224
-#, fuzzy
-#| msgid "Your messages are not encrypted,"
 msgid "Your messages are not encrypted, and carrier rates may apply"
-msgstr "Deine Nachrichten sind nicht verschlüsselt,"
+msgstr ""
+"Ihre Nachrichten sind nicht verschlüsselt, und Betreiberbeschränkungen "
+"könnten greifen"
 
 #: src/chatty-chat-page.c:213
 msgid "This is an SMS/MMS conversation"
@@ -419,10 +413,8 @@ msgid "Account disconnected"
 msgstr "Konto getrennt"
 
 #: src/chatty-main-view.c:126
-#, fuzzy
-#| msgid "connecting…"
 msgid "Account connecting…"
-msgstr "verbinde..."
+msgstr "Konto wird verbunden …"
 
 #: src/chatty-manager.c:736
 #, c-format
@@ -848,7 +840,7 @@ msgstr "Fortsetzen"
 
 #: src/chatty-window.c:356
 msgid "You shall no longer be notified for new messages, continue?"
-msgstr ""
+msgstr "Sie werden nicht mehr über neue Nachrichten informiert. Weiter?"
 
 #: src/chatty-window.c:435
 msgid "Delete"
@@ -1080,8 +1072,8 @@ msgstr "Sie haben eine leere MMS erhalten."
 #, c-format
 msgid "Automatically Retrying for  %i MMS"
 msgid_plural "Automatically Retrying for  %i MMSes..."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Automatischer Neuversuch für  %i MMS"
+msgstr[1] "Automatischer Neuversuch für  %i MMS"
 
 #: src/mm/chatty-mmsd.c:1720
 msgid "Temporary Error Sending MMS"
@@ -1425,7 +1417,7 @@ msgstr "Grafische Emoticons"
 
 #: src/ui/chatty-settings-dialog.ui:209
 msgid "if you type :) it will be changed to 😃"
-msgstr ""
+msgstr "wenn Sie :) eingeben, wird es in 😃 überführt"
 
 #. TRANSLATORS: Return is the Enter key.
 #: src/ui/chatty-settings-dialog.ui:222
@@ -1446,7 +1438,7 @@ msgstr "SMIL für MMS"
 
 #: src/ui/chatty-settings-dialog.ui:342
 msgid "MMS Carrier Settings"
-msgstr ""
+msgstr "MMS Betreibereinstellungen"
 
 #: src/ui/chatty-settings-dialog.ui:346
 msgid "Phone Number"
@@ -1471,10 +1463,11 @@ msgstr "Proxy"
 #: src/ui/chatty-settings-dialog.ui:411
 msgid "You shall not be notified for the messages from blocked contacts"
 msgstr ""
+"Sie werden nicht mehr über Nachrichten von blockierten Kontakten informiert"
 
 #: src/ui/chatty-settings-dialog.ui:442
 msgid "Blocked chat list empty"
-msgstr ""
+msgstr "Die Liste der blockierten Unterhaltungen ist leer"
 
 #: src/ui/chatty-settings-dialog.ui:495
 msgid "Message Archive Management"
@@ -1543,13 +1536,15 @@ msgstr "Eingehende Verifizierungsanfrage"
 
 #: src/ui/chatty-verification-page.ui:42
 msgid "Verify this user to mark them as trusted."
-msgstr ""
+msgstr "Diesen Benutzer als vertrauenswürdig bestätigen."
 
 #: src/ui/chatty-verification-page.ui:78
 msgid ""
 "Verifying this user will mark their session as trusted, and also mark your "
 "session as trusted to them."
 msgstr ""
+"Wenn Sie diesen Benutzer bestätigen, so wird die Sitzung des Gegenüber als "
+"vertrauenswürdig eingestuft, als auch Ihre Sitzung."
 
 #: src/ui/chatty-verification-page.ui:98
 msgid "C_ontinue"
@@ -1559,25 +1554,31 @@ msgstr "F_ortfahren"
 msgid ""
 "Verify this user by confirming the following emoji appears on their screen"
 msgstr ""
+"Bestätigen Sie diesen Benutzer, indem Sie die folgenden Emoji auf dem "
+"Bildschirm des Gegenüber bestätigen."
 
 #: src/ui/chatty-verification-page.ui:377
 msgid ""
 "Verify this user by confirming the following number appears on their screen."
 msgstr ""
+"Bestätigen Sie diesen Benutzer, indem Sie die folgende Zahl auf dem "
+"Bildschirm des Gegenüber bestätigen."
 
 #: src/ui/chatty-verification-page.ui:412
 msgid "To be secure, do this in person or use a trusted way to communicate."
 msgstr ""
+"Erledigen Sie dies persönlich oder mit einem vertrauenswürdigen "
+"Kommunikationsweg, um absolut sicher zu gehen."
 
 #: src/ui/chatty-verification-page.ui:423
 msgctxt "verb, which means 'both items are not the same'"
 msgid "_Don’t Match"
-msgstr ""
+msgstr "_Nicht übereinstimmen"
 
 #: src/ui/chatty-verification-page.ui:433
 msgctxt "verb, which means 'both items are the same'"
 msgid "_Match"
-msgstr ""
+msgstr "Ü_bereinstimmen"
 
 #: src/ui/help-overlay.ui:14
 msgctxt "shortcut window"
