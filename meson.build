@@ -11,7 +11,7 @@ cc = meson.get_compiler('c')
 top_inc = include_directories('.')
 src_inc = []
 
-gtk_version = '4.10'
+gtk_version = '4.12'
 gtk_version_arr = gtk_version.split('.')
 gtk_major = gtk_version_arr[0]
 gtk_minor = gtk_version_arr[1]
