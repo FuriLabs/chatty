@@ -14,7 +14,6 @@
 #include <glib/gi18n.h>
 
 #include "contrib/contrib.h"
-#include "gtk3-to-4.h"
 #include "chatty-manager.h"
 #include "chatty-mm-account.h"
 #include "chatty-purple.h"

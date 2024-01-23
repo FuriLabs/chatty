@@ -70,6 +70,7 @@ src/mm/chatty-mm-account.c
 src/ui/chatty-attachment.ui
 src/ui/chatty-chat-page.ui
 src/ui/chatty-contact-row.ui
+src/ui/chatty-dialog-wrong-pw.ui
 src/ui/chatty-dialog-join-muc.ui
 src/ui/chatty-dialog-new-chat.ui
 src/ui/chatty-file-item.ui
@@ -77,6 +78,7 @@ src/ui/chatty-info-dialog.ui
 src/ui/chatty-invite-page.ui
 src/ui/chatty-ma-chat-info.ui
 src/ui/chatty-main-view.ui
+src/ui/chatty-message-row.ui
 src/ui/chatty-pp-chat-info.ui
 src/ui/chatty-mm-chat-info.ui
 src/ui/chatty-fp-row.ui

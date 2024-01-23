@@ -1,3 +1,91 @@
+chatty (0.8.1) byzantium; urgency=medium
+
+  [ Mohammed Sadiq ]
+  * Update changelog and release 0.8.0
+  * chat: Add last-message-time property
+  * chat: Notify last-message-time on message changes
+  * manager: Use expressions to sort chat list
+  * chat: Remove message-added signal
+
+  [ Yuri Chornoivan ]
+  * Update Ukrainian translation
+
+  [ Florentina Mușat ]
+  * Update Romanian translation
+
+  [ Dexter Reed ]
+  * src/chatty-application.c: fix issue-url
+
+  [ Chris Talbot ]
+  * mmsd: fix spelling error
+  * chatty-list-row: Fix Memory Leak
+  * chatty-message-row: Add ability to copy text from message
+  * chatty-*-row: don't take ownership of GtkGesture
+  * test/message-row: make sure that message-row doesn't render malicious links
+  * build: specify using GTK 4.10
+  * build: Warn if GTK and Libadwaita on system is different than targeted
+  * src: remove gtk3-to-4
+  * chatty-utils: add helper dialog function
+  * chatty-window: Update dialogs for GTK 4.10
+  * chatty-progress-button: update functions for GTK 4.10
+  * chatty-*-item: update file launcher for GTK 4.10
+  * chatty-list-row: update call button for gtk 4.10
+  * chatty-message-row: update style-content for gtk 4.10
+  * src/dialogs: update style_context for gtk 4.10
+  * chatty-progress-button: fix depreciation warning
+  * chatty-message-bar: Update to file_dialog_open for GTK 4.10
+  * dialogs/chatty-ma-account-details.c: Update to file_dialog_open for GTK 4.10
+  * dialogs/chatty-pp-account-details: Update to file_dialog_open for GTK 4.10
+  * dialogs/chatty-pp-chat-info: Update to file_dialog_open for GTK 4.10
+  * dialogs/chatty-purple-request: update dialog to file_dialog_open and file_dialog_save for GTK 4.10
+  * dialogs/chatty-new-chat-dialog: Update alert dialog for gtk 4.10
+  * purple/chatty-purple-notify: Update dialog for GTK 4.10
+  * dialogs/chatty-settings-dialog.c: update error dialog to GTK 4.10
+  * dialog/chatty-purple: Update dialogs for GTK 4.10
+  * chatty-manager: Update Dialog for GTK 4.10
+  * chattty-application: Update URI and Dialog for GTK 4.10
+  * purple/chatty-purple-request: ignore depreciation warning for request_action
+  * matrix/chatty-ma_account: Create wrong password dialog
+  * tracking_ids: add utm_name
+  * chatty-image-item: Scale down image to fit on mobile screen
+  * list-row: Account for files and no text
+  * chatty-chat-page: Say if an SMS conversation is MMS
+  * mmsd: identify messages as CHATTY_MESSAGE_MMS
+  * mmsd: Give better error handling for attachments
+  * media: adjust sizing for scale_image_to_size
+  * message-bar: Account for preedit
+  * gitlab-ci: Use GNOME 45 for flatpak instead of nightly
+  * message-row: Account for parentheses and commas in URLs
+  * style.css: make green color bubble more friendly to links in dark mode
+  * style.css: revert dea10db4, make additonal dark style
+
+  [ Anders Jonsson ]
+  * Update Swedish translation
+
+  [ Yosef Or Boczko ]
+  * Update Hebrew translation
+
+  [ Asier Sarasua Garmendia ]
+  * Add Basque translation
+  * Update Basque translation
+
+  [ Yaron Shahrabani ]
+  * Update Hebrew translation
+
+  [ Tim Sabsch ]
+  * Update German translation
+
+  [ Artur S0 ]
+  * Update Russian translation
+
+  [ Sabri Ünal ]
+  * Update Turkish translation
+
+  [ Pierre Michel Augustin ]
+  * Update Haitian Creole translation
+
+ -- Mohammed Sadiq <sadiq@sadiqpk.org>  Fri, 19 Jan 2024 21:34:18 +0530
+
 chatty (0.8.0) byzantium; urgency=medium
 
   [ Anders Jonsson ]

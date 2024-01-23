@@ -196,9 +196,24 @@ chatty_chat_page_update (ChattyChatPage *self)
 #endif
 
   adw_status_page_set_icon_name (ADW_STATUS_PAGE (self->no_message_status), icon);
-  if (protocol == CHATTY_PROTOCOL_MMS_SMS) {
+  if (protocol == CHATTY_PROTOCOL_MMS) {
     adw_status_page_set_title (ADW_STATUS_PAGE (self->no_message_status),
-                               _("This is an SMS conversation"));
+                               _("This is an MMS conversation"));
+    adw_status_page_set_description (ADW_STATUS_PAGE (self->no_message_status),
+                                     _("Your messages are not encrypted, "
+                                       "and carrier rates may apply"));
+  }
+  if (protocol == CHATTY_PROTOCOL_MMS_SMS) {
+    /* An SMS/MMS with multiple users is an MMS conversation */
+    if (g_list_model_get_n_items (chatty_chat_get_users (self->chat)) > 1)
+      adw_status_page_set_title (ADW_STATUS_PAGE (self->no_message_status),
+                                 _("This is an MMS conversation"));
+    else if (chatty_chat_has_file_upload (self->chat))
+      adw_status_page_set_title (ADW_STATUS_PAGE (self->no_message_status),
+                                 _("This is an SMS/MMS conversation"));
+    else
+      adw_status_page_set_title (ADW_STATUS_PAGE (self->no_message_status),
+                                 _("This is an SMS conversation"));
     adw_status_page_set_description (ADW_STATUS_PAGE (self->no_message_status),
                                      _("Your messages are not encrypted, "
                                        "and carrier rates may apply"));

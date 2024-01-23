@@ -91,23 +91,19 @@ chatty_progress_button_snapshot (GtkWidget   *widget,
                                  GtkSnapshot *snapshot)
 {
   ChattyProgressButton *self = (ChattyProgressButton *)widget;
-  GtkStyleContext *sc;
   cairo_t *cr;
   int width, height;
   GdkRGBA color = {0};
 
-  width = gtk_widget_get_allocated_width (widget);
-  height = gtk_widget_get_allocated_height (widget);
+  width = gtk_widget_get_width (widget);
+  height = gtk_widget_get_height (widget);
 
   cr = gtk_snapshot_append_cairo (snapshot,
                                   &GRAPHENE_RECT_INIT (0, 0, width, height));
   cairo_save (cr);
-
-  sc = gtk_widget_get_style_context (widget);
-  if (gtk_style_context_lookup_color (sc, "accent_color", &color))
-    cairo_set_source_rgb (cr, color.red, color.green, color.blue);
-  else
-    cairo_set_source_rgb (cr, 0.2078, 0.5176, 0.894);
+  gtk_widget_get_color (widget, &color);
+  cairo_set_source_rgb (cr, color.red, color.green, color.blue);
+  gtk_widget_add_css_class (widget, "accent");
   cairo_set_line_width (cr, 6);
 
   cairo_arc (cr, width / 2., height / 2., width / 2. - 4.,

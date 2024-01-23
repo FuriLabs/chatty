@@ -13,13 +13,13 @@
 #include <libsecret/secret.h>
 #include <glib/gi18n.h>
 
-#include "gtk3-to-4.h"
 #include "chatty-history.h"
 #include "chatty-utils.h"
 #include "chatty-ma-chat.h"
 #include "chatty-ma-key-chat.h"
 #include "chatty-ma-account.h"
 #include "chatty-log.h"
+#include "dialogs/chatty-wrong-pw-dialog.h"
 
 /**
  * SECTION: chatty-mat-account
@@ -61,31 +61,6 @@ G_DEFINE_TYPE (ChattyMaAccount, chatty_ma_account, CHATTY_TYPE_ACCOUNT)
   } while (0)
 
 static void
-ma_acccount_password_response_cb (ChattyMaAccount *self,
-                                  int              response_id,
-                                  GtkDialog       *dialog)
-{
-  GtkWidget *entry;
-  const char *password;
-
-  g_assert (CHATTY_IS_MA_ACCOUNT (self));
-  g_assert (GTK_IS_DIALOG (dialog));
-
-  entry = g_object_get_data (G_OBJECT (dialog), "entry");
-  password = gtk_editable_get_text (GTK_EDITABLE (entry));
-
-  if (response_id != GTK_RESPONSE_ACCEPT || !password || !*password) {
-    chatty_account_set_enabled (CHATTY_ACCOUNT (self), FALSE);
-  } else {
-    cm_client_set_password (self->cm_client, password);
-    chatty_account_set_enabled (CHATTY_ACCOUNT (self), FALSE);
-    chatty_account_set_enabled (CHATTY_ACCOUNT (self), TRUE);
-  }
-
-  gtk_window_destroy (GTK_WINDOW (dialog));
-}
-
-static void
 handle_password_login (ChattyMaAccount *self,
                        GError          *error)
 {
@@ -94,47 +69,22 @@ handle_password_login (ChattyMaAccount *self,
   /* If no error, Api is informing us that logging in succeeded.
    * Let’s update matrix_enc & set device keys to upload */
   if (g_error_matches (error, CM_ERROR, CM_ERROR_BAD_PASSWORD)) {
-    GtkWidget *dialog, *content, *header_bar, *label;
-    GtkWidget *cancel_btn, *entry;
+    GtkWidget *pw_window;
+    GtkWindow *app_window;
     g_autofree char *message = NULL;
     CmAccount *cm_account;
 
-    dialog = gtk_dialog_new_with_buttons (_("Incorrect password"),
-                                          gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ())),
-                                          GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_USE_HEADER_BAR,
-                                          _("_OK"), GTK_RESPONSE_ACCEPT,
-                                          _("_Cancel"), GTK_RESPONSE_REJECT,
-                                          NULL);
-
-    content = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
-    gtk_box_set_spacing (GTK_BOX (content), 12);
     cm_account = cm_client_get_account (self->cm_client);
     message = g_strdup_printf (_("Please enter password for “%s”, homeserver: %s"),
                                cm_account_get_login_id (cm_account),
                                cm_client_get_homeserver (self->cm_client));
-    label = gtk_label_new (message);
-    gtk_label_set_wrap (GTK_LABEL (label), TRUE);
-    gtk_box_append (GTK_BOX (content), label);
-    entry = gtk_entry_new ();
-    gtk_entry_set_activates_default (GTK_ENTRY (entry), TRUE);
-    gtk_entry_set_visibility (GTK_ENTRY (entry), FALSE);
-    gtk_box_append (GTK_BOX (content), entry);
 
-    header_bar = gtk_dialog_get_header_bar (GTK_DIALOG (dialog));
-    gtk_header_bar_set_show_title_buttons (GTK_HEADER_BAR (header_bar), FALSE);
-
-    cancel_btn = gtk_dialog_get_widget_for_response (GTK_DIALOG (dialog),
-                                                     GTK_RESPONSE_REJECT);
-    g_object_ref (cancel_btn);
-    gtk_header_bar_remove (GTK_HEADER_BAR (header_bar), cancel_btn);
-    gtk_header_bar_pack_start (GTK_HEADER_BAR (header_bar), cancel_btn);
-    g_object_unref (cancel_btn);
-
-    g_object_set_data (G_OBJECT (dialog), "entry", entry);
-    g_signal_connect_object (dialog, "response",
-                             G_CALLBACK (ma_acccount_password_response_cb),
-                             self, G_CONNECT_SWAPPED);
-    gtk_window_present (GTK_WINDOW (dialog));
+    app_window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
+    pw_window = chatty_wrong_pw_dialog_new (app_window);
+    chatty_wrong_pw_dialog_set_description (CHATTY_WRONG_PW_DIALOG (pw_window), message);
+    chatty_wrong_pw_dialog_set_ma_account (CHATTY_WRONG_PW_DIALOG (pw_window), self);
+    chatty_wrong_pw_dialog_set_cm_client (CHATTY_WRONG_PW_DIALOG (pw_window), self->cm_client);
+    gtk_window_present (GTK_WINDOW (pw_window));
   }
 
   if (!error)

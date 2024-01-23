@@ -6,6 +6,7 @@ utm_medium
 utm_campaign
 utm_term
 utm_content
+utm_name
 // https://github.com/brave/brave-browser/issues/4239
 fbclid
 gclid

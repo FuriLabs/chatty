@@ -534,3 +534,16 @@ chatty_utils_create_thumbnail_finish (GAsyncResult  *result,
   return g_task_propagate_boolean (G_TASK (result), error);
 }
 
+/*
+ * chatty_utils_dialog_response_is_cancel:
+ * @dialog: the dialog to see if it was cancelled
+ *
+ * This checked a dialog response to see if it was cancelled.
+ */
+gboolean
+chatty_utils_dialog_response_is_cancel (GtkAlertDialog *alertdialog, int response)
+{
+  /* -1 means user closed the window */
+  return response == -1 || response == gtk_alert_dialog_get_cancel_button (alertdialog);
+}
+
