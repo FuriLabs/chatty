@@ -1,3 +1,11 @@
+chatty (0.8.1-1) unstable; urgency=medium
+
+  * New upstream release
+  * d/control: update libgtk-4-dev dependency
+  * d/control: add myself as an uploader
+
+ -- Christopher Talbot <chris@talbothome.com>  Tue, 23 Jan 2024 10:13:31 -0700
+
 chatty (0.8.0-1) unstable; urgency=medium
 
   * New upstream release 0.8.0
