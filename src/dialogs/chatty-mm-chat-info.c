@@ -14,7 +14,6 @@
 #include <glib/gi18n.h>
 #include <glib-object.h>
 
-#include "gtk3-to-4.h"
 #include "chatty-avatar.h"
 #include "chatty-chat.h"
 #include "chatty-contact.h"

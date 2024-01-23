@@ -18,7 +18,6 @@
 # include "chatty-pp-chat-info.h"
 #endif
 
-#include "gtk3-to-4.h"
 #include "chatty-mm-chat.h"
 #include "chatty-ma-chat.h"
 #include "chatty-utils.h"

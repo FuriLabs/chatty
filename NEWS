@@ -1,3 +1,12 @@
+Overview of Changes in Chats 0.8.1. Won, 19 January 2023
+========================================================
+* Address GTK4 deprecations
+  - Minimum GTK4 version is now 4.10
+* Fix media size to fit small screens
+* Fix URIs with parenthesis
+* Fix link color in dark style
+* Update translations 
+
 Overview of Changes in Chats 0.8.0. Won, 18 December 2023
 =========================================================
 * Fix flaky tests

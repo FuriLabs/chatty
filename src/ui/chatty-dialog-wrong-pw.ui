@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="ChattyWrongPwDialog" parent="AdwWindow">
+    <property name="modal">1</property>
+    <property name="default_width">360</property>
+    <property name="default_height">200</property>
+
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="AdwHeaderBar" id="header_bar">
+            <property name="show-end-title-buttons">1</property>
+            <property name="title-widget">
+              <object class="AdwWindowTitle">
+                <property name="title" translatable="yes">Incorrect password</property>
+              </object>
+            </property>
+
+            <!-- Cancel button -->
+            <child type="start">
+              <object class="GtkButton" id="cancel_button">
+                <property name="use-underline">1</property>
+                <property name="label" translatable="yes">_Cancel</property>
+                <signal name="clicked" handler="chatty_wrong_pw_dialog_cancel_button_clicked_cb" swapped="yes"/>
+              </object>
+            </child>
+
+            <!-- OK button -->
+            <child type="end">
+              <object class="GtkButton" id="ok_button">
+                <property name="use-underline">1</property>
+                <property name="sensitive">0</property>
+                <property name="label" translatable="yes">_OK</property>
+                <signal name="clicked" handler="chatty_wrong_pw_dialog_apply_button_clicked_cb" swapped="yes"/>
+                <style>
+                  <class name="suggested-action"/>
+                </style>
+              </object>
+            </child>
+
+          </object>
+        </child>
+        <child>
+          <object class="AdwPreferencesPage">
+          <child>
+            <object class="AdwPreferencesGroup" id="description">
+              <property name="description" translatable="yes">Please re-enter the Password.</property>
+                <child>
+                  <object class="GtkEntry" id="password_text">
+                    <property name="valign">center</property>
+                    <property name="visibility">0</property>
+                    <property name="buffer">password_text_buffer</property>
+                    <property name="placeholder-text" translatable="yes">Password</property>
+                  </object>
+                </child>
+              </object> <!--Pref Group-->
+            </child>
+
+          </object>  <!--Pref Page-->
+        </child>
+      </object>
+    </child>
+  </template>
+
+<object class="GtkEntryBuffer" id="password_text_buffer">
+  <signal name="inserted-text" handler="chatty_wrong_pw_dialog_password_text_buffer_changed_cb" swapped="yes"/>
+  <signal name="deleted-text" handler="chatty_wrong_pw_dialog_password_text_buffer_changed_cb" swapped="yes"/>
+</object>
+</interface>

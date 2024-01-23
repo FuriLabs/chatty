@@ -314,21 +314,26 @@ chatty_window_unarchive_chat (GtkWidget  *widget,
 }
 
 static void
-window_block_chat_response_cb (ChattyWindow *self,
-                               int           response_id,
-                               GtkDialog    *dialog)
+window_block_chat_response_cb (GObject         *dialog,
+                               GAsyncResult    *response,
+                               gpointer         user_data)
 {
+  ChattyWindow *self = CHATTY_WINDOW (user_data);
+  g_autoptr(GError) error = NULL;
+  int dialog_response = -1;
 
   g_assert (CHATTY_IS_WINDOW (self));
 
-  gtk_window_destroy (GTK_WINDOW (dialog));
 
-  if (response_id == GTK_RESPONSE_OK) {
+  dialog_response = gtk_alert_dialog_choose_finish (GTK_ALERT_DIALOG (dialog), response, &error);
+
+  if (!chatty_utils_dialog_response_is_cancel (GTK_ALERT_DIALOG (dialog), dialog_response)) {
     ChattyItem *item;
 
     item = chatty_main_view_get_item (CHATTY_MAIN_VIEW (self->main_view));
     chatty_item_set_state (item, CHATTY_ITEM_BLOCKED);
   }
+  g_clear_object (&dialog);
 }
 
 static void
@@ -337,8 +342,10 @@ chatty_window_block_chat (GtkWidget  *widget,
                           GVariant   *param)
 {
   ChattyWindow *self = CHATTY_WINDOW (widget);
-  GtkWidget *message;
   ChattyItem *item;
+  GtkWindow *window;
+  GtkAlertDialog *dialog;
+  const char *list[] = {_("Cancel"), _("Continue"), NULL};
 
   g_assert (CHATTY_IS_WINDOW (self));
 
@@ -346,17 +353,12 @@ chatty_window_block_chat (GtkWidget  *widget,
   g_return_if_fail (CHATTY_IS_MM_CHAT (item));
   g_return_if_fail (chatty_chat_is_im (CHATTY_CHAT (item)));
 
-  message = gtk_message_dialog_new (GTK_WINDOW (self),
-                                    GTK_DIALOG_MODAL | GTK_DIALOG_USE_HEADER_BAR,
-                                    GTK_MESSAGE_INFO,
-                                    GTK_BUTTONS_OK_CANCEL,
-                                    _("You shall no longer be notified for new messages, continue?"));
-
-  g_signal_connect_object (message, "response",
-                           G_CALLBACK (window_block_chat_response_cb),
-                           self, G_CONNECT_SWAPPED);
-
-  gtk_window_present (GTK_WINDOW (message));
+  dialog = gtk_alert_dialog_new (_("You shall no longer be notified for new messages, continue?"));
+  gtk_alert_dialog_set_buttons (dialog, list);
+  gtk_alert_dialog_set_cancel_button (dialog, 0);
+  gtk_alert_dialog_set_default_button (dialog, 1);
+  window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
+  gtk_alert_dialog_choose (dialog, window, NULL, window_block_chat_response_cb, self);
 }
 
 static void
@@ -378,14 +380,19 @@ chatty_window_unblock_chat (GtkWidget  *widget,
 }
 
 static void
-window_delete_chat_response_cb (ChattyWindow *self,
-                                int           response_id,
-                                GtkDialog    *dialog)
+window_delete_chat_response_cb (GObject         *dialog,
+                                GAsyncResult    *response,
+                                gpointer         user_data)
 {
-  g_assert (CHATTY_IS_WINDOW (self));
-  g_assert (GTK_IS_DIALOG (dialog));
+  ChattyWindow *self = CHATTY_WINDOW (user_data);
+  g_autoptr(GError) error = NULL;
+  int dialog_response = -1;
 
-  if (response_id == GTK_RESPONSE_OK) {
+  g_assert (CHATTY_IS_WINDOW (self));
+
+  dialog_response = gtk_alert_dialog_choose_finish (GTK_ALERT_DIALOG (dialog), response, &error);
+
+  if (!chatty_utils_dialog_response_is_cancel (GTK_ALERT_DIALOG (dialog), dialog_response)) {
     ChattyChat *chat;
 
     chat = (ChattyChat *)chatty_main_view_get_item (CHATTY_MAIN_VIEW (self->main_view));
@@ -408,8 +415,7 @@ window_delete_chat_response_cb (ChattyWindow *self,
     if (!adw_leaflet_get_folded (ADW_LEAFLET (self->content_box)))
       chatty_chat_list_select_first (CHATTY_CHAT_LIST (self->chat_list));
   }
-
-  gtk_window_destroy (GTK_WINDOW (dialog));
+  g_clear_object (&dialog);
 }
 
 static void
@@ -419,10 +425,14 @@ chatty_window_delete_chat (GtkWidget  *widget,
 {
   ChattyWindow *self = CHATTY_WINDOW (widget);
   g_autofree char *text = NULL;
-  GtkWidget *dialog;
   ChattyChat *chat;
   const char *name;
   const char *sub_text;
+  GtkWindow *window;
+  GtkAlertDialog *dialog;
+  g_autofree char *secondary_text = NULL;
+
+  const char *list[] = {_("Cancel"), _("Delete"), NULL};
 
   g_assert (CHATTY_IS_WINDOW (self));
 
@@ -439,26 +449,15 @@ chatty_window_delete_chat (GtkWidget  *widget,
     sub_text = _("This removes chat from chats list");
   }
 
-  dialog = gtk_message_dialog_new (GTK_WINDOW (self),
-                                   GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                   GTK_MESSAGE_QUESTION,
-                                   GTK_BUTTONS_NONE,
-                                   "%s", text);
+  window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
 
-  gtk_dialog_add_buttons (GTK_DIALOG (dialog),
-                          _("Cancel"), GTK_RESPONSE_CANCEL,
-                          _("Delete"), GTK_RESPONSE_OK,
-                          NULL);
-
-  gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-                                            "%s", sub_text);
-  gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_CANCEL);
-
-  g_signal_connect_object (dialog, "response",
-                           G_CALLBACK (window_delete_chat_response_cb),
-                           self, G_CONNECT_SWAPPED);
-
-  gtk_window_present (GTK_WINDOW (dialog));
+  dialog = gtk_alert_dialog_new ("%s", text);
+  secondary_text = g_strdup_printf("%s", sub_text);
+  gtk_alert_dialog_set_detail (dialog, secondary_text);
+  gtk_alert_dialog_set_buttons (dialog, list);
+  gtk_alert_dialog_set_cancel_button (dialog, 0);
+  gtk_alert_dialog_set_default_button (dialog, 1);
+  gtk_alert_dialog_choose (dialog, window, NULL, window_delete_chat_response_cb, self);
 }
 
 static void
@@ -597,6 +596,8 @@ chatty_window_call_user (GtkWidget  *widget,
 {
   ChattyWindow *self = CHATTY_WINDOW (widget);
   g_autofree char *uri = NULL;
+  g_autoptr(GtkUriLauncher) uri_launcher = NULL;
+  GtkWindow *window;
   ChattyChat *chat;
 
   g_assert (CHATTY_IS_WINDOW (self));
@@ -607,7 +608,10 @@ chatty_window_call_user (GtkWidget  *widget,
   uri = g_strconcat ("tel://", chatty_chat_get_chat_name (chat), NULL);
 
   CHATTY_INFO (uri, "Calling uri:");
-  gtk_show_uri (NULL, uri, GDK_CURRENT_TIME);
+
+  window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
+  uri_launcher = gtk_uri_launcher_new (uri);
+  gtk_uri_launcher_launch (uri_launcher, window, NULL, NULL, NULL);
 }
 
 static void

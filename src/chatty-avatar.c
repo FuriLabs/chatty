@@ -14,7 +14,6 @@
 
 #include <glib/gi18n.h>
 
-#include "gtk3-to-4.h"
 #include "chatty-chat.h"
 #include "chatty-ma-key-chat.h"
 #include "chatty-mm-chat.h"

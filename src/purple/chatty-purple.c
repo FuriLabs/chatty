@@ -19,7 +19,6 @@
 #include <purple.h>
 #include "xeps/xeps.h"
 
-#include "gtk3-to-4.h"
 #include "chatty-settings.h"
 #include "chatty-pp-buddy.h"
 #include "chatty-pp-account.h"
@@ -182,50 +181,6 @@ PurpleEventLoopUiOps eventloop_ui_ops =
   g_timeout_add_seconds,
 };
 
-static int
-run_dialog_and_destroy (GtkDialog *dialog)
-{
-  int response = 0;
-
-  gtk_dialog_set_default_response (dialog, GTK_RESPONSE_CANCEL);
-
-  response = gtk_dialog_run (dialog);
-
-  gtk_window_destroy (GTK_WINDOW (dialog));
-
-  return response;
-}
-
-static GtkDialog *
-message_dialog_new (GtkMessageType  type,
-                    GtkButtonsType  buttons,
-                    const gchar    *message_format,
-                    ...) G_GNUC_PRINTF (3, 4);
-static GtkDialog *
-message_dialog_new (GtkMessageType  type,
-                    GtkButtonsType  buttons,
-                    const gchar    *message_format,
-                    ...)
-{
-  GtkApplication *app;
-  GtkWidget *dialog;
-  GtkWindow *window;
-  g_autofree char *message = NULL;
-  va_list args;
-
-  va_start (args, message_format);
-  message = g_strdup_vprintf (message_format, args);
-  va_end (args);
-
-  app = GTK_APPLICATION (g_application_get_default ());
-  window = gtk_application_get_active_window (app);
-  dialog = gtk_message_dialog_new (window,
-                                   GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                   type, buttons, "%s", message);
-
-  return GTK_DIALOG (dialog);
-}
-
 static void
 chatty_purple_account_notify_added (PurpleAccount *pp_account,
                                     const char    *remote_user,
@@ -233,15 +188,58 @@ chatty_purple_account_notify_added (PurpleAccount *pp_account,
                                     const char    *alias,
                                     const char    *msg)
 {
-  GtkDialog *dialog;
+  GtkWindow *window;
+  g_autoptr(GtkAlertDialog) dialog = NULL;
 
-  dialog = message_dialog_new (GTK_MESSAGE_INFO, GTK_BUTTONS_OK, _("Contact added"));
-  gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-                                            _("User %s has added %s to the contacts"),
-                                            remote_user, id);
-  run_dialog_and_destroy (dialog);
+  dialog = gtk_alert_dialog_new (_("User %s has added %s to the contacts"), remote_user, id);
+  window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
+  gtk_alert_dialog_show (GTK_ALERT_DIALOG (dialog), window);
 }
 
+struct pp_auth
+{
+  PurpleAccount                       *pp_account;
+  const char                          *remote_user;
+  const char                          *id;
+  const char                          *alias;
+  const char                          *message;
+  gboolean                             on_list;
+  PurpleAccountRequestAuthorizationCb  auth_cb;
+  PurpleAccountRequestAuthorizationCb  deny_cb;
+  void                                *user_data;
+};
+
+
+static void
+chatty_purple_account_request_authorization_cb (GObject         *dialog,
+                                                GAsyncResult    *response,
+                                                gpointer         user_data)
+
+{
+  g_autoptr(GError) error = NULL;
+  int dialog_response = -1;
+  struct pp_auth *authorization = (struct pp_auth *)user_data;
+
+  dialog_response = gtk_alert_dialog_choose_finish (GTK_ALERT_DIALOG (dialog), response, &error);
+
+  if (!chatty_utils_dialog_response_is_cancel (GTK_ALERT_DIALOG (dialog), dialog_response)) {
+    if (!authorization->on_list)
+      purple_blist_request_add_buddy (authorization->pp_account,
+                                      authorization->remote_user,
+                                      NULL,
+                                      authorization->alias);
+    authorization->auth_cb (authorization->user_data);
+  } else {
+    authorization->deny_cb (authorization->user_data);
+  }
+  g_clear_object (&dialog);
+
+  g_debug ("Request authorization user: %s alias: %s",
+           authorization->remote_user,
+           authorization->alias);
+
+  g_free (authorization);
+}
 
 static void *
 chatty_purple_account_request_authorization (PurpleAccount                       *pp_account,
@@ -254,27 +252,37 @@ chatty_purple_account_request_authorization (PurpleAccount                      
                                              PurpleAccountRequestAuthorizationCb  deny_cb,
                                              void                                *user_data)
 {
-  GtkDialog *dialog;
+  GtkWindow *window;
+  GtkAlertDialog *dialog;
+  g_autofree char *text_detail = NULL;
+  struct pp_auth *authorization = NULL;
+  const char *list[] = {_("Reject"), _("Accept"), NULL};
 
-  dialog = message_dialog_new (GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE,
-                               _("Authorize %s?"), alias ? alias : remote_user);
-  gtk_dialog_add_buttons ((dialog),
-                          _("Reject"), GTK_RESPONSE_REJECT,
-                          _("Accept"), GTK_RESPONSE_ACCEPT,
-                          NULL);
-  gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-                                            _("Add %s to contact list"),
-                                            remote_user);
+  authorization = g_try_new0 (struct pp_auth, 1);
+  g_assert (authorization != NULL);
 
-  if (run_dialog_and_destroy (dialog) == GTK_RESPONSE_ACCEPT) {
-    if (!on_list)
-      purple_blist_request_add_buddy (pp_account, remote_user, NULL, alias);
-    auth_cb (user_data);
-  } else {
-    deny_cb (user_data);
-  }
+  /*
+   * These are all transfer none, and the authorization struct is destroyed in
+   * chatty_purple_account_request_authorization_cb
+   */
+  authorization->pp_account = pp_account;
+  authorization->remote_user = remote_user;
+  authorization->id = id;
+  authorization->alias = alias;
+  authorization->message = message;
+  authorization->on_list = on_list;
+  authorization->auth_cb = auth_cb;
+  authorization->deny_cb = deny_cb;
+  authorization->user_data = user_data;
 
-  g_debug ("Request authorization user: %s alias: %s", remote_user, alias);
+  dialog = gtk_alert_dialog_new (_("Authorize %s?"), alias ? alias : remote_user);
+  text_detail = g_strdup_printf (_("Add %s to contact list"), remote_user);
+  gtk_alert_dialog_set_detail (dialog, text_detail);
+  gtk_alert_dialog_set_buttons (dialog, list);
+  gtk_alert_dialog_set_cancel_button (dialog, 0);
+  gtk_alert_dialog_set_default_button (dialog, 1);
+  window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
+  gtk_alert_dialog_choose (dialog, window, NULL, chatty_purple_account_request_authorization_cb, authorization);
 
   return NULL;
 }
@@ -579,15 +587,15 @@ purple_account_connection_failed_cb (PurpleAccount         *pp_account,
     chatty_account_connect (CHATTY_ACCOUNT (account), TRUE);
 
   if (purple_connection_error_is_fatal (error)) {
-    GtkDialog *dialog;
+    g_autoptr(GtkAlertDialog) dialog = NULL;
+    GtkWindow *window;
+    dialog = gtk_alert_dialog_new ("%s: %s\n\n%s",
+                                   error_msg,
+                                   chatty_item_get_username (CHATTY_ITEM (account)),
+                                   _("Please check ID and password"));
 
-    dialog = message_dialog_new (GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, _("Login failed"));
-    gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-                                              "%s: %s\n\n%s",
-                                              error_msg,
-                                              chatty_item_get_username (CHATTY_ITEM (account)),
-                                              _("Please check ID and password"));
-    run_dialog_and_destroy (dialog);
+    window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
+    gtk_alert_dialog_show (GTK_ALERT_DIALOG (dialog), window);
   }
 }
 
@@ -1077,7 +1085,6 @@ chatty_conv_write_conversation (PurpleConversation *conv,
       chat_message = chatty_message_new (NULL, message, uuid, 0, CHATTY_MESSAGE_HTML_ESCAPED,
                                          CHATTY_DIRECTION_SYSTEM, 0);
       chatty_pp_chat_append_message (chat, chat_message);
-      g_signal_emit_by_name (chat, "message-added");
     } else if (pcm.flags & PURPLE_MESSAGE_RECV) {
       g_autoptr(ChattyContact) contact = NULL;
       ChattyPpChat *active_chat;
@@ -1090,7 +1097,6 @@ chatty_conv_write_conversation (PurpleConversation *conv,
       chat_message = chatty_message_new (CHATTY_ITEM (contact), message, uuid, mtime,
                                          CHATTY_MESSAGE_HTML_ESCAPED, CHATTY_DIRECTION_IN, 0);
       chatty_pp_chat_append_message (chat, chat_message);
-      g_signal_emit_by_name (chat, "message-added");
 
       if (buddy && purple_blist_node_get_bool (node, "chatty-notifications") &&
           active_chat != chat) {
@@ -1106,7 +1112,6 @@ chatty_conv_write_conversation (PurpleConversation *conv,
                                          CHATTY_DIRECTION_OUT, 0);
       chatty_message_set_status (chat_message, CHATTY_STATUS_SENT, 0);
       chatty_pp_chat_append_message (chat, chat_message);
-      g_signal_emit_by_name (chat, "message-added");
 
       chatty_chat_set_unread_count (CHATTY_CHAT (chat), 0);
     } else if (pcm.flags & PURPLE_MESSAGE_SEND) {
@@ -1118,7 +1123,6 @@ chatty_conv_write_conversation (PurpleConversation *conv,
                                          CHATTY_DIRECTION_OUT, 0);
       chatty_message_set_status (chat_message, CHATTY_STATUS_SENT, 0);
       chatty_pp_chat_append_message (chat, chat_message);
-      g_signal_emit_by_name (chat, "message-added");
 
       if (mtime > chatty_history_get_last_message_time (self->history, account->username, pcm.who))
         chatty_chat_set_unread_count (CHATTY_CHAT (chat), 0);

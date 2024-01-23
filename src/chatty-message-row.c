@@ -16,7 +16,6 @@
 #include <glib/gi18n.h>
 #include <ctype.h>
 
-#include "gtk3-to-4.h"
 #include "chatty-avatar.h"
 #include "chatty-enums.h"
 #include "chatty-purple.h"
@@ -111,10 +110,34 @@ find_url (const char  *buffer,
     size_t url_end;
 
     url_end = strcspn (url, " \n()[],\t\r");
-    if (url_end)
+    if (url_end == strlen (url))
       *end = url + url_end;
-    else
-      *end = url + strlen (url);
+    else {
+      char *ptr = url + url_end + 1;
+
+      while (ptr[-1] == '(') {
+        size_t count = 0;
+        size_t other_count = 0;
+
+        count = strcspn (ptr, ")");
+        other_count = strcspn (ptr, " \n([],\t\r");
+        if (count < strlen (ptr) && count < other_count)
+          ptr += count + 2;
+        else
+          break;
+      }
+
+      while (!isspace(ptr[-1]) && !isspace(ptr[0]) &&
+             ptr[-1] != '(' && ptr[-1] != ')') {
+        size_t count = 0;
+
+        count = strcspn (ptr, " \n()[],\t\r");
+        ptr += count + 1;
+        if (count == strlen (ptr - count - 1))
+          break;
+      }
+      *end = ptr - 1;
+    }
   }
 
   return url;
@@ -413,6 +436,35 @@ chatty_message_row_update_footer (ChattyMessageRow *self)
 }
 
 static void
+chatty_message_row_call_copy_message_text (GtkWidget  *widget,
+                                           const char *action_name,
+                                           GVariant   *param)
+{
+  ChattyMessageRow *self = CHATTY_MESSAGE_ROW (widget);
+  GdkClipboard *clipboard;
+  const char *text;
+
+  g_assert (CHATTY_IS_MESSAGE_ROW (self));
+
+  text = chatty_message_get_text (self->message);
+
+  if (!text || !*text)
+    return;
+
+  clipboard = gdk_display_get_clipboard (gdk_display_get_default ());
+  gdk_clipboard_set_text (clipboard, text);
+}
+
+static void
+long_pressed (GtkGestureLongPress *gesture,
+              gdouble              x,
+              gdouble              y,
+              ChattyMessageRow    *self)
+{
+  gtk_popover_popup (GTK_POPOVER (self->popover));
+}
+
+static void
 message_row_update_message (ChattyMessageRow *self)
 {
   g_assert (CHATTY_IS_MESSAGE_ROW (self));
@@ -470,14 +522,16 @@ chatty_message_row_class_init (ChattyMessageRowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, avatar_image);
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, hidden_box);
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, author_label);
+  gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, popover);
 
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, message_content);
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, files_box);
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, content_separator);
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, message_title);
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, message_body);
-
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, footer_label);
+
+  gtk_widget_class_install_action (widget_class, "win.copy-text", NULL, chatty_message_row_call_copy_message_text);
 }
 
 static void
@@ -525,7 +579,6 @@ chatty_message_row_new (ChattyMessage  *message,
                         gboolean        is_im)
 {
   ChattyMessageRow *self;
-  GtkStyleContext *sc;
   const char *text, *subject;
   ChattyMsgDirection direction;
 
@@ -537,12 +590,23 @@ chatty_message_row_new (ChattyMessage  *message,
   self->message = g_object_ref (message);
   self->is_im = !!is_im;
   direction = chatty_message_get_msg_direction (message);
-  sc = gtk_widget_get_style_context (self->message_content);
 
   message_row_add_files (self);
 
   subject = chatty_message_get_subject (message);
   text = chatty_message_get_text (message);
+
+  if (text && *text) {
+    GtkGesture *gesture;
+    gesture = gtk_gesture_long_press_new ();
+    /*
+     * gtk_widget_add_controller () transfers ownership of the gesture to
+     * ChattyMessageRow so you will not have to worry about freeing it manually
+     */
+    gtk_widget_add_controller (GTK_WIDGET (self), GTK_EVENT_CONTROLLER (gesture));
+    g_signal_connect (gesture, "pressed", G_CALLBACK (long_pressed), self);
+  }
+
   gtk_widget_set_visible (self->message_title, subject && *subject);
   gtk_widget_set_visible (self->message_body, text && *text);
 
@@ -583,17 +647,17 @@ chatty_message_row_new (ChattyMessage  *message,
   text_item_update_quotes (self);
 
   if (direction == CHATTY_DIRECTION_IN) {
-    gtk_style_context_add_class (sc, "bubble_white");
+    gtk_widget_add_css_class (self->message_content, "bubble_white");
     gtk_widget_set_halign (self->files_box, GTK_ALIGN_START);
     gtk_widget_set_halign (self->content_grid, GTK_ALIGN_START);
     gtk_widget_set_halign (self->message_content, GTK_ALIGN_START);
     gtk_widget_set_halign (self->author_label, GTK_ALIGN_START);
   } else if (direction == CHATTY_DIRECTION_OUT && protocol == CHATTY_PROTOCOL_MMS_SMS) {
-    gtk_style_context_add_class (sc, "bubble_green");
+    gtk_widget_add_css_class (self->message_content, "bubble_green");
   } else if (direction == CHATTY_DIRECTION_OUT) {
-    gtk_style_context_add_class (sc, "bubble_blue");
+    gtk_widget_add_css_class (self->message_content, "bubble_blue");
   } else { /* System message */
-    gtk_style_context_add_class (sc, "bubble_purple");
+    gtk_widget_add_css_class (self->message_content, "bubble_purple");
     gtk_widget_set_hexpand (self->message_content, TRUE);
   }
 

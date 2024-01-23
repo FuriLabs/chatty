@@ -32,7 +32,6 @@
 #define CMATRIX_USE_EXPERIMENTAL_API
 #include "cmatrix.h"
 
-#include "gtk3-to-4.h"
 #include "chatty-utils.h"
 #include "chatty-ma-account.h"
 #include "chatty-mm-account.h"
@@ -130,24 +129,18 @@ static void
 settings_apply_style (GtkWidget  *widget,
                       const char *style)
 {
-  GtkStyleContext *context;
-
   g_assert (style && *style);
 
-  context = gtk_widget_get_style_context (widget);
-  gtk_style_context_add_class (context, style);
+  gtk_widget_add_css_class (widget, style);
 }
 
 static void
 settings_remove_style (GtkWidget  *widget,
                        const char *style)
 {
-  GtkStyleContext *context;
-
   g_assert (style && *style);
 
-  context = gtk_widget_get_style_context (widget);
-  gtk_style_context_remove_class (context, style);
+  gtk_widget_add_css_class (widget, style);
 }
 
 static void
@@ -195,16 +188,12 @@ settings_save_account_cb (GObject      *object,
 
   if (error) {
     if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
-      GtkWidget *dialog;
+      g_autoptr(GtkAlertDialog) dialog = NULL;
+      GtkWindow *window;
 
-      dialog = gtk_message_dialog_new (GTK_WINDOW (self),
-                                       GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                       GTK_MESSAGE_WARNING,
-                                       GTK_BUTTONS_CLOSE,
-                                       "Error saving account: %s", error->message);
-      g_signal_connect_swapped (dialog, "response",
-                                G_CALLBACK (gtk_window_destroy), dialog);
-      gtk_window_present (GTK_WINDOW (dialog));
+      dialog = gtk_alert_dialog_new (_("Error saving account: %s"), error->message);
+      window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
+      gtk_alert_dialog_show (GTK_ALERT_DIALOG (dialog), window);
     }
   } else {
     gtk_widget_set_visible (self->add_button, FALSE);
@@ -422,14 +411,18 @@ settings_pp_details_changed_cb (ChattySettingsDialog *self,
 }
 
 static void
-settings_delete_account_response_cb (ChattySettingsDialog *self,
-                                     int                   response_id,
-                                     GtkDialog            *dialog)
+settings_delete_account_response_cb (GObject         *dialog,
+                                     GAsyncResult    *response,
+                                     gpointer         user_data)
 {
-  g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
-  g_assert (GTK_IS_DIALOG (dialog));
+  g_autoptr(GError) error = NULL;
+  ChattySettingsDialog *self = CHATTY_SETTINGS_DIALOG (user_data);
+  int dialog_response = -1;
 
-  if (response_id == GTK_RESPONSE_OK) {
+  g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
+  dialog_response = gtk_alert_dialog_choose_finish (GTK_ALERT_DIALOG (dialog), response, &error);
+
+  if (!chatty_utils_dialog_response_is_cancel (GTK_ALERT_DIALOG (dialog), dialog_response)) {
     chatty_manager_delete_account_async (chatty_manager_get_default (),
                                          g_steal_pointer (&self->selected_account),
                                          NULL, NULL, NULL);
@@ -437,38 +430,34 @@ settings_delete_account_response_cb (ChattySettingsDialog *self,
     gtk_widget_set_visible (self->save_button, FALSE);
     gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "main-settings");
   }
-
-  gtk_window_destroy (GTK_WINDOW (dialog));
+  g_clear_object (&dialog);
 }
 
 static void
 settings_delete_account_clicked_cb (ChattySettingsDialog *self)
 {
-  GtkWidget *dialog;
   const char *username;
+  GtkWindow *window;
+  GtkAlertDialog *dialog;
+  g_autofree char *secondary_text = NULL;
+  const char *list[] = {_("Cancel"), _("OK"), NULL};
 
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
+  window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
 
   if (CHATTY_IS_MA_ACCOUNT (self->selected_account))
     username = chatty_ma_account_get_login_username (CHATTY_MA_ACCOUNT (self->selected_account));
   else
     username = chatty_item_get_username (CHATTY_ITEM (self->selected_account));
 
-  dialog = gtk_message_dialog_new ((GtkWindow*)self,
-                                   GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                   GTK_MESSAGE_WARNING,
-                                   GTK_BUTTONS_OK_CANCEL,
-                                   _("Delete Account"));
+  dialog = gtk_alert_dialog_new ( _("Delete Account"));
+  secondary_text = g_strdup_printf(_("Delete account %s?"), username);
+  gtk_alert_dialog_set_detail (dialog, secondary_text);
+  gtk_alert_dialog_set_buttons (dialog, list);
+  gtk_alert_dialog_set_cancel_button (dialog, 0);
+  gtk_alert_dialog_set_default_button (dialog, 1);
+  gtk_alert_dialog_choose (dialog, window, NULL, settings_delete_account_response_cb, self);
 
-  gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-                                            _("Delete account %s?"), username);
-
-  gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_CANCEL);
-
-  g_signal_connect_object (dialog, "response",
-                           G_CALLBACK (settings_delete_account_response_cb),
-                           self, G_CONNECT_SWAPPED);
-  gtk_window_present (GTK_WINDOW (dialog));
 }
 
 static void
@@ -536,7 +525,6 @@ static void
 settings_phone_number_entry_changed_cb (ChattySettingsDialog *self,
                                         GtkEntry             *number_entry)
 {
-  GtkStyleContext *context;
   const char *number;
   gboolean valid = TRUE;
 
@@ -559,12 +547,10 @@ settings_phone_number_entry_changed_cb (ChattySettingsDialog *self,
     valid = chatty_phone_utils_is_valid (number, "+1");
 
  end:
-  context = gtk_widget_get_style_context (GTK_WIDGET (number_entry));
-
   if (valid)
-    gtk_style_context_remove_class (context, "error");
+    gtk_widget_remove_css_class (GTK_WIDGET (number_entry), "error");
   else
-    gtk_style_context_add_class (context, "error");
+    gtk_widget_add_css_class (GTK_WIDGET (number_entry), "error");
 
 
   gtk_widget_set_sensitive (self->mms_save_button, valid);

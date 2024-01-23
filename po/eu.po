@@ -1,348 +1,334 @@
-# Hebrew translation for chatty.
-# Copyright (C) 2021 chatty's COPYRIGHT HOLDER
+# Basque translation for chatty.
+# Copyright (C) 2023 chatty's COPYRIGHT HOLDER
 # This file is distributed under the same license as the chatty package.
-# Yaron Shahrabani <sh.yaron@gmail.com>, 2021.
-# Yosef Or Boczko <yoseforb@gmail.com>, 2022-2023.
+# Asier Sarasua Garmendia <asiersarasua@ni.eus>, 2023, 2024.
 #
 msgid ""
-msgstr ""
-"Project-Id-Version: chatty master\n"
+msgstr "Project-Id-Version: chatty main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-01-11 04:31+0000\n"
-"PO-Revision-Date: 2024-01-17 10:58+0200\n"
-"Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
-"Language-Team: Hebrew\n"
-"Language: he\n"
+"POT-Creation-Date: 2024-01-01 04:19+0000\n"
+"PO-Revision-Date: 2010:00+0100\n"
+"Last-Translator: Asier Sarasua Garmendia <asiersarasua@ni.eus>\n"
+"Language-Team: Basque <eu@li.org>\n"
+"Language: eu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : n==2 ? 1 : n>10 && n%10==0 ? "
-"2 : 3);\n"
-"X-Generator: Poedit 3.4.2\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: data/sm.puri.Chatty.desktop.in.in:3 data/sm.puri.Chatty.metainfo.xml.in.in:6
 #: src/chatty-application.c:164 src/chatty-application.c:403
 #: src/chatty-side-bar.c:347 src/ui/chatty-side-bar.ui:16
 msgid "Chats"
-msgstr "התכתבויות"
+msgstr "Berriketak"
 
 #: data/sm.puri.Chatty.desktop.in.in:6
 msgid "SMS and XMPP chat application"
-msgstr "יישום התכתבות במסרונים וב־XMPP"
+msgstr "SMS eta XMPP berriketarako aplikazioa"
 
 #: data/sm.puri.Chatty.desktop.in.in:7
 msgid "XMPP;SMS;chat;jabber;messaging;modem"
-msgstr "‫XMPP;מסרון;מסרונים;אס אם אס;SMS;התכתבות;צ׳אט;שיח;מודם;ג׳אבר"
+msgstr "XMPP;SMS;berriketa;jabber;mezuak;modema"
 
 #: data/sm.puri.Chatty.gschema.xml:7 data/sm.puri.Chatty.gschema.xml:8
 msgid "Whether the application is launching the first time"
-msgstr "האם זאת הטעינה הראשונה של היישומון"
+msgstr "Aplikazioa lehen aldiz abiarazten ari den ala ez"
 
 #: data/sm.puri.Chatty.gschema.xml:13
 msgid "Country code in ISO 3166-1 alpha-2 format"
-msgstr "קוד מדינה בתצורת ISO 3166-1 alpha-2"
+msgstr "Herrialde-kodea ISO 3166-1 alpha-2 formatuan"
 
 #: data/sm.puri.Chatty.gschema.xml:14
 msgid "Two letter country code of the last available SIM/Network"
-msgstr "קוד מדינה בשתי ספרות של הרשת/SIM האחרונים הזמינים"
+msgstr "Erabilgarri egon den azken SIM/Sarearen herrialde-kodea, bi letraduna"
 
 #: data/sm.puri.Chatty.gschema.xml:19
 msgid "Send message read receipts"
-msgstr "לשלוח קבלות קריאה על הודעות"
+msgstr "Bidali mezu irakurrien irakurragiriak"
 
 #: data/sm.puri.Chatty.gschema.xml:20
 msgid "Whether to send the status of the message if read"
-msgstr "האם לשלוח את מצב קריאת ההודעה"
+msgstr "Mezua irakurrri bada, horren egoera bidaliko den ala ez"
 
 #: data/sm.puri.Chatty.gschema.xml:25
 msgid "Message carbon copies"
-msgstr "עותקים של הודעות"
+msgstr ""
 
 #: data/sm.puri.Chatty.gschema.xml:26 src/ui/chatty-settings-dialog.ui:511
 msgid "Share chat history among devices"
-msgstr "שיתוף היסטוריית ההתכתבות בין מכשירים"
+msgstr ""
 
 #: data/sm.puri.Chatty.gschema.xml:31
 msgid "Enable Message Archive Management"
-msgstr "לאפשר ניהול ארכיון הודעות"
+msgstr ""
 
 #: data/sm.puri.Chatty.gschema.xml:32
 msgid "Enable MAM archive synchronization from the server"
-msgstr "לאפשר סנכרון ארכיון MAM מהשרת"
+msgstr ""
 
 #: data/sm.puri.Chatty.gschema.xml:37
 msgid "Enable purple"
-msgstr "לאפשר purple"
+msgstr "Gaitu purple"
 
 #: data/sm.puri.Chatty.gschema.xml:38 src/ui/chatty-settings-dialog.ui:471
 msgid "Enable purple accounts"
-msgstr "לאפשר חשבונות purple"
+msgstr "Gaitu purple kontuak"
 
 #: data/sm.puri.Chatty.gschema.xml:43
 msgid "Send typing notifications"
-msgstr "לשלוח התראות הקלדה"
+msgstr ""
 
 #: data/sm.puri.Chatty.gschema.xml:44
 msgid "Whether to Send typing notifications"
-msgstr "האם לשלוח התראות הקלדה"
+msgstr ""
 
 #: data/sm.puri.Chatty.gschema.xml:49 src/ui/chatty-settings-dialog.ui:173
 msgid "Strip Tracking IDs"
-msgstr "הפשטת מזהים למעקב"
+msgstr ""
 
 #: data/sm.puri.Chatty.gschema.xml:50
 msgid "Whether to Remove Tracking IDs from URLs Automatically"
-msgstr "Whether to Remove Tracking IDs from URLs Automatically"
+msgstr ""
 
 #: data/sm.puri.Chatty.gschema.xml:55 src/ui/chatty-settings-dialog.ui:187
 msgid "Render Attachments"
-msgstr "עיבוד צרופות"
+msgstr "Errendatu eranskinak"
 
 #: data/sm.puri.Chatty.gschema.xml:56
 msgid "Whether to Render Attachments or not"
-msgstr "Whether to Render Attachments or not"
+msgstr ""
 
 #: data/sm.puri.Chatty.gschema.xml:61 data/sm.puri.Chatty.gschema.xml:62
 msgid "Mark Idle users differently"
-msgstr "לסמן משתמשים בלתי פעילים אחרת"
+msgstr ""
 
 #: data/sm.puri.Chatty.gschema.xml:67 data/sm.puri.Chatty.gschema.xml:68
 msgid "Indicate unknown contacts"
-msgstr "לציין אנשי קשר בלתי ידועים"
+msgstr ""
 
 #: data/sm.puri.Chatty.gschema.xml:73
 msgid "Convert text to emoticons"
-msgstr "להמיר טקסט לרגשונים"
+msgstr "Bihurtu testuak emotikono"
 
 #: data/sm.puri.Chatty.gschema.xml:74
 msgid "Convert text matching emoticons as real emoticons"
-msgstr "להמיר טקסט שמחקה רגשונים לרגשונים אמתיים"
+msgstr ""
 
 #: data/sm.puri.Chatty.gschema.xml:79
 msgid "Enter key sends the message"
-msgstr "‫Enter שולח את ההודעה"
+msgstr "Enter teklak mezua bidaltzen du"
 
 #: data/sm.puri.Chatty.gschema.xml:80
 msgid "Whether pressing Enter key sends the message"
-msgstr "האם לחיצה על Enter תשלח את ההודעה"
+msgstr "Enter tekla sakatzen bada, mezua bidaliko da"
 
 #: data/sm.puri.Chatty.gschema.xml:85
 msgid "Request SMS delivery reports"
-msgstr "דרישת דיווחי מסירת הודעות SMS"
+msgstr ""
 
 #: data/sm.puri.Chatty.gschema.xml:86
 msgid "Whether to request delivery reports for outgoing SMS"
-msgstr "האם לדרוש דיווח על שליחה של הודעות SMS יוצאות"
+msgstr ""
 
 #: data/sm.puri.Chatty.gschema.xml:91
 msgid "Enable experimental features"
-msgstr "להפעיל תכונות ניסיוניות"
+msgstr "Gaitu eginbide esperimentalak"
 
 #: data/sm.puri.Chatty.gschema.xml:92
 msgid "Whether to enable experimental features"
-msgstr "האם להפעיל תכונות ניסיוניות"
+msgstr "Eginbide esperimentalak gaituko diren ala ez"
 
 #: data/sm.puri.Chatty.gschema.xml:97
 msgid "Window maximized"
-msgstr "החלון מוגדל לחלוטין"
+msgstr "Leihoa maximizatuta"
 
 #: data/sm.puri.Chatty.gschema.xml:98
 msgid "Window maximized state"
-msgstr "מצב הגדלת חלון"
+msgstr "Leihoaren maximizazioaren egoera"
 
 #: data/sm.puri.Chatty.gschema.xml:103
 msgid "Window size"
-msgstr "גודל חלון"
+msgstr "Leiho-tamaina"
 
 #: data/sm.puri.Chatty.gschema.xml:104
 msgid "Window size (width, height)."
-msgstr "גודל חלון (רוחב, גובה)."
+msgstr "Leiho-tamaina (zabalera, altuera)"
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:7
 msgid "Messaging application for mobile and desktop"
-msgstr "יישום שליחת הודעות לנייד ולשולחן העבודה"
+msgstr ""
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:9
 msgid ""
 "Chats is a simple to use to messaging app for 1:1 communication and small "
 "groups supporting SMS, MMS, XMPP and Matrix."
 msgstr ""
-"התכתבויות הוא יישום התכתבות לשיחות 1:1 ושיחות קבוצתיות קטנות התומך ב־SMS, "
-"MMS, XMPP ו־Matrix."
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:16
 msgid "Chats message window"
-msgstr "חלון ההודעות של התכתבויות"
+msgstr ""
 
 #: src/chatty-application.c:79
 msgid "Show release version"
-msgstr "להציג גרסה"
+msgstr "Erakutsi bertsioa"
 
 #: src/chatty-application.c:80
 msgid "Start in daemon mode"
-msgstr "לעלות במצב רקע"
+msgstr ""
 
 #: src/chatty-application.c:81
 msgid "Disable all accounts"
-msgstr "להשבית את כל החשבונות"
+msgstr "Desgaitu kontu guztiak"
 
 #: src/chatty-application.c:83
 msgid "Enable libpurple debug messages"
-msgstr "לאפשר הודעות ניפוי שגיאות של libpurple"
+msgstr "Gaitu libpurple arazketa-mezuak"
 
 #: src/chatty-application.c:86
 msgid "Enable verbose debug messages (repeat option for more verbosity)"
-msgstr "Enable verbose debug messages (repeat option for more verbosity)"
+msgstr ""
 
 #: src/chatty-application.c:167
 msgid "An SMS and XMPP messaging client"
-msgstr "לקוח התכתבות במסרונים וב־XMPP"
+msgstr ""
 
 #: src/chatty-application.c:175
 msgid "translator-credits"
-msgstr ""
-"ירון שהרבני <sh.yaron@gmail.com>\n"
-"יוסף אור בוצ׳קו <yoseforb@gmail.com>\n"
-"מיזם תרגום GNOME לעברית https://l10n.gnome.org/teams/he/"
+msgstr "translator-credits"
 
 #: src/chatty-application.c:198
 #, c-format
 msgid ""
 "There was an error displaying help:\n"
 "%s"
-msgstr ""
-"אירעה שגיאה בהצגת העזרה:\n"
+msgstr "Errorea gertatu da laguntza bistaratzean:\n"
 "%s"
 
 #: src/chatty-avatar.c:182 src/chatty-contact-list.c:393
 msgid "Send To"
-msgstr "לשלוח אל"
+msgstr "Bidali honi:"
 
 #: src/chatty-chat-list.c:174
 msgid "Select a contact with the <b>“+”</b> button in the titlebar."
-msgstr "נא לבחור באיש קשר עם הכפתור <b>”+„</b> שבשורת הכותרת."
+msgstr ""
 
 #: src/chatty-chat-list.c:178
 msgid "Add instant messaging accounts in Preferences."
-msgstr "הוספת חשבונות הודעות מידיות בהעדפות."
+msgstr ""
 
 #: src/chatty-chat-list.c:214 src/chatty-contact-list.c:282
 msgid "No Search Results"
-msgstr "אין תוצאות חיפוש"
+msgstr "Bilaketak ez du emaitzarik"
 
 #: src/chatty-chat-list.c:215
 msgid "Try different search"
-msgstr "יש לנסות חיפוש שונה"
+msgstr "Saiatu bestelako bilaketa bat"
 
 #: src/chatty-chat-list.c:220
 msgid "No archived chats"
-msgstr "אין שיחות מאורכבות"
+msgstr "Ez dago artxibatutako berriketarik"
 
 #: src/chatty-chat-list.c:222
 msgid "Start Chatting"
-msgstr "התחלת התכתבות"
+msgstr "Hasi berriketan"
 
 #: src/chatty-chat-page.c:201 src/chatty-chat-page.c:210
 msgid "This is an MMS conversation"
-msgstr "זה דיון בהודעות מולטימדיה"
+msgstr "Hau MMS berriketa bat da"
 
 #: src/chatty-chat-page.c:203 src/chatty-chat-page.c:218
 #: src/chatty-chat-page.c:224
 msgid "Your messages are not encrypted, and carrier rates may apply"
-msgstr "ההודעות שלך אינן מוצפנות, ויתכנו חיובים מהספק"
+msgstr ""
 
 #: src/chatty-chat-page.c:213
 msgid "This is an SMS/MMS conversation"
-msgstr "זה דיון במסרונים/הודעות מולטימדיה"
+msgstr "Hau SMS/MMS berriketa bat da"
 
 #: src/chatty-chat-page.c:216
 msgid "This is an SMS conversation"
-msgstr "זו התכתבות במסרונים (התמסררות)"
+msgstr "Hau SMS berriketa bat da"
 
 #: src/chatty-chat-page.c:222
 msgid "This is an IM conversation"
-msgstr "זאת שיחה בהודעות פרטיות"
+msgstr "Hau IM berriketa bat da"
 
 #: src/chatty-chat-page.c:228
 msgid "Your messages are encrypted"
-msgstr "ההודעות שלך מוצפנות"
+msgstr "Zure mezua zifratuta daude"
 
 #: src/chatty-chat-page.c:231
 msgid "Your messages are not encrypted"
-msgstr "ההודעות שלך אינן מוצפנות"
+msgstr "Zure mezuak ez daude zifratuta"
 
 #: src/chatty-chat.c:708
 msgid "Empty room"
-msgstr "חדר ריק"
+msgstr "Gela hutsa"
 
 #. TRANSLATORS: %s are name/user-id/phone numbers of two users
 #: src/chatty-chat.c:715
 #, c-format
 msgid "%s and %s"
-msgstr "‫%s וגם %s"
+msgstr "%s eta %s"
 
 #: src/chatty-chat.c:717
 #, c-format
 msgid "%s and %u other"
 msgid_plural "%s and %u others"
-msgstr[0] "‫%s ועוד אחד"
-msgstr[1] "‫%s ועוד שניים"
-msgstr[2] "‫%s ועוד %u נוספים"
-msgstr[3] "‫%s ועוד %u נוספים"
+msgstr[0] "%s eta %u gehiago"
+msgstr[1] "%s eta %u gehiago"
 
 #: src/chatty-contact-list.c:247 src/dialogs/chatty-mm-chat-info.c:127
 msgid "Unknown Contact"
-msgstr "איש קשר לא ידוע"
+msgstr "Kontaktu ezezaguna"
 
 #: src/chatty-contact-list.c:283
 msgid "Try different search, or type a valid number to create new chat"
-msgstr "כדאי לנסות חיפוש אחר או להקליד מספר טלפון תקני כדי ליצור התכתבות חדשה"
+msgstr "Saiatu beste bilaketa batekin edo idatzi baliozko zenbaki bat berriketa berria sortzeko"
 
 #: src/chatty-contact-list.c:289
 msgid "No Contacts"
-msgstr "אין אנשי קשר"
+msgstr "Kontakturik ez"
 
 #: src/chatty-clock.c:85
 msgid "Just Now"
-msgstr "ממש עכשיו"
+msgstr "Orain"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
 #: src/chatty-clock.c:94 src/chatty-clock.c:124
 msgid "%I∶%M %p"
-msgstr "%I:%M %p"
+msgstr "%I∶%M %p"
 
 #: src/chatty-clock.c:103
 #, c-format
 msgid "%lu minute ago"
 msgid_plural "%lu minutes ago"
-msgstr[0] "לפני דקה"
-msgstr[1] "לפני %lu דקות"
-msgstr[2] "לפני %lu דקות"
-msgstr[3] "לפני %lu דקות"
+msgstr[0] "Duela minutu %lu"
+msgstr[1] "Duela %lu minutu"
 
 #: src/chatty-clock.c:111
 msgid "Today %H∶%M"
-msgstr "היום, ‎%H∶%M"
+msgstr "Gaur %H∶%M"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “Today 06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
 #: src/chatty-clock.c:119
 msgid "Today %I∶%M %p"
-msgstr "היום, ‎%H∶%M ‏%p"
+msgstr "Gaur %I∶%M %p"
 
 #: src/chatty-clock.c:131
 msgid "Yesterday %H∶%M"
-msgstr "אתמול, ‎%H∶%M"
+msgstr "Atzo %H∶%M"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “Yesterday 06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
 #: src/chatty-clock.c:136
 msgid "Yesterday %I∶%M %p"
-msgstr "אתמול, ‎%H∶%M ‏%p"
+msgstr "Atzo %I∶%M %p"
 
 #. TRANSLATORS: Timestamp from more than 7 days ago or future date
 #. * (eg: when the system time is wrong), e.g. “2022-01-01”.
@@ -356,91 +342,91 @@ msgstr "%Y-%m-%d"
 #: src/chatty-fp-row.c:130
 #, c-format
 msgid "Device ID %s fingerprint:"
-msgstr "טביעת אצבע של מזהה מכשיר %s:"
+msgstr ""
 
 #. TRANSLATORS: %s is the chat room name
 #: src/chatty-invite-page.c:72
 #, c-format
 msgid "Do you want to join “%s”"
-msgstr "האם ברצונך להצטרף אל „%s”?"
+msgstr ""
 
 #: src/chatty-list-row.c:122
 msgid "Owner"
-msgstr "בעלים"
+msgstr "Jabea"
 
 #: src/chatty-list-row.c:125
 msgid "Moderator"
-msgstr "מפקח"
+msgstr "Moderatzailea"
 
 #: src/chatty-list-row.c:128
 msgid "Member"
-msgstr "חבר"
+msgstr "Kidea"
 
 #: src/chatty-list-row.c:250
 msgid "Picture"
-msgstr "תמונה"
+msgstr "Irudia"
 
 #: src/chatty-list-row.c:253
 msgid "Video"
-msgstr "סרטון"
+msgstr "Bideoa"
 
 #: src/chatty-list-row.c:256
 msgid "Audio"
-msgstr "שמע"
+msgstr "Audioa"
 
 #: src/chatty-list-row.c:259
 msgid "Location"
-msgstr "מקום"
+msgstr "Kokalekua"
 
 #: src/chatty-list-row.c:262 src/chatty-list-row.c:279
 msgid "File"
-msgstr "קובץ"
+msgstr "Fitxategia"
 
 #: src/chatty-list-row.c:265
 msgid "MMS Message"
-msgstr "הודעת מולטימדיה"
+msgstr "MMS mezua"
 
 #: src/chatty-list-row.c:281
 msgid "Multiple Files"
-msgstr "כמה קבצים"
+msgstr "Fitxategi anitz"
 
 #: src/chatty-main-view.c:124
 msgid "Account disconnected"
-msgstr "החשבון מנותק"
+msgstr "Kontua deskonektatuta"
 
 #: src/chatty-main-view.c:126
 msgid "Account connecting…"
-msgstr "מתחבר לחשבון…"
+msgstr "Kontua konektatzen…"
 
 #: src/chatty-manager.c:736
 #, c-format
 msgid "“%s” is not a valid URI"
-msgstr "הכתובת „%s” אינה תקינה"
+msgstr "“%s” ez da baliozko URIa"
 
 #: src/chatty-message.c:230
 msgid "Got an encrypted message, but couldn't decrypt due to missing keys"
-msgstr "התקבלה הודעה מוצפנת, אך לא ניתן לפענח אותה עקב מחסור במפתחות"
+msgstr "Mezu zifratu bat jaso da baina ezin da deszifratu gakoak falta direlako"
 
 #: src/chatty-notification.c:180
 msgid "Open Message"
-msgstr "לפתוח הודעה"
+msgstr "Ireki mezua"
 
 #: src/chatty-notification.c:213
 #, c-format
 msgid "New message from %s"
-msgstr "הודעה חדשה מאת %s"
+msgstr "%s-(r)en mezu berria"
 
 #: src/chatty-notification.c:215
 msgid "Message Received"
-msgstr "התקבלה הודעה"
+msgstr "Mezua jaso da"
 
 #: src/chatty-side-bar.c:317
 msgid "Any Protocol"
-msgstr "כל פרוטוקול"
+msgstr "Edozein protokolo"
 
 #: src/chatty-side-bar.c:318 src/ui/chatty-settings-dialog.ui:581
 msgid "Matrix"
-msgstr "‫Matrix"
+msgstr "Matrix"
 
 #: src/chatty-side-bar.c:319
 msgid "SMS/MMS"
@@ -448,490 +434,488 @@ msgstr "SMS/MMS"
 
 #: src/chatty-side-bar.c:322 src/ui/chatty-settings-dialog.ui:570
 msgid "XMPP"
-msgstr "‫XMPP"
+msgstr "XMPP"
 
 #: src/chatty-side-bar.c:325 src/ui/chatty-settings-dialog.ui:594
 msgid "Telegram"
-msgstr "טלגרם"
+msgstr "Telegram"
 
 #: src/chatty-side-bar.c:347
 msgid "Archived"
-msgstr "ארכיון"
+msgstr "Artxibatua"
 
 #: src/purple/chatty-purple-request.c:218
 msgid "Save File..."
-msgstr "שמירת קובץ…"
+msgstr "Gorde fitxategia..."
 
 #: src/purple/chatty-purple-request.c:220
 msgid "Open File..."
-msgstr "פתיחת קובץ…"
+msgstr "Ireki fitxategia..."
 
 #: src/purple/chatty-purple.c:194
 #, c-format
 msgid "User %s has added %s to the contacts"
-msgstr "המשתמש %s הוסיף את %s לאנשי קשר"
+msgstr "%s erabiltzaileak %s gehitu du kontaktuetan"
 
 #: src/purple/chatty-purple.c:259
 msgid "Reject"
-msgstr "לדחות"
+msgstr "Baztertu"
 
 #: src/purple/chatty-purple.c:259
 msgid "Accept"
-msgstr "לקבל"
+msgstr "Onartu"
 
 #: src/purple/chatty-purple.c:278
 #, c-format
 msgid "Authorize %s?"
-msgstr "לאשר את %s?"
+msgstr "Baimendu %s?"
 
 #: src/purple/chatty-purple.c:279
 #, c-format
 msgid "Add %s to contact list"
-msgstr "להוסיף את %s לרשימת אנשי הקשר"
+msgstr "Gehitu %s kontaktuen zerrendan"
 
 #: src/purple/chatty-purple.c:595
 msgid "Please check ID and password"
-msgstr "נא לבדוק מזהה וססמה"
+msgstr "Egiaztatu IDa eta pasahitza"
 
 #. TRANSLATORS: You may copy translations from https://github.com/matrix-org/matrix-spec-proposals/blob/old_master/data-definitions/sas-emoji.json
 #. * if available
 #: src/chatty-verification-page.c:27
 msgid "Dog"
-msgstr "כלב"
+msgstr "Txakurra"
 
 #. "U+1F436"
 #: src/chatty-verification-page.c:28
 msgid "Cat"
-msgstr "חתול"
+msgstr "Katua"
 
 #. "U+1F431"
 #: src/chatty-verification-page.c:29
 msgid "Lion"
-msgstr "אריה"
+msgstr "Lehoia"
 
 #. "U+1F981"
 #: src/chatty-verification-page.c:30
 msgid "Horse"
-msgstr "סוס"
+msgstr "Zaldia"
 
 #. "U+1F40E"
 #: src/chatty-verification-page.c:31
 msgid "Unicorn"
-msgstr "חד־קרן"
+msgstr "Unikornioa"
 
 #. "U+1F984"
 #: src/chatty-verification-page.c:32
 msgid "Pig"
-msgstr "חזיר"
+msgstr "Txerria"
 
 #. "U+1F437"
 #: src/chatty-verification-page.c:33
 msgid "Elephant"
-msgstr "פיל"
+msgstr "Elefantea"
 
 #. "U+1F418"
 #: src/chatty-verification-page.c:34
 msgid "Rabbit"
-msgstr "ארנב"
+msgstr "Untxia"
 
 #. "U+1F430"
 #: src/chatty-verification-page.c:35
 msgid "Panda"
-msgstr "דב פנדה"
+msgstr "Panda"
 
 #. "U+1F43C"
 #: src/chatty-verification-page.c:36
 msgid "Rooster"
-msgstr "תרנגול"
+msgstr "Oilarra"
 
 #. "U+1F413"
 #: src/chatty-verification-page.c:37
 msgid "Penguin"
-msgstr "פינגווין"
+msgstr "Pinguinoa"
 
 #. "U+1F427"
 #: src/chatty-verification-page.c:38
 msgid "Turtle"
-msgstr "צב"
+msgstr "Dortoka"
 
 #. "U+1F422"
 #: src/chatty-verification-page.c:39
 msgid "Fish"
-msgstr "דג"
+msgstr "Arraina"
 
 #. "U+1F41F"
 #: src/chatty-verification-page.c:40
 msgid "Octopus"
-msgstr "תמנון"
+msgstr "Olagarroa"
 
 #. "U+1F419"
 #: src/chatty-verification-page.c:41
 msgid "Butterfly"
-msgstr "פרפר"
+msgstr "Tximeleta"
 
 #. "U+1F98B"
 #: src/chatty-verification-page.c:42
 msgid "Flower"
-msgstr "פרח"
+msgstr "Lorea"
 
 #. "U+1F337"
 #: src/chatty-verification-page.c:43
 msgid "Tree"
-msgstr "עץ"
+msgstr "Zuhaitza"
 
 #. "U+1F333"
 #: src/chatty-verification-page.c:44
 msgid "Cactus"
-msgstr "קקטוס"
+msgstr "Kaktusa"
 
 #. "U+1F335"
 #: src/chatty-verification-page.c:45
 msgid "Mushroom"
-msgstr "פטריה"
+msgstr "Perretxikoa"
 
 #. "U+1F344"
 #: src/chatty-verification-page.c:46
 msgid "Globe"
-msgstr "כדור הארץ"
+msgstr "Globoa"
 
 #. "U+1F30F"
 #: src/chatty-verification-page.c:47
 msgid "Moon"
-msgstr "ירח"
+msgstr "Ilargia"
 
 #. "U+1F319"
 #: src/chatty-verification-page.c:48
 msgid "Cloud"
-msgstr "ענן"
+msgstr "Hodeia"
 
 #. "U+2601U+FE0F"
 #: src/chatty-verification-page.c:49
 msgid "Fire"
-msgstr "אש"
+msgstr "Sua"
 
 #. "U+1F525"
 #: src/chatty-verification-page.c:50
 msgid "Banana"
-msgstr "בננה"
+msgstr "Banana"
 
 #. "U+1F34C"
 #: src/chatty-verification-page.c:51
 msgid "Apple"
-msgstr "תפוח"
+msgstr "Sagarra"
 
 #. "U+1F34E"
 #: src/chatty-verification-page.c:52
 msgid "Strawberry"
-msgstr "תות שדה"
+msgstr "Marrubia"
 
 #. "U+1F353"
 #: src/chatty-verification-page.c:53
 msgid "Corn"
-msgstr "תירס"
+msgstr "Artoa"
 
 #. "U+1F33D"
 #: src/chatty-verification-page.c:54
 msgid "Pizza"
-msgstr "פיצה"
+msgstr "Pizza"
 
 #. "U+1F355"
 #: src/chatty-verification-page.c:55
 msgid "Cake"
-msgstr "עוגה"
+msgstr "Pastela"
 
 #. "U+1F382"
 #: src/chatty-verification-page.c:56
 msgid "Heart"
-msgstr "לב"
+msgstr "Bihotza"
 
 #. "U+2764U+FE0F"
 #: src/chatty-verification-page.c:57
 msgid "Smiley"
-msgstr "חייכן"
+msgstr "Emotikonoa"
 
 #. "U+1F600"
 #: src/chatty-verification-page.c:58
 msgid "Robot"
-msgstr "רובוט"
+msgstr "Robota"
 
 #. "U+1F916"
 #: src/chatty-verification-page.c:59
 msgid "Hat"
-msgstr "כובע"
+msgstr "Kapela"
 
 #. "U+1F3A9"
 #: src/chatty-verification-page.c:60
 msgid "Glasses"
-msgstr "משקפיים"
+msgstr "Betaurrekoak"
 
 #. "U+1F453"
 #: src/chatty-verification-page.c:61
 msgid "Spanner"
-msgstr "מפתח ברגים"
+msgstr "Giltza"
 
 #. "U+1F527"
 #: src/chatty-verification-page.c:62
 msgid "Santa"
-msgstr "סנטה"
+msgstr "Santa"
 
 #. "U+1F385"
 #: src/chatty-verification-page.c:63
 msgid "Thumbs Up"
-msgstr "אגודל כלפי מעלה"
+msgstr "Atzamarra gora"
 
 #. "U+1F44D"
 #: src/chatty-verification-page.c:64
 msgid "Umbrella"
-msgstr "מטרייה"
+msgstr "Aterkia"
 
 #. "U+2602U+FE0F"
 #: src/chatty-verification-page.c:65
 msgid "Hourglass"
-msgstr "שעון חול"
+msgstr "Harea-erlojua"
 
 #. "U+231B"
 #: src/chatty-verification-page.c:66
 msgid "Clock"
-msgstr "שעון"
+msgstr "Ordularia"
 
 #. "U+23F0"
 #: src/chatty-verification-page.c:67
 msgid "Gift"
-msgstr "מתנה"
+msgstr "Oparia"
 
 #. "U+1F381"
 #: src/chatty-verification-page.c:68
 msgid "Light Bulb"
-msgstr "נורה"
+msgstr "Bonbilla"
 
 #. "U+1F4A1"
 #: src/chatty-verification-page.c:69
 msgid "Book"
-msgstr "ספר"
+msgstr "Liburua"
 
 #. "U+1F4D5"
 #: src/chatty-verification-page.c:70
 msgid "Pencil"
-msgstr "עט"
+msgstr "Arkatza"
 
 #. "U+270FU+FE0F"
 #: src/chatty-verification-page.c:71
 msgid "Paperclip"
-msgstr "אטב"
+msgstr "Klipa"
 
 #. "U+1F4CE"
 #: src/chatty-verification-page.c:72
 msgid "Scissors"
-msgstr "מספריים"
+msgstr "Artaziak"
 
 #. "U+2702U+FE0F"
 #: src/chatty-verification-page.c:73
 msgid "Lock"
-msgstr "מנעול"
+msgstr "Giltzarrapoa"
 
 #. "U+1F512"
 #: src/chatty-verification-page.c:74
 msgid "Key"
-msgstr "מפתח"
+msgstr "Giltza"
 
 #. "U+1F511"
 #: src/chatty-verification-page.c:75
 msgid "Hammer"
-msgstr "פטיש"
+msgstr "Mailua"
 
 #. "U+1F528"
 #: src/chatty-verification-page.c:76
 msgid "Telephone"
-msgstr "טלפון"
+msgstr "Telefonoa"
 
 #. "U+260EU+FE0F"
 #: src/chatty-verification-page.c:77
 msgid "Flag"
-msgstr "דגל"
+msgstr "Bandera"
 
 #. "U+1F3C1"
 #: src/chatty-verification-page.c:78
 msgid "Train"
-msgstr "רכבת"
+msgstr "Trena"
 
 #. "U+1F682"
 #: src/chatty-verification-page.c:79
 msgid "Bicycle"
-msgstr "אופניים"
+msgstr "Bizikleta"
 
 #. "U+1F6B2"
 #: src/chatty-verification-page.c:80
 msgid "Aeroplane"
-msgstr "מטוס"
+msgstr "Hegazkina"
 
 #. "U+2708U+FE0F"
 #: src/chatty-verification-page.c:81
 msgid "Rocket"
-msgstr "טיל"
+msgstr "Suziria"
 
 #. "U+1F680"
 #: src/chatty-verification-page.c:82
 msgid "Trophy"
-msgstr "גביע"
+msgstr "Garaikurra"
 
 #. "U+1F3C6"
 #: src/chatty-verification-page.c:83
 msgid "Ball"
-msgstr "כדור"
+msgstr "Bola"
 
 #. "U+26BD"
 #: src/chatty-verification-page.c:84
 msgid "Guitar"
-msgstr "גיטרה"
+msgstr "Gitarra"
 
 #. "U+1F3B8"
 #: src/chatty-verification-page.c:85
 msgid "Trumpet"
-msgstr "חצוצרה"
+msgstr "Tronpeta"
 
 #. "U+1F3BA"
 #: src/chatty-verification-page.c:86
 msgid "Bell"
-msgstr "פעמון"
+msgstr "Kanpaia"
 
 #. "U+1F514"
 #: src/chatty-verification-page.c:87
 msgid "Anchor"
-msgstr "עוגן"
+msgstr "Aingura"
 
 #. "U+2693"
 #: src/chatty-verification-page.c:88
 msgid "Headphones"
-msgstr "אזניות"
+msgstr "Entzungailuak"
 
 #. "U+1F3A7"
 #: src/chatty-verification-page.c:89
 msgid "Folder"
-msgstr "תיקייה"
+msgstr "Karpeta"
 
 #. "U+1F4C1"
 #: src/chatty-verification-page.c:90
 msgid "Pin"
-msgstr "נעץ"
+msgstr "Orratza"
 
 #: src/chatty-verification-page.c:387
 msgid "Show Emojis"
-msgstr "הצגת סמלילים"
+msgstr "Erakutsi emotikonoak"
 
 #: src/chatty-verification-page.c:389
 msgid "Show Numbers"
-msgstr "הצגת מספרים"
+msgstr "Erakutsi zenbakiak"
 
 #: src/chatty-window.c:348 src/chatty-window.c:435
 #: src/dialogs/chatty-settings-dialog.c:443 src/ui/chatty-dialog-join-muc.ui:18
 #: src/ui/chatty-info-dialog.ui:26 src/ui/chatty-info-dialog.ui:35
 msgid "Cancel"
-msgstr "ביטול"
+msgstr "Utzi"
 
 #: src/chatty-window.c:348
 msgid "Continue"
-msgstr "להמשיך"
+msgstr "Jarraitu"
 
 #: src/chatty-window.c:356
 msgid "You shall no longer be notified for new messages, continue?"
-msgstr "פעולה זו תשבית את ההתראות על הודעות חדשות, להמשיך?"
+msgstr "Jadanik ez dituzu mezu berrien jakinarazpenak jasoko, jarraitu?"
 
 #: src/chatty-window.c:435
 msgid "Delete"
-msgstr "מחיקה"
+msgstr "Ezabatu"
 
 #: src/chatty-window.c:445
 #, c-format
 msgid "Delete chat with “%s”"
-msgstr "מחיקת ההתכתבות עם „%s”"
+msgstr ""
 
 #: src/chatty-window.c:446
 msgid "This deletes the conversation history"
-msgstr "פעולה זו מוחקת את היסטוריית ההתכתבות"
+msgstr "Honek berriketaren historia ezabatzen du"
 
 #: src/chatty-window.c:448
 #, c-format
 msgid "Disconnect group chat “%s”"
-msgstr "התנתקות מהתכתבות קבוצתית „%s”"
+msgstr ""
 
 #: src/chatty-window.c:449
 msgid "This removes chat from chats list"
-msgstr "פעולה זו מסירה את ההתכתבות מרשימת ההתכתבויות"
+msgstr "Honek berriketa kentzen du berriketen zerrendatik"
 
 #: src/dialogs/chatty-mm-chat-info.c:146
 msgctxt "Refer to self in contact list"
 msgid "You"
-msgstr "אני"
+msgstr "Zu"
 
 #: src/dialogs/chatty-pp-chat-info.c:111
 #: src/dialogs/chatty-ma-account-details.c:139
 #: src/dialogs/chatty-pp-account-details.c:115
 msgid "Set Avatar"
-msgstr "הגדרת תמונה ייצוגית"
+msgstr "Ezarri avatarra"
 
 #: src/dialogs/chatty-pp-chat-info.c:118
 #: src/dialogs/chatty-ma-account-details.c:146
 #: src/dialogs/chatty-pp-account-details.c:122
 msgid "Images"
-msgstr "תמונות"
+msgstr "Irudiak"
 
 #: src/dialogs/chatty-pp-chat-info.c:221
 msgid "Encryption is not available"
-msgstr "אין הצפנה זמינה"
+msgstr "Zifratzea ez dago erabilgarri"
 
 #: src/dialogs/chatty-pp-chat-info.c:225
 msgid "This chat is encrypted"
-msgstr "התכתבות זו מוצפנת"
+msgstr "Berriketa hau zifratuta dago"
 
 #: src/dialogs/chatty-pp-chat-info.c:229
 msgid "This chat is not encrypted"
-msgstr "התכתבות זו אינה מוצפנת"
+msgstr "Berriketa hau ez dago zifratuta"
 
 #: src/dialogs/chatty-pp-chat-info.c:253
 msgid "Encryption not available"
-msgstr "הצפנה אינה זמינה"
+msgstr "Zifratzea ez dago erabilgarri"
 
 #: src/dialogs/chatty-pp-chat-info.c:274
 #, c-format
 msgid "%u Member"
 msgid_plural "%u Members"
-msgstr[0] "חבר אחד"
-msgstr[1] "שני חברים"
-msgstr[2] "‫%u חברים"
-msgstr[3] "‫%u חברים"
+msgstr[0] "Kide %u"
+msgstr[1] "%u kide"
 
 #: src/dialogs/chatty-pp-chat-info.c:308
 msgid "Phone Number:"
-msgstr "מספר טלפון:"
+msgstr "Telefono-zenbakia:"
 
 #: src/dialogs/chatty-pp-chat-info.c:310
 msgid "XMPP ID:"
-msgstr "מזהה XMPP:"
+msgstr "XMMP IDa:"
 
 #: src/dialogs/chatty-pp-chat-info.c:315
 msgid "Matrix ID:"
-msgstr "מזהה Matrix:"
+msgstr "Matrix IDa:"
 
 #: src/dialogs/chatty-pp-chat-info.c:318
 msgid "Telegram ID:"
-msgstr "מזהה טלגרם:"
+msgstr "Telegram IDa:"
 
 #: src/dialogs/chatty-new-chat-dialog.c:170
 msgid "Add"
-msgstr "הוספה"
+msgstr "Gehitu"
 
 #: src/dialogs/chatty-new-chat-dialog.c:180
 msgid "Create"
-msgstr "יצירה"
+msgstr "Sortu"
 
 #: src/dialogs/chatty-new-chat-dialog.c:186
 msgid "Add Contact"
-msgstr "הוספת איש קשר"
+msgstr "Gehitu kontaktua"
 
 #: src/dialogs/chatty-new-chat-dialog.c:220
 #, c-format
 msgid "Error opening GNOME Contacts: %s"
-msgstr "שגיאה בפתיחת אנשי הקשר של GNOME:‏ %s"
+msgstr "Errorea GNOMEren kontaktuak irekitzean: %s"
 
 #: src/dialogs/chatty-new-chat-dialog.c:447
 msgid "SMS"
@@ -939,535 +923,510 @@ msgstr "SMS"
 
 #: src/dialogs/chatty-new-chat-dialog.c:625
 msgid "You"
-msgstr "אני"
+msgstr "Zu"
 
 #: src/dialogs/chatty-ma-account-details.c:396
 #: src/dialogs/chatty-pp-account-details.c:171
 msgid "connected"
-msgstr "מחובר"
+msgstr "konektatuta"
 
 #: src/dialogs/chatty-ma-account-details.c:398
 #: src/dialogs/chatty-pp-account-details.c:173
 msgid "connecting…"
-msgstr "מתחבר…"
+msgstr "konektatzen..."
 
 #: src/dialogs/chatty-ma-account-details.c:400
 #: src/dialogs/chatty-pp-account-details.c:175
 msgid "disconnected"
-msgstr "מנותק"
+msgstr "deskonektatuta"
 
 #: src/dialogs/chatty-settings-dialog.c:194
 #, c-format
 msgid "Error saving account: %s"
-msgstr "שגיאה בשמירת החשבון: %s"
+msgstr "Errorea kontua gordetzean: %s"
 
 #: src/dialogs/chatty-settings-dialog.c:244
 #, c-format
 msgid "Failed to verify server: %s"
-msgstr "ארע כשל אימות השרת: %s"
+msgstr "Huts egin du zerbitzaria egiaztatzeak: %s"
 
 #: src/dialogs/chatty-settings-dialog.c:246
 msgid "Failed to verify server"
-msgstr "ארע כשל אימות השרת"
+msgstr "Huts egin du zerbitzaria egiaztatzeak"
 
 #: src/dialogs/chatty-settings-dialog.c:252
 msgid "Couldn't get Home server address"
-msgstr "לא ניתן לקבל את כתובת השרת הביתי"
+msgstr "Ezin da etxeko zerbitzariaren helbidea eskuratu"
 
 #: src/dialogs/chatty-settings-dialog.c:443
 msgid "OK"
-msgstr "אישור"
+msgstr "Ados"
 
 #: src/dialogs/chatty-settings-dialog.c:453
 #: src/ui/chatty-ma-account-details.ui:162
 #: src/ui/chatty-pp-account-details.ui:154
 msgid "Delete Account"
-msgstr "מחיקת חשבון"
+msgstr "Ezabatu kontua"
 
 #: src/dialogs/chatty-settings-dialog.c:454
 #, c-format
 msgid "Delete account %s?"
-msgstr "למחוק את החשבון %s?"
+msgstr "Ezabatu %s kontua?"
 
 #: src/dialogs/chatty-settings-dialog.c:623
 msgid "Restart chatty to disable purple"
-msgstr "הפעלה מחדש של Chatty להשבתת Purple"
+msgstr "Berrabiarazi chatty purple desgaitzeko"
 
 #: src/dialogs/chatty-settings-dialog.c:625
 #: src/ui/chatty-settings-dialog.ui:472
 msgid "Enable purple plugin"
-msgstr "לאפשר תוסף purple"
+msgstr "Gaitu purple plugina"
 
 #: src/dialogs/chatty-settings-dialog.c:639
 #: src/ui/chatty-settings-dialog.ui:246
 msgid "SMS and MMS Settings"
-msgstr "הגדרות SMS ו־MMS"
+msgstr "SMS eta MMS ezarpenak"
 
 #: src/dialogs/chatty-settings-dialog.c:641
 #: src/ui/chatty-settings-dialog.ui:264
 msgid "Purple Settings"
-msgstr "הגדרות Purple"
+msgstr "Purple ezarpenak"
 
 #: src/dialogs/chatty-settings-dialog.c:643
 msgid "New Account"
-msgstr "חשבון חדש"
+msgstr "Kontu berria"
 
 #: src/dialogs/chatty-settings-dialog.c:645
 #: src/ui/chatty-settings-dialog.ui:324
 msgid "Blocked Contacts"
-msgstr "אנשי קשר חסומים"
+msgstr "Blokeatutako kontaktuak"
 
 #: src/dialogs/chatty-settings-dialog.c:647 src/ui/chatty-side-bar.ui:115
 msgid "Preferences"
-msgstr "העדפות"
+msgstr "Hobespenak"
 
 #: src/dialogs/chatty-settings-dialog.c:675
 msgid "Select Protocol"
-msgstr "בחירת פרוטוקול"
+msgstr "Hautatu protokoloa"
 
 #. TRANSLATORS: Only translate 'or'
 #: src/dialogs/chatty-settings-dialog.c:920
 msgid "@user:matrix.org or user@example.com"
-msgstr "‏‎@user:matrix.org או ‎user@example.com"
+msgstr "@erabiltzailea:matrix.org edo erabiltzailea@adibidea.com"
 
 #: src/matrix/chatty-ma-account.c:78
 #, c-format
 msgid "Please enter password for “%s”, homeserver: %s"
-msgstr "נא למלא ססמה עבור „%s”, שרת בית: %s"
+msgstr ""
 
 #: src/matrix/chatty-ma-key-chat.c:62
 msgid "Key Verification"
-msgstr "מפתח אימות"
+msgstr "Gakoaren egiaztatzea"
 
 #: src/mm/chatty-mmsd.c:253
 #, c-format
 msgid "Error Delivering Message to %s"
-msgstr "שגיאה בהעברה הודעה אל %s"
+msgstr ""
 
 #: src/mm/chatty-mmsd.c:254
 msgid "See logs for more details"
-msgstr "יש לעיין ביומנים למידע נוסף"
-
-#: src/mm/chatty-mmsd.c:572 src/mm/chatty-mmsd.c:632 src/mm/chatty-mmsd.c:654
-msgid "MMS cannot be sent"
-msgstr "אי אפשר לשלוח הודעת מולטימדיה"
-
-#: src/mm/chatty-mmsd.c:573
-msgid "Please send less attachments"
-msgstr "נא לשלוח פחות צרופות"
-
-#: src/mm/chatty-mmsd.c:633
-msgid "Could not resize image to be small enough"
-msgstr "לא ניתן לשנות את התמונה כך שתהיה קטנה מספיק"
-
-#: src/mm/chatty-mmsd.c:651
-#, c-format
-msgid "The attachment is too large"
-msgid_plural "Attachments are too large"
-msgstr[0] "הצרופה גדולה מדי"
-msgstr[1] "הצרופות גדולות מדי"
-msgstr[2] "הצרופות גדולות מדי"
-msgstr[3] "הצרופות גדולות מדי"
+msgstr "Ikusi egunkariak xehetasun gehiagorako"
 
 #. TRANSLATORS: Timestamp for minute accuracy, e.g. “2020-08-11 15:27”.
 #. See https://developer.gnome.org/glib/stable/glib-GDateTime.html#g-date-time-format
 #.
-#: src/mm/chatty-mmsd.c:948
+#: src/mm/chatty-mmsd.c:922
 msgid "%Y-%m-%d %H∶%M"
-msgstr "‫‎%Y-%m-%d %H∶%M"
+msgstr "%Y-%m-%d %H∶%M"
 
-#: src/mm/chatty-mmsd.c:1262
+#: src/mm/chatty-mmsd.c:1227
 #, c-format
 msgid "You received an MMS, but it expired on: %s"
-msgstr "קיבלת הודעת MMS, אך תוקפה פג: %s"
+msgstr ""
 
-#: src/mm/chatty-mmsd.c:1265
+#: src/mm/chatty-mmsd.c:1230
 msgid "You received an empty MMS."
-msgstr "קיבלת הודעת MMS ריקה."
+msgstr "Hutsik dagoen MMS bat jaso duzu."
 
-#: src/mm/chatty-mmsd.c:1741 src/mm/chatty-mmsd.c:1787
+#: src/mm/chatty-mmsd.c:1706 src/mm/chatty-mmsd.c:1752
 #, c-format
 msgid "Automatically Retrying for  %i MMS"
 msgid_plural "Automatically Retrying for  %i MMSes..."
-msgstr[0] "מתבצע ניסיון חוזר להודעת מולטימדיה"
-msgstr[1] "מתבצע ניסיון חוזר לשתי הודעות מולטימדיה…"
-msgstr[2] "מתבצע ניסיון חוזר ל־%i הודעות מולטימדיה…"
-msgstr[3] "מתבצע ניסיון חוזר ל־%i הודעות מולטימדיה…"
+msgstr[0] ""
+msgstr[1] ""
 
-#: src/mm/chatty-mmsd.c:1746
+#: src/mm/chatty-mmsd.c:1711
 msgid "Temporary Error Sending MMS"
-msgstr "שגיאה זמנית בשליחת MMS"
+msgstr ""
 
-#: src/mm/chatty-mmsd.c:1792
+#: src/mm/chatty-mmsd.c:1757
 msgid "Temporary Error Receiving MMS"
-msgstr "שגיאה זמנית בקבלת MMS"
+msgstr ""
 
-#: src/mm/chatty-mmsd.c:2008
+#: src/mm/chatty-mmsd.c:1973
 msgid "MMSC is not configured"
-msgstr "‏MMSC לא מוגדר"
+msgstr "MMSC ez dago konfiguratuta"
 
-#: src/mm/chatty-mmsd.c:2011
+#: src/mm/chatty-mmsd.c:1976
 msgid "APN is not configured correctly"
-msgstr "‏APN לא מוגדר כראוי"
+msgstr "APN ez dago ondo konfiguratuta"
 
-#: src/mm/chatty-mmsd.c:2014
+#: src/mm/chatty-mmsd.c:1979
 msgid "Mobile Data is not configured"
-msgstr "נתונים סלולריים לא מוגדרים"
+msgstr "Datu mugikorrak ez daude konfiguratuta"
 
-#: src/mm/chatty-mmsd.c:2017
+#: src/mm/chatty-mmsd.c:1982
 msgid "Mobile Data is off"
-msgstr "נתונים סלולריים כבויים"
+msgstr "Datu mugikorrak desaktibatuta daude"
 
-#: src/mm/chatty-mmsd.c:2020
+#: src/mm/chatty-mmsd.c:1985
 msgid "Unknown Error"
-msgstr "שגיאה לא ידועה"
+msgstr "Errore ezezaguna"
 
-#: src/mm/chatty-mmsd.c:2025
+#: src/mm/chatty-mmsd.c:1990
 #, c-format
 msgid "Chatty cannot process %i MMS"
 msgid_plural "Chatty cannot process %i MMSes..."
-msgstr[0] "ל־Chatty אין אפשר לעבד הודעת מולטימדיה"
-msgstr[1] "ל־Chatty אין אפשרות לעבד שתי הודעות מולטימדיה…"
-msgstr[2] "ל־Chatty אין אפשרות לעבד %i הודעות מולטימדיה…"
-msgstr[3] "ל־Chatty אין אפשרות לעבד %i הודעות מולטימדיה…"
+msgstr[0] ""
+msgstr[1] ""
 
 #: src/mm/chatty-mm-account.c:319 src/mm/chatty-mm-account.c:370
 #, c-format
 msgid "Error Sending SMS to %s"
-msgstr "שגיאה בשליחת מסרון SMS אל‏ %s"
+msgstr ""
 
 #: src/mm/chatty-mm-account.c:463
 #, c-format
 msgid "Error Sending MMS to %s"
-msgstr "שגיאה בשליחת MMS אל %s"
+msgstr ""
 
 #: src/ui/chatty-attachment.ui:20
 msgid "Remove Attachment"
-msgstr "הסרת צרופה"
+msgstr "Kendu eranskina"
 
 #: src/ui/chatty-dialog-wrong-pw.ui:16
 msgid "Incorrect password"
-msgstr "ססמה שגויה"
+msgstr "Pasahitz okerra"
 
 #: src/ui/chatty-dialog-wrong-pw.ui:24 src/ui/chatty-dialog-new-chat.ui:37
 #: src/ui/chatty-settings-dialog.ui:29 src/ui/chatty-settings-dialog.ui:72
 #: src/ui/chatty-verification-page.ui:129
 #: src/ui/chatty-verification-page.ui:157
 msgid "_Cancel"
-msgstr "_ביטול"
+msgstr "_Utzi"
 
 #: src/ui/chatty-dialog-wrong-pw.ui:34
 msgid "_OK"
-msgstr "_אישור"
+msgstr "_Ados"
 
 #: src/ui/chatty-dialog-wrong-pw.ui:48
 msgid "Please re-enter the Password."
-msgstr "נא למלא את הסיסמה מחדש."
+msgstr "Sartu pasahitza berriro."
 
 #: src/ui/chatty-dialog-wrong-pw.ui:54 src/ui/chatty-pp-account-details.ui:129
 #: src/ui/chatty-settings-dialog.ui:648
 msgid "Password"
-msgstr "ססמה"
+msgstr "Pasahitza"
 
 #: src/ui/chatty-dialog-join-muc.ui:7
 msgid "New Group Chat"
-msgstr "התכתבות קבוצתית חדשה"
+msgstr "Talde-berriketa berria"
 
 #: src/ui/chatty-dialog-join-muc.ui:24
 msgid "Join Chat"
-msgstr "הצטרפות להתכתבות"
+msgstr "Elkartu berriketarekin"
 
 #: src/ui/chatty-dialog-join-muc.ui:64 src/ui/chatty-dialog-new-chat.ui:193
 msgid "Select chat account"
-msgstr "נא לבחור חשבון התכתבות"
+msgstr "Hautatu berriketa-kontua"
 
 #: src/ui/chatty-dialog-join-muc.ui:122
 msgid "Password (optional)"
-msgstr "ססמה (רשות)"
+msgstr "Pasahitza (aukerakoa)"
 
 #: src/ui/chatty-dialog-new-chat.ui:77
 msgid "Group Title"
-msgstr "כותרת לקבוצה"
+msgstr "Taldearen izenburua"
 
 #: src/ui/chatty-dialog-new-chat.ui:119
 msgid "Add members from contacts…"
-msgstr "הוספת חברים מאנשי הקשר…"
+msgstr "Gehitu kideak kontaktuetatik..."
 
 #: src/ui/chatty-dialog-new-chat.ui:156
 msgid "Send To:"
-msgstr "לשלוח אל:"
+msgstr "Bidali honi:"
 
 #: src/ui/chatty-dialog-new-chat.ui:216
 msgid "Contact ID"
-msgstr "מזהה איש קשר"
+msgstr "Kontaktuaren IDa"
 
 #: src/ui/chatty-dialog-new-chat.ui:226
 msgid "Name (optional)"
-msgstr "שם (רשות)"
+msgstr "Izena (aukerakoa)"
 
 #: src/ui/chatty-dialog-new-chat.ui:263
 msgid "Add to Contacts"
-msgstr "הוספה לאנשי קשר"
+msgstr "Gehitu kontaktuei"
 
 #: src/ui/chatty-info-dialog.ui:8 src/ui/chatty-main-view.ui:129
 msgid "Chat Details"
-msgstr "פרטי התכתבות"
+msgstr "Berriketaren xehetasunak"
 
 #: src/ui/chatty-info-dialog.ui:44
 msgid "Apply"
-msgstr "החלה"
+msgstr "Aplikatu"
 
 #: src/ui/chatty-info-dialog.ui:57
 msgid "Invite"
-msgstr "להזמין"
+msgstr "Gonbidatu"
 
 #: src/ui/chatty-invite-page.ui:62
 msgid "_Accept"
-msgstr "ל_קבל"
+msgstr "_Onartu"
 
 #: src/ui/chatty-invite-page.ui:86
 msgid "_Reject"
-msgstr "ל_דחות"
+msgstr "_Ezetsi"
 
 #: src/ui/chatty-ma-chat-info.ui:32
 msgid "Chat"
-msgstr "התכתבות"
+msgstr "Berriketa"
 
 #: src/ui/chatty-ma-chat-info.ui:61 src/ui/chatty-ma-account-details.ui:210
 msgid "Matrix ID"
-msgstr "מזהה Matrix"
+msgstr "Matrix IDa"
 
 #: src/ui/chatty-ma-chat-info.ui:89 src/ui/chatty-pp-chat-info.ui:242
 msgid "Chat settings"
-msgstr "הגדרות התכתבות"
+msgstr "Berriketaren ezarpenak"
 
 #: src/ui/chatty-ma-chat-info.ui:107 src/ui/chatty-pp-chat-info.ui:193
 #: src/ui/chatty-pp-chat-info.ui:292
 msgid "Encryption"
-msgstr "הצפנה"
+msgstr "Zifratzea"
 
 #: src/ui/chatty-ma-chat-info.ui:108 src/ui/chatty-pp-chat-info.ui:293
 msgid "Encrypt Messages"
-msgstr "הצפנת הודעות"
+msgstr "Zifratu mezuak"
 
 #: src/ui/chatty-main-view.ui:17 src/ui/chatty-settings-dialog.ui:18
 #: src/ui/chatty-side-bar.ui:24
 msgid "Back"
-msgstr "חזרה"
+msgstr "Atzera"
 
 #: src/ui/chatty-main-view.ui:46 src/ui/chatty-list-row.ui:169
 msgid "Call"
-msgstr "שיחה"
+msgstr "Deitu"
 
 #: src/ui/chatty-main-view.ui:78
 msgid "Close"
-msgstr "סגירה"
+msgstr "Itxi"
 
 #: src/ui/chatty-main-view.ui:140
 msgid "Leave Chat"
-msgstr "לצאת מההתכתבות"
+msgstr "Utzi berriketa"
 
 #: src/ui/chatty-main-view.ui:148
 msgid "Block Contact"
-msgstr "חסימת איש קשר"
+msgstr "Blokeatu kontaktua"
 
 #: src/ui/chatty-main-view.ui:156
 msgid "Unblock Contact"
-msgstr "שחרור איש קשר"
+msgstr "Desblokeatu kontaktua"
 
 #: src/ui/chatty-main-view.ui:164
 msgid "Archive chat"
-msgstr "ארכוב שיחה"
+msgstr "Artxibatu berriketa"
 
 #: src/ui/chatty-main-view.ui:172
 msgid "Unarchive chat"
-msgstr "הוצאת שיחה מארכיון"
+msgstr "Atera berriketa artxibotik"
 
 #: src/ui/chatty-main-view.ui:180
 msgid "Delete Chat"
-msgstr "למחוק התכתבות"
+msgstr "Ezabatu berriketa"
 
 #: src/ui/chatty-message-row.ui:30
 msgid "Copy Text"
-msgstr "העתקת טקסט"
+msgstr "Kopiatu testua"
 
 #: src/ui/chatty-pp-chat-info.ui:34 src/ui/chatty-pp-account-details.ui:38
 msgid "Change Avatar"
-msgstr "שינוי תמונה ייצוגית"
+msgstr "Aldatu avatarra"
 
 #: src/ui/chatty-pp-chat-info.ui:47 src/ui/chatty-pp-account-details.ui:25
 msgid "Delete Avatar"
-msgstr "מחיקת תמונה ייצוגית"
+msgstr "Ezabatu avatarra"
 
 #: src/ui/chatty-pp-chat-info.ui:76
 msgid "Room topic"
-msgstr "נושא החדר"
+msgstr "Gelaren gaia"
 
 #: src/ui/chatty-pp-chat-info.ui:143
 msgid "User"
-msgstr "משתמש"
+msgstr "Erabiltzailea"
 
 #: src/ui/chatty-pp-chat-info.ui:168
 msgid "XMPP ID"
-msgstr "מזהה XMPP"
+msgstr "XMMP IDa"
 
 #: src/ui/chatty-pp-chat-info.ui:218 src/ui/chatty-ma-account-details.ui:54
 #: src/ui/chatty-pp-account-details.ui:105
 msgid "Status"
-msgstr "מצב"
+msgstr "Egoera"
 
 #: src/ui/chatty-pp-chat-info.ui:262
 msgid "Notifications"
-msgstr "התראות"
+msgstr "Jakinarazpenak"
 
 #: src/ui/chatty-pp-chat-info.ui:277
 msgid "Status Messages"
-msgstr "הודעות מצב"
+msgstr "Egoera-mezuak"
 
 #: src/ui/chatty-pp-chat-info.ui:278
 msgid "Show status messages in chat"
-msgstr "להציג הודעות מצב בהתכתבות"
+msgstr "Erakutsi egoera-mezuak berriketan"
 
 #: src/ui/chatty-pp-chat-info.ui:313
 msgid "Fingerprints"
-msgstr "טביעות אצבע"
+msgstr "Hatz-markak"
 
 #: src/ui/chatty-mm-chat-info.ui:20
 msgid "Title"
-msgstr "כותרת"
+msgstr "Titulua"
 
 #: src/ui/chatty-mm-chat-info.ui:23
 msgid "Blank for default"
-msgstr "ריק בברירת מחדל"
+msgstr "Utzi hutsik lehenetsia erabiltzeko"
 
 #: src/ui/chatty-mm-chat-info.ui:32
 msgid "Group Members"
-msgstr "חברי הקבוצה"
+msgstr "Taldeko kideak"
 
 #: src/ui/chatty-list-row.ui:33
 msgid "Copy Number"
-msgstr "העתקת מספר"
+msgstr "Kopiatu zenbakia"
 
 #: src/ui/chatty-ma-account-details.ui:78
 msgid "Name"
-msgstr "שם"
+msgstr "Izena"
 
 #: src/ui/chatty-ma-account-details.ui:106
 msgid "Email"
-msgstr "דוא״ל"
+msgstr "Posta elektronikoa"
 
 #: src/ui/chatty-ma-account-details.ui:134
 msgid "Phone"
-msgstr "טלפון"
+msgstr "Telefonoa"
 
 #: src/ui/chatty-ma-account-details.ui:174
 msgid "Advanced information"
-msgstr "מידע מתקדם"
+msgstr "Informazio aurreratua"
 
 #: src/ui/chatty-ma-account-details.ui:186
 msgid "Homeserver"
-msgstr "שם שרת"
+msgstr "Zerbitzaria"
 
 #: src/ui/chatty-ma-account-details.ui:234
 msgid "Device ID"
-msgstr "מזהה התקן"
+msgstr "Gailuaren IDa"
 
 #: src/ui/chatty-pp-account-details.ui:59
 msgid "Account ID"
-msgstr "מזהה חשבון"
+msgstr "Kontuaren IDa"
 
 #: src/ui/chatty-pp-account-details.ui:81
 msgid "Protocol"
-msgstr "פרוטוקול"
+msgstr "Protokoloa"
 
 #: src/ui/chatty-pp-account-details.ui:168
 msgid "Own Fingerprint"
-msgstr "טביעת אצבע עצמית"
+msgstr "Norberaren hatz-marka"
 
 #: src/ui/chatty-settings-dialog.ui:39
 msgid "_Add"
-msgstr "_הוספה"
+msgstr "_Gehitu"
 
 #: src/ui/chatty-settings-dialog.ui:52
 msgid "_Save"
-msgstr "_שמירה"
+msgstr "G_orde"
 
 #: src/ui/chatty-settings-dialog.ui:62
 msgid "_Apply"
-msgstr "ה_חלה"
+msgstr "_Aplikatu"
 
 #: src/ui/chatty-settings-dialog.ui:123
 msgid "Accounts"
-msgstr "משתמשים"
+msgstr "Kontuak"
 
 #: src/ui/chatty-settings-dialog.ui:140 src/ui/chatty-settings-dialog.ui:489
 msgid "Privacy"
-msgstr "פרטיות"
+msgstr "Pribatutasuna"
 
 #: src/ui/chatty-settings-dialog.ui:145
 msgid "Message Receipts"
-msgstr "קבלות על הודעות"
+msgstr ""
 
 #: src/ui/chatty-settings-dialog.ui:146
 msgid "Confirm received messages"
-msgstr "לאשר שהודעות התקבלו"
+msgstr ""
 
 #: src/ui/chatty-settings-dialog.ui:159
 msgid "Typing Notification"
-msgstr "התראות הקלדה"
+msgstr ""
 
 #: src/ui/chatty-settings-dialog.ui:160
 msgid "Send typing messages"
-msgstr "שליחת הודעות הקלדה"
+msgstr ""
 
 #: src/ui/chatty-settings-dialog.ui:174
 msgid "Strip Tracking IDs from URLs"
-msgstr "הפשטת מזהי מעקב מכתובות"
+msgstr ""
 
 #: src/ui/chatty-settings-dialog.ui:188
 msgid "Render Attachments from Messages"
-msgstr "עיבוד צרופות מהודעות"
+msgstr ""
 
 #: src/ui/chatty-settings-dialog.ui:204
 msgid "Editor"
-msgstr "עורך"
+msgstr "Editorea"
 
 #: src/ui/chatty-settings-dialog.ui:208
 msgid "Graphical Emoticons"
-msgstr "רגשונים גרפיים"
+msgstr "Emotikono grafikoak"
 
 #: src/ui/chatty-settings-dialog.ui:209
 msgid "if you type :) it will be changed to 😃"
-msgstr "הקלדה של :) תשתנה לחייכן 😃"
+msgstr ""
 
 #. TRANSLATORS: Return is the Enter key.
 #: src/ui/chatty-settings-dialog.ui:222
 msgid "Send Messages with Return"
-msgstr "לשלוח הודעה עם מקש Return"
+msgstr ""
 
 #: src/ui/chatty-settings-dialog.ui:236
 msgid "Protocol Settings"
-msgstr "הגדרות פרוטוקול"
+msgstr "Protokolo-ezarpenak"
 
 #: src/ui/chatty-settings-dialog.ui:297
 msgid "Request Delivery Reports"
-msgstr "דרישת דיווחי מסירת הודעות"
+msgstr ""
 
 #: src/ui/chatty-settings-dialog.ui:310
 msgid "SMIL for MMS"
-msgstr "‏SMIL עבור MMS"
+msgstr ""
 
 #: src/ui/chatty-settings-dialog.ui:342
 msgid "MMS Carrier Settings"
-msgstr "הגדרות חברה ל־MMS"
+msgstr ""
 
 #: src/ui/chatty-settings-dialog.ui:346
 msgid "Phone Number"
-msgstr "מספר טלפון"
+msgstr "Telefono-zenbakia"
 
 #: src/ui/chatty-settings-dialog.ui:352
 msgid "Your modem's phone number"
-msgstr "מספר הטלפון של המודם שלך"
+msgstr "Zure modemaren telefono-zenbakia"
 
 #: src/ui/chatty-settings-dialog.ui:360
 msgid "MMSC"
@@ -1479,312 +1438,147 @@ msgstr "APN"
 
 #: src/ui/chatty-settings-dialog.ui:384
 msgid "Proxy"
-msgstr "מתווך"
+msgstr "Proxya"
 
 #: src/ui/chatty-settings-dialog.ui:411
 msgid "You shall not be notified for the messages from blocked contacts"
-msgstr "לא תתקבלנה התראות על הודעות מאנשי קשר חסומים"
+msgstr ""
 
 #: src/ui/chatty-settings-dialog.ui:442
 msgid "Blocked chat list empty"
-msgstr "רשימת שיחות חסומות ריקה"
+msgstr ""
 
 #: src/ui/chatty-settings-dialog.ui:495
 msgid "Message Archive Management"
-msgstr "ניהול ארכיון הודעות"
+msgstr ""
 
 #: src/ui/chatty-settings-dialog.ui:496
 msgid "Sync conversations with chat server"
-msgstr "לסנכרן התכתבויות עם שרת התכתבויות"
+msgstr ""
 
 #: src/ui/chatty-settings-dialog.ui:510
 msgid "Message Carbon Copies"
-msgstr "עותקים של הודעות"
+msgstr ""
 
 #: src/ui/chatty-settings-dialog.ui:674
 msgid "Home server"
-msgstr "שרת ביתי"
+msgstr "Etxeko zerbitzaria"
 
 #: src/ui/chatty-settings-dialog.ui:706
 msgid "Add _new account…"
-msgstr "הוספת חשבון _חדש…"
+msgstr "Gehitu kontu _berria…"
 
 #: src/ui/chatty-side-bar.ui:32
 msgid "Add Chat"
-msgstr "הוספת התכתבות"
+msgstr "Gehitu berriketa"
 
-# msgctxt "shortcut window"
 #: src/ui/chatty-side-bar.ui:41
 msgid "Menu"
-msgstr "תפריט"
+msgstr "Menua"
 
-# msgctxt "shortcut window"
 #: src/ui/chatty-side-bar.ui:49
 msgid "Search"
-msgstr "חיפוש"
+msgstr "Bilatu"
 
 #: src/ui/chatty-side-bar.ui:107
 msgctxt "show archived chat list when clicked"
 msgid "Archived"
-msgstr "ארכיון"
+msgstr "Artxibatua"
 
 #: src/ui/chatty-side-bar.ui:122
 msgid "Keyboard _Shortcuts"
-msgstr "_צירופי מקשים"
+msgstr "Las_ter-teklak"
 
 #: src/ui/chatty-side-bar.ui:129
 msgid "Help"
-msgstr "עזרה"
+msgstr "Laguntza"
 
 #: src/ui/chatty-side-bar.ui:137
 msgid "About Chats"
-msgstr "על התכתבויות"
+msgstr "Berriketak aplikazioari buruz"
 
 #: src/ui/chatty-side-bar.ui:158
 msgid "New Message…"
-msgstr "הודעה חדשה…"
+msgstr "Mezu berria…"
 
 #: src/ui/chatty-side-bar.ui:164
 msgid "New SMS/MMS Message…"
-msgstr "הודעת SMS/MMS חדשה…"
+msgstr "SMS/MMS mezu berria…"
 
 #: src/ui/chatty-side-bar.ui:170
 msgid "New Group Message…"
-msgstr "הודעה קבוצתית חדשה…"
+msgstr "Taldeko mezu berria…"
 
 #: src/ui/chatty-verification-page.ui:24
 msgid "Incoming Verification Request"
-msgstr "בקשת אימות חדשה"
+msgstr ""
 
 #: src/ui/chatty-verification-page.ui:42
 msgid "Verify this user to mark them as trusted."
-msgstr "אימות משתמש זה לסימונו כמהימן."
+msgstr ""
 
 #: src/ui/chatty-verification-page.ui:78
 msgid ""
 "Verifying this user will mark their session as trusted, and also mark your "
 "session as trusted to them."
 msgstr ""
-"אימות משתמש זה יסמן את ההתכתבויות אתו כמהימנות, וגם יסמן אותך משתמש זה "
-"כמהימן."
 
 #: src/ui/chatty-verification-page.ui:98
 msgid "C_ontinue"
-msgstr "ה_משך"
+msgstr "_Jarraitu"
 
 #: src/ui/chatty-verification-page.ui:200
 msgid ""
 "Verify this user by confirming the following emoji appears on their screen"
-msgstr "אימות משתמש זה באמצעות אישור שהרגשון הבא מופיע על המסך שלו"
+msgstr ""
 
 #: src/ui/chatty-verification-page.ui:377
 msgid ""
 "Verify this user by confirming the following number appears on their screen."
-msgstr "אימות משתמש זה באמצעות אישור שהמספר הבא מופיע על המסך שלו."
+msgstr ""
 
 #: src/ui/chatty-verification-page.ui:412
 msgid "To be secure, do this in person or use a trusted way to communicate."
 msgstr ""
-"על מנת לשמור על אבטחה, יש לעשות זאת באופן אישי או להשתמש באמצעי תקשורת "
-"מאובטח."
 
 #: src/ui/chatty-verification-page.ui:423
 msgctxt "verb, which means 'both items are not the same'"
 msgid "_Don’t Match"
-msgstr "ל_א ללכוד"
+msgstr ""
 
 #: src/ui/chatty-verification-page.ui:433
 msgctxt "verb, which means 'both items are the same'"
 msgid "_Match"
-msgstr "לל_כוד"
+msgstr ""
 
 #: src/ui/help-overlay.ui:14
 msgctxt "shortcut window"
 msgid "General"
-msgstr "כללי"
+msgstr "Orokorra"
 
 #: src/ui/help-overlay.ui:19
 msgctxt "shortcut window"
 msgid "Open Menu"
-msgstr "פתיחת תפריט"
+msgstr "Ireki menua"
 
 #: src/ui/help-overlay.ui:27
 msgctxt "shortcut window"
 msgid "Open Search"
-msgstr "פתיחת חיפוש"
+msgstr "Ireki bilaketa"
 
 #: src/ui/help-overlay.ui:35
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
-msgstr "הצגת צירופי מקשים"
+msgstr "Erakutsi lasterbideak"
 
 #: src/users/chatty-contact.c:324
 msgid "Mobile: "
-msgstr "נייד: "
+msgstr "Mugikorra: "
 
 #: src/users/chatty-contact.c:326
 msgid "Work: "
-msgstr "עבודה: "
+msgstr "Lana: "
 
 #: src/users/chatty-contact.c:328
 msgid "Other: "
-msgstr "אחר: "
-
-#~ msgid "Select File..."
-#~ msgstr "בחירת קובץ…"
-
-#~ msgid "Open"
-#~ msgstr "פתיחה"
-
-#~ msgid "Save"
-#~ msgstr "שמירה"
-
-#~ msgid "Contact added"
-#~ msgstr "איש הקשר נוסף"
-
-#~ msgid "Login failed"
-#~ msgstr "הכניסה נכשלה"
-
-#~ msgid "A messaging application"
-#~ msgstr "יישומון התכתבות"
-
-#~ msgid "Enable verbose libpurple debug messages"
-#~ msgstr "להפעיל הודעות ניפוי שגיאות מפורטות של libpurple"
-
-#~ msgid "Unblock contact"
-#~ msgstr "שחרור איש קשר"
-
-#, c-format
-#~ msgid "Chatty password for \"%s\""
-#~ msgstr "ססמה של Chatty עבור „%s”"
-
-#, c-format
-#~ msgid "The certificate for ‘%s’ has unknown CA"
-#~ msgstr "לאישור עבור ‚%s’ יש רשות אישורים בלתי מוכרת"
-
-#, c-format
-#~ msgid "The certificate for ‘%s’ is self-signed"
-#~ msgstr "האישור הזה עבור ‚%s’ נחתם עצמית"
-
-#, c-format
-#~ msgid "The certificate for ‘%s’ has expired"
-#~ msgstr "האישור של ‚%s’ פג"
-
-#, c-format
-#~ msgid "The certificate for ‘%s’ has been revoked"
-#~ msgstr "האישור עבור ‚%s’ נשלל"
-
-#, c-format
-#~ msgid "Error validating certificate for ‘%s’"
-#~ msgstr "שגיאה באימות אישור עבור ‚%s’"
-
-#~ msgid "sm.puri.Chatty"
-#~ msgstr "sm.puri.Chatty"
-
-#~ msgid "Mark offline users differently"
-#~ msgstr "לסמן משתמשים בלתי־מקוונים אחרת"
-
-#~ msgid "ask your counterpart to use E2EE."
-#~ msgstr "ניתן לבקש מהצד השני בשיחה להפעיל E2EE (הצפנה מקצה לקצה)."
-
-#~ msgid "Your messages are secured"
-#~ msgstr "ההודעות שלך מאובטחות"
-
-#~ msgid "by end-to-end encryption."
-#~ msgstr "בהצפנה מקצה לקצה."
-
-#~ msgid "and carrier rates may apply."
-#~ msgstr "יכול להיות שהשיחה תעלה כסף."
-
-#~ msgctxt "timestamp-suffix-seconds"
-#~ msgid "s"
-#~ msgstr "שנ׳"
-
-#~ msgctxt "timestamp-suffix-minute"
-#~ msgid "m"
-#~ msgstr "ח׳"
-
-#~ msgctxt "timestamp-suffix-minutes"
-#~ msgid "m"
-#~ msgstr "ח׳"
-
-#~ msgctxt "timestamp-suffix-hour"
-#~ msgid "h"
-#~ msgstr "שע׳"
-
-#~ msgctxt "timestamp-suffix-hours"
-#~ msgid "h"
-#~ msgstr "שע׳"
-
-#~ msgctxt "timestamp-suffix-day"
-#~ msgid "d"
-#~ msgstr "י׳"
-
-#~ msgctxt "timestamp-suffix-days"
-#~ msgid "d"
-#~ msgstr "י׳"
-
-#~ msgctxt "timestamp-suffix-month"
-#~ msgid "mo"
-#~ msgstr "חודש"
-
-#~ msgctxt "timestamp-suffix-months"
-#~ msgid "mos"
-#~ msgstr "חודשים"
-
-#~ msgctxt "timestamp-suffix-year"
-#~ msgid "y"
-#~ msgstr "שנה"
-
-#~ msgctxt "timestamp-suffix-years"
-#~ msgid "y"
-#~ msgstr "שנים"
-
-#~ msgid "Over"
-#~ msgstr "למעלה מ־"
-
-#~ msgid "Almost"
-#~ msgstr "כמעט"
-
-#~ msgid "Choose a contact"
-#~ msgstr "נא לבחור איש קשר"
-
-#~ msgid ""
-#~ "Select an <b>SMS</b> or <b>Instant Message</b> contact with the <b>\"+\"</"
-#~ "b> button in the titlebar."
-#~ msgstr ""
-#~ "ניתן לבחור איש קשר ל<b>מסרונים</b> או ל<b>הודעה מיידית</b> עם הכפתור "
-#~ "<b>„+”</b> בשורת הכותרת."
-
-#~ msgid "Start a <b>SMS</b> chat with the \"+\" button in the titlebar."
-#~ msgstr "ניתן ליצור התכתבות ב<b>מסרונים</b> עם הכפתור „+” שבשורת הכותרת."
-
-#~ msgid "Start Chat"
-#~ msgstr "להתחיל התכתבות"
-
-#~ msgid "Chats List"
-#~ msgstr "רשימת התכתבויות"
-
-#~ msgid "Indicate Offline Contacts"
-#~ msgstr "לציין אנשי קשר בלתי מקוונים"
-
-#~ msgid "Grey out avatars from offline contacts"
-#~ msgstr "להאפיר תמונות ייצוגיות של אנשי קשר בלתי מקוונים"
-
-#~ msgid "Indicate Idle Contacts"
-#~ msgstr "לציין אנשי קשר בלתי פעילים"
-
-#~ msgid "Blur avatars from idle contacts"
-#~ msgstr "לטשטש תמונות ייצוגיות של אנשי קשר בלתי פעילים"
-
-#~ msgid "Color unknown contact ID red"
-#~ msgstr "לצבוע מזהי אנשי קשר בלתי מוכרים באדום"
-
-#~ msgid "Convert ASCII emoticons"
-#~ msgstr "להמיר ASCII רגשונים"
-
-#~ msgid "Return = Send Message"
-#~ msgstr "‫Return = לשלוח הודעה"
-
-#~ msgid "New Bulk SMS…"
-#~ msgstr "מסרון מרוכז חדש…"
+msgstr "Bestelakoa: "

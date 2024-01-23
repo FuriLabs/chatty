@@ -569,6 +569,8 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
         g_warning ("Total Number of attachment %d greater then maximum number of attachments %d",
                    total_files_count,
                    self->max_num_attach);
+        chatty_mm_notify_message (_("MMS cannot be sent"),
+                                  _("Please send less attachments"));
         return NULL;
       }
     }
@@ -626,8 +628,32 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
               return NULL;
             }
             l->data = new_attachment;
+            if (chatty_file_get_size (new_attachment) > self->max_attach_size) {
+              chatty_mm_notify_message (_("MMS cannot be sent"),
+                                        _("Could not resize image to be small enough"));
+              return NULL;
+            }
           }
         }
+      }
+    }
+
+    for (GList *l = files; l != NULL; l = l->next) {
+      ChattyFile *attachment = l->data;
+      gsize total_size = 0;
+      total_size = total_size + chatty_file_get_size (attachment);
+      if (total_size > self->max_attach_size) {
+        g_autofree char *body = NULL;
+        g_warning ("Size of attachments %" G_GSIZE_FORMAT
+                   " greater then maximum attachment size %" G_GSIZE_FORMAT,
+                   total_size, self->max_attach_size);
+        body = g_strdup_printf (g_dngettext (GETTEXT_PACKAGE,
+                                             "The attachment is too large",
+                                             "Attachments are too large",
+                                             total_files_count));
+        chatty_mm_notify_message (_("MMS cannot be sent"),
+                                  body);
+        return NULL;
       }
     }
 
@@ -829,7 +855,7 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
   g_autoptr(GDateTime) date_time = NULL;
   ChattyMsgDirection direction = CHATTY_DIRECTION_UNKNOWN;
   ChattyMsgStatus mms_status = CHATTY_STATUS_UNKNOWN;
-  ChattyMsgType chatty_msg_type = CHATTY_MESSAGE_TEXT;
+  ChattyMsgType chatty_msg_type = CHATTY_MESSAGE_MMS;
   g_autoptr(GVariant) properties = NULL;
   g_autoptr(GFileInfo) attachment_info = NULL;
   GVariant *reciever, *attach;
@@ -967,7 +993,7 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
 
   if (rx_modem_number && *rx_modem_number) {
     if (g_strcmp0 (known_modem_number, rx_modem_number) != 0) {
-      g_warning ("Receieved Modem Number %s different than current modem number %s",
+      g_warning ("Received Modem Number %s different than current modem number %s",
                  known_modem_number, rx_modem_number);
       return NULL;
     }
@@ -1208,6 +1234,8 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
   if ((!files || !files->data) && savepath) {
     g_autoptr(GError) error = NULL;
 
+    /* If there are no files, then there is a text message */
+    chatty_msg_type = CHATTY_MESSAGE_TEXT;
     g_file_delete (savepath, NULL, &error);
 
     if (error)
@@ -1217,9 +1245,16 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
   if (!subject && !mms_message && files && g_list_length (files) == 1) {
     ChattyFile *attachment = files->data;
 
-    if (attachment && chatty_file_get_mime_type (attachment) &&
-        g_str_has_prefix (chatty_file_get_mime_type (attachment), "image"))
-      chatty_msg_type = CHATTY_MESSAGE_IMAGE;
+    if (attachment && chatty_file_get_mime_type (attachment)) {
+      if (g_str_has_prefix (chatty_file_get_mime_type (attachment), "image"))
+        chatty_msg_type = CHATTY_MESSAGE_IMAGE;
+      else if (g_str_has_prefix (chatty_file_get_mime_type (attachment), "audio"))
+        chatty_msg_type = CHATTY_MESSAGE_AUDIO;
+      else if (g_str_has_prefix (chatty_file_get_mime_type (attachment), "video"))
+        chatty_msg_type = CHATTY_MESSAGE_VIDEO;
+      else
+        chatty_msg_type = CHATTY_MESSAGE_FILE;
+    }
   }
 
   if (!mms_message && !files) {

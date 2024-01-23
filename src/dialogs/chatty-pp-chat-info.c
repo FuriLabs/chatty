@@ -29,7 +29,6 @@
 
 #include <glib/gi18n.h>
 
-#include "gtk3-to-4.h"
 #include "chatty-avatar.h"
 #include "chatty-list-row.h"
 #include "chatty-fp-row.h"
@@ -72,52 +71,54 @@ struct _ChattyPpChatInfo
 G_DEFINE_TYPE (ChattyPpChatInfo, chatty_pp_chat_info, CHATTY_TYPE_CHAT_INFO)
 
 static void
-pp_chat_info_load_avatar_response_cb (ChattyPpChatInfo *self,
-                                      int               response_id,
-                                      GtkDialog        *dialog)
+pp_chat_info_load_avatar_response_cb (GObject         *dialog,
+                                      GAsyncResult    *response,
+                                      gpointer        user_data)
 {
+  ChattyPpChatInfo *self = CHATTY_PP_CHAT_INFO (user_data);
+  g_autoptr(GError) error = NULL;
+  g_autoptr(GFile) file = NULL;
+  g_autofree char *file_name = NULL;
+
   g_assert (CHATTY_IS_PP_CHAT_INFO (self));
+  g_assert (GTK_IS_DIALOG (dialog));
 
-  if (response_id == GTK_RESPONSE_ACCEPT) {
-    g_autoptr(GFile) file = NULL;
-    g_autofree char *file_name = NULL;
+  file = gtk_file_dialog_open_finish (GTK_FILE_DIALOG (dialog), response, &error);
+  g_clear_object (&dialog);
 
-    file = gtk_file_chooser_get_file (GTK_FILE_CHOOSER (dialog));
-    file_name = g_file_get_path (file);
-
-    if (file_name)
-      chatty_item_set_avatar_async (CHATTY_ITEM (self->chat), file_name,
-                                    NULL, NULL, NULL);
+  if (!file) {
+    if (!g_error_matches (error, GTK_DIALOG_ERROR, GTK_DIALOG_ERROR_DISMISSED))
+      g_warning ("Error getting file: %s", error->message);
+    return;
   }
+
+  file_name = g_file_get_path (file);
+
+  if (file_name)
+    chatty_item_set_avatar_async (CHATTY_ITEM (self->chat),
+                                  file_name, NULL, NULL, NULL);
 }
 
 static void
 pp_info_edit_avatar_button_clicked_cb (ChattyPpChatInfo *self)
 {
-  g_autoptr(GtkFileChooserNative) dialog = NULL;
   GtkFileFilter *filter;
-  GtkWindow *window;
+  GtkWidget *window;
+  GtkFileDialog *dialog;
 
-  g_assert (CHATTY_IS_PP_CHAT_INFO (self));
+  window = gtk_widget_get_ancestor (GTK_WIDGET (self), GTK_TYPE_WINDOW);
+  dialog = gtk_file_dialog_new ();
+  gtk_file_dialog_set_title (dialog, _("Set Avatar"));
 
-  window = (GtkWindow *)gtk_widget_get_ancestor (GTK_WIDGET (self), GTK_TYPE_WINDOW);
-  dialog = gtk_file_chooser_native_new (_("Set Avatar"),
-                                        GTK_WINDOW (window),
-                                        GTK_FILE_CHOOSER_ACTION_OPEN,
-                                        _("Open"),
-                                        _("Cancel"));
   gtk_native_dialog_set_transient_for (GTK_NATIVE_DIALOG (dialog), GTK_WINDOW (window));
   gtk_native_dialog_set_modal (GTK_NATIVE_DIALOG (dialog), TRUE);
 
   filter = gtk_file_filter_new ();
   gtk_file_filter_add_mime_type (filter, "image/*");
   gtk_file_filter_set_name (filter, _("Images"));
-  gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dialog), filter);
+  gtk_file_dialog_set_default_filter (dialog, filter);
 
-  g_signal_connect_object (dialog, "response",
-                           G_CALLBACK (pp_chat_info_load_avatar_response_cb),
-                           self, G_CONNECT_SWAPPED);
-  gtk_native_dialog_show (GTK_NATIVE_DIALOG (dialog));
+  gtk_file_dialog_open (dialog, GTK_WINDOW (window), NULL, pp_chat_info_load_avatar_response_cb, self);
 }
 
 static void

@@ -52,13 +52,13 @@ enum {
   PROP_ENCRYPT,
   PROP_BUDDY_TYPING,
   PROP_CHAT_STATE,
+  PROP_LAST_MESSAGE_TIME,
   PROP_LOADING_HISTORY,
   N_PROPS
 };
 
 enum {
   CHANGED,
-  MESSAGE_ADDED,
   N_SIGNALS
 };
 
@@ -452,6 +452,10 @@ chatty_chat_get_property (GObject    *object,
       g_value_set_boolean (value, chatty_chat_get_chat_state (self));
       break;
 
+    case PROP_LAST_MESSAGE_TIME:
+      g_value_set_int64 (value, chatty_chat_get_last_msg_time (self));
+      break;
+
     case PROP_LOADING_HISTORY:
       g_value_set_boolean (value, chatty_chat_is_loading_history (self));
       break;
@@ -566,6 +570,13 @@ chatty_chat_class_init (ChattyChatClass *klass)
                           FALSE,
                           G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
+  properties[PROP_LAST_MESSAGE_TIME] =
+    g_param_spec_int64 ("last-message-time",
+                        "Last Message time",
+                        "The time of the last message received",
+                        0, G_MAXLONG, 0,
+                        G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+
   properties[PROP_LOADING_HISTORY] =
     g_param_spec_boolean ("loading-history",
                           "Loading history",
@@ -583,19 +594,6 @@ chatty_chat_class_init (ChattyChatClass *klass)
    */
   signals [CHANGED] =
     g_signal_new ("changed",
-                  G_TYPE_FROM_CLASS (klass),
-                  G_SIGNAL_RUN_LAST,
-                  0, NULL, NULL, NULL,
-                  G_TYPE_NONE, 0);
-
-  /**
-   * ChattyChat::message-added:
-   * @self: a #ChattyChat
-   *
-   * Emitted when new message is added
-   */
-  signals [MESSAGE_ADDED] =
-    g_signal_new ("message-added",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST,
                   0, NULL, NULL, NULL,

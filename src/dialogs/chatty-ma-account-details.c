@@ -29,7 +29,6 @@
 
 #include <glib/gi18n.h>
 
-#include "gtk3-to-4.h"
 #include "chatty-avatar.h"
 #include "chatty-ma-account.h"
 #include "chatty-ma-account-details.h"
@@ -100,51 +99,54 @@ update_delete_avatar_button_state (ChattyMaAccountDetails *self)
 }
 
 static void
-ma_account_load_avatar_response_cb (ChattyMaAccountDetails *self,
-                                    int                     response_id,
-                                    GtkDialog              *dialog)
+ma_account_load_avatar_response_cb (GObject         *dialog,
+                                    GAsyncResult    *response,
+                                    gpointer        user_data)
 {
+  ChattyMaAccountDetails *self = CHATTY_MA_ACCOUNT_DETAILS (user_data);
+  g_autoptr(GError) error = NULL;
+  g_autoptr(GFile) file = NULL;
+  g_autofree char *file_name = NULL;
+
   g_assert (CHATTY_IS_MA_ACCOUNT_DETAILS (self));
   g_assert (GTK_IS_DIALOG (dialog));
 
-  if (response_id == GTK_RESPONSE_ACCEPT) {
-    g_autoptr(GFile) file = NULL;
-    g_autofree char *file_name = NULL;
+  file = gtk_file_dialog_open_finish (GTK_FILE_DIALOG (dialog), response, &error);
+  g_clear_object (&dialog);
 
-    file = gtk_file_chooser_get_file (GTK_FILE_CHOOSER (dialog));
-    file_name = g_file_get_path (file);
-
-    if (file_name)
-      chatty_item_set_avatar_async (CHATTY_ITEM (self->account),
-                                  file_name, NULL, NULL, NULL);
+  if (!file) {
+    if (!g_error_matches (error, GTK_DIALOG_ERROR, GTK_DIALOG_ERROR_DISMISSED))
+      g_warning ("Error getting file: %s", error->message);
+    return;
   }
+
+  file_name = g_file_get_path (file);
+
+  if (file_name)
+    chatty_item_set_avatar_async (CHATTY_ITEM (self->account),
+                                  file_name, NULL, NULL, NULL);
 }
 
 static void
 ma_account_show_dialog_load_avatar (ChattyMaAccountDetails *self)
 {
-  g_autoptr(GtkFileChooserNative) dialog = NULL;
   GtkFileFilter *filter;
   GtkWidget *window;
+  GtkFileDialog *dialog;
 
   window = gtk_widget_get_ancestor (GTK_WIDGET (self), GTK_TYPE_WINDOW);
-  dialog = gtk_file_chooser_native_new (_("Set Avatar"),
-                                        GTK_WINDOW (window),
-                                        GTK_FILE_CHOOSER_ACTION_OPEN,
-                                        _("Open"),
-                                        _("Cancel"));
+  dialog = gtk_file_dialog_new ();
+  gtk_file_dialog_set_title (dialog, _("Set Avatar"));
+
   gtk_native_dialog_set_transient_for (GTK_NATIVE_DIALOG (dialog), GTK_WINDOW (window));
   gtk_native_dialog_set_modal (GTK_NATIVE_DIALOG (dialog), TRUE);
 
   filter = gtk_file_filter_new ();
   gtk_file_filter_add_mime_type (filter, "image/*");
   gtk_file_filter_set_name (filter, _("Images"));
-  gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dialog), filter);
+  gtk_file_dialog_set_default_filter (dialog, filter);
 
-  g_signal_connect_object (dialog, "response",
-                           G_CALLBACK (ma_account_load_avatar_response_cb),
-                           self, G_CONNECT_SWAPPED);
-  gtk_native_dialog_show (GTK_NATIVE_DIALOG (dialog));
+  gtk_file_dialog_open (dialog, GTK_WINDOW (window), NULL, ma_account_load_avatar_response_cb, self);
 }
 
 static void
@@ -318,11 +320,9 @@ ma_account_details_add_entry (ChattyMaAccountDetails *self,
                               const char             *value)
 {
   GtkWidget *entry, *row, *button, *stack, *spinner, *image;
-  GtkStyleContext *context;
 
   row = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
-  context = gtk_widget_get_style_context (row);
-  gtk_style_context_add_class (context, "linked");
+  gtk_widget_add_css_class (row, "linked");
 
   entry = gtk_entry_new ();
   gtk_widget_set_visible (entry, TRUE);
