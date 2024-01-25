@@ -681,6 +681,14 @@ chatty_mm_chat_has_custom_name (ChattyMmChat *self)
   return self->has_custom_name;
 }
 
+ChattyEds *
+chatty_mm_chat_get_eds (ChattyMmChat *self)
+{
+  g_return_val_if_fail (CHATTY_IS_MM_CHAT (self), NULL);
+
+  return self->chatty_eds;
+}
+
 void
 chatty_mm_chat_set_eds (ChattyMmChat *self,
                         ChattyEds    *chatty_eds)
