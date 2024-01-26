@@ -42,7 +42,7 @@ struct _ChattyWindow
 
   GtkWidget *chat_list;
 
-  GtkWidget *content_box;
+  GtkWidget *split_view;
   GtkWidget *side_bar;
   GtkWidget *main_view;
 
@@ -102,9 +102,8 @@ window_set_item (ChattyWindow *self,
                                                           G_CALLBACK (window_chat_changed_cb),
                                                           self, G_CONNECT_SWAPPED);
   }
-
   if (!chat)
-    adw_leaflet_set_visible_child (ADW_LEAFLET (self->content_box), self->side_bar);
+    adw_navigation_split_view_set_show_content (ADW_NAVIGATION_SPLIT_VIEW (self->split_view), FALSE);
 
   chatty_window_set_item (self, CHATTY_ITEM (chat));
 }
@@ -164,7 +163,7 @@ window_chat_list_selection_changed (ChattyWindow   *self,
   g_return_if_fail (CHATTY_IS_CHAT (chat));
 
   if (chat == (gpointer)chatty_main_view_get_item (CHATTY_MAIN_VIEW (self->main_view))) {
-    adw_leaflet_set_visible_child (ADW_LEAFLET (self->content_box), self->main_view);
+    adw_navigation_split_view_set_show_content (ADW_NAVIGATION_SPLIT_VIEW (self->split_view), TRUE);
 
     if (chatty_window_get_active_chat (self))
       chatty_chat_set_unread_count (chat, 0);
@@ -180,23 +179,32 @@ window_chat_list_selection_changed (ChattyWindow   *self,
     chatty_window_open_chat (self, chat);
 }
 
+/*
+ * adw_navigation_split_view_get_collapsed () doesn't update fast enough for the
+ * signal. Thus, I just seperate the signals and do logic accordingly
+ */
 static void
 notify_fold_cb (ChattyWindow *self)
 {
-  gboolean folded;
-
   if (!gtk_widget_get_mapped (GTK_WIDGET (self)))
     return;
 
-  folded = adw_leaflet_get_folded (ADW_LEAFLET (self->content_box));
-  chatty_chat_list_set_selection_mode (CHATTY_CHAT_LIST (self->chat_list), !folded);
+  chatty_chat_list_set_selection_mode (CHATTY_CHAT_LIST (self->chat_list), FALSE);
+  chatty_side_bar_set_show_end_title_buttons (CHATTY_SIDE_BAR (self->side_bar), TRUE);
+}
 
-  if (!folded) {
-    ChattyItem *item;
+static void
+notify_unfold_cb (ChattyWindow *self)
+{
+  ChattyItem *item = NULL;
+  if (!gtk_widget_get_mapped (GTK_WIDGET (self)))
+    return;
 
-    item = chatty_main_view_get_item (CHATTY_MAIN_VIEW (self->main_view));
-    chatty_chat_list_select_item (CHATTY_CHAT_LIST (self->chat_list), item);
-  }
+  chatty_chat_list_set_selection_mode (CHATTY_CHAT_LIST (self->chat_list), TRUE);
+
+  item = chatty_main_view_get_item (CHATTY_MAIN_VIEW (self->main_view));
+  chatty_chat_list_select_item (CHATTY_CHAT_LIST (self->chat_list), item);
+  chatty_side_bar_set_show_end_title_buttons (CHATTY_SIDE_BAR (self->side_bar), FALSE);
 }
 
 static void
@@ -412,7 +420,7 @@ window_delete_chat_response_cb (GObject         *dialog,
 
     window_set_item (self, NULL);
 
-    if (!adw_leaflet_get_folded (ADW_LEAFLET (self->content_box)))
+    if (!adw_navigation_split_view_get_collapsed (ADW_NAVIGATION_SPLIT_VIEW (self->split_view)))
       chatty_chat_list_select_first (CHATTY_CHAT_LIST (self->chat_list));
   }
   g_clear_object (&dialog);
@@ -482,7 +490,7 @@ chatty_window_leave_chat (GtkWidget  *widget,
 
   window_set_item (self, NULL);
 
-  if (!adw_leaflet_get_folded (ADW_LEAFLET (self->content_box)))
+  if (!adw_navigation_split_view_get_collapsed (ADW_NAVIGATION_SPLIT_VIEW (self->split_view)))
     chatty_chat_list_select_first (CHATTY_CHAT_LIST (self->chat_list));
 }
 
@@ -539,6 +547,13 @@ chatty_window_show_settings (GtkWidget  *widget,
 }
 
 static void
+window_chat_list_hiding (ChattyWindow *self)
+{
+  if (!chatty_chat_list_is_archived (CHATTY_CHAT_LIST (self->chat_list)))
+    window_set_item (self, NULL);
+}
+
+static void
 chatty_window_go_back (GtkWidget  *widget,
                        const char *action_name,
                        GVariant   *param)
@@ -547,8 +562,7 @@ chatty_window_go_back (GtkWidget  *widget,
 
   g_assert (CHATTY_IS_WINDOW (self));
 
-  if (!chatty_chat_list_is_archived (CHATTY_CHAT_LIST (self->chat_list)))
-    window_set_item (self, NULL);
+  window_chat_list_hiding (self);
 }
 
 static void
@@ -711,12 +725,14 @@ chatty_window_class_init (ChattyWindowClass *klass)
                                                "/sm/puri/Chatty/"
                                                "ui/chatty-window.ui");
 
-  gtk_widget_class_bind_template_child (widget_class, ChattyWindow, content_box);
+  gtk_widget_class_bind_template_child (widget_class, ChattyWindow, split_view);
   gtk_widget_class_bind_template_child (widget_class, ChattyWindow, side_bar);
   gtk_widget_class_bind_template_child (widget_class, ChattyWindow, main_view);
 
   gtk_widget_class_bind_template_callback (widget_class, notify_fold_cb);
+  gtk_widget_class_bind_template_callback (widget_class, notify_unfold_cb);
   gtk_widget_class_bind_template_callback (widget_class, window_chat_list_selection_changed);
+  gtk_widget_class_bind_template_callback (widget_class, window_chat_list_hiding);
 
   gtk_widget_class_install_action (widget_class, "win.new-chat", NULL, chatty_window_start_new_chat);
   gtk_widget_class_install_action (widget_class, "win.new-sms-mms", NULL, chatty_window_start_sms_mms_chat);
@@ -739,6 +755,7 @@ chatty_window_class_init (ChattyWindowClass *klass)
 static void
 chatty_window_init (ChattyWindow *self)
 {
+  gboolean folded;
   gtk_widget_init_template (GTK_WIDGET (self));
 
   self->chat_list = chatty_side_bar_get_chat_list (CHATTY_SIDE_BAR (self->side_bar));
@@ -748,6 +765,9 @@ chatty_window_init (ChattyWindow *self)
   g_signal_connect_object (self->manager, "chat-deleted",
                            G_CALLBACK (window_chat_deleted_cb), self,
                            G_CONNECT_SWAPPED);
+
+  folded = adw_navigation_split_view_get_collapsed (ADW_NAVIGATION_SPLIT_VIEW (self->split_view));
+  chatty_side_bar_set_show_end_title_buttons (CHATTY_SIDE_BAR (self->side_bar), folded);
 }
 
 GtkWidget *
@@ -797,9 +817,9 @@ chatty_window_open_chat (ChattyWindow *self,
   CHATTY_INFO (chatty_chat_get_chat_name (chat),
                "opening chat (%p), type: %s, chat-name:", chat, G_OBJECT_TYPE_NAME (chat));
 
-  window_set_item (self, chat);
+  adw_navigation_split_view_set_show_content (ADW_NAVIGATION_SPLIT_VIEW (self->split_view), TRUE);
 
-  adw_leaflet_set_visible_child (ADW_LEAFLET (self->content_box), self->main_view);
+  window_set_item (self, chat);
 
   if (chatty_window_get_active_chat (self))
     chatty_chat_set_unread_count (chat, 0);
