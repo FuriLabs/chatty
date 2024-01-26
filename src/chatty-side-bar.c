@@ -61,6 +61,13 @@ enum {
 
 static guint signals[N_SIGNALS];
 
+void
+chatty_side_bar_set_show_end_title_buttons (ChattySideBar *self,
+                                            gboolean       visible)
+{
+  adw_header_bar_set_show_end_title_buttons (ADW_HEADER_BAR (self->header_bar), visible);
+}
+
 static void
 side_bar_update_search_mode (ChattySideBar *self)
 {

@@ -6,11 +6,6 @@
 
     <child>
       <object class="AdwHeaderBar" id="header_bar">
-        <binding name="show-end-title-buttons">
-          <lookup name="folded" type="AdwLeaflet">
-            <lookup name="parent">ChattySideBar</lookup>
-          </lookup>
-        </binding>
         <property name="title-widget">
           <object class="AdwWindowTitle">
             <property name="title" translatable="yes">Chats</property>
