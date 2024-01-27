@@ -8,11 +8,6 @@
       <object class="AdwHeaderBar" id="header_bar">
         <child type="start">
           <object class="GtkButton">
-            <binding name="visible">
-              <lookup name="folded" type="AdwLeaflet">
-                <lookup name="parent">ChattyMainView</lookup>
-              </lookup>
-            </binding>
             <property name="icon-name">go-previous-symbolic</property>
             <property name="tooltip-text" translatable="yes">Back</property>
             <property name="action-name">win.go-back</property>
