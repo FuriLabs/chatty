@@ -4,6 +4,7 @@ Priority: optional
 Maintainer: DebianOnMobile Maintainers <debian-on-mobile-maintainers@alioth-lists.debian.net>
 Uploaders:
  Evangelos Ribeiro Tzaras <devrtz-debian@fortysixandtwo.eu>,
+ Christopher Talbot <chris@talbothome.com>,
 Build-Depends:
  appstream,
  appstream-util,
