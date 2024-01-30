@@ -768,6 +768,7 @@ chatty_window_init (ChattyWindow *self)
 
   folded = adw_navigation_split_view_get_collapsed (ADW_NAVIGATION_SPLIT_VIEW (self->split_view));
   chatty_side_bar_set_show_end_title_buttons (CHATTY_SIDE_BAR (self->side_bar), folded);
+  chatty_main_view_set_item (CHATTY_MAIN_VIEW (self->main_view), NULL);
 }
 
 GtkWidget *
