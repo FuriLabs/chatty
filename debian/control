@@ -45,6 +45,7 @@ Recommends:
  purple-xmpp-carbons,
  purple-lurch,
  purple-xmpp-http-upload,
+ libgdk-pixbuf2.0-bin,
 Suggests:
  calls,
 Description: Messaging application for mobile and desktop
