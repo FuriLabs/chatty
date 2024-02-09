@@ -10,6 +10,10 @@
 
 #define G_LOG_DOMAIN "chatty-notification"
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #define LIBFEEDBACK_USE_UNSTABLE_API
 #include <libfeedback.h>
 #include <gtk/gtk.h>
@@ -144,7 +148,8 @@ chatty_notification_new (ChattyChat *chat)
 void
 chatty_notification_show_message (ChattyNotification *self,
                                   ChattyMessage      *message,
-                                  const char         *name)
+                                  const char         *name,
+                                  unsigned int        unread_count)
 {
   g_autofree char *title = NULL;
   g_autoptr(LfbEvent) event = NULL;
@@ -197,6 +202,18 @@ chatty_notification_show_message (ChattyNotification *self,
       g_notification_set_body (self->notification, chatty_message_get_text (message));
       break;
     }
+
+  if (unread_count >= 2) {
+    g_autofree char *message_unread = NULL;
+
+    message_unread = g_strdup_printf (g_dngettext (GETTEXT_PACKAGE,
+                                                   "%i Message",
+                                                   "%i Messages",
+                                                   unread_count),
+                                      unread_count);
+
+    g_notification_set_body (self->notification, message_unread);
+  }
 
   g_notification_set_title (self->notification, title);
   g_notification_set_priority (self->notification, G_NOTIFICATION_PRIORITY_HIGH);

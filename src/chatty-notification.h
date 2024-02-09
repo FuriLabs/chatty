@@ -25,6 +25,7 @@ G_DECLARE_FINAL_TYPE (ChattyNotification, chatty_notification, CHATTY, NOTIFICAT
 ChattyNotification *chatty_notification_new          (ChattyChat         *chat);
 void                chatty_notification_show_message (ChattyNotification *self,
                                                       ChattyMessage      *message,
-                                                      const char         *name);
+                                                      const char         *name,
+                                                      unsigned int        unread_count);
 
 G_END_DECLS
