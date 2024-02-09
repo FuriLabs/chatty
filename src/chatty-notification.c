@@ -112,8 +112,6 @@ chatty_notification_init (ChattyNotification *self)
 {
   self->notification = g_notification_new ("chatty");
 
-  g_notification_set_default_action (self->notification, "app.show-window");
-
 #if GLIB_CHECK_VERSION(2,70,0)
   g_notification_set_category (self->notification, "im.received");
 #endif
@@ -135,10 +133,10 @@ chatty_notification_new (ChattyChat *chat)
                            G_CALLBACK (notification_chat_changed_cb),
                            self, G_CONNECT_SWAPPED);
 
-  g_notification_add_button_with_target (self->notification, _("Open Message"), "app.open-chat",
-                                         "(ssi)", self->chat_name,
-                                         chatty_item_get_username (CHATTY_ITEM (chat)),
-                                         chatty_item_get_protocols (CHATTY_ITEM (chat)));
+  g_notification_set_default_action_and_target (self->notification, "app.open-chat",
+                                                "(ssi)", self->chat_name,
+                                                chatty_item_get_username (CHATTY_ITEM (chat)),
+                                                chatty_item_get_protocols (CHATTY_ITEM (chat)));
 
   return self;
 }
