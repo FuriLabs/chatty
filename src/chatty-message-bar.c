@@ -331,6 +331,7 @@ view_send_message_async_cb (GObject      *object,
   g_autoptr(ChattyMessageBar) self = user_data;
 
   chatty_chat_set_unread_count (self->chat, 0);
+  chatty_chat_withdraw_notification (self->chat);
 }
 
 static void
