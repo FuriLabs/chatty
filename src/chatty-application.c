@@ -293,8 +293,10 @@ main_window_focus_changed_cb (ChattyApplication *self)
   if (has_focus)
     chat = chatty_application_get_active_chat (self);
 
-  if (chat)
+  if (chat) {
     chatty_chat_set_unread_count (chat, 0);
+    chatty_chat_withdraw_notification (chat);
+  }
 }
 
 static void
