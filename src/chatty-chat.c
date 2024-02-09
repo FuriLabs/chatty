@@ -376,6 +376,7 @@ chatty_chat_real_show_notification (ChattyChat *self,
   g_autoptr(ChattyMessage) message = NULL;
   GListModel *messages;
   guint n_items;
+  guint unread_count;
 
   g_assert (CHATTY_IS_CHAT (self));
 
@@ -399,7 +400,9 @@ chatty_chat_real_show_notification (ChattyChat *self,
   if (!priv->notification)
     priv->notification = chatty_notification_new (self);
 
-  chatty_notification_show_message (priv->notification, message, name);
+  unread_count = chatty_chat_get_unread_count (self);
+
+  chatty_notification_show_message (priv->notification, message, name, unread_count);
 }
 
 static const char *
