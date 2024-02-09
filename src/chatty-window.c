@@ -165,8 +165,10 @@ window_chat_list_selection_changed (ChattyWindow   *self,
   if (chat == (gpointer)chatty_main_view_get_item (CHATTY_MAIN_VIEW (self->main_view))) {
     adw_navigation_split_view_set_show_content (ADW_NAVIGATION_SPLIT_VIEW (self->split_view), TRUE);
 
-    if (chatty_window_get_active_chat (self))
+    if (chatty_window_get_active_chat (self)) {
       chatty_chat_set_unread_count (chat, 0);
+      chatty_chat_withdraw_notification (chat);
+    }
 
     return;
   }
@@ -822,6 +824,8 @@ chatty_window_open_chat (ChattyWindow *self,
 
   window_set_item (self, chat);
 
-  if (chatty_window_get_active_chat (self))
+  if (chatty_window_get_active_chat (self)) {
     chatty_chat_set_unread_count (chat, 0);
+    chatty_chat_withdraw_notification (chat);
+  }
 }
