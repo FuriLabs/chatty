@@ -370,6 +370,17 @@ chatty_chat_real_invite_finish (ChattyChat   *self,
 }
 
 static void
+chatty_chat_real_withdraw_notification (ChattyChat *self)
+{
+  ChattyChatPrivate *priv = chatty_chat_get_instance_private (self);
+
+  g_assert (CHATTY_IS_CHAT (self));
+
+  if (priv->notification)
+    chatty_notification_withdraw_notification (priv->notification);
+}
+
+static void
 chatty_chat_real_show_notification (ChattyChat *self,
                                     const char *name)
 {
@@ -556,6 +567,7 @@ chatty_chat_class_init (ChattyChatClass *klass)
   klass->invite_async = chatty_chat_real_invite_async;
   klass->invite_finish = chatty_chat_real_invite_finish;
   klass->show_notification = chatty_chat_real_show_notification;
+  klass->withdraw_notification = chatty_chat_real_withdraw_notification;
 
   properties[PROP_ENCRYPT] =
     g_param_spec_boolean ("encrypt",
@@ -1099,4 +1111,18 @@ chatty_chat_show_notification (ChattyChat *self,
   g_return_if_fail (CHATTY_IS_CHAT (self));
 
   CHATTY_CHAT_GET_CLASS (self)->show_notification (self, name);
+}
+
+/**
+ * chatty_chat_withdraw_notification:
+ * @self: A #ChattyChat
+ *
+ * Withdraw the notification from the chat
+ */
+void
+chatty_chat_withdraw_notification (ChattyChat *self)
+{
+  g_return_if_fail (CHATTY_IS_CHAT (self));
+
+  CHATTY_CHAT_GET_CLASS (self)->withdraw_notification (self);
 }
