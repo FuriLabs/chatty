@@ -26,6 +26,7 @@ ChattyNotification *chatty_notification_new          (ChattyChat         *chat);
 void                chatty_notification_show_message (ChattyNotification *self,
                                                       ChattyMessage      *message,
                                                       const char         *name,
-                                                      unsigned int        unread_count);
+                                                      unsigned int        unread_count,
+                                                      gboolean            is_sms);
 
 G_END_DECLS

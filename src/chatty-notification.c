@@ -149,7 +149,8 @@ void
 chatty_notification_show_message (ChattyNotification *self,
                                   ChattyMessage      *message,
                                   const char         *name,
-                                  unsigned int        unread_count)
+                                  unsigned int        unread_count,
+                                  gboolean            is_sms)
 {
   g_autofree char *title = NULL;
   g_autoptr(LfbEvent) event = NULL;
@@ -223,8 +224,11 @@ chatty_notification_show_message (ChattyNotification *self,
   g_clear_handle_id (&self->timeout_id, g_source_remove);
   self->timeout_id = g_timeout_add (NOTIFICATION_TIMEOUT,
                                     show_notification, self);
+  if (is_sms)
+    event = lfb_event_new ("message-new-sms");
+  else
+    event = lfb_event_new ("message-new-instant");
 
-  event = lfb_event_new ("message-new-instant");
   lfb_event_trigger_feedback_async (event, NULL,
                                     feedback_triggered_cb,
                                     g_object_ref (self));

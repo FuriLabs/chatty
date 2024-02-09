@@ -19,6 +19,7 @@
 #include <glib/gi18n.h>
 
 #include "chatty-mm-buddy.h"
+#include "chatty-mm-chat.h"
 #include "chatty-notification.h"
 #include "chatty-history.h"
 #include "chatty-chat.h"
@@ -402,7 +403,11 @@ chatty_chat_real_show_notification (ChattyChat *self,
 
   unread_count = chatty_chat_get_unread_count (self);
 
-  chatty_notification_show_message (priv->notification, message, name, unread_count);
+  chatty_notification_show_message (priv->notification,
+                                    message,
+                                    name,
+                                    unread_count,
+                                    CHATTY_IS_MM_CHAT (self));
 }
 
 static const char *
