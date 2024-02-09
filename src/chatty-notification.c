@@ -240,26 +240,26 @@ chatty_notification_show_message (ChattyNotification *self,
       break;
 
     case CHATTY_MESSAGE_FILE:
-      g_notification_set_body (self->notification, "File");
+      g_notification_set_body (self->notification, _("File"));
       break;
 
     case CHATTY_MESSAGE_IMAGE:
-      g_notification_set_body (self->notification, "Picture");
+      g_notification_set_body (self->notification, _("Picture"));
       break;
 
     case CHATTY_MESSAGE_VIDEO:
-      g_notification_set_body (self->notification, "Video");
+      g_notification_set_body (self->notification, _("Video"));
       break;
 
     case CHATTY_MESSAGE_AUDIO:
-      g_notification_set_body (self->notification, "Audio File");
+      g_notification_set_body (self->notification, _("Audio File"));
       break;
 
     case CHATTY_MESSAGE_MMS:
       if (chatty_message_get_text (message) && *chatty_message_get_text (message))
         g_notification_set_body (self->notification, chatty_message_get_text (message));
       else
-        g_notification_set_body (self->notification, "MMS");
+        g_notification_set_body (self->notification, _("MMS"));
       break;
 
     default:
