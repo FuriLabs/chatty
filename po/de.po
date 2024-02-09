@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-01-20 12:22+0000\n"
-"PO-Revision-Date: 2024-01-20 19:07+0100\n"
+"POT-Creation-Date: 2024-02-09 06:26+0000\n"
+"PO-Revision-Date: 2024-02-09 09:55+0100\n"
 "Last-Translator: Jürgen Benvenuti <gastornis@posteo.org>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -22,11 +22,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4\n"
+"X-Generator: Poedit 3.4.2\n"
 
 #: data/sm.puri.Chatty.desktop.in.in:3 data/sm.puri.Chatty.metainfo.xml.in.in:6
 #: src/chatty-application.c:164 src/chatty-application.c:403
-#: src/chatty-side-bar.c:347 src/ui/chatty-side-bar.ui:16
+#: src/chatty-side-bar.c:354 src/ui/chatty-side-bar.ui:11
+#: src/ui/chatty-window.ui:4
 msgid "Chats"
 msgstr "Unterhaltungen"
 
@@ -383,11 +384,11 @@ msgstr "Moderator"
 msgid "Member"
 msgstr "Mitglied"
 
-#: src/chatty-list-row.c:250
+#: src/chatty-list-row.c:250 src/chatty-notification.c:178
 msgid "Picture"
 msgstr "Bild"
 
-#: src/chatty-list-row.c:253
+#: src/chatty-list-row.c:253 src/chatty-notification.c:182
 msgid "Video"
 msgstr "Video"
 
@@ -400,6 +401,7 @@ msgid "Location"
 msgstr "Standort"
 
 #: src/chatty-list-row.c:262 src/chatty-list-row.c:279
+#: src/chatty-notification.c:174
 msgid "File"
 msgstr "Datei"
 
@@ -430,40 +432,44 @@ msgstr ""
 "Es wurde eine verschlüsselte Nachricht erhalten, konnte aber aufgrund "
 "fehlender Schlüssel nicht entschlüsselt werden"
 
-#: src/chatty-notification.c:180
-msgid "Open Message"
-msgstr "Nachricht öffnen"
-
-#: src/chatty-notification.c:213
+#: src/chatty-notification.c:157
 #, c-format
 msgid "New message from %s"
 msgstr "Neue Nachricht von %s"
 
-#: src/chatty-notification.c:215
+#: src/chatty-notification.c:159
 msgid "Message Received"
 msgstr "Nachricht erhalten"
 
-#: src/chatty-side-bar.c:317
+#: src/chatty-notification.c:186
+msgid "Audio File"
+msgstr "Audiodatei"
+
+#: src/chatty-notification.c:193
+msgid "MMS"
+msgstr "MMS"
+
+#: src/chatty-side-bar.c:324
 msgid "Any Protocol"
 msgstr "Beliebiges Protokoll"
 
-#: src/chatty-side-bar.c:318 src/ui/chatty-settings-dialog.ui:581
+#: src/chatty-side-bar.c:325 src/ui/chatty-settings-dialog.ui:581
 msgid "Matrix"
 msgstr "Matrix"
 
-#: src/chatty-side-bar.c:319
+#: src/chatty-side-bar.c:326 src/dialogs/chatty-new-chat-dialog.c:625
 msgid "SMS/MMS"
 msgstr "SMS/MMS"
 
-#: src/chatty-side-bar.c:322 src/ui/chatty-settings-dialog.ui:570
+#: src/chatty-side-bar.c:329 src/ui/chatty-settings-dialog.ui:570
 msgid "XMPP"
 msgstr "XMPP"
 
-#: src/chatty-side-bar.c:325 src/ui/chatty-settings-dialog.ui:594
+#: src/chatty-side-bar.c:332 src/ui/chatty-settings-dialog.ui:594
 msgid "Telegram"
 msgstr "Telegram"
 
-#: src/chatty-side-bar.c:347
+#: src/chatty-side-bar.c:354
 msgid "Archived"
 msgstr "Archiviert"
 
@@ -831,39 +837,39 @@ msgstr "Emojis anzeigen"
 msgid "Show Numbers"
 msgstr "Nummern anzeigen"
 
-#: src/chatty-window.c:348 src/chatty-window.c:435
+#: src/chatty-window.c:356 src/chatty-window.c:443
 #: src/dialogs/chatty-settings-dialog.c:443 src/ui/chatty-dialog-join-muc.ui:18
 #: src/ui/chatty-info-dialog.ui:26 src/ui/chatty-info-dialog.ui:35
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: src/chatty-window.c:348
+#: src/chatty-window.c:356
 msgid "Continue"
 msgstr "Fortsetzen"
 
-#: src/chatty-window.c:356
+#: src/chatty-window.c:364
 msgid "You shall no longer be notified for new messages, continue?"
 msgstr "Sie werden nicht mehr über neue Nachrichten informiert. Weiter?"
 
-#: src/chatty-window.c:435
+#: src/chatty-window.c:443
 msgid "Delete"
 msgstr "Löschen"
 
-#: src/chatty-window.c:445
+#: src/chatty-window.c:453
 #, c-format
 msgid "Delete chat with “%s”"
 msgstr "Unterhaltung mit »%s« löschen"
 
-#: src/chatty-window.c:446
+#: src/chatty-window.c:454
 msgid "This deletes the conversation history"
 msgstr "Dies löscht den Verlauf der Unterhaltung"
 
-#: src/chatty-window.c:448
+#: src/chatty-window.c:456
 #, c-format
 msgid "Disconnect group chat “%s”"
 msgstr "Gruppenunterhaltung »%s« verlassen"
 
-#: src/chatty-window.c:449
+#: src/chatty-window.c:457
 msgid "This removes chat from chats list"
 msgstr "Dies entfernt die Unterhaltung von der Liste"
 
@@ -1024,7 +1030,7 @@ msgstr "Neues Konto"
 msgid "Blocked Contacts"
 msgstr "Blockierte Kontakte"
 
-#: src/dialogs/chatty-settings-dialog.c:647 src/ui/chatty-side-bar.ui:115
+#: src/dialogs/chatty-settings-dialog.c:647 src/ui/chatty-side-bar.ui:110
 msgid "Preferences"
 msgstr "Einstellungen"
 
@@ -1137,7 +1143,7 @@ msgstr[1] "Chatty kann %i MMS nicht verarbeiten"
 msgid "Error Sending SMS to %s"
 msgstr "Fehler beim Senden einer SMS an %s"
 
-#: src/mm/chatty-mm-account.c:463
+#: src/mm/chatty-mm-account.c:506
 #, c-format
 msgid "Error Sending MMS to %s"
 msgstr "Fehler beim Senden einer MMS an %s"
@@ -1210,7 +1216,7 @@ msgstr "Name (optional)"
 msgid "Add to Contacts"
 msgstr "Zu Kontakten hinzufügen"
 
-#: src/ui/chatty-info-dialog.ui:8 src/ui/chatty-main-view.ui:129
+#: src/ui/chatty-info-dialog.ui:8 src/ui/chatty-main-view.ui:124
 msgid "Chat Details"
 msgstr "Unterhaltungsdetails"
 
@@ -1251,40 +1257,40 @@ msgstr "Verschlüsselung"
 msgid "Encrypt Messages"
 msgstr "Nachrichten verschlüsseln"
 
-#: src/ui/chatty-main-view.ui:17 src/ui/chatty-settings-dialog.ui:18
-#: src/ui/chatty-side-bar.ui:24
+#: src/ui/chatty-main-view.ui:12 src/ui/chatty-settings-dialog.ui:18
+#: src/ui/chatty-side-bar.ui:19
 msgid "Back"
 msgstr "Zurück"
 
-#: src/ui/chatty-main-view.ui:46 src/ui/chatty-list-row.ui:169
+#: src/ui/chatty-main-view.ui:41 src/ui/chatty-list-row.ui:169
 msgid "Call"
 msgstr "Anrufen"
 
-#: src/ui/chatty-main-view.ui:78
+#: src/ui/chatty-main-view.ui:73
 msgid "Close"
 msgstr "Schließen"
 
-#: src/ui/chatty-main-view.ui:140
+#: src/ui/chatty-main-view.ui:135
 msgid "Leave Chat"
 msgstr "Unterhaltung verlassen"
 
-#: src/ui/chatty-main-view.ui:148
+#: src/ui/chatty-main-view.ui:143
 msgid "Block Contact"
 msgstr "Kontakt blockieren"
 
-#: src/ui/chatty-main-view.ui:156
+#: src/ui/chatty-main-view.ui:151
 msgid "Unblock Contact"
 msgstr "Blockierung des Kontakts aufheben"
 
-#: src/ui/chatty-main-view.ui:164
+#: src/ui/chatty-main-view.ui:159
 msgid "Archive chat"
 msgstr "Unterhaltung archivieren"
 
-#: src/ui/chatty-main-view.ui:172
+#: src/ui/chatty-main-view.ui:167
 msgid "Unarchive chat"
 msgstr "Archivierung der Unterhaltung aufheben"
 
-#: src/ui/chatty-main-view.ui:180
+#: src/ui/chatty-main-view.ui:175
 msgid "Delete Chat"
 msgstr "Unterhaltung löschen"
 
@@ -1511,44 +1517,44 @@ msgstr "Heimserver"
 msgid "Add _new account…"
 msgstr "_Neues Konto hinzufügen …"
 
-#: src/ui/chatty-side-bar.ui:32
+#: src/ui/chatty-side-bar.ui:27
 msgid "Add Chat"
 msgstr "Unterhaltung hinzufügen"
 
-#: src/ui/chatty-side-bar.ui:41
+#: src/ui/chatty-side-bar.ui:36
 msgid "Menu"
 msgstr "Menü"
 
-#: src/ui/chatty-side-bar.ui:49
+#: src/ui/chatty-side-bar.ui:44
 msgid "Search"
 msgstr "Suchen"
 
-#: src/ui/chatty-side-bar.ui:107
+#: src/ui/chatty-side-bar.ui:102
 msgctxt "show archived chat list when clicked"
 msgid "Archived"
 msgstr "Archivierte"
 
-#: src/ui/chatty-side-bar.ui:122
+#: src/ui/chatty-side-bar.ui:117
 msgid "Keyboard _Shortcuts"
 msgstr "_Tastenkombinationen"
 
-#: src/ui/chatty-side-bar.ui:129
+#: src/ui/chatty-side-bar.ui:124
 msgid "Help"
 msgstr "Hilfe"
 
-#: src/ui/chatty-side-bar.ui:137
+#: src/ui/chatty-side-bar.ui:132
 msgid "About Chats"
 msgstr "Info zu Chats"
 
-#: src/ui/chatty-side-bar.ui:158
+#: src/ui/chatty-side-bar.ui:153
 msgid "New Message…"
 msgstr "Neue Nachricht …"
 
-#: src/ui/chatty-side-bar.ui:164
+#: src/ui/chatty-side-bar.ui:159
 msgid "New SMS/MMS Message…"
 msgstr "Neue SMS/MMS-Nachricht …"
 
-#: src/ui/chatty-side-bar.ui:170
+#: src/ui/chatty-side-bar.ui:165
 msgid "New Group Message…"
 msgstr "Neue Gruppennachricht …"
 
@@ -1633,6 +1639,9 @@ msgstr "Geschäftlich: "
 #: src/users/chatty-contact.c:328
 msgid "Other: "
 msgstr "Weitere: "
+
+#~ msgid "Open Message"
+#~ msgstr "Nachricht öffnen"
 
 #~ msgid "Select File..."
 #~ msgstr "Datei auswählen …"
