@@ -92,6 +92,7 @@
 
   <object class="GtkTextBuffer" id="message_buffer">
     <signal name="changed" handler="message_bar_input_changed_cb" after="yes" swapped="yes"/>
+    <signal name="paste-done" handler="message_bar_text_buffer_clipboard_paste_done_cb" swapped="yes"/>
   </object>
 
 </interface>

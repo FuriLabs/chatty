@@ -11,6 +11,7 @@
 #pragma once
 
 #include <gtk/gtk.h>
+#include <adwaita.h>
 
 #include "chatty-chat.h"
 #include "chatty-history.h"

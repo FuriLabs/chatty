@@ -438,6 +438,50 @@ message_bar_send_message_button_clicked_cb (ChattyMessageBar *self)
 }
 
 static void
+message_bar_text_buffer_clipboard_paste_done_cb (ChattyMessageBar *self)
+{
+  ChattySettings  *settings;
+  g_autofree char *stripped_message = NULL;
+  g_autofree char *message_buffer_text = NULL;
+  GtkTextIter      start, end;
+
+  settings = chatty_settings_get_default ();
+  if (!chatty_settings_get_strip_url_tracking_ids (settings)) {
+    chatty_settings_set_strip_url_tracking_ids_dialog (settings, FALSE);
+    return;
+  }
+
+  gtk_text_buffer_get_bounds (self->message_buffer, &start, &end);
+  message_buffer_text = gtk_text_buffer_get_text (self->message_buffer, &start, &end, FALSE);
+
+  stripped_message = chatty_utils_strip_utm_from_message (message_buffer_text);
+
+  if (g_strcmp0 (stripped_message, message_buffer_text) != 0) {
+
+    /* To not annoy the user, we only show the strip ID dialog the first time */
+    if (!chatty_settings_get_strip_url_tracking_ids_dialog (settings)) {
+      GtkWidget *dialog;
+      GtkWindow *window;
+
+      window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
+      dialog = adw_message_dialog_new (window,
+                                       _("Alert"),
+                                       _("Found and automatically deleted tracking IDs from the pasted link."));
+      adw_message_dialog_add_response (ADW_MESSAGE_DIALOG (dialog), "close", _("Close"));
+
+      adw_message_dialog_set_default_response (ADW_MESSAGE_DIALOG (dialog), "close");
+      adw_message_dialog_set_close_response (ADW_MESSAGE_DIALOG (dialog), "close");
+
+      gtk_window_present (GTK_WINDOW (dialog));
+    }
+    gtk_text_buffer_begin_user_action (self->message_buffer);
+    gtk_text_buffer_delete (self->message_buffer, &start, &end);
+    gtk_text_buffer_insert (self->message_buffer, &start, stripped_message, -1);
+    gtk_text_buffer_end_user_action (self->message_buffer);
+  }
+}
+
+static void
 message_bar_text_view_preddit_changed_cb (ChattyMessageBar *self,
                                           char             *preedit)
 {
@@ -524,6 +568,7 @@ chatty_message_bar_class_init (ChattyMessageBarClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, message_bar_send_file_button_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, message_bar_send_message_button_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, message_bar_text_view_preddit_changed_cb);
+  gtk_widget_class_bind_template_callback (widget_class, message_bar_text_buffer_clipboard_paste_done_cb);
 
   gtk_widget_class_install_action (widget_class, "message-bar.activate", NULL, message_bar_activate);
 }
