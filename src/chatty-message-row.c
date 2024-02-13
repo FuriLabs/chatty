@@ -255,10 +255,11 @@ chatty_message_row_update_footer (ChattyMessageRow *self)
 }
 
 static void
-chatty_message_row_call_copy_message_text (GtkWidget  *widget,
+chatty_message_row_copy_message_text (GtkWidget  *widget,
                                            const char *action_name,
                                            GVariant   *param)
 {
+  ChattySettings  *settings;
   ChattyMessageRow *self = CHATTY_MESSAGE_ROW (widget);
   GdkClipboard *clipboard;
   const char *text;
@@ -271,7 +272,15 @@ chatty_message_row_call_copy_message_text (GtkWidget  *widget,
     return;
 
   clipboard = gdk_display_get_clipboard (gdk_display_get_default ());
-  gdk_clipboard_set_text (clipboard, text);
+
+  settings = chatty_settings_get_default ();
+  if (chatty_settings_get_strip_url_tracking_ids (settings)) {
+    g_autofree char *stripped_message = NULL;
+
+    stripped_message = chatty_utils_strip_utm_from_message (text);
+    gdk_clipboard_set_text (clipboard, stripped_message);
+  } else
+    gdk_clipboard_set_text (clipboard, text);
 }
 
 static void
@@ -350,7 +359,7 @@ chatty_message_row_class_init (ChattyMessageRowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, message_body);
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, footer_label);
 
-  gtk_widget_class_install_action (widget_class, "win.copy-text", NULL, chatty_message_row_call_copy_message_text);
+  gtk_widget_class_install_action (widget_class, "win.copy-text", NULL, chatty_message_row_copy_message_text);
 }
 
 static void
