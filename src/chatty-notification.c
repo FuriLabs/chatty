@@ -20,6 +20,8 @@
 #include <glib/gi18n.h>
 
 #include "chatty-notification.h"
+#include "chatty-settings.h"
+#include "chatty-utils.h"
 
 
 #define NOTIFICATION_TIMEOUT 300 /* milliseconds */
@@ -179,7 +181,16 @@ chatty_notification_show_message (ChattyNotification *self,
     case CHATTY_MESSAGE_HTML_ESCAPED:
     case CHATTY_MESSAGE_MATRIX_HTML:
     case CHATTY_MESSAGE_LOCATION:
-      g_notification_set_body (self->notification, chatty_message_get_text (message));
+      ChattySettings *settings;
+      settings = chatty_settings_get_default ();
+
+      if (chatty_settings_get_strip_url_tracking_ids (settings)) {
+        g_autofree char *utm_stripped_message = NULL;
+
+        utm_stripped_message = chatty_utils_strip_utm_from_message (chatty_message_get_text (message));
+        g_notification_set_body (self->notification, utm_stripped_message);
+      } else
+        g_notification_set_body (self->notification, chatty_message_get_text (message));
       break;
 
     case CHATTY_MESSAGE_FILE:
