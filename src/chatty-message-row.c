@@ -229,7 +229,7 @@ strip_utm (const char *url_to_parse)
                              g_uri_get_host (url),
                              g_uri_get_port (url),
                              g_uri_get_path (url),
-                             str->str,
+                             (str->len ? str->str : NULL),
                              g_uri_get_fragment (url));
 
   g_uri_unref (url);
