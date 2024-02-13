@@ -50,6 +50,12 @@
       <description>Whether to Remove Tracking IDs from URLs Automatically</description>
     </key>
 
+    <key name="strip-url-tracking-id-dialog" type="b">
+      <default>false</default>
+      <summary>Whether Strip Tracking IDs was shown</summary>
+      <description>Whether the Tracking IDs dialog has been shown</description>
+    </key>
+
     <key name="render-attachments" type="b">
       <default>true</default>
       <summary>Render Attachments</summary>

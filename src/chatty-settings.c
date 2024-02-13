@@ -57,6 +57,7 @@ enum {
   PROP_MESSAGE_CARBONS,
   PROP_SEND_TYPING,
   PROP_STRIP_URL_TRACKING_IDS,
+  PROP_STRIP_URL_TRACKING_IDS_DIALOG,
   PROP_RENDER_ATTACHMENTS,
   PROP_BLUR_IDLE_BUDDIES,
   PROP_INDICATE_UNKNOWN_CONTACTS,
@@ -102,6 +103,10 @@ chatty_settings_get_property (GObject    *object,
 
     case PROP_STRIP_URL_TRACKING_IDS:
       g_value_set_boolean (value, chatty_settings_get_strip_url_tracking_ids (self));
+      break;
+
+    case PROP_STRIP_URL_TRACKING_IDS_DIALOG:
+      g_value_set_boolean (value, chatty_settings_get_strip_url_tracking_ids_dialog (self));
       break;
 
     case PROP_RENDER_ATTACHMENTS:
@@ -176,6 +181,11 @@ chatty_settings_set_property (GObject      *object,
 
     case PROP_STRIP_URL_TRACKING_IDS:
       g_settings_set_boolean (self->settings, "strip-url-tracking-id",
+                              g_value_get_boolean (value));
+      break;
+
+    case PROP_STRIP_URL_TRACKING_IDS_DIALOG:
+      g_settings_set_boolean (self->settings, "strip-url-tracking-id-dialog",
                               g_value_get_boolean (value));
       break;
 
@@ -320,6 +330,13 @@ chatty_settings_class_init (ChattySettingsClass *klass)
     g_param_spec_boolean ("strip-url-tracking-id",
                           "Strip Tracking IDs",
                           "Remove Tracking IDs from URLs",
+                          FALSE,
+                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  properties[PROP_STRIP_URL_TRACKING_IDS_DIALOG] =
+    g_param_spec_boolean ("strip-url-tracking-id-dialog",
+                          "Strip Tracking IDs Dialog",
+                          "Whether the Tracking IDs dialog has been shown",
                           FALSE,
                           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
@@ -507,6 +524,38 @@ chatty_settings_get_strip_url_tracking_ids (ChattySettings *self)
   g_return_val_if_fail (CHATTY_IS_SETTINGS (self), FALSE);
 
   return g_settings_get_boolean (self->settings, "strip-url-tracking-id");
+}
+
+/**
+ * chatty_settings_get_strip_url_tracking_ids_dialog:
+ * @self: A #ChattySettings
+ *
+ * Get if Chatty has shown the dialog that a URL has been stripped.
+ *
+ * Returns: %TRUE if tracking IDs dialog has been shown to the user.
+ * %FALSE otherwise
+ */
+gboolean
+chatty_settings_get_strip_url_tracking_ids_dialog (ChattySettings *self)
+{
+  g_return_val_if_fail (CHATTY_IS_SETTINGS (self), FALSE);
+
+  return g_settings_get_boolean (self->settings, "strip-url-tracking-id-dialog");
+}
+
+/**
+ * chatty_settings_set_strip_url_tracking_ids_dialog:
+ * @self: A #ChattySettings
+ *
+ * Set if Chatty has shown the dialog that a URL has been stripped.
+ */
+void
+chatty_settings_set_strip_url_tracking_ids_dialog (ChattySettings *self,
+                                                   gboolean shown)
+{
+  g_return_if_fail (CHATTY_IS_SETTINGS (self));
+
+  g_settings_set_boolean (G_SETTINGS (self->settings), "strip-url-tracking-id-dialog", !!shown);
 }
 
 /**
