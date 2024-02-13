@@ -24,7 +24,6 @@ test_items = [
   'clock',
   'history',
   'settings',
-  'utils',
   'mm-account',
   'sms-uri',
   'pgp',
@@ -43,6 +42,7 @@ endforeach
 
 test_items_shared_lib = [
   'message-row',
+  'utils',
 ]
 
 foreach item: test_items_shared_lib
