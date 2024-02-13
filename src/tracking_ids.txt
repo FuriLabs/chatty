@@ -59,4 +59,11 @@ oft_ids
 oft_sk
 // https://github.com/brave/brave-browser/issues/11580
 igshid
-
+// From Instagram Threads
+ad_id
+adset_id
+campaign_id
+ad_name
+adset_name
+campaign_name
+placement
