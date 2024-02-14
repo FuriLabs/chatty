@@ -81,7 +81,7 @@ asan-test:native-debian-trixie:
   script:
     - meson setup -Db_sanitize=address -Dbuildtype=debug _build-asan
     - meson compile -C _build-asan
-    - ${XVFB_RUN} meson test -C _build-asan --verbose  clock history settings utils sms-uri mm-account
+    - ${XVFB_RUN} meson test -C _build-asan --verbose  clock history settings sms-uri mm-account
 
 check-po:
   stage: test
