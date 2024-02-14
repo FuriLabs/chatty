@@ -106,8 +106,7 @@ test:debian-gcc:
     - export G_DEBUG=fatal-warnings
     - export LC_ALL=C.UTF-8
     - xvfb-run -a -s "-screen 0 1024x768x24" ninja -C _build test
-# Disable until it works in trixie again
-#    - ninja -C _build coverage
+    - ninja -C _build coverage
   coverage: '/^\s+lines\.+:\s+([\d.]+\%)\s+/'
   except:
     variables:
