@@ -11,7 +11,7 @@
 G_BEGIN_DECLS
 
 #define CHATTY_TYPE_SIDE_BAR (chatty_side_bar_get_type ())
-G_DECLARE_FINAL_TYPE (ChattySideBar, chatty_side_bar, CHATTY, SIDE_BAR, GtkBox)
+G_DECLARE_FINAL_TYPE (ChattySideBar, chatty_side_bar, CHATTY, SIDE_BAR, AdwNavigationPage)
 
 GtkWidget  *chatty_side_bar_get_chat_list         (ChattySideBar *self);
 void        chatty_side_bar_set_show_archived     (ChattySideBar *self,

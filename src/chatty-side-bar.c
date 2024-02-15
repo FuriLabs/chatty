@@ -23,7 +23,7 @@
 
 struct _ChattySideBar
 {
-  GtkBox             parent_instance;
+  AdwNavigationPage            parent_instance;
 
   GtkWidget         *header_bar;
   GtkWidget         *back_button;
@@ -52,7 +52,7 @@ struct _ChattySideBar
 };
 
 
-G_DEFINE_TYPE (ChattySideBar, chatty_side_bar, GTK_TYPE_BOX)
+G_DEFINE_TYPE (ChattySideBar, chatty_side_bar, ADW_TYPE_NAVIGATION_PAGE)
 
 enum {
   SELECTION_CHANGED,
