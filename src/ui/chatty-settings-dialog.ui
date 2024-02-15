@@ -4,20 +4,19 @@
     <property name="default-height">480</property>
     <property name="default-width">360</property>
     <property name="hide-on-close">1</property>
+    <signal name="close-request" handler="chatty_settings_window_hidden_cb" swapped="yes"/>
 
     <child>
-      <object class="GtkBox">
-        <property name="orientation">vertical</property>
-        <child>
-          <object class="AdwHeaderBar">
-            <property name="show-end-title-buttons">0</property>
-
+      <object class="AdwToolbarView">
+        <child type="top">
+          <object class="AdwHeaderBar" id="header_bar">
             <!-- Back button -->
             <child type="start">
               <object class="GtkButton" id="back_button">
+                <property name="visible">0</property>
                 <property name="tooltip-text" translatable="yes">Back</property>
                 <property name="icon-name">go-previous-symbolic</property>
-                <signal name="clicked" handler="chatty_settings_back_clicked_cb" swapped="yes"/>
+                <signal name="clicked" handler="chatty_settings_back_button_clicked_cb" swapped="yes"/>
               </object>
             </child>
 
@@ -28,19 +27,6 @@
                 <property name="use-underline">1</property>
                 <property name="label" translatable="yes">_Cancel</property>
                 <signal name="clicked" handler="chatty_settings_cancel_clicked_cb" swapped="yes"/>
-              </object>
-            </child>
-
-            <!-- Add button -->
-            <child type="end">
-              <object class="GtkButton" id="add_button">
-                <property name="visible">0</property>
-                <property name="use-underline">1</property>
-                <property name="label" translatable="yes">_Add</property>
-                <signal name="clicked" handler="chatty_settings_add_clicked_cb" swapped="yes"/>
-                <style>
-                  <class name="suggested-action"/>
-                </style>
               </object>
             </child>
 
@@ -83,7 +69,7 @@
           </object>
         </child>
 
-        <child>
+        <property name="content">
           <object class="GtkOverlay">
             <child type="overlay">
               <object class="GtkRevealer" id="notification_revealer">
@@ -115,7 +101,7 @@
                   <object class="GtkStackPage">
                     <property name="name">main-settings</property>
                     <property name="child">
-                      <object class="AdwPreferencesPage">
+                      <object class="AdwPreferencesPage" id="main_pref_page">
 
                         <!-- Account settings -->
                         <child>
@@ -243,7 +229,7 @@
                                   <object class="AdwActionRow">
                                     <property name="activatable">1</property>
                                     <property name="selectable">0</property>
-                                    <property name="title" translatable="yes">SMS and MMS Settings</property>
+                                    <property name="title" translatable="yes">SMS/MMS</property>
                                     <property name="use-underline">1</property>
                                     <signal name="activated" handler="sms_mms_settings_row_activated_cb" swapped="yes"/>
                                     <child>
@@ -261,7 +247,7 @@
                                     <property name="visible">0</property>
                                     <property name="activatable">1</property>
                                     <property name="selectable">0</property>
-                                    <property name="title" translatable="yes">Purple Settings</property>
+                                    <property name="title" translatable="yes">Purple</property>
                                     <property name="use-underline">1</property>
                                     <signal name="activated" handler="purple_settings_row_activated_cb" swapped="yes"/>
                                     <child>
@@ -468,8 +454,7 @@
                                   <object class="AdwActionRow" id="enable_purple_row">
                                     <property name="activatable">1</property>
                                     <property name="selectable">0</property>
-                                    <property name="title" translatable="yes">Enable purple accounts</property>
-                                    <property name="subtitle" translatable="yes">Enable purple plugin</property>
+                                    <property name="title" translatable="yes">Enable Purple Accounts</property>
                                     <property name="activatable-widget">enable_purple_switch</property>
                                     <child>
                                       <object class="GtkSwitch" id="enable_purple_switch">
@@ -686,6 +671,20 @@
                                 </child>
                               </object>
                             </child>
+                            <child>
+                             <object class="GtkButton" id="add_button">
+                                <property name="use-underline">1</property>
+                                <property name="label" translatable="yes">_Add</property>
+                                <property name="margin-top">15</property>
+                                <property name="halign">center</property>
+                                <signal name="clicked" handler="chatty_settings_add_clicked_cb" swapped="yes"/>
+                                <style>
+                                  <class name="suggested-action"/>
+                                  <class name="pill"/>
+                                  <class name="opaque"/>
+                                </style>
+                              </object>
+                            </child>
                           </object>
                         </child>
                       </object>
@@ -696,15 +695,23 @@
             </property>
 
           </object> <!-- ./GtkOverlay -->
-        </child>
+        </property>
 
       </object>
     </child>
 
   </template>
   <object class="AdwActionRow" id="add_account_row">
-    <property name="title" translatable="yes">Add _new account…</property>
+    <property name="title" translatable="yes">Add _New Account</property>
     <property name="use-underline">1</property>
     <property name="activatable">1</property>
+    <child>
+      <object class="GtkImage">
+         <property name="icon-name">go-next-symbolic</property>
+         <style>
+           <class name="dim-label"/>
+         </style>
+      </object>
+    </child>
   </object>
 </interface>

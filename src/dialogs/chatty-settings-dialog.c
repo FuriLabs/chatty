@@ -57,6 +57,8 @@ struct _ChattySettingsDialog
 {
   AdwWindow      parent_instance;
 
+  GtkWidget      *main_pref_page;
+  GtkWidget      *header_bar;
   GtkWidget      *back_button;
   GtkWidget      *cancel_button;
   GtkWidget      *add_button;
@@ -140,7 +142,7 @@ settings_remove_style (GtkWidget  *widget,
 {
   g_assert (style && *style);
 
-  gtk_widget_add_css_class (widget, style);
+  gtk_widget_remove_css_class (widget, style);
 }
 
 static void
@@ -357,6 +359,7 @@ chatty_settings_add_clicked_cb (ChattySettingsDialog *self)
     chatty_account_set_enabled (CHATTY_ACCOUNT (account), TRUE);
 
   gtk_widget_set_visible (self->add_button, FALSE);
+  gtk_widget_set_visible (self->back_button, FALSE);
   gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "main-settings");
 }
 
@@ -504,6 +507,7 @@ sms_mms_settings_row_activated_cb (ChattySettingsDialog *self)
   gtk_widget_set_visible (self->mms_save_button, TRUE);
   gtk_widget_set_visible (self->mms_cancel_button, TRUE);
   gtk_widget_set_visible (self->back_button, FALSE);
+  adw_header_bar_set_show_end_title_buttons (ADW_HEADER_BAR (self->header_bar), FALSE);
 
   settings_dialog_load_mms_settings (self);
 
@@ -517,6 +521,7 @@ static void
 purple_settings_row_activated_cb (ChattySettingsDialog *self)
 {
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
+  gtk_widget_set_visible (self->back_button, TRUE);
 
   gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "purple-settings-view");
 }
@@ -620,9 +625,7 @@ settings_dialog_purple_changed_cb (ChattySettingsDialog *self)
   active = gtk_switch_get_active (GTK_SWITCH (self->enable_purple_switch));
 
   if (!active && chatty_purple_is_loaded (purple))
-    adw_action_row_set_subtitle (row, _("Restart chatty to disable purple"));
-  else
-    adw_action_row_set_subtitle (row, _("Enable purple plugin"));
+    adw_action_row_set_subtitle (row, _("Restart Chatty to disable Purple"));
 #endif
 }
 
@@ -636,9 +639,9 @@ settings_dialog_page_changed_cb (ChattySettingsDialog *self)
   name = gtk_stack_get_visible_child_name (GTK_STACK (self->main_stack));
 
   if (g_strcmp0 (name, "message-settings-view") == 0)
-    gtk_window_set_title (GTK_WINDOW (self), _("SMS and MMS Settings"));
+    gtk_window_set_title (GTK_WINDOW (self), _("SMS/MMS"));
   else if (g_strcmp0 (name, "purple-settings-view") == 0)
-    gtk_window_set_title (GTK_WINDOW (self), _("Purple Settings"));
+    gtk_window_set_title (GTK_WINDOW (self), _("Purple"));
   else if (g_strcmp0 (name, "add-account-view") == 0)
     gtk_window_set_title (GTK_WINDOW (self), _("New Account"));
   else if (g_strcmp0 (name, "blocked-list-view") == 0)
@@ -660,7 +663,7 @@ settings_update_new_account_view (ChattySettingsDialog *self)
 
   self->selected_account = NULL;
   gtk_widget_grab_focus (self->new_account_id_entry);
-  gtk_widget_set_visible (self->add_button, TRUE);
+  gtk_widget_set_visible (self->back_button, TRUE);
 
   gtk_widget_set_visible (self->matrix_row, TRUE);
 
@@ -672,7 +675,7 @@ settings_update_new_account_view (ChattySettingsDialog *self)
 #endif
 
   adw_preferences_group_set_title (ADW_PREFERENCES_GROUP (self->protocol_list_group),
-                                   _("Select Protocol"));
+                                   _("Protocol"));
   gtk_widget_set_visible (self->protocol_list, TRUE);
 
   if (gtk_widget_is_visible (self->xmpp_radio_button))
@@ -702,6 +705,19 @@ chatty_settings_dialog_update_status (GtkListBoxRow *row)
 }
 
 static void
+chatty_settings_reset_window_ui (ChattySettingsDialog *self)
+{
+  gtk_widget_set_visible (self->add_button, FALSE);
+  gtk_widget_set_visible (self->save_button, FALSE);
+  gtk_widget_set_visible (self->back_button, FALSE);
+  gtk_widget_set_visible (self->mms_cancel_button, FALSE);
+  gtk_widget_set_visible (self->mms_save_button, FALSE);
+
+  gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "main-settings");
+  adw_header_bar_set_show_end_title_buttons (ADW_HEADER_BAR (self->header_bar), TRUE);
+}
+
+static void
 mms_carrier_settings_apply_button_clicked_cb (ChattySettingsDialog *self)
 {
   ChattyAccount *mm_account;
@@ -726,10 +742,7 @@ mms_carrier_settings_apply_button_clicked_cb (ChattySettingsDialog *self)
                 gtk_switch_get_state (GTK_SWITCH (self->delivery_reports_switch)),
                 NULL);
 
-  gtk_widget_set_visible (self->mms_cancel_button, FALSE);
-  gtk_widget_set_visible (self->mms_save_button, FALSE);
-  gtk_widget_set_visible (self->back_button, TRUE);
-  gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "main-settings");
+  chatty_settings_reset_window_ui (self);
 }
 
 static void
@@ -737,10 +750,7 @@ mms_carrier_settings_cancel_button_clicked_cb (ChattySettingsDialog *self)
 {
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
 
-  gtk_widget_set_visible (self->mms_cancel_button, FALSE);
-  gtk_widget_set_visible (self->mms_save_button, FALSE);
-  gtk_widget_set_visible (self->back_button, TRUE);
-  gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "main-settings");
+  chatty_settings_reset_window_ui (self);
 }
 
 static void
@@ -752,6 +762,7 @@ account_list_row_activated_cb (ChattySettingsDialog *self,
   g_assert (GTK_IS_LIST_BOX_ROW (row));
   g_assert (GTK_IS_LIST_BOX (box));
 
+  gtk_widget_set_visible (self->add_button, TRUE);
   gtk_widget_set_sensitive (self->add_button, FALSE);
   gtk_widget_set_sensitive (self->save_button, FALSE);
 
@@ -796,7 +807,16 @@ blocked_list_action_activated_cb (ChattySettingsDialog *self)
 }
 
 static void
-chatty_settings_back_clicked_cb (ChattySettingsDialog *self)
+chatty_settings_window_hidden_cb (ChattySettingsDialog *self)
+{
+  chatty_settings_reset_window_ui (self);
+  adw_preferences_page_scroll_to_top (ADW_PREFERENCES_PAGE (self->main_pref_page));
+  gtk_widget_set_visible (GTK_WIDGET (self), FALSE);
+}
+
+
+static void
+chatty_settings_back_button_clicked_cb (ChattySettingsDialog *self)
 {
   const gchar *visible_child;
 
@@ -810,15 +830,9 @@ chatty_settings_back_clicked_cb (ChattySettingsDialog *self)
 
       gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "message-settings-view");
     }
-  else if (g_str_equal (visible_child, "main-settings"))
-    {
-        gtk_widget_set_visible (GTK_WIDGET (self), FALSE);
-    }
   else
     {
-      gtk_widget_set_visible (self->add_button, FALSE);
-      gtk_widget_set_visible (self->save_button, FALSE);
-      gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "main-settings");
+      chatty_settings_reset_window_ui (self);
     }
 }
 
@@ -1127,6 +1141,8 @@ chatty_settings_dialog_class_init (ChattySettingsDialogClass *klass)
                                                "/sm/puri/Chatty/"
                                                "ui/chatty-settings-dialog.ui");
 
+  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, main_pref_page);
+  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, header_bar);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, back_button);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, cancel_button);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, add_button);
@@ -1195,7 +1211,7 @@ chatty_settings_dialog_class_init (ChattySettingsDialogClass *klass)
 
   gtk_widget_class_bind_template_callback (widget_class, account_list_row_activated_cb);
   gtk_widget_class_bind_template_callback (widget_class, blocked_list_action_activated_cb);
-  gtk_widget_class_bind_template_callback (widget_class, chatty_settings_back_clicked_cb);
+  gtk_widget_class_bind_template_callback (widget_class, chatty_settings_back_button_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, chatty_settings_cancel_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, settings_new_detail_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, settings_protocol_changed_cb);
@@ -1203,6 +1219,7 @@ chatty_settings_dialog_class_init (ChattySettingsDialogClass *klass)
 
   gtk_widget_class_bind_template_callback (widget_class, settings_dialog_purple_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, settings_dialog_page_changed_cb);
+  gtk_widget_class_bind_template_callback (widget_class, chatty_settings_window_hidden_cb);
 }
 
 static void
