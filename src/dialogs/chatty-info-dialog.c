@@ -27,7 +27,7 @@
 
 struct _ChattyInfoDialog
 {
-  GtkDialog       parent_instance;
+  AdwWindow       parent_instance;
 
   GtkWidget      *main_stack;
   GtkWidget      *chat_type_stack;
@@ -48,7 +48,7 @@ struct _ChattyInfoDialog
   ChattyChat     *chat;
 };
 
-G_DEFINE_TYPE (ChattyInfoDialog, chatty_info_dialog, GTK_TYPE_DIALOG)
+G_DEFINE_TYPE (ChattyInfoDialog, chatty_info_dialog, ADW_TYPE_WINDOW)
 
 static void
 info_dialog_new_invite_clicked_cb (ChattyInfoDialog *self)
@@ -208,7 +208,6 @@ chatty_info_dialog_new (GtkWindow *parent_window)
 
   return g_object_new (CHATTY_TYPE_INFO_DIALOG,
                        "transient-for", parent_window,
-                       "use-header-bar", 1,
                        NULL);
 }
 
@@ -228,7 +227,7 @@ chatty_info_dialog_set_chat (ChattyInfoDialog *self,
 
   gtk_widget_set_visible (self->cancel_button, FALSE);
   gtk_widget_set_visible (self->apply_button, FALSE);
-  gtk_header_bar_set_show_title_buttons (GTK_HEADER_BAR (self->header_bar), TRUE);
+  adw_header_bar_set_show_end_title_buttons (ADW_HEADER_BAR (self->header_bar), TRUE);
 
   if (CHATTY_IS_MA_CHAT (chat)) {
     chatty_chat_info_set_item (CHATTY_CHAT_INFO (self->ma_chat_info), chat);
@@ -244,7 +243,7 @@ chatty_info_dialog_set_chat (ChattyInfoDialog *self,
     if (!chatty_chat_is_im (chat)) {
       gtk_widget_set_visible (self->cancel_button, TRUE);
       gtk_widget_set_visible (self->apply_button, TRUE);
-      gtk_header_bar_set_show_title_buttons (GTK_HEADER_BAR (self->header_bar), FALSE);
+      adw_header_bar_set_show_end_title_buttons (ADW_HEADER_BAR (self->header_bar), FALSE);
     }
     gtk_stack_set_visible_child (GTK_STACK (self->chat_type_stack), self->mm_chat_info);
   } else {
