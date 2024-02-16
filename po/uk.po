@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-02-09 06:26+0000\n"
-"PO-Revision-Date: 2024-02-09 22:42+0200\n"
+"POT-Creation-Date: 2024-02-16 18:36+0000\n"
+"PO-Revision-Date: 2024-02-16 20:39+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -279,17 +279,17 @@ msgstr "Ваші повідомлення зашифровано"
 msgid "Your messages are not encrypted"
 msgstr "Ваші повідомлення не зашифровано"
 
-#: src/chatty-chat.c:706
+#: src/chatty-chat.c:714
 msgid "Empty room"
 msgstr "Порожня кімната"
 
 #. TRANSLATORS: %s are name/user-id/phone numbers of two users
-#: src/chatty-chat.c:713
+#: src/chatty-chat.c:721
 #, c-format
 msgid "%s and %s"
 msgstr "%s і %s"
 
-#: src/chatty-chat.c:715
+#: src/chatty-chat.c:723
 #, c-format
 msgid "%s and %u other"
 msgid_plural "%s and %u others"
@@ -384,11 +384,11 @@ msgstr "Модератор"
 msgid "Member"
 msgstr "Учасник"
 
-#: src/chatty-list-row.c:250 src/chatty-notification.c:178
+#: src/chatty-list-row.c:250 src/chatty-notification.c:184
 msgid "Picture"
 msgstr "Зображення"
 
-#: src/chatty-list-row.c:253 src/chatty-notification.c:182
+#: src/chatty-list-row.c:253 src/chatty-notification.c:188
 msgid "Video"
 msgstr "Відео"
 
@@ -401,7 +401,7 @@ msgid "Location"
 msgstr "Місце"
 
 #: src/chatty-list-row.c:262 src/chatty-list-row.c:279
-#: src/chatty-notification.c:174
+#: src/chatty-notification.c:180
 msgid "File"
 msgstr "Файл"
 
@@ -432,24 +432,31 @@ msgstr ""
 "Отримано зашифроване повідомлення, але його не вдалося розшифрувати через "
 "брак ключів"
 
-#: src/chatty-notification.c:157
+#: src/chatty-notification.c:163
 #, c-format
 msgid "New message from %s"
 msgstr "Нове повідомлення від %s"
 
-#: src/chatty-notification.c:159
+#: src/chatty-notification.c:165
 msgid "Message Received"
 msgstr "Надійшло повідомлення"
 
-#: src/chatty-notification.c:186
-#| msgid "Audio"
+#: src/chatty-notification.c:192
 msgid "Audio File"
 msgstr "Звуковий файл"
 
-#: src/chatty-notification.c:193
-#| msgid "MMSC"
+#: src/chatty-notification.c:199
 msgid "MMS"
 msgstr "MMS"
+
+#: src/chatty-notification.c:211
+#, c-format
+#| msgid "MMS Message"
+msgid "%i Message"
+msgid_plural "%i Messages"
+msgstr[0] "%i повідомлення"
+msgstr[1] "%i повідомлення"
+msgstr[2] "%i повідомлень"
 
 #: src/chatty-side-bar.c:324
 msgid "Any Protocol"
