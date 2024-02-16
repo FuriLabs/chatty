@@ -7,9 +7,8 @@
     <property name="hide-on-close">1</property>
 
     <child>
-      <object class="GtkBox">
-        <property name="orientation">vertical</property>
-        <child>
+      <object class="AdwToolbarView">
+        <child type="top">
           <object class="AdwHeaderBar" id="header_bar">
             <property name="show-end-title-buttons">1</property>
 
@@ -63,7 +62,7 @@
           </object>
         </child>
 
-        <child>
+        <property name="content">
           <object class="GtkStack" id="main_stack">
             <property name="transition_type">slide-left-right</property>
             <signal name="notify::visible-child" handler="new_chat_dialog_page_changed_cb" swapped="yes" after="yes"/>
@@ -273,10 +272,10 @@
               </object>
             </child>
 
-          </object>
-        </child>
+          </object> <!-- ./GtkStack main_stack -->
+        </property>
 
-      </object> <!-- ./GtkStack main_stack -->
+      </object>
     </child>
   </template>
 
