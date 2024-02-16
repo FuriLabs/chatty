@@ -37,7 +37,7 @@ struct _ChattyNotification
 
 G_DEFINE_TYPE (ChattyNotification, chatty_notification, G_TYPE_OBJECT)
 
-void
+static void
 show_notification (gpointer user_data)
 {
   ChattyNotification *self = user_data;
