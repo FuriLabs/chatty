@@ -7,10 +7,8 @@
     <property name="title" translatable="yes">New Group Chat</property>
 
     <child>
-      <object class="GtkBox">
-        <property name="orientation">vertical</property>
-
-        <child>
+      <object class="AdwToolbarView">
+        <child type="top">
           <object class="AdwHeaderBar">
             <property name="show-end-title-buttons">0</property>
             <child type="start">
@@ -32,7 +30,7 @@
           </object>
         </child>
 
-        <child>
+        <property name="content">
           <object class="GtkScrolledWindow">
             <property name="propagate_natural_height">1</property>
             <property name="hscrollbar_policy">never</property>
@@ -181,7 +179,7 @@
               </object>
             </property>
           </object>
-        </child>
+        </property>
 
       </object>
     </child>
