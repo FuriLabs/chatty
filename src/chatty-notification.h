@@ -28,5 +28,6 @@ void                chatty_notification_show_message (ChattyNotification *self,
                                                       const char         *name,
                                                       unsigned int        unread_count,
                                                       gboolean            is_sms);
+void                chatty_notification_withdraw_notification (ChattyNotification *self);
 
 G_END_DECLS

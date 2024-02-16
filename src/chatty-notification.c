@@ -37,7 +37,7 @@ struct _ChattyNotification
 
 G_DEFINE_TYPE (ChattyNotification, chatty_notification, G_TYPE_OBJECT)
 
-static gboolean
+void
 show_notification (gpointer user_data)
 {
   ChattyNotification *self = user_data;
@@ -51,12 +51,10 @@ show_notification (gpointer user_data)
   if (app)
     g_application_send_notification (app, self->chat_name,
                                      self->notification);
-
-  return G_SOURCE_REMOVE;
 }
 
-static void
-notification_chat_changed_cb (ChattyNotification *self)
+void
+chatty_notification_withdraw_notification (ChattyNotification *self)
 {
   GApplication *app;
 
@@ -70,6 +68,14 @@ notification_chat_changed_cb (ChattyNotification *self)
 
   if (app)
     g_application_withdraw_notification (app, self->chat_name);
+}
+
+static void
+notification_chat_changed_cb (ChattyNotification *self)
+{
+  g_assert (CHATTY_IS_NOTIFICATION (self));
+
+  chatty_notification_withdraw_notification (self);
 }
 
 static void
@@ -222,8 +228,8 @@ chatty_notification_show_message (ChattyNotification *self,
   /* Delay the notification a bit so that we can squash multiple notifications
    * if we get them too fast */
   g_clear_handle_id (&self->timeout_id, g_source_remove);
-  self->timeout_id = g_timeout_add (NOTIFICATION_TIMEOUT,
-                                    show_notification, self);
+  self->timeout_id = g_timeout_add_once (NOTIFICATION_TIMEOUT,
+                                         show_notification, self);
   if (is_sms)
     event = lfb_event_new ("message-new-sms");
   else
