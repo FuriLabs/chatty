@@ -128,8 +128,7 @@
                             <child>
                               <object class="AdwActionRow">
                                 <property name="selectable">0</property>
-                                <property name="title" translatable="yes">Message Receipts</property>
-                                <property name="subtitle" translatable="yes">Confirm received messages</property>
+                                <property name="title" translatable="yes">Read Receipts</property>
                                 <property name="activatable-widget">send_receipts_switch</property>
                                 <child>
                                   <object class="GtkSwitch" id="send_receipts_switch">
@@ -142,8 +141,7 @@
                             <child>
                               <object class="AdwActionRow">
                                 <property name="selectable">0</property>
-                                <property name="title" translatable="yes">Typing Notification</property>
-                                <property name="subtitle" translatable="yes">Send typing messages</property>
+                                <property name="title" translatable="yes">Typing Indicators</property>
                                 <property name="activatable-widget">typing_notification_switch</property>
                                 <child>
                                   <object class="GtkSwitch" id="typing_notification_switch">
@@ -156,8 +154,7 @@
                             <child>
                               <object class="AdwActionRow">
                                 <property name="selectable">0</property>
-                                <property name="title" translatable="yes">Strip Tracking IDs</property>
-                                <property name="subtitle" translatable="yes">Strip Tracking IDs from URLs</property>
+                                <property name="title" translatable="yes">Remove Tracking IDs From URLs</property>
                                 <property name="activatable-widget">strip_url_tracking_id_switch</property>
                                 <child>
                                   <object class="GtkSwitch" id="strip_url_tracking_id_switch">
@@ -170,8 +167,7 @@
                             <child>
                               <object class="AdwActionRow">
                                 <property name="selectable">0</property>
-                                <property name="title" translatable="yes">Render Attachments</property>
-                                <property name="subtitle" translatable="yes">Render Attachments from Messages</property>
+                                <property name="title" translatable="yes">Show Attachment Previews</property>
                                 <property name="activatable-widget">render_attachments_switch</property>
                                 <child>
                                   <object class="GtkSwitch" id="render_attachments_switch">
@@ -191,8 +187,8 @@
                             <child>
                               <object class="AdwActionRow">
                                 <property name="selectable">0</property>
-                                <property name="title" translatable="yes">Graphical Emoticons</property>
-                                <property name="subtitle" translatable="yes">if you type :) it will be changed to 😃</property>
+                                <property name="title" translatable="yes">Convert Emoticons</property>
+                                <property name="subtitle" translatable="yes">When you type :) it will be changed to 😃</property>
                                 <property name="activatable-widget">convert_smileys_switch</property>
                                 <child>
                                   <object class="GtkSwitch" id="convert_smileys_switch">
@@ -205,7 +201,7 @@
                               <object class="AdwActionRow">
                                 <property name="selectable">0</property>
                                 <!-- TRANSLATORS: Return is the Enter key. -->
-                                <property name="title" translatable="yes">Send Messages with Return</property>
+                                <property name="title" translatable="yes">Send Messages With Enter</property>
                                 <property name="activatable-widget">return_sends_switch</property>
                                 <child>
                                   <object class="GtkSwitch" id="return_sends_switch">
@@ -219,7 +215,7 @@
 
                         <child>
                           <object class="AdwPreferencesGroup">
-                            <property name="title" translatable="yes">Protocol Settings</property>
+                            <property name="title" translatable="yes">Protocol</property>
                             <child>
                               <object class="GtkListBox">
                                 <style>
@@ -394,7 +390,7 @@
                             <child>
                               <object class="GtkLabel">
                                 <property name="wrap">1</property>
-                                <property name="label" translatable="yes">You shall not be notified for the messages from blocked contacts</property>
+                                <property name="label" translatable="yes">You won't be notified by messages from blocked contacts</property>
                               </object>
                             </child>
                           </object>
@@ -425,7 +421,7 @@
                                 <child type="placeholder">
                                   <object class="AdwActionRow">
                                     <property name="sensitive">0</property>
-                                    <property name="title" translatable="yes">Blocked chat list empty</property>
+                                    <property name="title" translatable="yes">No Blocked Chats</property>
                                   </object>
                                 </child>
                               </object>
