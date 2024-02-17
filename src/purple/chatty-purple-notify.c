@@ -19,14 +19,25 @@ chatty_notify_message (PurpleNotifyMsgType  type,
                        const char          *primary,
                        const char          *secondary)
 {
+  GtkWidget *dialog;
   GtkWindow *window;
-  g_autoptr(GtkAlertDialog) dialog = NULL;
 
   window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
-  dialog = gtk_alert_dialog_new ("%s", primary ? primary : title);
-  gtk_alert_dialog_set_detail (dialog, secondary);
-  gtk_alert_dialog_show (GTK_ALERT_DIALOG (dialog), window);
-  purple_notify_close (PURPLE_NOTIFY_MESSAGE, GTK_WIDGET (dialog));
+  dialog = adw_message_dialog_new (window, _("Error"), NULL);
+
+  adw_message_dialog_format_heading (ADW_MESSAGE_DIALOG (dialog),
+                                    _("%s"),
+                                     primary ? primary : title);
+
+  adw_message_dialog_format_body (ADW_MESSAGE_DIALOG (dialog),
+                                  _("%s"),
+                                   secondary);
+  adw_message_dialog_add_response (ADW_MESSAGE_DIALOG (dialog), "close", _("Close"));
+
+  adw_message_dialog_set_default_response (ADW_MESSAGE_DIALOG (dialog), "close");
+  adw_message_dialog_set_close_response (ADW_MESSAGE_DIALOG (dialog), "close");
+
+  gtk_window_present (GTK_WINDOW (dialog));
 
   return dialog;
 }
