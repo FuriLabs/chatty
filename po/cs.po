@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-02-16 20:06+0000\n"
-"PO-Revision-Date: 2024-02-17 23:42+0100\n"
+"POT-Creation-Date: 2024-02-17 22:43+0000\n"
+"PO-Revision-Date: 2024-02-17 23:52+0100\n"
 "Last-Translator: Daniel Rusek <mail@asciiwolf.com>\n"
 "Language-Team: Czech\n"
 "Language: cs\n"
@@ -87,11 +87,11 @@ msgstr "Zdali odesílat upozornění o psaní"
 
 #: data/sm.puri.Chatty.gschema.xml:49 src/ui/chatty-settings-dialog.ui:159
 msgid "Strip Tracking IDs"
-msgstr "Odstranit ID sledování"
+msgstr "Odstranit sledovací ID"
 
 #: data/sm.puri.Chatty.gschema.xml:50
 msgid "Whether to Remove Tracking IDs from URLs Automatically"
-msgstr "Zda automaticky odebrat ID sledování z adres URL"
+msgstr "Zda automaticky odebrat sledovací ID z adres URL"
 
 #: data/sm.puri.Chatty.gschema.xml:55 src/ui/chatty-settings-dialog.ui:173
 msgid "Render Attachments"
@@ -1416,7 +1416,7 @@ msgstr "Odesílat zprávy o odepisování"
 
 #: src/ui/chatty-settings-dialog.ui:160
 msgid "Strip Tracking IDs from URLs"
-msgstr "Odstranit ID sledování z adres URL"
+msgstr "Odstranit sledovací ID z adres URL"
 
 #: src/ui/chatty-settings-dialog.ui:174
 msgid "Render Attachments from Messages"
