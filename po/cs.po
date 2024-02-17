@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-02-09 06:26+0000\n"
-"PO-Revision-Date: 2024-02-10 00:34+0100\n"
+"POT-Creation-Date: 2024-02-16 20:06+0000\n"
+"PO-Revision-Date: 2024-02-17 23:42+0100\n"
 "Last-Translator: Daniel Rusek <mail@asciiwolf.com>\n"
 "Language-Team: Czech\n"
 "Language: cs\n"
@@ -18,8 +18,9 @@ msgstr ""
 "X-Generator: Poedit 3.4.2\n"
 
 #: data/sm.puri.Chatty.desktop.in.in:3 data/sm.puri.Chatty.metainfo.xml.in.in:6
-#: src/chatty-application.c:164 src/chatty-application.c:403
-#: src/chatty-side-bar.c:354 src/ui/chatty-side-bar.ui:11
+#: src/chatty-application.c:164 src/chatty-application.c:405
+#: src/chatty-side-bar.c:354 src/ui/chatty-main-view.ui:4
+#: src/ui/chatty-side-bar.ui:4 src/ui/chatty-side-bar.ui:12
 #: src/ui/chatty-window.ui:4
 msgid "Chats"
 msgstr "Konverzace"
@@ -56,7 +57,7 @@ msgstr "Zdali odesílat stav zprávy po přečtení"
 msgid "Message carbon copies"
 msgstr "Kopie zpráv"
 
-#: data/sm.puri.Chatty.gschema.xml:26 src/ui/chatty-settings-dialog.ui:511
+#: data/sm.puri.Chatty.gschema.xml:26 src/ui/chatty-settings-dialog.ui:496
 msgid "Share chat history among devices"
 msgstr "Sdílet historii konverzací se všemi zařízeními"
 
@@ -72,7 +73,7 @@ msgstr "Zapnout MAM synchronizaci archivu ze serveru"
 msgid "Enable purple"
 msgstr "Zapnout purple"
 
-#: data/sm.puri.Chatty.gschema.xml:38 src/ui/chatty-settings-dialog.ui:471
+#: data/sm.puri.Chatty.gschema.xml:38
 msgid "Enable purple accounts"
 msgstr "Zapnout purple účty"
 
@@ -84,21 +85,21 @@ msgstr "Odesílat upozornění o psaní"
 msgid "Whether to Send typing notifications"
 msgstr "Zdali odesílat upozornění o psaní"
 
-#: data/sm.puri.Chatty.gschema.xml:49 src/ui/chatty-settings-dialog.ui:173
+#: data/sm.puri.Chatty.gschema.xml:49 src/ui/chatty-settings-dialog.ui:159
 msgid "Strip Tracking IDs"
-msgstr ""
+msgstr "Odstranit ID sledování"
 
 #: data/sm.puri.Chatty.gschema.xml:50
 msgid "Whether to Remove Tracking IDs from URLs Automatically"
-msgstr ""
+msgstr "Zda automaticky odebrat ID sledování z adres URL"
 
-#: data/sm.puri.Chatty.gschema.xml:55 src/ui/chatty-settings-dialog.ui:187
+#: data/sm.puri.Chatty.gschema.xml:55 src/ui/chatty-settings-dialog.ui:173
 msgid "Render Attachments"
 msgstr "Vykreslit přílohy"
 
 #: data/sm.puri.Chatty.gschema.xml:56
 msgid "Whether to Render Attachments or not"
-msgstr ""
+msgstr "Zda vykreslit přílohy nebo ne"
 
 #: data/sm.puri.Chatty.gschema.xml:61 data/sm.puri.Chatty.gschema.xml:62
 msgid "Mark Idle users differently"
@@ -190,7 +191,7 @@ msgstr "Zapnout ladicí zprávy libpurple"
 
 #: src/chatty-application.c:86
 msgid "Enable verbose debug messages (repeat option for more verbosity)"
-msgstr ""
+msgstr "Povolit podrobné ladicí zprávy (možnost opakování pro více detailů)"
 
 #: src/chatty-application.c:167
 msgid "An SMS and XMPP messaging client"
@@ -268,17 +269,17 @@ msgstr "Vaše zprávy jsou šifrovány"
 msgid "Your messages are not encrypted"
 msgstr "Vaše zprávy nejsou šifrovány"
 
-#: src/chatty-chat.c:706
+#: src/chatty-chat.c:726
 msgid "Empty room"
 msgstr "Prázdná místnost"
 
 #. TRANSLATORS: %s are name/user-id/phone numbers of two users
-#: src/chatty-chat.c:713
+#: src/chatty-chat.c:733
 #, c-format
 msgid "%s and %s"
 msgstr "%s a %s"
 
-#: src/chatty-chat.c:715
+#: src/chatty-chat.c:735
 #, c-format
 msgid "%s and %u other"
 msgid_plural "%s and %u others"
@@ -358,8 +359,8 @@ msgstr "ID zařízení %s otisk:"
 #. TRANSLATORS: %s is the chat room name
 #: src/chatty-invite-page.c:72
 #, c-format
-msgid "Do you want to join “%s”"
-msgstr "Chcete se připojit do „%s“"
+msgid "Do you want to join “%s”?"
+msgstr "Chcete se připojit do „%s“?"
 
 #: src/chatty-list-row.c:122
 msgid "Owner"
@@ -373,11 +374,11 @@ msgstr "Moderátor"
 msgid "Member"
 msgstr "Člen"
 
-#: src/chatty-list-row.c:250 src/chatty-notification.c:178
+#: src/chatty-list-row.c:250 src/chatty-notification.c:190
 msgid "Picture"
 msgstr "Obrázek"
 
-#: src/chatty-list-row.c:253 src/chatty-notification.c:182
+#: src/chatty-list-row.c:253 src/chatty-notification.c:194
 msgid "Video"
 msgstr "Video"
 
@@ -390,7 +391,7 @@ msgid "Location"
 msgstr "Umístění"
 
 #: src/chatty-list-row.c:262 src/chatty-list-row.c:279
-#: src/chatty-notification.c:174
+#: src/chatty-notification.c:186
 msgid "File"
 msgstr "Soubor"
 
@@ -402,11 +403,11 @@ msgstr "Zpráva MMS"
 msgid "Multiple Files"
 msgstr "Více souborů"
 
-#: src/chatty-main-view.c:124
+#: src/chatty-main-view.c:125
 msgid "Account disconnected"
 msgstr "Účet odpojen"
 
-#: src/chatty-main-view.c:126
+#: src/chatty-main-view.c:127
 msgid "Account connecting…"
 msgstr "Účet se připojuje…"
 
@@ -421,41 +422,50 @@ msgstr ""
 "Dostali jste šifrovanou zprávu, ale nepodařilo se ji dešifrovat kvůli "
 "chybějícím klíčům"
 
-#: src/chatty-notification.c:157
+#: src/chatty-notification.c:169
 #, c-format
 msgid "New message from %s"
 msgstr "Nová zpráva od %s"
 
-#: src/chatty-notification.c:159
+#: src/chatty-notification.c:171
 msgid "Message Received"
 msgstr "Zpráva obdržena"
 
-#: src/chatty-notification.c:186
+#: src/chatty-notification.c:198
 msgid "Audio File"
 msgstr "Zvukový soubor"
 
-#: src/chatty-notification.c:193
-#| msgid "MMSC"
+#: src/chatty-notification.c:205
 msgid "MMS"
 msgstr "MMS"
+
+#: src/chatty-notification.c:217
+#, c-format
+msgid "%i Message"
+msgid_plural "%i Messages"
+msgstr[0] "%i zpráva"
+msgstr[1] "%i zprávy"
+msgstr[2] "%i zpráv"
 
 #: src/chatty-side-bar.c:324
 msgid "Any Protocol"
 msgstr "Libovolný protokol"
 
-#: src/chatty-side-bar.c:325 src/ui/chatty-settings-dialog.ui:581
+#: src/chatty-side-bar.c:325 src/ui/chatty-settings-dialog.ui:566
 msgid "Matrix"
 msgstr "Matrix"
 
 #: src/chatty-side-bar.c:326 src/dialogs/chatty-new-chat-dialog.c:625
+#: src/dialogs/chatty-settings-dialog.c:642
+#: src/ui/chatty-settings-dialog.ui:232
 msgid "SMS/MMS"
 msgstr "SMS/MMS"
 
-#: src/chatty-side-bar.c:329 src/ui/chatty-settings-dialog.ui:570
+#: src/chatty-side-bar.c:329 src/ui/chatty-settings-dialog.ui:555
 msgid "XMPP"
 msgstr "XMPP"
 
-#: src/chatty-side-bar.c:332 src/ui/chatty-settings-dialog.ui:594
+#: src/chatty-side-bar.c:332 src/ui/chatty-settings-dialog.ui:579
 msgid "Telegram"
 msgstr "Telegram"
 
@@ -464,12 +474,12 @@ msgid "Archived"
 msgstr "Archivováno"
 
 #: src/purple/chatty-purple-request.c:218
-msgid "Save File..."
-msgstr "Uložit soubor..."
+msgid "Save File…"
+msgstr "Uložit soubor…"
 
 #: src/purple/chatty-purple-request.c:220
-msgid "Open File..."
-msgstr "Otevřít soubor..."
+msgid "Open File…"
+msgstr "Otevřít soubor…"
 
 #: src/purple/chatty-purple.c:194
 #, c-format
@@ -827,39 +837,39 @@ msgstr "Zobrazit Emodži"
 msgid "Show Numbers"
 msgstr "Zobrazit čísla"
 
-#: src/chatty-window.c:356 src/chatty-window.c:443
-#: src/dialogs/chatty-settings-dialog.c:443 src/ui/chatty-dialog-join-muc.ui:18
+#: src/chatty-window.c:358 src/chatty-window.c:445
+#: src/dialogs/chatty-settings-dialog.c:446 src/ui/chatty-dialog-join-muc.ui:16
 #: src/ui/chatty-info-dialog.ui:26 src/ui/chatty-info-dialog.ui:35
 msgid "Cancel"
 msgstr "Zrušit"
 
-#: src/chatty-window.c:356
+#: src/chatty-window.c:358
 msgid "Continue"
 msgstr "Pokračovat"
 
-#: src/chatty-window.c:364
+#: src/chatty-window.c:366
 msgid "You shall no longer be notified for new messages, continue?"
 msgstr "Již nebudete upozorňováni na nové zprávy, pokračovat?"
 
-#: src/chatty-window.c:443
+#: src/chatty-window.c:445
 msgid "Delete"
 msgstr "Smazat"
 
-#: src/chatty-window.c:453
+#: src/chatty-window.c:455
 #, c-format
 msgid "Delete chat with “%s”"
 msgstr "Smazat chat s „%s“"
 
-#: src/chatty-window.c:454
+#: src/chatty-window.c:456
 msgid "This deletes the conversation history"
 msgstr "Toto vymaže historii konverzace"
 
-#: src/chatty-window.c:456
+#: src/chatty-window.c:458
 #, c-format
 msgid "Disconnect group chat “%s”"
 msgstr "Odpojit skupinovou konverzaci „%s“"
 
-#: src/chatty-window.c:457
+#: src/chatty-window.c:459
 msgid "This removes chat from chats list"
 msgstr "Tímto odstraníte koverzaci ze seznamu"
 
@@ -960,77 +970,68 @@ msgstr "připojování…"
 msgid "disconnected"
 msgstr "odpojeno"
 
-#: src/dialogs/chatty-settings-dialog.c:194
+#: src/dialogs/chatty-settings-dialog.c:196
 #, c-format
 msgid "Error saving account: %s"
 msgstr "Chyba při ukládání účtu: %s"
 
-#: src/dialogs/chatty-settings-dialog.c:244
+#: src/dialogs/chatty-settings-dialog.c:246
 #, c-format
 msgid "Failed to verify server: %s"
 msgstr "Selhalo ověření serveru: %s"
 
-#: src/dialogs/chatty-settings-dialog.c:246
+#: src/dialogs/chatty-settings-dialog.c:248
 msgid "Failed to verify server"
 msgstr "Selhalo ověření serveru"
 
-#: src/dialogs/chatty-settings-dialog.c:252
+#: src/dialogs/chatty-settings-dialog.c:254
 msgid "Couldn't get Home server address"
 msgstr "Nepodařilo se získat adresu domovského serveru"
 
-#: src/dialogs/chatty-settings-dialog.c:443
+#: src/dialogs/chatty-settings-dialog.c:446
 msgid "OK"
 msgstr "Budiž"
 
-#: src/dialogs/chatty-settings-dialog.c:453
+#: src/dialogs/chatty-settings-dialog.c:456
 #: src/ui/chatty-ma-account-details.ui:162
 #: src/ui/chatty-pp-account-details.ui:154
 msgid "Delete Account"
 msgstr "Odstranit účet"
 
-#: src/dialogs/chatty-settings-dialog.c:454
+#: src/dialogs/chatty-settings-dialog.c:457
 #, c-format
 msgid "Delete account %s?"
 msgstr "Odstranit účet %s?"
 
-#: src/dialogs/chatty-settings-dialog.c:623
-msgid "Restart chatty to disable purple"
-msgstr "Restartovat chatty pro deaktivování purple"
+#: src/dialogs/chatty-settings-dialog.c:628
+msgid "Restart Chatty to disable Purple"
+msgstr "Restartujte Chatty pro deaktivování Purple"
 
-#: src/dialogs/chatty-settings-dialog.c:625
-#: src/ui/chatty-settings-dialog.ui:472
-msgid "Enable purple plugin"
-msgstr "Povolit zásuvný modul purple"
+#: src/dialogs/chatty-settings-dialog.c:644
+#: src/ui/chatty-settings-dialog.ui:250
+msgid "Purple"
+msgstr "Purple"
 
-#: src/dialogs/chatty-settings-dialog.c:639
-#: src/ui/chatty-settings-dialog.ui:246
-msgid "SMS and MMS Settings"
-msgstr "Nastavení SMS a MMS"
-
-#: src/dialogs/chatty-settings-dialog.c:641
-#: src/ui/chatty-settings-dialog.ui:264
-msgid "Purple Settings"
-msgstr "Nastavení purple"
-
-#: src/dialogs/chatty-settings-dialog.c:643
+#: src/dialogs/chatty-settings-dialog.c:646
 msgid "New Account"
 msgstr "Nový účet"
 
-#: src/dialogs/chatty-settings-dialog.c:645
-#: src/ui/chatty-settings-dialog.ui:324
+#: src/dialogs/chatty-settings-dialog.c:648
+#: src/ui/chatty-settings-dialog.ui:310
 msgid "Blocked Contacts"
 msgstr "Blokované kontakty"
 
-#: src/dialogs/chatty-settings-dialog.c:647 src/ui/chatty-side-bar.ui:110
+#: src/dialogs/chatty-settings-dialog.c:650 src/ui/chatty-side-bar.ui:110
 msgid "Preferences"
 msgstr "Předvolby"
 
-#: src/dialogs/chatty-settings-dialog.c:675
-msgid "Select Protocol"
-msgstr "Vybrat protokol"
+#: src/dialogs/chatty-settings-dialog.c:678
+#: src/ui/chatty-pp-account-details.ui:81
+msgid "Protocol"
+msgstr "Protokol"
 
 #. TRANSLATORS: Only translate 'or'
-#: src/dialogs/chatty-settings-dialog.c:920
+#: src/dialogs/chatty-settings-dialog.c:934
 msgid "@user:matrix.org or user@example.com"
 msgstr "@uživatel:matrix.org nebo uživatel@example.com"
 
@@ -1046,11 +1047,11 @@ msgstr "Ověření klíčem"
 #: src/mm/chatty-mmsd.c:253
 #, c-format
 msgid "Error Delivering Message to %s"
-msgstr ""
+msgstr "Chyba při doručování zprávy pro %s"
 
 #: src/mm/chatty-mmsd.c:254
 msgid "See logs for more details"
-msgstr ""
+msgstr "Pro více podrobností viz záznamy"
 
 #: src/mm/chatty-mmsd.c:572 src/mm/chatty-mmsd.c:632 src/mm/chatty-mmsd.c:654
 msgid "MMS cannot be sent"
@@ -1058,19 +1059,19 @@ msgstr "MMS nelze odeslat"
 
 #: src/mm/chatty-mmsd.c:573
 msgid "Please send less attachments"
-msgstr ""
+msgstr "Odešlete prosím méně příloh"
 
 #: src/mm/chatty-mmsd.c:633
 msgid "Could not resize image to be small enough"
-msgstr ""
+msgstr "Nelze změnit velikost obrázku tak, aby byl dostatečně malý"
 
 #: src/mm/chatty-mmsd.c:651
 #, c-format
 msgid "The attachment is too large"
 msgid_plural "Attachments are too large"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Příloha je příliš velká"
+msgstr[1] "Přílohy jsou příliš velké"
+msgstr[2] "Přílohy jsou příliš velké"
 
 #. TRANSLATORS: Timestamp for minute accuracy, e.g. “2020-08-11 15:27”.
 #. See https://developer.gnome.org/glib/stable/glib-GDateTime.html#g-date-time-format
@@ -1092,25 +1093,25 @@ msgstr "Obdrželi jste prázdnou MMS."
 #, c-format
 msgid "Automatically Retrying for  %i MMS"
 msgid_plural "Automatically Retrying for  %i MMSes..."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Automatické opakování pro  %i MMS"
+msgstr[1] "Automatické opakování pro  %i MMS..."
+msgstr[2] "Automatické opakování pro  %i MMS..."
 
 #: src/mm/chatty-mmsd.c:1746
 msgid "Temporary Error Sending MMS"
-msgstr ""
+msgstr "Dočasná chyba při odesílání MMS"
 
 #: src/mm/chatty-mmsd.c:1792
 msgid "Temporary Error Receiving MMS"
-msgstr ""
+msgstr "Dočasná chyba při příjmu MMS"
 
 #: src/mm/chatty-mmsd.c:2008
 msgid "MMSC is not configured"
-msgstr ""
+msgstr "MMSC není nastaveno"
 
 #: src/mm/chatty-mmsd.c:2011
 msgid "APN is not configured correctly"
-msgstr ""
+msgstr "APN není správně nastaveno"
 
 #: src/mm/chatty-mmsd.c:2014
 msgid "Mobile Data is not configured"
@@ -1128,9 +1129,9 @@ msgstr "Neznámá chyba"
 #, c-format
 msgid "Chatty cannot process %i MMS"
 msgid_plural "Chatty cannot process %i MMSes..."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Chatty nemůže zpracovat %i MMS"
+msgstr[1] "Chatty nemůže zpracovat %i MMS..."
+msgstr[2] "Chatty nemůže zpracovat %i MMS..."
 
 #: src/mm/chatty-mm-account.c:319 src/mm/chatty-mm-account.c:370
 #, c-format
@@ -1146,27 +1147,27 @@ msgstr "Chyba při odesílání MMS pro %s"
 msgid "Remove Attachment"
 msgstr "Odebrat přílohu"
 
-#: src/ui/chatty-dialog-wrong-pw.ui:16
+#: src/ui/chatty-dialog-wrong-pw.ui:15
 msgid "Incorrect password"
 msgstr "Nesprávné heslo"
 
-#: src/ui/chatty-dialog-wrong-pw.ui:24 src/ui/chatty-dialog-new-chat.ui:37
-#: src/ui/chatty-settings-dialog.ui:29 src/ui/chatty-settings-dialog.ui:72
+#: src/ui/chatty-dialog-wrong-pw.ui:23 src/ui/chatty-dialog-new-chat.ui:36
+#: src/ui/chatty-settings-dialog.ui:28 src/ui/chatty-settings-dialog.ui:58
 #: src/ui/chatty-verification-page.ui:129
 #: src/ui/chatty-verification-page.ui:157
 msgid "_Cancel"
 msgstr "_Zrušit"
 
-#: src/ui/chatty-dialog-wrong-pw.ui:34
+#: src/ui/chatty-dialog-wrong-pw.ui:33
 msgid "_OK"
 msgstr "_Budiž"
 
-#: src/ui/chatty-dialog-wrong-pw.ui:48
+#: src/ui/chatty-dialog-wrong-pw.ui:47
 msgid "Please re-enter the Password."
 msgstr "Zadejte heslo znovu."
 
-#: src/ui/chatty-dialog-wrong-pw.ui:54 src/ui/chatty-pp-account-details.ui:129
-#: src/ui/chatty-settings-dialog.ui:648
+#: src/ui/chatty-dialog-wrong-pw.ui:53 src/ui/chatty-pp-account-details.ui:129
+#: src/ui/chatty-settings-dialog.ui:633
 msgid "Password"
 msgstr "Heslo"
 
@@ -1174,43 +1175,43 @@ msgstr "Heslo"
 msgid "New Group Chat"
 msgstr "Nová hromadná konverzace"
 
-#: src/ui/chatty-dialog-join-muc.ui:24
+#: src/ui/chatty-dialog-join-muc.ui:22
 msgid "Join Chat"
 msgstr "Připojit ke konverzaci"
 
-#: src/ui/chatty-dialog-join-muc.ui:64 src/ui/chatty-dialog-new-chat.ui:193
+#: src/ui/chatty-dialog-join-muc.ui:62 src/ui/chatty-dialog-new-chat.ui:192
 msgid "Select chat account"
 msgstr "Zvolit účet"
 
-#: src/ui/chatty-dialog-join-muc.ui:122
+#: src/ui/chatty-dialog-join-muc.ui:120
 msgid "Password (optional)"
 msgstr "Heslo (nepovinné)"
 
-#: src/ui/chatty-dialog-new-chat.ui:77
+#: src/ui/chatty-dialog-new-chat.ui:76
 msgid "Group Title"
 msgstr "Titulek skupiny"
 
-#: src/ui/chatty-dialog-new-chat.ui:119
+#: src/ui/chatty-dialog-new-chat.ui:118
 msgid "Add members from contacts…"
 msgstr "Přidat členy z kontaktů…"
 
-#: src/ui/chatty-dialog-new-chat.ui:156
+#: src/ui/chatty-dialog-new-chat.ui:155
 msgid "Send To:"
 msgstr "Příjemce:"
 
-#: src/ui/chatty-dialog-new-chat.ui:216
+#: src/ui/chatty-dialog-new-chat.ui:215
 msgid "Contact ID"
 msgstr "ID kontaktu"
 
-#: src/ui/chatty-dialog-new-chat.ui:226
+#: src/ui/chatty-dialog-new-chat.ui:225
 msgid "Name (optional)"
 msgstr "Jméno (volitelně)"
 
-#: src/ui/chatty-dialog-new-chat.ui:263
+#: src/ui/chatty-dialog-new-chat.ui:262
 msgid "Add to Contacts"
 msgstr "Přidat kontakt"
 
-#: src/ui/chatty-info-dialog.ui:8 src/ui/chatty-main-view.ui:124
+#: src/ui/chatty-info-dialog.ui:8 src/ui/chatty-main-view.ui:126
 msgid "Chat Details"
 msgstr "Podrobnosti konverzace"
 
@@ -1251,7 +1252,7 @@ msgstr "Šifrování"
 msgid "Encrypt Messages"
 msgstr "Šifrovat zprávy"
 
-#: src/ui/chatty-main-view.ui:12 src/ui/chatty-settings-dialog.ui:18
+#: src/ui/chatty-main-view.ui:12 src/ui/chatty-settings-dialog.ui:17
 #: src/ui/chatty-side-bar.ui:19
 msgid "Back"
 msgstr "Zpět"
@@ -1264,27 +1265,27 @@ msgstr "Volat"
 msgid "Close"
 msgstr "Zavřít"
 
-#: src/ui/chatty-main-view.ui:135
+#: src/ui/chatty-main-view.ui:137
 msgid "Leave Chat"
 msgstr "Odejít z konverzace"
 
-#: src/ui/chatty-main-view.ui:143
+#: src/ui/chatty-main-view.ui:145
 msgid "Block Contact"
 msgstr "Blokovat kontakt"
 
-#: src/ui/chatty-main-view.ui:151
+#: src/ui/chatty-main-view.ui:153
 msgid "Unblock Contact"
 msgstr "Zrušit blokaci kontaktu"
 
-#: src/ui/chatty-main-view.ui:159
+#: src/ui/chatty-main-view.ui:161
 msgid "Archive chat"
 msgstr "Archivovat konverzaci"
 
-#: src/ui/chatty-main-view.ui:167
+#: src/ui/chatty-main-view.ui:169
 msgid "Unarchive chat"
 msgstr "Zrušit archivaci konverzace"
 
-#: src/ui/chatty-main-view.ui:175
+#: src/ui/chatty-main-view.ui:177
 msgid "Delete Chat"
 msgstr "Smazat konverzaci"
 
@@ -1377,138 +1378,138 @@ msgstr "ID zařízení"
 msgid "Account ID"
 msgstr "ID účtu"
 
-#: src/ui/chatty-pp-account-details.ui:81
-msgid "Protocol"
-msgstr "Protokol"
-
 #: src/ui/chatty-pp-account-details.ui:168
 msgid "Own Fingerprint"
 msgstr "Vlastní otisk"
 
-#: src/ui/chatty-settings-dialog.ui:39
-msgid "_Add"
-msgstr "_Přidat"
-
-#: src/ui/chatty-settings-dialog.ui:52
+#: src/ui/chatty-settings-dialog.ui:38
 msgid "_Save"
 msgstr "_Uložit"
 
-#: src/ui/chatty-settings-dialog.ui:62
+#: src/ui/chatty-settings-dialog.ui:48
 msgid "_Apply"
 msgstr "_Použít"
 
-#: src/ui/chatty-settings-dialog.ui:123
+#: src/ui/chatty-settings-dialog.ui:109
 msgid "Accounts"
 msgstr "Účty"
 
-#: src/ui/chatty-settings-dialog.ui:140 src/ui/chatty-settings-dialog.ui:489
+#: src/ui/chatty-settings-dialog.ui:126 src/ui/chatty-settings-dialog.ui:474
 msgid "Privacy"
 msgstr "Soukromí"
 
-#: src/ui/chatty-settings-dialog.ui:145
+#: src/ui/chatty-settings-dialog.ui:131
 msgid "Message Receipts"
 msgstr "Doručenky"
 
-#: src/ui/chatty-settings-dialog.ui:146
+#: src/ui/chatty-settings-dialog.ui:132
 msgid "Confirm received messages"
 msgstr "Potvrdit doručení zprávy"
 
-#: src/ui/chatty-settings-dialog.ui:159
+#: src/ui/chatty-settings-dialog.ui:145
 msgid "Typing Notification"
 msgstr "Upozornění na psaní"
 
-#: src/ui/chatty-settings-dialog.ui:160
+#: src/ui/chatty-settings-dialog.ui:146
 msgid "Send typing messages"
 msgstr "Odesílat zprávy o odepisování"
 
-#: src/ui/chatty-settings-dialog.ui:174
+#: src/ui/chatty-settings-dialog.ui:160
 msgid "Strip Tracking IDs from URLs"
 msgstr "Odstranit ID sledování z adres URL"
 
-#: src/ui/chatty-settings-dialog.ui:188
+#: src/ui/chatty-settings-dialog.ui:174
 msgid "Render Attachments from Messages"
 msgstr "Vykreslit přílohy ze zpráv"
 
-#: src/ui/chatty-settings-dialog.ui:204
+#: src/ui/chatty-settings-dialog.ui:190
 msgid "Editor"
 msgstr "Editor"
 
-#: src/ui/chatty-settings-dialog.ui:208
+#: src/ui/chatty-settings-dialog.ui:194
 msgid "Graphical Emoticons"
 msgstr "Grafické emotikony"
 
-#: src/ui/chatty-settings-dialog.ui:209
+#: src/ui/chatty-settings-dialog.ui:195
 msgid "if you type :) it will be changed to 😃"
 msgstr "pokud napíšete :) bude to změněno na 😃"
 
 #. TRANSLATORS: Return is the Enter key.
-#: src/ui/chatty-settings-dialog.ui:222
+#: src/ui/chatty-settings-dialog.ui:208
 msgid "Send Messages with Return"
 msgstr "Odesílat zprávy klávesou Enter"
 
-#: src/ui/chatty-settings-dialog.ui:236
+#: src/ui/chatty-settings-dialog.ui:222
 msgid "Protocol Settings"
 msgstr "Nastavení protokolu"
 
-#: src/ui/chatty-settings-dialog.ui:297
+#: src/ui/chatty-settings-dialog.ui:283
 msgid "Request Delivery Reports"
 msgstr "Vyžádat zprávy o doručení"
 
-#: src/ui/chatty-settings-dialog.ui:310
+#: src/ui/chatty-settings-dialog.ui:296
 msgid "SMIL for MMS"
 msgstr "SMIL pro MMS"
 
-#: src/ui/chatty-settings-dialog.ui:342
+#: src/ui/chatty-settings-dialog.ui:328
 msgid "MMS Carrier Settings"
 msgstr "Nastavení operátora MMS"
 
-#: src/ui/chatty-settings-dialog.ui:346
+#: src/ui/chatty-settings-dialog.ui:332
 msgid "Phone Number"
 msgstr "Telefonní číslo"
 
-#: src/ui/chatty-settings-dialog.ui:352
+#: src/ui/chatty-settings-dialog.ui:338
 msgid "Your modem's phone number"
 msgstr "Telefonní číslo vašeho modemu"
 
-#: src/ui/chatty-settings-dialog.ui:360
+#: src/ui/chatty-settings-dialog.ui:346
 msgid "MMSC"
 msgstr "MMSC"
 
-#: src/ui/chatty-settings-dialog.ui:372
+#: src/ui/chatty-settings-dialog.ui:358
 msgid "APN"
 msgstr "APN"
 
-#: src/ui/chatty-settings-dialog.ui:384
+#: src/ui/chatty-settings-dialog.ui:370
 msgid "Proxy"
 msgstr "Proxy"
 
-#: src/ui/chatty-settings-dialog.ui:411
+#: src/ui/chatty-settings-dialog.ui:397
 msgid "You shall not be notified for the messages from blocked contacts"
 msgstr "Nebudete upozorňováni na zprávy od blokovaných kontaktů"
 
-#: src/ui/chatty-settings-dialog.ui:442
+#: src/ui/chatty-settings-dialog.ui:428
 msgid "Blocked chat list empty"
 msgstr "Prázdný seznam blokovaných konverzací"
 
-#: src/ui/chatty-settings-dialog.ui:495
+#: src/ui/chatty-settings-dialog.ui:457
+msgid "Enable Purple Accounts"
+msgstr "Zapnout účty Purple"
+
+#: src/ui/chatty-settings-dialog.ui:480
 msgid "Message Archive Management"
 msgstr "Správa archivu zpráv"
 
-#: src/ui/chatty-settings-dialog.ui:496
+#: src/ui/chatty-settings-dialog.ui:481
 msgid "Sync conversations with chat server"
 msgstr "Synchronizovat konverzace s chat serverem"
 
-#: src/ui/chatty-settings-dialog.ui:510
+#: src/ui/chatty-settings-dialog.ui:495
 msgid "Message Carbon Copies"
 msgstr "Kopie zpráv"
 
-#: src/ui/chatty-settings-dialog.ui:674
+#: src/ui/chatty-settings-dialog.ui:659
 msgid "Home server"
 msgstr "Domovský server"
 
-#: src/ui/chatty-settings-dialog.ui:706
-msgid "Add _new account…"
-msgstr "Přidat _nový účet…"
+#: src/ui/chatty-settings-dialog.ui:677
+msgid "_Add"
+msgstr "Přid_at"
+
+#: src/ui/chatty-settings-dialog.ui:705
+msgid "Add _New Account"
+msgstr "Přidat _nový účet"
 
 #: src/ui/chatty-side-bar.ui:27
 msgid "Add Chat"
@@ -1529,7 +1530,7 @@ msgstr "Archivováno"
 
 #: src/ui/chatty-side-bar.ui:117
 msgid "Keyboard _Shortcuts"
-msgstr "_Klávesové zkratky"
+msgstr "Kláve_sové zkratky"
 
 #: src/ui/chatty-side-bar.ui:124
 msgid "Help"
@@ -1622,16 +1623,31 @@ msgid "Show Shortcuts"
 msgstr "Zobrazit zkratky"
 
 #: src/users/chatty-contact.c:324
-msgid "Mobile: "
-msgstr "Mobil: "
+msgid "Mobile:"
+msgstr "Mobil:"
 
 #: src/users/chatty-contact.c:326
-msgid "Work: "
-msgstr "Zaměstnání: "
+msgid "Work:"
+msgstr "Zaměstnání:"
 
 #: src/users/chatty-contact.c:328
-msgid "Other: "
-msgstr "Ostatní: "
+msgid "Other:"
+msgstr "Ostatní:"
+
+#~ msgid "Enable purple plugin"
+#~ msgstr "Povolit zásuvný modul purple"
+
+#~ msgid "SMS and MMS Settings"
+#~ msgstr "Nastavení SMS a MMS"
+
+#~ msgid "Purple Settings"
+#~ msgstr "Nastavení purple"
+
+#~ msgid "Select Protocol"
+#~ msgstr "Vybrat protokol"
+
+#~ msgid "Add _new account…"
+#~ msgstr "Přidat _nový účet…"
 
 #~ msgid "Open Message"
 #~ msgstr "Otevřít zprávu"
