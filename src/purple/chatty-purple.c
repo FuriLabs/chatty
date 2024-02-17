@@ -188,12 +188,20 @@ chatty_purple_account_notify_added (PurpleAccount *pp_account,
                                     const char    *alias,
                                     const char    *msg)
 {
+  GtkWidget *dialog;
   GtkWindow *window;
-  g_autoptr(GtkAlertDialog) dialog = NULL;
 
-  dialog = gtk_alert_dialog_new (_("User %s has added %s to the contacts"), remote_user, id);
   window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
-  gtk_alert_dialog_show (GTK_ALERT_DIALOG (dialog), window);
+  dialog = adw_message_dialog_new (window, _("Alert"), NULL);
+  adw_message_dialog_format_body (ADW_MESSAGE_DIALOG (dialog),
+                                  _("User %s has added %s to the contacts"),
+                                   remote_user, id);
+  adw_message_dialog_add_response (ADW_MESSAGE_DIALOG (dialog), "close", _("Close"));
+
+  adw_message_dialog_set_default_response (ADW_MESSAGE_DIALOG (dialog), "close");
+  adw_message_dialog_set_close_response (ADW_MESSAGE_DIALOG (dialog), "close");
+
+  gtk_window_present (GTK_WINDOW (dialog));
 }
 
 struct pp_auth
@@ -211,18 +219,15 @@ struct pp_auth
 
 
 static void
-chatty_purple_account_request_authorization_cb (GObject         *dialog,
-                                                GAsyncResult    *response,
-                                                gpointer         user_data)
+chatty_purple_account_request_authorization_cb (AdwMessageDialog *dialog,
+                                                const char       *response,
+                                                gpointer          user_data)
 
 {
   g_autoptr(GError) error = NULL;
-  int dialog_response = -1;
   struct pp_auth *authorization = (struct pp_auth *)user_data;
 
-  dialog_response = gtk_alert_dialog_choose_finish (GTK_ALERT_DIALOG (dialog), response, &error);
-
-  if (!chatty_utils_dialog_response_is_cancel (GTK_ALERT_DIALOG (dialog), dialog_response)) {
+  if (g_strcmp0 (response, "authorize") == 0) {
     if (!authorization->on_list)
       purple_blist_request_add_buddy (authorization->pp_account,
                                       authorization->remote_user,
@@ -253,10 +258,9 @@ chatty_purple_account_request_authorization (PurpleAccount                      
                                              void                                *user_data)
 {
   GtkWindow *window;
-  GtkAlertDialog *dialog;
+  GtkWidget *dialog;
   g_autofree char *text_detail = NULL;
   struct pp_auth *authorization = NULL;
-  const char *list[] = {_("Reject"), _("Accept"), NULL};
 
   authorization = g_try_new0 (struct pp_auth, 1);
   g_assert (authorization != NULL);
@@ -275,14 +279,27 @@ chatty_purple_account_request_authorization (PurpleAccount                      
   authorization->deny_cb = deny_cb;
   authorization->user_data = user_data;
 
-  dialog = gtk_alert_dialog_new (_("Authorize %s?"), alias ? alias : remote_user);
-  text_detail = g_strdup_printf (_("Add %s to contact list"), remote_user);
-  gtk_alert_dialog_set_detail (dialog, text_detail);
-  gtk_alert_dialog_set_buttons (dialog, list);
-  gtk_alert_dialog_set_cancel_button (dialog, 0);
-  gtk_alert_dialog_set_default_button (dialog, 1);
   window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
-  gtk_alert_dialog_choose (dialog, window, NULL, chatty_purple_account_request_authorization_cb, authorization);
+  dialog = adw_message_dialog_new (window,  _("Delete Account"), NULL);
+  adw_message_dialog_format_heading (ADW_MESSAGE_DIALOG (dialog),
+                                     _("Authorize %s?"),
+                                     alias ? alias : remote_user);
+
+  adw_message_dialog_format_body (ADW_MESSAGE_DIALOG (dialog),
+                                  _("Add %s to contact list"),
+                                  remote_user);
+
+  adw_message_dialog_add_responses (ADW_MESSAGE_DIALOG (dialog),
+                                    "cancel",  _("_Cancel"),
+                                    "authorize", _("Authorize"),
+                                    NULL);
+
+  adw_message_dialog_set_response_appearance (ADW_MESSAGE_DIALOG (dialog), "authorize", ADW_RESPONSE_SUGGESTED);
+
+  adw_message_dialog_set_default_response (ADW_MESSAGE_DIALOG (dialog), "cancel");
+  adw_message_dialog_set_close_response (ADW_MESSAGE_DIALOG (dialog), "cancel");
+
+  g_signal_connect (dialog, "response", G_CALLBACK (chatty_purple_account_request_authorization_cb), authorization);
 
   return NULL;
 }
@@ -587,15 +604,22 @@ purple_account_connection_failed_cb (PurpleAccount         *pp_account,
     chatty_account_connect (CHATTY_ACCOUNT (account), TRUE);
 
   if (purple_connection_error_is_fatal (error)) {
-    g_autoptr(GtkAlertDialog) dialog = NULL;
+    GtkWidget *dialog;
     GtkWindow *window;
-    dialog = gtk_alert_dialog_new ("%s: %s\n\n%s",
+
+    window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
+    dialog = adw_message_dialog_new (window, _("Error"), NULL);
+    adw_message_dialog_format_body (ADW_MESSAGE_DIALOG (dialog),
+                                    "%s: %s\n\n%s",
                                    error_msg,
                                    chatty_item_get_username (CHATTY_ITEM (account)),
                                    _("Please check ID and password"));
+    adw_message_dialog_add_response (ADW_MESSAGE_DIALOG (dialog), "close", _("Close"));
 
-    window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
-    gtk_alert_dialog_show (GTK_ALERT_DIALOG (dialog), window);
+    adw_message_dialog_set_default_response (ADW_MESSAGE_DIALOG (dialog), "close");
+    adw_message_dialog_set_close_response (ADW_MESSAGE_DIALOG (dialog), "close");
+
+    gtk_window_present (GTK_WINDOW (dialog));
   }
 }
 
