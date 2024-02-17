@@ -191,13 +191,20 @@ show_help_cb (GObject      *object,
   g_clear_object (&object);
 
   if (error) {
-    g_autoptr(GtkAlertDialog) dialog = NULL;
+    GtkWidget *dialog;
     GtkWindow *window;
 
     window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
-    dialog = gtk_alert_dialog_new (_("There was an error displaying help:\n%s"), error->message);
+    dialog = adw_message_dialog_new (window, _("Error"), NULL);
+    adw_message_dialog_format_body (ADW_MESSAGE_DIALOG (dialog),
+                                    _("There was an error displaying help:\n%s"),
+                                     error->message);
+    adw_message_dialog_add_response (ADW_MESSAGE_DIALOG (dialog), "close", _("Close"));
 
-    gtk_alert_dialog_show (GTK_ALERT_DIALOG (dialog), window);
+    adw_message_dialog_set_default_response (ADW_MESSAGE_DIALOG (dialog), "close");
+    adw_message_dialog_set_close_response (ADW_MESSAGE_DIALOG (dialog), "close");
+
+    gtk_window_present (GTK_WINDOW (dialog));
   }
 }
 
