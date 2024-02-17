@@ -16,7 +16,7 @@ gtk_version_arr = gtk_version.split('.')
 gtk_major = gtk_version_arr[0]
 gtk_minor = gtk_version_arr[1]
 
-adw_version = '1.4'
+adw_version = '1.5'
 adw_version_arr = adw_version.split('.')
 adw_major = adw_version_arr[0]
 adw_minor = adw_version_arr[1]
