@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-02-09 02:45+0000\n"
-"PO-Revision-Date: 2024-02-09 05:51+0100\n"
+"POT-Creation-Date: 2024-02-16 20:06+0000\n"
+"PO-Revision-Date: 2024-02-17 00:59+0100\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -20,8 +20,9 @@ msgstr ""
 "X-Generator: Poedit 3.4.2\n"
 
 #: data/sm.puri.Chatty.desktop.in.in:3 data/sm.puri.Chatty.metainfo.xml.in.in:6
-#: src/chatty-application.c:164 src/chatty-application.c:403
-#: src/chatty-side-bar.c:354 src/ui/chatty-side-bar.ui:11
+#: src/chatty-application.c:164 src/chatty-application.c:405
+#: src/chatty-side-bar.c:354 src/ui/chatty-main-view.ui:4
+#: src/ui/chatty-side-bar.ui:4 src/ui/chatty-side-bar.ui:12
 #: src/ui/chatty-window.ui:4
 msgid "Chats"
 msgstr "Chattar"
@@ -58,7 +59,7 @@ msgstr "Huruvida status för meddelandet ska skickas om det läses"
 msgid "Message carbon copies"
 msgstr "Meddelandekopior"
 
-#: data/sm.puri.Chatty.gschema.xml:26 src/ui/chatty-settings-dialog.ui:511
+#: data/sm.puri.Chatty.gschema.xml:26 src/ui/chatty-settings-dialog.ui:496
 msgid "Share chat history among devices"
 msgstr "Dela chatthistorik mellan enheter"
 
@@ -74,7 +75,7 @@ msgstr "Aktivera MAM-arkivsynkronisering från servern"
 msgid "Enable purple"
 msgstr "Aktivera purple"
 
-#: data/sm.puri.Chatty.gschema.xml:38 src/ui/chatty-settings-dialog.ui:471
+#: data/sm.puri.Chatty.gschema.xml:38
 msgid "Enable purple accounts"
 msgstr "Aktivera purple-konton"
 
@@ -86,7 +87,7 @@ msgstr "Skicka skrivaviseringar"
 msgid "Whether to Send typing notifications"
 msgstr "Huruvida skrivaviseringar ska skickas"
 
-#: data/sm.puri.Chatty.gschema.xml:49 src/ui/chatty-settings-dialog.ui:173
+#: data/sm.puri.Chatty.gschema.xml:49 src/ui/chatty-settings-dialog.ui:159
 msgid "Strip Tracking IDs"
 msgstr "Ta bort spårnings-ID:n"
 
@@ -94,7 +95,7 @@ msgstr "Ta bort spårnings-ID:n"
 msgid "Whether to Remove Tracking IDs from URLs Automatically"
 msgstr "Huruvida spårnings-ID:n automatiskt ska tas bort från URL:er"
 
-#: data/sm.puri.Chatty.gschema.xml:55 src/ui/chatty-settings-dialog.ui:187
+#: data/sm.puri.Chatty.gschema.xml:55 src/ui/chatty-settings-dialog.ui:173
 msgid "Render Attachments"
 msgstr "Rendera bilagor"
 
@@ -272,17 +273,17 @@ msgstr "Dina meddelanden krypteras"
 msgid "Your messages are not encrypted"
 msgstr "Dina meddelanden krypteras inte"
 
-#: src/chatty-chat.c:706
+#: src/chatty-chat.c:726
 msgid "Empty room"
 msgstr "Tomt rum"
 
 #. TRANSLATORS: %s are name/user-id/phone numbers of two users
-#: src/chatty-chat.c:713
+#: src/chatty-chat.c:733
 #, c-format
 msgid "%s and %s"
 msgstr "%s och %s"
 
-#: src/chatty-chat.c:715
+#: src/chatty-chat.c:735
 #, c-format
 msgid "%s and %u other"
 msgid_plural "%s and %u others"
@@ -360,8 +361,8 @@ msgstr "Fingeravtryck för enhets-ID %s:"
 #. TRANSLATORS: %s is the chat room name
 #: src/chatty-invite-page.c:72
 #, c-format
-msgid "Do you want to join “%s”"
-msgstr "Vill du gå in i ”%s”"
+msgid "Do you want to join “%s”?"
+msgstr "Vill du gå in i ”%s”?"
 
 #: src/chatty-list-row.c:122
 msgid "Owner"
@@ -375,11 +376,11 @@ msgstr "Moderator"
 msgid "Member"
 msgstr "Medlem"
 
-#: src/chatty-list-row.c:250 src/chatty-notification.c:247
+#: src/chatty-list-row.c:250 src/chatty-notification.c:190
 msgid "Picture"
 msgstr "Bild"
 
-#: src/chatty-list-row.c:253 src/chatty-notification.c:251
+#: src/chatty-list-row.c:253 src/chatty-notification.c:194
 msgid "Video"
 msgstr "Video"
 
@@ -392,7 +393,7 @@ msgid "Location"
 msgstr "Plats"
 
 #: src/chatty-list-row.c:262 src/chatty-list-row.c:279
-#: src/chatty-notification.c:243
+#: src/chatty-notification.c:186
 msgid "File"
 msgstr "Fil"
 
@@ -404,11 +405,11 @@ msgstr "MMS-meddelande"
 msgid "Multiple Files"
 msgstr "Flera filer"
 
-#: src/chatty-main-view.c:124
+#: src/chatty-main-view.c:125
 msgid "Account disconnected"
 msgstr "Konto frånkopplat"
 
-#: src/chatty-main-view.c:126
+#: src/chatty-main-view.c:127
 msgid "Account connecting…"
 msgstr "Konto ansluter…"
 
@@ -423,44 +424,49 @@ msgstr ""
 "Fick ett krypterat meddelande, men kunde inte dekryptera på grund av saknade "
 "nycklar"
 
-#: src/chatty-notification.c:180
-msgid "Open Message"
-msgstr "Öppna meddelande"
-
-#: src/chatty-notification.c:213
+#: src/chatty-notification.c:169
 #, c-format
 msgid "New message from %s"
 msgstr "Nytt meddelande från %s"
 
-#: src/chatty-notification.c:215
+#: src/chatty-notification.c:171
 msgid "Message Received"
 msgstr "Meddelande togs emot"
 
-#: src/chatty-notification.c:255
+#: src/chatty-notification.c:198
 msgid "Audio File"
 msgstr "Ljudfil"
 
-#: src/chatty-notification.c:262
+#: src/chatty-notification.c:205
 msgid "MMS"
 msgstr "MMS"
+
+#: src/chatty-notification.c:217
+#, c-format
+msgid "%i Message"
+msgid_plural "%i Messages"
+msgstr[0] "%i meddelande"
+msgstr[1] "%i meddelanden"
 
 #: src/chatty-side-bar.c:324
 msgid "Any Protocol"
 msgstr "Alla protokoll"
 
-#: src/chatty-side-bar.c:325 src/ui/chatty-settings-dialog.ui:581
+#: src/chatty-side-bar.c:325 src/ui/chatty-settings-dialog.ui:566
 msgid "Matrix"
 msgstr "Matrix"
 
 #: src/chatty-side-bar.c:326 src/dialogs/chatty-new-chat-dialog.c:625
+#: src/dialogs/chatty-settings-dialog.c:642
+#: src/ui/chatty-settings-dialog.ui:232
 msgid "SMS/MMS"
 msgstr "SMS/MMS"
 
-#: src/chatty-side-bar.c:329 src/ui/chatty-settings-dialog.ui:570
+#: src/chatty-side-bar.c:329 src/ui/chatty-settings-dialog.ui:555
 msgid "XMPP"
 msgstr "XMPP"
 
-#: src/chatty-side-bar.c:332 src/ui/chatty-settings-dialog.ui:594
+#: src/chatty-side-bar.c:332 src/ui/chatty-settings-dialog.ui:579
 msgid "Telegram"
 msgstr "Telegram"
 
@@ -469,11 +475,11 @@ msgid "Archived"
 msgstr "Arkiverade"
 
 #: src/purple/chatty-purple-request.c:218
-msgid "Save File..."
+msgid "Save File…"
 msgstr "Spara fil…"
 
 #: src/purple/chatty-purple-request.c:220
-msgid "Open File..."
+msgid "Open File…"
 msgstr "Öppna fil…"
 
 #: src/purple/chatty-purple.c:194
@@ -832,39 +838,39 @@ msgstr "Visa emojier"
 msgid "Show Numbers"
 msgstr "Visa nummer"
 
-#: src/chatty-window.c:356 src/chatty-window.c:443
-#: src/dialogs/chatty-settings-dialog.c:443 src/ui/chatty-dialog-join-muc.ui:18
+#: src/chatty-window.c:358 src/chatty-window.c:445
+#: src/dialogs/chatty-settings-dialog.c:446 src/ui/chatty-dialog-join-muc.ui:16
 #: src/ui/chatty-info-dialog.ui:26 src/ui/chatty-info-dialog.ui:35
 msgid "Cancel"
 msgstr "Avbryt"
 
-#: src/chatty-window.c:356
+#: src/chatty-window.c:358
 msgid "Continue"
 msgstr "Fortsätt"
 
-#: src/chatty-window.c:364
+#: src/chatty-window.c:366
 msgid "You shall no longer be notified for new messages, continue?"
 msgstr "Du kommer inte längre att meddelas om nya meddelanden, fortsätt?"
 
-#: src/chatty-window.c:443
+#: src/chatty-window.c:445
 msgid "Delete"
 msgstr "Ta bort"
 
-#: src/chatty-window.c:453
+#: src/chatty-window.c:455
 #, c-format
 msgid "Delete chat with “%s”"
 msgstr "Ta bort chatt med ”%s”"
 
-#: src/chatty-window.c:454
+#: src/chatty-window.c:456
 msgid "This deletes the conversation history"
 msgstr "Det här tar bort meddelandehistoriken"
 
-#: src/chatty-window.c:456
+#: src/chatty-window.c:458
 #, c-format
 msgid "Disconnect group chat “%s”"
 msgstr "Lämna gruppchatten ”%s”"
 
-#: src/chatty-window.c:457
+#: src/chatty-window.c:459
 msgid "This removes chat from chats list"
 msgstr "Detta tar bort chatten från chattlistan"
 
@@ -964,77 +970,68 @@ msgstr "ansluter…"
 msgid "disconnected"
 msgstr "frånkopplad"
 
-#: src/dialogs/chatty-settings-dialog.c:194
+#: src/dialogs/chatty-settings-dialog.c:196
 #, c-format
 msgid "Error saving account: %s"
 msgstr "Fel vid sparande av konto: %s"
 
-#: src/dialogs/chatty-settings-dialog.c:244
+#: src/dialogs/chatty-settings-dialog.c:246
 #, c-format
 msgid "Failed to verify server: %s"
 msgstr "Misslyckades med att verifiera server: %s"
 
-#: src/dialogs/chatty-settings-dialog.c:246
+#: src/dialogs/chatty-settings-dialog.c:248
 msgid "Failed to verify server"
 msgstr "Misslyckades med att verifiera server"
 
-#: src/dialogs/chatty-settings-dialog.c:252
+#: src/dialogs/chatty-settings-dialog.c:254
 msgid "Couldn't get Home server address"
 msgstr "Kunde inte erhålla hemserverns adress"
 
-#: src/dialogs/chatty-settings-dialog.c:443
+#: src/dialogs/chatty-settings-dialog.c:446
 msgid "OK"
 msgstr "OK"
 
-#: src/dialogs/chatty-settings-dialog.c:453
+#: src/dialogs/chatty-settings-dialog.c:456
 #: src/ui/chatty-ma-account-details.ui:162
 #: src/ui/chatty-pp-account-details.ui:154
 msgid "Delete Account"
 msgstr "Ta bort konto"
 
-#: src/dialogs/chatty-settings-dialog.c:454
+#: src/dialogs/chatty-settings-dialog.c:457
 #, c-format
 msgid "Delete account %s?"
 msgstr "Ta bort kontot %s?"
 
-#: src/dialogs/chatty-settings-dialog.c:623
-msgid "Restart chatty to disable purple"
-msgstr "Starta om chatty för att inaktivera purple"
+#: src/dialogs/chatty-settings-dialog.c:628
+msgid "Restart Chatty to disable Purple"
+msgstr "Starta om Chatty för att inaktivera Purple"
 
-#: src/dialogs/chatty-settings-dialog.c:625
-#: src/ui/chatty-settings-dialog.ui:472
-msgid "Enable purple plugin"
-msgstr "Aktivera purple-insticksmodul"
+#: src/dialogs/chatty-settings-dialog.c:644
+#: src/ui/chatty-settings-dialog.ui:250
+msgid "Purple"
+msgstr "Purple"
 
-#: src/dialogs/chatty-settings-dialog.c:639
-#: src/ui/chatty-settings-dialog.ui:246
-msgid "SMS and MMS Settings"
-msgstr "SMS och MMS-inställningar"
-
-#: src/dialogs/chatty-settings-dialog.c:641
-#: src/ui/chatty-settings-dialog.ui:264
-msgid "Purple Settings"
-msgstr "Purple-inställningar"
-
-#: src/dialogs/chatty-settings-dialog.c:643
+#: src/dialogs/chatty-settings-dialog.c:646
 msgid "New Account"
 msgstr "Nytt konto"
 
-#: src/dialogs/chatty-settings-dialog.c:645
-#: src/ui/chatty-settings-dialog.ui:324
+#: src/dialogs/chatty-settings-dialog.c:648
+#: src/ui/chatty-settings-dialog.ui:310
 msgid "Blocked Contacts"
 msgstr "Blockerade kontakter"
 
-#: src/dialogs/chatty-settings-dialog.c:647 src/ui/chatty-side-bar.ui:110
+#: src/dialogs/chatty-settings-dialog.c:650 src/ui/chatty-side-bar.ui:110
 msgid "Preferences"
 msgstr "Inställningar"
 
-#: src/dialogs/chatty-settings-dialog.c:675
-msgid "Select Protocol"
-msgstr "Välj protokoll"
+#: src/dialogs/chatty-settings-dialog.c:678
+#: src/ui/chatty-pp-account-details.ui:81
+msgid "Protocol"
+msgstr "Protokoll"
 
 #. TRANSLATORS: Only translate 'or'
-#: src/dialogs/chatty-settings-dialog.c:920
+#: src/dialogs/chatty-settings-dialog.c:934
 msgid "@user:matrix.org or user@example.com"
 msgstr "@user:matrix.org eller user@example.com"
 
@@ -1147,27 +1144,27 @@ msgstr "Fel vid skickande av MMS till %s"
 msgid "Remove Attachment"
 msgstr "Ta bort bilaga"
 
-#: src/ui/chatty-dialog-wrong-pw.ui:16
+#: src/ui/chatty-dialog-wrong-pw.ui:15
 msgid "Incorrect password"
 msgstr "Felaktigt lösenord"
 
-#: src/ui/chatty-dialog-wrong-pw.ui:24 src/ui/chatty-dialog-new-chat.ui:37
-#: src/ui/chatty-settings-dialog.ui:29 src/ui/chatty-settings-dialog.ui:72
+#: src/ui/chatty-dialog-wrong-pw.ui:23 src/ui/chatty-dialog-new-chat.ui:36
+#: src/ui/chatty-settings-dialog.ui:28 src/ui/chatty-settings-dialog.ui:58
 #: src/ui/chatty-verification-page.ui:129
 #: src/ui/chatty-verification-page.ui:157
 msgid "_Cancel"
 msgstr "A_vbryt"
 
-#: src/ui/chatty-dialog-wrong-pw.ui:34
+#: src/ui/chatty-dialog-wrong-pw.ui:33
 msgid "_OK"
 msgstr "_OK"
 
-#: src/ui/chatty-dialog-wrong-pw.ui:48
+#: src/ui/chatty-dialog-wrong-pw.ui:47
 msgid "Please re-enter the Password."
 msgstr "Mata in lösenordet igen."
 
-#: src/ui/chatty-dialog-wrong-pw.ui:54 src/ui/chatty-pp-account-details.ui:129
-#: src/ui/chatty-settings-dialog.ui:648
+#: src/ui/chatty-dialog-wrong-pw.ui:53 src/ui/chatty-pp-account-details.ui:129
+#: src/ui/chatty-settings-dialog.ui:633
 msgid "Password"
 msgstr "Lösenord"
 
@@ -1175,43 +1172,43 @@ msgstr "Lösenord"
 msgid "New Group Chat"
 msgstr "Ny gruppchatt"
 
-#: src/ui/chatty-dialog-join-muc.ui:24
+#: src/ui/chatty-dialog-join-muc.ui:22
 msgid "Join Chat"
 msgstr "Gå in i chatt"
 
-#: src/ui/chatty-dialog-join-muc.ui:64 src/ui/chatty-dialog-new-chat.ui:193
+#: src/ui/chatty-dialog-join-muc.ui:62 src/ui/chatty-dialog-new-chat.ui:192
 msgid "Select chat account"
 msgstr "Välj chattkonto"
 
-#: src/ui/chatty-dialog-join-muc.ui:122
+#: src/ui/chatty-dialog-join-muc.ui:120
 msgid "Password (optional)"
 msgstr "Lösenord (valfritt)"
 
-#: src/ui/chatty-dialog-new-chat.ui:77
+#: src/ui/chatty-dialog-new-chat.ui:76
 msgid "Group Title"
 msgstr "Grupptitel"
 
-#: src/ui/chatty-dialog-new-chat.ui:119
+#: src/ui/chatty-dialog-new-chat.ui:118
 msgid "Add members from contacts…"
 msgstr "Lägg till medlemmar från kontakter…"
 
-#: src/ui/chatty-dialog-new-chat.ui:156
+#: src/ui/chatty-dialog-new-chat.ui:155
 msgid "Send To:"
 msgstr "Skicka till:"
 
-#: src/ui/chatty-dialog-new-chat.ui:216
+#: src/ui/chatty-dialog-new-chat.ui:215
 msgid "Contact ID"
 msgstr "Kontakt-ID"
 
-#: src/ui/chatty-dialog-new-chat.ui:226
+#: src/ui/chatty-dialog-new-chat.ui:225
 msgid "Name (optional)"
 msgstr "Namn (valfritt)"
 
-#: src/ui/chatty-dialog-new-chat.ui:263
+#: src/ui/chatty-dialog-new-chat.ui:262
 msgid "Add to Contacts"
 msgstr "Lägg till i Kontakter"
 
-#: src/ui/chatty-info-dialog.ui:8 src/ui/chatty-main-view.ui:124
+#: src/ui/chatty-info-dialog.ui:8 src/ui/chatty-main-view.ui:126
 msgid "Chat Details"
 msgstr "Chattdetaljer"
 
@@ -1252,7 +1249,7 @@ msgstr "Kryptering"
 msgid "Encrypt Messages"
 msgstr "Kryptera meddelanden"
 
-#: src/ui/chatty-main-view.ui:12 src/ui/chatty-settings-dialog.ui:18
+#: src/ui/chatty-main-view.ui:12 src/ui/chatty-settings-dialog.ui:17
 #: src/ui/chatty-side-bar.ui:19
 msgid "Back"
 msgstr "Tillbaka"
@@ -1265,27 +1262,27 @@ msgstr "Ring"
 msgid "Close"
 msgstr "Stäng"
 
-#: src/ui/chatty-main-view.ui:135
+#: src/ui/chatty-main-view.ui:137
 msgid "Leave Chat"
 msgstr "Lämna chatt"
 
-#: src/ui/chatty-main-view.ui:143
+#: src/ui/chatty-main-view.ui:145
 msgid "Block Contact"
 msgstr "Blockera kontakt"
 
-#: src/ui/chatty-main-view.ui:151
+#: src/ui/chatty-main-view.ui:153
 msgid "Unblock Contact"
 msgstr "Avblockera kontakt"
 
-#: src/ui/chatty-main-view.ui:159
+#: src/ui/chatty-main-view.ui:161
 msgid "Archive chat"
 msgstr "Arkivera chatt"
 
-#: src/ui/chatty-main-view.ui:167
+#: src/ui/chatty-main-view.ui:169
 msgid "Unarchive chat"
 msgstr "Återställ chatt från arkiv"
 
-#: src/ui/chatty-main-view.ui:175
+#: src/ui/chatty-main-view.ui:177
 msgid "Delete Chat"
 msgstr "Ta bort chatt"
 
@@ -1378,138 +1375,138 @@ msgstr "Enhets-ID"
 msgid "Account ID"
 msgstr "Konto-ID"
 
-#: src/ui/chatty-pp-account-details.ui:81
-msgid "Protocol"
-msgstr "Protokoll"
-
 #: src/ui/chatty-pp-account-details.ui:168
 msgid "Own Fingerprint"
 msgstr "Eget fingeravtryck"
 
-#: src/ui/chatty-settings-dialog.ui:39
-msgid "_Add"
-msgstr "_Lägg till"
-
-#: src/ui/chatty-settings-dialog.ui:52
+#: src/ui/chatty-settings-dialog.ui:38
 msgid "_Save"
 msgstr "_Spara"
 
-#: src/ui/chatty-settings-dialog.ui:62
+#: src/ui/chatty-settings-dialog.ui:48
 msgid "_Apply"
 msgstr "_Verkställ"
 
-#: src/ui/chatty-settings-dialog.ui:123
+#: src/ui/chatty-settings-dialog.ui:109
 msgid "Accounts"
 msgstr "Konton"
 
-#: src/ui/chatty-settings-dialog.ui:140 src/ui/chatty-settings-dialog.ui:489
+#: src/ui/chatty-settings-dialog.ui:126 src/ui/chatty-settings-dialog.ui:474
 msgid "Privacy"
 msgstr "Sekretess"
 
-#: src/ui/chatty-settings-dialog.ui:145
+#: src/ui/chatty-settings-dialog.ui:131
 msgid "Message Receipts"
 msgstr "Meddelandekvitton"
 
-#: src/ui/chatty-settings-dialog.ui:146
+#: src/ui/chatty-settings-dialog.ui:132
 msgid "Confirm received messages"
 msgstr "Bekräfta mottagna meddelanden"
 
-#: src/ui/chatty-settings-dialog.ui:159
+#: src/ui/chatty-settings-dialog.ui:145
 msgid "Typing Notification"
 msgstr "Inmatningsavisering"
 
-#: src/ui/chatty-settings-dialog.ui:160
+#: src/ui/chatty-settings-dialog.ui:146
 msgid "Send typing messages"
 msgstr "Skicka att meddelanden skrivs"
 
-#: src/ui/chatty-settings-dialog.ui:174
+#: src/ui/chatty-settings-dialog.ui:160
 msgid "Strip Tracking IDs from URLs"
 msgstr "Ta bort spårnings-ID:n från URL:er"
 
-#: src/ui/chatty-settings-dialog.ui:188
+#: src/ui/chatty-settings-dialog.ui:174
 msgid "Render Attachments from Messages"
 msgstr "Rendera bilagor från meddelanden"
 
-#: src/ui/chatty-settings-dialog.ui:204
+#: src/ui/chatty-settings-dialog.ui:190
 msgid "Editor"
 msgstr "Redigerare"
 
-#: src/ui/chatty-settings-dialog.ui:208
+#: src/ui/chatty-settings-dialog.ui:194
 msgid "Graphical Emoticons"
 msgstr "Grafiska humörsymboler"
 
-#: src/ui/chatty-settings-dialog.ui:209
+#: src/ui/chatty-settings-dialog.ui:195
 msgid "if you type :) it will be changed to 😃"
 msgstr "om du skriver :) så kommer det att ändras till 😃"
 
 #. TRANSLATORS: Return is the Enter key.
-#: src/ui/chatty-settings-dialog.ui:222
+#: src/ui/chatty-settings-dialog.ui:208
 msgid "Send Messages with Return"
 msgstr "Skicka meddelanden med Retur"
 
-#: src/ui/chatty-settings-dialog.ui:236
+#: src/ui/chatty-settings-dialog.ui:222
 msgid "Protocol Settings"
 msgstr "Protokollinställningar"
 
-#: src/ui/chatty-settings-dialog.ui:297
+#: src/ui/chatty-settings-dialog.ui:283
 msgid "Request Delivery Reports"
 msgstr "Begär leveransrapporter"
 
-#: src/ui/chatty-settings-dialog.ui:310
+#: src/ui/chatty-settings-dialog.ui:296
 msgid "SMIL for MMS"
 msgstr "SMIL för MMS"
 
-#: src/ui/chatty-settings-dialog.ui:342
+#: src/ui/chatty-settings-dialog.ui:328
 msgid "MMS Carrier Settings"
 msgstr "MMS-operatörsinställningar"
 
-#: src/ui/chatty-settings-dialog.ui:346
+#: src/ui/chatty-settings-dialog.ui:332
 msgid "Phone Number"
 msgstr "Telefonnummer"
 
-#: src/ui/chatty-settings-dialog.ui:352
+#: src/ui/chatty-settings-dialog.ui:338
 msgid "Your modem's phone number"
 msgstr "Ditt modems telefonnummer"
 
-#: src/ui/chatty-settings-dialog.ui:360
+#: src/ui/chatty-settings-dialog.ui:346
 msgid "MMSC"
 msgstr "MMSC"
 
-#: src/ui/chatty-settings-dialog.ui:372
+#: src/ui/chatty-settings-dialog.ui:358
 msgid "APN"
 msgstr "APN"
 
-#: src/ui/chatty-settings-dialog.ui:384
+#: src/ui/chatty-settings-dialog.ui:370
 msgid "Proxy"
 msgstr "Proxy"
 
-#: src/ui/chatty-settings-dialog.ui:411
+#: src/ui/chatty-settings-dialog.ui:397
 msgid "You shall not be notified for the messages from blocked contacts"
 msgstr "Du kommer inte att meddelas om meddelanden från blockerade kontakter"
 
-#: src/ui/chatty-settings-dialog.ui:442
+#: src/ui/chatty-settings-dialog.ui:428
 msgid "Blocked chat list empty"
 msgstr "Blockerad chattlista tom"
 
-#: src/ui/chatty-settings-dialog.ui:495
+#: src/ui/chatty-settings-dialog.ui:457
+msgid "Enable Purple Accounts"
+msgstr "Aktivera Purple-konton"
+
+#: src/ui/chatty-settings-dialog.ui:480
 msgid "Message Archive Management"
 msgstr "Meddelandearkivhantering"
 
-#: src/ui/chatty-settings-dialog.ui:496
+#: src/ui/chatty-settings-dialog.ui:481
 msgid "Sync conversations with chat server"
 msgstr "Synka konversationer med chattserver"
 
-#: src/ui/chatty-settings-dialog.ui:510
+#: src/ui/chatty-settings-dialog.ui:495
 msgid "Message Carbon Copies"
 msgstr "Meddelandekopior"
 
-#: src/ui/chatty-settings-dialog.ui:674
+#: src/ui/chatty-settings-dialog.ui:659
 msgid "Home server"
 msgstr "Hemserver"
 
-#: src/ui/chatty-settings-dialog.ui:706
-msgid "Add _new account…"
-msgstr "Lägg till _nytt konto…"
+#: src/ui/chatty-settings-dialog.ui:677
+msgid "_Add"
+msgstr "_Lägg till"
+
+#: src/ui/chatty-settings-dialog.ui:705
+msgid "Add _New Account"
+msgstr "Lägg till _nytt konto"
 
 #: src/ui/chatty-side-bar.ui:27
 msgid "Add Chat"
@@ -1623,16 +1620,34 @@ msgid "Show Shortcuts"
 msgstr "Visa kortkommandon"
 
 #: src/users/chatty-contact.c:324
-msgid "Mobile: "
-msgstr "Mobil: "
+msgid "Mobile:"
+msgstr "Mobil:"
 
 #: src/users/chatty-contact.c:326
-msgid "Work: "
-msgstr "Arbete: "
+msgid "Work:"
+msgstr "Arbete:"
 
 #: src/users/chatty-contact.c:328
-msgid "Other: "
-msgstr "Annat: "
+msgid "Other:"
+msgstr "Annat:"
+
+#~ msgid "Open Message"
+#~ msgstr "Öppna meddelande"
+
+#~ msgid "Enable purple plugin"
+#~ msgstr "Aktivera purple-insticksmodul"
+
+#~ msgid "SMS and MMS Settings"
+#~ msgstr "SMS och MMS-inställningar"
+
+#~ msgid "Purple Settings"
+#~ msgstr "Purple-inställningar"
+
+#~ msgid "Select Protocol"
+#~ msgstr "Välj protokoll"
+
+#~ msgid "Add _new account…"
+#~ msgstr "Lägg till _nytt konto…"
 
 #~ msgid "Select File..."
 #~ msgstr "Välj fil…"
