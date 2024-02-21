@@ -67,3 +67,7 @@ ad_name
 adset_name
 campaign_name
 placement
+// From Reddit
+share_id
+ref
+ref_share
