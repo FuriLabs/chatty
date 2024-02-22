@@ -460,19 +460,18 @@ message_bar_text_buffer_clipboard_paste_done_cb (ChattyMessageBar *self)
 
     /* To not annoy the user, we only show the strip ID dialog the first time */
     if (!chatty_settings_get_strip_url_tracking_ids_dialog (settings)) {
-      GtkWidget *dialog;
+      AdwDialog *dialog;
       GtkWindow *window;
 
       window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
-      dialog = adw_message_dialog_new (window,
-                                       _("Alert"),
-                                       _("Found and automatically deleted tracking IDs from the pasted link."));
-      adw_message_dialog_add_response (ADW_MESSAGE_DIALOG (dialog), "close", _("Close"));
+      dialog = adw_alert_dialog_new (_("Alert"),
+                                     _("Found and automatically deleted tracking IDs from the pasted link."));
+      adw_alert_dialog_add_response (ADW_ALERT_DIALOG (dialog), "close", _("Close"));
 
-      adw_message_dialog_set_default_response (ADW_MESSAGE_DIALOG (dialog), "close");
-      adw_message_dialog_set_close_response (ADW_MESSAGE_DIALOG (dialog), "close");
+      adw_alert_dialog_set_default_response (ADW_ALERT_DIALOG (dialog), "close");
+      adw_alert_dialog_set_close_response (ADW_ALERT_DIALOG (dialog), "close");
 
-      gtk_window_present (GTK_WINDOW (dialog));
+      adw_dialog_present (dialog, GTK_WIDGET (window));
     }
     gtk_text_buffer_begin_user_action (self->message_buffer);
     gtk_text_buffer_delete (self->message_buffer, &start, &end);
