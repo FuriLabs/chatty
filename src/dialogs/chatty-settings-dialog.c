@@ -473,6 +473,8 @@ settings_delete_account_clicked_cb (ChattySettingsDialog *self)
   adw_message_dialog_set_close_response (ADW_MESSAGE_DIALOG (dialog), "cancel");
 
   g_signal_connect (dialog, "response", G_CALLBACK (settings_delete_account_response_cb), self);
+
+  gtk_window_present (GTK_WINDOW (dialog));
 }
 
 static void
