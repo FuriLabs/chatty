@@ -160,7 +160,7 @@ chatty_application_show_about (GSimpleAction *action,
   if (!self->main_window)
     return;
 
-  adw_show_about_window (gtk_application_get_active_window (user_data),
+  adw_show_about_dialog (GTK_WIDGET (gtk_application_get_active_window (user_data)),
                          "application-name", _("Chats"),
                          "application-icon", CHATTY_APP_ID,
                          "version", GIT_VERSION,
