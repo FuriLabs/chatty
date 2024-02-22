@@ -301,6 +301,8 @@ chatty_purple_account_request_authorization (PurpleAccount                      
 
   g_signal_connect (dialog, "response", G_CALLBACK (chatty_purple_account_request_authorization_cb), authorization);
 
+  gtk_window_present (GTK_WINDOW (dialog));
+
   return NULL;
 }
 
