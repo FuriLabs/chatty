@@ -55,7 +55,7 @@
  * which was written by Andrea Schäfer. */
 struct _ChattySettingsDialog
 {
-  AdwWindow      parent_instance;
+  AdwPreferencesDialog      parent_instance;
 
   GtkWidget      *main_pref_page;
   GtkWidget      *header_bar;
@@ -125,7 +125,7 @@ struct _ChattySettingsDialog
   guint    revealer_timeout_id;
 };
 
-G_DEFINE_TYPE (ChattySettingsDialog, chatty_settings_dialog, ADW_TYPE_WINDOW)
+G_DEFINE_TYPE (ChattySettingsDialog, chatty_settings_dialog, ADW_TYPE_PREFERENCES_DIALOG)
 
 static void
 settings_apply_style (GtkWidget  *widget,
@@ -653,15 +653,15 @@ settings_dialog_page_changed_cb (ChattySettingsDialog *self)
   name = gtk_stack_get_visible_child_name (GTK_STACK (self->main_stack));
 
   if (g_strcmp0 (name, "message-settings-view") == 0)
-    gtk_window_set_title (GTK_WINDOW (self), _("SMS/MMS"));
+    adw_dialog_set_title (ADW_DIALOG (self), _("SMS/MMS"));
   else if (g_strcmp0 (name, "purple-settings-view") == 0)
-    gtk_window_set_title (GTK_WINDOW (self), _("Purple"));
+    adw_dialog_set_title (ADW_DIALOG (self), _("Purple"));
   else if (g_strcmp0 (name, "add-account-view") == 0)
-    gtk_window_set_title (GTK_WINDOW (self), _("New Account"));
+    adw_dialog_set_title (ADW_DIALOG (self), _("New Account"));
   else if (g_strcmp0 (name, "blocked-list-view") == 0)
-    gtk_window_set_title (GTK_WINDOW (self), _("Blocked Contacts"));
+    adw_dialog_set_title (ADW_DIALOG (self), _("Blocked Contacts"));
   else
-    gtk_window_set_title (GTK_WINDOW (self), _("Preferences"));
+    adw_dialog_set_title (ADW_DIALOG (self), _("Preferences"));
 }
 
 static void
@@ -825,7 +825,7 @@ chatty_settings_window_hidden_cb (ChattySettingsDialog *self)
 {
   chatty_settings_reset_window_ui (self);
   adw_preferences_page_scroll_to_top (ADW_PREFERENCES_PAGE (self->main_pref_page));
-  gtk_widget_set_visible (GTK_WIDGET (self), FALSE);
+  adw_dialog_force_close (ADW_DIALOG (self));
 }
 
 
@@ -1297,7 +1297,5 @@ chatty_settings_dialog_new (GtkWindow *parent_window)
   g_return_val_if_fail (GTK_IS_WINDOW (parent_window), NULL);
 
   return g_object_new (CHATTY_TYPE_SETTINGS_DIALOG,
-                       "transient-for", parent_window,
-                       "modal", TRUE,
                        NULL);
 }

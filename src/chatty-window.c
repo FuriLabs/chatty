@@ -549,7 +549,8 @@ chatty_window_show_settings (GtkWidget  *widget,
 
   if (!self->settings_dialog)
     self->settings_dialog = chatty_settings_dialog_new (GTK_WINDOW (self));
-  gtk_window_present (GTK_WINDOW (self->settings_dialog));
+
+  adw_dialog_present (ADW_DIALOG (self->settings_dialog), GTK_WIDGET (self));
 }
 
 static void

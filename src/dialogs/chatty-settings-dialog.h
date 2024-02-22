@@ -28,7 +28,7 @@
 G_BEGIN_DECLS
 
 #define CHATTY_TYPE_SETTINGS_DIALOG (chatty_settings_dialog_get_type())
-G_DECLARE_FINAL_TYPE (ChattySettingsDialog, chatty_settings_dialog, CHATTY, SETTINGS_DIALOG, AdwWindow)
+G_DECLARE_FINAL_TYPE (ChattySettingsDialog, chatty_settings_dialog, CHATTY, SETTINGS_DIALOG, AdwPreferencesDialog)
 
 GtkWidget *chatty_settings_dialog_new (GtkWindow *parent_window);
 
