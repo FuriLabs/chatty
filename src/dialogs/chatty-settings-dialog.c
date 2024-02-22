@@ -190,20 +190,20 @@ settings_save_account_cb (GObject      *object,
 
   if (error) {
     if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
-      GtkWidget *dialog;
+      AdwDialog *dialog;
       GtkWindow *window;
 
       window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
-      dialog = adw_message_dialog_new (window, _("Error"), NULL);
-      adw_message_dialog_format_body (ADW_MESSAGE_DIALOG (dialog),
+      dialog = adw_alert_dialog_new (_("Error"), NULL);
+      adw_alert_dialog_format_body (ADW_ALERT_DIALOG (dialog),
                                       _("Error saving account: %s"),
                                        error->message);
-      adw_message_dialog_add_response (ADW_MESSAGE_DIALOG (dialog), "close", _("Close"));
+      adw_alert_dialog_add_response (ADW_ALERT_DIALOG (dialog), "close", _("Close"));
 
-      adw_message_dialog_set_default_response (ADW_MESSAGE_DIALOG (dialog), "close");
-      adw_message_dialog_set_close_response (ADW_MESSAGE_DIALOG (dialog), "close");
+      adw_alert_dialog_set_default_response (ADW_ALERT_DIALOG (dialog), "close");
+      adw_alert_dialog_set_close_response (ADW_ALERT_DIALOG (dialog), "close");
 
-      gtk_window_present (GTK_WINDOW (dialog));
+      adw_dialog_present (dialog, GTK_WIDGET (window));
     }
   } else {
     gtk_widget_set_visible (self->add_button, FALSE);
@@ -447,7 +447,7 @@ settings_delete_account_clicked_cb (ChattySettingsDialog *self)
 {
   const char *username;
   GtkWindow *window;
-  GtkWidget *dialog;
+  AdwDialog *dialog;
 
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
   window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
@@ -457,24 +457,24 @@ settings_delete_account_clicked_cb (ChattySettingsDialog *self)
   else
     username = chatty_item_get_username (CHATTY_ITEM (self->selected_account));
 
-  dialog = adw_message_dialog_new (window,  _("Delete Account"), NULL);
-  adw_message_dialog_format_body (ADW_MESSAGE_DIALOG (dialog),
+  dialog = adw_alert_dialog_new (_("Delete Account"), NULL);
+  adw_alert_dialog_format_body (ADW_ALERT_DIALOG (dialog),
                                   _("Delete account %s?"),
                                   username);
 
-  adw_message_dialog_add_responses (ADW_MESSAGE_DIALOG (dialog),
+  adw_alert_dialog_add_responses (ADW_ALERT_DIALOG (dialog),
                                     "cancel",  _("_Cancel"),
                                     "delete", _("Delete"),
                                     NULL);
 
-  adw_message_dialog_set_response_appearance (ADW_MESSAGE_DIALOG (dialog), "delete", ADW_RESPONSE_DESTRUCTIVE);
+  adw_alert_dialog_set_response_appearance (ADW_ALERT_DIALOG (dialog), "delete", ADW_RESPONSE_DESTRUCTIVE);
 
-  adw_message_dialog_set_default_response (ADW_MESSAGE_DIALOG (dialog), "cancel");
-  adw_message_dialog_set_close_response (ADW_MESSAGE_DIALOG (dialog), "cancel");
+  adw_alert_dialog_set_default_response (ADW_ALERT_DIALOG (dialog), "cancel");
+  adw_alert_dialog_set_close_response (ADW_ALERT_DIALOG (dialog), "cancel");
 
   g_signal_connect (dialog, "response", G_CALLBACK (settings_delete_account_response_cb), self);
 
-  gtk_window_present (GTK_WINDOW (dialog));
+  adw_dialog_present (dialog, GTK_WIDGET (window));
 }
 
 static void
