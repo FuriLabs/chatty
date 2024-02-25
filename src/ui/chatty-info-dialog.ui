@@ -113,7 +113,7 @@
                             <child>
                               <object class="GtkLabel">
                                 <property name="xalign">1</property>
-                                <property name="label" translatable="0">Contact ID</property>
+                                <property name="label" translatable="yes">Contact ID</property>
                               </object>
                             </child>
                             <child>
@@ -133,7 +133,7 @@
                             <child>
                               <object class="GtkLabel">
                                 <property name="xalign">1</property>
-                                <property name="label" translatable="0">Invite message</property>
+                                <property name="label" translatable="yes">Invite message</property>
                               </object>
                             </child>
                             <child>

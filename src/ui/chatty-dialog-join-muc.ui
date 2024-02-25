@@ -87,7 +87,7 @@
                             <child>
                               <object class="GtkLabel" id="label_group_chat_id">
                                 <property name="xalign">1</property>
-                                <property name="label" translatable="0">Room address</property>
+                                <property name="label" translatable="yes">Room address</property>
                                 <layout>
                                   <property name="column">0</property>
                                   <property name="row">0</property>
@@ -97,7 +97,7 @@
                             <child>
                               <object class="GtkLabel" id="label_group_chat_room_alias">
                                 <property name="xalign">1</property>
-                                <property name="label" translatable="0">Room alias (optional)</property>
+                                <property name="label" translatable="yes">Room alias (optional)</property>
                                 <layout>
                                   <property name="column">0</property>
                                   <property name="row">1</property>
@@ -107,7 +107,7 @@
                             <child>
                               <object class="GtkLabel" id="label_group_chat_user_alias">
                                 <property name="xalign">1</property>
-                                <property name="label" translatable="0">Nickname (optional)</property>
+                                <property name="label" translatable="yes">Nickname (optional)</property>
                                 <layout>
                                   <property name="column">0</property>
                                   <property name="row">2</property>

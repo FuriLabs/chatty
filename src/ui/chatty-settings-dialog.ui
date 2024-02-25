@@ -603,7 +603,7 @@
                                     <property name="activatable">0</property>
                                     <child type="prefix">
                                       <object class="GtkLabel">
-                                        <property name="label" translatable="0">User ID</property>
+                                        <property name="label" translatable="yes">User ID</property>
                                         <property name="xalign">1</property>
                                         <property name="halign">start</property>
                                       </object>
