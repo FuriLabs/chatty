@@ -803,10 +803,10 @@ chatty_mmsd_process_mms_message_attachments (GList **filesp)
       continue;
     }
 
-    /* If an MMS has a message, it tends to be the first text/plain attachment */
-    if (!content_set && g_str_has_prefix (chatty_file_get_mime_type (attachment), "text/plain")) {
+    if (g_str_has_prefix (chatty_file_get_mime_type (attachment), "text/plain")) {
       g_autoptr(GFile) text_file = NULL;
       g_autofree char *contents = NULL;
+      g_autofree char *stripped_contents = NULL;
       g_autoptr(GError) error = NULL;
       gsize length;
 
@@ -823,20 +823,53 @@ chatty_mmsd_process_mms_message_attachments (GList **filesp)
         break;
       }
 
-      if (contents && *contents)
+      /*
+       * iMessage decided to add a text file to MMS that says
+       * "Replied to a message:" plus the text file. It's annoying.
+       * If we encounter that text file, we should prepend it to
+       * the message.
+       */
+      stripped_contents = g_strdup (contents);
+      g_strstrip (stripped_contents);
+      if (g_str_has_prefix (stripped_contents, "Replied to a message:")) {
+        if (message_contents->str && *message_contents->str) {
+          g_string_prepend (message_contents, "\n");
+          g_string_prepend (message_contents, contents);
+        } else {
+          g_string_append (message_contents, contents);
+          g_string_append (message_contents, "\n");
+        }
+
+        /* We don't want the message content to be saved as a file */
+        *filesp = g_list_remove (*filesp, attachment);
+        if (chatty_file_get_url (attachment)) {
+          g_autoptr(GFile) file = NULL;
+
+          file = g_file_new_for_uri (chatty_file_get_url (attachment));
+          g_file_delete (file, NULL, &error);
+
+          if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND))
+            g_warning ("Deleting file failed: %s", error->message);
+        }
+      /*
+       * With the exception of the goofy iMessage stuff, if an MMS
+       * has a message, it tends to be the first text/plain attachment
+       */
+      } else if (contents && *contents && !content_set) {
         g_string_append (message_contents, contents);
-      content_set = TRUE;
+        content_set = TRUE;
 
-      /* We don't want the message content to be saved as a file */
-      *filesp = g_list_remove (*filesp, attachment);
-      if (chatty_file_get_url (attachment)) {
-        g_autoptr(GFile) file = NULL;
+        /* We don't want the message content to be saved as a file */
+        *filesp = g_list_remove (*filesp, attachment);
+        if (chatty_file_get_url (attachment)) {
+          g_autoptr(GFile) file = NULL;
 
-        file = g_file_new_for_uri (chatty_file_get_url (attachment));
-        g_file_delete (file, NULL, &error);
+          file = g_file_new_for_uri (chatty_file_get_url (attachment));
+          g_file_delete (file, NULL, &error);
 
-        if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND))
-          g_warning ("Deleting file failed: %s", error->message);
+          if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND))
+            g_warning ("Deleting file failed: %s", error->message);
+        }
       }
     }
   }
