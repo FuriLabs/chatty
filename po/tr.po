@@ -1,15 +1,15 @@
 # Turkish translation of chatty.
 #
-# Sabri Ünal <libreajans@gmail.com>, 2023, 2024.
+# Sabri Ünal <yakushabb@gmail.com>, 2023, 2024.
 # Emin Tufan Çetin <etcetin@gmail.com>, 2019, 2020, 2021, 2022, 2023, 2024.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-02-23 01:02+0000\n"
-"PO-Revision-Date: 2024-02-23 02:55+0300\n"
-"Last-Translator: Sabri Ünal <libreajans@gmail.com>\n"
+"POT-Creation-Date: 2024-02-27 05:48+0000\n"
+"PO-Revision-Date: 2024-03-02 01:52+0300\n"
+"Last-Translator: Sabri Ünal <yakushabb@gmail.com>\n"
 "Language-Team: Turkish <takim@gnome.org.tr>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
@@ -1197,6 +1197,18 @@ msgstr "Konuşmaya Katıl"
 msgid "Select chat account"
 msgstr "Konuşma hesabı seç"
 
+#: src/ui/chatty-dialog-join-muc.ui:90
+msgid "Room address"
+msgstr "Oda Adresi"
+
+#: src/ui/chatty-dialog-join-muc.ui:100
+msgid "Room alias (optional)"
+msgstr "Oda takma adı (isteğe bağlı)"
+
+#: src/ui/chatty-dialog-join-muc.ui:110
+msgid "Nickname (optional)"
+msgstr "Takma ad (isteğe bağlı)"
+
 #: src/ui/chatty-dialog-join-muc.ui:120
 msgid "Password (optional)"
 msgstr "Parola (isteğe bağlı)"
@@ -1213,7 +1225,7 @@ msgstr "Kişilerden üye ekle…"
 msgid "Send To:"
 msgstr "Şuna Gönder:"
 
-#: src/ui/chatty-dialog-new-chat.ui:215
+#: src/ui/chatty-dialog-new-chat.ui:215 src/ui/chatty-info-dialog.ui:116
 msgid "Contact ID"
 msgstr "Kişi Kimliği"
 
@@ -1236,6 +1248,10 @@ msgstr "Uygula"
 #: src/ui/chatty-info-dialog.ui:57
 msgid "Invite"
 msgstr "Davet Et"
+
+#: src/ui/chatty-info-dialog.ui:136
+msgid "Invite message"
+msgstr "Davet iletisi"
 
 #: src/ui/chatty-invite-page.ui:62
 msgid "_Accept"
@@ -1497,6 +1513,10 @@ msgstr "Konuşmaları konuşma sunucusuyla eşzamanlandır"
 msgid "Message Carbon Copies"
 msgstr "İleti Karbon Kopyaları"
 
+#: src/ui/chatty-settings-dialog.ui:606
+msgid "User ID"
+msgstr "Kullanıcı kimliği"
+
 #: src/ui/chatty-settings-dialog.ui:655
 msgid "Home server"
 msgstr "Ev sunucusu"
@@ -1592,12 +1612,12 @@ msgstr ""
 #: src/ui/chatty-verification-page.ui:424
 msgctxt "verb, which means 'both items are not the same'"
 msgid "_Don’t Match"
-msgstr "Eşleştir_me"
+msgstr "Eşleş_miyor"
 
 #: src/ui/chatty-verification-page.ui:434
 msgctxt "verb, which means 'both items are the same'"
 msgid "_Match"
-msgstr "_Eşleştir"
+msgstr "_Eşleşiyor"
 
 #: src/ui/help-overlay.ui:14
 msgctxt "shortcut window"
@@ -1630,19 +1650,3 @@ msgstr "İş:"
 #: src/users/chatty-contact.c:328
 msgid "Other:"
 msgstr "Diğer:"
-
-#, c-format
-#~ msgid "%s"
-#~ msgstr "%s"
-
-#~ msgid "Reject"
-#~ msgstr "Reddet"
-
-#~ msgid "Accept"
-#~ msgstr "Kabul Et"
-
-#~ msgid "Continue"
-#~ msgstr "Sürdür"
-
-#~ msgid "OK"
-#~ msgstr "Tamam"
