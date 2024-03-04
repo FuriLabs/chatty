@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-02-27 05:48+0000\n"
-"PO-Revision-Date: 2024-02-28 00:48+0100\n"
+"POT-Creation-Date: 2024-03-03 20:54+0000\n"
+"PO-Revision-Date: 2024-03-04 14:38+0100\n"
 "Last-Translator: Daniel Rusek <mail@asciiwolf.com>\n"
 "Language-Team: Czech\n"
 "Language: cs\n"
@@ -94,10 +94,8 @@ msgid "Whether to Remove Tracking IDs from URLs Automatically"
 msgstr "Zda automaticky odebrat sledovací ID z adres URL"
 
 #: data/sm.puri.Chatty.gschema.xml:55
-#, fuzzy
-#| msgid "Strip Tracking IDs"
 msgid "Whether Strip Tracking IDs was shown"
-msgstr "Odstranit sledovací ID"
+msgstr "Zda bylo zobrazeno odstranění sledovacích ID"
 
 #: data/sm.puri.Chatty.gschema.xml:56
 msgid "Whether the Tracking IDs dialog has been shown"
@@ -1264,11 +1262,8 @@ msgid "Invite"
 msgstr "Pozvat"
 
 #: src/ui/chatty-info-dialog.ui:136
-#, fuzzy
-#| msgid "%i Message"
-#| msgid_plural "%i Messages"
 msgid "Invite message"
-msgstr "%i zpráva"
+msgstr "Zvací zpráva"
 
 #: src/ui/chatty-invite-page.ui:62
 msgid "_Accept"
@@ -1442,10 +1437,8 @@ msgid "Privacy"
 msgstr "Soukromí"
 
 #: src/ui/chatty-settings-dialog.ui:131
-#, fuzzy
-#| msgid "Message Receipts"
 msgid "Read Receipts"
-msgstr "Doručenky"
+msgstr "Potvrzení o přečtení"
 
 #: src/ui/chatty-settings-dialog.ui:144
 msgid "Typing Indicators"
