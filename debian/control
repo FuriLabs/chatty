@@ -33,6 +33,7 @@ Build-Depends:
  xauth,
 Standards-Version: 4.2.1
 Homepage: https://gitlab.gnome.org/World/Chatty
+Rules-Requires-Root: no
 
 Package: chatty
 Architecture: any
