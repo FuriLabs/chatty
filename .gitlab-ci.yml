@@ -6,6 +6,7 @@ include:
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
   IMAGE: debian:trixie
+  ALPINE_IMAGE: alpine:edge
 
 stages:
   - build
@@ -50,6 +51,47 @@ build-debian-gcc-trixie:
     variables:
       - $FP_ONLY == "1"
 
+build-alpine-edge:
+  image: ${ALPINE_IMAGE}
+  stage: build
+  before_script:
+    - apk -q add
+        build-base
+        glib-dev
+        dbus
+        dbus-x11
+        evolution-data-server-dev
+        evolution-dev
+        feedbackd-dev
+        folks-dev
+        gspell-dev
+        gnupg
+        gtk+3.0-dev
+        libadwaita-dev
+        libgee-dev
+        libphonenumber-dev
+        meson
+        modemmanager-dev
+        olm-dev
+        pidgin-dev
+        cyrus-sasl
+        purple-xmpp
+        purple-carbons
+        purple-lurch
+        purple-xmpp-http-upload
+        appstream-glib
+        desktop-file-utils
+        mesa-dri-gallium
+        xvfb-run
+  script:
+    # check for uninitialized g_autoptr, which cause segfaults in musl
+    - grep -n -e 'g_autoptr(\w*)\s*\w*;' -R . && exit 1
+    - meson setup -Dwerror=true _build
+    - meson compile -C _build
+  artifacts:
+    paths:
+      - _build/
+
 test:debian-gcc:
   stage: test
   image: ${IMAGE}
@@ -67,6 +109,50 @@ test:debian-gcc:
   except:
     variables:
       - $FP_ONLY == "1"
+
+test:alpine-edge:
+  stage: test
+  image: ${ALPINE_IMAGE}
+  dependencies:
+    - build-alpine-edge
+  before_script:
+    - apk -q add
+        build-base
+        glib-dev
+        dbus
+        dbus-x11
+        evolution-data-server-dev
+        evolution-dev
+        feedbackd-dev
+        folks-dev
+        gspell-dev
+        gnupg
+        gtk+3.0-dev
+        libadwaita-dev
+        libgee-dev
+        libphonenumber-dev
+        meson
+        modemmanager-dev
+        olm-dev
+        pidgin-dev
+        cyrus-sasl
+        purple-xmpp
+        purple-carbons
+        purple-lurch
+        purple-xmpp-http-upload
+        appstream-glib
+        desktop-file-utils
+        mesa-dri-gallium
+        xvfb-run
+  script:
+    # check for uninitialized g_autoptr, which cause segfaults in musl
+    - grep -n -e 'g_autoptr(\w*)\s*\w*;' -R . && exit 1
+    - meson setup -Dwerror=true _build
+    - meson compile -C _build
+    - xvfb-run meson test -C _build --print-errorlogs
+  artifacts:
+    paths:
+      - _build/
 
 asan-test:native-debian-trixie:
   stage: test
