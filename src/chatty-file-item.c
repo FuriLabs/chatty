@@ -230,7 +230,7 @@ chatty_file_item_new (ChattyMessage *message,
       gtk_image_set_from_icon_name (GTK_IMAGE (self->file_icon), "x-office-calendar-symbolic");
     else {
       g_autoptr(GIcon) new_file_icon = NULL;
-      new_file_icon = g_content_type_get_icon (file_mime_type);
+      new_file_icon = g_content_type_get_symbolic_icon (file_mime_type);
       gtk_image_set_from_gicon (GTK_IMAGE (self->file_icon), new_file_icon);
     }
   }
