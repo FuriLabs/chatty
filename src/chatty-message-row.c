@@ -372,11 +372,9 @@ static void
 message_row_add_files (ChattyMessageRow *self)
 {
   GList *files;
-  ChattySettings *settings;
 
   g_assert (CHATTY_IS_MESSAGE_ROW (self));
 
-  settings = chatty_settings_get_default ();
   files = chatty_message_get_files (self->message);
   gtk_widget_set_visible (self->files_box, files && files->data);
 
@@ -387,14 +385,7 @@ message_row_add_files (ChattyMessageRow *self)
     g_assert (CHATTY_IS_FILE (file->data));
     mime_type = chatty_file_get_mime_type (file->data);
 
-    if (!chatty_settings_get_render_attachments (settings)) {
-      child = chatty_file_item_new (self->message, file->data, mime_type);
-    } else if ((mime_type && g_str_has_prefix (mime_type, "image")) ||
-        chatty_message_get_msg_type (self->message) == CHATTY_MESSAGE_IMAGE) {
-      child = chatty_image_item_new (self->message, file->data);
-    } else {
-      child = chatty_file_item_new (self->message, file->data, mime_type);
-    }
+    child = chatty_file_item_new (self->message, file->data, mime_type);
 
     gtk_widget_set_visible (child, TRUE);
     gtk_box_append (GTK_BOX (self->files_box), child);

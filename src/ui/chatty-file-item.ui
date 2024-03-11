@@ -27,7 +27,7 @@
                   <class name="flat"/>
                 </style>
                 <child>
-                  <object class="GtkImage" id="file_icon">
+                  <object class="GtkImage" id="file_widget">
                     <property name="pixel-size">96</property>
                     <property name="icon-name">text-x-generic-symbolic</property>
                     <style>
@@ -39,7 +39,17 @@
             </property>
           </object>  <!-- ./GtkOverlay file_overlay -->
         </child>
-
+        <child>
+          <object class="GtkFrame" id="video_frame">
+            <property name="visible">false</property>
+            <child>
+              <object class="GtkVideo" id="video">
+                <property name="autoplay">false</property>
+                <property name="loop">false</property>
+              </object>
+            </child>
+          </object>
+        </child>
         <child>
           <object class="GtkLabel" id="file_title">
             <property name="visible">0</property>

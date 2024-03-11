@@ -18,6 +18,7 @@
 #include "chatty-progress-button.h"
 #include "chatty-message.h"
 #include "chatty-file-item.h"
+#include "chatty-settings.h"
 
 
 struct _ChattyFileItem
@@ -25,17 +26,20 @@ struct _ChattyFileItem
   AdwBin         parent_instance;
 
   GtkWidget     *file_overlay;
-  GtkWidget     *file_icon;
+  GtkWidget     *file_widget;
   GtkWidget     *progress_button;
   GtkWidget     *file_title;
+  GtkWidget     *video_frame;
+  GtkWidget     *video;
 
-  GtkGesture    *activate_gesture;
   ChattyMessage *message;
   ChattyFile    *file;
+  GdkPixbufAnimation     *pixbuf_animation;
+  GdkPixbufAnimationIter *animation_iter;
+  guint                   animation_id;
 };
 
 G_DEFINE_TYPE (ChattyFileItem, chatty_file_item, ADW_TYPE_BIN)
-
 
 static void
 file_item_get_stream_cb (GObject      *object,
@@ -54,16 +58,255 @@ file_item_get_stream_cb (GObject      *object,
     return;
 }
 
+static void
+image_item_paint (ChattyFileItem *self,
+                  GdkPixbuf      *pixbuf)
+{
+  if (pixbuf) {
+    gtk_widget_remove_css_class (self->file_widget, "dim-label");
+    gtk_image_set_from_gicon (GTK_IMAGE (self->file_widget), G_ICON (pixbuf));
+    gtk_image_set_pixel_size (GTK_IMAGE (self->file_widget), 220);
+  } else {
+    gtk_widget_add_css_class (self->file_widget, "dim-label");
+    gtk_image_set_from_icon_name (GTK_IMAGE (self->file_widget),
+                                  "image-x-generic-symbolic");
+    return;
+  }
+}
+
+static void
+image_item_get_stream_cb (GObject      *object,
+                          GAsyncResult *result,
+                          gpointer      user_data)
+{
+  g_autoptr(ChattyFileItem) self = user_data;
+  g_autoptr(GInputStream) stream = NULL;
+  g_autoptr(GdkPixbuf) pixbuf = NULL;
+  int scale_factor;
+
+  if (gtk_widget_in_destruction (GTK_WIDGET (self)))
+    return;
+
+  stream = chatty_file_get_stream_finish (self->file, result, NULL);
+
+  if (!stream)
+    return;
+
+  scale_factor = gtk_widget_get_scale_factor (GTK_WIDGET (self));
+  pixbuf = gdk_pixbuf_new_from_stream_at_scale (stream, 200 * scale_factor,
+                                                -1, TRUE, NULL, NULL);
+  image_item_paint (self, pixbuf);
+}
+
+static gboolean
+image_item_update_animation_cb (gpointer user_data)
+{
+  ChattyFileItem *self = user_data;
+  int timeout = 0;
+
+  if (gdk_pixbuf_animation_iter_advance (self->animation_iter, NULL)) {
+    GdkPixbuf *pixbuf;
+
+    pixbuf = gdk_pixbuf_animation_iter_get_pixbuf (self->animation_iter);
+    gtk_image_set_from_gicon (GTK_IMAGE (self->file_widget), G_ICON (pixbuf));
+    gtk_image_set_pixel_size (GTK_IMAGE (self->file_widget), 220);
+
+    timeout = gdk_pixbuf_animation_iter_get_delay_time (self->animation_iter);
+    if (timeout > 0)
+       self->animation_id = g_timeout_add (timeout,
+                                           image_item_update_animation_cb,
+                                           self);
+  }
+
+  if (timeout <= 0) {
+    g_clear_object (&self->animation_iter);
+    self->animation_id = 0;
+  }
+
+  return G_SOURCE_REMOVE;
+}
+
+static void
+update_file_widget_icon (ChattyFileItem *self,
+                         const char *file_mime_type)
+{
+  ChattyMsgType msg_type = CHATTY_MESSAGE_UNKNOWN;
+
+  if (file_mime_type && *file_mime_type) {
+    /* g_content_type_get_symbolic_icon () thinks vcards and vcalendars are text files */
+    if (strstr (file_mime_type, "vcard"))
+      gtk_image_set_from_icon_name (GTK_IMAGE (self->file_widget), "contact-new-symbolic");
+    else if (strstr (file_mime_type, "calendar"))
+      gtk_image_set_from_icon_name (GTK_IMAGE (self->file_widget), "x-office-calendar-symbolic");
+    else {
+      g_autoptr(GIcon) new_file_widget = NULL;
+      new_file_widget = g_content_type_get_symbolic_icon (file_mime_type);
+      gtk_image_set_from_gicon (GTK_IMAGE (self->file_widget), new_file_widget);
+    }
+  }
+
+  /*
+   * If we don't have a MIME type, try to guess the type baed on the message.
+   * This is useful for Matrix, were we may not know the MIME type until it
+   * is downloaded.
+   */
+  if (self->message && (!file_mime_type || !*file_mime_type))
+    msg_type = chatty_message_get_msg_type (self->message);
+
+  switch (msg_type)
+    {
+    case CHATTY_MESSAGE_IMAGE:
+      gtk_image_set_from_icon_name (GTK_IMAGE (self->file_widget), "image-x-generic-symbolic");
+      break;
+    case CHATTY_MESSAGE_VIDEO:
+      gtk_image_set_from_icon_name (GTK_IMAGE (self->file_widget), "video-x-generic-symbolic");
+      break;
+    case CHATTY_MESSAGE_AUDIO:
+      gtk_image_set_from_icon_name (GTK_IMAGE (self->file_widget), "audio-x-generic-symbolic");
+      break;
+    case CHATTY_MESSAGE_FILE:
+    case CHATTY_MESSAGE_UNKNOWN:
+    case CHATTY_MESSAGE_TEXT:
+    case CHATTY_MESSAGE_HTML:
+    case CHATTY_MESSAGE_HTML_ESCAPED:
+    case CHATTY_MESSAGE_MATRIX_HTML:
+    case CHATTY_MESSAGE_LOCATION:
+    case CHATTY_MESSAGE_MMS:
+    default:
+      break;
+    }
+}
+
 static gboolean
 item_set_file (gpointer user_data)
 {
   ChattyFileItem *self = user_data;
+  g_autoptr(GFile) file = NULL;
+  g_autoptr(GError) error = NULL;
+  g_autoptr(GFileInfo) file_info = NULL;
+  ChattySettings *settings;
+  g_autofree char *file_mime_type = NULL;
 
   /* It's possible that we get signals after dispose().
    * Fix warning in those cases
    */
   if (!self->file)
     return G_SOURCE_REMOVE;
+
+  if (chatty_message_get_cm_event (self->message))
+    file = g_file_new_build_filename (chatty_file_get_path (self->file), NULL);
+  else
+    file = g_file_new_build_filename (g_get_user_data_dir (), "chatty", chatty_file_get_path (self->file), NULL);
+
+  file_info = g_file_query_info (file,
+                                 G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
+                                 G_FILE_QUERY_INFO_NONE,
+                                 NULL,
+                                 &error);
+  if (error)
+    g_warning ("Cannot figure out file info: '%s'", error->message);
+
+  g_clear_error (&error);
+
+  /*
+   * Before you download a file from Matrix, you may not know what type of file
+   * it is yet. Now that we downloaded it, let's figure it out so render it
+   * and/or give it the right icon.
+   */
+  file_mime_type = g_strdup (chatty_file_get_mime_type (self->file));
+  if (!file_mime_type) {
+    if (g_file_info_get_content_type (file_info) == NULL) {
+      file_mime_type = g_strdup ("application/octet-stream");
+    } else {
+      file_mime_type = g_content_type_get_mime_type (g_file_info_get_content_type (file_info));
+      if (file_mime_type == NULL) {
+        if (g_file_info_get_content_type (file_info) != NULL)
+          file_mime_type = g_strdup (g_file_info_get_content_type (file_info));
+        else
+          file_mime_type = g_strdup ("application/octet-stream");
+      }
+    }
+    update_file_widget_icon (self, file_mime_type);
+  }
+
+  settings = chatty_settings_get_default ();
+  if (!chatty_settings_get_render_attachments (settings)) {
+    chatty_file_get_stream_async (self->file, NULL,
+                                  file_item_get_stream_cb,
+                                  g_object_ref (self));
+
+    return G_SOURCE_REMOVE;
+  }
+  if ((file_mime_type && g_str_has_prefix (file_mime_type, "image")) ||
+      chatty_message_get_msg_type (self->message) == CHATTY_MESSAGE_IMAGE) {
+    g_autofree char *path = NULL;
+
+    if (chatty_message_get_cm_event (self->message))
+      path = g_strdup (chatty_file_get_path (self->file));
+    else
+      path = g_build_path (G_DIR_SEPARATOR_S, g_get_user_data_dir (), "chatty", chatty_file_get_path (self->file), NULL);
+
+    self->pixbuf_animation = gdk_pixbuf_animation_new_from_file (path, &error);
+    if (!error && !gdk_pixbuf_animation_is_static_image (self->pixbuf_animation)) {
+      GdkPixbuf *pixbuf;
+      int timeout = 0;
+
+      gtk_widget_remove_css_class (self->file_widget, "dim-label");
+
+      self->animation_iter = gdk_pixbuf_animation_get_iter (self->pixbuf_animation, NULL);
+      pixbuf = gdk_pixbuf_animation_iter_get_pixbuf (self->animation_iter);
+      gtk_image_set_from_gicon (GTK_IMAGE (self->file_widget), G_ICON (pixbuf));
+      gtk_image_set_pixel_size (GTK_IMAGE (self->file_widget), 220);
+
+      timeout = gdk_pixbuf_animation_iter_get_delay_time (self->animation_iter);
+      if (timeout > 0)
+        self->animation_id = g_timeout_add (timeout,
+                                            image_item_update_animation_cb,
+                                            self);
+      /*
+       * chatty_file_get_stream_async () breaks the animation, so don't let
+       * it run
+       */
+      return G_SOURCE_REMOVE;
+
+    } else if (gdk_pixbuf_animation_is_static_image (self->pixbuf_animation)) {
+      g_clear_object (&self->pixbuf_animation);
+
+      chatty_file_get_stream_async (self->file, NULL,
+                                    image_item_get_stream_cb,
+                                    g_object_ref (self));
+
+      return G_SOURCE_REMOVE;
+    } else if (error)
+      g_warning ("Error getting animation from file: '%s'", error->message);
+  } else if ((file_mime_type && g_str_has_prefix (file_mime_type, "video")) ||
+             chatty_message_get_msg_type (self->message) == CHATTY_MESSAGE_VIDEO) {
+    /* If there is an error loading the file, don't show the video widget */
+    if (file_info) {
+      GtkMediaStream *media_stream;
+      const GError *media_error = NULL;
+
+      gtk_widget_set_visible (self->file_overlay, FALSE);
+      gtk_widget_set_visible (self->video_frame, TRUE);
+      gtk_widget_set_size_request (self->video, 220, 220);
+      gtk_video_set_file (GTK_VIDEO (self->video), file);
+
+      /*
+       * Since Chatty is mainly a mobile program, mute the video by default.
+       * Nobody likes "that guy" who blasts a video in a crowded space.
+       */
+      media_stream = gtk_video_get_media_stream (GTK_VIDEO (self->video));
+      if (media_stream) {
+        gtk_media_stream_set_muted (media_stream, TRUE);
+        media_error = gtk_media_stream_get_error (media_stream);
+        if (media_error) {
+          g_warning ("Error in Media Stream: '%s'", media_error->message);
+          gtk_widget_set_visible (self->file_overlay, TRUE);
+          gtk_widget_set_visible (self->video_frame, FALSE);
+        }
+      }
+    }
+  }
 
   chatty_file_get_stream_async (self->file, NULL,
                                 file_item_get_stream_cb,
@@ -159,9 +402,23 @@ static void
 chatty_file_item_dispose (GObject *object)
 {
   ChattyFileItem *self = (ChattyFileItem *)object;
+  GtkMediaStream *media_stream;
 
   g_clear_object (&self->message);
   g_clear_object (&self->file);
+  g_clear_object (&self->pixbuf_animation);
+  g_clear_object (&self->animation_iter);
+
+  if (self->animation_id != 0)
+    g_source_remove (self->animation_id);
+
+  /*
+   * For some reason, when the widget is destroyed, the media still plays.
+   * Let's stop it when we close out.
+   */
+  media_stream = gtk_video_get_media_stream (GTK_VIDEO (self->video));
+  if (media_stream)
+    gtk_media_stream_set_playing (media_stream, FALSE);
 
   G_OBJECT_CLASS (chatty_file_item_parent_class)->dispose (object);
 }
@@ -179,9 +436,11 @@ chatty_file_item_class_init (ChattyFileItemClass *klass)
                                                "ui/chatty-file-item.ui");
 
   gtk_widget_class_bind_template_child (widget_class, ChattyFileItem, file_overlay);
-  gtk_widget_class_bind_template_child (widget_class, ChattyFileItem, file_icon);
+  gtk_widget_class_bind_template_child (widget_class, ChattyFileItem, file_widget);
   gtk_widget_class_bind_template_child (widget_class, ChattyFileItem, progress_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyFileItem, file_title);
+  gtk_widget_class_bind_template_child (widget_class, ChattyFileItem, video_frame);
+  gtk_widget_class_bind_template_child (widget_class, ChattyFileItem, video);
 
   gtk_widget_class_bind_template_callback (widget_class, file_progress_button_action_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, file_item_button_clicked);
@@ -222,18 +481,7 @@ chatty_file_item_new (ChattyMessage *message,
   file_name = chatty_file_get_name (file);
   gtk_widget_set_visible (self->file_title, file_name && *file_name);
 
-  if (file_mime_type && *file_mime_type) {
-    /* gtk_image_set_from_gicon () thinks vcards and vcalendars are text files */
-    if (strstr (file_mime_type, "vcard"))
-      gtk_image_set_from_icon_name (GTK_IMAGE (self->file_icon), "x-office-address-book-symbolic");
-    else if (strstr (file_mime_type, "calendar"))
-      gtk_image_set_from_icon_name (GTK_IMAGE (self->file_icon), "x-office-calendar-symbolic");
-    else {
-      g_autoptr(GIcon) new_file_icon = NULL;
-      new_file_icon = g_content_type_get_symbolic_icon (file_mime_type);
-      gtk_image_set_from_gicon (GTK_IMAGE (self->file_icon), new_file_icon);
-    }
-  }
+  update_file_widget_icon (self, file_mime_type);
 
   if (file_name)
     gtk_label_set_text (GTK_LABEL (self->file_title), file_name);
