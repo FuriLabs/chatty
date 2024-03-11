@@ -128,18 +128,145 @@ image_item_update_animation_cb (gpointer user_data)
 }
 
 static void
+process_vcard (ChattyFileItem *self)
+{
+  g_autoptr(GFile) text_file = NULL;
+  g_autofree char *contents = NULL;
+  g_autoptr(GError) error = NULL;
+  g_auto(GStrv) lines = NULL;
+  gsize length;
+
+  gtk_label_set_text (GTK_LABEL (self->file_title), _("Contact"));
+
+  if (chatty_message_get_cm_event (self->message))
+    text_file = g_file_new_build_filename (chatty_file_get_path (self->file), NULL);
+  else
+    text_file = g_file_new_build_filename (g_get_user_data_dir (), "chatty", chatty_file_get_path (self->file), NULL);
+
+  g_file_load_contents (text_file,
+                        NULL,
+                        &contents,
+                        &length,
+                        NULL,
+                        &error);
+
+  if (error) {
+    g_warning ("error opening file: %s", error->message);
+    return;
+  }
+
+  lines = g_strsplit_set (contents, "\r\n", -1);
+  for (int i = 0; lines[i] != NULL; i++) {
+     if (g_str_has_prefix (lines[i], "FN:")) {
+       g_autofree char *contact = NULL;
+
+       contact = g_strdup_printf (_("Contact: %s"), lines[i] + 3);
+       gtk_label_set_text (GTK_LABEL (self->file_title), contact);
+       /*
+        * Formatted name ("FN:") is better formatted and required in later versions
+        * of vCals vs. Name ("N:"). Since we found it, we can be done searching.
+        */
+       break;
+     }
+     if (g_str_has_prefix (lines[i], "N:")) {
+       g_autofree char *contact = NULL;
+       g_auto(GStrv) tokens = NULL;
+       unsigned int token_length = 0;
+
+       tokens = g_strsplit_set (lines[i] + 2, ";", 5);
+       token_length = g_strv_length (tokens);
+       /* https://www.rfc-editor.org/rfc/rfc2426#section-3.1.2  This should be a length of 5, but let's not risk it*/
+       /* Translators: Order is: Family Name, Given Name, Additional/Middle Names, Honorific Prefixes, and Honorific Suffixes */
+       if (token_length == 5) {
+         if (*tokens[3])
+           contact = g_strdup_printf (_("Contact: %s %s %s %s"), tokens[3], tokens[1], tokens[0], tokens[4]);
+         else
+           contact = g_strdup_printf (_("Contact: %s %s %s"), tokens[1], tokens[0], tokens[4]);
+
+       } else if (token_length == 4) {
+         if (*tokens[3])
+           contact = g_strdup_printf (_("Contact: %s %s %s"), tokens[3], tokens[1], tokens[0]);
+         else
+           contact = g_strdup_printf (_("Contact: %s %s"), tokens[1], tokens[0]);
+
+       } else if (token_length == 3 || token_length == 2)
+         contact = g_strdup_printf (_("Contact: %s %s"), tokens[1], tokens[0]);
+       else
+         contact = g_strdup_printf (_("Contact: %s"), tokens[0]);
+
+       gtk_label_set_text (GTK_LABEL (self->file_title), contact);
+       /*
+        * Formatted name ("FN:") is better formatted and required in later versions
+        * of vCals vs. Name ("N:"). So if we find Name ("N:"), let's keep
+        * searching for formatted name.
+        */
+       continue;
+     }
+  }
+}
+
+static void
+process_vcal (ChattyFileItem *self)
+{
+  g_autoptr(GFile) text_file = NULL;
+  g_autofree char *contents = NULL;
+  g_autoptr(GError) error = NULL;
+  g_auto(GStrv) lines = NULL;
+  gsize length;
+
+  gtk_label_set_text (GTK_LABEL (self->file_title), _("Invite"));
+
+  if (chatty_message_get_cm_event (self->message))
+    text_file = g_file_new_build_filename (chatty_file_get_path (self->file), NULL);
+  else
+    text_file = g_file_new_build_filename (g_get_user_data_dir (), "chatty", chatty_file_get_path (self->file), NULL);
+
+  g_file_load_contents (text_file,
+                        NULL,
+                        &contents,
+                        &length,
+                        NULL,
+                        &error);
+
+  if (error) {
+    g_warning ("error opening file: %s", error->message);
+    return;
+  }
+
+  lines = g_strsplit_set (contents, "\r\n", -1);
+  for (int i = 0; lines[i] != NULL; i++) {
+     if (g_str_has_prefix (lines[i], "SUMMARY")) {
+       g_auto(GStrv) tokens = NULL;
+       unsigned int token_length = 0;
+
+       tokens = g_strsplit_set (lines[i] + 2, ":", 2);
+       token_length = g_strv_length (tokens);
+       /* https://www.rfc-editor.org/rfc/rfc5545#section-3.8.1.12  This should be a length of 2, but let's not risk it*/
+       if (token_length == 2) {
+         g_autofree char *calendar = NULL;
+         calendar = g_strdup_printf (_("Invite: %s"), tokens[1]);
+         gtk_label_set_text (GTK_LABEL (self->file_title), calendar);
+       }
+
+       break;
+     }
+  }
+}
+
+static void
 update_file_widget_icon (ChattyFileItem *self,
                          const char *file_mime_type)
 {
   ChattyMsgType msg_type = CHATTY_MESSAGE_UNKNOWN;
-
   if (file_mime_type && *file_mime_type) {
     /* g_content_type_get_symbolic_icon () thinks vcards and vcalendars are text files */
-    if (strstr (file_mime_type, "vcard"))
+    if (strstr (file_mime_type, "vcard")) {
       gtk_image_set_from_icon_name (GTK_IMAGE (self->file_widget), "contact-new-symbolic");
-    else if (strstr (file_mime_type, "calendar"))
+      process_vcard (self);
+    } else if (strstr (file_mime_type, "calendar")) {
       gtk_image_set_from_icon_name (GTK_IMAGE (self->file_widget), "x-office-calendar-symbolic");
-    else {
+      process_vcal (self);
+    } else {
       g_autoptr(GIcon) new_file_widget = NULL;
       new_file_widget = g_content_type_get_symbolic_icon (file_mime_type);
       gtk_image_set_from_gicon (GTK_IMAGE (self->file_widget), new_file_widget);
@@ -521,10 +648,10 @@ chatty_file_item_new (ChattyMessage *message,
   file_name = chatty_file_get_name (file);
   gtk_widget_set_visible (self->file_title, file_name && *file_name);
 
-  update_file_widget_icon (self, file_mime_type);
-
   if (file_name)
     gtk_label_set_text (GTK_LABEL (self->file_title), file_name);
+
+  update_file_widget_icon (self, file_mime_type);
 
   g_signal_connect_object (file, "status-changed",
                            G_CALLBACK (file_item_update_message),
