@@ -20,7 +20,6 @@
 #include "chatty-purple.h"
 #include "chatty-file.h"
 #include "chatty-file-item.h"
-#include "chatty-image-item.h"
 #include "chatty-clock.h"
 #include "chatty-message-row.h"
 #include "chatty-settings.h"
