@@ -8,8 +8,20 @@
     <property name="margin-end">9</property>
 
     <child>
-      <object class="GtkOverlay" id="overlay">
-        <property name="valign">end</property>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkOverlay" id="overlay">
+            <property name="valign">end</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label">
+            <property name="halign">start</property>
+            <property name="valign">end</property>
+            <property name="ellipsize">PANGO_ELLIPSIZE_END</property>
+          </object>
+        </child>
       </object>
     </child>
   </template>

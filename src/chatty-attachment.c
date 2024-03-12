@@ -23,6 +23,7 @@ struct _ChattyAttachment
   GtkBox       parent_instance;
 
   GtkWidget   *overlay;
+  GtkWidget   *label;
   GtkWidget   *remove_button;
 
   GFile       *file;
@@ -71,7 +72,9 @@ attachment_update_image (ChattyAttachment *self,
   g_assert (file);
 
   file_info = g_file_query_info (file,
+                                 G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE ","
                                  G_FILE_ATTRIBUTE_STANDARD_ICON ","
+                                 G_FILE_ATTRIBUTE_STANDARD_NAME ","
                                  G_FILE_ATTRIBUTE_THUMBNAIL_PATH,
                                  G_FILE_QUERY_INFO_NONE,
                                  NULL, &error);
@@ -91,16 +94,28 @@ attachment_update_image (ChattyAttachment *self,
     gtk_frame_set_child (GTK_FRAME (frame), image);
     gtk_overlay_set_child (GTK_OVERLAY (self->overlay), frame);
   } else {
-    GIcon *icon;
+    g_autofree char *file_mime_type = NULL;
 
     gtk_widget_set_margin_end (image, 6);
-    icon = (GIcon *)g_file_info_get_attribute_object (file_info, G_FILE_ATTRIBUTE_STANDARD_ICON);
-    gtk_image_set_from_gicon (GTK_IMAGE (image), icon);
-    image = gtk_image_new_from_gicon (icon);
+    file_mime_type = g_content_type_get_mime_type (g_file_info_get_content_type (file_info));
+
+    if (!file_mime_type)
+      gtk_image_set_from_icon_name (GTK_IMAGE (image), "text-x-generic-symbolic");
+    else if (strstr (file_mime_type, "vcard"))
+      gtk_image_set_from_icon_name (GTK_IMAGE (image), "contact-new-symbolic");
+    else if (strstr (file_mime_type, "calendar"))
+      gtk_image_set_from_icon_name (GTK_IMAGE (image), "x-office-calendar-symbolic");
+    else {
+      g_autoptr(GIcon) icon = NULL;
+
+      icon = g_content_type_get_symbolic_icon (file_mime_type);
+      gtk_image_set_from_gicon (GTK_IMAGE (image), icon);
+    }
     gtk_image_set_pixel_size (GTK_IMAGE (image), 96);
     gtk_overlay_set_child (GTK_OVERLAY (self->overlay), image);
   }
 
+  gtk_label_set_text (GTK_LABEL (self->label), g_file_info_get_name (file_info));
   gtk_overlay_add_overlay (GTK_OVERLAY (self->overlay), self->remove_button);
 }
 
@@ -155,6 +170,7 @@ chatty_attachment_class_init (ChattyAttachmentClass *klass)
                                                "ui/chatty-attachment.ui");
 
   gtk_widget_class_bind_template_child (widget_class, ChattyAttachment, overlay);
+  gtk_widget_class_bind_template_child (widget_class, ChattyAttachment, label);
   gtk_widget_class_bind_template_child (widget_class, ChattyAttachment, remove_button);
 
   gtk_widget_class_bind_template_callback (widget_class, attachment_remove_clicked_cb);
