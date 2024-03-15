@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-03-01 11:18+0000\n"
-"PO-Revision-Date: 2024-03-01 19:54+0330\n"
+"POT-Creation-Date: 2024-03-15 16:24+0000\n"
+"PO-Revision-Date: 2024-03-15 20:14+0330\n"
 "Last-Translator: Danial Behzadi <dani.behzi@ubuntu.com>\n"
 "Language-Team: Persian <fa@li.org>\n"
 "Language: fa\n"
@@ -175,10 +175,10 @@ msgid ""
 "Chats is a simple to use to messaging app for 1:1 communication and small "
 "groups supporting SMS, MMS, XMPP and Matrix."
 msgstr ""
-"گپ‌ها کارهٔ پیام‌رسانی آسانی برای ارتباطات یک به یک و گروه‌های کوچک با پشتیبانی "
-"از پیامک، پیام چندرسانه‌ای، XMPP و ماتریکس است."
+"گپ‌ها کارهٔ پیام‌رسانی آسانی برای ارتباطات یک به یک و گروه‌های کوچک با پشتیبانی از "
+"پیامک، پیام چندرسانه‌ای، XMPP و ماتریکس است."
 
-#: data/sm.puri.Chatty.metainfo.xml.in.in:16
+#: data/sm.puri.Chatty.metainfo.xml.in.in:23
 msgid "Chats message window"
 msgstr "پنجرهٔ پیام گپ‌ها"
 
@@ -368,6 +368,39 @@ msgstr "دیروز %OI:%OM %p"
 msgid "%Y-%m-%d"
 msgstr "%Oy/%Om/%Od"
 
+#: src/chatty-file-item.c:139
+msgid "Contact"
+msgstr "تماس"
+
+#: src/chatty-file-item.c:163 src/chatty-file-item.c:195
+#, c-format
+msgid "Contact: %s"
+msgstr "تماس: %s"
+
+#: src/chatty-file-item.c:182
+#, c-format
+msgid "Contact: %s %s %s %s"
+msgstr "تماس: %s %s %s %s"
+
+#: src/chatty-file-item.c:184 src/chatty-file-item.c:188
+#, c-format
+msgid "Contact: %s %s %s"
+msgstr "تماس: %s %s %s"
+
+#: src/chatty-file-item.c:190 src/chatty-file-item.c:193
+#, c-format
+msgid "Contact: %s %s"
+msgstr "تماس: %s %s"
+
+#: src/chatty-file-item.c:217 src/ui/chatty-info-dialog.ui:57
+msgid "Invite"
+msgstr "دعوت"
+
+#: src/chatty-file-item.c:247
+#, c-format
+msgid "Invite: %s"
+msgstr "دعوت: %s"
+
 #. TRANSLATORS: %s is the Device ID
 #: src/chatty-fp-row.c:130
 #, c-format
@@ -480,8 +513,7 @@ msgid "Matrix"
 msgstr "ماتریکس"
 
 #: src/chatty-side-bar.c:326 src/dialogs/chatty-new-chat-dialog.c:634
-#: src/dialogs/chatty-settings-dialog.c:656
-#: src/ui/chatty-settings-dialog.ui:228
+#: src/dialogs/chatty-settings-dialog.c:656 src/ui/chatty-settings-dialog.ui:228
 msgid "SMS/MMS"
 msgstr "پیام کوتاه یا چندرسانه‌ای"
 
@@ -511,8 +543,7 @@ msgid "User %s has added %s to the contacts"
 msgstr "کاربر %s، ‏%s را به آشنایان افزود"
 
 #: src/purple/chatty-purple.c:283 src/dialogs/chatty-settings-dialog.c:460
-#: src/ui/chatty-ma-account-details.ui:162
-#: src/ui/chatty-pp-account-details.ui:154
+#: src/ui/chatty-ma-account-details.ui:162 src/ui/chatty-pp-account-details.ui:154
 msgid "Delete Account"
 msgstr "حذف حساب"
 
@@ -526,11 +557,10 @@ msgstr "تصدیق %s؟"
 msgid "Add %s to contact list"
 msgstr "افزودن %s به سیاههٔ اشنایان"
 
-#: src/purple/chatty-purple.c:293 src/chatty-window.c:366
-#: src/chatty-window.c:464 src/dialogs/chatty-settings-dialog.c:466
-#: src/ui/chatty-dialog-wrong-pw.ui:23 src/ui/chatty-dialog-new-chat.ui:36
-#: src/ui/chatty-settings-dialog.ui:28 src/ui/chatty-settings-dialog.ui:58
-#: src/ui/chatty-verification-page.ui:129
+#: src/purple/chatty-purple.c:293 src/chatty-window.c:366 src/chatty-window.c:464
+#: src/dialogs/chatty-settings-dialog.c:466 src/ui/chatty-dialog-wrong-pw.ui:23
+#: src/ui/chatty-dialog-new-chat.ui:36 src/ui/chatty-settings-dialog.ui:28
+#: src/ui/chatty-settings-dialog.ui:58 src/ui/chatty-verification-page.ui:129
 #: src/ui/chatty-verification-page.ui:158
 msgid "_Cancel"
 msgstr "_لغو"
@@ -1025,8 +1055,7 @@ msgstr "حذف حساب %s؟"
 msgid "Restart Chatty to disable Purple"
 msgstr "آغاز دوبارهٔ چتی برای از کار انداختن پرپل"
 
-#: src/dialogs/chatty-settings-dialog.c:658
-#: src/ui/chatty-settings-dialog.ui:246
+#: src/dialogs/chatty-settings-dialog.c:658 src/ui/chatty-settings-dialog.ui:246
 msgid "Purple"
 msgstr "بنفش"
 
@@ -1034,8 +1063,7 @@ msgstr "بنفش"
 msgid "New Account"
 msgstr "حساب جدید"
 
-#: src/dialogs/chatty-settings-dialog.c:662
-#: src/ui/chatty-settings-dialog.ui:306
+#: src/dialogs/chatty-settings-dialog.c:662 src/ui/chatty-settings-dialog.ui:306
 msgid "Blocked Contacts"
 msgstr "آشنایان مسدود"
 
@@ -1043,8 +1071,8 @@ msgstr "آشنایان مسدود"
 msgid "Preferences"
 msgstr "ترجیحات"
 
-#: src/dialogs/chatty-settings-dialog.c:692
-#: src/ui/chatty-pp-account-details.ui:81 src/ui/chatty-settings-dialog.ui:218
+#: src/dialogs/chatty-settings-dialog.c:692 src/ui/chatty-pp-account-details.ui:81
+#: src/ui/chatty-settings-dialog.ui:218
 msgid "Protocol"
 msgstr "شیوه‌نامه"
 
@@ -1093,55 +1121,55 @@ msgstr[1] "پیوست‌ها بیش از حد بزرگند"
 #. TRANSLATORS: Timestamp for minute accuracy, e.g. “2020-08-11 15:27”.
 #. See https://developer.gnome.org/glib/stable/glib-GDateTime.html#g-date-time-format
 #.
-#: src/mm/chatty-mmsd.c:951
+#: src/mm/chatty-mmsd.c:984
 msgid "%Y-%m-%d %H∶%M"
 msgstr "%OH:%OM %Oy/%Om/%Od"
 
-#: src/mm/chatty-mmsd.c:1265
+#: src/mm/chatty-mmsd.c:1298
 #, c-format
 msgid "You received an MMS, but it expired on: %s"
 msgstr "پیامی چندرسانه‌ای گرفتید، ولی در %s منقضی شد"
 
-#: src/mm/chatty-mmsd.c:1268
+#: src/mm/chatty-mmsd.c:1301
 msgid "You received an empty MMS."
 msgstr "پیام چندرسانه‌ای خالی‌ای گرفتید."
 
-#: src/mm/chatty-mmsd.c:1749 src/mm/chatty-mmsd.c:1797
+#: src/mm/chatty-mmsd.c:1782 src/mm/chatty-mmsd.c:1830
 #, c-format
 msgid "Automatically Retrying for  %i MMS"
 msgid_plural "Automatically Retrying for  %i MMSes..."
 msgstr[0] "تلاش دوبارهٔ خودکار برای %Ii پیام چندرسانه‌ای…"
 msgstr[1] "تلاش دوبارهٔ خودکار برای %Ii پیام چندرسانه‌ای…"
 
-#: src/mm/chatty-mmsd.c:1754
+#: src/mm/chatty-mmsd.c:1787
 msgid "Temporary Error Sending MMS"
 msgstr "خطای موقّتی فرستادن پیام‌های چندرسانه‌ای"
 
-#: src/mm/chatty-mmsd.c:1802
+#: src/mm/chatty-mmsd.c:1835
 msgid "Temporary Error Receiving MMS"
 msgstr "خطای موقّتی گرفتن پیام‌های چندرسانه‌ای"
 
-#: src/mm/chatty-mmsd.c:2020
+#: src/mm/chatty-mmsd.c:2053
 msgid "MMSC is not configured"
 msgstr "مرکز پیام چندرسانه‌ای پیکربندی نشده"
 
-#: src/mm/chatty-mmsd.c:2023
+#: src/mm/chatty-mmsd.c:2056
 msgid "APN is not configured correctly"
 msgstr "نام نقطهٔ دسترسی به درستی پیکربندی نشده"
 
-#: src/mm/chatty-mmsd.c:2026
+#: src/mm/chatty-mmsd.c:2059
 msgid "Mobile Data is not configured"
 msgstr "دادهٔ همراه پیکربندی نشده"
 
-#: src/mm/chatty-mmsd.c:2029
+#: src/mm/chatty-mmsd.c:2062
 msgid "Mobile Data is off"
 msgstr "دادهٔ همراه خاموش است"
 
-#: src/mm/chatty-mmsd.c:2032
+#: src/mm/chatty-mmsd.c:2065
 msgid "Unknown Error"
 msgstr "خطای ناشناخته"
 
-#: src/mm/chatty-mmsd.c:2037
+#: src/mm/chatty-mmsd.c:2070
 #, c-format
 msgid "Chatty cannot process %i MMS"
 msgid_plural "Chatty cannot process %i MMSes..."
@@ -1158,7 +1186,7 @@ msgstr "خطای فرستادن پیامک به %s"
 msgid "Error Sending MMS to %s"
 msgstr "خطای فرستادن پیام چندرسانه‌ای به %s"
 
-#: src/ui/chatty-attachment.ui:20
+#: src/ui/chatty-attachment.ui:32
 msgid "Remove Attachment"
 msgstr "برداشتن چهرک"
 
@@ -1243,10 +1271,6 @@ msgstr "جزییات گپ"
 #: src/ui/chatty-info-dialog.ui:44
 msgid "Apply"
 msgstr "اعمال"
-
-#: src/ui/chatty-info-dialog.ui:57
-msgid "Invite"
-msgstr "دعوت"
 
 #: src/ui/chatty-info-dialog.ui:136
 msgid "Invite message"
@@ -1590,8 +1614,7 @@ msgid "C_ontinue"
 msgstr "_ادامه"
 
 #: src/ui/chatty-verification-page.ui:201
-msgid ""
-"Verify this user by confirming the following emoji appears on their screen"
+msgid "Verify this user by confirming the following emoji appears on their screen"
 msgstr "تأیید این کاربر با تأیید ظاهر شدن شکلک‌های زیر روی صفحه‌اش"
 
 #: src/ui/chatty-verification-page.ui:378
