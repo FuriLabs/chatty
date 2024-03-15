@@ -66,6 +66,7 @@ build-alpine-edge:
         folks-dev
         gspell-dev
         gnupg
+        gst-plugins-base-dev
         gtk+3.0-dev
         libadwaita-dev
         libgee-dev
@@ -127,6 +128,7 @@ test:alpine-edge:
         folks-dev
         gspell-dev
         gnupg
+        gst-plugins-base-dev
         gtk+3.0-dev
         libadwaita-dev
         libgee-dev

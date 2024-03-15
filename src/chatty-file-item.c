@@ -11,6 +11,7 @@
 #define G_LOG_DOMAIN "chatty-file-item"
 
 #include <glib/gi18n.h>
+#include <gst/gst.h>
 
 #include "chatty-enums.h"
 #include "chatty-file.h"
@@ -186,6 +187,10 @@ item_set_file (gpointer user_data)
   g_autoptr(GFileInfo) file_info = NULL;
   ChattySettings *settings;
   g_autofree char *file_mime_type = NULL;
+  unsigned int gst_version_major = 0;
+  unsigned int gst_version_minor = 0;
+  unsigned int gst_version_micro = 0;
+  unsigned int gst_version_nano = 0;
 
   /* It's possible that we get signals after dispose().
    * Fix warning in those cases
@@ -237,6 +242,11 @@ item_set_file (gpointer user_data)
 
     return G_SOURCE_REMOVE;
   }
+  gst_version (&gst_version_major,
+               &gst_version_minor,
+               &gst_version_micro,
+               &gst_version_nano);
+
   if ((file_mime_type && g_str_has_prefix (file_mime_type, "image")) ||
       chatty_message_get_msg_type (self->message) == CHATTY_MESSAGE_IMAGE) {
     g_autofree char *path = NULL;
@@ -279,8 +289,38 @@ item_set_file (gpointer user_data)
       return G_SOURCE_REMOVE;
     } else if (error)
       g_warning ("Error getting animation from file: '%s'", error->message);
-  } else if ((file_mime_type && g_str_has_prefix (file_mime_type, "video")) ||
-             chatty_message_get_msg_type (self->message) == CHATTY_MESSAGE_VIDEO) {
+  /*
+   * For some reason, with gstreamer 1.22.10, some webm videos don't work with GtkVideo
+   * on the Librem5 nor Pinephone Pro (arm64), but work fine on my laptop (amd64). Per:
+   *
+   * https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/3384#note_2326261
+   *
+   * This is fixed in 1.24. I confirmed it works in Flatpak gtk4-widget-factory,
+   * but I couldn't confirm in Sid.
+   *
+   * Considering MMS does not "officially" support webm, and Chatty matrix
+   * doesn't show videos, the author of this comment is probably the only
+   * person who will actually notice a difference.
+   *
+   * TODO: Fix this when the fix is in gstreamer.
+   */
+  #if defined(__x86_64__) || defined(_M_X64)
+  } else if (
+             (file_mime_type && g_str_has_prefix (file_mime_type, "video")) ||
+             chatty_message_get_msg_type (self->message) == CHATTY_MESSAGE_VIDEO
+            ) {
+  #else
+  } else if (
+             (
+              ((gst_version_major >= 1) && (gst_version_minor >= 24)) ||
+               (file_mime_type && (strstr (file_mime_type, "webm") == NULL))
+             ) &&
+             (
+              (file_mime_type && g_str_has_prefix (file_mime_type, "video")) ||
+              chatty_message_get_msg_type (self->message) == CHATTY_MESSAGE_VIDEO
+             )
+            ) {
+  #endif
     /* If there is an error loading the file, don't show the video widget */
     if (file_info) {
       GtkMediaStream *media_stream;

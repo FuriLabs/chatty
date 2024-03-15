@@ -112,6 +112,7 @@ chatty_deps += [
   dependency('libebook-contacts-1.2'),
   dependency('libebook-1.2'),
   dependency('gsettings-desktop-schemas'),
+  dependency('gstreamer-1.0'),
   libadwaita_dep,
   libgtk_dep,
   libebook_dep,
