@@ -1,3 +1,139 @@
+chatty (0.8.2) unstable; urgency=medium
+
+  [ Chris Talbot ]
+  * chatty-mm-chat: actually set the unread count in chatty_mm_chat_set_unread_count ()
+  * d/control: recommend libgdk-pixbuf2.0-bin
+  * mm-chat: add API to get eds
+  * mm-account: don't make notification until eds is ready
+  * meson: depend on libadwaita 1.4
+  * main-view: remove view binding
+  * chatty-side-bar: expose show end title buttons API
+  * chatty-window: use AdwNavigationSplitView instead of AdwLeaflet
+  * message-bar: start message bar being sensitive
+  * window: Set main view to not have a chat when initialized
+  * chatty-new-chat-dialog: Indicate that new chat can be SMS or MMS
+  * notification: Make bodies translatable
+  * meson: Update to gtk 4.12
+  * Notification: don't set avatar as icon
+  * notification: Default to opening the chat
+  * Tracking IDs: Add more tracking IDs
+  * message-row: remove query is not needed in strip-utm
+  * notification: Add API for unread count
+  * chat: include API for unread_count
+  * notification: differentiate between an SMS and instant message for feedback
+  * notifiation: add API to withdraw a notification
+  * chat: add API to withdraw notification
+  * window: withdraw notification when a chat is opened
+  * application: withdraw notification if a chat is in focus
+  * message-bar: withdraw notification if a message is sent
+  * Fix problematic strings
+  * notification: make show_notification static
+  * main-view: update AdwNavPage
+  * side-bar: update AdwNavPage
+  * chat-list: style it after a navigation-sidebar
+  * dialog-join-muc: update libadwaita
+  * new-chat: update for libadwaita
+  * info-dialog: Update for libadwaita
+  * wrong-pw-dialog: update for libadwaita
+  * settings-dialog: update for libadwaita
+  * meson: do a better version check for gtk and libadwaita
+  * settings-dialog: change wording of settings
+  * utils: Move strip_utm and find_url to utils, add strip_utm_from_message
+  * settings: Add setting as to whether the tracking ID dialog was shown
+  * message-bar: strip out tracking IDs when pasting a link
+  * message-row: strip out tracking IDs when copying message
+  * list-row: remove tracking IDs from subtitle
+  * notification: strip tracking IDs from notification
+  * mm: add different ids for mm-notify, withdraw notifications when temp errors clear
+  * tracking_ids: add more tracking ids
+  * verification-page: port from GtkDialog to AdwWindow
+  * application: replace GtkAlertDialog with AdwMessageDialog
+  * manager: replace GtkAlertDialog with AdwMessageDialog
+  * window: replace GtkAlertDialog with AdwMessageDialog
+  * new-chat-dialog: replace GtkAlertDialog with AdwMessageDialog
+  * settings-dialog: replace GtkAlertDialog with AdwMessageDialog
+  * purple-notify: replace GtkAlertDialog with AdwMessageDialog
+  * chatty-purple: replace GtkAlertDialog with AdwMessageDialog
+  * utils: remove alert_dialog function
+  * purple: actually present message dialog
+  * settings-dialog: actually present message_dialog
+  * mmsd: account for iMessage's goofy addition
+  * file-item: use symbolic icon
+  * attachment: account for vcal and vcard, add label for filename
+  * file_item: render images and videos
+  * file-item: Add gstreamer check for webm
+  * file-item: process vcards and vcals
+  * Remove chatty-image-item
+  * attachment: Render spinner while thumbnail is loading, add filename right away
+  * file-item: Add download button for attachments
+  * Update Changelog and release 0.8.2
+
+  [ Vittorio Monti ]
+  * Update Italian translation
+  * Update Italian translation
+
+  [ Jürgen Benvenuti ]
+  * Update German translation
+  * Update German translation
+
+  [ Daniel Șerbănescu ]
+  * Update Romanian translation
+  * Update Romanian translation
+  * Update Romanian translation
+
+  [ Anders Jonsson ]
+  * Update Swedish translation
+  * Update Swedish translation
+  * Update Swedish translation
+
+  [ Yuri Chornoivan ]
+  * Update Ukrainian translation
+  * Update Ukrainian translation
+  * Update Ukrainian translation
+  * Update Ukrainian translation
+  * Update Ukrainian translation
+  * Update Ukrainian translation
+  * Update Ukrainian translation
+  * Update Ukrainian translation
+
+  [ Daniel Rusek ]
+  * Update Czech translation
+  * Update Czech translation
+  * Update Czech translation
+  * Update Czech translation
+  * Update Czech translation
+  * Update Czech translation
+
+  [ Artur S0 ]
+  * Update Russian translation
+  * Update Russian translation
+
+  [ Sabri Ünal ]
+  * Update Turkish translation
+  * Update Turkish translation
+  * purple: Mark two strings untranslatable
+  * Update Turkish translation
+  * ui: Mark missing strings translatable
+  * Update Turkish translation
+
+  [ Dexter Reed ]
+  * flatpak: Fix hardware acceleration
+
+  [ Yaron Shahrabani ]
+  * Update Hebrew translation
+
+  [ Danial Behzadi ]
+  * Add Persian translation
+  * Update Persian translation
+
+  [ Guido Günther ]
+  * packaging: Don't require root
+
+  [ Julian ]
+  * appdata: Improve appdata for AppStream 1.0
+
+ -- Chris Talbot <chris@talbothome.com>  Sun, 17 Mar 2024 19:26:22 -0600
+
 chatty (0.8.1) byzantium; urgency=medium
 
   [ Mohammed Sadiq ]
@@ -3656,7 +3792,7 @@ chatty (0.0.8) amber-phone; urgency=medium
   * Improved connection handling
   * Added spinner for connection status to each entry in the accounts list
   * Reworked connection error dialog
-  * Added OMEMO fingerprints and device IDs to the XMPP account info dialog and the chat details dialog 
+  * Added OMEMO fingerprints and device IDs to the XMPP account info dialog and the chat details dialog
   * Added phone number formatting according to E164
   * Added lazy-loading for the chat history
   * Added gtk_about_dialog
@@ -3671,7 +3807,7 @@ chatty (0.0.7) purple; urgency=medium
 
   * Added an application info dialog
   * Fixed a core dump issue which was caused by invoking another instance of Chatty
-  * Chatty won't start anymore if another libpurple client, like Pidgin, 
+  * Chatty won't start anymore if another libpurple client, like Pidgin,
     is running already
 
  -- Andrea Schaefer <andrea.schaefer@puri.sm>  Tue, 16 Apr 2019 10:12:34 +0200
@@ -3679,7 +3815,7 @@ chatty (0.0.7) purple; urgency=medium
 chatty (0.0.6) purple; urgency=medium
 
   * Set the spinner-widget for account-connection status active again
-  * The first 'Chats' list entry will be selected after leaving/deleting a chat and at application start 
+  * The first 'Chats' list entry will be selected after leaving/deleting a chat and at application start
   * Added HdyLeaflet notification handler for headerbar update
   * Fixed issue #97 'Unsolicited chats get ignored'
   * Improved css styling of message panel
@@ -3696,7 +3832,7 @@ chatty (0.0.5) purple; urgency=medium
   * Added 'Welcome' dialog
   * Fixed issue #87 'Duplicated Jabber-IDs'
   * Fixed issue #54 'New accounts should be enabled'
-  * Added bugfix: return to contacts list after new contact has been added 
+  * Added bugfix: return to contacts list after new contact has been added
 
  -- Andrea Schaefer <andrea.schaefer@puri.sm>  Mon, 04 Mar 2019 16:13:51 +0100
 
@@ -3713,8 +3849,8 @@ chatty (0.0.4) purple; urgency=medium
  -- Andrea Schaefer <andrea.schaefer@puri.sm>  Wed, 30 Jan 2019 19:15:11 +0100
 
 chatty (0.0.3) purple; urgency=medium
-	
-  * Fixed issues #73 #75 #77 
+
+  * Fixed issues #73 #75 #77
   * Added contacts list refresh handling
   * Added 'edit account' dialog
   * Replaced 'add account' view with dialog
