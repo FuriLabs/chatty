@@ -32,6 +32,8 @@ struct _ChattyFileItem
   GtkWidget     *file_title;
   GtkWidget     *video_frame;
   GtkWidget     *video;
+  GtkWidget     *download_append;
+  GtkWidget     *download_prepend;
 
   ChattyMessage *message;
   ChattyFile    *file;
@@ -66,7 +68,7 @@ image_item_paint (ChattyFileItem *self,
   if (pixbuf) {
     gtk_widget_remove_css_class (self->file_widget, "dim-label");
     gtk_image_set_from_gicon (GTK_IMAGE (self->file_widget), G_ICON (pixbuf));
-    gtk_image_set_pixel_size (GTK_IMAGE (self->file_widget), 220);
+    gtk_image_set_pixel_size (GTK_IMAGE (self->file_widget), 200);
   } else {
     gtk_widget_add_css_class (self->file_widget, "dim-label");
     gtk_image_set_from_icon_name (GTK_IMAGE (self->file_widget),
@@ -110,7 +112,7 @@ image_item_update_animation_cb (gpointer user_data)
 
     pixbuf = gdk_pixbuf_animation_iter_get_pixbuf (self->animation_iter);
     gtk_image_set_from_gicon (GTK_IMAGE (self->file_widget), G_ICON (pixbuf));
-    gtk_image_set_pixel_size (GTK_IMAGE (self->file_widget), 220);
+    gtk_image_set_pixel_size (GTK_IMAGE (self->file_widget), 200);
 
     timeout = gdk_pixbuf_animation_iter_get_delay_time (self->animation_iter);
     if (timeout > 0)
@@ -314,6 +316,7 @@ item_set_file (gpointer user_data)
   g_autoptr(GFileInfo) file_info = NULL;
   ChattySettings *settings;
   g_autofree char *file_mime_type = NULL;
+  ChattyMsgDirection direction;
   unsigned int gst_version_major = 0;
   unsigned int gst_version_minor = 0;
   unsigned int gst_version_micro = 0;
@@ -361,6 +364,14 @@ item_set_file (gpointer user_data)
     update_file_widget_icon (self, file_mime_type);
   }
 
+  direction = chatty_message_get_msg_direction (self->message);
+  if (direction == CHATTY_DIRECTION_IN)
+      gtk_widget_set_visible (self->download_append, TRUE);
+  else if (direction == CHATTY_DIRECTION_OUT)
+      gtk_widget_set_visible (self->download_prepend, TRUE);
+  else if (direction == CHATTY_DIRECTION_SYSTEM)
+      gtk_widget_set_visible (self->download_prepend, TRUE);
+
   settings = chatty_settings_get_default ();
   if (!chatty_settings_get_render_attachments (settings)) {
     chatty_file_get_stream_async (self->file, NULL,
@@ -393,7 +404,7 @@ item_set_file (gpointer user_data)
       self->animation_iter = gdk_pixbuf_animation_get_iter (self->pixbuf_animation, NULL);
       pixbuf = gdk_pixbuf_animation_iter_get_pixbuf (self->animation_iter);
       gtk_image_set_from_gicon (GTK_IMAGE (self->file_widget), G_ICON (pixbuf));
-      gtk_image_set_pixel_size (GTK_IMAGE (self->file_widget), 220);
+      gtk_image_set_pixel_size (GTK_IMAGE (self->file_widget), 200);
 
       timeout = gdk_pixbuf_animation_iter_get_delay_time (self->animation_iter);
       if (timeout > 0)
@@ -505,6 +516,75 @@ file_item_update_message (ChattyFileItem *self)
 }
 
 static void
+save_dialog_finished (GObject         *dialog,
+                      GAsyncResult    *response,
+                      gpointer        user_data)
+{
+  ChattyFileItem *self = CHATTY_FILE_ITEM (user_data);
+  g_autoptr(GError) error = NULL;
+  g_autoptr(GFile) save_filename = NULL;
+  g_autoptr(GFile) original_file = NULL;
+
+  save_filename = gtk_file_dialog_save_finish (GTK_FILE_DIALOG (dialog), response, &error);
+  g_clear_object (&dialog);
+
+  if (error != NULL) {
+    if (!g_error_matches (error, GTK_DIALOG_ERROR, GTK_DIALOG_ERROR_DISMISSED) &&
+        !g_error_matches (error, GTK_DIALOG_ERROR, GTK_DIALOG_ERROR_DISMISSED))
+      g_warning ("Error saving: %s", error->message);
+    return;
+  }
+
+  if (chatty_message_get_cm_event (self->message))
+    original_file = g_file_new_build_filename (chatty_file_get_path (self->file), NULL);
+  else
+    original_file = g_file_new_build_filename (g_get_user_data_dir (), "chatty", chatty_file_get_path (self->file), NULL);
+
+  if (g_strcmp0 (g_file_peek_path (original_file), g_file_peek_path (save_filename)) != 0) {
+    g_file_copy_async (original_file, save_filename, G_FILE_COPY_OVERWRITE, G_PRIORITY_DEFAULT, NULL, NULL, NULL, NULL, NULL);
+    g_debug ("Saving at %s", g_file_peek_path (save_filename));
+  }
+}
+
+static void
+download_button_clicked (ChattyFileItem *self)
+{
+  g_autoptr(GFile) file_to_save = NULL;
+  g_autoptr(GFile) home_folder = NULL;
+  g_autoptr(GError) error = NULL;
+  GtkFileDialog *dialog;
+  GFileInfo *file_info;
+  GtkWindow *window;
+
+  window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
+
+  dialog = gtk_file_dialog_new ();
+
+
+  if (chatty_message_get_cm_event (self->message))
+    file_to_save = g_file_new_build_filename (chatty_file_get_path (self->file), NULL);
+  else
+    file_to_save = g_file_new_build_filename (g_get_user_data_dir (), "chatty", chatty_file_get_path (self->file), NULL);
+
+  home_folder = g_file_new_build_filename (g_get_home_dir (), NULL);
+  gtk_file_dialog_set_initial_folder (dialog, home_folder);
+
+  file_info = g_file_query_info (file_to_save,
+                                 G_FILE_ATTRIBUTE_STANDARD_NAME,
+                                 G_FILE_QUERY_INFO_NONE,
+                                 NULL, &error);
+  if (error)
+    g_warning ("Error querying info: %s", error->message);
+  else
+    gtk_file_dialog_set_initial_name (dialog,  g_file_info_get_name (file_info));
+
+  gtk_file_dialog_set_modal (dialog, TRUE);
+  gtk_file_dialog_set_title (dialog, "Save File as....");
+
+  gtk_file_dialog_save (dialog, window, NULL, save_dialog_finished, self);
+}
+
+static void
 file_progress_button_action_clicked_cb (ChattyFileItem *self)
 {
   GtkWidget *view;
@@ -608,9 +688,12 @@ chatty_file_item_class_init (ChattyFileItemClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyFileItem, file_title);
   gtk_widget_class_bind_template_child (widget_class, ChattyFileItem, video_frame);
   gtk_widget_class_bind_template_child (widget_class, ChattyFileItem, video);
+  gtk_widget_class_bind_template_child (widget_class, ChattyFileItem, download_append);
+  gtk_widget_class_bind_template_child (widget_class, ChattyFileItem, download_prepend);
 
   gtk_widget_class_bind_template_callback (widget_class, file_progress_button_action_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, file_item_button_clicked);
+  gtk_widget_class_bind_template_callback (widget_class, download_button_clicked);
 
   g_type_ensure (CHATTY_TYPE_PROGRESS_BUTTON);
 }

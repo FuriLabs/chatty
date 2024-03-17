@@ -9,56 +9,79 @@
 
     <child>
       <object class="GtkBox">
-        <property name="orientation">vertical</property>
-
+        <property name="orientation">horizontal</property>
+        <property name="spacing">3</property>
         <child>
-          <object class="GtkOverlay" id="file_overlay">
-            <child type="overlay">
-              <object class="ChattyProgressButton" id="progress_button">
-                <signal name="action-clicked" handler="file_progress_button_action_clicked_cb" swapped="yes"/>
-              </object>
-            </child>
-            <property name="child">
-              <object class="GtkButton">
-                <property name="sensitive" bind-source="progress_button" bind-property="visible" bind-flags="sync-create|invert-boolean"/>
-                <property name="focus-on-click">0</property>
-                <signal name="clicked" handler="file_item_button_clicked" swapped="yes"/>
-                <style>
-                  <class name="flat"/>
-                </style>
-                <child>
-                  <object class="GtkImage" id="file_widget">
-                    <property name="pixel-size">96</property>
-                    <property name="icon-name">text-x-generic-symbolic</property>
-                    <style>
-                      <class name="dim-label"/>
-                    </style>
-                  </object>
-                </child>
-              </object>
-            </property>
-          </object>  <!-- ./GtkOverlay file_overlay -->
-        </child>
-        <child>
-          <object class="GtkFrame" id="video_frame">
+          <object class="GtkButton" id="download_prepend">
             <property name="visible">false</property>
-            <child>
-              <object class="GtkVideo" id="video">
-                <property name="autoplay">false</property>
-                <property name="loop">false</property>
-              </object>
-            </child>
+            <property name="valign">center</property>
+            <property name="icon-name">document-save</property>
+            <signal name="clicked" handler="download_button_clicked" swapped="yes"/>
           </object>
         </child>
         <child>
-          <object class="GtkLabel" id="file_title">
-            <property name="visible">0</property>
-            <property name="halign">start</property>
-            <property name="ellipsize">middle</property>
-            <property name="max-width-chars">27</property>
-            <style>
-              <class name="dim-label"/>
-            </style>
+          <object class="GtkBox">
+            <property name="orientation">vertical</property>
+
+            <child>
+              <object class="GtkOverlay" id="file_overlay">
+                <child type="overlay">
+                  <object class="ChattyProgressButton" id="progress_button">
+                    <signal name="action-clicked" handler="file_progress_button_action_clicked_cb" swapped="yes"/>
+                  </object>
+                </child>
+                <property name="child">
+                  <object class="GtkButton">
+                    <property name="sensitive" bind-source="progress_button" bind-property="visible" bind-flags="sync-create|invert-boolean"/>
+                    <property name="focus-on-click">0</property>
+                    <signal name="clicked" handler="file_item_button_clicked" swapped="yes"/>
+                    <style>
+                      <class name="flat"/>
+                    </style>
+                    <child>
+                      <object class="GtkImage" id="file_widget">
+                        <property name="pixel-size">96</property>
+                        <property name="icon-name">text-x-generic-symbolic</property>
+                        <style>
+                          <class name="dim-label"/>
+                        </style>
+                      </object>
+                    </child>
+                  </object>
+                </property>
+              </object>  <!-- ./GtkOverlay file_overlay -->
+            </child>
+            <child>
+              <object class="GtkFrame" id="video_frame">
+                <property name="visible">false</property>
+                <child>
+                  <object class="GtkVideo" id="video">
+                    <property name="autoplay">false</property>
+                    <property name="loop">false</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="file_title">
+                <property name="visible">0</property>
+                <property name="halign">start</property>
+                <property name="ellipsize">middle</property>
+                <property name="max-width-chars">27</property>
+                <style>
+                  <class name="dim-label"/>
+                </style>
+              </object>
+            </child>
+
+          </object>  <!-- ./GtkBox -->
+        </child>
+        <child>
+          <object class="GtkButton" id="download_append">
+            <property name="visible">false</property>
+            <property name="valign">center</property>
+            <property name="icon-name">document-save</property>
+            <signal name="clicked" handler="download_button_clicked" swapped="yes"/>
           </object>
         </child>
 
