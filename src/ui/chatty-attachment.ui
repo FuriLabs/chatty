@@ -8,8 +8,36 @@
     <property name="margin-end">9</property>
 
     <child>
-      <object class="GtkOverlay" id="overlay">
-        <property name="valign">end</property>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkOverlay" id="overlay">
+            <property name="valign">end</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkFrame" id="spinner">
+            <property name="visible">false</property>
+            <child>
+              <object class="GtkSpinner">
+                <property name="halign">center</property>
+                <property name="valign">center</property>
+                <property name="margin-start">42</property>
+                <property name="margin-end">42</property>
+                <property name="margin-top">42</property>
+                <property name="margin-bottom">42</property>
+                <property name="spinning">true</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label">
+            <property name="halign">start</property>
+            <property name="valign">end</property>
+            <property name="ellipsize">PANGO_ELLIPSIZE_END</property>
+          </object>
+        </child>
       </object>
     </child>
   </template>

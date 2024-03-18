@@ -318,7 +318,7 @@ sms_send_cb (GObject      *object,
     chatty_history_add_message (self->history_db, chat, message);
     title = g_strdup_printf (_("Error Sending SMS to %s"),
                               chatty_item_get_name (CHATTY_ITEM (chat)));
-    chatty_mm_notify_message (title, "");
+    chatty_mm_notify_message (title, ERROR_MM_SMS_SEND_RECEIVE, "");
     g_debug ("Failed to send sms: %s", error->message);
     g_task_return_error (task, error);
     return;
@@ -369,7 +369,7 @@ sms_create_cb (GObject      *object,
     chatty_history_add_message (self->history_db, chat, message);
     title = g_strdup_printf (_("Error Sending SMS to %s"),
                               chatty_item_get_name (CHATTY_ITEM (chat)));
-    chatty_mm_notify_message (title, "");
+    chatty_mm_notify_message (title, ERROR_MM_SMS_SEND_RECEIVE, "");
 
     g_debug ("Failed creating sms: %s", error->message);
     g_task_return_error (task, error);
@@ -381,6 +381,45 @@ sms_create_cb (GObject      *object,
   CHATTY_TRACE_MSG ("Sending message");
   mm_sms_send (sms, cancellable, sms_send_cb,
                g_steal_pointer (&task));
+}
+
+static gboolean
+chatty_mm_account_is_eds_ready (ChattyEds *chatty_eds)
+{
+  gboolean eds_is_ready = FALSE;
+
+  if (!chatty_eds)
+    return FALSE;
+
+  g_object_get (chatty_eds, "is-ready", &eds_is_ready, NULL);
+  return eds_is_ready;
+}
+
+static void
+chatty_mm_account_notify_chat (gpointer user_data)
+{
+  ChattyChat *chat = user_data;
+
+  chatty_chat_show_notification (CHATTY_CHAT (chat),
+                                 chatty_item_get_name (CHATTY_ITEM (chat)));
+
+}
+
+static gboolean
+chatty_mm_account_check_eds (gpointer user_data)
+{
+  ChattyChat *chat = user_data;
+  ChattyEds  *chatty_eds;
+
+  chatty_eds = chatty_mm_chat_get_eds (CHATTY_MM_CHAT (chat));
+
+  if (chatty_mm_account_is_eds_ready (chatty_eds)) {
+    /* notify after some timeout so that contacts are loaded */
+    g_timeout_add_seconds_once (1, chatty_mm_account_notify_chat, chat);
+
+    return G_SOURCE_REMOVE;
+  }
+  return G_SOURCE_CONTINUE;
 }
 
 static gboolean
@@ -404,8 +443,12 @@ chatty_mm_account_append_message (ChattyMmAccount *self,
   chatty_chat_set_unread_count (chat, chatty_chat_get_unread_count (chat) + 1);
   g_signal_emit_by_name (chat, "changed", 0);
   if (chatty_message_get_msg_direction (message) == CHATTY_DIRECTION_IN) {
-    chatty_chat_show_notification (CHATTY_CHAT (chat),
-                                   chatty_item_get_name (CHATTY_ITEM (chat)));
+    /* If Chatty is loading, the contact provider might not be ready yet */
+    if (chatty_mm_account_is_eds_ready (self->chatty_eds))
+      chatty_chat_show_notification (CHATTY_CHAT (chat),
+                                     chatty_item_get_name (CHATTY_ITEM (chat)));
+    else
+     g_timeout_add_seconds (1, chatty_mm_account_check_eds, chat);
   }
 
   if (chatty_utils_get_item_position (G_LIST_MODEL (self->chat_list), chat, &position))
@@ -462,7 +505,7 @@ chatty_mm_account_recieve_mms_cb (ChattyMmAccount *self,
       g_autofree char *title = NULL;
       title = g_strdup_printf (_("Error Sending MMS to %s"),
                               chatty_item_get_name (CHATTY_ITEM (chat)));
-      chatty_mm_notify_message (title, "");
+      chatty_mm_notify_message (title, ERROR_MM_MMS_SEND_RECEIVE, "");
     }
 
     return TRUE;

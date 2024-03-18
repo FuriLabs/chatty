@@ -45,7 +45,8 @@
               <object class="GtkTextView" id="message_input">
                 <property name="hexpand">1</property>
                 <property name="valign">fill</property>
-                <property name="sensitive">0</property>
+                <!-- Needs to be sensitive for OSK to work in Phosh: https://gitlab.gnome.org/GNOME/libadwaita/-/issues/791 -->
+                <property name="sensitive">1</property>
                 <property name="wrap-mode">word-char</property>
                 <property name="buffer">message_buffer</property>
                 <property name="left-margin">6</property>
@@ -91,6 +92,7 @@
 
   <object class="GtkTextBuffer" id="message_buffer">
     <signal name="changed" handler="message_bar_input_changed_cb" after="yes" swapped="yes"/>
+    <signal name="paste-done" handler="message_bar_text_buffer_clipboard_paste_done_cb" swapped="yes"/>
   </object>
 
 </interface>

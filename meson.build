@@ -1,6 +1,6 @@
 project(
   'chatty', 'c', 'cpp',
-  version: '0.8.1',
+  version: '0.8.2',
   meson_version: '>= 0.56.0',
 )
 
@@ -11,12 +11,12 @@ cc = meson.get_compiler('c')
 top_inc = include_directories('.')
 src_inc = []
 
-gtk_version = '4.10'
+gtk_version = '4.12'
 gtk_version_arr = gtk_version.split('.')
 gtk_major = gtk_version_arr[0]
 gtk_minor = gtk_version_arr[1]
 
-adw_version = '1.2'
+adw_version = '1.4'
 adw_version_arr = adw_version.split('.')
 adw_major = adw_version_arr[0]
 adw_minor = adw_version_arr[1]

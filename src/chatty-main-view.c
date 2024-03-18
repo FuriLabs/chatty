@@ -29,7 +29,7 @@
 
 struct _ChattyMainView
 {
-  GtkBox        parent_instance;
+  AdwNavigationPage        parent_instance;
 
   GtkWidget    *header_bar;
   GtkWidget    *avatar;
@@ -54,6 +54,7 @@ struct _ChattyMainView
   GtkWidget    *archive_button;
   GtkWidget    *unarchive_button;
   GtkWidget    *delete_button;
+  GtkWidget    *back_button;
 
   ChattyItem   *item;
 
@@ -61,7 +62,7 @@ struct _ChattyMainView
   gulong        content_handler;
 };
 
-G_DEFINE_TYPE (ChattyMainView, chatty_main_view, GTK_TYPE_BOX)
+G_DEFINE_TYPE (ChattyMainView, chatty_main_view, ADW_TYPE_NAVIGATION_PAGE)
 
 static void
 header_bar_update_item_state_button (ChattyMainView *self,
@@ -190,6 +191,7 @@ chatty_main_view_class_init (ChattyMainViewClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyMainView, archive_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyMainView, unarchive_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyMainView, delete_button);
+  gtk_widget_class_bind_template_child (widget_class, ChattyMainView, back_button);
 
   gtk_widget_class_bind_template_callback (widget_class, main_view_notification_closed_cb);
 
@@ -295,15 +297,20 @@ chatty_main_view_set_item (ChattyMainView *self,
     if (state == CHATTY_CHAT_INVITED)
       chatty_invite_page_set_chat (CHATTY_INVITE_PAGE (self->invite_page), (ChattyChat *)item);
 
-    if (state == CHATTY_CHAT_INVITED)
+    if (state == CHATTY_CHAT_INVITED) {
       gtk_stack_set_visible_child (GTK_STACK (self->main_stack), self->invite_page);
-    else if (state == CHATTY_CHAT_VERIFICATION)
+      gtk_widget_set_visible (self->back_button, TRUE);
+    } else if (state == CHATTY_CHAT_VERIFICATION) {
       gtk_stack_set_visible_child (GTK_STACK (self->main_stack), self->verification_page);
-    else
+      gtk_widget_set_visible (self->back_button, TRUE);
+    } else {
       gtk_stack_set_visible_child (GTK_STACK (self->main_stack), self->chat_page);
+      gtk_widget_set_visible (self->back_button, TRUE);
+    }
   } else {
     gtk_revealer_set_reveal_child (GTK_REVEALER (self->notification_revealer), FALSE);
     gtk_stack_set_visible_child (GTK_STACK (self->main_stack), self->empty_page);
+    gtk_widget_set_visible (self->back_button, FALSE);
   }
 
   if (CHATTY_IS_CHAT (item) && chatty_chat_get_account (CHATTY_CHAT (item))) {

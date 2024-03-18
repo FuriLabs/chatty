@@ -1,165 +1,167 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="ChattyInfoDialog" parent="GtkDialog">
+  <template class="ChattyInfoDialog" parent="AdwWindow">
     <property name="modal">1</property>
     <property name="default-width">360</property>
     <property name="default-height">576</property>
     <property name="hide-on-close">1</property>
     <property name="title" translatable="yes">Chat Details</property>
-
-    <child type="titlebar">
-      <object class="GtkHeaderBar" id="header_bar">
-        <property name="show-title-buttons" bind-source="invite_button" bind-property="visible" bind-flags="invert-boolean|sync-create"/>
-
-        <!-- New Invite button -->
-        <child type="end">
-          <object class="GtkButton" id="new_invite_button">
-            <property name="icon_name">contact-new-symbolic</property>
-            <signal name="clicked" handler="info_dialog_new_invite_clicked_cb" swapped="yes"/>
-          </object>
-        </child>
-
-        <!-- Cancel button -->
-        <child>
-          <object class="GtkButton">
-            <property name="visible" bind-source="invite_button" bind-property="visible" bind-flags="sync-create"/>
-            <property name="label" translatable="yes">Cancel</property>
-            <signal name="clicked" handler="info_dialog_cancel_clicked_cb" swapped="yes"/>
-          </object>
-        </child>
-
-        <!--MMS Cancel button -->
-        <child>
-          <object class="GtkButton" id="cancel_button">
-            <property name="visible">0</property>
-            <property name="label" translatable="yes">Cancel</property>
-            <signal name="clicked" handler="cancel_button_clicked_cb" swapped="yes"/>
-          </object>
-        </child>
-
-        <!--MMS Apply button -->
-        <child type="end">
-          <object class="GtkButton" id="apply_button">
-            <property name="visible">0</property>
-            <property name="label" translatable="yes">Apply</property>
-            <signal name="clicked" handler="apply_button_clicked_cb" swapped="yes"/>
-            <style>
-             <class name="suggested-action"/>
-            </style>
-          </object>
-        </child>
-
-        <!-- Invite button -->
-        <child type="end">
-          <object class="GtkButton" id="invite_button">
-            <property name="visible">0</property>
-            <property name="sensitive">0</property>
-            <property name="label" translatable="yes">Invite</property>
-            <signal name="clicked" handler="info_dialog_invite_clicked_cb" swapped="yes"/>
-            <style>
-             <class name="suggested-action"/>
-            </style>
-          </object>
-        </child>
-
-      </object>
-    </child>
-
     <child>
-      <object class="GtkBox">
-        <property name="hexpand">1</property>
-        <property name="vexpand">1</property>
-        <child>
-          <object class="GtkStack" id="main_stack">
-            <property name="transition-type">slide-left-right</property>
+      <object class="AdwToolbarView">
+        <child type="top">
+          <object class="AdwHeaderBar" id="header_bar">
 
-            <child>
-              <object class="GtkStack" id="chat_type_stack">
-                <child>
-                  <object class="ChattyMaChatInfo" id="ma_chat_info"/>
-                </child>
-                <child>
-                  <object class="ChattyMmChatInfo" id="mm_chat_info"/>
-                </child>
+            <!-- New Invite button -->
+            <child type="end">
+              <object class="GtkButton" id="new_invite_button">
+                <property name="icon_name">contact-new-symbolic</property>
+                <signal name="clicked" handler="info_dialog_new_invite_clicked_cb" swapped="yes"/>
               </object>
             </child>
 
+            <!-- Cancel button -->
             <child>
-              <object class="AdwPreferencesPage" id="invite_page">
-                <property name="hexpand">1</property>
-                <property name="vexpand">1</property>
-                <child>
-                  <object class="AdwPreferencesGroup">
-                    <child>
-                      <object class="GtkGrid">
-                        <property name="halign">center</property>
-                        <property name="valign">start</property>
-                        <property name="column-spacing">6</property>
-                        <property name="row-spacing">12</property>
-                        <property name="orientation">vertical</property>
-
-                        <child>
-                          <object class="GtkImage">
-                            <property name="margin-bottom">32</property>
-                            <property name="icon_name">avatar-default-symbolic</property>
-                            <property name="pixel-size">72</property>
-                            <layout>
-                              <property name="column-span">2</property>
-                            </layout>
-                          </object>
-                        </child>
-
-                        <!-- Contact ID -->
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="xalign">1</property>
-                            <property name="label" translatable="0">Contact ID</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkEntry" id="contact_id_entry">
-                            <property name="hexpand">1</property>
-                            <property name="vexpand">1</property>
-                            <property name="halign">start</property>
-                            <signal name="changed" handler="info_dialog_contact_id_changed_cb" swapped="yes"/>
-                            <layout>
-                              <property name="column">1</property>
-                              <property name="row">1</property>
-                            </layout>
-                          </object>
-                        </child>
-
-                        <!-- Invite message -->
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="xalign">1</property>
-                            <property name="label" translatable="0">Invite message</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkEntry" id="message_entry">
-                            <property name="hexpand">1</property>
-                            <property name="vexpand">1</property>
-                            <property name="halign">start</property>
-                            <layout>
-                              <property name="column">1</property>
-                              <property name="row">2</property>
-                            </layout>
-                          </object>
-                        </child>
-
-                      </object>
-                    </child>
-                  </object> <!-- ./AdwPreferencesGroup -->
-                </child>
+              <object class="GtkButton">
+                <property name="visible" bind-source="invite_button" bind-property="visible" bind-flags="sync-create"/>
+                <property name="label" translatable="yes">Cancel</property>
+                <signal name="clicked" handler="info_dialog_cancel_clicked_cb" swapped="yes"/>
               </object>
             </child>
 
-          </object> <!-- ./GtkStack -->
+            <!--MMS Cancel button -->
+            <child>
+              <object class="GtkButton" id="cancel_button">
+                <property name="visible">0</property>
+                <property name="label" translatable="yes">Cancel</property>
+                <signal name="clicked" handler="cancel_button_clicked_cb" swapped="yes"/>
+              </object>
+            </child>
+
+            <!--MMS Apply button -->
+            <child type="end">
+              <object class="GtkButton" id="apply_button">
+                <property name="visible">0</property>
+                <property name="label" translatable="yes">Apply</property>
+                <signal name="clicked" handler="apply_button_clicked_cb" swapped="yes"/>
+                <style>
+                 <class name="suggested-action"/>
+                </style>
+              </object>
+            </child>
+
+            <!-- Invite button -->
+            <child type="end">
+              <object class="GtkButton" id="invite_button">
+                <property name="visible">0</property>
+                <property name="sensitive">0</property>
+                <property name="label" translatable="yes">Invite</property>
+                <signal name="clicked" handler="info_dialog_invite_clicked_cb" swapped="yes"/>
+                <style>
+                 <class name="suggested-action"/>
+                </style>
+              </object>
+            </child>
+
+          </object>
         </child>
+
+        <property name="content">
+          <object class="GtkBox">
+            <property name="hexpand">1</property>
+            <property name="vexpand">1</property>
+            <child>
+              <object class="GtkStack" id="main_stack">
+                <property name="transition-type">slide-left-right</property>
+
+                <child>
+                  <object class="GtkStack" id="chat_type_stack">
+                    <child>
+                      <object class="ChattyMaChatInfo" id="ma_chat_info"/>
+                    </child>
+                    <child>
+                      <object class="ChattyMmChatInfo" id="mm_chat_info"/>
+                    </child>
+                  </object>
+                </child>
+
+                <child>
+                  <object class="AdwPreferencesPage" id="invite_page">
+                    <property name="hexpand">1</property>
+                    <property name="vexpand">1</property>
+                    <child>
+                      <object class="AdwPreferencesGroup">
+                        <child>
+                          <object class="GtkGrid">
+                            <property name="halign">center</property>
+                            <property name="valign">start</property>
+                            <property name="column-spacing">6</property>
+                            <property name="row-spacing">12</property>
+                            <property name="orientation">vertical</property>
+
+                            <child>
+                              <object class="GtkImage">
+                                <property name="margin-bottom">32</property>
+                                <property name="icon_name">avatar-default-symbolic</property>
+                                <property name="pixel-size">72</property>
+                                <layout>
+                                  <property name="column-span">2</property>
+                                </layout>
+                              </object>
+                            </child>
+
+                            <!-- Contact ID -->
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="xalign">1</property>
+                                <property name="label" translatable="yes">Contact ID</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkEntry" id="contact_id_entry">
+                                <property name="hexpand">1</property>
+                                <property name="vexpand">1</property>
+                                <property name="halign">start</property>
+                                <signal name="changed" handler="info_dialog_contact_id_changed_cb" swapped="yes"/>
+                                <layout>
+                                  <property name="column">1</property>
+                                  <property name="row">1</property>
+                                </layout>
+                              </object>
+                            </child>
+
+                            <!-- Invite message -->
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="xalign">1</property>
+                                <property name="label" translatable="yes">Invite message</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkEntry" id="message_entry">
+                                <property name="hexpand">1</property>
+                                <property name="vexpand">1</property>
+                                <property name="halign">start</property>
+                                <layout>
+                                  <property name="column">1</property>
+                                  <property name="row">2</property>
+                                </layout>
+                              </object>
+                            </child>
+
+                          </object>
+                        </child>
+                      </object> <!-- ./AdwPreferencesGroup -->
+                    </child>
+                  </object>
+                </child>
+
+              </object> <!-- ./GtkStack -->
+            </child>
+          </object>
+        </property>
+
       </object>
     </child>
-
   </template>
 
   <object class="GtkTextBuffer" id="topic_buffer"/>

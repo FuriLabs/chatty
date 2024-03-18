@@ -274,6 +274,8 @@ chatty_mm_chat_set_unread_count (ChattyChat *chat,
 
   if (chatty_item_get_state (CHATTY_ITEM (self)) == CHATTY_ITEM_BLOCKED)
     self->unread_count = 0;
+  else
+    self->unread_count = unread_count;
 
   /* If there is no users, the chat is being loaded from history,
    * and so we shouldn't update history again.
@@ -677,6 +679,14 @@ chatty_mm_chat_has_custom_name (ChattyMmChat *self)
   g_return_val_if_fail (CHATTY_IS_MM_CHAT (self), FALSE);
 
   return self->has_custom_name;
+}
+
+ChattyEds *
+chatty_mm_chat_get_eds (ChattyMmChat *self)
+{
+  g_return_val_if_fail (CHATTY_IS_MM_CHAT (self), NULL);
+
+  return self->chatty_eds;
 }
 
 void

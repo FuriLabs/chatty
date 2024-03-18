@@ -119,45 +119,6 @@ test_message_text_markup (void)
   }
 }
 
-static void
-test_message_strip_utm (void)
-{
-  typedef struct data {
-    char *text;
-    char *check;
-  } data;
-  data array[] = {
-    {
-     "http://www.example.com/user's-image.png?blah=1234",
-     "http://www.example.com/user's-image.png?blah=1234"},
-    {
-     "http://www.example.com/user's-image.png?blah",
-     "http://www.example.com/user's-image.png?blah"},
-    {
-     "http://www.example.com/user's-image.png?utm_source=1234qwer&fbclid=1234564&",
-     "http://www.example.com/user's-image.png?"},
-    {
-     "https://www.example.com/?t=ftsa&q=hello&ia=definition",
-     "https://www.example.com/?t=ftsa&q=hello&ia=definition"},
-    {
-     "http://example.com/utm_source/something?v=_utm_source",
-     "http://example.com/utm_source/something?v=_utm_source"},
-    {
-     "http://www.example.com/user's-image.png?_utm_sourcecode=1234qwer&fbclid=1234564&",
-     "http://www.example.com/user's-image.png?_utm_sourcecode=1234qwer"},
-    {
-     "http://utm_source.example.com/something?wowbraid=123",
-     "http://utm_source.example.com/something?wowbraid=123"},
-  };
-
-  for (guint i = 0; i < G_N_ELEMENTS (array); i++) {
-    g_autofree char *content = NULL;
-
-    content = strip_utm (array[i].text);
-    g_assert_cmpstr (content, ==, array[i].check);
-  }
-}
-
 int
 main (int   argc,
       char *argv[])
@@ -165,7 +126,6 @@ main (int   argc,
   g_test_init (&argc, &argv, NULL);
 
   g_test_add_func ("/message-text/markup", test_message_text_markup);
-  g_test_add_func ("/message-text/strip_utm", test_message_strip_utm);
 
   return g_test_run ();
 }

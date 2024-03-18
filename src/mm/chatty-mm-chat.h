@@ -34,6 +34,7 @@ ChattyMmChat     *chatty_mm_chat_new_with_uri           (ChattySmsUri   *uri,
                                                          ChattyProtocol  protocol,
                                                          gboolean        is_im);
 gboolean          chatty_mm_chat_has_custom_name        (ChattyMmChat   *self);
+ChattyEds        *chatty_mm_chat_get_eds                (ChattyMmChat   *self);
 void              chatty_mm_chat_set_eds                (ChattyMmChat   *self,
                                                          ChattyEds      *chatty_eds);
 void              chatty_mm_chat_append_message         (ChattyMmChat   *self,

@@ -23,7 +23,7 @@
 
 struct _ChattySideBar
 {
-  GtkBox             parent_instance;
+  AdwNavigationPage            parent_instance;
 
   GtkWidget         *header_bar;
   GtkWidget         *back_button;
@@ -52,7 +52,7 @@ struct _ChattySideBar
 };
 
 
-G_DEFINE_TYPE (ChattySideBar, chatty_side_bar, GTK_TYPE_BOX)
+G_DEFINE_TYPE (ChattySideBar, chatty_side_bar, ADW_TYPE_NAVIGATION_PAGE)
 
 enum {
   SELECTION_CHANGED,
@@ -60,6 +60,13 @@ enum {
 };
 
 static guint signals[N_SIGNALS];
+
+void
+chatty_side_bar_set_show_end_title_buttons (ChattySideBar *self,
+                                            gboolean       visible)
+{
+  adw_header_bar_set_show_end_title_buttons (ADW_HEADER_BAR (self->header_bar), visible);
+}
 
 static void
 side_bar_update_search_mode (ChattySideBar *self)

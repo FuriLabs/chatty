@@ -26,6 +26,7 @@
 #include "chatty-clock.h"
 #include "chatty-list-row.h"
 #include "chatty-contact-provider.h"
+#include "chatty-settings.h"
 
 struct _ChattyListRow
 {
@@ -222,6 +223,7 @@ chatty_list_row_update (ChattyListRow *self)
 
     gtk_widget_set_visible (self->subtitle, last_message && *last_message);
     if (last_message && *last_message) {
+      ChattySettings *settings;
       g_autofree char *message_stripped = NULL;
 
 #ifdef PURPLE_ENABLED
@@ -231,7 +233,16 @@ chatty_list_row_update (ChattyListRow *self)
 #endif
       g_strstrip (message_stripped);
 
-      gtk_label_set_label (GTK_LABEL (self->subtitle), message_stripped);
+      settings = chatty_settings_get_default ();
+
+      if (chatty_settings_get_strip_url_tracking_ids (settings)) {
+        g_autofree char *utm_stripped_message = NULL;
+
+        utm_stripped_message = chatty_utils_strip_utm_from_message (message_stripped);
+        gtk_label_set_label (GTK_LABEL (self->subtitle), utm_stripped_message);
+      } else
+        gtk_label_set_label (GTK_LABEL (self->subtitle), message_stripped);
+
     } else {
       GListModel *model;
       guint n_items;

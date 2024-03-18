@@ -14,14 +14,12 @@
 #endif
 
 #include <glib/gi18n.h>
-#include <ctype.h>
 
 #include "chatty-avatar.h"
 #include "chatty-enums.h"
 #include "chatty-purple.h"
 #include "chatty-file.h"
 #include "chatty-file-item.h"
-#include "chatty-image-item.h"
 #include "chatty-clock.h"
 #include "chatty-message-row.h"
 #include "chatty-settings.h"
@@ -59,186 +57,6 @@ struct _ChattyMessageRow
 
 G_DEFINE_TYPE (ChattyMessageRow, chatty_message_row, GTK_TYPE_LIST_BOX_ROW)
 
-#define URL_WWW "www"
-#define URL_HTTP "http"
-#define URL_HTTPS "https"
-#define URL_FILE "file"
-
-#define get_url_start(_start, _match, _type, _suffix, _out)             \
-  do {                                                                  \
-    char *_uri = _match - strlen (_type);                               \
-    size_t len = strlen (_type _suffix);                                \
-                                                                        \
-    if (*_out)                                                          \
-      break;                                                            \
-                                                                        \
-    if (_match - _start >= strlen (_type) &&                            \
-        g_ascii_strncasecmp (_uri, _type _suffix, len) == 0 &&          \
-        (isalnum (_uri[len]) || _uri[len] == '/'))                      \
-      *_out = match - strlen (_type);                                   \
-  } while (0)
-
-static char *
-find_url (const char  *buffer,
-          char       **end)
-{
-  char *match, *url = NULL;
-  const char *start;
-
-  start = buffer;
-
-  /*
-   * linkify http://,  https://, file://, and www.
-   */
-  while ((match = strpbrk (start, ":."))) {
-    get_url_start (start, match, URL_HTTP, "://", &url);
-    get_url_start (start, match, URL_HTTPS, "://", &url);
-    get_url_start (start, match, URL_FILE, "://", &url);
-    get_url_start (start, match, URL_WWW, ".", &url);
-
-    start = match + 1;
-
-    if (url && url > buffer &&
-        !isspace (url[-1]) && !ispunct (url[-1]))
-      url = NULL;
-
-    if (url)
-      break;
-  }
-
-  if (url) {
-    size_t url_end;
-
-    url_end = strcspn (url, " \n()[],\t\r");
-    if (url_end == strlen (url))
-      *end = url + url_end;
-    else {
-      char *ptr = url + url_end + 1;
-
-      while (ptr[-1] == '(') {
-        size_t count = 0;
-        size_t other_count = 0;
-
-        count = strcspn (ptr, ")");
-        other_count = strcspn (ptr, " \n([],\t\r");
-        if (count < strlen (ptr) && count < other_count)
-          ptr += count + 2;
-        else
-          break;
-      }
-
-      while (!isspace(ptr[-1]) && !isspace(ptr[0]) &&
-             ptr[-1] != '(' && ptr[-1] != ')') {
-        size_t count = 0;
-
-        count = strcspn (ptr, " \n()[],\t\r");
-        ptr += count + 1;
-        if (count == strlen (ptr - count - 1))
-          break;
-      }
-      *end = ptr - 1;
-    }
-  }
-
-  return url;
-}
-
-static char **
-load_tracking_ids (void)
-{
-  GBytes *resource_data;
-  char **lines;
-  g_autoptr(GError) error = NULL;
-  resource_data = g_resources_lookup_data ("/sm/puri/Chatty/tracking_ids/tracking_ids.txt",
-                                          G_RESOURCE_LOOKUP_FLAGS_NONE,
-                                          &error);
-  if (error) {
-    g_warning ("Failed to load resource %s", error->message);
-    return NULL;
-  }
-
-  lines = g_strsplit_set (g_bytes_get_data (resource_data, NULL), "\r\n", 0);
-
-  g_bytes_unref(resource_data);
-
-  return lines;
-}
-
-/*
- * https://datatracker.ietf.org/doc/html/rfc1738#section-3.3
- * An URL takes the form: http://<host>:<port>/<path>?<searchpart>
- *
- */
-static char *
-strip_utm (const char *url_to_parse)
-{
-  g_autoptr(GError) error = NULL;
-  GUri *url = NULL;
-  GString *str = NULL;
-  char *stripped_url, *unowned_attr, *unowned_value;
-  GUriParamsIter iter;
-  char **tracking_ids = NULL;
-
-  if (!url_to_parse || !strstr (url_to_parse, "?"))
-    return g_strdup (url_to_parse);
-
-  url = g_uri_parse (url_to_parse, G_URI_FLAGS_NONE, NULL);
-  if (!url)
-    return g_strdup (url_to_parse);
-
-  tracking_ids = load_tracking_ids ();
-  if (!tracking_ids)
-    return g_strdup (url_to_parse);
-
-  str = g_string_new (NULL);
-  g_uri_params_iter_init (&iter, g_uri_get_query (url), -1, "&", G_URI_PARAMS_NONE);
-  while (g_uri_params_iter_next (&iter, &unowned_attr, &unowned_value, &error)) {
-    g_autofree char *attr = g_steal_pointer (&unowned_attr);
-    g_autofree char *value = g_steal_pointer (&unowned_value);
-    gboolean tracking_id = FALSE;
-
-    for (unsigned int j = 0; tracking_ids[j] != NULL; j++) {
-       /* The g_resource has "//" as comments, ignore those */
-       if (g_str_has_prefix (tracking_ids[j], "//"))
-          continue;
-
-       if (g_strcmp0 ((char *) attr, tracking_ids[j]) == 0) {
-         tracking_id = TRUE;
-         break;
-       }
-    }
-
-    if (!tracking_id) {
-      str = g_string_append (str, attr);
-      str = g_string_append (str, "=");
-      str = g_string_append (str, value);
-      str = g_string_append (str, "&");
-    }
-
-  }
-  if (error)
-    str = g_string_append (str, g_uri_get_query (url));
-
-  /* Remove trailing "&" */
-  if (str->len > 1 && str->str[str->len - 1] == '&')
-    g_string_truncate (str, str->len - 1);
-
-  stripped_url = g_uri_join (G_URI_FLAGS_NONE,
-                             g_uri_get_scheme (url),
-                             g_uri_get_userinfo (url),
-                             g_uri_get_host (url),
-                             g_uri_get_port (url),
-                             g_uri_get_path (url),
-                             str->str,
-                             g_uri_get_fragment (url));
-
-  g_uri_unref (url);
-  g_string_free (str, TRUE);
-  g_strfreev (tracking_ids);
-
-  return stripped_url;
-}
-
 static char *
 text_item_linkify (const char *message)
 {
@@ -253,7 +71,7 @@ text_item_linkify (const char *message)
   link_str = g_string_sized_new (256);
   start = end = (char *)message;
 
-  while ((url = find_url (start, &end))) {
+  while ((url = chatty_utils_find_url (start, &end))) {
     ChattySettings *settings;
     g_autofree char *link = NULL;
     g_autofree char *escaped_link = NULL;
@@ -267,7 +85,7 @@ text_item_linkify (const char *message)
 
     link = g_strndup (url, end - url);
     if (chatty_settings_get_strip_url_tracking_ids (settings))
-      utm_stripped_link = strip_utm (link);
+      utm_stripped_link = chatty_utils_strip_utm_from_url (link);
     else
       utm_stripped_link = g_strdup (link);
 
@@ -436,10 +254,11 @@ chatty_message_row_update_footer (ChattyMessageRow *self)
 }
 
 static void
-chatty_message_row_call_copy_message_text (GtkWidget  *widget,
+chatty_message_row_copy_message_text (GtkWidget  *widget,
                                            const char *action_name,
                                            GVariant   *param)
 {
+  ChattySettings  *settings;
   ChattyMessageRow *self = CHATTY_MESSAGE_ROW (widget);
   GdkClipboard *clipboard;
   const char *text;
@@ -452,7 +271,15 @@ chatty_message_row_call_copy_message_text (GtkWidget  *widget,
     return;
 
   clipboard = gdk_display_get_clipboard (gdk_display_get_default ());
-  gdk_clipboard_set_text (clipboard, text);
+
+  settings = chatty_settings_get_default ();
+  if (chatty_settings_get_strip_url_tracking_ids (settings)) {
+    g_autofree char *stripped_message = NULL;
+
+    stripped_message = chatty_utils_strip_utm_from_message (text);
+    gdk_clipboard_set_text (clipboard, stripped_message);
+  } else
+    gdk_clipboard_set_text (clipboard, text);
 }
 
 static void
@@ -531,7 +358,7 @@ chatty_message_row_class_init (ChattyMessageRowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, message_body);
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, footer_label);
 
-  gtk_widget_class_install_action (widget_class, "win.copy-text", NULL, chatty_message_row_call_copy_message_text);
+  gtk_widget_class_install_action (widget_class, "win.copy-text", NULL, chatty_message_row_copy_message_text);
 }
 
 static void
@@ -544,11 +371,9 @@ static void
 message_row_add_files (ChattyMessageRow *self)
 {
   GList *files;
-  ChattySettings *settings;
 
   g_assert (CHATTY_IS_MESSAGE_ROW (self));
 
-  settings = chatty_settings_get_default ();
   files = chatty_message_get_files (self->message);
   gtk_widget_set_visible (self->files_box, files && files->data);
 
@@ -559,14 +384,7 @@ message_row_add_files (ChattyMessageRow *self)
     g_assert (CHATTY_IS_FILE (file->data));
     mime_type = chatty_file_get_mime_type (file->data);
 
-    if (!chatty_settings_get_render_attachments (settings)) {
-      child = chatty_file_item_new (self->message, file->data, mime_type);
-    } else if ((mime_type && g_str_has_prefix (mime_type, "image")) ||
-        chatty_message_get_msg_type (self->message) == CHATTY_MESSAGE_IMAGE) {
-      child = chatty_image_item_new (self->message, file->data);
-    } else {
-      child = chatty_file_item_new (self->message, file->data, mime_type);
-    }
+    child = chatty_file_item_new (self->message, file->data, mime_type);
 
     gtk_widget_set_visible (child, TRUE);
     gtk_box_append (GTK_BOX (self->files_box), child);

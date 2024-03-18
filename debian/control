@@ -15,6 +15,7 @@ Build-Depends:
  libebook-contacts1.2-dev,
  libgcrypt20-dev,
  libgnome-desktop-4-dev (>= 43),
+ libgstreamer1.0-dev,
  libjson-glib-dev,
  libmm-glib-dev (>= 1.12.0),
  libphonenumber-dev,
@@ -33,6 +34,7 @@ Build-Depends:
  xauth,
 Standards-Version: 4.2.1
 Homepage: https://gitlab.gnome.org/World/Chatty
+Rules-Requires-Root: no
 
 Package: chatty
 Architecture: any
@@ -45,6 +47,7 @@ Recommends:
  purple-xmpp-carbons,
  purple-lurch,
  purple-xmpp-http-upload,
+ libgdk-pixbuf2.0-bin,
 Suggests:
  calls,
 Description: Messaging application for mobile and desktop

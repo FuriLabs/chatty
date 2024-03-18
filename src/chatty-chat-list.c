@@ -325,6 +325,7 @@ chatty_chat_list_init (ChattyChatList *self)
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
+  gtk_widget_add_css_class (GTK_WIDGET (self->chats_listbox), "navigation-sidebar");
   self->protocol_filter = CHATTY_PROTOCOL_ANY;
   g_set_weak_pointer (&self->manager, chatty_manager_get_default ());
   self->selected_items = g_ptr_array_new_full (1, g_object_unref);

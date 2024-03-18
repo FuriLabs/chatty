@@ -145,300 +145,304 @@
     </child>
   </template>
 
-  <object class="GtkDialog" id="verification_dialog">
+  <object class="AdwWindow" id="verification_dialog">
     <property name="modal">1</property>
-    <property name="use-header-bar">1</property>
-
-    <child internal-child="headerbar">
-      <object class="GtkHeaderBar">
-        <property name="show-title-buttons">0</property>
-        <child type="start">
-          <object class="GtkButton">
-            <property name="label" translatable="yes">_Cancel</property>
-            <property name="use-underline">1</property>
-            <property name="valign">center</property>
-            <signal name="clicked" handler="verification_cancel_clicked_cb" swapped="yes"/>
-          </object>
-        </child>
-
-        <child type="end">
-          <object class="GtkButton" id="verification_type_button">
-            <property name="valign">center</property>
-            <signal name="clicked" handler="verification_type_clicked_cb" swapped="yes"/>
-          </object>
-        </child>
-      </object>
-    </child>
 
     <child>
-      <object class="GtkBox">
-        <property name="margin-start">12</property>
-        <property name="margin-end">12</property>
-        <property name="margin-top">12</property>
-        <property name="margin-bottom">12</property>
-        <property name="spacing">32</property>
-        <property name="halign">center</property>
-        <property name="orientation">vertical</property>
-
-        <child>
-          <object class="GtkStack" id="content_stack">
-            <signal name="notify::visible-child" handler="verification_content_child_changed_cb" swapped="yes"/>
-
-            <child>
-              <object class="GtkGrid" id="emoji_content">
-                <property name="row-spacing">9</property>
-                <property name="column-spacing">3</property>
-                <property name="column-homogeneous">1</property>
-                <property name="row-homogeneous">1</property>
-
-                <child>
-                  <object class="GtkLabel">
-                    <property name="xalign">0.0</property>
-                    <property name="yalign">0.0</property>
-                    <property name="wrap">1</property>
-                    <property name="max-width-chars">40</property>
-                    <property name="label" translatable="yes">Verify this user by confirming the following emoji appears on their screen</property>
-                    <layout>
-                      <property name="row">0</property>
-                      <property name="column">0</property>
-                      <property name="column-span">8</property>
-                    </layout>
-                  </object>
-                </child>
-
-                <child>
-                  <object class="GtkBox">
-                    <property name="spacing">3</property>
-                    <property name="orientation">vertical</property>
-                    <child>
-                      <object class="GtkLabel" id="emoji1_label">
-                        <style>
-                          <class name="large-title"/>
-                        </style>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="emoji1_title"/>
-                    </child>
-                    <layout>
-                      <property name="row">1</property>
-                      <property name="column">0</property>
-                      <property name="column-span">2</property>
-                    </layout>
-                  </object>
-                </child>
-
-                <child>
-                  <object class="GtkBox">
-                    <property name="spacing">3</property>
-                    <property name="orientation">vertical</property>
-                    <child>
-                      <object class="GtkLabel" id="emoji2_label">
-                        <style>
-                          <class name="large-title"/>
-                        </style>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="emoji2_title"/>
-                    </child>
-                    <layout>
-                      <property name="row">1</property>
-                      <property name="column">2</property>
-                      <property name="column-span">2</property>
-                    </layout>
-                  </object>
-                </child>
-
-                <child>
-                  <object class="GtkBox">
-                    <property name="spacing">3</property>
-                    <property name="orientation">vertical</property>
-                    <child>
-                      <object class="GtkLabel" id="emoji3_label">
-                        <style>
-                          <class name="large-title"/>
-                        </style>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="emoji3_title"/>
-                    </child>
-                    <layout>
-                      <property name="row">1</property>
-                      <property name="column">4</property>
-                      <property name="column-span">2</property>
-                    </layout>
-                  </object>
-                </child>
-
-                <child>
-                  <object class="GtkBox">
-                    <property name="spacing">3</property>
-                    <property name="orientation">vertical</property>
-                    <child>
-                      <object class="GtkLabel" id="emoji4_label">
-                        <style>
-                          <class name="large-title"/>
-                        </style>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="emoji4_title"/>
-                    </child>
-                    <layout>
-                      <property name="row">1</property>
-                      <property name="column">6</property>
-                      <property name="column-span">2</property>
-                    </layout>
-                  </object>
-                </child>
-
-                <child>
-                  <object class="GtkBox">
-                    <property name="spacing">3</property>
-                    <property name="orientation">vertical</property>
-                    <child>
-                      <object class="GtkLabel" id="emoji5_label">
-                        <style>
-                          <class name="large-title"/>
-                        </style>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="emoji5_title"/>
-                    </child>
-                    <layout>
-                      <property name="row">2</property>
-                      <property name="column">1</property>
-                      <property name="column-span">2</property>
-                    </layout>
-                  </object>
-                </child>
-
-                <child>
-                  <object class="GtkBox">
-                    <property name="spacing">3</property>
-                    <property name="orientation">vertical</property>
-                    <child>
-                      <object class="GtkLabel" id="emoji6_label">
-                        <style>
-                          <class name="large-title"/>
-                        </style>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="emoji6_title"/>
-                    </child>
-                    <layout>
-                      <property name="row">2</property>
-                      <property name="column">3</property>
-                      <property name="column-span">2</property>
-                    </layout>
-                  </object>
-                </child>
-
-                <child>
-                  <object class="GtkBox">
-                    <property name="spacing">3</property>
-                    <property name="orientation">vertical</property>
-                    <child>
-                      <object class="GtkLabel" id="emoji7_label">
-                        <style>
-                          <class name="large-title"/>
-                        </style>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="emoji7_title"/>
-                    </child>
-                    <layout>
-                      <property name="row">2</property>
-                      <property name="column">5</property>
-                      <property name="column-span">2</property>
-                    </layout>
-                  </object>
-                </child>
-
-              </object>
-            </child>
-
-            <child>
-              <object class="GtkBox" id="decimal_content">
-                <property name="orientation">vertical</property>
-                <property name="spacing">32</property>
-
-                <child>
-                  <object class="GtkLabel">
-                    <property name="xalign">0.0</property>
-                    <property name="yalign">0.0</property>
-                    <property name="wrap">1</property>
-                    <property name="max-width-chars">40</property>
-                    <property name="label" translatable="yes">Verify this user by confirming the following number appears on their screen.</property>
-                  </object>
-                </child>
-
-                <child>
-                  <object class="GtkBox">
-                    <property name="vexpand">1</property>
-                    <property name="halign">center</property>
-                    <property name="spacing">24</property>
-                    <style>
-                      <class name="large-title"/>
-                    </style>
-                    <child>
-                      <object class="GtkLabel" id="decimal1_label"/>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="decimal2_label"/>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="decimal3_label"/>
-                    </child>
-                  </object>
-                </child>
-
-              </object>
-            </child>
-
-          </object>
-        </child>
-
-        <child>
-          <object class="GtkLabel">
-            <property name="xalign">0.0</property>
-            <property name="wrap">1</property>
-            <property name="max-width-chars">40</property>
-            <property name="label" translatable="yes">To be secure, do this in person or use a trusted way to communicate.</property>
-          </object>
-        </child>
-
-        <child>
-          <object class="GtkBox">
-            <property name="hexpand">1</property>
-            <property name="spacing">18</property>
-            <child>
-              <object class="GtkButton" id="no_match_button">
+      <object class="AdwToolbarView">
+        <child type="top">
+          <object class="AdwHeaderBar" id="header_bar">
+            <property name="show-end-title-buttons">0</property>
+            <child type="start">
+              <object class="GtkButton">
+                <property name="label" translatable="yes">_Cancel</property>
                 <property name="use-underline">1</property>
-                <property name="label" translatable="yes" context="verb, which means 'both items are not the same'">_Don’t Match</property>
+                <property name="valign">center</property>
                 <signal name="clicked" handler="verification_cancel_clicked_cb" swapped="yes"/>
-                <style>
-                  <class name="destructive-action"/>
-                </style>
               </object>
             </child>
-            <child>
-              <object class="GtkButton" id="match_button">
-                <property name="use-underline">1</property>
-                <property name="label" translatable="yes" context="verb, which means 'both items are the same'">_Match</property>
-                <signal name="clicked" handler="verification_match_clicked_cb" swapped="yes"/>
-                <style>
-                  <class name="suggested-action"/>
-                </style>
+
+            <child type="end">
+              <object class="GtkButton" id="verification_type_button">
+                <property name="valign">center</property>
+                <signal name="clicked" handler="verification_type_clicked_cb" swapped="yes"/>
               </object>
             </child>
           </object>
         </child>
+
+        <property name="content">
+          <object class="GtkBox">
+            <property name="margin-start">12</property>
+            <property name="margin-end">12</property>
+            <property name="margin-top">12</property>
+            <property name="margin-bottom">12</property>
+            <property name="spacing">32</property>
+            <property name="halign">center</property>
+            <property name="orientation">vertical</property>
+
+            <child>
+              <object class="GtkStack" id="content_stack">
+                <signal name="notify::visible-child" handler="verification_content_child_changed_cb" swapped="yes"/>
+
+                <child>
+                  <object class="GtkGrid" id="emoji_content">
+                    <property name="row-spacing">9</property>
+                    <property name="column-spacing">3</property>
+                    <property name="column-homogeneous">1</property>
+                    <property name="row-homogeneous">1</property>
+
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="xalign">0.0</property>
+                        <property name="yalign">0.0</property>
+                        <property name="wrap">1</property>
+                        <property name="max-width-chars">40</property>
+                        <property name="label" translatable="yes">Verify this user by confirming the following emoji appears on their screen</property>
+                        <layout>
+                          <property name="row">0</property>
+                          <property name="column">0</property>
+                          <property name="column-span">8</property>
+                        </layout>
+                      </object>
+                    </child>
+
+                    <child>
+                      <object class="GtkBox">
+                        <property name="spacing">3</property>
+                        <property name="orientation">vertical</property>
+                        <child>
+                          <object class="GtkLabel" id="emoji1_label">
+                            <style>
+                              <class name="large-title"/>
+                            </style>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="emoji1_title"/>
+                        </child>
+                        <layout>
+                          <property name="row">1</property>
+                          <property name="column">0</property>
+                          <property name="column-span">2</property>
+                        </layout>
+                      </object>
+                    </child>
+
+                    <child>
+                      <object class="GtkBox">
+                        <property name="spacing">3</property>
+                        <property name="orientation">vertical</property>
+                        <child>
+                          <object class="GtkLabel" id="emoji2_label">
+                            <style>
+                              <class name="large-title"/>
+                            </style>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="emoji2_title"/>
+                        </child>
+                        <layout>
+                          <property name="row">1</property>
+                          <property name="column">2</property>
+                          <property name="column-span">2</property>
+                        </layout>
+                      </object>
+                    </child>
+
+                    <child>
+                      <object class="GtkBox">
+                        <property name="spacing">3</property>
+                        <property name="orientation">vertical</property>
+                        <child>
+                          <object class="GtkLabel" id="emoji3_label">
+                            <style>
+                              <class name="large-title"/>
+                            </style>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="emoji3_title"/>
+                        </child>
+                        <layout>
+                          <property name="row">1</property>
+                          <property name="column">4</property>
+                          <property name="column-span">2</property>
+                        </layout>
+                      </object>
+                    </child>
+
+                    <child>
+                      <object class="GtkBox">
+                        <property name="spacing">3</property>
+                        <property name="orientation">vertical</property>
+                        <child>
+                          <object class="GtkLabel" id="emoji4_label">
+                            <style>
+                              <class name="large-title"/>
+                            </style>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="emoji4_title"/>
+                        </child>
+                        <layout>
+                          <property name="row">1</property>
+                          <property name="column">6</property>
+                          <property name="column-span">2</property>
+                        </layout>
+                      </object>
+                    </child>
+
+                    <child>
+                      <object class="GtkBox">
+                        <property name="spacing">3</property>
+                        <property name="orientation">vertical</property>
+                        <child>
+                          <object class="GtkLabel" id="emoji5_label">
+                            <style>
+                              <class name="large-title"/>
+                                </style>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="emoji5_title"/>
+                        </child>
+                        <layout>
+                          <property name="row">2</property>
+                          <property name="column">1</property>
+                          <property name="column-span">2</property>
+                        </layout>
+                      </object>
+                    </child>
+
+                    <child>
+                      <object class="GtkBox">
+                        <property name="spacing">3</property>
+                        <property name="orientation">vertical</property>
+                        <child>
+                          <object class="GtkLabel" id="emoji6_label">
+                            <style>
+                              <class name="large-title"/>
+                            </style>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="emoji6_title"/>
+                        </child>
+                        <layout>
+                          <property name="row">2</property>
+                          <property name="column">3</property>
+                          <property name="column-span">2</property>
+                        </layout>
+                      </object>
+                    </child>
+
+                    <child>
+                      <object class="GtkBox">
+                        <property name="spacing">3</property>
+                        <property name="orientation">vertical</property>
+                        <child>
+                          <object class="GtkLabel" id="emoji7_label">
+                            <style>
+                              <class name="large-title"/>
+                            </style>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="emoji7_title"/>
+                        </child>
+                        <layout>
+                          <property name="row">2</property>
+                          <property name="column">5</property>
+                          <property name="column-span">2</property>
+                        </layout>
+                      </object>
+                    </child>
+
+                  </object>
+                </child>
+
+                <child>
+                  <object class="GtkBox" id="decimal_content">
+                    <property name="orientation">vertical</property>
+                    <property name="spacing">32</property>
+
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="xalign">0.0</property>
+                        <property name="yalign">0.0</property>
+                        <property name="wrap">1</property>
+                        <property name="max-width-chars">40</property>
+                        <property name="label" translatable="yes">Verify this user by confirming the following number appears on their screen.</property>
+                      </object>
+                    </child>
+
+                    <child>
+                      <object class="GtkBox">
+                        <property name="vexpand">1</property>
+                        <property name="halign">center</property>
+                        <property name="spacing">24</property>
+                        <style>
+                          <class name="large-title"/>
+                        </style>
+                        <child>
+                          <object class="GtkLabel" id="decimal1_label"/>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="decimal2_label"/>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="decimal3_label"/>
+                        </child>
+                      </object>
+                    </child>
+
+                  </object>
+                </child>
+
+              </object>
+            </child>
+
+            <child>
+              <object class="GtkLabel">
+                <property name="xalign">0.0</property>
+                <property name="wrap">1</property>
+                <property name="max-width-chars">40</property>
+                <property name="label" translatable="yes">To be secure, do this in person or use a trusted way to communicate.</property>
+              </object>
+            </child>
+
+            <child>
+              <object class="GtkBox">
+                <property name="hexpand">1</property>
+                <property name="spacing">18</property>
+                <child>
+                  <object class="GtkButton" id="no_match_button">
+                    <property name="use-underline">1</property>
+                    <property name="label" translatable="yes" context="verb, which means 'both items are not the same'">_Don’t Match</property>
+                    <signal name="clicked" handler="verification_cancel_clicked_cb" swapped="yes"/>
+                    <style>
+                      <class name="destructive-action"/>
+                    </style>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton" id="match_button">
+                    <property name="use-underline">1</property>
+                    <property name="label" translatable="yes" context="verb, which means 'both items are the same'">_Match</property>
+                    <signal name="clicked" handler="verification_match_clicked_cb" swapped="yes"/>
+                    <style>
+                      <class name="suggested-action"/>
+                    </style>
+                  </object>
+                </child>
+              </object>
+            </child>
+
+          </object>
+        </property>
 
       </object>
     </child>
