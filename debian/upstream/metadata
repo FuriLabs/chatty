@@ -1,2 +1,5 @@
 ---
-Repository: https://source.puri.sm/Librem5/chatty
+Bug-Database: https://gitlab.gnome.org/World/Chatty/-/issues
+Bug-Submit: https://gitlab.gnome.org/World/Chatty/-/issues/new
+Repository: https://gitlab.gnome.org/World/Chatty.git
+Repository-Browse: https://gitlab.gnome.org/World/Chatty
