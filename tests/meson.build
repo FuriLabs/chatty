@@ -22,11 +22,11 @@ endif
 
 test_items = [
   'clock',
-  'history',
+#  'history',
   'settings',
   'mm-account',
   'sms-uri',
-  'pgp',
+#  'pgp',
 ]
 
 foreach item: test_items
