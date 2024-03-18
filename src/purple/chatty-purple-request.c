@@ -215,9 +215,9 @@ chatty_request_file (const char         *title,
   dialog = gtk_file_dialog_new ();
 
   if (save_dialog)
-    gtk_file_dialog_set_title (dialog, _("Save File..."));
+    gtk_file_dialog_set_title (dialog, _("Save File…"));
   else
-    gtk_file_dialog_set_title (dialog, _("Open File..."));
+    gtk_file_dialog_set_title (dialog, _("Open File…"));
 
   if ((filename != NULL) && (*filename != '\0')) {
     if (save_dialog) {

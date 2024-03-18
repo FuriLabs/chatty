@@ -97,6 +97,7 @@ struct _ChattyChatClass
                                            GError       **error);
   void             (*show_notification)   (ChattyChat    *self,
                                            const char    *name);
+  void             (*withdraw_notification)   (ChattyChat    *self);
 };
 
 ChattyChat         *chatty_chat_new                (const char *account_username,
@@ -176,5 +177,6 @@ gboolean           chatty_chat_invite_finish       (ChattyChat    *self,
                                                     GError       **error);
 void               chatty_chat_show_notification   (ChattyChat    *self,
                                                     const char    *name);
+void               chatty_chat_withdraw_notification   (ChattyChat    *self);
 
 G_END_DECLS

@@ -42,7 +42,6 @@ libsrc += [
   'chatty-message-row.c',
   'chatty-progress-button.c',
   'chatty-file-item.c',
-  'chatty-image-item.c',
   'chatty-log.c',
   'chatty-avatar.c',
   'chatty-chat.c',
@@ -112,6 +111,7 @@ chatty_deps += [
   dependency('libebook-contacts-1.2'),
   dependency('libebook-1.2'),
   dependency('gsettings-desktop-schemas'),
+  dependency('gstreamer-1.0'),
   libadwaita_dep,
   libgtk_dep,
   libebook_dep,
@@ -121,9 +121,12 @@ chatty_deps += [
   libcmatrix_dep,
 ]
 
+gtk_next_version = gtk_minor.to_int() + 1
+adw_next_version = adw_minor.to_int() + 1
+
 summary({
-    'GTK matches machine version': libgtk_dep.version().version_compare('== @0@'.format(gtk_version)),
-    'Libadwaita matches machine version': libadwaita_dep.version().version_compare('== @0@'.format(adw_version))
+    'GTK matches machine version': libgtk_dep.version().version_compare('< @0@.@1@'.format(gtk_major, gtk_next_version.to_string())),
+    'Libadwaita matches machine version': libadwaita_dep.version().version_compare('< @0@.@1@'.format(adw_major, adw_next_version.to_string())),
   },
   bool_yn: true,
   section: 'Versions',

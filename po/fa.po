@@ -1,23 +1,22 @@
-# Ukrainian translation of chatty.
+# Persian translation for chatty.
+# Copyright (C) 2024 chatty's COPYRIGHT HOLDER
 # This file is distributed under the same license as the chatty package.
+# Danial Behzadi <dani.behzi@ubuntu.com>, 2024.
 #
-# Roman Riabenko <roman@riabenko.com>, 2020.
-# Yuri Chornoivan <yurchor@ukr.net>, 2020, 2021, 2022, 2023, 2024.
 msgid ""
 msgstr ""
-"Project-Id-Version: purism-chatty\n"
+"Project-Id-Version: chatty main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
 "POT-Creation-Date: 2024-03-15 16:24+0000\n"
-"PO-Revision-Date: 2024-03-15 21:50+0200\n"
-"Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
-"Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
-"Language: uk\n"
+"PO-Revision-Date: 2024-03-15 20:14+0330\n"
+"Last-Translator: Danial Behzadi <dani.behzi@ubuntu.com>\n"
+"Language-Team: Persian <fa@li.org>\n"
+"Language: fa\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 23.04.1\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 3.4.2\n"
 
 #: data/sm.puri.Chatty.desktop.in.in:3 data/sm.puri.Chatty.metainfo.xml.in.in:6
 #: src/chatty-application.c:164 src/chatty-application.c:412
@@ -25,206 +24,198 @@ msgstr ""
 #: src/ui/chatty-side-bar.ui:4 src/ui/chatty-side-bar.ui:12
 #: src/ui/chatty-window.ui:4
 msgid "Chats"
-msgstr "Спілкування"
+msgstr "گپ‌ها"
 
 #: data/sm.puri.Chatty.desktop.in.in:6
 msgid "SMS and XMPP chat application"
-msgstr "Програма для спілкування за допомогою SMS і XMPP"
+msgstr "برنامهٔ گپ XMPP و پیامک"
 
 #: data/sm.puri.Chatty.desktop.in.in:7
 msgid "XMPP;SMS;chat;jabber;messaging;modem"
-msgstr ""
-"XMPP;SMS;chat;jabber;messaging;modem;есемес;чат;балачка;спілкування;джабер;"
-"повідомлення;модем;"
+msgstr "XMPP;SMS;chat;jabber;messaging;modem;پیامک;گپ;جبر;پیام;مودم"
 
 #: data/sm.puri.Chatty.gschema.xml:7 data/sm.puri.Chatty.gschema.xml:8
 msgid "Whether the application is launching the first time"
-msgstr "Чи запущено програму вперше"
+msgstr "این که برنامه برای نخستین بار در حال اجراست یا خیر"
 
 #: data/sm.puri.Chatty.gschema.xml:13
 msgid "Country code in ISO 3166-1 alpha-2 format"
-msgstr "Код країни у форматі ISO 3166-1 alpha-2"
+msgstr "کد کشور در قالب ایزو 3166-1 alpha-2"
 
 #: data/sm.puri.Chatty.gschema.xml:14
 msgid "Two letter country code of the last available SIM/Network"
-msgstr "Дволітерний код країни останньої доступної SIM/мережі"
+msgstr "کد دوحرفی کشور آخرین شبکه یا سیم‌کارت موجود"
 
 #: data/sm.puri.Chatty.gschema.xml:19
 msgid "Send message read receipts"
-msgstr "Надсилати сповіщення про прочитання повідомлень"
+msgstr "فرستادن رسید‌های خواندن پیام"
 
 #: data/sm.puri.Chatty.gschema.xml:20
 msgid "Whether to send the status of the message if read"
-msgstr "Чи слід надсилати дані щодо того, що повідомлення прочитано"
+msgstr "این که در صورت خوانده شدن وضعیت خواندن پیام فرستاده شود یا نه"
 
 #: data/sm.puri.Chatty.gschema.xml:25
 msgid "Message carbon copies"
-msgstr "Копії повідомлень"
+msgstr "رونوشت‌های کاربنی پیام"
 
 #: data/sm.puri.Chatty.gschema.xml:26 src/ui/chatty-settings-dialog.ui:492
 msgid "Share chat history among devices"
-msgstr "Спільний з іншими пристроями журнал спілкування"
+msgstr "هم‌رسانی تاریخچهٔ گپ بین افزاره‌ها"
 
 #: data/sm.puri.Chatty.gschema.xml:31
 msgid "Enable Message Archive Management"
-msgstr "Увімкнути керування архівом повідомлень"
+msgstr "به کار انداختن مدیریت بایگانی پیام"
 
 #: data/sm.puri.Chatty.gschema.xml:32
 msgid "Enable MAM archive synchronization from the server"
-msgstr "Увімкнути синхронізацію архіву MAM з сервера"
+msgstr "به کار انداختن همگام سازی بایگانی MAM از کارساز"
 
 #: data/sm.puri.Chatty.gschema.xml:37
 msgid "Enable purple"
-msgstr "Увімкнути purple"
+msgstr "به کار انداختن پرپل"
 
 #: data/sm.puri.Chatty.gschema.xml:38
 msgid "Enable purple accounts"
-msgstr "Увімкнути облікові записи purple"
+msgstr "به کار انداختن حساب‌های پرپل"
 
 #: data/sm.puri.Chatty.gschema.xml:43
 msgid "Send typing notifications"
-msgstr "Надсилати сповіщення щодо введення"
+msgstr "فرستادن آگاهی‌های نوشتن"
 
 #: data/sm.puri.Chatty.gschema.xml:44
 msgid "Whether to Send typing notifications"
-msgstr "Чи слід надсилати сповіщення щодо введення повідомлень"
+msgstr "این که آگاهی‌های نوشتن فرستاده شود یا نه"
 
 #: data/sm.puri.Chatty.gschema.xml:49
 msgid "Strip Tracking IDs"
-msgstr "Вилучити ідентифікатори стеження"
+msgstr "جدا کردن شناسه‌های ردیابی"
 
 #: data/sm.puri.Chatty.gschema.xml:50
 msgid "Whether to Remove Tracking IDs from URLs Automatically"
-msgstr ""
-"Визначає, чи слід автоматично вилучати з адрес ідентифікатори стеження"
+msgstr "این که شناسه‌های ردیابی به صورت خودکار از نشانی‌ها برداشته شود یا نه"
 
 #: data/sm.puri.Chatty.gschema.xml:55
 msgid "Whether Strip Tracking IDs was shown"
-msgstr "Визначає, чи було показано вилучення ідентифікаторів стеження"
+msgstr "این که شناسه‌های ردیابی برداشته نشان داده شوند یا نه"
 
 #: data/sm.puri.Chatty.gschema.xml:56
 msgid "Whether the Tracking IDs dialog has been shown"
-msgstr "Визначає, чи було показано вікно ідентифікаторів стеження"
+msgstr "این که گفت‌وکوب شناسه‌های ردیابی نشان داده شود یا نه"
 
 #: data/sm.puri.Chatty.gschema.xml:61
 msgid "Render Attachments"
-msgstr "Обробляти долучення"
+msgstr "پرداخت پیوست‌ها"
 
 #: data/sm.puri.Chatty.gschema.xml:62
 msgid "Whether to Render Attachments or not"
-msgstr "Визначає, чи слід обробляти долучення"
+msgstr "این که پیوست‌ها پرداخت شوند یا نه"
 
 #: data/sm.puri.Chatty.gschema.xml:67 data/sm.puri.Chatty.gschema.xml:68
 msgid "Mark Idle users differently"
-msgstr "Позначати бездіяльних користувачів"
+msgstr "علامت زدن متفاوت کاربران بی‌کار"
 
 #: data/sm.puri.Chatty.gschema.xml:73 data/sm.puri.Chatty.gschema.xml:74
 msgid "Indicate unknown contacts"
-msgstr "Позначати невідомі контакти"
+msgstr "نشان دادن آشنایان ناشناخته"
 
 #: data/sm.puri.Chatty.gschema.xml:79
 msgid "Convert text to emoticons"
-msgstr "Перетворювати текст на емоційки"
+msgstr "تبدیل متن به شکلک"
 
 #: data/sm.puri.Chatty.gschema.xml:80
 msgid "Convert text matching emoticons as real emoticons"
-msgstr "Перетворювати відповідні текстові емоційки на графічні"
+msgstr "تبدیل متن مطابق با شکلک به شکلک‌های واقعی"
 
 #: data/sm.puri.Chatty.gschema.xml:85
 msgid "Enter key sends the message"
-msgstr "Клавіша Enter надсилає повідомлення"
+msgstr "فرستادن پیام با کلید ورود"
 
 #: data/sm.puri.Chatty.gschema.xml:86
 msgid "Whether pressing Enter key sends the message"
-msgstr "Чи призводитиме натискання клавіш Enter до надсилання повідомлення"
+msgstr "این که فشردن کلید ورود پیام را می‌فرستد یا نه"
 
 #: data/sm.puri.Chatty.gschema.xml:91
 msgid "Request SMS delivery reports"
-msgstr "Надсилати запит щодо звіту про доставлення SMS"
+msgstr "درخواست گزارش‌های تحویل پیامک"
 
 #: data/sm.puri.Chatty.gschema.xml:92
 msgid "Whether to request delivery reports for outgoing SMS"
-msgstr ""
-"Визначає, чи слід надсилати запит щодо звітів про доставлення вихідних SMS"
+msgstr "این که گزارش‌های تحویل پیامک برای پیامک‌های ارسالی درخواست شود یا نه"
 
 #: data/sm.puri.Chatty.gschema.xml:97
 msgid "Enable experimental features"
-msgstr "Увімкнути експериментальні можливості"
+msgstr "فعال‌سازی امکانات آزمایشی"
 
 #: data/sm.puri.Chatty.gschema.xml:98
 msgid "Whether to enable experimental features"
-msgstr "Чи слід вмикати експериментальні можливості"
+msgstr "این که ویژگی‌های آزمایشی به کار بیفتند یا نه"
 
 #: data/sm.puri.Chatty.gschema.xml:103
 msgid "Window maximized"
-msgstr "Вікно розгорнуто"
+msgstr "پنجره بیشینه شد"
 
 #: data/sm.puri.Chatty.gschema.xml:104
 msgid "Window maximized state"
-msgstr "Стан розгорнутого вікна"
+msgstr "وضعیت بیشینهٔ پنجره"
 
 #: data/sm.puri.Chatty.gschema.xml:109
 msgid "Window size"
-msgstr "Розмір вікна"
+msgstr "اندازهٔ پنجره"
 
 #: data/sm.puri.Chatty.gschema.xml:110
 msgid "Window size (width, height)."
-msgstr "Розмір вікна (ширина, висота)."
+msgstr "اندازهٔ پنجره (پهنا، بلندا)."
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:7
 msgid "Messaging application for mobile and desktop"
-msgstr ""
-"Програма для обміну повідомленнями для мобільних пристроїв та робочих станцій"
+msgstr "برنامهٔ پیام‌رسامی برای تلفن همراه و میزکار"
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:9
 msgid ""
 "Chats is a simple to use to messaging app for 1:1 communication and small "
 "groups supporting SMS, MMS, XMPP and Matrix."
 msgstr ""
-"«Спілкування» — проста у користуванні програма для обміну повідомленнями для "
-"спілкування один-на-один і у малих групах з підтримкою SMS, MMS, XMPP та "
-"Matrix."
+"گپ‌ها کارهٔ پیام‌رسانی آسانی برای ارتباطات یک به یک و گروه‌های کوچک با پشتیبانی از "
+"پیامک، پیام چندرسانه‌ای، XMPP و ماتریکس است."
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:23
 msgid "Chats message window"
-msgstr "Вікно повідомлень спілкування"
+msgstr "پنجرهٔ پیام گپ‌ها"
 
 #: src/chatty-application.c:79
 msgid "Show release version"
-msgstr "Показати версію випуску"
+msgstr "نمایش نسخهٔ انتشار"
 
 #: src/chatty-application.c:80
 msgid "Start in daemon mode"
-msgstr "Запускати у режимі служби"
+msgstr "آغاز در حالت خدمت"
 
 #: src/chatty-application.c:81
 msgid "Disable all accounts"
-msgstr "Вимкнути усі облікові записи"
+msgstr "از کار انداختن همهٔ حساب‌ها"
 
 #: src/chatty-application.c:83
 msgid "Enable libpurple debug messages"
-msgstr "Увімкнути діагностичні повідомлення libpurple"
+msgstr "به کار انداختن پیام‌های رفع اشکال libpurple"
 
 #: src/chatty-application.c:86
 msgid "Enable verbose debug messages (repeat option for more verbosity)"
-msgstr ""
-"Увімкнути докладні діагностичні повідомлення (повторіть параметр, щоб "
-"збільшити докладність)"
+msgstr "به کار انداختن پیام‌های رفع اشکال پرگو (تکرار گزینه برای پرگویی بیش‌تر)"
 
 #: src/chatty-application.c:167
 msgid "An SMS and XMPP messaging client"
-msgstr "Клієнт обміну повідомленнями SMS і XMPP"
+msgstr "کارخواه پیام‌رسانی برای پیامک و XMPP"
 
 #: src/chatty-application.c:175
 msgid "translator-credits"
-msgstr "Юрій Чорноіван <yurchor@ukr.net>, 2020"
+msgstr "دانیال بهزادی <dani.behzi@ubuntu.com>"
 
 #: src/chatty-application.c:198 src/chatty-manager.c:679
 #: src/purple/chatty-purple-notify.c:26 src/purple/chatty-purple.c:613
 #: src/dialogs/chatty-new-chat-dialog.c:222
 #: src/dialogs/chatty-settings-dialog.c:197
 msgid "Error"
-msgstr "Помилка"
+msgstr "خطا"
 
 #: src/chatty-application.c:200
 #, c-format
@@ -232,7 +223,7 @@ msgid ""
 "There was an error displaying help:\n"
 "%s"
 msgstr ""
-"Спроба показати довідку завершилася помилкою:\n"
+"خطایی هنگام نمایش راهنما رخ داد: \n"
 "%s"
 
 #: src/chatty-application.c:202 src/chatty-manager.c:683
@@ -241,140 +232,133 @@ msgstr ""
 #: src/dialogs/chatty-new-chat-dialog.c:226
 #: src/dialogs/chatty-settings-dialog.c:201 src/ui/chatty-main-view.ui:73
 msgid "Close"
-msgstr "Закрити"
+msgstr "بستن"
 
 #: src/chatty-avatar.c:182 src/chatty-contact-list.c:393
 msgid "Send To"
-msgstr "Надіслати"
+msgstr "ارسال به"
 
 #: src/chatty-chat-list.c:174
 msgid "Select a contact with the <b>“+”</b> button in the titlebar."
-msgstr "Виберіть контакт за допомогою кнопки <b>«+»</b> на смужці заголовка."
+msgstr "گزینش آشنایی با دکمهٔ <b>+</b> در نوار عنوان."
 
 #: src/chatty-chat-list.c:178
 msgid "Add instant messaging accounts in Preferences."
-msgstr ""
-"Додайте облікові записи миттєвого обміну повідомленнями у «Параметрах»."
+msgstr "افزودن حساب‌های پیام‌رسانی در ترجیحات."
 
 #: src/chatty-chat-list.c:214 src/chatty-contact-list.c:282
 msgid "No Search Results"
-msgstr "Нічого не знайдено"
+msgstr "بدون نتایج جست‌وجو"
 
 #: src/chatty-chat-list.c:215
 msgid "Try different search"
-msgstr "Спробувати інші критерії пошуку"
+msgstr "آزمودن جست‌وجویی متفاوت"
 
 #: src/chatty-chat-list.c:220
 msgid "No archived chats"
-msgstr "Немає архівованих спілкувань"
+msgstr "بدون گپ بایگانی شده"
 
 #: src/chatty-chat-list.c:222
 msgid "Start Chatting"
-msgstr "Почати спілкування"
+msgstr "آغاز به گپ"
 
 #: src/chatty-chat-page.c:201 src/chatty-chat-page.c:210
 msgid "This is an MMS conversation"
-msgstr "Це обмін повідомленнями MMS"
+msgstr "این گفت‌وگو چندرسانه‌ایست"
 
 #: src/chatty-chat-page.c:203 src/chatty-chat-page.c:218
 #: src/chatty-chat-page.c:224
 msgid "Your messages are not encrypted, and carrier rates may apply"
-msgstr ""
-"Ваші повідомлення не зашифровано, оператор може стягувати сплату за "
-"передавання даних"
+msgstr "پیام‌هایتان رمزنگاری نشده و ممکن است هزینه‌های اوپراتور اعمال شود"
 
 #: src/chatty-chat-page.c:213
 msgid "This is an SMS/MMS conversation"
-msgstr "Це обмін повідомленнями SMS/MMS"
+msgstr "این گفت‌وگو پیام کوتاه یا چندرسانه‌ایست"
 
 #: src/chatty-chat-page.c:216
 msgid "This is an SMS conversation"
-msgstr "Це обмін повідомленнями SMS"
+msgstr "این گفت‌وگو پیامکیست"
 
 #: src/chatty-chat-page.c:222
 msgid "This is an IM conversation"
-msgstr "Це спілкування у службі обміну повідомленнями"
+msgstr "این گفت‌وگو پیام فوریست"
 
 #: src/chatty-chat-page.c:228
 msgid "Your messages are encrypted"
-msgstr "Ваші повідомлення зашифровано"
+msgstr "پیام‌هایتان رمزنگاری شده‌اند"
 
 #: src/chatty-chat-page.c:231
 msgid "Your messages are not encrypted"
-msgstr "Ваші повідомлення не зашифровано"
+msgstr "پیام‌هایتان رمزنگاری نشده‌اند"
 
 #: src/chatty-chat.c:726
 msgid "Empty room"
-msgstr "Порожня кімната"
+msgstr "اتاق خالی"
 
 #. TRANSLATORS: %s are name/user-id/phone numbers of two users
 #: src/chatty-chat.c:733
 #, c-format
 msgid "%s and %s"
-msgstr "%s і %s"
+msgstr "%s و %s"
 
 #: src/chatty-chat.c:735
 #, c-format
 msgid "%s and %u other"
 msgid_plural "%s and %u others"
-msgstr[0] "%s і %u інший"
-msgstr[1] "%s і %u інших"
-msgstr[2] "%s і %u інших"
+msgstr[0] "%s و %Iu نفر دیگر"
+msgstr[1] "%s و %Iu نفر دیگر"
 
 #: src/chatty-contact-list.c:247 src/dialogs/chatty-mm-chat-info.c:127
 msgid "Unknown Contact"
-msgstr "Невідомий контакт"
+msgstr "آشنای ناشناخته"
 
 #: src/chatty-contact-list.c:283
 msgid "Try different search, or type a valid number to create new chat"
-msgstr ""
-"Спробуйте інший критерій пошуку або введіть коректне число, щоб розпочати "
-"нове спілкування"
+msgstr "آزمودن جست‌وجویی دیگر یا نوشتن شماره‌ای معتبر برای ایجاد گپ جدید"
 
 #: src/chatty-contact-list.c:289
 msgid "No Contacts"
-msgstr "Немає контактів"
+msgstr "بدون آشنا"
 
 #: src/chatty-clock.c:85
 msgid "Just Now"
-msgstr "Просто зараз"
+msgstr "هم‌اکنون"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
 #: src/chatty-clock.c:94 src/chatty-clock.c:124
 msgid "%I∶%M %p"
-msgstr "%H:%M"
+msgstr "%OH:%OM"
 
 #: src/chatty-clock.c:103
 #, c-format
 msgid "%lu minute ago"
 msgid_plural "%lu minutes ago"
-msgstr[0] "%lu хвилину тому"
-msgstr[1] "%lu хвилини тому"
-msgstr[2] "%lu хвилин тому"
+msgstr[0] "%Ilu دقیقه پیش"
+msgstr[1] "%Ilu دقیقه پیش"
 
 #: src/chatty-clock.c:111
 msgid "Today %H∶%M"
-msgstr "Сьогодні %H:%M"
+msgstr "امروز %OH:%OM"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “Today 06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
 #: src/chatty-clock.c:119
 msgid "Today %I∶%M %p"
-msgstr "Сьогодні %H:%M"
+msgstr "امروز %OI:%OM %p"
 
 #: src/chatty-clock.c:131
 msgid "Yesterday %H∶%M"
-msgstr "Вчора %H:%M"
+msgstr "دیروز %OH:%OM"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “Yesterday 06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
 #: src/chatty-clock.c:136
 msgid "Yesterday %I∶%M %p"
-msgstr "Вчора %H:%M"
+msgstr "دیروز %OI:%OM %p"
 
 #. TRANSLATORS: Timestamp from more than 7 days ago or future date
 #. * (eg: when the system time is wrong), e.g. “2022-01-01”.
@@ -382,166 +366,156 @@ msgstr "Вчора %H:%M"
 #.
 #: src/chatty-clock.c:152
 msgid "%Y-%m-%d"
-msgstr "%d-%m-%Y"
+msgstr "%Oy/%Om/%Od"
 
 #: src/chatty-file-item.c:139
-#| msgid "Contact ID"
 msgid "Contact"
-msgstr "Контакт"
+msgstr "تماس"
 
 #: src/chatty-file-item.c:163 src/chatty-file-item.c:195
 #, c-format
-#| msgid "Contact ID"
 msgid "Contact: %s"
-msgstr "Контакт: %s"
+msgstr "تماس: %s"
 
 #: src/chatty-file-item.c:182
 #, c-format
 msgid "Contact: %s %s %s %s"
-msgstr "Контакт: %s %s %s %s"
+msgstr "تماس: %s %s %s %s"
 
 #: src/chatty-file-item.c:184 src/chatty-file-item.c:188
 #, c-format
 msgid "Contact: %s %s %s"
-msgstr "Контакт: %s %s %s"
+msgstr "تماس: %s %s %s"
 
 #: src/chatty-file-item.c:190 src/chatty-file-item.c:193
 #, c-format
-#| msgid "Contact ID"
 msgid "Contact: %s %s"
-msgstr "Контакт: %s %s"
+msgstr "تماس: %s %s"
 
 #: src/chatty-file-item.c:217 src/ui/chatty-info-dialog.ui:57
 msgid "Invite"
-msgstr "Запросити"
+msgstr "دعوت"
 
 #: src/chatty-file-item.c:247
 #, c-format
-#| msgid "Invite"
 msgid "Invite: %s"
-msgstr "Запросити: %s"
+msgstr "دعوت: %s"
 
 #. TRANSLATORS: %s is the Device ID
 #: src/chatty-fp-row.c:130
 #, c-format
 msgid "Device ID %s fingerprint:"
-msgstr "Відбиток ідентифікатора пристрою %s:"
+msgstr "اثر انگشت شناسهٔ افزارهٔ %s:"
 
 #. TRANSLATORS: %s is the chat room name
 #: src/chatty-invite-page.c:72
 #, c-format
 msgid "Do you want to join “%s”?"
-msgstr "Хочете долучитися до «%s»?"
+msgstr "می‌خواهید به «%s» بپیوندید؟"
 
 #: src/chatty-list-row.c:123
 msgid "Owner"
-msgstr "Власник"
+msgstr "مالک"
 
 #: src/chatty-list-row.c:126
 msgid "Moderator"
-msgstr "Модератор"
+msgstr "ناظمر"
 
 #: src/chatty-list-row.c:129
 msgid "Member"
-msgstr "Учасник"
+msgstr "عضو"
 
 #: src/chatty-list-row.c:261 src/chatty-notification.c:201
 msgid "Picture"
-msgstr "Зображення"
+msgstr "نگاره"
 
 #: src/chatty-list-row.c:264 src/chatty-notification.c:205
 msgid "Video"
-msgstr "Відео"
+msgstr "ویدیو"
 
 #: src/chatty-list-row.c:267
 msgid "Audio"
-msgstr "Звук"
+msgstr "صدا"
 
 #: src/chatty-list-row.c:270
 msgid "Location"
-msgstr "Місце"
+msgstr "مکان"
 
 #: src/chatty-list-row.c:273 src/chatty-list-row.c:290
 #: src/chatty-notification.c:197
 msgid "File"
-msgstr "Файл"
+msgstr "پرونده"
 
 #: src/chatty-list-row.c:276
 msgid "MMS Message"
-msgstr "Повідомлення MMS"
+msgstr "پیام چندرسانه‌ای"
 
 #: src/chatty-list-row.c:292
 msgid "Multiple Files"
-msgstr "Декілька файлів"
+msgstr "چندین پرونده"
 
 #: src/chatty-main-view.c:125
 msgid "Account disconnected"
-msgstr "Обліковий запис від'єднано"
+msgstr "حساب قطع شد"
 
 #: src/chatty-main-view.c:127
 msgid "Account connecting…"
-msgstr "З'єднання з обліковим записом…"
+msgstr "وصل شدن حساب…"
 
 #: src/chatty-manager.c:681
 #, c-format
 msgid "“%s” is not a valid URI"
-msgstr "«%s» не є коректною адресою"
+msgstr "نشانی %s معتبر نیست"
 
 #: src/chatty-message-bar.c:468 src/purple/chatty-purple.c:195
 #: src/chatty-window.c:362
 msgid "Alert"
-msgstr "Попередження"
+msgstr "هشدار"
 
 #: src/chatty-message-bar.c:469
 msgid "Found and automatically deleted tracking IDs from the pasted link."
-msgstr ""
-"Знайдено і автоматично вилучено ідентифікатори стеження зі вставленого "
-"посилання."
+msgstr "شناسه‌های ردیابی پیدا و به طور خودکار از پیوند جایگذاری شده حذف شدند."
 
 #: src/chatty-message.c:230
 msgid "Got an encrypted message, but couldn't decrypt due to missing keys"
-msgstr ""
-"Отримано зашифроване повідомлення, але його не вдалося розшифрувати через "
-"брак ключів"
+msgstr "پیامی رمزنگاشته گرفته شد؛ ولی به خاطر نبودن کلید نتوانست رمزگشاییش کند"
 
 #: src/chatty-notification.c:171
 #, c-format
 msgid "New message from %s"
-msgstr "Нове повідомлення від %s"
+msgstr "پیام جدید از %s"
 
 #: src/chatty-notification.c:173
 msgid "Message Received"
-msgstr "Надійшло повідомлення"
+msgstr "پیام رسید"
 
 #: src/chatty-notification.c:209
 msgid "Audio File"
-msgstr "Звуковий файл"
+msgstr "پروندهٔ صوتی"
 
 #: src/chatty-notification.c:216
 msgid "MMS"
-msgstr "MMS"
+msgstr "پیام چندرسانه‌ای"
 
 #: src/chatty-notification.c:228
 #, c-format
 msgid "%i Message"
 msgid_plural "%i Messages"
-msgstr[0] "%i повідомлення"
-msgstr[1] "%i повідомлення"
-msgstr[2] "%i повідомлень"
+msgstr[0] "%Ii پیام"
+msgstr[1] "%Ii پیام"
 
 #: src/chatty-side-bar.c:324
 msgid "Any Protocol"
-msgstr "Будь-який протокол"
+msgstr "هر شیوه‌نامه‌ای"
 
 #: src/chatty-side-bar.c:325 src/ui/chatty-settings-dialog.ui:562
 msgid "Matrix"
-msgstr "Matrix"
+msgstr "ماتریکس"
 
 #: src/chatty-side-bar.c:326 src/dialogs/chatty-new-chat-dialog.c:634
-#: src/dialogs/chatty-settings-dialog.c:656
-#: src/ui/chatty-settings-dialog.ui:228
+#: src/dialogs/chatty-settings-dialog.c:656 src/ui/chatty-settings-dialog.ui:228
 msgid "SMS/MMS"
-msgstr "SMS/MMS"
+msgstr "پیام کوتاه یا چندرسانه‌ای"
 
 #: src/chatty-side-bar.c:329 src/ui/chatty-settings-dialog.ui:551
 msgid "XMPP"
@@ -549,990 +523,982 @@ msgstr "XMPP"
 
 #: src/chatty-side-bar.c:332 src/ui/chatty-settings-dialog.ui:575
 msgid "Telegram"
-msgstr "Telegram"
+msgstr "تلگرام"
 
 #: src/chatty-side-bar.c:354
 msgid "Archived"
-msgstr "Архівовано"
+msgstr "بایگانی شده"
 
 #: src/purple/chatty-purple-request.c:218
 msgid "Save File…"
-msgstr "Зберегти файл…"
+msgstr "ذخیرهٔ پرونده…"
 
 #: src/purple/chatty-purple-request.c:220
 msgid "Open File…"
-msgstr "Відкрити файл…"
+msgstr "گشودن پرونده…"
 
 #: src/purple/chatty-purple.c:197
 #, c-format
 msgid "User %s has added %s to the contacts"
-msgstr "Користувач %s додав %s до контактів"
+msgstr "کاربر %s، ‏%s را به آشنایان افزود"
 
 #: src/purple/chatty-purple.c:283 src/dialogs/chatty-settings-dialog.c:460
-#: src/ui/chatty-ma-account-details.ui:162
-#: src/ui/chatty-pp-account-details.ui:154
+#: src/ui/chatty-ma-account-details.ui:162 src/ui/chatty-pp-account-details.ui:154
 msgid "Delete Account"
-msgstr "Вилучити запис"
+msgstr "حذف حساب"
 
 #: src/purple/chatty-purple.c:285
 #, c-format
 msgid "Authorize %s?"
-msgstr "Уповноважити %s?"
+msgstr "تصدیق %s؟"
 
 #: src/purple/chatty-purple.c:289
 #, c-format
 msgid "Add %s to contact list"
-msgstr "Додати %s до списку контактів"
+msgstr "افزودن %s به سیاههٔ اشنایان"
 
-#: src/purple/chatty-purple.c:293 src/chatty-window.c:366
-#: src/chatty-window.c:464 src/dialogs/chatty-settings-dialog.c:466
-#: src/ui/chatty-dialog-wrong-pw.ui:23 src/ui/chatty-dialog-new-chat.ui:36
-#: src/ui/chatty-settings-dialog.ui:28 src/ui/chatty-settings-dialog.ui:58
-#: src/ui/chatty-verification-page.ui:129
+#: src/purple/chatty-purple.c:293 src/chatty-window.c:366 src/chatty-window.c:464
+#: src/dialogs/chatty-settings-dialog.c:466 src/ui/chatty-dialog-wrong-pw.ui:23
+#: src/ui/chatty-dialog-new-chat.ui:36 src/ui/chatty-settings-dialog.ui:28
+#: src/ui/chatty-settings-dialog.ui:58 src/ui/chatty-verification-page.ui:129
 #: src/ui/chatty-verification-page.ui:158
 msgid "_Cancel"
-msgstr "_Скасувати"
+msgstr "_لغو"
 
 #: src/purple/chatty-purple.c:294
 msgid "Authorize"
-msgstr "Уповноважити"
+msgstr "تصدیق"
 
 #: src/purple/chatty-purple.c:618
 msgid "Please check ID and password"
-msgstr "Будь ласка, перевірте ідентифікатор і пароль"
+msgstr "بررسی شناسه و گذرواژه لطفاُ"
 
 #. TRANSLATORS: You may copy translations from https://github.com/matrix-org/matrix-spec-proposals/blob/old_master/data-definitions/sas-emoji.json
 #. * if available
 #: src/chatty-verification-page.c:27
 msgid "Dog"
-msgstr "Собака"
+msgstr "سگ"
 
 #. "U+1F436"
 #: src/chatty-verification-page.c:28
 msgid "Cat"
-msgstr "Кіт"
+msgstr "گربه"
 
 #. "U+1F431"
 #: src/chatty-verification-page.c:29
 msgid "Lion"
-msgstr "Лев"
+msgstr "شیر"
 
 #. "U+1F981"
 #: src/chatty-verification-page.c:30
 msgid "Horse"
-msgstr "Кінь"
+msgstr "اسب"
 
 #. "U+1F40E"
 #: src/chatty-verification-page.c:31
 msgid "Unicorn"
-msgstr "Одноріг"
+msgstr "تک‌شاخ"
 
 #. "U+1F984"
 #: src/chatty-verification-page.c:32
 msgid "Pig"
-msgstr "Свиня"
+msgstr "خوک"
 
 #. "U+1F437"
 #: src/chatty-verification-page.c:33
 msgid "Elephant"
-msgstr "Слон"
+msgstr "فیل"
 
 #. "U+1F418"
 #: src/chatty-verification-page.c:34
 msgid "Rabbit"
-msgstr "Кролик"
+msgstr "خرگوش"
 
 #. "U+1F430"
 #: src/chatty-verification-page.c:35
 msgid "Panda"
-msgstr "Панда"
+msgstr "پاندا"
 
 #. "U+1F43C"
 #: src/chatty-verification-page.c:36
 msgid "Rooster"
-msgstr "Півень"
+msgstr "خروس"
 
 #. "U+1F413"
 #: src/chatty-verification-page.c:37
 msgid "Penguin"
-msgstr "Пінгвін"
+msgstr "پنگوئن"
 
 #. "U+1F427"
 #: src/chatty-verification-page.c:38
 msgid "Turtle"
-msgstr "Черепаха"
+msgstr "لاک‌پشت"
 
 #. "U+1F422"
 #: src/chatty-verification-page.c:39
 msgid "Fish"
-msgstr "Риба"
+msgstr "ماهی"
 
 #. "U+1F41F"
 #: src/chatty-verification-page.c:40
 msgid "Octopus"
-msgstr "Восьминіг"
+msgstr "هشت‌پا"
 
 #. "U+1F419"
 #: src/chatty-verification-page.c:41
 msgid "Butterfly"
-msgstr "Метелик"
+msgstr "پروانه"
 
 #. "U+1F98B"
 #: src/chatty-verification-page.c:42
 msgid "Flower"
-msgstr "Квітка"
+msgstr "گل"
 
 #. "U+1F337"
 #: src/chatty-verification-page.c:43
 msgid "Tree"
-msgstr "Дерево"
+msgstr "درخت"
 
 #. "U+1F333"
 #: src/chatty-verification-page.c:44
 msgid "Cactus"
-msgstr "Кактус"
+msgstr "کاکتوس"
 
 #. "U+1F335"
 #: src/chatty-verification-page.c:45
 msgid "Mushroom"
-msgstr "Гриб"
+msgstr "قارچ"
 
 #. "U+1F344"
 #: src/chatty-verification-page.c:46
 msgid "Globe"
-msgstr "Глобус"
+msgstr "کره"
 
 #. "U+1F30F"
 #: src/chatty-verification-page.c:47
 msgid "Moon"
-msgstr "Місяць"
+msgstr "ماه"
 
 #. "U+1F319"
 #: src/chatty-verification-page.c:48
 msgid "Cloud"
-msgstr "Хмара"
+msgstr "ابر"
 
 #. "U+2601U+FE0F"
 #: src/chatty-verification-page.c:49
 msgid "Fire"
-msgstr "Вогонь"
+msgstr "اتش"
 
 #. "U+1F525"
 #: src/chatty-verification-page.c:50
 msgid "Banana"
-msgstr "Банан"
+msgstr "موز"
 
 #. "U+1F34C"
 #: src/chatty-verification-page.c:51
 msgid "Apple"
-msgstr "Яблуко"
+msgstr "سیب"
 
 #. "U+1F34E"
 #: src/chatty-verification-page.c:52
 msgid "Strawberry"
-msgstr "Полуниця"
+msgstr "توت‌فرنگی"
 
 #. "U+1F353"
 #: src/chatty-verification-page.c:53
 msgid "Corn"
-msgstr "Кукурудза"
+msgstr "ذرّت"
 
 #. "U+1F33D"
 #: src/chatty-verification-page.c:54
 msgid "Pizza"
-msgstr "Піца"
+msgstr "پیتزا"
 
 #. "U+1F355"
 #: src/chatty-verification-page.c:55
 msgid "Cake"
-msgstr "Торт"
+msgstr "کیک"
 
 #. "U+1F382"
 #: src/chatty-verification-page.c:56
 msgid "Heart"
-msgstr "Серце"
+msgstr "قلب"
 
 #. "U+2764U+FE0F"
 #: src/chatty-verification-page.c:57
 msgid "Smiley"
-msgstr "Смайлик"
+msgstr "شکلک"
 
 #. "U+1F600"
 #: src/chatty-verification-page.c:58
 msgid "Robot"
-msgstr "Робот"
+msgstr "آدم آهنی"
 
 #. "U+1F916"
 #: src/chatty-verification-page.c:59
 msgid "Hat"
-msgstr "Аті"
+msgstr "کلاه"
 
 #. "U+1F3A9"
 #: src/chatty-verification-page.c:60
 msgid "Glasses"
-msgstr "Стакани"
+msgstr "عینک"
 
 #. "U+1F453"
 #: src/chatty-verification-page.c:61
 msgid "Spanner"
-msgstr "Гайковий ключ"
+msgstr "آچار"
 
 #. "U+1F527"
 #: src/chatty-verification-page.c:62
 msgid "Santa"
-msgstr "Санта"
+msgstr "بابانوئل"
 
 #. "U+1F385"
 #: src/chatty-verification-page.c:63
 msgid "Thumbs Up"
-msgstr "Палець вгору"
+msgstr "شصت"
 
 #. "U+1F44D"
 #: src/chatty-verification-page.c:64
 msgid "Umbrella"
-msgstr "Парасолька"
+msgstr "چتر"
 
 #. "U+2602U+FE0F"
 #: src/chatty-verification-page.c:65
 msgid "Hourglass"
-msgstr "Клепсидра"
+msgstr "ساعت شنی"
 
 #. "U+231B"
 #: src/chatty-verification-page.c:66
 msgid "Clock"
-msgstr "Годинник"
+msgstr "ساعت"
 
 #. "U+23F0"
 #: src/chatty-verification-page.c:67
 msgid "Gift"
-msgstr "Подарунок"
+msgstr "کادو"
 
 #. "U+1F381"
 #: src/chatty-verification-page.c:68
 msgid "Light Bulb"
-msgstr "Лампочка"
+msgstr "لامپ"
 
 #. "U+1F4A1"
 #: src/chatty-verification-page.c:69
 msgid "Book"
-msgstr "Книга"
+msgstr "کتاب"
 
 #. "U+1F4D5"
 #: src/chatty-verification-page.c:70
 msgid "Pencil"
-msgstr "Олівець"
+msgstr "مداد"
 
 #. "U+270FU+FE0F"
 #: src/chatty-verification-page.c:71
 msgid "Paperclip"
-msgstr "Затискач для паперу"
+msgstr "گیره کاغذ"
 
 #. "U+1F4CE"
 #: src/chatty-verification-page.c:72
 msgid "Scissors"
-msgstr "Ножиці"
+msgstr "قیچی"
 
 #. "U+2702U+FE0F"
 #: src/chatty-verification-page.c:73
 msgid "Lock"
-msgstr "Замок"
+msgstr "قفل"
 
 #. "U+1F512"
 #: src/chatty-verification-page.c:74
 msgid "Key"
-msgstr "Ключ"
+msgstr "کلید"
 
 #. "U+1F511"
 #: src/chatty-verification-page.c:75
 msgid "Hammer"
-msgstr "Молот"
+msgstr "چکش"
 
 #. "U+1F528"
 #: src/chatty-verification-page.c:76
 msgid "Telephone"
-msgstr "Телефон"
+msgstr "تلفن"
 
 #. "U+260EU+FE0F"
 #: src/chatty-verification-page.c:77
 msgid "Flag"
-msgstr "Прапор"
+msgstr "پرچم"
 
 #. "U+1F3C1"
 #: src/chatty-verification-page.c:78
 msgid "Train"
-msgstr "Потяг"
+msgstr "قطار"
 
 #. "U+1F682"
 #: src/chatty-verification-page.c:79
 msgid "Bicycle"
-msgstr "Велосипед"
+msgstr "دوچرخه"
 
 #. "U+1F6B2"
 #: src/chatty-verification-page.c:80
 msgid "Aeroplane"
-msgstr "Аероплан"
+msgstr "هواپیما"
 
 #. "U+2708U+FE0F"
 #: src/chatty-verification-page.c:81
 msgid "Rocket"
-msgstr "Ракета"
+msgstr "موشک"
 
 #. "U+1F680"
 #: src/chatty-verification-page.c:82
 msgid "Trophy"
-msgstr "Трофей"
+msgstr "جام"
 
 #. "U+1F3C6"
 #: src/chatty-verification-page.c:83
 msgid "Ball"
-msgstr "М’яч"
+msgstr "توپ"
 
 #. "U+26BD"
 #: src/chatty-verification-page.c:84
 msgid "Guitar"
-msgstr "Гітара"
+msgstr "گیتار"
 
 #. "U+1F3B8"
 #: src/chatty-verification-page.c:85
 msgid "Trumpet"
-msgstr "Труба"
+msgstr "ترومپت"
 
 #. "U+1F3BA"
 #: src/chatty-verification-page.c:86
 msgid "Bell"
-msgstr "Дзвінок"
+msgstr "زنگوله"
 
 #. "U+1F514"
 #: src/chatty-verification-page.c:87
 msgid "Anchor"
-msgstr "Якір"
+msgstr "لنگر"
 
 #. "U+2693"
 #: src/chatty-verification-page.c:88
 msgid "Headphones"
-msgstr "Навушники"
+msgstr "هدفون"
 
 #. "U+1F3A7"
 #: src/chatty-verification-page.c:89
 msgid "Folder"
-msgstr "Тека"
+msgstr "پوشه"
 
 #. "U+1F4C1"
 #: src/chatty-verification-page.c:90
 msgid "Pin"
-msgstr "Шпилька"
+msgstr "سنجاق"
 
 #: src/chatty-verification-page.c:387
 msgid "Show Emojis"
-msgstr "Показати емоційки"
+msgstr "نمایش شکلک‌ها"
 
 #: src/chatty-verification-page.c:389
 msgid "Show Numbers"
-msgstr "Показувати номери"
+msgstr "نمایش شماره‌ها"
 
 #: src/chatty-window.c:363
 msgid "You shall no longer be notified for new messages, continue?"
-msgstr "Програма більше не сповіщатиме вас про нові повідомлення. Продовжити?"
+msgstr "دیگر برای پیام‌های جدید آگاه نخواهید شد. ادامه؟"
 
 #: src/chatty-window.c:367
 msgid "Block"
-msgstr "Заблокувати"
+msgstr "بلوک"
 
 #: src/chatty-window.c:456
 #, c-format
 msgid "Delete chat with “%s”"
-msgstr "Вилучити спілкування з «%s»"
+msgstr "حذف گپ با «%s»؟"
 
 #: src/chatty-window.c:457
 msgid "This deletes the conversation history"
-msgstr "У результаті буде вилучено журнал спілкування"
+msgstr "این کار تاریخچهٔ گفت‌وگو را حذف می‌کند"
 
 #: src/chatty-window.c:459
 #, c-format
 msgid "Disconnect group chat “%s”"
-msgstr "Від'єднатися від групового спілкування «%s»"
+msgstr "قطع گپ گروهی «%s»"
 
 #: src/chatty-window.c:460
 msgid "This removes chat from chats list"
-msgstr "У результаті спілкування буде вилучено зі списку спілкувань"
+msgstr "این کار گپ را از سیاههٔ گپ‌ها برمی‌دارد"
 
 #: src/chatty-window.c:465 src/dialogs/chatty-settings-dialog.c:467
 msgid "Delete"
-msgstr "Вилучити"
+msgstr "حذف"
 
 #: src/dialogs/chatty-mm-chat-info.c:146
 msgctxt "Refer to self in contact list"
 msgid "You"
-msgstr "Ви"
+msgstr "شما"
 
 #: src/dialogs/chatty-pp-chat-info.c:111
 #: src/dialogs/chatty-ma-account-details.c:139
 #: src/dialogs/chatty-pp-account-details.c:115
 msgid "Set Avatar"
-msgstr "Встановити аватар"
+msgstr "تنظیم چهرک"
 
 #: src/dialogs/chatty-pp-chat-info.c:118
 #: src/dialogs/chatty-ma-account-details.c:146
 #: src/dialogs/chatty-pp-account-details.c:122
 msgid "Images"
-msgstr "Зображення"
+msgstr "تصویرها"
 
 #: src/dialogs/chatty-pp-chat-info.c:221
 msgid "Encryption is not available"
-msgstr "Шифрування не доступне"
+msgstr "رمزنگاری ممکن نیست"
 
 #: src/dialogs/chatty-pp-chat-info.c:225
 msgid "This chat is encrypted"
-msgstr "Це спілкування зашифровано"
+msgstr "ین گپ رمزنگاری شده"
 
 #: src/dialogs/chatty-pp-chat-info.c:229
 msgid "This chat is not encrypted"
-msgstr "Це спілкування не зашифровано"
+msgstr "ین گپ رمزنگاری نشده"
 
 #: src/dialogs/chatty-pp-chat-info.c:253
 msgid "Encryption not available"
-msgstr "Шифрування не доступне"
+msgstr "رمزنگاری ممکن نیست"
 
 #: src/dialogs/chatty-pp-chat-info.c:274
 #, c-format
 msgid "%u Member"
 msgid_plural "%u Members"
-msgstr[0] "%u учасник"
-msgstr[1] "%u учасники"
-msgstr[2] "%u учасників"
+msgstr[0] "%Iu عضو"
+msgstr[1] "%Iu عضو"
 
 #: src/dialogs/chatty-pp-chat-info.c:308
 msgid "Phone Number:"
-msgstr "Номер телефону:"
+msgstr "شماره تلفن:"
 
 #: src/dialogs/chatty-pp-chat-info.c:310
 msgid "XMPP ID:"
-msgstr "Ід. XMPP:"
+msgstr "شناسهٔ XMPP:"
 
 #: src/dialogs/chatty-pp-chat-info.c:315
 msgid "Matrix ID:"
-msgstr "Ід. Matrix:"
+msgstr "شناسهٔ ماتریکس:"
 
 #: src/dialogs/chatty-pp-chat-info.c:318
 msgid "Telegram ID:"
-msgstr "Ід. Telegram:"
+msgstr "شناسهٔ تلگرام:"
 
 #: src/dialogs/chatty-new-chat-dialog.c:170
 msgid "Add"
-msgstr "Додати"
+msgstr "افزودن"
 
 #: src/dialogs/chatty-new-chat-dialog.c:180
 msgid "Create"
-msgstr "Створити"
+msgstr "ایجاد"
 
 #: src/dialogs/chatty-new-chat-dialog.c:186
 msgid "Add Contact"
-msgstr "Додати контакт"
+msgstr "افزودن آشنا"
 
 #: src/dialogs/chatty-new-chat-dialog.c:224
 #, c-format
 msgid "Error opening GNOME Contacts: %s"
-msgstr "Помилка під час спроби відкрити «Контакти» GNOME: %s"
+msgstr "خطا در گشودن آشنای گنوم: %s"
 
 #: src/dialogs/chatty-new-chat-dialog.c:456
 msgid "SMS"
-msgstr "SMS"
+msgstr "پیامک"
 
 #: src/dialogs/chatty-new-chat-dialog.c:634
 msgid "You"
-msgstr "Ви"
+msgstr "شما"
 
 #: src/dialogs/chatty-ma-account-details.c:396
 #: src/dialogs/chatty-pp-account-details.c:171
 msgid "connected"
-msgstr "з'єднано"
+msgstr "وصل شده"
 
 #: src/dialogs/chatty-ma-account-details.c:398
 #: src/dialogs/chatty-pp-account-details.c:173
 msgid "connecting…"
-msgstr "З'єднання…"
+msgstr "درحال اتّصال…"
 
 #: src/dialogs/chatty-ma-account-details.c:400
 #: src/dialogs/chatty-pp-account-details.c:175
 msgid "disconnected"
-msgstr "від'єднано"
+msgstr "قطع شده"
 
 #: src/dialogs/chatty-settings-dialog.c:199
 #, c-format
 msgid "Error saving account: %s"
-msgstr "Помилка під час спроби зберегти обліковий запис: %s"
+msgstr "خطا در ذخیرهٔ حساب: %s"
 
 #: src/dialogs/chatty-settings-dialog.c:254
 #, c-format
 msgid "Failed to verify server: %s"
-msgstr "Не вдалося перевірити сервер: %s"
+msgstr "خطا در تأ‌یید کارساز: %s"
 
 #: src/dialogs/chatty-settings-dialog.c:256
 msgid "Failed to verify server"
-msgstr "Не вдалося перевірити сервер"
+msgstr "خطا در تأ‌یید کارساز"
 
 #: src/dialogs/chatty-settings-dialog.c:262
 msgid "Couldn't get Home server address"
-msgstr "Не вдалося отримати адресу домашнього сервера."
+msgstr "نتوانست نشانی کارساز خانگی را بگیرد"
 
 #: src/dialogs/chatty-settings-dialog.c:462
 #, c-format
 msgid "Delete account %s?"
-msgstr "Вилучити запис %s?"
+msgstr "حذف حساب %s؟"
 
 #: src/dialogs/chatty-settings-dialog.c:642
 msgid "Restart Chatty to disable Purple"
-msgstr "Перезапустіть Chatty, щоб вимкнути Purple"
+msgstr "آغاز دوبارهٔ چتی برای از کار انداختن پرپل"
 
-#: src/dialogs/chatty-settings-dialog.c:658
-#: src/ui/chatty-settings-dialog.ui:246
+#: src/dialogs/chatty-settings-dialog.c:658 src/ui/chatty-settings-dialog.ui:246
 msgid "Purple"
-msgstr "Purple"
+msgstr "بنفش"
 
 #: src/dialogs/chatty-settings-dialog.c:660
 msgid "New Account"
-msgstr "Новий обліковий запис"
+msgstr "حساب جدید"
 
-#: src/dialogs/chatty-settings-dialog.c:662
-#: src/ui/chatty-settings-dialog.ui:306
+#: src/dialogs/chatty-settings-dialog.c:662 src/ui/chatty-settings-dialog.ui:306
 msgid "Blocked Contacts"
-msgstr "Заблоковані контакти"
+msgstr "آشنایان مسدود"
 
 #: src/dialogs/chatty-settings-dialog.c:664 src/ui/chatty-side-bar.ui:110
 msgid "Preferences"
-msgstr "Параметри"
+msgstr "ترجیحات"
 
-#: src/dialogs/chatty-settings-dialog.c:692
-#: src/ui/chatty-pp-account-details.ui:81 src/ui/chatty-settings-dialog.ui:218
+#: src/dialogs/chatty-settings-dialog.c:692 src/ui/chatty-pp-account-details.ui:81
+#: src/ui/chatty-settings-dialog.ui:218
 msgid "Protocol"
-msgstr "Протокол"
+msgstr "شیوه‌نامه"
 
 #. TRANSLATORS: Only translate 'or'
 #: src/dialogs/chatty-settings-dialog.c:948
 msgid "@user:matrix.org or user@example.com"
-msgstr "@user:matrix.org або user@example.com"
+msgstr "@user:matrix.org یا user@example.com"
 
 #: src/matrix/chatty-ma-account.c:78
 #, c-format
 msgid "Please enter password for “%s”, homeserver: %s"
-msgstr "Будь ласка, введіть пароль до «%s», домашній сервер: %s"
+msgstr "ورود گذرواژه برای «%s»، کارساز خانگی: %s"
 
 #: src/matrix/chatty-ma-key-chat.c:62
 msgid "Key Verification"
-msgstr "Перевірка ключа"
+msgstr "تأیید کلید"
 
 #: src/mm/chatty-mmsd.c:253
 #, c-format
 msgid "Error Delivering Message to %s"
-msgstr "Помилка під час спроби доставити повідомлення %s"
+msgstr "خطا در رساندن پیام به %s"
 
 #: src/mm/chatty-mmsd.c:254
 msgid "See logs for more details"
-msgstr "Див. журнал, щоб дізнатися більше"
+msgstr "دیدن گزارش‌ها برای جزییات بیش‌تر"
 
 #: src/mm/chatty-mmsd.c:572 src/mm/chatty-mmsd.c:633 src/mm/chatty-mmsd.c:656
 msgid "MMS cannot be sent"
-msgstr "Не вдалося надіслати MMS"
+msgstr "نمی‌توان پیام چندرسانه‌ای فرستاد"
 
 #: src/mm/chatty-mmsd.c:574
 msgid "Please send less attachments"
-msgstr "Будь ласка, зменшіть об'єм долучень"
+msgstr "فرستادن پیوست‌های کم‌تر لطفاً"
 
 #: src/mm/chatty-mmsd.c:635
 msgid "Could not resize image to be small enough"
-msgstr "Не вдалося змінити розміри зображення на достатньо малі"
+msgstr "نتوانست تصویر را به اندازهٔ کافی کوچک کند"
 
 #: src/mm/chatty-mmsd.c:653
 #, c-format
 msgid "The attachment is too large"
 msgid_plural "Attachments are too large"
-msgstr[0] "Долучення є надто великими"
-msgstr[1] "Долучення є надто великими"
-msgstr[2] "Долучення є надто великими"
+msgstr[0] "پیوست بیش از حد بزرگ است"
+msgstr[1] "پیوست‌ها بیش از حد بزرگند"
 
 #. TRANSLATORS: Timestamp for minute accuracy, e.g. “2020-08-11 15:27”.
 #. See https://developer.gnome.org/glib/stable/glib-GDateTime.html#g-date-time-format
 #.
 #: src/mm/chatty-mmsd.c:984
 msgid "%Y-%m-%d %H∶%M"
-msgstr "%Y.%m.%d %H:%M"
+msgstr "%OH:%OM %Oy/%Om/%Od"
 
 #: src/mm/chatty-mmsd.c:1298
 #, c-format
 msgid "You received an MMS, but it expired on: %s"
-msgstr "Вами отримано MMS, але строк його дії вичерпано %s"
+msgstr "پیامی چندرسانه‌ای گرفتید، ولی در %s منقضی شد"
 
 #: src/mm/chatty-mmsd.c:1301
 msgid "You received an empty MMS."
-msgstr "Вами отримано порожнє MMS."
+msgstr "پیام چندرسانه‌ای خالی‌ای گرفتید."
 
 #: src/mm/chatty-mmsd.c:1782 src/mm/chatty-mmsd.c:1830
 #, c-format
 msgid "Automatically Retrying for  %i MMS"
 msgid_plural "Automatically Retrying for  %i MMSes..."
-msgstr[0] "Автоматично повторюємо спробу для %i MMS…"
-msgstr[1] "Автоматично повторюємо спробу для %i MMS…"
-msgstr[2] "Автоматично повторюємо спробу для %i MMS…"
+msgstr[0] "تلاش دوبارهٔ خودکار برای %Ii پیام چندرسانه‌ای…"
+msgstr[1] "تلاش دوبارهٔ خودکار برای %Ii پیام چندرسانه‌ای…"
 
 #: src/mm/chatty-mmsd.c:1787
 msgid "Temporary Error Sending MMS"
-msgstr "Тимчасова помилка надсилання MMS"
+msgstr "خطای موقّتی فرستادن پیام‌های چندرسانه‌ای"
 
 #: src/mm/chatty-mmsd.c:1835
 msgid "Temporary Error Receiving MMS"
-msgstr "Тимчасова помилка отримання MMS"
+msgstr "خطای موقّتی گرفتن پیام‌های چندرسانه‌ای"
 
 #: src/mm/chatty-mmsd.c:2053
 msgid "MMSC is not configured"
-msgstr "MMSC не налаштовано"
+msgstr "مرکز پیام چندرسانه‌ای پیکربندی نشده"
 
 #: src/mm/chatty-mmsd.c:2056
 msgid "APN is not configured correctly"
-msgstr "APN не налаштовано належним чином"
+msgstr "نام نقطهٔ دسترسی به درستی پیکربندی نشده"
 
 #: src/mm/chatty-mmsd.c:2059
 msgid "Mobile Data is not configured"
-msgstr "Мобільний обмін даними не налаштовано"
+msgstr "دادهٔ همراه پیکربندی نشده"
 
 #: src/mm/chatty-mmsd.c:2062
 msgid "Mobile Data is off"
-msgstr "Мобільний обмін даними вимкнено"
+msgstr "دادهٔ همراه خاموش است"
 
 #: src/mm/chatty-mmsd.c:2065
 msgid "Unknown Error"
-msgstr "Невідома помилка"
+msgstr "خطای ناشناخته"
 
 #: src/mm/chatty-mmsd.c:2070
 #, c-format
 msgid "Chatty cannot process %i MMS"
 msgid_plural "Chatty cannot process %i MMSes..."
-msgstr[0] "Chatty не вдалося обробити %i MMS…"
-msgstr[1] "Chatty не вдалося обробити %i MMS…"
-msgstr[2] "Chatty не вдалося обробити %i MMS…"
+msgstr[0] "چتی نمی‌تواند %Ii پیام چندرسانه‌ای را پردازش کند"
+msgstr[1] "چتی نمی‌تواند %Ii پیام چندرسانه‌ای را پردازش کند…"
 
 #: src/mm/chatty-mm-account.c:319 src/mm/chatty-mm-account.c:370
 #, c-format
 msgid "Error Sending SMS to %s"
-msgstr "Помилка надсилання SMS %s"
+msgstr "خطای فرستادن پیامک به %s"
 
 #: src/mm/chatty-mm-account.c:506
 #, c-format
 msgid "Error Sending MMS to %s"
-msgstr "Помилка надсилання MMS %s"
+msgstr "خطای فرستادن پیام چندرسانه‌ای به %s"
 
 #: src/ui/chatty-attachment.ui:32
 msgid "Remove Attachment"
-msgstr "Вилучити долучення"
+msgstr "برداشتن چهرک"
 
 #: src/ui/chatty-dialog-wrong-pw.ui:15
 msgid "Incorrect password"
-msgstr "Помилковий пароль"
+msgstr "گذرواژهٔ نادرست"
 
 #: src/ui/chatty-dialog-wrong-pw.ui:33
 msgid "_OK"
-msgstr "_Гаразд"
+msgstr "_تأیید"
 
 #: src/ui/chatty-dialog-wrong-pw.ui:47
 msgid "Please re-enter the Password."
-msgstr "Будь ласка, повторіть введення пароля."
+msgstr "ورود دوبارهٔ گذرواژه لطفاً."
 
 #: src/ui/chatty-dialog-wrong-pw.ui:53 src/ui/chatty-pp-account-details.ui:129
 #: src/ui/chatty-settings-dialog.ui:629
 msgid "Password"
-msgstr "Пароль"
+msgstr "گذرواژه"
 
 #: src/ui/chatty-dialog-join-muc.ui:7
 msgid "New Group Chat"
-msgstr "Нове групове спілкування"
+msgstr "گپ گروهی جدید"
 
 #: src/ui/chatty-dialog-join-muc.ui:16 src/ui/chatty-info-dialog.ui:26
 #: src/ui/chatty-info-dialog.ui:35
 msgid "Cancel"
-msgstr "Скасувати"
+msgstr "لغو"
 
 #: src/ui/chatty-dialog-join-muc.ui:22
 msgid "Join Chat"
-msgstr "Долучитися до спілкування"
+msgstr "پیوستن به گپ"
 
 #: src/ui/chatty-dialog-join-muc.ui:62 src/ui/chatty-dialog-new-chat.ui:192
 msgid "Select chat account"
-msgstr "Виберіть обліковий запис"
+msgstr "گزینش حساب گپ"
 
 #: src/ui/chatty-dialog-join-muc.ui:90
 msgid "Room address"
-msgstr "Адреса кімнати"
+msgstr "نشانی اتاق"
 
 #: src/ui/chatty-dialog-join-muc.ui:100
 msgid "Room alias (optional)"
-msgstr "Альт. назва кімнати (необов’язково)"
+msgstr "نام مستعار اتاق (اختیاری)"
 
 #: src/ui/chatty-dialog-join-muc.ui:110
 msgid "Nickname (optional)"
-msgstr "Псевдонім (необов’язково)"
+msgstr "نام نمایشی (اختیاری)"
 
 #: src/ui/chatty-dialog-join-muc.ui:120
 msgid "Password (optional)"
-msgstr "Пароль (необов'язковий)"
+msgstr "گذرواژه (اختیاری)"
 
 #: src/ui/chatty-dialog-new-chat.ui:76
 msgid "Group Title"
-msgstr "Заголовок групи"
+msgstr "عنوان گروه"
 
 #: src/ui/chatty-dialog-new-chat.ui:118
 msgid "Add members from contacts…"
-msgstr "Додати учасників з контактів…"
+msgstr "افزودن اعضا از آشنایان…"
 
 #: src/ui/chatty-dialog-new-chat.ui:155
 msgid "Send To:"
-msgstr "Надіслати:"
+msgstr "فرستادن به:"
 
 #: src/ui/chatty-dialog-new-chat.ui:215 src/ui/chatty-info-dialog.ui:116
 msgid "Contact ID"
-msgstr "Ід. контакту"
+msgstr "شناسهٔ آشنا"
 
 #: src/ui/chatty-dialog-new-chat.ui:225
 msgid "Name (optional)"
-msgstr "Назва (необов’язково):"
+msgstr "نام (اختیاری)"
 
 #: src/ui/chatty-dialog-new-chat.ui:262
 msgid "Add to Contacts"
-msgstr "Додати до контактів"
+msgstr "افزودن به آشنایان"
 
 #: src/ui/chatty-info-dialog.ui:8 src/ui/chatty-main-view.ui:126
 msgid "Chat Details"
-msgstr "Подробиці спілкування"
+msgstr "جزییات گپ"
 
 #: src/ui/chatty-info-dialog.ui:44
 msgid "Apply"
-msgstr "Застосувати"
+msgstr "اعمال"
 
 #: src/ui/chatty-info-dialog.ui:136
 msgid "Invite message"
-msgstr "Повідомлення запрошення"
+msgstr "پیام دعوت"
 
 #: src/ui/chatty-invite-page.ui:62
 msgid "_Accept"
-msgstr "При_йняти"
+msgstr "_پذیرش"
 
 #: src/ui/chatty-invite-page.ui:86
 msgid "_Reject"
-msgstr "Від_!мовити"
+msgstr "_رد"
 
 #: src/ui/chatty-ma-chat-info.ui:32
 msgid "Chat"
-msgstr "Спілкування"
+msgstr "گپ"
 
 #: src/ui/chatty-ma-chat-info.ui:61 src/ui/chatty-ma-account-details.ui:210
 msgid "Matrix ID"
-msgstr "Ід. Matrix"
+msgstr "شناسهٔ ماتریکس"
 
 #: src/ui/chatty-ma-chat-info.ui:89 src/ui/chatty-pp-chat-info.ui:242
 msgid "Chat settings"
-msgstr "Параметри спілкування"
+msgstr "تنظیمات گپ"
 
 #: src/ui/chatty-ma-chat-info.ui:107 src/ui/chatty-pp-chat-info.ui:193
 #: src/ui/chatty-pp-chat-info.ui:292
 msgid "Encryption"
-msgstr "Шифрування"
+msgstr "رمزنگاری"
 
 #: src/ui/chatty-ma-chat-info.ui:108 src/ui/chatty-pp-chat-info.ui:293
 msgid "Encrypt Messages"
-msgstr "Шифрувати повідомлення"
+msgstr "رمزنگاری پیام‌ها"
 
 #: src/ui/chatty-main-view.ui:12 src/ui/chatty-settings-dialog.ui:17
 #: src/ui/chatty-side-bar.ui:19
 msgid "Back"
-msgstr "Назад"
+msgstr "بازگشت"
 
 #: src/ui/chatty-main-view.ui:41 src/ui/chatty-list-row.ui:169
 msgid "Call"
-msgstr "Виклик"
+msgstr "تماس"
 
 #: src/ui/chatty-main-view.ui:137
 msgid "Leave Chat"
-msgstr "Полишити спілкування"
+msgstr "ترک گپ"
 
 #: src/ui/chatty-main-view.ui:145
 msgid "Block Contact"
-msgstr "Заблокувати контакт"
+msgstr "انسداد آشنا"
 
 #: src/ui/chatty-main-view.ui:153
 msgid "Unblock Contact"
-msgstr "Розблокувати контакт"
+msgstr "رفع انسداد آشنا"
 
 #: src/ui/chatty-main-view.ui:161
 msgid "Archive chat"
-msgstr "Архівувати спілкування"
+msgstr "بایگانی گپ"
 
 #: src/ui/chatty-main-view.ui:169
 msgid "Unarchive chat"
-msgstr "Скасувати архівування"
+msgstr "در آوردن گپ از بایگانی"
 
 #: src/ui/chatty-main-view.ui:177
 msgid "Delete Chat"
-msgstr "Вилучити спілкування"
+msgstr "حذف گپ"
 
 #: src/ui/chatty-message-row.ui:30
 msgid "Copy Text"
-msgstr "Скопіювати текст"
+msgstr "رونوشت متن"
 
 #: src/ui/chatty-pp-chat-info.ui:34 src/ui/chatty-pp-account-details.ui:38
 msgid "Change Avatar"
-msgstr "Змінити аватар"
+msgstr "تغییر چهرک"
 
 #: src/ui/chatty-pp-chat-info.ui:47 src/ui/chatty-pp-account-details.ui:25
 msgid "Delete Avatar"
-msgstr "Вилучити аватар"
+msgstr "حذف چهرک"
 
 #: src/ui/chatty-pp-chat-info.ui:76
 msgid "Room topic"
-msgstr "Тема кімнати"
+msgstr "موضوع اتاق"
 
 #: src/ui/chatty-pp-chat-info.ui:143
 msgid "User"
-msgstr "Користувач"
+msgstr "کاربر"
 
 #: src/ui/chatty-pp-chat-info.ui:168
 msgid "XMPP ID"
-msgstr "Ід. XMPP"
+msgstr "شناسهٔ XMPP"
 
 #: src/ui/chatty-pp-chat-info.ui:218 src/ui/chatty-ma-account-details.ui:54
 #: src/ui/chatty-pp-account-details.ui:105
 msgid "Status"
-msgstr "Стан"
+msgstr "وضعیت"
 
 #: src/ui/chatty-pp-chat-info.ui:262
 msgid "Notifications"
-msgstr "Сповіщення"
+msgstr "آگاهی‌ها"
 
 #: src/ui/chatty-pp-chat-info.ui:277
 msgid "Status Messages"
-msgstr "Повідомлення про стан"
+msgstr "پیام وضعیت"
 
 #: src/ui/chatty-pp-chat-info.ui:278
 msgid "Show status messages in chat"
-msgstr "Показувати повідомлення стану у спілкуванні"
+msgstr "نمایش پیام وضعیت در گپ"
 
 #: src/ui/chatty-pp-chat-info.ui:313
 msgid "Fingerprints"
-msgstr "Відбитки"
+msgstr "اثر انگشت‌ها"
 
 #: src/ui/chatty-mm-chat-info.ui:20
 msgid "Title"
-msgstr "Заголовок"
+msgstr "عنوان"
 
 #: src/ui/chatty-mm-chat-info.ui:23
 msgid "Blank for default"
-msgstr "Типово порожній"
+msgstr "به صورت پیش‌گزیده خالی"
 
 #: src/ui/chatty-mm-chat-info.ui:32
 msgid "Group Members"
-msgstr "Учасники групи"
+msgstr "اعضای گروه"
 
 #: src/ui/chatty-list-row.ui:33
 msgid "Copy Number"
-msgstr "Копіювати номер"
+msgstr "رونوشت از شماره"
 
 #: src/ui/chatty-ma-account-details.ui:78
 msgid "Name"
-msgstr "Ім'я"
+msgstr "نام"
 
 #: src/ui/chatty-ma-account-details.ui:106
 msgid "Email"
-msgstr "Ел. пошта"
+msgstr "رایانامه"
 
 #: src/ui/chatty-ma-account-details.ui:134
 msgid "Phone"
-msgstr "Телефон"
+msgstr "تلفن"
 
 #: src/ui/chatty-ma-account-details.ui:174
 msgid "Advanced information"
-msgstr "Додаткові відомості"
+msgstr "اطّلاعات پیش‌رفته"
 
 #: src/ui/chatty-ma-account-details.ui:186
 msgid "Homeserver"
-msgstr "Домашній сервер"
+msgstr "کارساز خانگی"
 
 #: src/ui/chatty-ma-account-details.ui:234
 msgid "Device ID"
-msgstr "Ід. пристрою"
+msgstr "شناسه دستگاه"
 
 #: src/ui/chatty-pp-account-details.ui:59
 msgid "Account ID"
-msgstr "Ідентифікатор запису"
+msgstr "شناسهٔ حساب"
 
 #: src/ui/chatty-pp-account-details.ui:168
 msgid "Own Fingerprint"
-msgstr "Власний відбиток"
+msgstr "اثرانگشت خود"
 
 #: src/ui/chatty-settings-dialog.ui:38
 msgid "_Save"
-msgstr "З_берегти"
+msgstr "_ذخیره"
 
 #: src/ui/chatty-settings-dialog.ui:48
 msgid "_Apply"
-msgstr "З_астосувати"
+msgstr "_اعمال"
 
 #: src/ui/chatty-settings-dialog.ui:109
 msgid "Accounts"
-msgstr "Облікові записи"
+msgstr "حساب‌ها"
 
 #: src/ui/chatty-settings-dialog.ui:126 src/ui/chatty-settings-dialog.ui:470
 msgid "Privacy"
-msgstr "Конфіденційність"
+msgstr "محرمانگی"
 
 #: src/ui/chatty-settings-dialog.ui:131
 msgid "Read Receipts"
-msgstr "Підтвердження прочитання"
+msgstr "رسید‌های خواندن"
 
 #: src/ui/chatty-settings-dialog.ui:144
 msgid "Typing Indicators"
-msgstr "Сповіщення щодо набирання"
+msgstr "نشانگرهای نوشتن"
 
 #: src/ui/chatty-settings-dialog.ui:157
 msgid "Remove Tracking IDs From URLs"
-msgstr "Вилучити ідентифікатори стеження з адрес"
+msgstr "برداشتن شناسه‌های ردیابی از نشانی‌ها"
 
 #: src/ui/chatty-settings-dialog.ui:170
 msgid "Show Attachment Previews"
-msgstr "Показувати ескізи долучень"
+msgstr "پیش‌نمایش پیوست‌ها"
 
 #: src/ui/chatty-settings-dialog.ui:186
 msgid "Editor"
-msgstr "Редактор"
+msgstr "ویراستار"
 
 #: src/ui/chatty-settings-dialog.ui:190
 msgid "Convert Emoticons"
-msgstr "Перетворювати емоційки"
+msgstr "تبدیل شکلک‌ها"
 
 #: src/ui/chatty-settings-dialog.ui:191
 msgid "When you type :) it will be changed to 😃"
-msgstr "Якщо ви введете :), програма виконає заміну на 😃"
+msgstr "دگرگونی به 😃 هنگام نوشتن (:"
 
 #. TRANSLATORS: Return is the Enter key.
 #: src/ui/chatty-settings-dialog.ui:204
 msgid "Send Messages With Enter"
-msgstr "Надсилати повідомлення клавішею Enter"
+msgstr "فرستادن پیام‌ها با ورود"
 
 #: src/ui/chatty-settings-dialog.ui:279
 msgid "Request Delivery Reports"
-msgstr "Надсилати запит щодо доставлення"
+msgstr "درخواست گزارش‌های رسیدن"
 
 #: src/ui/chatty-settings-dialog.ui:292
 msgid "SMIL for MMS"
-msgstr "SMIL для MMS"
+msgstr "SMIL برای پیام چندرسانه‌ای"
 
 #: src/ui/chatty-settings-dialog.ui:324
 msgid "MMS Carrier Settings"
-msgstr "Параметри MMS носія сигналу"
+msgstr "تنظیمات حامل پیام چندرسانه‌ای"
 
 #: src/ui/chatty-settings-dialog.ui:328
 msgid "Phone Number"
-msgstr "Номер телефону"
+msgstr "شماره تلفن"
 
 #: src/ui/chatty-settings-dialog.ui:334
 msgid "Your modem's phone number"
-msgstr "Номер телефону вашого модема"
+msgstr "شماره تلفن موردمتان"
 
 #: src/ui/chatty-settings-dialog.ui:342
 msgid "MMSC"
@@ -1540,240 +1506,164 @@ msgstr "MMSC"
 
 #: src/ui/chatty-settings-dialog.ui:354
 msgid "APN"
-msgstr "APN"
+msgstr "ای‌پی‌ان"
 
 #: src/ui/chatty-settings-dialog.ui:366
 msgid "Proxy"
-msgstr "Проксі"
+msgstr "پیشکار"
 
 #: src/ui/chatty-settings-dialog.ui:393
 msgid "You won't be notified by messages from blocked contacts"
-msgstr ""
-"Програма не сповіщатиме вас про повідомлення від заблокованих контактів"
+msgstr "از پیام‌های آشنایان مسدود آگاه نخواهید شد"
 
 #: src/ui/chatty-settings-dialog.ui:424
 msgid "No Blocked Chats"
-msgstr "Немає заблокованих спілкувань"
+msgstr "بدون گپ مسدود"
 
 #: src/ui/chatty-settings-dialog.ui:453
 msgid "Enable Purple Accounts"
-msgstr "Увімкнути облікові записи purple"
+msgstr "به کار انداختن حساب‌های پرپل"
 
 #: src/ui/chatty-settings-dialog.ui:476
 msgid "Message Archive Management"
-msgstr "Керування архівом повідомлень"
+msgstr "مدیریت بایگانی پیام"
 
 #: src/ui/chatty-settings-dialog.ui:477
 msgid "Sync conversations with chat server"
-msgstr "Синхронізувати спілкування із сервером"
+msgstr "همگام سازی گفت‌وگوها با کارساز گپ"
 
 #: src/ui/chatty-settings-dialog.ui:491
 msgid "Message Carbon Copies"
-msgstr "Копії повідомлень"
+msgstr "رونوشت‌های کاربنی پیام"
 
 #: src/ui/chatty-settings-dialog.ui:606
 msgid "User ID"
-msgstr "Ід. користувача"
+msgstr "شناسهٔ کاربری"
 
 #: src/ui/chatty-settings-dialog.ui:655
 msgid "Home server"
-msgstr "Домашній сервер"
+msgstr "کارساز خانیگ"
 
 #: src/ui/chatty-settings-dialog.ui:673
 msgid "_Add"
-msgstr "_Додати"
+msgstr "_افزودن"
 
 #: src/ui/chatty-settings-dialog.ui:701
 msgid "Add _New Account"
-msgstr "Додати _новий обліковий запис"
+msgstr "افزودن حساب _جدید"
 
 #: src/ui/chatty-side-bar.ui:27
 msgid "Add Chat"
-msgstr "Додати спілкування"
+msgstr "افزودن گپ"
 
 #: src/ui/chatty-side-bar.ui:36
 msgid "Menu"
-msgstr "Меню"
+msgstr "فهرست"
 
 #: src/ui/chatty-side-bar.ui:44
 msgid "Search"
-msgstr "Пошук"
+msgstr "جست‌وجو"
 
 #: src/ui/chatty-side-bar.ui:102
 msgctxt "show archived chat list when clicked"
 msgid "Archived"
-msgstr "Архівовано"
+msgstr "بایگانی شده"
 
 #: src/ui/chatty-side-bar.ui:117
 msgid "Keyboard _Shortcuts"
-msgstr "_Клавіатурні скорочення"
+msgstr "_میان‌برهای صفحه‌کلید"
 
 #: src/ui/chatty-side-bar.ui:124
 msgid "Help"
-msgstr "Довідка"
+msgstr "راهنما"
 
 #: src/ui/chatty-side-bar.ui:132
 msgid "About Chats"
-msgstr "Про «Спілкування»"
+msgstr "دربارهٔ گپ‌ها"
 
 #: src/ui/chatty-side-bar.ui:153
 msgid "New Message…"
-msgstr "Нове повідомлення…"
+msgstr "پیام جدید…"
 
 #: src/ui/chatty-side-bar.ui:159
 msgid "New SMS/MMS Message…"
-msgstr "Нове повідомлення SMS/MMS…"
+msgstr "پیام کوتاه یا چندرسانه‌ای جدید…"
 
 #: src/ui/chatty-side-bar.ui:165
 msgid "New Group Message…"
-msgstr "Нове групове повідомлення…"
+msgstr "پیام گروهی جدید…"
 
 #: src/ui/chatty-verification-page.ui:24
 msgid "Incoming Verification Request"
-msgstr "Вхідний запит щодо перевірки"
+msgstr "درخواست تأیید وارده"
 
 #: src/ui/chatty-verification-page.ui:42
 msgid "Verify this user to mark them as trusted."
-msgstr ""
-"Підтвердьте особу цього користувача для позначення його як довіреного."
+msgstr "تأیید این کاربر برای علامت زدنش به عنوان مطمئن."
 
 #: src/ui/chatty-verification-page.ui:78
 msgid ""
 "Verifying this user will mark their session as trusted, and also mark your "
 "session as trusted to them."
 msgstr ""
-"Підтвердження особи цього користувача зробить сеанс довіреним, а також "
-"позначити ваш сеанс як довірений для цього користувача."
+"تأیید این کاربر نشستش را به عنوان مطمئن علامت زده و نشستتان را نیز برایش به "
+"عنوان مطمئن علامت می‌زند."
 
 #: src/ui/chatty-verification-page.ui:98
 msgid "C_ontinue"
-msgstr "Пр_одовжити"
+msgstr "_ادامه"
 
 #: src/ui/chatty-verification-page.ui:201
-msgid ""
-"Verify this user by confirming the following emoji appears on their screen"
-msgstr ""
-"Підтвердьте особу цього користувача за допомогою вказаної нижче емоційки, "
-"яка з'явиться на екрані його пристрою"
+msgid "Verify this user by confirming the following emoji appears on their screen"
+msgstr "تأیید این کاربر با تأیید ظاهر شدن شکلک‌های زیر روی صفحه‌اش"
 
 #: src/ui/chatty-verification-page.ui:378
 msgid ""
 "Verify this user by confirming the following number appears on their screen."
-msgstr ""
-"Підтвердьте особу цього користувача за допомогою вказаного нижче числа, яке "
-"з'явиться на екрані його пристрою."
+msgstr "تأیید این کاربر با تأیید ظاهر شدن عدد زیر روی صفحه‌اش."
 
 #: src/ui/chatty-verification-page.ui:413
 msgid "To be secure, do this in person or use a trusted way to communicate."
-msgstr ""
-"Заради безпеки, виконайте це у реальному житті або скористайтеся надійним "
-"способом зв'язку."
+msgstr "انجام این کار به صورت حضوری با با روش ارتباطی مطمئن برای امن بودن."
 
 #: src/ui/chatty-verification-page.ui:424
 msgctxt "verb, which means 'both items are not the same'"
 msgid "_Don’t Match"
-msgstr "_Різні"
+msgstr "_نامطابقند"
 
 #: src/ui/chatty-verification-page.ui:434
 msgctxt "verb, which means 'both items are the same'"
 msgid "_Match"
-msgstr "Ві_дповідність"
+msgstr "_مطابقند"
 
 #: src/ui/help-overlay.ui:14
 msgctxt "shortcut window"
 msgid "General"
-msgstr "Загальні"
+msgstr "عمومی"
 
 #: src/ui/help-overlay.ui:19
 msgctxt "shortcut window"
 msgid "Open Menu"
-msgstr "Відкрити меню"
+msgstr "گشودن فهرست"
 
 #: src/ui/help-overlay.ui:27
 msgctxt "shortcut window"
 msgid "Open Search"
-msgstr "Відкрити пошук"
+msgstr "گشودن جست‌وجو"
 
 #: src/ui/help-overlay.ui:35
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
-msgstr "Показати скорочення"
+msgstr "نمایش میان‌برها"
 
 #: src/users/chatty-contact.c:324
 msgid "Mobile:"
-msgstr "Мобільний:"
+msgstr "همراه:"
 
 #: src/users/chatty-contact.c:326
 msgid "Work:"
-msgstr "Робочий:"
+msgstr "کاری:"
 
 #: src/users/chatty-contact.c:328
 msgid "Other:"
-msgstr "Інший:"
-
-#, c-format
-#~ msgid "%s"
-#~ msgstr "%s"
-
-#~ msgid "Reject"
-#~ msgstr "Відмовити"
-
-#~ msgid "Accept"
-#~ msgstr "Прийняти"
-
-#~ msgid "Continue"
-#~ msgstr "Продовжити"
-
-#~ msgid "OK"
-#~ msgstr "Гаразд"
-
-#~ msgid "Confirm received messages"
-#~ msgstr "Підтверджувати отримання повідомлень"
-
-#~ msgid "Send typing messages"
-#~ msgstr "Надсилати повідомлення щодо набирання"
-
-#~ msgid "Render Attachments from Messages"
-#~ msgstr "Обробляти долучення з повідомлень"
-
-#~ msgid "Graphical Emoticons"
-#~ msgstr "Графічні емоційки"
-
-#~ msgid "Protocol Settings"
-#~ msgstr "Параметри протоколу"
-
-#~ msgid "Blocked chat list empty"
-#~ msgstr "Список заблокованих у спілкування порожній"
-
-#~ msgid "Enable purple plugin"
-#~ msgstr "Увімкнути додаток purple"
-
-#~ msgid "SMS and MMS Settings"
-#~ msgstr "Параметри SMS і MMS"
-
-#~ msgid "Purple Settings"
-#~ msgstr "Параметри Purple"
-
-#~ msgid "Select Protocol"
-#~ msgstr "Виберіть протокол"
-
-#~ msgid "Add _new account…"
-#~ msgstr "Додати _новий обліковий запис…"
-
-#~ msgid "Open Message"
-#~ msgstr "Відкрити повідомлення"
-
-#~ msgid "Select File..."
-#~ msgstr "Вибір файла…"
-
-#~ msgid "Open"
-#~ msgstr "Відкрити"
-
-#~ msgid "Save"
-#~ msgstr "Зберегти"
-
-#~ msgid "Contact added"
-#~ msgstr "Контакт додано"
-
-#~ msgid "Login failed"
-#~ msgstr "Невдала спроба увійти"
+msgstr "دیگر:"

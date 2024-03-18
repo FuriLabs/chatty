@@ -251,7 +251,7 @@ chatty_mmsd_process_delivery_status (const char *delivery_status)
       g_autofree char *title = NULL;
       g_warning ("There was an error delivering message. Error: %s", number[1]);
       title = g_strdup_printf (_("Error Delivering Message to %s"), number[1]);
-      chatty_mm_notify_message (title, _("See logs for more details"));
+      chatty_mm_notify_message (title, ERROR_MM_MMS_DELIVERY, _("See logs for more details"));
     }
   }
 }
@@ -570,6 +570,7 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
                    total_files_count,
                    self->max_num_attach);
         chatty_mm_notify_message (_("MMS cannot be sent"),
+                                  ERROR_MM_MMS_SEND_RECEIVE,
                                   _("Please send less attachments"));
         return NULL;
       }
@@ -630,6 +631,7 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
             l->data = new_attachment;
             if (chatty_file_get_size (new_attachment) > self->max_attach_size) {
               chatty_mm_notify_message (_("MMS cannot be sent"),
+                                        ERROR_MM_MMS_SEND_RECEIVE,
                                         _("Could not resize image to be small enough"));
               return NULL;
             }
@@ -652,6 +654,7 @@ chatty_mmsd_send_mms_create_attachments (ChattyMmsd    *self,
                                              "Attachments are too large",
                                              total_files_count));
         chatty_mm_notify_message (_("MMS cannot be sent"),
+                                  ERROR_MM_MMS_SEND_RECEIVE,
                                   body);
         return NULL;
       }
@@ -800,10 +803,10 @@ chatty_mmsd_process_mms_message_attachments (GList **filesp)
       continue;
     }
 
-    /* If an MMS has a message, it tends to be the first text/plain attachment */
-    if (!content_set && g_str_has_prefix (chatty_file_get_mime_type (attachment), "text/plain")) {
+    if (g_str_has_prefix (chatty_file_get_mime_type (attachment), "text/plain")) {
       g_autoptr(GFile) text_file = NULL;
       g_autofree char *contents = NULL;
+      g_autofree char *stripped_contents = NULL;
       g_autoptr(GError) error = NULL;
       gsize length;
 
@@ -820,20 +823,53 @@ chatty_mmsd_process_mms_message_attachments (GList **filesp)
         break;
       }
 
-      if (contents && *contents)
+      /*
+       * iMessage decided to add a text file to MMS that says
+       * "Replied to a message:" plus the text file. It's annoying.
+       * If we encounter that text file, we should prepend it to
+       * the message.
+       */
+      stripped_contents = g_strdup (contents);
+      g_strstrip (stripped_contents);
+      if (g_str_has_prefix (stripped_contents, "Replied to a message:")) {
+        if (message_contents->str && *message_contents->str) {
+          g_string_prepend (message_contents, "\n");
+          g_string_prepend (message_contents, contents);
+        } else {
+          g_string_append (message_contents, contents);
+          g_string_append (message_contents, "\n");
+        }
+
+        /* We don't want the message content to be saved as a file */
+        *filesp = g_list_remove (*filesp, attachment);
+        if (chatty_file_get_url (attachment)) {
+          g_autoptr(GFile) file = NULL;
+
+          file = g_file_new_for_uri (chatty_file_get_url (attachment));
+          g_file_delete (file, NULL, &error);
+
+          if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND))
+            g_warning ("Deleting file failed: %s", error->message);
+        }
+      /*
+       * With the exception of the goofy iMessage stuff, if an MMS
+       * has a message, it tends to be the first text/plain attachment
+       */
+      } else if (contents && *contents && !content_set) {
         g_string_append (message_contents, contents);
-      content_set = TRUE;
+        content_set = TRUE;
 
-      /* We don't want the message content to be saved as a file */
-      *filesp = g_list_remove (*filesp, attachment);
-      if (chatty_file_get_url (attachment)) {
-        g_autoptr(GFile) file = NULL;
+        /* We don't want the message content to be saved as a file */
+        *filesp = g_list_remove (*filesp, attachment);
+        if (chatty_file_get_url (attachment)) {
+          g_autoptr(GFile) file = NULL;
 
-        file = g_file_new_for_uri (chatty_file_get_url (attachment));
-        g_file_delete (file, NULL, &error);
+          file = g_file_new_for_uri (chatty_file_get_url (attachment));
+          g_file_delete (file, NULL, &error);
 
-        if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND))
-          g_warning ("Deleting file failed: %s", error->message);
+          if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND))
+            g_warning ("Deleting file failed: %s", error->message);
+        }
       }
     }
   }
@@ -1287,6 +1323,11 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
     chatty_message_set_files (payload->message, files);
   }
 
+  /* Since we successfully got an mms, we know the temp send/receive errors are gone */
+  chatty_mm_notify_withdraw_notification (ERROR_MM_MMS_TEMP_SEND_RECEIVE);
+
+  /* Since we successfully got an mms, we know the temp configuration errors are gone */
+  chatty_mm_notify_withdraw_notification (ERROR_MM_MMS_CONFIGURATION);
   return payload;
 }
 
@@ -1743,7 +1784,9 @@ chatty_mmsd_service_send_error_cb (ChattyMmsd *self,
                                          unsent_mmses),
                             unsent_mmses);
 
-    chatty_mm_notify_message (_("Temporary Error Sending MMS"), body);
+    chatty_mm_notify_message (_("Temporary Error Sending MMS"),
+                              ERROR_MM_MMS_TEMP_SEND_RECEIVE,
+                              body);
   }
 
   self->mms_pending_sent = unsent_mmses;
@@ -1789,7 +1832,9 @@ chatty_mmsd_rx_notifications_cb (GObject      *service,
                                          notifications),
                             notifications);
 
-    chatty_mm_notify_message (_("Temporary Error Receiving MMS"), body);
+    chatty_mm_notify_message (_("Temporary Error Receiving MMS"),
+                              ERROR_MM_MMS_TEMP_SEND_RECEIVE,
+                              body);
   }
 
   self->mms_notifications = notifications;
@@ -2027,7 +2072,7 @@ chatty_mmsd_bearer_handler_notification_cb (GObject      *service,
                                           unsent_mmses + notifications),
                              unsent_mmses + notifications);
 
-    chatty_mm_notify_message (title, body);
+    chatty_mm_notify_message (title, ERROR_MM_MMS_CONFIGURATION, body);
   }
 
   self->mms_notifications = notifications;

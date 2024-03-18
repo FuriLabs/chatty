@@ -17,6 +17,7 @@
 #define LIBFEEDBACK_USE_UNSTABLE_API
 #include <libfeedback.h>
 #include <glib/gi18n.h>
+#include <adwaita.h>
 #define CMATRIX_USE_EXPERIMENTAL_API
 #include "cmatrix.h"
 
@@ -671,12 +672,20 @@ chatty_manager_set_uri (ChattyManager *self,
   sms_uri = chatty_sms_uri_new (uri);
 
   if (!chatty_sms_uri_is_valid (sms_uri)) {
-    g_autoptr(GtkAlertDialog) dialog = NULL;
+    GtkWidget *dialog;
     GtkWindow *window;
 
     window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
-    dialog = gtk_alert_dialog_new (_("“%s” is not a valid URI"), uri);
-    gtk_alert_dialog_show (GTK_ALERT_DIALOG (dialog), window);
+    dialog = adw_message_dialog_new (window, _("Error"), NULL);
+    adw_message_dialog_format_body (ADW_MESSAGE_DIALOG (dialog),
+                                    _("“%s” is not a valid URI"),
+                                    uri);
+    adw_message_dialog_add_response (ADW_MESSAGE_DIALOG (dialog), "close", _("Close"));
+
+    adw_message_dialog_set_default_response (ADW_MESSAGE_DIALOG (dialog), "close");
+    adw_message_dialog_set_close_response (ADW_MESSAGE_DIALOG (dialog), "close");
+
+    gtk_window_present (GTK_WINDOW (dialog));
 
     return FALSE;
   }

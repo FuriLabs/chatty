@@ -1,92 +1,87 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="ChattySideBar" parent="GtkBox">
-    <property name="orientation">vertical</property>
-    <property name="width-request">360</property>
+  <template class="ChattySideBar" parent="AdwNavigationPage">
+    <property name="title" translatable="yes">Chats</property>
+    <property name="child">
+      <object class="AdwToolbarView">
+        <child type="top">
+          <object class="AdwHeaderBar" id="header_bar">
 
-    <child>
-      <object class="AdwHeaderBar" id="header_bar">
-        <binding name="show-end-title-buttons">
-          <lookup name="folded" type="AdwLeaflet">
-            <lookup name="parent">ChattySideBar</lookup>
-          </lookup>
-        </binding>
-        <property name="title-widget">
-          <object class="AdwWindowTitle">
-            <property name="title" translatable="yes">Chats</property>
-          </object>
-        </property>
-
-        <child>
-          <object class="GtkButton" id="back_button">
-            <property name="visible">0</property>
-            <property name="icon-name">go-previous-symbolic</property>
-            <property name="tooltip-text" translatable="yes">Back</property>
-            <signal name="clicked" handler="side_bar_back_clicked_cb" swapped="yes"/>
-          </object>
-        </child>
-
-        <child>
-          <object class="GtkMenuButton" id="add_chat_button">
-            <property name="sensitive">0</property>
-            <property name="tooltip-text" translatable="yes">Add Chat</property>
-            <property name="icon-name">list-add-symbolic</property>
-            <property name="popover">new_message_popover</property>
-          </object>
-        </child>
-
-        <child type="end">
-          <object class="GtkMenuButton">
-            <property name="visible" bind-source="add_chat_button" bind-property="visible" bind-flags="sync-create"/>
-            <property name="tooltip-text" translatable="yes">Menu</property>
-            <property name="icon-name">open-menu-symbolic</property>
-            <property name="popover">main_menu_popover</property>
-          </object>
-        </child>
-
-        <child type="end">
-          <object class="GtkToggleButton" id="search_button">
-            <property name="tooltip-text" translatable="yes">Search</property>
-            <property name="icon-name">system-search-symbolic</property>
-            <property name="active" bind-source="chats_search_bar" bind-property="search-mode-enabled" bind-flags="sync-create|bidirectional"/>
-          </object>
-        </child>
-      </object>
-    </child>
-
-    <child>
-      <object class="GtkSearchBar" id="chats_search_bar">
-        <property name="hexpand">0</property>
-        <signal name="notify::search-mode-enabled" handler="side_bar_search_enable_changed_cb" swapped="yes"/>
-        <child>
-          <object class="GtkBox">
-            <style>
-              <class name="linked"/>
-            </style>
+            <property name="title-widget">
+              <object class="AdwWindowTitle">
+                <property name="title" translatable="yes">Chats</property>
+              </object>
+            </property>
             <child>
-              <object class="DemoTaggedEntry" id="chats_search_entry">
-                <property name="hexpand">1</property>
-                <signal name="changed" handler="side_bar_search_changed_cb" swapped="yes"/>
+              <object class="GtkButton" id="back_button">
+                <property name="visible">0</property>
+                <property name="icon-name">go-previous-symbolic</property>
+                <property name="tooltip-text" translatable="yes">Back</property>
+                <signal name="clicked" handler="side_bar_back_clicked_cb" swapped="yes"/>
               </object>
             </child>
+
             <child>
+              <object class="GtkMenuButton" id="add_chat_button">
+                <property name="sensitive">0</property>
+                <property name="tooltip-text" translatable="yes">Add Chat</property>
+                <property name="icon-name">list-add-symbolic</property>
+                <property name="popover">new_message_popover</property>
+              </object>
+            </child>
+
+            <child type="end">
               <object class="GtkMenuButton">
-                <property name="popover">protocol_list_popover</property>
+                <property name="visible" bind-source="add_chat_button" bind-property="visible" bind-flags="sync-create"/>
+                <property name="tooltip-text" translatable="yes">Menu</property>
+                <property name="icon-name">open-menu-symbolic</property>
+                <property name="popover">main_menu_popover</property>
+              </object>
+            </child>
+
+            <child type="end">
+              <object class="GtkToggleButton" id="search_button">
+                <property name="tooltip-text" translatable="yes">Search</property>
+                <property name="icon-name">system-search-symbolic</property>
+                <property name="active" bind-source="chats_search_bar" bind-property="search-mode-enabled" bind-flags="sync-create|bidirectional"/>
               </object>
             </child>
           </object>
         </child>
-      </object>
-    </child>
 
-    <child>
-      <object class="ChattyChatList" id="chat_list">
-        <property name="hexpand">0</property>
-        <property name="width_request">300</property>
-        <signal name="selection-changed" handler="side_bar_chat_list_selection_changed_cb" swapped="yes"/>
+      <child type="top">
+          <object class="GtkSearchBar" id="chats_search_bar">
+            <property name="hexpand">0</property>
+            <signal name="notify::search-mode-enabled" handler="side_bar_search_enable_changed_cb" swapped="yes"/>
+            <child>
+              <object class="GtkBox">
+                <style>
+                  <class name="linked"/>
+                </style>
+                <child>
+                  <object class="DemoTaggedEntry" id="chats_search_entry">
+                    <property name="hexpand">1</property>
+                    <signal name="changed" handler="side_bar_search_changed_cb" swapped="yes"/>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkMenuButton">
+                    <property name="popover">protocol_list_popover</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      <property name="content">
+        <object class="ChattyChatList" id="chat_list">
+          <property name="hexpand">0</property>
+          <property name="width_request">300</property>
+          <signal name="selection-changed" handler="side_bar_chat_list_selection_changed_cb" swapped="yes"/>
+        </object>
+       </property>
       </object>
-    </child>
-
+    </property>
   </template>
 
   <object class="GtkPopover" id="main_menu_popover">

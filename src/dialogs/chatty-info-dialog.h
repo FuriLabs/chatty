@@ -18,7 +18,7 @@ G_BEGIN_DECLS
 
 #define CHATTY_TYPE_INFO_DIALOG (chatty_info_dialog_get_type ())
 
-G_DECLARE_FINAL_TYPE (ChattyInfoDialog, chatty_info_dialog, CHATTY, INFO_DIALOG, GtkDialog)
+G_DECLARE_FINAL_TYPE (ChattyInfoDialog, chatty_info_dialog, CHATTY, INFO_DIALOG, AdwWindow)
 
 GtkWidget     *chatty_info_dialog_new      (GtkWindow        *parent_window);
 void           chatty_info_dialog_set_chat (ChattyInfoDialog *self,

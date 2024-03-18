@@ -9,17 +9,25 @@
       <p>Chats is a simple to use to messaging app for 1:1 communication and small groups supporting SMS, MMS, XMPP and Matrix.</p>
     </description>
     <url type="homepage">https://gitlab.gnome.org/World/Chatty</url>
+    <url type="bugtracker">https://gitlab.gnome.org/World/Chatty/-/issues</url>
+    <url type="vcs-browser">https://gitlab.gnome.org/World/Chatty</url>
+    <url type="translate">https://l10n.gnome.org/module/chatty/</url>
     <translation type="gettext">purism-chatty</translation>
     <update_contact>librem5-dev@lists.community.puri.sm</update_contact>
+    <launchable type="desktop-id">@APP_ID@.desktop</launchable>
+    <developer id="@chatty@puri.sm">
+      <name translate="no">The Chatty Team</name>
+    </developer>
     <screenshots>
         <screenshot type="default">
             <caption>Chats message window</caption>
             <image type="source" width="906" height="621">https://gitlab.gnome.org/World/Chatty/-/raw/main/data/screenshots/screenshot.png?inline=false</image>
         </screenshot>
     </screenshots>
-    <mimetypes>
-        <mimetype>x-scheme-handler/sms</mimetype>
-    </mimetypes>
+    <provides>
+      <id>@APP_ID@-daemon.desktop</id>
+      <mediatype>x-scheme-handler/sms</mediatype>
+    </provides>
     <content_rating type="oars-1.1">
         <content_attribute id="social-chat">intense</content_attribute>
     </content_rating>
@@ -47,7 +55,6 @@
     </supports>
     <!-- todo: drop this for crimson -->
     <custom>
-      <value key="Purism::form_factor">workstation</value>
       <value key="Purism::form_factor">mobile</value>
     </custom>
 </component>

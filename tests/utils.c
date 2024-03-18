@@ -208,6 +208,122 @@ test_utils_jabber_id_strip (void)
   }
 }
 
+static void
+test_message_strip_utm_from_url (void)
+{
+  typedef struct data {
+    char *text;
+    char *check;
+  } data;
+  data array[] = {
+    {"",""},
+    {"abc","abc"},
+    {".abc",".abc"},
+    {"www.","www."},
+    {"www. ","www. "},
+    /* Even though this has a tracking element, it has extra stuff so this function won't work */
+    {
+     "URL with extra stuff http://www.example.com/user's-image.png?utm_source=1234qwer&fbclid=1234564&",
+     "URL with extra stuff http://www.example.com/user's-image.png?utm_source=1234qwer&fbclid=1234564&"},
+    {
+     "Not a URL",
+     "Not a URL"},
+    {
+     "http://www.example.com/user's-image.png?blah=1234",
+     "http://www.example.com/user's-image.png?blah=1234"},
+    {
+     "http://www.example.com/user's-image.png?blah",
+     "http://www.example.com/user's-image.png?blah"},
+    {
+     "http://www.example.com/user's-image.png?utm_source=1234qwer&fbclid=1234564&",
+     "http://www.example.com/user's-image.png"},
+    {
+     "https://www.example.com/?t=ftsa&q=hello&ia=definition",
+     "https://www.example.com/?t=ftsa&q=hello&ia=definition"},
+    {
+     "http://example.com/utm_source/something?v=_utm_source",
+     "http://example.com/utm_source/something?v=_utm_source"},
+    {
+     "http://www.example.com/user's-image.png?_utm_sourcecode=1234qwer&fbclid=1234564&",
+     "http://www.example.com/user's-image.png?_utm_sourcecode=1234qwer"},
+    {
+     "http://utm_source.example.com/something?wowbraid=123",
+     "http://utm_source.example.com/something?wowbraid=123"},
+    {"https://breeo.co/pages/pizza-oven?utm_source=facebook&utm_medium=cpc&utm_campaign=Pizza+Launch+%257C+Full+Funnel+%257C+Conversion%257ERetargeting+Purchase+%257C+Traffic+Engagers+Purchasers&utm_content=Spec+Text+Callouts+IMG+%257C+X24+Pizza+Oven&ad_id=6598924229883&adset_id=6598924227883&campaign_id=6598902108283&ad_name=Spec+Text+Callouts+IMG+%257C+X24+Pizza+Oven&adset_name=Retargeting+Purchase+%257C+Traffic+Engagers+Purchasers&campaign_name=Pizza+Launch+%257C+Full+Funnel+%257C+Conversion&placement=Instagram_Reels",
+     "https://breeo.co/pages/pizza-oven"},
+  };
+
+  g_assert_null (chatty_utils_strip_utm_from_url (NULL));
+
+  for (guint i = 0; i < G_N_ELEMENTS (array); i++) {
+    g_autofree char *content = NULL;
+
+    content = chatty_utils_strip_utm_from_url (array[i].text);
+    g_assert_cmpstr (content, ==, array[i].check);
+  }
+}
+
+static void
+test_message_strip_utm_from_message (void)
+{
+  typedef struct data {
+    char *text;
+    char *check;
+  } data;
+  data array[] = {
+    {"",""},
+    {"abc","abc"},
+    {".abc",".abc"},
+    {"www.","www."},
+    {"www. ","www. "},
+    {
+     "Test message no url",
+     "Test message no url"},
+    {
+     "http://www.example.com/user's-image.png?utm_source=1234qwer&fbclid=1234564&",
+     "http://www.example.com/user's-image.png"},
+    {
+     "http://www.example.com/user's-image.png?_utm_sourcecode=1234qwer&fbclid=1234564&",
+     "http://www.example.com/user's-image.png?_utm_sourcecode=1234qwer"},
+    {
+     "Test message text before http://www.example.com/user's-image.png",
+     "Test message text before http://www.example.com/user's-image.png"},
+    {
+     "Test message text before http://www.example.com/user's-image.png?utm_source=1234qwer&fbclid=1234564&",
+     "Test message text before http://www.example.com/user's-image.png"},
+    {
+     "Test message text before http://www.example.com/user's-image.png?_utm_sourcecode=1234qwer&fbclid=1234564&",
+     "Test message text before http://www.example.com/user's-image.png?_utm_sourcecode=1234qwer"},
+    {
+     "http://www.example.com/user's-image.png?utm_source=1234qwer&fbclid=1234564& Text message Text After",
+     "http://www.example.com/user's-image.png Text message Text After"},
+    {
+     "http://www.example.com/user's-image.png Text message Text After",
+     "http://www.example.com/user's-image.png Text message Text After"},
+    {
+     "http://www.example.com/user's-image.png?_utm_sourcecode=1234qwer&fbclid=1234564& Text message Text After",
+     "http://www.example.com/user's-image.png?_utm_sourcecode=1234qwer Text message Text After"},
+    {
+     "Test message text before and after http://www.example.com/user's-image.png?utm_source=1234qwer&fbclid=1234564& and after",
+     "Test message text before and after http://www.example.com/user's-image.png and after"},
+    {
+     "Test message text before and after http://www.example.com/user's-image.png?_utm_sourcecode=1234qwer&fbclid=1234564& and after",
+     "Test message text before and after http://www.example.com/user's-image.png?_utm_sourcecode=1234qwer and after"},
+    {
+     "Test message text before and after http://www.example.com/user's-image.png and after",
+     "Test message text before and after http://www.example.com/user's-image.png and after"},
+  };
+
+  g_assert_null (chatty_utils_strip_utm_from_message (NULL));
+
+  for (guint i = 0; i < G_N_ELEMENTS (array); i++) {
+    g_autofree char *content = NULL;
+
+    content = chatty_utils_strip_utm_from_message (array[i].text);
+    g_assert_cmpstr (content, ==, array[i].check);
+  }
+}
+
 int
 main (int   argc,
       char *argv[])
@@ -219,6 +335,8 @@ main (int   argc,
   g_test_add_func ("/utils/username_valid", test_utils_username_valid);
   g_test_add_func ("/utils/groupname_valid", test_utils_groupname_valid);
   g_test_add_func ("/utils/jabber_id_strip", test_utils_jabber_id_strip);
+  g_test_add_func ("/message-text/strip_utmstrip_utm_from_url", test_message_strip_utm_from_url);
+  g_test_add_func ("/message-text/strip_utmstrip_utm_from_message", test_message_strip_utm_from_message);
 
   return g_test_run ();
 }

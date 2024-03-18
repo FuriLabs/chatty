@@ -6,11 +6,10 @@
     <property name="default_height">200</property>
 
     <child>
-      <object class="GtkBox">
-        <property name="orientation">vertical</property>
-        <child>
+      <object class="AdwToolbarView">
+        <child type="top">
           <object class="AdwHeaderBar" id="header_bar">
-            <property name="show-end-title-buttons">1</property>
+            <property name="show-end-title-buttons">0</property>
             <property name="title-widget">
               <object class="AdwWindowTitle">
                 <property name="title" translatable="yes">Incorrect password</property>
@@ -41,7 +40,7 @@
 
           </object>
         </child>
-        <child>
+        <property name="content">
           <object class="AdwPreferencesPage">
           <child>
             <object class="AdwPreferencesGroup" id="description">
@@ -58,7 +57,7 @@
             </child>
 
           </object>  <!--Pref Page-->
-        </child>
+        </property>
       </object>
     </child>
   </template>

@@ -18,7 +18,7 @@ G_BEGIN_DECLS
 
 #define CHATTY_TYPE_MAIN_VIEW (chatty_main_view_get_type ())
 
-G_DECLARE_FINAL_TYPE (ChattyMainView, chatty_main_view, CHATTY, MAIN_VIEW, GtkBox)
+G_DECLARE_FINAL_TYPE (ChattyMainView, chatty_main_view, CHATTY, MAIN_VIEW, AdwNavigationPage)
 
 void           chatty_main_view_set_db            (ChattyMainView *self,
                                                    gpointer        db);

@@ -1,113 +1,110 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="ChattyMainView" parent="GtkBox">
-    <property name="hexpand">1</property>
-    <property name="orientation">vertical</property>
-
-    <child>
-      <object class="AdwHeaderBar" id="header_bar">
-        <child type="start">
-          <object class="GtkButton">
-            <binding name="visible">
-              <lookup name="folded" type="AdwLeaflet">
-                <lookup name="parent">ChattyMainView</lookup>
-              </lookup>
-            </binding>
-            <property name="icon-name">go-previous-symbolic</property>
-            <property name="tooltip-text" translatable="yes">Back</property>
-            <property name="action-name">win.go-back</property>
-          </object>
-        </child>
-        <child type="title">
-          <object class="GtkBox">
-            <property name="halign">center</property>
-            <property name="valign">center</property>
-            <child>
-              <object class="ChattyAvatar" id="avatar">
-                <property name="halign">center</property>
-                <property name="size">28</property>
+  <template class="ChattyMainView" parent="AdwNavigationPage">
+    <property name="title" translatable="yes">Chats</property>
+    <property name="child">
+      <object class="AdwToolbarView">
+        <child type="top">
+          <object class="AdwHeaderBar" id="header_bar">
+            <child type="start">
+              <object class="GtkButton" id="back_button">
+                <property name="icon-name">go-previous-symbolic</property>
+                <property name="tooltip-text" translatable="yes">Back</property>
+                <property name="action-name">win.go-back</property>
               </object>
             </child>
-            <child>
-              <object class="AdwWindowTitle" id="title"/>
-            </child>
-          </object>
-        </child>
-        <child type="end">
-          <object class="GtkMenuButton" id="menu_button">
-            <property name="visible">0</property>
-            <property name="icon-name">view-more-symbolic</property>
-            <property name="popover">menu_popover</property>
-          </object>
-        </child>
-        <child type="end">
-          <object class="GtkButton" id="call_button">
-            <property name="visible">0</property>
-            <property name="tooltip-text" translatable="yes">Call</property>
-            <property name="action-name">win.call-user</property>
-            <property name="icon-name">call-start-symbolic</property>
-          </object>
-        </child>
-      </object>
-    </child>
-
-    <child>
-      <object class="GtkOverlay">
-
-        <child type="overlay">
-          <object class="GtkRevealer" id="notification_revealer">
-            <property name="halign">center</property>
-            <property name="valign">start</property>
-            <property name="child">
-
+            <child type="title">
               <object class="GtkBox">
-                <property name="spacing">12</property>
-                <style>
-                  <class name="app-notification"/>
-                </style>
+                <property name="halign">center</property>
+                <property name="valign">center</property>
                 <child>
-                  <object class="GtkLabel" id="notification_label">
-                    <property name="use-markup">1</property>
-                    <property name="ellipsize">end</property>
+                  <object class="ChattyAvatar" id="avatar">
+                    <property name="halign">center</property>
+                    <property name="size">28</property>
                   </object>
                 </child>
-
                 <child>
-                  <object class="GtkButton" id="close_button">
-                    <property name="visible">0</property>
-                    <property name="tooltip-text" translatable="yes">Close</property>
-                    <property name="icon-name">window-close-symbolic</property>
-                    <signal name="clicked" handler="main_view_notification_closed_cb" swapped="yes"/>
-                  </object>
+                  <object class="AdwWindowTitle" id="title"/>
                 </child>
-
               </object>
-            </property>
+            </child>
+            <child type="end">
+              <object class="GtkMenuButton" id="menu_button">
+                <property name="visible">0</property>
+                <property name="icon-name">view-more-symbolic</property>
+                <property name="popover">menu_popover</property>
+              </object>
+            </child>
+            <child type="end">
+              <object class="GtkButton" id="call_button">
+                <property name="visible">0</property>
+                <property name="tooltip-text" translatable="yes">Call</property>
+                <property name="action-name">win.call-user</property>
+                <property name="icon-name">call-start-symbolic</property>
+              </object>
+            </child>
           </object>
         </child>
 
-        <property name="child">
-          <object class="GtkStack" id="main_stack">
-            <property name="vhomogeneous">0</property>
-            <property name="hhomogeneous">0</property>
-            <child>
-              <object class="ChattyChatPage" id="chat_page"/>
+        <property name="content">
+          <object class="GtkOverlay">
+
+            <child type="overlay">
+              <object class="GtkRevealer" id="notification_revealer">
+                <property name="halign">center</property>
+                <property name="valign">start</property>
+                <property name="child">
+
+                  <object class="GtkBox">
+                    <property name="spacing">12</property>
+                    <style>
+                      <class name="app-notification"/>
+                    </style>
+                    <child>
+                      <object class="GtkLabel" id="notification_label">
+                        <property name="use-markup">1</property>
+                        <property name="ellipsize">end</property>
+                      </object>
+                    </child>
+
+                    <child>
+                      <object class="GtkButton" id="close_button">
+                        <property name="visible">0</property>
+                        <property name="tooltip-text" translatable="yes">Close</property>
+                        <property name="icon-name">window-close-symbolic</property>
+                        <signal name="clicked" handler="main_view_notification_closed_cb" swapped="yes"/>
+                      </object>
+                    </child>
+
+                  </object>
+                </property>
+              </object>
             </child>
-            <child>
-              <object class="ChattyInvitePage" id="invite_page"/>
-            </child>
-            <child>
-              <object class="ChattyVerificationPage" id="verification_page"/>
-            </child>
-            <child>
-              <object class="GtkBox" id="empty_page"/>
-            </child>
+
+          <property name="child">
+             <object class="GtkStack" id="main_stack">
+               <property name="vhomogeneous">0</property>
+               <property name="hhomogeneous">0</property>
+               <child>
+                 <object class="ChattyChatPage" id="chat_page"/>
+               </child>
+               <child>
+                 <object class="ChattyInvitePage" id="invite_page"/>
+               </child>
+               <child>
+                 <object class="ChattyVerificationPage" id="verification_page"/>
+               </child>
+               <child>
+                 <object class="AdwStatusPage" id="empty_page">
+                 </object>
+               </child>
+             </object>
+           </property>
+
           </object>
         </property>
-
       </object>
-    </child>
-
+    </property>
   </template>
 
   <object class="GtkPopover" id="menu_popover">

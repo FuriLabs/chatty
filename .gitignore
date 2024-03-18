@@ -6,4 +6,5 @@ arm
 arm-build
 .zanata-cache/
 .vscode
+.flatpak-builder/
 .#*

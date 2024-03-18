@@ -69,7 +69,7 @@ chat_invite_name_changed_cb (ChattyInvitePage *self)
 
   name = chatty_item_get_name (CHATTY_ITEM (self->chat));
   /* TRANSLATORS: %s is the chat room name */
-  title = g_strdup_printf (_("Do you want to join “%s”"), name);
+  title = g_strdup_printf (_("Do you want to join “%s”?"), name);
   gtk_label_set_label (GTK_LABEL (self->invite_title), title);
 }
 

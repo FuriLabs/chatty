@@ -1,11 +1,19 @@
-Overview of Changes in Chats 0.8.1. Won, 19 January 2023
+Overview of Changes in Chats 0.8.1. Won, 15 March 2024
+========================================================
+* Update GUI for libadwaita 1.4
+  - Minimum libadwaita version is now 1.4
+* Fix various small UI issues
+* Let chat render animated images and videos
+* Have tracking ids stripped from pasting and chat
+
+Overview of Changes in Chats 0.8.1. Won, 19 January 2024
 ========================================================
 * Address GTK4 deprecations
   - Minimum GTK4 version is now 4.10
 * Fix media size to fit small screens
 * Fix URIs with parenthesis
 * Fix link color in dark style
-* Update translations 
+* Update translations
 
 Overview of Changes in Chats 0.8.0. Won, 18 December 2023
 =========================================================
@@ -54,7 +62,7 @@ Overview of Changes in Chats 0.7.2. Mon, 14 March 2023
 * Fix a crash when replacing emotes
 * Fix empty message content for XMPP messages
 * Update Translations
-  - Turkish 
+  - Turkish
 
 Overview of Changes in Chats 0.7.1. Mon, 06 March 2023
 ======================================================
@@ -534,7 +542,7 @@ Overview of Changes in Chats 0.0.8. Sat, 05 Oct 2019
 * Improve connection handling
 * Add spinner for connection status to each entry in the accounts list
 * Rework connection error dialog
-* Add OMEMO fingerprints and device IDs to the XMPP account info dialog and the chat details dialog 
+* Add OMEMO fingerprints and device IDs to the XMPP account info dialog and the chat details dialog
 * Add phone number formatting according to E164
 * Add lazy-loading for the chat history
 * Add an about dialog
@@ -554,7 +562,7 @@ Overview of Changes in Chats 0.0.7. Tue, 16 Apr 2019
 Overview of Changes in Chats 0.0.6. Thu, 07 Mar 2019
 ====================================================
 * Set the spinner-widget for account-connection status
-* Select the first 'Chats' list entry after leaving/deleting a chat and at application start 
+* Select the first 'Chats' list entry after leaving/deleting a chat and at application start
 * Add HdyLeaflet notification handler for headerbar update
 * Improve css styling of message panel
 * Show 'close' button when leaflet is folded
@@ -603,6 +611,6 @@ Overview of Changes in Chats 0.0.2. Fri, 14 Dec 2018
 * handle XMPP authorization requests
 
 
-Overview of Changes in Chats 0.0.1. Thu, 08 Nov 2018 
+Overview of Changes in Chats 0.0.1. Thu, 08 Nov 2018
 ====================================================
 * Initial release
