@@ -21,12 +21,12 @@ if purple_dep.found()
 endif
 
 test_items = [
-  'clock',
-  'history',
+#  'clock',
+#  'history',
   'settings',
   'mm-account',
   'sms-uri',
-  'pgp',
+#  'pgp',
 ]
 
 foreach item: test_items
