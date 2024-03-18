@@ -1,3 +1,12 @@
+chatty (0.8.2-1) unstable; urgency=medium
+
+  * New upstream release
+  * d/patches: reformat patches to apply
+  * d/control: Add gstreamer as dependency, enforce libadwaita to be 1.4 or newer
+  * d/upsteam/metadata: Update metadata
+
+ -- Chris Talbot <chris@talbothome.com>  Sun, 17 Mar 2024 20:21:04 -0600
+
 chatty (0.8.1-1) unstable; urgency=medium
 
   * New upstream release
