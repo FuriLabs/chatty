@@ -530,7 +530,7 @@ save_dialog_finished (GObject         *dialog,
 
   if (error != NULL) {
     if (!g_error_matches (error, GTK_DIALOG_ERROR, GTK_DIALOG_ERROR_DISMISSED) &&
-        !g_error_matches (error, GTK_DIALOG_ERROR, GTK_DIALOG_ERROR_DISMISSED))
+        !g_error_matches (error, GTK_DIALOG_ERROR, GTK_DIALOG_ERROR_CANCELLED))
       g_warning ("Error saving: %s", error->message);
     return;
   }
