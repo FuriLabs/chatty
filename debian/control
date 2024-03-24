@@ -11,7 +11,7 @@ Build-Depends:
  itstool,
  libgtk-4-dev,
  libfeedback-dev,
- libadwaita-1-dev (>= 1.4),
+ libadwaita-1-dev (>= 1.5~),
  libebook-contacts1.2-dev,
  libgcrypt20-dev,
  libgnome-desktop-4-dev (>= 43),
