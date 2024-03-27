@@ -62,7 +62,7 @@ This can be skipped if MMS is not needed.
 
 ### Build Chatty
 ``` bash
-meson build # From chatty source directory
+meson setup build # From chatty source directory
 meson compile -C build
 ```
 
