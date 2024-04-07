@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-03-07 15:52+0000\n"
-"PO-Revision-Date: 2024-03-08 18:28+0100\n"
+"POT-Creation-Date: 2024-03-15 16:24+0000\n"
+"PO-Revision-Date: 2024-03-15 21:09+0100\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -179,7 +179,7 @@ msgstr ""
 "Chattar är ett lättanvänt meddelandeprogram för kommunikation mellan två "
 "personer eller i små grupper med stöd för SMS, MMS, XMPP och Matrix."
 
-#: data/sm.puri.Chatty.metainfo.xml.in.in:16
+#: data/sm.puri.Chatty.metainfo.xml.in.in:23
 msgid "Chats message window"
 msgstr "Meddelandefönster för Chattar"
 
@@ -374,6 +374,40 @@ msgstr "I går %I∶%M %p"
 #: src/chatty-clock.c:152
 msgid "%Y-%m-%d"
 msgstr "%Y-%m-%d"
+
+#: src/chatty-file-item.c:139
+msgid "Contact"
+msgstr "Kontakt"
+
+#: src/chatty-file-item.c:163 src/chatty-file-item.c:195
+#, c-format
+msgid "Contact: %s"
+msgstr "Kontakt: %s"
+
+#: src/chatty-file-item.c:182
+#, c-format
+msgid "Contact: %s %s %s %s"
+msgstr "Kontakt: %s %s %s %s"
+
+#: src/chatty-file-item.c:184 src/chatty-file-item.c:188
+#, c-format
+msgid "Contact: %s %s %s"
+msgstr "Kontakt: %s %s %s"
+
+#: src/chatty-file-item.c:190 src/chatty-file-item.c:193
+#, c-format
+msgid "Contact: %s %s"
+msgstr "Kontakt: %s %s"
+
+# TODO: ev context för att skilja dem åt om det ska vara inbjudan/bjud in
+#: src/chatty-file-item.c:217 src/ui/chatty-info-dialog.ui:57
+msgid "Invite"
+msgstr "Bjud in"
+
+#: src/chatty-file-item.c:247
+#, c-format
+msgid "Invite: %s"
+msgstr "Inbjudan: %s"
 
 #. TRANSLATORS: %s is the Device ID
 #: src/chatty-fp-row.c:130
@@ -1168,7 +1202,7 @@ msgstr "Fel vid skickande av SMS till %s"
 msgid "Error Sending MMS to %s"
 msgstr "Fel vid skickande av MMS till %s"
 
-#: src/ui/chatty-attachment.ui:20
+#: src/ui/chatty-attachment.ui:32
 msgid "Remove Attachment"
 msgstr "Ta bort bilaga"
 
@@ -1253,10 +1287,6 @@ msgstr "Chattdetaljer"
 #: src/ui/chatty-info-dialog.ui:44
 msgid "Apply"
 msgstr "Verkställ"
-
-#: src/ui/chatty-info-dialog.ui:57
-msgid "Invite"
-msgstr "Bjud in"
 
 #: src/ui/chatty-info-dialog.ui:136
 msgid "Invite message"
