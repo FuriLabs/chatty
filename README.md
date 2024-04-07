@@ -113,7 +113,7 @@ will be shown in a different display:
 build/run -vvvv --display=XXX
 ```
 
-## Debugging
+## Backup and Restore
 
 Chatty stores data in the following locations:
 - `~/.purple` - chat history and libpurple config
@@ -125,9 +125,18 @@ Chatty stores data in the following locations:
 Also, Matrix account secrets are stored with `libsecret`, those details can
 be retrieved using `GNOME Passwords`.
 
-If you want to modify/delete any of the above data or to debug chatty,
-you should first close all running instance of chatty by running
-`killall chatty` multiple times until it says `chatty: no process found`.
+To backup, simply copy all of these locations. To restore, place all of the
+contents back in those respective folders.
+
+If you want to modify/delete any of the above data, you should first close
+all running instance of chatty by running `killall chatty` multiple times
+until it says `chatty: no process found`.
+
+## Debugging
+
+If you want to debug chatty, you should first close all running instance
+of chatty by running `killall chatty` multiple times until it says
+`chatty: no process found`.
 
 To run chatty with verbose logs, you can run `chatty -vvvv`
 (or `./run -vvvv` from the build directory). In case of crashes,
