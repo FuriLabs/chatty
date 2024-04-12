@@ -435,7 +435,7 @@ ma_chat_send_message_cb (GObject      *object,
   g_autoptr(GTask) task = user_data;
   g_autofree char *event_id = NULL;
   ChattyMessage *message;
-  g_autoptr (GError) err = NULL;
+  g_autoptr(GError) err = NULL;
 
   g_assert (G_IS_TASK (task));
 
@@ -454,6 +454,9 @@ ma_chat_send_message_cb (GObject      *object,
     g_debug ("Failed to send: %s", err->message);
     chatty_message_set_status (message, CHATTY_STATUS_SENDING_FAILED, 0);
   }
+
+  /* Inovke callback passed to chatty_ma_chat_send_message_async */
+  g_task_return_pointer (task, NULL, NULL);
 }
 
 static void
