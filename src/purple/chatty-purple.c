@@ -1617,7 +1617,7 @@ purple_buddy_removed_cb (PurpleBuddy  *pp_buddy,
 
 
 static void
-purple_buddy_privacy_chaged_cb (PurpleBuddy *buddy)
+purple_buddy_privacy_changed_cb (PurpleBuddy *buddy)
 {
   if (!PURPLE_BLIST_NODE(buddy)->ui_data)
     return;
@@ -1643,7 +1643,7 @@ purple_buddy_signed_on_off_cb (PurpleBuddy *buddy)
 }
 
 static void
-purple_buddy_icon_chaged_cb (PurpleBuddy *buddy)
+purple_buddy_icon_changed_cb (PurpleBuddy *buddy)
 {
   PurpleConversation *conv;
 
@@ -1670,7 +1670,7 @@ chatty_purple_load_buddies (ChattyPurple *self)
                          PURPLE_CALLBACK (purple_buddy_removed_cb), self);
   purple_signal_connect (purple_blist_get_handle (),
                          "buddy-privacy-changed", self,
-                         PURPLE_CALLBACK (purple_buddy_privacy_chaged_cb), self);
+                         PURPLE_CALLBACK (purple_buddy_privacy_changed_cb), self);
   purple_signal_connect (purple_blist_get_handle (),
                          "buddy-signed-on", self,
                          PURPLE_CALLBACK (purple_buddy_signed_on_off_cb), self);
@@ -1679,7 +1679,7 @@ chatty_purple_load_buddies (ChattyPurple *self)
                          PURPLE_CALLBACK (purple_buddy_signed_on_off_cb), self);
   purple_signal_connect (purple_blist_get_handle (),
                          "buddy-icon-changed", self,
-                         PURPLE_CALLBACK (purple_buddy_icon_chaged_cb), self);
+                         PURPLE_CALLBACK (purple_buddy_icon_changed_cb), self);
 
   buddies = purple_blist_get_buddies ();
 
