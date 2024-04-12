@@ -418,13 +418,12 @@ chatty_message_row_new (ChattyMessage  *message,
   text = chatty_message_get_text (message);
 
   if (text && *text) {
-    GtkGesture *gesture;
-    gesture = gtk_gesture_long_press_new ();
+    GtkGesture *gesture = gtk_gesture_long_press_new ();
     /*
      * gtk_widget_add_controller () transfers ownership of the gesture to
      * ChattyMessageRow so you will not have to worry about freeing it manually
      */
-    gtk_widget_add_controller (GTK_WIDGET (self), GTK_EVENT_CONTROLLER (gesture));
+    gtk_widget_add_controller (GTK_WIDGET (self->message_content), GTK_EVENT_CONTROLLER (gesture));
     g_signal_connect (gesture, "pressed", G_CALLBACK (long_pressed), self);
   }
 
