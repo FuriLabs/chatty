@@ -288,6 +288,9 @@ long_pressed (GtkGestureLongPress *gesture,
               gdouble              y,
               ChattyMessageRow    *self)
 {
+  if (!gtk_widget_get_parent (self->popover))
+    gtk_widget_set_parent (self->popover, self->message_content);
+
   gtk_popover_popup (GTK_POPOVER (self->popover));
 }
 
