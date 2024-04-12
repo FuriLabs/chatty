@@ -427,9 +427,9 @@ chatty_ma_chat_set_unread_count (ChattyChat *chat,
 }
 
 static void
-ma_chage_send_message_cb (GObject      *object,
-                          GAsyncResult *result,
-                          gpointer      user_data)
+ma_chat_send_message_cb (GObject      *object,
+                         GAsyncResult *result,
+                         gpointer      user_data)
 {
   ChattyMaChat *self;
   g_autoptr(GTask) task = user_data;
@@ -483,12 +483,12 @@ chatty_ma_chat_send_message_async (ChattyChat          *chat,
   if (file)
     event_id = cm_room_send_file_async (self->cm_room, file, NULL,
                                         NULL, NULL, NULL,
-                                        ma_chage_send_message_cb, task);
+                                        ma_chat_send_message_cb, task);
   else
     event_id = cm_room_send_text_async (self->cm_room,
                                         chatty_message_get_text (message),
                                         NULL,
-                                        ma_chage_send_message_cb, task);
+                                        ma_chat_send_message_cb, task);
   g_object_set_data_full (G_OBJECT (message), "event-id", g_strdup (event_id), g_free);
 }
 
