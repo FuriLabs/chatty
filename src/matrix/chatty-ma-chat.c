@@ -435,6 +435,7 @@ ma_chat_send_message_cb (GObject      *object,
   g_autoptr(GTask) task = user_data;
   g_autofree char *event_id = NULL;
   ChattyMessage *message;
+  g_autoptr (GError) err = NULL;
 
   g_assert (G_IS_TASK (task));
 
@@ -443,13 +444,14 @@ ma_chat_send_message_cb (GObject      *object,
   g_assert (CHATTY_IS_MA_CHAT (self));
   g_assert (CHATTY_IS_MESSAGE (message));
 
-  event_id = cm_room_send_text_finish (self->cm_room, result, NULL);
+  event_id = cm_room_send_text_finish (self->cm_room, result, &err);
 
   /* We add only failed to send messages.  If sending succeeded,
    * we shall get the same via the /sync responses */
   if (event_id) {
     chatty_message_set_status (message, CHATTY_STATUS_SENT, 0);
   } else {
+    g_debug ("Failed to send: %s", err->message);
     chatty_message_set_status (message, CHATTY_STATUS_SENDING_FAILED, 0);
   }
 }
