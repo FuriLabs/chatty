@@ -295,6 +295,22 @@ long_pressed (GtkGestureLongPress *gesture,
 }
 
 static void
+row_clicked_cb (GtkGestureLongPress *gesture,
+                int                  n_press,
+                gdouble              x,
+                gdouble              y,
+                ChattyMessageRow    *self)
+{
+  if (n_press != 1)
+    return;
+
+  if (!gtk_widget_get_parent (self->popover))
+    gtk_widget_set_parent (self->popover, self->message_content);
+
+  gtk_popover_popup (GTK_POPOVER (self->popover));
+}
+
+static void
 message_row_update_message (ChattyMessageRow *self)
 {
   g_assert (CHATTY_IS_MESSAGE_ROW (self));
@@ -419,12 +435,17 @@ chatty_message_row_new (ChattyMessage  *message,
 
   if (text && *text) {
     GtkGesture *gesture = gtk_gesture_long_press_new ();
+    GtkGesture *click_gesture = gtk_gesture_click_new ();
     /*
      * gtk_widget_add_controller () transfers ownership of the gesture to
      * ChattyMessageRow so you will not have to worry about freeing it manually
      */
     gtk_widget_add_controller (GTK_WIDGET (self->message_content), GTK_EVENT_CONTROLLER (gesture));
     g_signal_connect (gesture, "pressed", G_CALLBACK (long_pressed), self);
+
+    gtk_widget_add_controller (GTK_WIDGET (self), GTK_EVENT_CONTROLLER (click_gesture));
+    gtk_gesture_single_set_button (GTK_GESTURE_SINGLE (click_gesture), GDK_BUTTON_SECONDARY);
+    g_signal_connect (click_gesture, "pressed", G_CALLBACK (row_clicked_cb), self);
   }
 
   gtk_widget_set_visible (self->message_title, subject && *subject);
