@@ -26,12 +26,12 @@ chatty_notify_message (PurpleNotifyMsgType  type,
   dialog = adw_alert_dialog_new (_("Error"), NULL);
 
   adw_alert_dialog_format_heading (ADW_ALERT_DIALOG (dialog),
-                                    _("%s"),
-                                     primary ? primary : title);
+                                   "%s",
+                                   primary ? primary : title);
 
   adw_alert_dialog_format_body (ADW_ALERT_DIALOG (dialog),
-                                  _("%s"),
-                                   secondary);
+                                "%s",
+                                secondary);
   adw_alert_dialog_add_response (ADW_ALERT_DIALOG (dialog), "close", _("Close"));
 
   adw_alert_dialog_set_default_response (ADW_ALERT_DIALOG (dialog), "close");
