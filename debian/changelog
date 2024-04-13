@@ -1,3 +1,12 @@
+chatty (0.8.2-1.1) unstable; urgency=medium
+
+  * Non-maintainer upload
+
+  [ Julian Andres Klode ]
+  * Bump local shlibs for libpurple0t64. (Closes: #1068219)
+
+ -- Sebastian Ramacher <sramacher@debian.org>  Sat, 13 Apr 2024 23:05:24 +0200
+
 chatty (0.8.2-1) unstable; urgency=medium
 
   * New upstream release
