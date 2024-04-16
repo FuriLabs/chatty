@@ -438,6 +438,20 @@ message_bar_send_message_button_clicked_cb (ChattyMessageBar *self)
 }
 
 static void
+message_bar_strip_utm_id_paste_cb (AdwMessageDialog *dialog,
+                                   const char       *response,
+                                   gpointer          user_data)
+
+{
+  if (g_strcmp0 (response, "dont_show") == 0) {
+    ChattySettings  *settings;
+
+    settings = chatty_settings_get_default ();
+    chatty_settings_set_strip_url_tracking_ids_dialog (settings, TRUE);
+  }
+}
+
+static void
 message_bar_text_buffer_clipboard_paste_done_cb (ChattyMessageBar *self)
 {
   ChattySettings  *settings;
@@ -458,7 +472,6 @@ message_bar_text_buffer_clipboard_paste_done_cb (ChattyMessageBar *self)
 
   if (g_strcmp0 (stripped_message, message_buffer_text) != 0) {
 
-    /* To not annoy the user, we only show the strip ID dialog the first time */
     if (!chatty_settings_get_strip_url_tracking_ids_dialog (settings)) {
       AdwDialog *dialog;
       GtkWindow *window;
@@ -467,11 +480,14 @@ message_bar_text_buffer_clipboard_paste_done_cb (ChattyMessageBar *self)
       dialog = adw_alert_dialog_new (_("Alert"),
                                      _("Found and automatically deleted tracking IDs from the pasted link."));
       adw_alert_dialog_add_response (ADW_ALERT_DIALOG (dialog), "close", _("Close"));
+      adw_alert_dialog_add_response (ADW_ALERT_DIALOG (dialog), "dont_show", _("Don't Show Again"));
 
       adw_alert_dialog_set_default_response (ADW_ALERT_DIALOG (dialog), "close");
       adw_alert_dialog_set_close_response (ADW_ALERT_DIALOG (dialog), "close");
 
       adw_dialog_present (dialog, GTK_WIDGET (window));
+
+      g_signal_connect (dialog, "response", G_CALLBACK (message_bar_strip_utm_id_paste_cb), self);
     }
     gtk_text_buffer_begin_user_action (self->message_buffer);
     gtk_text_buffer_delete (self->message_buffer, &start, &end);
