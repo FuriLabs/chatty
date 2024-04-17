@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-04-08 19:26+0000\n"
-"PO-Revision-Date: 2024-04-09 22:00+0300\n"
+"POT-Creation-Date: 2024-04-17 17:48+0000\n"
+"PO-Revision-Date: 2024-04-17 21:38+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian\n"
 "Language: uk\n"
@@ -229,7 +229,7 @@ msgstr ""
 "%s"
 
 #: src/chatty-application.c:202 src/chatty-manager.c:683
-#: src/chatty-message-bar.c:469 src/purple/chatty-purple-notify.c:35
+#: src/chatty-message-bar.c:482 src/purple/chatty-purple-notify.c:35
 #: src/purple/chatty-purple.c:199 src/purple/chatty-purple.c:619
 #: src/dialogs/chatty-new-chat-dialog.c:226
 #: src/dialogs/chatty-settings-dialog.c:201 src/ui/chatty-main-view.ui:73
@@ -402,7 +402,6 @@ msgid "Contact: %s %s"
 msgstr "Контакт: %s %s"
 
 #: src/chatty-file-item.c:219
-#| msgid "Invite"
 msgctxt "Invitation to event"
 msgid "Invite"
 msgstr "Запросити"
@@ -478,16 +477,20 @@ msgstr "З'єднання з обліковим записом…"
 msgid "“%s” is not a valid URI"
 msgstr "«%s» не є коректною адресою"
 
-#: src/chatty-message-bar.c:467 src/purple/chatty-purple.c:195
+#: src/chatty-message-bar.c:480 src/purple/chatty-purple.c:195
 #: src/chatty-window.c:361
 msgid "Alert"
 msgstr "Попередження"
 
-#: src/chatty-message-bar.c:468
+#: src/chatty-message-bar.c:481
 msgid "Found and automatically deleted tracking IDs from the pasted link."
 msgstr ""
 "Знайдено і автоматично вилучено ідентифікатори стеження зі вставленого "
 "посилання."
+
+#: src/chatty-message-bar.c:483
+msgid "Don't Show Again"
+msgstr "Більше не показувати"
 
 #: src/chatty-message.c:230
 msgid "Got an encrypted message, but couldn't decrypt due to missing keys"
@@ -551,11 +554,6 @@ msgstr "Архівовано"
 #: src/dialogs/chatty-settings-dialog.c:197
 msgid "Error"
 msgstr "Помилка"
-
-#: src/purple/chatty-purple-notify.c:29 src/purple/chatty-purple-notify.c:33
-#, c-format
-msgid "%s"
-msgstr "%s"
 
 #: src/purple/chatty-purple-request.c:218
 msgid "Save File…"
@@ -1379,7 +1377,7 @@ msgstr "Скасувати архівування"
 msgid "Delete Chat"
 msgstr "Вилучити спілкування"
 
-#: src/ui/chatty-message-row.ui:30
+#: src/ui/chatty-message-row.ui:160
 msgid "Copy Text"
 msgstr "Скопіювати текст"
 
@@ -1717,6 +1715,10 @@ msgstr "Робочий:"
 #: src/users/chatty-contact.c:328
 msgid "Other:"
 msgstr "Інший:"
+
+#, c-format
+#~ msgid "%s"
+#~ msgstr "%s"
 
 #~ msgid "Reject"
 #~ msgstr "Відмовити"
