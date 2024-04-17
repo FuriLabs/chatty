@@ -328,7 +328,7 @@ view_send_message_async_cb (GObject      *object,
                             GAsyncResult *result,
                             gpointer      user_data)
 {
-  g_autoptr(ChattyMessageBar) self = user_data;
+  ChattyMessageBar *self = CHATTY_MESSAGE_BAR (user_data);
 
   chatty_chat_set_unread_count (self->chat, 0);
   chatty_chat_withdraw_notification (self->chat);
@@ -622,7 +622,7 @@ chat_get_draft_cb (GObject      *object,
                    GAsyncResult *result,
                    gpointer      user_data)
 {
-  g_autoptr(ChattyMessageBar) self = user_data;
+  ChattyMessageBar *self = CHATTY_MESSAGE_BAR (user_data);
   g_autofree char *draft = NULL;
 
   draft = chatty_history_get_draft_finish (self->history, result, NULL);
