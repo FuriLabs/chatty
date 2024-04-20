@@ -23,6 +23,7 @@ Build-Depends:
  libolm-dev,
  libsecret-1-dev,
  libsoup2.4-dev,
+ libspelling-1-dev,
  libsqlite3-dev (>= 3.26.0),
  libebook1.2-dev,
  gsettings-desktop-schemas-dev,
