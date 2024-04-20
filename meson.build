@@ -23,6 +23,8 @@ adw_minor = adw_version_arr[1]
 
 purple_dep = dependency('purple', required: get_option('purple'))
 
+libspell_dep = dependency('libspelling-1', required: false)
+
 app_id = 'sm.puri.Chatty'
 if get_option('profile') == 'devel'
   app_id = app_id + '.Devel'
@@ -31,6 +33,7 @@ endif
 config_h = configuration_data()
 config_h.set10('HAVE_EXPLICIT_BZERO', cc.has_function('explicit_bzero'))
 config_h.set('PURPLE_ENABLED', purple_dep.found())
+config_h.set('LIBSPELL_ENABLED', libspell_dep.found())
 config_h.set_quoted('GETTEXT_PACKAGE', 'purism-chatty')
 config_h.set_quoted('LOCALEDIR', join_paths(get_option('prefix'), get_option('localedir')))
 config_h.set_quoted('PACKAGE_NAME', meson.project_name())
@@ -146,6 +149,7 @@ summary({'Target': system,
 
 summary({'Build type': get_option('buildtype'),
          'libpurple': purple_dep.found(),
+         'libspelling': libspell_dep.found(),
         }, section: 'Configuration')
 
 # gnome.post_install() is available since meson 0.59.0

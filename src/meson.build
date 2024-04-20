@@ -112,6 +112,8 @@ chatty_deps += [
   dependency('libebook-1.2'),
   dependency('gsettings-desktop-schemas'),
   dependency('gstreamer-1.0'),
+  dependency('gtksourceview-5', version: '>= 5.4.0'),
+  libspell_dep,
   libadwaita_dep,
   libgtk_dep,
   libebook_dep,
