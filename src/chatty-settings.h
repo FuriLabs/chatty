@@ -57,6 +57,12 @@ void            chatty_settings_set_window_geometry          (ChattySettings *se
 const char     *chatty_settings_get_country_iso_code         (ChattySettings *self);
 void            chatty_settings_set_country_iso_code         (ChattySettings *self,
                                                               const char     *iso_code);
+const char     *chatty_settings_get_pgp_user_id              (ChattySettings *self);
+void            chatty_settings_set_pgp_user_id              (ChattySettings *self,
+                                                              const char     *pgp_signing_id);
+const char     *chatty_settings_get_pgp_public_key_fingerprint    (ChattySettings *self);
+void            chatty_settings_set_pgp_public_key_fingerprint    (ChattySettings *self,
+                                                                   const char     *pgp_key_id);
 gboolean        chatty_settings_request_sms_delivery_reports (ChattySettings *self);
 gboolean        chatty_settings_get_clear_out_stuck_sms      (ChattySettings *self);
 void            chatty_settings_set_clear_out_stuck_sms      (ChattySettings *self,

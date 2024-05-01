@@ -117,4 +117,19 @@
     </key>
 
   </schema>
+
+<schema id="sm.puri.Chatty.pgp" path="/sm/puri/Chatty/pgp/">
+    <key name="user-id" type="s">
+      <default>""</default>
+      <summary>PGP user ID</summary>
+      <description>The user ID for PGP that Chatty will use for outgoing messages</description>
+    </key>
+
+    <key name="public-key-fingerprint" type="s">
+      <default>""</default>
+      <summary>Public Key Fingerprint</summary>
+      <description>The default keyid the remote side should use to encrypt messages to us</description>
+    </key>
+</schema>
+
 </schemalist>

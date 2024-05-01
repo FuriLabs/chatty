@@ -44,7 +44,10 @@ struct _ChattySettings
   GObject     parent_instance;
 
   GSettings  *settings;
+  GSettings  *pgp_settings;
   char       *country_code;
+  char       *pgp_user_id;
+  char       *pgp_public_key_fingerprint;
 };
 
 G_DEFINE_TYPE (ChattySettings, chatty_settings, G_TYPE_OBJECT)
@@ -272,6 +275,8 @@ chatty_settings_constructed (GObject *object)
   g_settings_bind (self->settings, "clear-out-stuck-sms",
                    self, "clear-out-stuck-sms", G_SETTINGS_BIND_DEFAULT);
   self->country_code = g_settings_get_string (self->settings, "country-code");
+  self->pgp_user_id = g_settings_get_string (self->pgp_settings, "user-id");
+  self->pgp_public_key_fingerprint = g_settings_get_string (self->pgp_settings, "public-key-fingerprint");
 }
 
 static void
@@ -282,6 +287,8 @@ chatty_settings_finalize (GObject *object)
   g_settings_set_boolean (self->settings, "first-start", FALSE);
   g_object_unref (self->settings);
   g_free (self->country_code);
+  g_free (self->pgp_user_id);
+  g_free (self->pgp_public_key_fingerprint);
 
   G_OBJECT_CLASS (chatty_settings_parent_class)->finalize (object);
 }
@@ -408,6 +415,7 @@ static void
 chatty_settings_init (ChattySettings *self)
 {
   self->settings = g_settings_new ("sm.puri.Chatty");
+  self->pgp_settings = g_settings_new ("sm.puri.Chatty.pgp");
 }
 
 /**
@@ -746,6 +754,52 @@ chatty_settings_set_country_iso_code (ChattySettings *self,
   g_free (self->country_code);
   self->country_code = g_strdup (country_code);
   g_settings_set (G_SETTINGS (self->settings), "country-code", "s", country_code);
+}
+
+const char *
+chatty_settings_get_pgp_user_id (ChattySettings *self)
+{
+  g_return_val_if_fail (CHATTY_IS_SETTINGS (self), NULL);
+
+  if (self->pgp_user_id && *self->pgp_user_id)
+    return self->pgp_user_id;
+
+  return NULL;
+}
+
+void
+chatty_settings_set_pgp_user_id (ChattySettings *self,
+                                 const char     *pgp_user_id)
+{
+  g_return_if_fail (CHATTY_IS_SETTINGS (self));
+
+  g_free (self->pgp_user_id);
+  self->pgp_user_id = g_strdup (pgp_user_id);
+  g_settings_set (G_SETTINGS (self->pgp_settings), "user-id", "s", pgp_user_id);
+  g_settings_apply (G_SETTINGS (self->pgp_settings));
+}
+
+const char *
+chatty_settings_get_pgp_public_key_fingerprint (ChattySettings *self)
+{
+  g_return_val_if_fail (CHATTY_IS_SETTINGS (self), NULL);
+
+  if (self->pgp_public_key_fingerprint && *self->pgp_public_key_fingerprint)
+    return self->pgp_public_key_fingerprint;
+
+  return NULL;
+}
+
+void
+chatty_settings_set_pgp_public_key_fingerprint (ChattySettings *self,
+                                                const char     *pgp_public_key_fingerprint)
+{
+  g_return_if_fail (CHATTY_IS_SETTINGS (self));
+
+  g_free (self->pgp_public_key_fingerprint);
+  self->pgp_public_key_fingerprint = g_strdup (pgp_public_key_fingerprint);
+  g_settings_set (G_SETTINGS (self->pgp_settings), "public-key-fingerprint", "s", pgp_public_key_fingerprint);
+  g_settings_apply (G_SETTINGS (self->pgp_settings));
 }
 
 gboolean
