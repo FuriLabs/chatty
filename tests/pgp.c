@@ -356,10 +356,7 @@ test_pgp_message_and_files (void)
   test_check_sha (attachment_2_filepath, attachment_2_savepath);
   test_check_sha (attachment_3_filepath, attachment_3_savepath);
 
-  /* fixme: This is fails on byzantium, but works on Debian Bookworm */
-  //g_assert_cmpstr (stream_to_encode, ==, content_message);
-  if (g_strcmp0 (stream_to_encode, content_message) !=0)
-    g_message ("%s is different than %s", stream_to_encode, content_message);
+  g_assert_cmpstr (stream_to_encode, ==, content_message);
 
   /* Delete Attachments. Comment if you are having issues */
   unlink (attachment_1_savepath);
