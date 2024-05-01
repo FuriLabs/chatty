@@ -386,7 +386,7 @@ test_pgp_export_pub_key (void)
   g_assert_nonnull (pub_key);
 
   orig_pub_key = g_build_filename (PGP_TEST_DATA_DIR, "chatty-test.gpg.pub", NULL);
-  pub_key_to_check = g_build_filename (pub_key_save_dir, "pub_key.asc", NULL);
+  pub_key_to_check = g_file_get_path (pub_key);
 
   test_check_sha (orig_pub_key, pub_key_to_check);
   g_file_load_contents (pub_key, NULL, &pdu, &len, NULL, &error);

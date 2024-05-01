@@ -673,6 +673,7 @@ chatty_pgp_get_pub_key (const char *signing_id,
   g_autofree char *system_args = NULL;
   g_autofree char *path = NULL;
   g_autofree char *directory = NULL;
+  g_autofree char *random_file_name = NULL;
   const char *gpg_exec = NULL;
   int return_code = 0;
 
@@ -686,7 +687,9 @@ chatty_pgp_get_pub_key (const char *signing_id,
 
   g_mkdir_with_parents (directory, 0700);
 
-  path = g_build_filename (directory, "pub_key.asc", NULL);
+  random_file_name = g_strdup_printf ("pub_key.%s.asc", g_uuid_string_random());
+
+  path = g_build_filename (directory, random_file_name, NULL);
 
   if (g_file_test (path, G_FILE_TEST_EXISTS)) {
     g_warning ("File already exists at %s", path);
