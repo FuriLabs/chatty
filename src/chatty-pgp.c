@@ -623,7 +623,7 @@ chatty_pgp_get_pub_fingerprint (const char *signing_id)
   success = system (system_args);
 
   if (success != 0) {
-    g_warning ("Exporting getting fingerprint error: %d", success);
+    g_debug ("Exporting getting fingerprint error: %d", success);
     return NULL;
   }
 
@@ -709,6 +709,134 @@ chatty_pgp_get_pub_key (const char *signing_id,
   }
 
   return g_file_new_for_path (path);
+}
+
+static void
+pgp_create_key (GTask        *task,
+                gpointer      source_object,
+                gpointer      task_data,
+                GCancellable *cancellable)
+{
+  char *key_data = task_data;
+  char **key_data_tokens = NULL;
+  g_autofree char *name_real = NULL;
+  g_autofree char *name_email = NULL;
+  g_autofree char *passphrase = NULL;
+  g_autofree char *options = NULL;
+  g_autofree char *system_args = NULL;
+  g_autofree char *fingerprint = NULL;
+  g_autoptr(GFile) text_file = NULL;
+  GFileIOStream *iostream;
+  gboolean success = FALSE;
+  GError *error = NULL;
+
+  key_data_tokens = g_strsplit (key_data, "\n", -1);
+  name_real = g_strdup (key_data_tokens[0]);
+  name_email = g_strdup (key_data_tokens[1]);
+  passphrase = g_strdup (key_data_tokens[2]);
+  g_strfreev (key_data_tokens);
+
+  /* https://www.gnupg.org/documentation/manuals/gnupg/Unattended-GPG-key-generation.html */
+  /* I know gpgme exists, but I can't really figure out how to use it */
+  options = g_strdup_printf ("Key-Type: RSA\nKey-Usage: sign\nKey-Length: 2048\nSubkey-Type: RSA\nSubkey-Usage: encrypt\nSubkey-Length: 2048\nName-Real: %s\nName-Email: %s\nExpire-Date: 0\nPassphrase: %s\n%%commit",
+                              name_real, name_email, passphrase);
+
+  text_file = g_file_new_tmp ("chatty-pgp-key-options.XXXXXX.txt", &iostream, &error);
+  if (error) {
+    g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_FAILED, "Error creating Temp file: %s", error->message);
+    g_warning ("Error creating Temp file: %s", error->message);
+    g_error_free (error);
+
+    g_task_return_boolean (task, FALSE);
+    return;
+  }
+
+  if (!g_file_replace_contents (text_file, options, strlen (options), NULL, FALSE,
+                                G_FILE_CREATE_NONE, NULL, NULL, &error)) {
+    g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_FAILED, "Failed to write to file %s: %s",
+                             g_file_peek_path (text_file), error->message);
+    g_warning ("Failed to write to file %s: %s",
+               g_file_peek_path (text_file), error->message);
+    g_error_free (error);
+
+    g_task_return_boolean (task, FALSE);
+    return;
+  }
+
+  /* https://devhints.io/gnupg */
+  system_args = g_strdup_printf ("gpg --batch --generate-key %s", g_file_peek_path (text_file));
+  success = system (system_args);
+
+  if (success != 0) {
+    g_warning ("Error Creating Key: %d", success);
+    g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_FAILED, "Error Creating Key in gpg %d", success);
+    g_task_return_boolean (task, FALSE);
+    return;
+  }
+
+  if (!g_file_delete (text_file,NULL,&error)) {
+
+    g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_FAILED, "Failed to write to file %s: %s",
+                             g_file_peek_path (text_file), error->message);
+    g_warning ("Failed to write to file %s: %s",
+               g_file_peek_path (text_file), error->message);
+    g_error_free (error);
+    g_task_return_boolean (task, FALSE);
+
+    return;
+  }
+
+  g_task_return_boolean (task, TRUE);
+}
+
+gboolean
+chatty_pgp_create_key_async (const char          *name_real,
+                             const char          *name_email,
+                             const char          *passphrase,
+                             GAsyncReadyCallback  callback,
+                             gpointer             user_data)
+{
+  g_autoptr(GTask) task = NULL;
+  g_autofree char *fingerprint = NULL;
+  char *key_data;
+
+  g_return_val_if_fail (callback, FALSE);
+
+  if (!name_real || !*name_real)
+    return FALSE;
+
+  if (!name_email || !*name_email)
+    return FALSE;
+
+  if (!passphrase || !*passphrase)
+    return FALSE;
+
+  fingerprint = chatty_pgp_get_pub_fingerprint (name_email);
+  if (fingerprint) {
+    g_debug ("%s already has key with fingerprint %s", name_email, fingerprint);
+    return FALSE;
+  }
+
+  key_data = g_strdup_printf ("%s\n%s\n%s\n",
+                              name_real,
+                              name_email,
+                              passphrase);
+
+  task = g_task_new (NULL, NULL, callback, user_data);
+  g_task_set_task_data (task, key_data, g_free);
+
+  g_task_run_in_thread (task, pgp_create_key);
+
+  return TRUE;
+}
+
+gboolean
+chatty_pgp_create_key_finish (GAsyncResult  *result,
+                              GError       **error)
+{
+  g_return_val_if_fail (G_IS_TASK (result), FALSE);
+
+  return g_task_propagate_boolean (G_TASK (result), error);
 }
 
 char *

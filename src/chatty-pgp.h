@@ -66,4 +66,12 @@ char                *chatty_pgp_get_recipients (CamelMimePart *mime_part);
 GFile               *chatty_pgp_get_pub_key    (const char *signing_id,
                                                 const char *save_directory);
 char                *chatty_pgp_get_pub_fingerprint (const char *signing_id);
+gboolean             chatty_pgp_create_key_async (const char          *name_real,
+                                                  const char          *name_email,
+                                                  const char          *passphrase,
+                                                  GAsyncReadyCallback  callback,
+                                                  gpointer             user_data);
+
+gboolean             chatty_pgp_create_key_finish (GAsyncResult  *result,
+                                                   GError       **error);
 G_END_DECLS
