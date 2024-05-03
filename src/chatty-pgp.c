@@ -595,7 +595,8 @@ chatty_gpg_get_exec (void)
 
 /* This functionality doesn't exist in libcamel, so we have to make it ourselves */
 char *
-chatty_pgp_get_pub_fingerprint (const char *signing_id)
+chatty_pgp_get_pub_fingerprint (const char *signing_id,
+                                gboolean    pretty_format)
 {
   g_autoptr(GError) error = NULL;
   g_autofree char *directory = NULL;
@@ -662,6 +663,20 @@ chatty_pgp_get_pub_fingerprint (const char *signing_id)
   if (error)
     g_warning ("Error deleting file: %s", error->message);
 
+  if (fingerprint && pretty_format) {
+    unsigned int fingerprint_length = strlen (fingerprint);
+    GString *str = NULL;
+
+    str = g_string_new (NULL);
+    for (int j = 0; j < fingerprint_length ; j++) {
+      g_string_append_c (str, fingerprint[j]);
+      if((j+1) % 4 == 0 && j != 0)
+        g_string_append_c (str, ' ');
+    }
+    g_free (fingerprint);
+    fingerprint = g_string_free (str, FALSE);
+  }
+  g_strstrip (fingerprint);
   return fingerprint;
 }
 
@@ -724,7 +739,7 @@ pgp_create_key (GTask        *task,
   g_autofree char *passphrase = NULL;
   g_autofree char *options = NULL;
   g_autofree char *system_args = NULL;
-  g_autofree char *fingerprint = NULL;
+  g_autofree char *pretty_fingerprint = NULL;
   g_autoptr(GFile) text_file = NULL;
   GFileIOStream *iostream;
   gboolean success = FALSE;
@@ -797,7 +812,7 @@ chatty_pgp_create_key_async (const char          *name_real,
                              gpointer             user_data)
 {
   g_autoptr(GTask) task = NULL;
-  g_autofree char *fingerprint = NULL;
+  g_autofree char *pretty_fingerprint = NULL;
   char *key_data;
 
   g_return_val_if_fail (callback, FALSE);
@@ -811,9 +826,9 @@ chatty_pgp_create_key_async (const char          *name_real,
   if (!passphrase || !*passphrase)
     return FALSE;
 
-  fingerprint = chatty_pgp_get_pub_fingerprint (name_email);
-  if (fingerprint) {
-    g_debug ("%s already has key with fingerprint %s", name_email, fingerprint);
+  pretty_fingerprint = chatty_pgp_get_pub_fingerprint (name_email, TRUE);
+  if (pretty_fingerprint) {
+    g_debug ("%s already has key with fingerprint %s", name_email, pretty_fingerprint);
     return FALSE;
   }
 

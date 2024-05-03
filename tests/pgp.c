@@ -399,9 +399,13 @@ test_pgp_export_pub_key (void)
   g_assert_cmpint (CHATTY_PGP_PUBLIC_KEY, ==, chatty_pgp_check_pgp_type (pdu));
   g_assert_finalize_object (pub_key);
 
-  fingerprint = chatty_pgp_get_pub_fingerprint (signing_email);
+  fingerprint = chatty_pgp_get_pub_fingerprint (signing_email, FALSE);
 
   g_assert_cmpstr ("362E7448A9CEEBD2C045D9AD028782BB929585AA", ==, fingerprint);
+
+  fingerprint = chatty_pgp_get_pub_fingerprint (signing_email, TRUE);
+
+  g_assert_cmpstr ("362E 7448 A9CE EBD2 C045 D9AD 0287 82BB 9295 85AA", ==, fingerprint);
 }
 
 static void
@@ -420,7 +424,7 @@ create_key_cb (GObject      *object,
                                                &error));
   g_assert_null (error);
 
-  fingerprint = chatty_pgp_get_pub_fingerprint (name_email);
+  fingerprint = chatty_pgp_get_pub_fingerprint (name_email, FALSE);
   g_assert_nonnull (fingerprint);
 
   /* We can check the newly created key */
