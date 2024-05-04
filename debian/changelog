@@ -1,3 +1,9 @@
+chatty (0.8.3-1) UNRELEASED; urgency=medium
+
+  * New upstream release
+
+ -- Christopher Talbot <chris@talbothome.com>  Sat, 04 May 2024 14:43:59 -0600
+
 chatty (0.8.2-1.1) unstable; urgency=medium
 
   * Non-maintainer upload
