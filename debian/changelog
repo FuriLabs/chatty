@@ -1,3 +1,88 @@
+chatty (0.8.3) UNRELEASED; urgency=medium
+
+  [ Chris Talbot ]
+  * d/control: Enforce libadwaita to be 1.4 or newer
+  * file-item: correct warning dialog
+  * README: Make section on backing up and restoring explicit
+  * NEWs: correct error in version
+  * d/control: enforce using libadwaita 1.5~
+  * meson: compile against adwaita 1.5
+  * application: convert to about dialog
+  * application: replace message dialog with alert dialog
+  * Manager: convert message dialog to alert dialog
+  * message-bar: convert message dialog to alert dialog
+  * window: convert message dialog to alert dialog
+  * new-chat-dialog: convert message dialog to alert dialog
+  * settings-dialog: convert message dialog to alert dialog
+  * purple: replace message dialog with alert dialog
+  * purple-notify: replace message dialog with alert dialog
+  * settings-dialog: port to AdwPreferencesDialog
+  * file-item: Add context to invite
+  * info-dialog: add context to translation
+  * purple-notify: remove redundant %s translatable strings
+  * message-bar: only show dialog for tracking IDs once
+  * message-bar: don't autopointer message-bar
+  * d/control: add libspelling-1-dev as dependency
+  * meson: add option for libspelling
+  * main: initialize gtk_source_view
+  * message-bar: Enable spell checking
+  * daemon.desktop: Remove StartupNotify=True
+  * pgp test: fix the fixme
+  * pgp: fix uncorrect NULL
+  * src/meson.build: Dump dependency to 2.78
+
+  [ Sabri Ünal ]
+  * Update Turkish translation
+  * Update Turkish translation
+
+  [ Vittorio Monti ]
+  * Update Italian translation
+
+  [ Artur S0 ]
+  * Update Russian translation
+  * Update Russian translation
+
+  [ maxrdz ]
+  * readme: 'meson build' is deprecated. updated build instructions
+
+  [ Anders Jonsson ]
+  * Update Swedish translation
+  * Update Swedish translation
+  * Update Swedish translation
+
+  [ Danial Behzadi ]
+  * Update Persian translation
+  * Update Persian translation
+
+  [ Yuri Chornoivan ]
+  * Update Ukrainian translation
+  * Update Ukrainian translation
+  * Update Ukrainian translation
+
+  [ Emin Tufan Çetin ]
+  * Update Turkish translation
+
+  [ Guido Günther ]
+  * message-row: Set message_content as popover parent
+  * message-row: Restrict long press gesture to message content
+  * message-row: Add right click gesture
+  * purple: Fix callback name
+  * matrix: Fix function name
+  * matrix: Don't ignore error when sending message
+  * matrix: Don't forget to invoke the callback when finishing sending a message
+  * subprojects: Update libcmatrix
+
+  [ Daniel Șerbănescu ]
+  * Update Romanian translation
+
+  [ Ekaterine Papava ]
+  * Add Georgian translation
+
+  [ Daniel Rusek ]
+  * Update Czech translation
+
+ -- Christopher Talbot <chris@talbothome.com>  Sat, 04 May 2024 14:18:49 -0600
+
 chatty (0.8.2) unstable; urgency=medium
 
   [ Chris Talbot ]
