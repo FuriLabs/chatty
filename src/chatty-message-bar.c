@@ -15,6 +15,10 @@
 #endif
 
 #include <glib/gi18n.h>
+#include <gtksourceview/gtksource.h>
+#ifdef LIBSPELL_ENABLED
+#include <libspelling.h>
+#endif
 
 #include "chatty-account.h"
 #include "chatty-attachments-bar.h"
@@ -38,7 +42,7 @@ struct _ChattyMessageBar
   GtkWidget     *scrolled_window;
   GtkWidget     *message_input;
   GtkWidget     *send_message_button;
-  GtkTextBuffer *message_buffer;
+  GtkSourceBuffer *message_buffer;
 
   ChattyHistory *history;
   ChattyChat    *chat;
@@ -46,6 +50,9 @@ struct _ChattyMessageBar
   gboolean       draft_is_loading;
   gboolean       is_self_change;
   char          *preedit;
+#ifdef LIBSPELL_ENABLED
+  SpellingChecker *checker;
+#endif
 };
 
 
@@ -153,14 +160,14 @@ update_emote (gpointer user_data)
   int i;
 
   i = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (self->message_buffer), "emote-index"));
-  mark = gtk_text_buffer_get_insert (self->message_buffer);
-  gtk_text_buffer_get_iter_at_mark (self->message_buffer, &end, mark);
+  mark = gtk_text_buffer_get_insert (GTK_TEXT_BUFFER (self->message_buffer));
+  gtk_text_buffer_get_iter_at_mark (GTK_TEXT_BUFFER (self->message_buffer), &end, mark);
   pos = end;
 
   self->is_self_change = TRUE;
   gtk_text_iter_backward_chars (&pos, strlen (emoticons[i][0]));
-  gtk_text_buffer_delete (self->message_buffer, &pos, &end);
-  gtk_text_buffer_insert (self->message_buffer, &pos, emoticons[i][1], -1);
+  gtk_text_buffer_delete (GTK_TEXT_BUFFER (self->message_buffer), &pos, &end);
+  gtk_text_buffer_insert (GTK_TEXT_BUFFER (self->message_buffer), &pos, emoticons[i][1], -1);
   self->is_self_change = FALSE;
 
   return G_SOURCE_REMOVE;
@@ -175,11 +182,11 @@ chatty_check_for_emoticon (ChattyMessageBar *self)
 
   g_assert (CHATTY_IS_MESSAGE_BAR (self));
 
-  mark = gtk_text_buffer_get_insert (self->message_buffer);
-  gtk_text_buffer_get_iter_at_mark (self->message_buffer, &end, mark);
+  mark = gtk_text_buffer_get_insert (GTK_TEXT_BUFFER (self->message_buffer));
+  gtk_text_buffer_get_iter_at_mark (GTK_TEXT_BUFFER (self->message_buffer), &end, mark);
   start = end;
   gtk_text_iter_backward_chars (&start, 7);
-  text = gtk_text_buffer_get_text (self->message_buffer, &start, &end, FALSE);
+  text = gtk_text_buffer_get_text (GTK_TEXT_BUFFER (self->message_buffer), &start, &end, FALSE);
 
   for (guint i = 0; i < G_N_ELEMENTS (emoticons); i++)
     {
@@ -233,7 +240,7 @@ chat_page_save_message_to_db (gpointer user_data)
                               CHATTY_MESSAGE_TEXT,
                               CHATTY_DIRECTION_OUT, CHATTY_STATUS_DRAFT);
   chatty_history_add_message (self->history, self->chat, draft);
-  gtk_text_buffer_set_modified (self->message_buffer, FALSE);
+  gtk_text_buffer_set_modified (GTK_TEXT_BUFFER (self->message_buffer), FALSE);
 
   return G_SOURCE_REMOVE;
 }
@@ -245,7 +252,7 @@ chatty_update_typing_status (ChattyMessageBar *self)
 
   g_assert (CHATTY_IS_MESSAGE_BAR (self));
 
-  is_typing = gtk_text_buffer_get_char_count (self->message_buffer) > 0;
+  is_typing = gtk_text_buffer_get_char_count (GTK_TEXT_BUFFER (self->message_buffer)) > 0;
   chatty_chat_set_typing (self->chat, is_typing);
 }
 
@@ -257,7 +264,7 @@ message_bar_attachment_revealer_notify_cb (ChattyMessageBar *self)
   g_assert (CHATTY_IS_MESSAGE_BAR (self));
 
   has_files = gtk_revealer_get_reveal_child (GTK_REVEALER (self->attachment_revealer));
-  has_text = gtk_text_buffer_get_char_count (self->message_buffer) > 0;
+  has_text = gtk_text_buffer_get_char_count (GTK_TEXT_BUFFER (self->message_buffer)) > 0;
 
   gtk_widget_set_visible (self->send_message_button, has_files || has_text);
 
@@ -278,7 +285,7 @@ message_bar_input_changed_cb (ChattyMessageBar *self)
     return;
 
   g_clear_handle_id (&self->save_timeout_id, g_source_remove);
-  has_text = gtk_text_buffer_get_char_count (self->message_buffer) > 0;
+  has_text = gtk_text_buffer_get_char_count (GTK_TEXT_BUFFER (self->message_buffer)) > 0;
   has_files = gtk_revealer_get_reveal_child (GTK_REVEALER (self->attachment_revealer));
   gtk_widget_set_visible (self->send_message_button, has_text || has_files);
 
@@ -296,7 +303,7 @@ message_bar_input_changed_cb (ChattyMessageBar *self)
       chatty_item_get_protocols (CHATTY_ITEM (self->chat)) != CHATTY_PROTOCOL_MMS_SMS)
     chatty_check_for_emoticon (self);
 
-  if (gtk_text_buffer_get_line_count (self->message_buffer) > 3)
+  if (gtk_text_buffer_get_line_count (GTK_TEXT_BUFFER (self->message_buffer)) > 3)
     gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (self->scrolled_window),
                                     GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
   else
@@ -328,7 +335,7 @@ view_send_message_async_cb (GObject      *object,
                             GAsyncResult *result,
                             gpointer      user_data)
 {
-  g_autoptr(ChattyMessageBar) self = user_data;
+  ChattyMessageBar *self = CHATTY_MESSAGE_BAR (user_data);
 
   chatty_chat_set_unread_count (self->chat, 0);
   chatty_chat_withdraw_notification (self->chat);
@@ -349,8 +356,8 @@ message_bar_send_message_button_clicked_cb (ChattyMessageBar *self)
 
   files = chatty_attachments_bar_get_files (CHATTY_ATTACHMENTS_BAR (self->attachment_bar));
 
-  gtk_text_buffer_get_bounds (self->message_buffer, &start, &end);
-  message_buffer_text = gtk_text_buffer_get_text (self->message_buffer, &start, &end, FALSE);
+  gtk_text_buffer_get_bounds (GTK_TEXT_BUFFER (self->message_buffer), &start, &end);
+  message_buffer_text = gtk_text_buffer_get_text (GTK_TEXT_BUFFER (self->message_buffer), &start, &end, FALSE);
   g_object_get (self->message_buffer,
                 "cursor-position",
                 &cursor_location,
@@ -369,7 +376,7 @@ message_bar_send_message_button_clicked_cb (ChattyMessageBar *self)
     g_clear_handle_id (&self->save_timeout_id, g_source_remove);
 
     gtk_widget_set_visible (self->send_message_button, FALSE);
-    gtk_text_buffer_delete (self->message_buffer, &start, &end);
+    gtk_text_buffer_delete (GTK_TEXT_BUFFER (self->message_buffer), &start, &end);
     /* Make sure the text view things is necessary to reset the im context */
     gtk_text_view_set_editable (GTK_TEXT_VIEW (self->message_input), FALSE);
     gtk_text_view_set_editable (GTK_TEXT_VIEW (self->message_input), TRUE);
@@ -386,7 +393,7 @@ message_bar_send_message_button_clicked_cb (ChattyMessageBar *self)
 
   gtk_widget_grab_focus (self->message_input);
 
-  if (gtk_text_buffer_get_char_count (self->message_buffer) || (self->preedit && *self->preedit) || files) {
+  if (gtk_text_buffer_get_char_count (GTK_TEXT_BUFFER (self->message_buffer)) || (self->preedit && *self->preedit) || files) {
     g_autofree char *escaped = NULL;
 
 #ifdef PURPLE_ENABLED
@@ -414,7 +421,7 @@ message_bar_send_message_button_clicked_cb (ChattyMessageBar *self)
   if (CHATTY_IS_MA_CHAT (self->chat) && files)
     gtk_widget_set_sensitive (self->message_input, TRUE);
   else {
-    gtk_text_buffer_delete (self->message_buffer, &start, &end);
+    gtk_text_buffer_delete (GTK_TEXT_BUFFER (self->message_buffer), &start, &end);
     /* Make sure the text view things is necessary to reset the im context */
     gtk_text_view_set_editable (GTK_TEXT_VIEW (self->message_input), FALSE);
     gtk_text_view_set_editable (GTK_TEXT_VIEW (self->message_input), TRUE);
@@ -438,6 +445,20 @@ message_bar_send_message_button_clicked_cb (ChattyMessageBar *self)
 }
 
 static void
+message_bar_strip_utm_id_paste_cb (AdwMessageDialog *dialog,
+                                   const char       *response,
+                                   gpointer          user_data)
+
+{
+  if (g_strcmp0 (response, "dont_show") == 0) {
+    ChattySettings  *settings;
+
+    settings = chatty_settings_get_default ();
+    chatty_settings_set_strip_url_tracking_ids_dialog (settings, TRUE);
+  }
+}
+
+static void
 message_bar_text_buffer_clipboard_paste_done_cb (ChattyMessageBar *self)
 {
   ChattySettings  *settings;
@@ -451,33 +472,34 @@ message_bar_text_buffer_clipboard_paste_done_cb (ChattyMessageBar *self)
     return;
   }
 
-  gtk_text_buffer_get_bounds (self->message_buffer, &start, &end);
-  message_buffer_text = gtk_text_buffer_get_text (self->message_buffer, &start, &end, FALSE);
+  gtk_text_buffer_get_bounds (GTK_TEXT_BUFFER (self->message_buffer), &start, &end);
+  message_buffer_text = gtk_text_buffer_get_text (GTK_TEXT_BUFFER (self->message_buffer), &start, &end, FALSE);
 
   stripped_message = chatty_utils_strip_utm_from_message (message_buffer_text);
 
   if (g_strcmp0 (stripped_message, message_buffer_text) != 0) {
 
-    /* To not annoy the user, we only show the strip ID dialog the first time */
     if (!chatty_settings_get_strip_url_tracking_ids_dialog (settings)) {
-      GtkWidget *dialog;
+      AdwDialog *dialog;
       GtkWindow *window;
 
       window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
-      dialog = adw_message_dialog_new (window,
-                                       _("Alert"),
-                                       _("Found and automatically deleted tracking IDs from the pasted link."));
-      adw_message_dialog_add_response (ADW_MESSAGE_DIALOG (dialog), "close", _("Close"));
+      dialog = adw_alert_dialog_new (_("Alert"),
+                                     _("Found and automatically deleted tracking IDs from the pasted link."));
+      adw_alert_dialog_add_response (ADW_ALERT_DIALOG (dialog), "close", _("Close"));
+      adw_alert_dialog_add_response (ADW_ALERT_DIALOG (dialog), "dont_show", _("Don't Show Again"));
 
-      adw_message_dialog_set_default_response (ADW_MESSAGE_DIALOG (dialog), "close");
-      adw_message_dialog_set_close_response (ADW_MESSAGE_DIALOG (dialog), "close");
+      adw_alert_dialog_set_default_response (ADW_ALERT_DIALOG (dialog), "close");
+      adw_alert_dialog_set_close_response (ADW_ALERT_DIALOG (dialog), "close");
 
-      gtk_window_present (GTK_WINDOW (dialog));
+      adw_dialog_present (dialog, GTK_WIDGET (window));
+
+      g_signal_connect (dialog, "response", G_CALLBACK (message_bar_strip_utm_id_paste_cb), self);
     }
-    gtk_text_buffer_begin_user_action (self->message_buffer);
-    gtk_text_buffer_delete (self->message_buffer, &start, &end);
-    gtk_text_buffer_insert (self->message_buffer, &start, stripped_message, -1);
-    gtk_text_buffer_end_user_action (self->message_buffer);
+    gtk_text_buffer_begin_user_action (GTK_TEXT_BUFFER (self->message_buffer));
+    gtk_text_buffer_delete (GTK_TEXT_BUFFER (self->message_buffer), &start, &end);
+    gtk_text_buffer_insert (GTK_TEXT_BUFFER (self->message_buffer), &start, stripped_message, -1);
+    gtk_text_buffer_end_user_action (GTK_TEXT_BUFFER (self->message_buffer));
   }
 }
 
@@ -490,7 +512,7 @@ message_bar_text_view_preddit_changed_cb (ChattyMessageBar *self,
   if (preedit && *preedit)
     self->preedit = g_strdup (preedit);
 
-  has_text = (gtk_text_buffer_get_char_count (self->message_buffer) > 0) || (self->preedit && *self->preedit);
+  has_text = (gtk_text_buffer_get_char_count (GTK_TEXT_BUFFER (self->message_buffer)) > 0) || (self->preedit && *self->preedit);
   has_files = gtk_revealer_get_reveal_child (GTK_REVEALER (self->attachment_revealer));
   gtk_widget_set_visible (self->send_message_button, has_text || has_files);
 
@@ -509,12 +531,12 @@ message_bar_activate (GtkWidget  *widget,
   ChattyMessageBar *self = CHATTY_MESSAGE_BAR (widget);
 
   if (chatty_settings_get_return_sends_message (chatty_settings_get_default ())) {
-    if (gtk_text_buffer_get_char_count (self->message_buffer) > 0)
+    if (gtk_text_buffer_get_char_count (GTK_TEXT_BUFFER (self->message_buffer)) > 0)
       message_bar_send_message_button_clicked_cb (self);
     else
       gtk_widget_error_bell (self->message_input);
   } else {
-    gtk_text_buffer_insert_at_cursor (self->message_buffer, "\n", strlen ("\n"));
+    gtk_text_buffer_insert_at_cursor (GTK_TEXT_BUFFER (self->message_buffer), "\n", strlen ("\n"));
   }
 }
 
@@ -536,6 +558,9 @@ chatty_message_bar_finalize (GObject *object)
   g_clear_handle_id (&self->save_timeout_id, g_source_remove);
   g_clear_object (&self->chat);
   g_clear_object (&self->history);
+#ifdef LIBSPELL_ENABLED
+  g_clear_object (&self->checker);
+#endif
 
   G_OBJECT_CLASS (chatty_message_bar_parent_class)->finalize (object);
 }
@@ -593,6 +618,11 @@ static void
 chatty_message_bar_init (ChattyMessageBar *self)
 {
   GListModel *files = NULL;
+#ifdef LIBSPELL_ENABLED
+  GMenuModel *extra_menu = NULL;
+  g_autoptr(SpellingTextBufferAdapter) adapter = NULL;
+  const char* const *languages = g_get_language_names ();
+#endif
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
@@ -600,6 +630,18 @@ chatty_message_bar_init (ChattyMessageBar *self)
   g_signal_connect_object (files, "items-changed",
                            G_CALLBACK (attachment_files_changed_cb),
                            self, G_CONNECT_SWAPPED);
+
+#ifdef LIBSPELL_ENABLED
+  /* g_get_language_names () picks the most preferred language first */
+  self->checker = spelling_checker_new (spelling_provider_get_default (), languages [0]);
+  adapter = spelling_text_buffer_adapter_new (GTK_SOURCE_BUFFER (self->message_buffer), self->checker);
+  extra_menu = spelling_text_buffer_adapter_get_menu_model (adapter);
+
+  gtk_text_view_set_extra_menu (GTK_TEXT_VIEW (self->message_input), extra_menu);
+  gtk_widget_insert_action_group (GTK_WIDGET (self->message_input), "spelling", G_ACTION_GROUP (adapter));
+
+  spelling_text_buffer_adapter_set_enabled (adapter, TRUE);
+#endif
 }
 
 static void
@@ -607,13 +649,13 @@ chat_get_draft_cb (GObject      *object,
                    GAsyncResult *result,
                    gpointer      user_data)
 {
-  g_autoptr(ChattyMessageBar) self = user_data;
+  ChattyMessageBar *self = CHATTY_MESSAGE_BAR (user_data);
   g_autofree char *draft = NULL;
 
   draft = chatty_history_get_draft_finish (self->history, result, NULL);
 
   self->draft_is_loading = TRUE;
-  g_object_set (self->message_buffer, "text", draft ? draft : "", NULL);
+  g_object_set (GTK_TEXT_BUFFER (self->message_buffer), "text", draft ? draft : "", NULL);
   self->draft_is_loading = FALSE;
 }
 
@@ -639,7 +681,7 @@ chatty_message_bar_set_chat (ChattyMessageBar *self,
 
   gtk_widget_set_sensitive (self->message_input, !!chat);
 
-  if (gtk_text_buffer_get_line_count (self->message_buffer) > 3)
+  if (gtk_text_buffer_get_line_count (GTK_TEXT_BUFFER (self->message_buffer)) > 3)
     gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (self->scrolled_window),
                                     GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
   else

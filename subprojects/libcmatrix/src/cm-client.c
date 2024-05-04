@@ -334,14 +334,8 @@ handle_matrix_glitches (CmClient *self,
    */
   if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NETWORK_UNREACHABLE) ||
       g_error_matches (error, G_IO_ERROR, G_IO_ERROR_TIMED_OUT) ||
-#if SOUP_MAJOR_VERSION == 2
-      (error->domain == SOUP_HTTP_ERROR &&
-       error->code <= SOUP_STATUS_TLS_FAILED &&
-       error->code > SOUP_STATUS_CANCELLED) ||
-#else
       error->domain == SOUP_TLD_ERROR ||
       error->domain == G_TLS_ERROR ||
-#endif
       /* Should we handle connection_refused, or just keep it for localhost? */
       g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CONNECTION_REFUSED) ||
       error->domain == G_RESOLVER_ERROR ||
@@ -969,7 +963,7 @@ db_load_client_cb (GObject      *obj,
   matrix_start_sync (self, g_steal_pointer (&task));
 }
 
-/*
+/**
  * cm_client_pop_event_id:
  * @self: A #CmClient
  *
@@ -989,7 +983,7 @@ cm_client_pop_event_id (CmClient *self)
   return self->event_id - 1;
 }
 
-/*
+/**
  * cm_client_get_db:
  * @self: A #CmClient
  *
@@ -1006,7 +1000,7 @@ cm_client_get_db (CmClient *self)
   return self->cm_db;
 }
 
-/*
+/**
  * cm_client_get_net:
  * @self: A #CmClient
  *
@@ -1022,7 +1016,7 @@ cm_client_get_net (CmClient *self)
   return self->cm_net;
 }
 
-/*
+/**
  * cm_client_get_enc:
  * @self: A #CmClient
  *
@@ -1039,7 +1033,7 @@ cm_client_get_enc (CmClient *self)
   return self->cm_enc;
 }
 
-/*
+/**
  * cm_client_set_db:
  * @self: A #CmClient
  * @db: A #CmDb
@@ -1140,7 +1134,7 @@ db_save_cb (GObject      *object,
   cm_client_save (self);
 }
 
-/*
+/**
  * cm_client_set_enabled:
  * @self: A #CmClient
  * @force: Whether to force saving to db
@@ -1318,11 +1312,6 @@ gboolean
 cm_client_set_homeserver (CmClient   *self,
                           const char *homeserver)
 {
-#if SOUP_MAJOR_VERSION == 2
-  g_autoptr(SoupURI) uri = NULL;
-#else
-  g_autoptr(GUri) uri = NULL;
-#endif
   GString *server;
 
   g_return_val_if_fail (CM_IS_CLIENT (self), FALSE);
@@ -1465,7 +1454,7 @@ cm_client_get_access_token (CmClient *self)
   return cm_net_get_access_token (self->cm_net);
 }
 
-/*
+/**
  * cm_client_get_next_batch:
  * @self: A #CmClient
  *
@@ -1897,7 +1886,6 @@ room_loaded_cb (GObject      *obj,
                 GAsyncResult *result,
                 gpointer      user_data)
 {
-  g_autoptr(CmClient) self = user_data;
   g_autoptr(GError) error = NULL;
   CmRoom *room = CM_ROOM (obj);
 
@@ -1949,7 +1937,6 @@ upload_key_cb (GObject      *obj,
   g_autoptr(JsonObject) root = NULL;
   g_autoptr(GError) error = NULL;
   JsonObject *object = NULL;
-  g_autofree char *json_str = NULL;
 
   g_assert (CM_IS_CLIENT (self));
   g_assert (G_IS_TASK (result));
@@ -1957,19 +1944,15 @@ upload_key_cb (GObject      *obj,
   root = g_task_propagate_pointer (G_TASK (result), &error);
   g_debug ("(%p) Upload key %s", self, CM_LOG_SUCCESS (!error));
 
-  if (error)
-    {
-      self->sync_failed = TRUE;
-      handle_matrix_glitches (self, error);
-      g_debug ("Error uploading key: %s", error->message);
-      return;
-    }
-
-  json_str = cm_utils_json_object_to_string (root, FALSE);
-  cm_enc_publish_one_time_keys (self->cm_enc);
+  if (!error) {
+    cm_enc_publish_one_time_keys (self->cm_enc);
+  } else {
+    self->sync_failed = TRUE;
+    handle_matrix_glitches (self, error);
+    g_warning ("Error uploading key: %s", error->message);
+  }
 
   object = cm_utils_json_object_get_object (root, "one_time_key_counts");
-
   if (!handle_one_time_keys (self, object))
     matrix_start_sync (self, NULL);
 }
@@ -2088,7 +2071,9 @@ verification_send_key_cb (GObject      *object,
                           GAsyncResult *result,
                           gpointer      user_data)
 {
-  g_autoptr(CmClient) self = user_data;
+  CmClient *self = CM_CLIENT (user_data);
+
+  g_object_unref (self);
 }
 
 static void

@@ -390,8 +390,7 @@ chatty_pgp_decrypt_mime_part (CamelMimePart *encpart)
   valid = camel_cipher_context_decrypt_sync (ctx, encpart, outpart, NULL, &error);
   if (error != NULL) {
     g_warning ("PGP decryption failed: '%s'", error->message);
-    g_object_unref (outpart);
-    encpart = NULL;
+    g_clear_object (&outpart);
     goto out;
   }
 

@@ -55,7 +55,7 @@
  * which was written by Andrea Schäfer. */
 struct _ChattySettingsDialog
 {
-  AdwWindow      parent_instance;
+  AdwPreferencesDialog      parent_instance;
 
   GtkWidget      *main_pref_page;
   GtkWidget      *header_bar;
@@ -125,7 +125,7 @@ struct _ChattySettingsDialog
   guint    revealer_timeout_id;
 };
 
-G_DEFINE_TYPE (ChattySettingsDialog, chatty_settings_dialog, ADW_TYPE_WINDOW)
+G_DEFINE_TYPE (ChattySettingsDialog, chatty_settings_dialog, ADW_TYPE_PREFERENCES_DIALOG)
 
 static void
 settings_apply_style (GtkWidget  *widget,
@@ -190,20 +190,20 @@ settings_save_account_cb (GObject      *object,
 
   if (error) {
     if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
-      GtkWidget *dialog;
+      AdwDialog *dialog;
       GtkWindow *window;
 
       window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
-      dialog = adw_message_dialog_new (window, _("Error"), NULL);
-      adw_message_dialog_format_body (ADW_MESSAGE_DIALOG (dialog),
+      dialog = adw_alert_dialog_new (_("Error"), NULL);
+      adw_alert_dialog_format_body (ADW_ALERT_DIALOG (dialog),
                                       _("Error saving account: %s"),
                                        error->message);
-      adw_message_dialog_add_response (ADW_MESSAGE_DIALOG (dialog), "close", _("Close"));
+      adw_alert_dialog_add_response (ADW_ALERT_DIALOG (dialog), "close", _("Close"));
 
-      adw_message_dialog_set_default_response (ADW_MESSAGE_DIALOG (dialog), "close");
-      adw_message_dialog_set_close_response (ADW_MESSAGE_DIALOG (dialog), "close");
+      adw_alert_dialog_set_default_response (ADW_ALERT_DIALOG (dialog), "close");
+      adw_alert_dialog_set_close_response (ADW_ALERT_DIALOG (dialog), "close");
 
-      gtk_window_present (GTK_WINDOW (dialog));
+      adw_dialog_present (dialog, GTK_WIDGET (window));
     }
   } else {
     gtk_widget_set_visible (self->add_button, FALSE);
@@ -447,7 +447,7 @@ settings_delete_account_clicked_cb (ChattySettingsDialog *self)
 {
   const char *username;
   GtkWindow *window;
-  GtkWidget *dialog;
+  AdwDialog *dialog;
 
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
   window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
@@ -457,24 +457,24 @@ settings_delete_account_clicked_cb (ChattySettingsDialog *self)
   else
     username = chatty_item_get_username (CHATTY_ITEM (self->selected_account));
 
-  dialog = adw_message_dialog_new (window,  _("Delete Account"), NULL);
-  adw_message_dialog_format_body (ADW_MESSAGE_DIALOG (dialog),
+  dialog = adw_alert_dialog_new (_("Delete Account"), NULL);
+  adw_alert_dialog_format_body (ADW_ALERT_DIALOG (dialog),
                                   _("Delete account %s?"),
                                   username);
 
-  adw_message_dialog_add_responses (ADW_MESSAGE_DIALOG (dialog),
+  adw_alert_dialog_add_responses (ADW_ALERT_DIALOG (dialog),
                                     "cancel",  _("_Cancel"),
                                     "delete", _("Delete"),
                                     NULL);
 
-  adw_message_dialog_set_response_appearance (ADW_MESSAGE_DIALOG (dialog), "delete", ADW_RESPONSE_DESTRUCTIVE);
+  adw_alert_dialog_set_response_appearance (ADW_ALERT_DIALOG (dialog), "delete", ADW_RESPONSE_DESTRUCTIVE);
 
-  adw_message_dialog_set_default_response (ADW_MESSAGE_DIALOG (dialog), "cancel");
-  adw_message_dialog_set_close_response (ADW_MESSAGE_DIALOG (dialog), "cancel");
+  adw_alert_dialog_set_default_response (ADW_ALERT_DIALOG (dialog), "cancel");
+  adw_alert_dialog_set_close_response (ADW_ALERT_DIALOG (dialog), "cancel");
 
   g_signal_connect (dialog, "response", G_CALLBACK (settings_delete_account_response_cb), self);
 
-  gtk_window_present (GTK_WINDOW (dialog));
+  adw_dialog_present (dialog, GTK_WIDGET (window));
 }
 
 static void
@@ -653,15 +653,15 @@ settings_dialog_page_changed_cb (ChattySettingsDialog *self)
   name = gtk_stack_get_visible_child_name (GTK_STACK (self->main_stack));
 
   if (g_strcmp0 (name, "message-settings-view") == 0)
-    gtk_window_set_title (GTK_WINDOW (self), _("SMS/MMS"));
+    adw_dialog_set_title (ADW_DIALOG (self), _("SMS/MMS"));
   else if (g_strcmp0 (name, "purple-settings-view") == 0)
-    gtk_window_set_title (GTK_WINDOW (self), _("Purple"));
+    adw_dialog_set_title (ADW_DIALOG (self), _("Purple"));
   else if (g_strcmp0 (name, "add-account-view") == 0)
-    gtk_window_set_title (GTK_WINDOW (self), _("New Account"));
+    adw_dialog_set_title (ADW_DIALOG (self), _("New Account"));
   else if (g_strcmp0 (name, "blocked-list-view") == 0)
-    gtk_window_set_title (GTK_WINDOW (self), _("Blocked Contacts"));
+    adw_dialog_set_title (ADW_DIALOG (self), _("Blocked Contacts"));
   else
-    gtk_window_set_title (GTK_WINDOW (self), _("Preferences"));
+    adw_dialog_set_title (ADW_DIALOG (self), _("Preferences"));
 }
 
 static void
@@ -825,7 +825,7 @@ chatty_settings_window_hidden_cb (ChattySettingsDialog *self)
 {
   chatty_settings_reset_window_ui (self);
   adw_preferences_page_scroll_to_top (ADW_PREFERENCES_PAGE (self->main_pref_page));
-  gtk_widget_set_visible (GTK_WIDGET (self), FALSE);
+  adw_dialog_force_close (ADW_DIALOG (self));
 }
 
 
@@ -1297,7 +1297,5 @@ chatty_settings_dialog_new (GtkWindow *parent_window)
   g_return_val_if_fail (GTK_IS_WINDOW (parent_window), NULL);
 
   return g_object_new (CHATTY_TYPE_SETTINGS_DIALOG,
-                       "transient-for", parent_window,
-                       "modal", TRUE,
                        NULL);
 }

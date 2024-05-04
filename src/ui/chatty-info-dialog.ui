@@ -54,6 +54,7 @@
               <object class="GtkButton" id="invite_button">
                 <property name="visible">0</property>
                 <property name="sensitive">0</property>
+                <!-- Translators: This is invite to a chat room -->
                 <property name="label" translatable="yes">Invite</property>
                 <signal name="clicked" handler="info_dialog_invite_clicked_cb" swapped="yes"/>
                 <style>

@@ -45,7 +45,6 @@ static JsonObject *
 room_message_generate_json (CmRoomMessageEvent *self,
                             CmRoom             *room)
 {
-  g_autofree char *uri = NULL;
   const char *body, *room_id;
   CmClient *client;
   JsonObject *root;
@@ -231,6 +230,17 @@ cm_room_message_event_new_from_json (JsonObject *root)
   else if (g_strcmp0 (type, "m.notice") == 0)
     self->type = CM_CONTENT_TYPE_NOTICE;
 
+  if ((self->type == CM_CONTENT_TYPE_IMAGE ||
+       self->type == CM_CONTENT_TYPE_FILE ||
+       self->type == CM_CONTENT_TYPE_AUDIO) &&
+      !self->mxc_uri)
+    {
+      JsonObject *file = cm_utils_json_object_get_object (child, "file");
+
+      if (file)
+	self->mxc_uri = cm_utils_json_object_dup_string (file, "url");
+    }
+
   return CM_ROOM_EVENT (self);
 }
 
@@ -319,8 +329,6 @@ message_file_stream_cb (GObject      *obj,
     g_task_return_pointer (task, NULL, NULL);
   else
     {
-      g_autofree char *file_name = NULL;
-
       self->file_istream = (GInputStream *)g_file_read (out_file, NULL, NULL);
       g_object_set_data_full (G_OBJECT (self->file_istream), "out-file",
                               out_file, g_object_unref);

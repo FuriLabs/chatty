@@ -188,20 +188,20 @@ chatty_purple_account_notify_added (PurpleAccount *pp_account,
                                     const char    *alias,
                                     const char    *msg)
 {
-  GtkWidget *dialog;
+  AdwDialog *dialog;
   GtkWindow *window;
 
   window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
-  dialog = adw_message_dialog_new (window, _("Alert"), NULL);
-  adw_message_dialog_format_body (ADW_MESSAGE_DIALOG (dialog),
+  dialog = adw_alert_dialog_new (_("Alert"), NULL);
+  adw_alert_dialog_format_body (ADW_ALERT_DIALOG (dialog),
                                   _("User %s has added %s to the contacts"),
                                    remote_user, id);
-  adw_message_dialog_add_response (ADW_MESSAGE_DIALOG (dialog), "close", _("Close"));
+  adw_alert_dialog_add_response (ADW_ALERT_DIALOG (dialog), "close", _("Close"));
 
-  adw_message_dialog_set_default_response (ADW_MESSAGE_DIALOG (dialog), "close");
-  adw_message_dialog_set_close_response (ADW_MESSAGE_DIALOG (dialog), "close");
+  adw_alert_dialog_set_default_response (ADW_ALERT_DIALOG (dialog), "close");
+  adw_alert_dialog_set_close_response (ADW_ALERT_DIALOG (dialog), "close");
 
-  gtk_window_present (GTK_WINDOW (dialog));
+  adw_dialog_present (dialog, GTK_WIDGET (window));
 }
 
 struct pp_auth
@@ -258,7 +258,7 @@ chatty_purple_account_request_authorization (PurpleAccount                      
                                              void                                *user_data)
 {
   GtkWindow *window;
-  GtkWidget *dialog;
+  AdwDialog *dialog;
   g_autofree char *text_detail = NULL;
   struct pp_auth *authorization = NULL;
 
@@ -280,28 +280,28 @@ chatty_purple_account_request_authorization (PurpleAccount                      
   authorization->user_data = user_data;
 
   window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
-  dialog = adw_message_dialog_new (window,  _("Delete Account"), NULL);
-  adw_message_dialog_format_heading (ADW_MESSAGE_DIALOG (dialog),
+  dialog = adw_alert_dialog_new (_("Delete Account"), NULL);
+  adw_alert_dialog_format_heading (ADW_ALERT_DIALOG (dialog),
                                      _("Authorize %s?"),
                                      alias ? alias : remote_user);
 
-  adw_message_dialog_format_body (ADW_MESSAGE_DIALOG (dialog),
+  adw_alert_dialog_format_body (ADW_ALERT_DIALOG (dialog),
                                   _("Add %s to contact list"),
                                   remote_user);
 
-  adw_message_dialog_add_responses (ADW_MESSAGE_DIALOG (dialog),
+  adw_alert_dialog_add_responses (ADW_ALERT_DIALOG (dialog),
                                     "cancel",  _("_Cancel"),
                                     "authorize", _("Authorize"),
                                     NULL);
 
-  adw_message_dialog_set_response_appearance (ADW_MESSAGE_DIALOG (dialog), "authorize", ADW_RESPONSE_SUGGESTED);
+  adw_alert_dialog_set_response_appearance (ADW_ALERT_DIALOG (dialog), "authorize", ADW_RESPONSE_SUGGESTED);
 
-  adw_message_dialog_set_default_response (ADW_MESSAGE_DIALOG (dialog), "cancel");
-  adw_message_dialog_set_close_response (ADW_MESSAGE_DIALOG (dialog), "cancel");
+  adw_alert_dialog_set_default_response (ADW_ALERT_DIALOG (dialog), "cancel");
+  adw_alert_dialog_set_close_response (ADW_ALERT_DIALOG (dialog), "cancel");
 
   g_signal_connect (dialog, "response", G_CALLBACK (chatty_purple_account_request_authorization_cb), authorization);
 
-  gtk_window_present (GTK_WINDOW (dialog));
+  adw_dialog_present (dialog, GTK_WIDGET (window));
 
   return NULL;
 }
@@ -606,22 +606,22 @@ purple_account_connection_failed_cb (PurpleAccount         *pp_account,
     chatty_account_connect (CHATTY_ACCOUNT (account), TRUE);
 
   if (purple_connection_error_is_fatal (error)) {
-    GtkWidget *dialog;
+    AdwDialog *dialog;
     GtkWindow *window;
 
     window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
-    dialog = adw_message_dialog_new (window, _("Error"), NULL);
-    adw_message_dialog_format_body (ADW_MESSAGE_DIALOG (dialog),
+    dialog = adw_alert_dialog_new (_("Error"), NULL);
+    adw_alert_dialog_format_body (ADW_ALERT_DIALOG (dialog),
                                     "%s: %s\n\n%s",
                                    error_msg,
                                    chatty_item_get_username (CHATTY_ITEM (account)),
                                    _("Please check ID and password"));
-    adw_message_dialog_add_response (ADW_MESSAGE_DIALOG (dialog), "close", _("Close"));
+    adw_alert_dialog_add_response (ADW_ALERT_DIALOG (dialog), "close", _("Close"));
 
-    adw_message_dialog_set_default_response (ADW_MESSAGE_DIALOG (dialog), "close");
-    adw_message_dialog_set_close_response (ADW_MESSAGE_DIALOG (dialog), "close");
+    adw_alert_dialog_set_default_response (ADW_ALERT_DIALOG (dialog), "close");
+    adw_alert_dialog_set_close_response (ADW_ALERT_DIALOG (dialog), "close");
 
-    gtk_window_present (GTK_WINDOW (dialog));
+    adw_dialog_present (dialog, GTK_WIDGET (window));
   }
 }
 
@@ -1617,7 +1617,7 @@ purple_buddy_removed_cb (PurpleBuddy  *pp_buddy,
 
 
 static void
-purple_buddy_privacy_chaged_cb (PurpleBuddy *buddy)
+purple_buddy_privacy_changed_cb (PurpleBuddy *buddy)
 {
   if (!PURPLE_BLIST_NODE(buddy)->ui_data)
     return;
@@ -1643,7 +1643,7 @@ purple_buddy_signed_on_off_cb (PurpleBuddy *buddy)
 }
 
 static void
-purple_buddy_icon_chaged_cb (PurpleBuddy *buddy)
+purple_buddy_icon_changed_cb (PurpleBuddy *buddy)
 {
   PurpleConversation *conv;
 
@@ -1670,7 +1670,7 @@ chatty_purple_load_buddies (ChattyPurple *self)
                          PURPLE_CALLBACK (purple_buddy_removed_cb), self);
   purple_signal_connect (purple_blist_get_handle (),
                          "buddy-privacy-changed", self,
-                         PURPLE_CALLBACK (purple_buddy_privacy_chaged_cb), self);
+                         PURPLE_CALLBACK (purple_buddy_privacy_changed_cb), self);
   purple_signal_connect (purple_blist_get_handle (),
                          "buddy-signed-on", self,
                          PURPLE_CALLBACK (purple_buddy_signed_on_off_cb), self);
@@ -1679,7 +1679,7 @@ chatty_purple_load_buddies (ChattyPurple *self)
                          PURPLE_CALLBACK (purple_buddy_signed_on_off_cb), self);
   purple_signal_connect (purple_blist_get_handle (),
                          "buddy-icon-changed", self,
-                         PURPLE_CALLBACK (purple_buddy_icon_chaged_cb), self);
+                         PURPLE_CALLBACK (purple_buddy_icon_changed_cb), self);
 
   buddies = purple_blist_get_buddies ();
 

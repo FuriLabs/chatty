@@ -216,7 +216,7 @@ process_vcal (ChattyFileItem *self)
   g_auto(GStrv) lines = NULL;
   gsize length;
 
-  gtk_label_set_text (GTK_LABEL (self->file_title), _("Invite"));
+  gtk_label_set_text (GTK_LABEL (self->file_title), C_("Invitation to event", "Invite"));
 
   if (chatty_message_get_cm_event (self->message))
     text_file = g_file_new_build_filename (chatty_file_get_path (self->file), NULL);
@@ -530,7 +530,7 @@ save_dialog_finished (GObject         *dialog,
 
   if (error != NULL) {
     if (!g_error_matches (error, GTK_DIALOG_ERROR, GTK_DIALOG_ERROR_DISMISSED) &&
-        !g_error_matches (error, GTK_DIALOG_ERROR, GTK_DIALOG_ERROR_DISMISSED))
+        !g_error_matches (error, GTK_DIALOG_ERROR, GTK_DIALOG_ERROR_CANCELLED))
       g_warning ("Error saving: %s", error->message);
     return;
   }
