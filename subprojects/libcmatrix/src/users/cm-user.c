@@ -569,7 +569,7 @@ cm_user_find_device (CmUser     *self,
   return NULL;
 }
 
-/*
+/**
  * cm_user_set_devices:
  * @self: A #CmUser
  * @root: A #JsonObject
@@ -583,7 +583,6 @@ cm_user_find_device (CmUser     *self,
  * If @update_state is %FALSE, the device changed info
  * shall not be updated, and so cm_user_get_device_changed()
  * shall return the old values.
- *
  */
 void
 cm_user_set_devices (CmUser     *self,
@@ -609,7 +608,6 @@ cm_user_set_devices (CmUser     *self,
   for (GList *member = members; member; member = member->next)
     {
       g_autoptr(CmDevice) device = NULL;
-      g_autofree char *device_name = NULL;
       const char *device_id, *user;
 
       child = cm_utils_json_object_get_object (root, member->data);

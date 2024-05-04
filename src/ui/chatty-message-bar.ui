@@ -42,7 +42,7 @@
               <class name="frame"/>
             </style>
             <property name="child">
-              <object class="GtkTextView" id="message_input">
+              <object class="GtkSourceView" id="message_input">
                 <property name="hexpand">1</property>
                 <property name="valign">fill</property>
                 <!-- Needs to be sensitive for OSK to work in Phosh: https://gitlab.gnome.org/GNOME/libadwaita/-/issues/791 -->
@@ -90,7 +90,7 @@
 
   </template>
 
-  <object class="GtkTextBuffer" id="message_buffer">
+  <object class="GtkSourceBuffer" id="message_buffer">
     <signal name="changed" handler="message_bar_input_changed_cb" after="yes" swapped="yes"/>
     <signal name="paste-done" handler="message_bar_text_buffer_clipboard_paste_done_cb" swapped="yes"/>
   </object>

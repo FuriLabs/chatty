@@ -104,7 +104,7 @@ libadwaita_dep = dependency('libadwaita-1', version: '>= @0@'.format(adw_version
 libgtk_dep = dependency('gtk4', version: '>= @0@'.format(gtk_version))
 
 chatty_deps += [
-  dependency('gio-2.0', version: '>= 2.66'),
+  dependency('gio-2.0', version: '>= 2.78'),
   dependency('gnome-desktop-4', version: '>= 43'),
   dependency('sqlite3', version: '>=3.0.0'),
   dependency('camel-1.2'),
@@ -112,6 +112,8 @@ chatty_deps += [
   dependency('libebook-1.2'),
   dependency('gsettings-desktop-schemas'),
   dependency('gstreamer-1.0'),
+  dependency('gtksourceview-5', version: '>= 5.4.0'),
+  libspell_dep,
   libadwaita_dep,
   libgtk_dep,
   libebook_dep,

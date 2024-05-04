@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="ChattySettingsDialog" parent="AdwWindow">
-    <property name="default-height">480</property>
-    <property name="default-width">360</property>
-    <property name="hide-on-close">1</property>
-    <signal name="close-request" handler="chatty_settings_window_hidden_cb" swapped="yes"/>
-
+  <template class="ChattySettingsDialog" parent="AdwPreferencesDialog">
+    <property name="can-close">false</property>
+    <signal name="close-attempt" handler="chatty_settings_window_hidden_cb" swapped="yes"/>
     <child>
       <object class="AdwToolbarView">
         <child type="top">

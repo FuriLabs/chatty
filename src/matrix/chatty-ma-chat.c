@@ -427,14 +427,15 @@ chatty_ma_chat_set_unread_count (ChattyChat *chat,
 }
 
 static void
-ma_chage_send_message_cb (GObject      *object,
-                          GAsyncResult *result,
-                          gpointer      user_data)
+ma_chat_send_message_cb (GObject      *object,
+                         GAsyncResult *result,
+                         gpointer      user_data)
 {
   ChattyMaChat *self;
   g_autoptr(GTask) task = user_data;
   g_autofree char *event_id = NULL;
   ChattyMessage *message;
+  g_autoptr(GError) err = NULL;
 
   g_assert (G_IS_TASK (task));
 
@@ -443,15 +444,19 @@ ma_chage_send_message_cb (GObject      *object,
   g_assert (CHATTY_IS_MA_CHAT (self));
   g_assert (CHATTY_IS_MESSAGE (message));
 
-  event_id = cm_room_send_text_finish (self->cm_room, result, NULL);
+  event_id = cm_room_send_text_finish (self->cm_room, result, &err);
 
   /* We add only failed to send messages.  If sending succeeded,
    * we shall get the same via the /sync responses */
   if (event_id) {
     chatty_message_set_status (message, CHATTY_STATUS_SENT, 0);
   } else {
+    g_debug ("Failed to send: %s", err->message);
     chatty_message_set_status (message, CHATTY_STATUS_SENDING_FAILED, 0);
   }
+
+  /* Inovke callback passed to chatty_ma_chat_send_message_async */
+  g_task_return_pointer (task, NULL, NULL);
 }
 
 static void
@@ -483,12 +488,12 @@ chatty_ma_chat_send_message_async (ChattyChat          *chat,
   if (file)
     event_id = cm_room_send_file_async (self->cm_room, file, NULL,
                                         NULL, NULL, NULL,
-                                        ma_chage_send_message_cb, task);
+                                        ma_chat_send_message_cb, task);
   else
     event_id = cm_room_send_text_async (self->cm_room,
                                         chatty_message_get_text (message),
                                         NULL,
-                                        ma_chage_send_message_cb, task);
+                                        ma_chat_send_message_cb, task);
   g_object_set_data_full (G_OBJECT (message), "event-id", g_strdup (event_id), g_free);
 }
 

@@ -1,24 +1,22 @@
-# Romanian translation for chatty.
-# Copyright (C) 2020 chatty's COPYRIGHT HOLDER
+# Georgian translation for chatty.
+# Copyright (C) 2024 chatty's COPYRIGHT HOLDER
 # This file is distributed under the same license as the chatty package.
-# Antonio Marin (libre) <gnmer.6qxyg@slmail.me>, 2024.
+# Ekaterine Papava <papava.e@gtu.ge>, 2024.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: chatty master\n"
+"Project-Id-Version: chatty main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-04-17 17:48+0000\n"
-"PO-Revision-Date: 2024-04-20 19:50+0200\n"
-"Last-Translator: Antonio Marin <gnmer.6qxyg@slmail.me>\n"
-"Language-Team: Romanian <gnomero-list@lists.sourceforge.net>\n"
-"Language: ro\n"
+"POT-Creation-Date: 2024-04-21 16:33+0000\n"
+"PO-Revision-Date: 2024-04-25 10:06+0200\n"
+"Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
+"Language-Team: Georgian <ka@li.org>\n"
+"Language: ka\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n==0 || (n!=1 && n%100>=1 && "
-"n%100<=19) ? 1 : 2);\n"
-"X-Generator: Poedit 3.4.2\n"
-"X-Poedit-SourceCharset: UTF-8\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 3.3.2\n"
 
 #: data/sm.puri.Chatty.desktop.in.in:3 data/sm.puri.Chatty.metainfo.xml.in.in:6
 #: src/chatty-application.c:164 src/chatty-application.c:412
@@ -26,194 +24,193 @@ msgstr ""
 #: src/ui/chatty-side-bar.ui:4 src/ui/chatty-side-bar.ui:12
 #: src/ui/chatty-window.ui:4
 msgid "Chats"
-msgstr "Discuții"
+msgstr "საუბრები"
 
 #: data/sm.puri.Chatty.desktop.in.in:6
 msgid "SMS and XMPP chat application"
-msgstr "Aplicație de conversații XMPP și SMS"
+msgstr "SMS და XMPP საუბრის აპლიკაცია"
 
 #: data/sm.puri.Chatty.desktop.in.in:7
 msgid "XMPP;SMS;chat;jabber;messaging;modem"
-msgstr "XMPP;SMS;chat;jabber;messaging;modem;discuție;mesagerie"
+msgstr "XMPP;SMS;საუბარი;jabber;შეტყობინებები;მოდემი"
 
 #: data/sm.puri.Chatty.gschema.xml:7 data/sm.puri.Chatty.gschema.xml:8
 msgid "Whether the application is launching the first time"
-msgstr "Dacă aplicația este pornită pentru prima dată"
+msgstr "როცა აპლიკაცია პირველად ეშვება"
 
 #: data/sm.puri.Chatty.gschema.xml:13
 msgid "Country code in ISO 3166-1 alpha-2 format"
-msgstr "Codul țării în formatul ISO 3166-1 alpha-2"
+msgstr "ქვეყნის კოდი ISO 3166-1 alpha-2 ფორმატში"
 
 #: data/sm.puri.Chatty.gschema.xml:14
 msgid "Two letter country code of the last available SIM/Network"
-msgstr "Codul țării format din două litere a ultimei SIM/Rețele disponibile"
+msgstr "ბოლოს შესული SIM/ქსელის ორსიმბოლოიანი ქვეყნის კოდი"
 
 #: data/sm.puri.Chatty.gschema.xml:19
 msgid "Send message read receipts"
-msgstr "Trimite confirmarea de citire a mesajului"
+msgstr "საუბრის წაკითხულობის შეტყობინების გაგზავნა"
 
 #: data/sm.puri.Chatty.gschema.xml:20
 msgid "Whether to send the status of the message if read"
-msgstr "Dacă să se trimită starea mesajului când a fost citit"
+msgstr "გააგზავნოს თუ არა სტატუსი, წაკითხული იყო თუ არა შეტყობინება"
 
 #: data/sm.puri.Chatty.gschema.xml:25
 msgid "Message carbon copies"
-msgstr "Copiile mesajelor"
+msgstr "შეტყობინების ასლები"
 
 #: data/sm.puri.Chatty.gschema.xml:26 src/ui/chatty-settings-dialog.ui:489
 msgid "Share chat history among devices"
-msgstr "Distribuie cronologia discuției între dispozitive"
+msgstr "საუბრის ისტორიის მოწყობილობებს შორის გაზიარება"
 
 #: data/sm.puri.Chatty.gschema.xml:31
 msgid "Enable Message Archive Management"
-msgstr "Activează Gestionarea Arhivei Mesajelor"
+msgstr "შეტყობინებების არქივის მმართველის ჩართვა"
 
 #: data/sm.puri.Chatty.gschema.xml:32
 msgid "Enable MAM archive synchronization from the server"
-msgstr "Activează sincronizarea arhivei GAM de la server"
+msgstr "შეტყობინებების არქივის სერვერიდან სინქრონიზაციის ჩართვა"
 
 #: data/sm.puri.Chatty.gschema.xml:37
 msgid "Enable purple"
-msgstr "Activează Purple"
+msgstr "Purple-ის ჩართვა"
 
 #: data/sm.puri.Chatty.gschema.xml:38
 msgid "Enable purple accounts"
-msgstr "Activează conturile Purple"
+msgstr "Purple-ის ანგარიშების ჩართვა"
 
 #: data/sm.puri.Chatty.gschema.xml:43
 msgid "Send typing notifications"
-msgstr "Trimite înștiințări de tastare"
+msgstr "კრეფის შეტყობინების გაგზავნა"
 
 #: data/sm.puri.Chatty.gschema.xml:44
 msgid "Whether to Send typing notifications"
-msgstr "Dacă să se trimită înștiințări de tastare"
+msgstr "გააგზავნოს თუ არა კრეფის დაწყების შეტყობინება"
 
 #: data/sm.puri.Chatty.gschema.xml:49
 msgid "Strip Tracking IDs"
-msgstr "Elimină ID-urile de urmărire"
+msgstr "ტრეკინგი ID-ების მოცილება"
 
 #: data/sm.puri.Chatty.gschema.xml:50
 msgid "Whether to Remove Tracking IDs from URLs Automatically"
-msgstr "Dacă să se elimine automat ID-urile de urmărire din URL-uri"
+msgstr "წავშალო თუ არა URL-ებიდან ტრეკინგის ID-ები ავტომატურად"
 
 #: data/sm.puri.Chatty.gschema.xml:55
 msgid "Whether Strip Tracking IDs was shown"
-msgstr "Dacă a fost arătat „Elimină ID-urile de urmărire”"
+msgstr "არის თუ არა ნაჩვენები მოცილებული ტრეკინგის ID-ები"
 
 #: data/sm.puri.Chatty.gschema.xml:56
 msgid "Whether the Tracking IDs dialog has been shown"
-msgstr "Dacă a fost arătat dialogul despre ID-urile de urmărire"
+msgstr "არის თუ არა ნაჩვენები ტრეკინგის ID-ების დიალოგი"
 
 #: data/sm.puri.Chatty.gschema.xml:61
 msgid "Render Attachments"
-msgstr "Redă fișiere atașate"
+msgstr "დანართების რენდერი"
 
 #: data/sm.puri.Chatty.gschema.xml:62
 msgid "Whether to Render Attachments or not"
-msgstr "Dacă să fie redate sau nu fișierele atașate"
+msgstr "დავარენდერო თუ არა დანართები"
 
 #: data/sm.puri.Chatty.gschema.xml:67 data/sm.puri.Chatty.gschema.xml:68
 msgid "Mark Idle users differently"
-msgstr "Marchează diferit utilizatorii inactivi"
+msgstr "უმოქმედო მომხმარებლების სხვა ფერად მონიშვნა"
 
 #: data/sm.puri.Chatty.gschema.xml:73 data/sm.puri.Chatty.gschema.xml:74
 msgid "Indicate unknown contacts"
-msgstr "Indică contactele necunoscute"
+msgstr "უცნობი კონტაქტების მონიშვნა"
 
 #: data/sm.puri.Chatty.gschema.xml:79
 msgid "Convert text to emoticons"
-msgstr "Convertește textul în emoticoane"
+msgstr "ტექსტის სიცილაკებში გადაყვანა"
 
 #: data/sm.puri.Chatty.gschema.xml:80
 msgid "Convert text matching emoticons as real emoticons"
-msgstr ""
-"Convertește textul care se potrivește emoticoanelor ca emoticoane reale"
+msgstr "ტექსტის შესაბამისი სიცილაკების გადაქცევა რეალურ სიცილაკებად"
 
 #: data/sm.puri.Chatty.gschema.xml:85
 msgid "Enter key sends the message"
-msgstr "Tasta Enter trimite mesajul"
+msgstr "ღილაკი Enter აგზავნის შეტყობინებას"
 
 #: data/sm.puri.Chatty.gschema.xml:86
 msgid "Whether pressing Enter key sends the message"
-msgstr "Dacă apăsarea tastei Enter trimite mesajul"
+msgstr "აგზავნის თუ არა ღილაკი Enter შეტყობინებებს"
 
 #: data/sm.puri.Chatty.gschema.xml:91
 msgid "Request SMS delivery reports"
-msgstr "Solicită rapoarte de livrare SMS"
+msgstr "SMS-ის მიწოდების ანგარიშის მოთხოვნა"
 
 #: data/sm.puri.Chatty.gschema.xml:92
 msgid "Whether to request delivery reports for outgoing SMS"
-msgstr "Dacă să se solicite rapoarte de livrare pentru SMS-urile trimise"
+msgstr "მოითხოვოს თუ არა SMS-ის მიწოდების დადასტურება"
 
 #: data/sm.puri.Chatty.gschema.xml:97
 msgid "Enable experimental features"
-msgstr "Activează caracteristicile experimentale"
+msgstr "ექსპერიმენტალური თვისებების ჩართვა"
 
 #: data/sm.puri.Chatty.gschema.xml:98
 msgid "Whether to enable experimental features"
-msgstr "Dacă să fie activate caracteristicile experimentale"
+msgstr "ჩართოს თუ არა ექსპერიმენტალური თვისებები"
 
 #: data/sm.puri.Chatty.gschema.xml:103
 msgid "Window maximized"
-msgstr "Fereastră maximizată"
+msgstr "გადიდებული ფანჯარა"
 
 #: data/sm.puri.Chatty.gschema.xml:104
 msgid "Window maximized state"
-msgstr "Starea ferestrei maximizate"
+msgstr "ფანჯრის სრულად გაშლილი მდგომარეობა"
 
 #: data/sm.puri.Chatty.gschema.xml:109
 msgid "Window size"
-msgstr "Dimensiunile ferestrei"
+msgstr "ფანჯრის ზომა"
 
 #: data/sm.puri.Chatty.gschema.xml:110
 msgid "Window size (width, height)."
-msgstr "Dimensiunile ferestrei (lățime, înălțime)."
+msgstr "ფანჯრის ზომა (სიგანე, სიმაღლე)"
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:7
 msgid "Messaging application for mobile and desktop"
-msgstr "Aplicație de mesagerie pentru mobil și computer"
+msgstr "საუბრის აპლიკაცია კომპიუტერისა და მობილურისთვის"
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:9
 msgid ""
 "Chats is a simple to use to messaging app for 1:1 communication and small "
 "groups supporting SMS, MMS, XMPP and Matrix."
 msgstr ""
-"Discuții este o aplicație de mesagerie SMS, MMS, XMPP și Matrix, ușor de "
-"folosit, pentru comunicare 1:1 și grupuri mici."
+"Chats მარტივი აპლიკაციაა 1:1 კომუნიკაციისთვის და პატარა ჯგუფებისთვის, SMS, "
+"MMS, XMPP და Matrix-ის მხარდაჭერით."
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:23
 msgid "Chats message window"
-msgstr "Fereastra de mesaj pentru Discuții"
+msgstr "Chats-ის სასაუბრო ფანჯარა"
 
 #: src/chatty-application.c:79
 msgid "Show release version"
-msgstr "Arată versiunea"
+msgstr "ვერსიის ჩვენება"
 
 #: src/chatty-application.c:80
 msgid "Start in daemon mode"
-msgstr "Pornește în modul serviciu"
+msgstr "ფონურ რეჟიმში გაშვება"
 
 #: src/chatty-application.c:81
 msgid "Disable all accounts"
-msgstr "Dezactivează toate conturile"
+msgstr "ყველა ანგარიშის გამორთვა"
 
 #: src/chatty-application.c:83
 msgid "Enable libpurple debug messages"
-msgstr "Activează mesajele de depanare libpurple"
+msgstr "Libpurble-ის გამართვის შეტყობინებების ჩართვა"
 
 #: src/chatty-application.c:86
 msgid "Enable verbose debug messages (repeat option for more verbosity)"
 msgstr ""
-"Activează mesajele detaliate de depanare (repetă opțiunea pentru mai multe "
-"detalii)"
+"დამატებითი გამართვის შეტყობინებების ჩართვა (გაიმეორეთ პარამეტრი მეტი "
+"შეტყობინებისთვის)"
 
 #: src/chatty-application.c:167
 msgid "An SMS and XMPP messaging client"
-msgstr "Aplicație de mesagerie SMS și XMPP"
+msgstr "SMS და XMPP შეტყობინებების კლიენტი"
 
 #: src/chatty-application.c:175
 msgid "translator-credits"
-msgstr "libre (Antonio Marin) <gnmer.6qxyg@slmail.me>"
+msgstr "ეკატერინე პაპავა"
 
 #: src/chatty-application.c:200
 #, c-format
@@ -221,107 +218,105 @@ msgid ""
 "There was an error displaying help:\n"
 "%s"
 msgstr ""
-"S-a produs o eroare la afișarea ajutorului:\n"
+"დახმარების ჩვენების შეცდომა:\n"
 "%s"
 
 #: src/chatty-application.c:202 src/chatty-manager.c:683
-#: src/chatty-message-bar.c:482 src/purple/chatty-purple-notify.c:35
+#: src/chatty-message-bar.c:489 src/purple/chatty-purple-notify.c:35
 #: src/purple/chatty-purple.c:199 src/purple/chatty-purple.c:619
 #: src/dialogs/chatty-new-chat-dialog.c:226
 #: src/dialogs/chatty-settings-dialog.c:201 src/ui/chatty-main-view.ui:73
 msgid "Close"
-msgstr "Închide"
+msgstr "დახურვა"
 
 #: src/chatty-avatar.c:182 src/chatty-contact-list.c:393
 msgid "Send To"
-msgstr "Trimite la"
+msgstr "რეციპიენტისთვის გაგზავნა"
 
 #: src/chatty-chat-list.c:174
 msgid "Select a contact with the <b>“+”</b> button in the titlebar."
-msgstr "Alege un contact cu butonul <b>„+”</b> din partea de sus."
+msgstr "მონიშნეთ კონტაქტი სათაურის ზოლში <b>“+”</b> ღილაკით."
 
 #: src/chatty-chat-list.c:178
 msgid "Add instant messaging accounts in Preferences."
-msgstr "Adaugă conturi de mesagerie instantanee în Preferințe."
+msgstr "პარამეტრებში დაამატეთ სწრაფი შეტყობინების ანგარიშები."
 
 #: src/chatty-chat-list.c:214 src/chatty-contact-list.c:282
 msgid "No Search Results"
-msgstr "Nu s-a găsit nimic"
+msgstr "ძებნის შედეგების გარეშე"
 
 #: src/chatty-chat-list.c:215
 msgid "Try different search"
-msgstr "Caută altfel"
+msgstr "სცადეთ სხვა ძებნა"
 
 #: src/chatty-chat-list.c:220
 msgid "No archived chats"
-msgstr "Nicio discuție arhivată"
+msgstr "დაარქივებული ჩატების გარეშე"
 
 #: src/chatty-chat-list.c:222
 msgid "Start Chatting"
-msgstr "Începe discuția"
+msgstr "საუბრის დაწყება"
 
 #: src/chatty-chat-page.c:201 src/chatty-chat-page.c:210
 msgid "This is an MMS conversation"
-msgstr "Aceasta este o conversație MMS"
+msgstr "ეს MMS საუბარია"
 
 #: src/chatty-chat-page.c:203 src/chatty-chat-page.c:218
 #: src/chatty-chat-page.c:224
 msgid "Your messages are not encrypted, and carrier rates may apply"
-msgstr "Mesajele nu sunt cifrate, și pot fi aplicate tarifele operatorului"
+msgstr "თქვენი შეტყობინებები დაუშიფრავია და შეიძლება გადასახადებიც მოგიწიოთ"
 
 #: src/chatty-chat-page.c:213
 msgid "This is an SMS/MMS conversation"
-msgstr "Aceasta este o conversație SMS/MMS"
+msgstr "ეს SMS/MMS საუბარია"
 
 #: src/chatty-chat-page.c:216
 msgid "This is an SMS conversation"
-msgstr "Aceasta este o conversație SMS"
+msgstr "ეს SMS საუბარია"
 
 #: src/chatty-chat-page.c:222
 msgid "This is an IM conversation"
-msgstr "Aceasta este o conversație IM"
+msgstr "ეს IM საუბარია"
 
 #: src/chatty-chat-page.c:228
 msgid "Your messages are encrypted"
-msgstr "Mesajele sunt cifrate"
+msgstr "შეტყობინებები დაშიფრულია"
 
 #: src/chatty-chat-page.c:231
 msgid "Your messages are not encrypted"
-msgstr "Mesajele nu sunt cifrate"
+msgstr "შეტყობინებები დაუშიფრავია"
 
 #: src/chatty-chat.c:726
 msgid "Empty room"
-msgstr "Cameră goală"
+msgstr "ცარიელი ოთახი"
 
 #. TRANSLATORS: %s are name/user-id/phone numbers of two users
 #: src/chatty-chat.c:733
 #, c-format
 msgid "%s and %s"
-msgstr "%s și %s"
+msgstr "%s და %s"
 
 #: src/chatty-chat.c:735
 #, c-format
 msgid "%s and %u other"
 msgid_plural "%s and %u others"
-msgstr[0] "%s și %u altul"
-msgstr[1] "%s și alți %u"
-msgstr[2] "%s și alți %u"
+msgstr[0] "%s და სხვა %u"
 
 #: src/chatty-contact-list.c:247 src/dialogs/chatty-mm-chat-info.c:127
 msgid "Unknown Contact"
-msgstr "Contact necunoscut"
+msgstr "უცნობი კონტაქტი"
 
 #: src/chatty-contact-list.c:283
 msgid "Try different search, or type a valid number to create new chat"
-msgstr "Caută altfel sau scrie un număr valabil ca să creezi o discuție nouă"
+msgstr "ახალი ჩატის შესაქმნელად სცადეთ სხვა ძებნა, ან ჩაწერეთ სწორი ნომერი"
 
 #: src/chatty-contact-list.c:289
 msgid "No Contacts"
-msgstr "Niciun contact"
+msgstr "კონტაქტების გარეშე"
 
 #: src/chatty-clock.c:85
 msgid "Just Now"
-msgstr "Chiar acum"
+msgstr "მხოლოდ ახლა"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
@@ -334,31 +329,29 @@ msgstr "%I∶%M %p"
 #, c-format
 msgid "%lu minute ago"
 msgid_plural "%lu minutes ago"
-msgstr[0] "Acum %lu minut"
-msgstr[1] "Acum %lu minute"
-msgstr[2] "Acum %lu de minute"
+msgstr[0] "%lu წუთის წინ"
 
 #: src/chatty-clock.c:111
 msgid "Today %H∶%M"
-msgstr "Azi %H∶%M"
+msgstr "დღეს %H∶%M"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “Today 06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
 #: src/chatty-clock.c:119
 msgid "Today %I∶%M %p"
-msgstr "Azi %I∶%M %p"
+msgstr "დღეს %I∶%M %p"
 
 #: src/chatty-clock.c:131
 msgid "Yesterday %H∶%M"
-msgstr "Ieri %H∶%M"
+msgstr "გუშინ %H∶%M"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “Yesterday 06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
 #: src/chatty-clock.c:136
 msgid "Yesterday %I∶%M %p"
-msgstr "Ieri %I∶%M %p"
+msgstr "გუშინ %I∶%M %p"
 
 #. TRANSLATORS: Timestamp from more than 7 days ago or future date
 #. * (eg: when the system time is wrong), e.g. “2022-01-01”.
@@ -370,135 +363,135 @@ msgstr "%Y-%m-%d"
 
 #: src/chatty-file-item.c:141
 msgid "Contact"
-msgstr "Contact"
+msgstr "კონტაქტი"
 
 #: src/chatty-file-item.c:165 src/chatty-file-item.c:197
 #, c-format
 msgid "Contact: %s"
-msgstr "Contact: %s"
+msgstr "კონტაქტი: %s"
 
 #: src/chatty-file-item.c:184
 #, c-format
 msgid "Contact: %s %s %s %s"
-msgstr "Contact: %s %s %s %s"
+msgstr "კონტაქტი: %s %s %s %s"
 
 #: src/chatty-file-item.c:186 src/chatty-file-item.c:190
 #, c-format
 msgid "Contact: %s %s %s"
-msgstr "Contact: %s %s %s"
+msgstr "კონტაქტი: %s %s %s"
 
 #: src/chatty-file-item.c:192 src/chatty-file-item.c:195
 #, c-format
 msgid "Contact: %s %s"
-msgstr "Contact: %s %s"
+msgstr "კონტაქტი: %s %s"
 
 #: src/chatty-file-item.c:219
 msgctxt "Invitation to event"
 msgid "Invite"
-msgstr "Invită"
+msgstr "მოწვევა"
 
 #: src/chatty-file-item.c:249
 #, c-format
 msgid "Invite: %s"
-msgstr "Invită: %s"
+msgstr "მოწვევა: %s"
 
 #. TRANSLATORS: %s is the Device ID
 #: src/chatty-fp-row.c:130
 #, c-format
 msgid "Device ID %s fingerprint:"
-msgstr "Amprenta ID-ului aparatului %s:"
+msgstr "მოწყობილობის ID: %s ანაბეჭდი:"
 
 #. TRANSLATORS: %s is the chat room name
 #: src/chatty-invite-page.c:72
 #, c-format
 msgid "Do you want to join “%s”?"
-msgstr "Vrei să te alături discuției din camera „%s”?"
+msgstr "გნებავთ, შეუერთდეთ ოთახს “%s”?"
 
 #: src/chatty-list-row.c:123
 msgid "Owner"
-msgstr "Proprietar"
+msgstr "მფლობელი"
 
 #: src/chatty-list-row.c:126
 msgid "Moderator"
-msgstr "Moderator"
+msgstr "მოდერატორი"
 
 #: src/chatty-list-row.c:129
 msgid "Member"
-msgstr "Membru"
+msgstr "წევრი"
 
 #: src/chatty-list-row.c:261 src/chatty-notification.c:201
 msgid "Picture"
-msgstr "Poze"
+msgstr "სურათი"
 
 #: src/chatty-list-row.c:264 src/chatty-notification.c:205
 msgid "Video"
-msgstr "Video"
+msgstr "ვიდეო"
 
 #: src/chatty-list-row.c:267
 msgid "Audio"
-msgstr "Audio"
+msgstr "აუდიო"
 
 #: src/chatty-list-row.c:270
 msgid "Location"
-msgstr "Poziția"
+msgstr "მდებარეობა"
 
 #: src/chatty-list-row.c:273 src/chatty-list-row.c:290
 #: src/chatty-notification.c:197
 msgid "File"
-msgstr "Fișier"
+msgstr "ფაილი"
 
 #: src/chatty-list-row.c:276
 msgid "MMS Message"
-msgstr "Mesaj MMS"
+msgstr "MMS შეტყობინება"
 
 #: src/chatty-list-row.c:292
 msgid "Multiple Files"
-msgstr "Mai multe fișiere"
+msgstr "ერთზე მეტი ფაილი"
 
 #: src/chatty-main-view.c:125
 msgid "Account disconnected"
-msgstr "Cont deconectat"
+msgstr "ანგარიში განკავშირებულია"
 
 #: src/chatty-main-view.c:127
 msgid "Account connecting…"
-msgstr "Se conectează contul…"
+msgstr "ანგარიშის დაკავშირება…"
 
 #: src/chatty-manager.c:681
 #, c-format
 msgid "“%s” is not a valid URI"
-msgstr "„%s” nu este un URI valabil"
+msgstr "%s არ წარმოადგენს სწორ URI-ის"
 
-#: src/chatty-message-bar.c:480 src/purple/chatty-purple.c:195
+#: src/chatty-message-bar.c:487 src/purple/chatty-purple.c:195
 #: src/chatty-window.c:361
 msgid "Alert"
-msgstr "Alertă"
+msgstr "გაფრთხილება"
 
-#: src/chatty-message-bar.c:481
+#: src/chatty-message-bar.c:488
 msgid "Found and automatically deleted tracking IDs from the pasted link."
-msgstr "ID-uri de urmărire găsite și șterse automat din adresa web lipită."
+msgstr "ნაპოვნი და ავტომატურად წაშლილია ტრეკინგის ID-ები ჩასმული ბმულიდან."
 
-#: src/chatty-message-bar.c:483
+#: src/chatty-message-bar.c:490
 msgid "Don't Show Again"
-msgstr "Nu mai arăta asta"
+msgstr "აღარ მაჩვენო"
 
 #: src/chatty-message.c:230
 msgid "Got an encrypted message, but couldn't decrypt due to missing keys"
 msgstr ""
-"S-a primit un mesaj cifrat, dar nu a putut fi descifrat din cauza lipsei "
-"cheilor"
+"მივიღე დაშიფრული შეტყობინება, რომლის გაშიფვრაც შეუძლებელია საჭირო "
+"გასაღებების არარსებობის გამო"
 
 #: src/chatty-notification.c:171
 #, c-format
 msgid "New message from %s"
-msgstr "Mesaj nou de la %s"
+msgstr "ახალი შეტყობინება %s-სგან"
 
 #: src/chatty-notification.c:173
 msgid "Message Received"
-msgstr "Mesaj primit"
+msgstr "შეტყობინება მოვიდა"
 
 #: src/chatty-notification.c:209
 msgid "Audio File"
-msgstr "Fișier audio"
+msgstr "აუდიო ფაილი"
 
 #: src/chatty-notification.c:216
 msgid "MMS"
@@ -508,13 +501,11 @@ msgstr "MMS"
 #, c-format
 msgid "%i Message"
 msgid_plural "%i Messages"
-msgstr[0] "%i mesaj"
-msgstr[1] "%i mesaje"
-msgstr[2] "%i de mesaje"
+msgstr[0] "%i შეტყობინება"
 
 #: src/chatty-side-bar.c:324
 msgid "Any Protocol"
-msgstr "Orice Protocol"
+msgstr "ნებისმიერი კლიენტი"
 
 #: src/chatty-side-bar.c:325 src/ui/chatty-settings-dialog.ui:559
 msgid "Matrix"
@@ -532,46 +523,46 @@ msgstr "XMPP"
 
 #: src/chatty-side-bar.c:332 src/ui/chatty-settings-dialog.ui:572
 msgid "Telegram"
-msgstr "Telegram"
+msgstr "ტელეგრამი"
 
 #: src/chatty-side-bar.c:354
 msgid "Archived"
-msgstr "Arhivată"
+msgstr "დაარქივებული"
 
 #: src/purple/chatty-purple-notify.c:26 src/purple/chatty-purple.c:613
 #: src/dialogs/chatty-new-chat-dialog.c:222
 #: src/dialogs/chatty-settings-dialog.c:197
 msgid "Error"
-msgstr "Eroare"
+msgstr "შეცდომა"
 
 #: src/purple/chatty-purple-request.c:218
 msgid "Save File…"
-msgstr "Salvează fișierul…"
+msgstr "ფაილის შენახვა…"
 
 #: src/purple/chatty-purple-request.c:220
 msgid "Open File…"
-msgstr "Deschide fișierul…"
+msgstr "ფაილის გახსნა…"
 
 #: src/purple/chatty-purple.c:197
 #, c-format
 msgid "User %s has added %s to the contacts"
-msgstr "Utilizatorul %s a adăugat %s la contacte"
+msgstr "მომხმარებელმა %s-მა დაამატა %s კონტაქტებში"
 
 #: src/purple/chatty-purple.c:283 src/dialogs/chatty-settings-dialog.c:460
 #: src/ui/chatty-ma-account-details.ui:162
 #: src/ui/chatty-pp-account-details.ui:154
 msgid "Delete Account"
-msgstr "Șterge contul"
+msgstr "ანგარიშის წაშლა"
 
 #: src/purple/chatty-purple.c:285
 #, c-format
 msgid "Authorize %s?"
-msgstr "Autorizezi %s?"
+msgstr "%s-ის ავტორიზაცია?"
 
 #: src/purple/chatty-purple.c:289
 #, c-format
 msgid "Add %s to contact list"
-msgstr "Adaugă %s la lista de contacte"
+msgstr "%s-ის კონტაქტებში ჩამატება"
 
 #: src/purple/chatty-purple.c:293 src/chatty-window.c:365
 #: src/chatty-window.c:463 src/dialogs/chatty-settings-dialog.c:466
@@ -580,448 +571,446 @@ msgstr "Adaugă %s la lista de contacte"
 #: src/ui/chatty-verification-page.ui:129
 #: src/ui/chatty-verification-page.ui:158
 msgid "_Cancel"
-msgstr "_Anulează"
+msgstr "_გაუქმება"
 
 #: src/purple/chatty-purple.c:294
 msgid "Authorize"
-msgstr "Autorizează"
+msgstr "ავტორიზაცია"
 
 #: src/purple/chatty-purple.c:618
 msgid "Please check ID and password"
-msgstr "Verifică ID-ul și parola"
+msgstr "გთხოვთ, შეამოწმეთ ID და პაროლი"
 
 #. TRANSLATORS: You may copy translations from https://github.com/matrix-org/matrix-spec-proposals/blob/old_master/data-definitions/sas-emoji.json
 #. * if available
 #: src/chatty-verification-page.c:27
 msgid "Dog"
-msgstr "Câine"
+msgstr "ძაღლი"
 
 #. "U+1F436"
 #: src/chatty-verification-page.c:28
 msgid "Cat"
-msgstr "Pisică"
+msgstr "კატა"
 
 #. "U+1F431"
 #: src/chatty-verification-page.c:29
 msgid "Lion"
-msgstr "Leu"
+msgstr "Lion"
 
 #. "U+1F981"
 #: src/chatty-verification-page.c:30
 msgid "Horse"
-msgstr "Cal"
+msgstr "ცხენი"
 
 #. "U+1F40E"
 #: src/chatty-verification-page.c:31
 msgid "Unicorn"
-msgstr "Inorog"
+msgstr "მარტორქა"
 
 #. "U+1F984"
 #: src/chatty-verification-page.c:32
 msgid "Pig"
-msgstr "Porc"
+msgstr "Pig"
 
 #. "U+1F437"
 #: src/chatty-verification-page.c:33
 msgid "Elephant"
-msgstr "Elefant"
+msgstr "სპილო"
 
 #. "U+1F418"
 #: src/chatty-verification-page.c:34
 msgid "Rabbit"
-msgstr "Iepure"
+msgstr "კურდღელი"
 
 #. "U+1F430"
 #: src/chatty-verification-page.c:35
 msgid "Panda"
-msgstr "Panda"
+msgstr "პანდა"
 
 #. "U+1F43C"
 #: src/chatty-verification-page.c:36
 msgid "Rooster"
-msgstr "Cocoș"
+msgstr "მამალი"
 
 #. "U+1F413"
 #: src/chatty-verification-page.c:37
 msgid "Penguin"
-msgstr "Pinguin"
+msgstr "პინგვინი"
 
 #. "U+1F427"
 #: src/chatty-verification-page.c:38
 msgid "Turtle"
-msgstr "Broască-țestoasă"
+msgstr "კუ"
 
 #. "U+1F422"
 #: src/chatty-verification-page.c:39
 msgid "Fish"
-msgstr "Pește"
+msgstr "Fish"
 
 #. "U+1F41F"
 #: src/chatty-verification-page.c:40
 msgid "Octopus"
-msgstr "Caracatiță"
+msgstr "რვაფეხა"
 
 #. "U+1F419"
 #: src/chatty-verification-page.c:41
 msgid "Butterfly"
-msgstr "Fluture"
+msgstr "პეპელა"
 
 #. "U+1F98B"
 #: src/chatty-verification-page.c:42
 msgid "Flower"
-msgstr "Floare"
+msgstr "ყვავილი"
 
 #. "U+1F337"
 #: src/chatty-verification-page.c:43
 msgid "Tree"
-msgstr "Copac"
+msgstr "ხე"
 
 #. "U+1F333"
 #: src/chatty-verification-page.c:44
 msgid "Cactus"
-msgstr "Cactus"
+msgstr "კაქტუსი"
 
 #. "U+1F335"
 #: src/chatty-verification-page.c:45
 msgid "Mushroom"
-msgstr "Ciupercă"
+msgstr "სოკო"
 
 #. "U+1F344"
 #: src/chatty-verification-page.c:46
 msgid "Globe"
-msgstr "Glob"
+msgstr "გლობალური"
 
 #. "U+1F30F"
 #: src/chatty-verification-page.c:47
 msgid "Moon"
-msgstr "Lună"
+msgstr "მთვარის"
 
 #. "U+1F319"
 #: src/chatty-verification-page.c:48
 msgid "Cloud"
-msgstr "Nor"
+msgstr "ღრუბელი"
 
 #. "U+2601U+FE0F"
 #: src/chatty-verification-page.c:49
 msgid "Fire"
-msgstr "Foc"
+msgstr "ცეცხლი"
 
 #. "U+1F525"
 #: src/chatty-verification-page.c:50
 msgid "Banana"
-msgstr "Banană"
+msgstr "ბანანი"
 
 #. "U+1F34C"
 #: src/chatty-verification-page.c:51
 msgid "Apple"
-msgstr "Măr"
+msgstr "გამოყენება"
 
 #. "U+1F34E"
 #: src/chatty-verification-page.c:52
 msgid "Strawberry"
-msgstr "Căpșună"
+msgstr "მარწყვი"
 
 #. "U+1F353"
 #: src/chatty-verification-page.c:53
 msgid "Corn"
-msgstr "Porumb"
+msgstr "სიმინდი"
 
 #. "U+1F33D"
 #: src/chatty-verification-page.c:54
 msgid "Pizza"
-msgstr "Pizza"
+msgstr "პიცა"
 
 #. "U+1F355"
 #: src/chatty-verification-page.c:55
 msgid "Cake"
-msgstr "Tort"
+msgstr "ნამცხვარი"
 
 #. "U+1F382"
 #: src/chatty-verification-page.c:56
 msgid "Heart"
-msgstr "Inimă"
+msgstr "გული"
 
 #. "U+2764U+FE0F"
 #: src/chatty-verification-page.c:57
 msgid "Smiley"
-msgstr "Față zâmbitoare"
+msgstr "სიცილაკი"
 
 #. "U+1F600"
 #: src/chatty-verification-page.c:58
 msgid "Robot"
-msgstr "Robot"
+msgstr "რობოტი"
 
 #. "U+1F916"
 #: src/chatty-verification-page.c:59
 msgid "Hat"
-msgstr "Pălărie"
+msgstr "ქუდი"
 
 #. "U+1F3A9"
 #: src/chatty-verification-page.c:60
 msgid "Glasses"
-msgstr "Ochelari"
+msgstr "სათვალე"
 
 #. "U+1F453"
 #: src/chatty-verification-page.c:61
 msgid "Spanner"
-msgstr "Cheie de piulițe"
+msgstr "ქანჩის გასაღები"
 
 #. "U+1F527"
 #: src/chatty-verification-page.c:62
 msgid "Santa"
-msgstr "Moș Crăciun"
+msgstr "სანტა"
 
 #. "U+1F385"
 #: src/chatty-verification-page.c:63
 msgid "Thumbs Up"
-msgstr "Semn de aprobare"
+msgstr "ცერა მაღლა"
 
 #. "U+1F44D"
 #: src/chatty-verification-page.c:64
 msgid "Umbrella"
-msgstr "Umbrelă"
+msgstr "ქოლგა"
 
 #. "U+2602U+FE0F"
 #: src/chatty-verification-page.c:65
 msgid "Hourglass"
-msgstr "Clepsidră"
+msgstr "ქვიშის საათი"
 
 #. "U+231B"
 #: src/chatty-verification-page.c:66
 msgid "Clock"
-msgstr "Ceas"
+msgstr "საათი"
 
 #. "U+23F0"
 #: src/chatty-verification-page.c:67
 msgid "Gift"
-msgstr "Cadou"
+msgstr "საჩუქრები"
 
 #. "U+1F381"
 #: src/chatty-verification-page.c:68
 msgid "Light Bulb"
-msgstr "Bec"
+msgstr "ნათურა"
 
 #. "U+1F4A1"
 #: src/chatty-verification-page.c:69
 msgid "Book"
-msgstr "Carte"
+msgstr "წიგნი"
 
 #. "U+1F4D5"
 #: src/chatty-verification-page.c:70
 msgid "Pencil"
-msgstr "Creion"
+msgstr "ფანქარი"
 
 #. "U+270FU+FE0F"
 #: src/chatty-verification-page.c:71
 msgid "Paperclip"
-msgstr "Agrafă de birou"
+msgstr "სამაგრი"
 
 #. "U+1F4CE"
 #: src/chatty-verification-page.c:72
 msgid "Scissors"
-msgstr "Foarfecă"
+msgstr "მაკრატლები"
 
 #. "U+2702U+FE0F"
 #: src/chatty-verification-page.c:73
 msgid "Lock"
-msgstr "Lacăt"
+msgstr "ჩაკეტვა"
 
 #. "U+1F512"
 #: src/chatty-verification-page.c:74
 msgid "Key"
-msgstr "Cheie"
+msgstr "გასაღები"
 
 #. "U+1F511"
 #: src/chatty-verification-page.c:75
 msgid "Hammer"
-msgstr "Ciocan"
+msgstr "ჩაქუჩი"
 
 #. "U+1F528"
 #: src/chatty-verification-page.c:76
 msgid "Telephone"
-msgstr "Telefon"
+msgstr "ტელეფონი"
 
 #. "U+260EU+FE0F"
 #: src/chatty-verification-page.c:77
 msgid "Flag"
-msgstr "Steag"
+msgstr "ალამი"
 
 #. "U+1F3C1"
 #: src/chatty-verification-page.c:78
 msgid "Train"
-msgstr "Tren"
+msgstr "მატარებელი"
 
 #. "U+1F682"
 #: src/chatty-verification-page.c:79
 msgid "Bicycle"
-msgstr "Bicicletă"
+msgstr "ველოსიპედი"
 
 #. "U+1F6B2"
 #: src/chatty-verification-page.c:80
 msgid "Aeroplane"
-msgstr "Avion"
+msgstr "აეროპლანი"
 
 #. "U+2708U+FE0F"
 #: src/chatty-verification-page.c:81
 msgid "Rocket"
-msgstr "Rachetă"
+msgstr "რაკეტა"
 
 #. "U+1F680"
 #: src/chatty-verification-page.c:82
 msgid "Trophy"
-msgstr "Trofeu"
+msgstr "ნადავლი"
 
 #. "U+1F3C6"
 #: src/chatty-verification-page.c:83
 msgid "Ball"
-msgstr "Minge"
+msgstr "ბურთი"
 
 #. "U+26BD"
 #: src/chatty-verification-page.c:84
 msgid "Guitar"
-msgstr "Chitară"
+msgstr "გიტარა"
 
 #. "U+1F3B8"
 #: src/chatty-verification-page.c:85
 msgid "Trumpet"
-msgstr "Trompetă"
+msgstr "ბუკი"
 
 #. "U+1F3BA"
 #: src/chatty-verification-page.c:86
 msgid "Bell"
-msgstr "Clopot"
+msgstr "ზარი"
 
 #. "U+1F514"
 #: src/chatty-verification-page.c:87
 msgid "Anchor"
-msgstr "Ancoră"
+msgstr "ბმული"
 
 #. "U+2693"
 #: src/chatty-verification-page.c:88
 msgid "Headphones"
-msgstr "Căști"
+msgstr "ყურსაცვამები"
 
 #. "U+1F3A7"
 #: src/chatty-verification-page.c:89
 msgid "Folder"
-msgstr "Dosar"
+msgstr "საქაღალდე"
 
 #. "U+1F4C1"
 #: src/chatty-verification-page.c:90
 msgid "Pin"
-msgstr "Bold"
+msgstr "მიმაგრება"
 
 #: src/chatty-verification-page.c:387
 msgid "Show Emojis"
-msgstr "Arată emoticoane"
+msgstr "ემოჯიების ჩვენაბ"
 
 #: src/chatty-verification-page.c:389
 msgid "Show Numbers"
-msgstr "Arată numerele"
+msgstr "ნომრების ჩვენება"
 
 #: src/chatty-window.c:362
 msgid "You shall no longer be notified for new messages, continue?"
-msgstr "Nu vei mai fi înștiințat dacă vei primi mesaje noi. Continui?"
+msgstr "ახალი შეტყობინებების შესახებ გაფრთხილებები აღარ მოგივათ. გავაგრძელო?"
 
 #: src/chatty-window.c:366
 msgid "Block"
-msgstr "Blochează"
+msgstr "დაბლოკვა"
 
 #: src/chatty-window.c:455
 #, c-format
 msgid "Delete chat with “%s”"
-msgstr "Șterge discuția cu „%s”"
+msgstr "%s-თან საუბრის წაშლა"
 
 #: src/chatty-window.c:456
 msgid "This deletes the conversation history"
-msgstr "Aceasta șterge cronologia conversației"
+msgstr "წაშლის საუბრის ისტორიას"
 
 #: src/chatty-window.c:458
 #, c-format
 msgid "Disconnect group chat “%s”"
-msgstr "Deconectează discuția în grup „%s”"
+msgstr "ჯგუფური ჩატი %s-დან გასვლა"
 
 #: src/chatty-window.c:459
 msgid "This removes chat from chats list"
-msgstr "Aceasta elimină discuția din lista discuțiilor"
+msgstr "საუბრის საუბრების სიიდან წაშლა"
 
 #: src/chatty-window.c:464 src/dialogs/chatty-settings-dialog.c:467
 msgid "Delete"
-msgstr "Șterge"
+msgstr "წაშლა"
 
 #: src/dialogs/chatty-mm-chat-info.c:146
 msgctxt "Refer to self in contact list"
 msgid "You"
-msgstr "Tu"
+msgstr "თქვენ"
 
 #: src/dialogs/chatty-pp-chat-info.c:111
 #: src/dialogs/chatty-ma-account-details.c:139
 #: src/dialogs/chatty-pp-account-details.c:115
 msgid "Set Avatar"
-msgstr "Alege poza de profil"
+msgstr "ავატარის დაყენება"
 
 #: src/dialogs/chatty-pp-chat-info.c:118
 #: src/dialogs/chatty-ma-account-details.c:146
 #: src/dialogs/chatty-pp-account-details.c:122
 msgid "Images"
-msgstr "Imagini"
+msgstr "გამოსახულებები"
 
 #: src/dialogs/chatty-pp-chat-info.c:221
 msgid "Encryption is not available"
-msgstr "Cifrarea nu este disponibilă"
+msgstr "დაშიფრვა შეუძლებელია"
 
 #: src/dialogs/chatty-pp-chat-info.c:225
 msgid "This chat is encrypted"
-msgstr "Această discuție este cifrată"
+msgstr "საუბარი დაშიფრულია"
 
 #: src/dialogs/chatty-pp-chat-info.c:229
 msgid "This chat is not encrypted"
-msgstr "Această discuție nu este cifrată"
+msgstr "საუბარი დაუშიფრავია"
 
 #: src/dialogs/chatty-pp-chat-info.c:253
 msgid "Encryption not available"
-msgstr "Cifrare indisponibilă"
+msgstr "დაშიფრვა ხელმიუწვდომელია"
 
 #: src/dialogs/chatty-pp-chat-info.c:274
 #, c-format
 msgid "%u Member"
 msgid_plural "%u Members"
-msgstr[0] "%u Membru"
-msgstr[1] "%u Membri"
-msgstr[2] "%u de Membri"
+msgstr[0] "%u წევრი"
 
 #: src/dialogs/chatty-pp-chat-info.c:308
 msgid "Phone Number:"
-msgstr "Număr de telefon:"
+msgstr "ტელეფონის ნომერი:"
 
 #: src/dialogs/chatty-pp-chat-info.c:310
 msgid "XMPP ID:"
-msgstr "ID XMPP:"
+msgstr "XMPP ID:"
 
 #: src/dialogs/chatty-pp-chat-info.c:315
 msgid "Matrix ID:"
-msgstr "ID Matrix:"
+msgstr "Matrix ID:"
 
 #: src/dialogs/chatty-pp-chat-info.c:318
 msgid "Telegram ID:"
-msgstr "ID Telegram:"
+msgstr "Telegram ID:"
 
 #: src/dialogs/chatty-new-chat-dialog.c:170
 msgid "Add"
-msgstr "Adaugă"
+msgstr "დამატება"
 
 #: src/dialogs/chatty-new-chat-dialog.c:180
 msgid "Create"
-msgstr "Creează"
+msgstr "შექმნა"
 
 #: src/dialogs/chatty-new-chat-dialog.c:186
 msgid "Add Contact"
-msgstr "Adaugă un contact"
+msgstr "კონტაქტის დამატება"
 
 #: src/dialogs/chatty-new-chat-dialog.c:224
 #, c-format
 msgid "Error opening GNOME Contacts: %s"
-msgstr "Eroare la deschiderea Contacte GNOME: %s"
+msgstr "GNOME-ის კონტაქტების გახსნის შეცდომა: %s"
 
 #: src/dialogs/chatty-new-chat-dialog.c:456
 msgid "SMS"
@@ -1029,115 +1018,113 @@ msgstr "SMS"
 
 #: src/dialogs/chatty-new-chat-dialog.c:634
 msgid "You"
-msgstr "Tu"
+msgstr "თქვენ"
 
 #: src/dialogs/chatty-ma-account-details.c:396
 #: src/dialogs/chatty-pp-account-details.c:171
 msgid "connected"
-msgstr "conectat"
+msgstr "დაკავშირებულია"
 
 #: src/dialogs/chatty-ma-account-details.c:398
 #: src/dialogs/chatty-pp-account-details.c:173
 msgid "connecting…"
-msgstr "se conectează…"
+msgstr "დაკავშირება…"
 
 #: src/dialogs/chatty-ma-account-details.c:400
 #: src/dialogs/chatty-pp-account-details.c:175
 msgid "disconnected"
-msgstr "deconectat"
+msgstr "გათიშულია"
 
 #: src/dialogs/chatty-settings-dialog.c:199
 #, c-format
 msgid "Error saving account: %s"
-msgstr "Eroare la salvarea contului: %s"
+msgstr "ანგარიშის შენახვის შეცდომა: %s"
 
 #: src/dialogs/chatty-settings-dialog.c:254
 #, c-format
 msgid "Failed to verify server: %s"
-msgstr "Nu s-a putut verifica serverul: %s"
+msgstr "სერვერის შემოწმების შეცდომა: %s"
 
 #: src/dialogs/chatty-settings-dialog.c:256
 msgid "Failed to verify server"
-msgstr "Serverul nu a putut fi verificat"
+msgstr "სერვერის შემოწმების შეცდომა"
 
 #: src/dialogs/chatty-settings-dialog.c:262
 msgid "Couldn't get Home server address"
-msgstr "Nu s-a putut obține adresa serverului de acasă"
+msgstr "სახლის სერვერის მისამართის პოვნის შეცდომა"
 
 #: src/dialogs/chatty-settings-dialog.c:462
 #, c-format
 msgid "Delete account %s?"
-msgstr "Ștergi contul %s?"
+msgstr "წავშალო ანგარიში %s?"
 
 #: src/dialogs/chatty-settings-dialog.c:642
 msgid "Restart Chatty to disable Purple"
-msgstr "Repornește aplicația pentru a dezactiva Purple"
+msgstr "Purple-ს გასათიშად გადატვირთეთ Chatty"
 
 #: src/dialogs/chatty-settings-dialog.c:658
 #: src/ui/chatty-settings-dialog.ui:243
 msgid "Purple"
-msgstr "Purple"
+msgstr "იისფერი"
 
 #: src/dialogs/chatty-settings-dialog.c:660
 msgid "New Account"
-msgstr "Cont nou"
+msgstr "ახალი ანგარიში"
 
 #: src/dialogs/chatty-settings-dialog.c:662
 #: src/ui/chatty-settings-dialog.ui:303
 msgid "Blocked Contacts"
-msgstr "Contacte blocate"
+msgstr "დაბლოკილი კონტაქტები"
 
 #: src/dialogs/chatty-settings-dialog.c:664 src/ui/chatty-side-bar.ui:110
 msgid "Preferences"
-msgstr "Preferințe"
+msgstr "მორგება"
 
 #: src/dialogs/chatty-settings-dialog.c:692
 #: src/ui/chatty-pp-account-details.ui:81 src/ui/chatty-settings-dialog.ui:215
 msgid "Protocol"
-msgstr "Protocol"
+msgstr "პროტოკოლი"
 
 #. TRANSLATORS: Only translate 'or'
 #: src/dialogs/chatty-settings-dialog.c:948
 msgid "@user:matrix.org or user@example.com"
-msgstr "@user:matrix.org sau user@example.com"
+msgstr "@user:matrix.org ან user@example.com"
 
 #: src/matrix/chatty-ma-account.c:78
 #, c-format
 msgid "Please enter password for “%s”, homeserver: %s"
-msgstr "Introdu parola pentru „%s”, server de acasă: %s"
+msgstr "შეიყვანეთ პაროლი \"%s\"-სთვის, სახლის სერვერი: %s"
 
 #: src/matrix/chatty-ma-key-chat.c:62
 msgid "Key Verification"
-msgstr "Verificarea cheii"
+msgstr "გასაღების გადამოწმება"
 
 #: src/mm/chatty-mmsd.c:253
 #, c-format
 msgid "Error Delivering Message to %s"
-msgstr "Eroare la livrarea mesajului către %s"
+msgstr "%s-სთვის შეტყობინების მიწოდების შეცდომა"
 
 #: src/mm/chatty-mmsd.c:254
 msgid "See logs for more details"
-msgstr "A se vedea jurnalele pentru mai multe detalii"
+msgstr "მეტი დეტალისთვის იხილეთ ჟურნალი"
 
 #: src/mm/chatty-mmsd.c:572 src/mm/chatty-mmsd.c:633 src/mm/chatty-mmsd.c:656
 msgid "MMS cannot be sent"
-msgstr "MMS-ul nu poate fi trimis"
+msgstr "MMS-ის გაგზავნა შეუძლებელია"
 
 #: src/mm/chatty-mmsd.c:574
 msgid "Please send less attachments"
-msgstr "Trimite mai puține fișiere atașate"
+msgstr "გთხოვთ გააგზავნოთ ნაკლები დანართი"
 
 #: src/mm/chatty-mmsd.c:635
 msgid "Could not resize image to be small enough"
-msgstr "Nu s-a putut redimensiona imaginea pentru a fi suficient de mică"
+msgstr "გამოსახულების საკმარისად დაპატარავება შეუძლებელია"
 
 #: src/mm/chatty-mmsd.c:653
 #, c-format
 msgid "The attachment is too large"
 msgid_plural "Attachments are too large"
-msgstr[0] "Fișierul atașat este prea mare"
-msgstr[1] "Fișierele atașate sunt prea mari"
-msgstr[2] "Fișierele atașate sunt prea mari"
+msgstr[0] "დანართი მეტისმეტად დიდია"
 
 #. TRANSLATORS: Timestamp for minute accuracy, e.g. “2020-08-11 15:27”.
 #. See https://developer.gnome.org/glib/stable/glib-GDateTime.html#g-date-time-format
@@ -1149,384 +1136,380 @@ msgstr "%Y-%m-%d %H∶%M"
 #: src/mm/chatty-mmsd.c:1298
 #, c-format
 msgid "You received an MMS, but it expired on: %s"
-msgstr "Ai primit un MMS, dar a expirat în: %s"
+msgstr "თქვენ მიიღეთ MMS, მაგრამ მას ვადა გაუვიდა %s-ზე"
 
 #: src/mm/chatty-mmsd.c:1301
 msgid "You received an empty MMS."
-msgstr "Ai primit un MMS gol."
+msgstr "თქვენ მიიღეთ ცარიელი MMS."
 
 #: src/mm/chatty-mmsd.c:1782 src/mm/chatty-mmsd.c:1830
 #, c-format
 msgid "Automatically Retrying for  %i MMS"
 msgid_plural "Automatically Retrying for  %i MMSes..."
-msgstr[0] "Se reîncearcă automat pentru %i MMS"
-msgstr[1] "Se reîncearcă automat pentru %i MMS-uri..."
-msgstr[2] "Se reîncearcă automat pentru %i de MMS-uri..."
+msgstr[0] "ავტომატურად თავიდან ცდა   %i MMS-სთვის"
 
 #: src/mm/chatty-mmsd.c:1787
 msgid "Temporary Error Sending MMS"
-msgstr "Eroare temporară la trimiterea MMS"
+msgstr "MMS-ის გაგზავნის დროებითი შეცდომა"
 
 #: src/mm/chatty-mmsd.c:1835
 msgid "Temporary Error Receiving MMS"
-msgstr "Eroare temporară la primirea MMS"
+msgstr "MMS-ს მიღების დროებითი შეცდომა"
 
 #: src/mm/chatty-mmsd.c:2053
 msgid "MMSC is not configured"
-msgstr "MMSC nu este configurat"
+msgstr "MMSC მორგებული არაა"
 
 #: src/mm/chatty-mmsd.c:2056
 msgid "APN is not configured correctly"
-msgstr "APN nu este configurat corect"
+msgstr "APN არასწორია"
 
 #: src/mm/chatty-mmsd.c:2059
 msgid "Mobile Data is not configured"
-msgstr "Datele mobile nu sunt configurate"
+msgstr "მობილური ინტერნეტი მორგებული არაა"
 
 #: src/mm/chatty-mmsd.c:2062
 msgid "Mobile Data is off"
-msgstr "Datele mobile sunt oprite"
+msgstr "მობილური ინტერნეტი გამორთულია"
 
 #: src/mm/chatty-mmsd.c:2065
 msgid "Unknown Error"
-msgstr "Eroare necunoscută"
+msgstr "უცნობი შეცდომა"
 
 #: src/mm/chatty-mmsd.c:2070
 #, c-format
 msgid "Chatty cannot process %i MMS"
 msgid_plural "Chatty cannot process %i MMSes..."
-msgstr[0] "Aplicația nu poate procesa %i MMS"
-msgstr[1] "Aplicația nu poate procesa %i MMS-uri..."
-msgstr[2] "Aplicația nu poate procesa %i de MMS-uri..."
+msgstr[0] "Chatty-მა ვერ დაამუშავა %i MMS"
 
 #: src/mm/chatty-mm-account.c:319 src/mm/chatty-mm-account.c:370
 #, c-format
 msgid "Error Sending SMS to %s"
-msgstr "Eroare la trimiterea SMS-ului către %s"
+msgstr "%s-სთვის SMS-ის გაგზავნის შეცდომა"
 
 #: src/mm/chatty-mm-account.c:506
 #, c-format
 msgid "Error Sending MMS to %s"
-msgstr "Eroare la trimiterea MMS-ului către %s"
+msgstr "%s-სთვის MMS-ის გაგზავნის შეცდომა"
 
 #: src/ui/chatty-attachment.ui:48
 msgid "Remove Attachment"
-msgstr "Elimină fișierul atașat"
+msgstr "მიმაგრებულის წაშლა"
 
 #: src/ui/chatty-dialog-wrong-pw.ui:15
 msgid "Incorrect password"
-msgstr "Parolă greșită"
+msgstr "არასწორი პაროლი"
 
 #: src/ui/chatty-dialog-wrong-pw.ui:33
 msgid "_OK"
-msgstr "_OK"
+msgstr "_დიახ"
 
 #: src/ui/chatty-dialog-wrong-pw.ui:47
 msgid "Please re-enter the Password."
-msgstr "Introdu din nou parola."
+msgstr "თავიდან შეიყვანეთ პაროლი."
 
 #: src/ui/chatty-dialog-wrong-pw.ui:53 src/ui/chatty-pp-account-details.ui:129
 #: src/ui/chatty-settings-dialog.ui:626
 msgid "Password"
-msgstr "Parola"
+msgstr "პაროლი"
 
 #: src/ui/chatty-dialog-join-muc.ui:7
 msgid "New Group Chat"
-msgstr "Grup nou de discuții"
+msgstr "ახალი ჯგუფური საუბარი"
 
 #: src/ui/chatty-dialog-join-muc.ui:16 src/ui/chatty-info-dialog.ui:26
 #: src/ui/chatty-info-dialog.ui:35
 msgid "Cancel"
-msgstr "Anulează"
+msgstr "გაუქმება"
 
 #: src/ui/chatty-dialog-join-muc.ui:22
 msgid "Join Chat"
-msgstr "Alătură-te discuției"
+msgstr "საუბარში ჩართვა"
 
 #: src/ui/chatty-dialog-join-muc.ui:62 src/ui/chatty-dialog-new-chat.ui:192
 msgid "Select chat account"
-msgstr "Alege contul"
+msgstr "აირჩიეთ საუბრის ანგარიში"
 
 #: src/ui/chatty-dialog-join-muc.ui:90
 msgid "Room address"
-msgstr "Adresa camerei"
+msgstr "ოთახის მისამართი"
 
 #: src/ui/chatty-dialog-join-muc.ui:100
 msgid "Room alias (optional)"
-msgstr "Pseudonimul camerei (facultativ)"
+msgstr "ოთახის ფსევდონიმი (არასავალდებულო)"
 
 #: src/ui/chatty-dialog-join-muc.ui:110
 msgid "Nickname (optional)"
-msgstr "Porecla (facultativ)"
+msgstr "მეტსახელი (არასავალდებულო)"
 
 #: src/ui/chatty-dialog-join-muc.ui:120
 msgid "Password (optional)"
-msgstr "Parola (opțional)"
+msgstr "პაროლი (არასავალდებულო)"
 
 #: src/ui/chatty-dialog-new-chat.ui:76
 msgid "Group Title"
-msgstr "Titlul grupului"
+msgstr "ჯგუფის სათაური"
 
 #: src/ui/chatty-dialog-new-chat.ui:118
 msgid "Add members from contacts…"
-msgstr "Adaugă membri din contacte…"
+msgstr "წევრების კონტაქტებიდან დამატება…"
 
 #: src/ui/chatty-dialog-new-chat.ui:155
 msgid "Send To:"
-msgstr "Trimite la:"
+msgstr "რეციპიენტისთვის გაგზავნა:"
 
 #: src/ui/chatty-dialog-new-chat.ui:215 src/ui/chatty-info-dialog.ui:117
 msgid "Contact ID"
-msgstr "ID-ul contactului"
+msgstr "კონტაქტის ID"
 
 #: src/ui/chatty-dialog-new-chat.ui:225
 msgid "Name (optional)"
-msgstr "Nume (opțional)"
+msgstr "სახელი (არასავალდებულო)"
 
 #: src/ui/chatty-dialog-new-chat.ui:262
 msgid "Add to Contacts"
-msgstr "Adaugă la contacte"
+msgstr "კონტაქტებში ჩამატება"
 
 #: src/ui/chatty-info-dialog.ui:8 src/ui/chatty-main-view.ui:126
 msgid "Chat Details"
-msgstr "Detaliile discuției"
+msgstr "საუბრის დეტალები"
 
 #: src/ui/chatty-info-dialog.ui:44
 msgid "Apply"
-msgstr "Aplică"
+msgstr "გადატარება"
 
 #. Translators: This is invite to a chat room
 #: src/ui/chatty-info-dialog.ui:58
 msgid "Invite"
-msgstr "Invită"
+msgstr "მოწვევა"
 
 #: src/ui/chatty-info-dialog.ui:137
 msgid "Invite message"
-msgstr "Mesaj de invitație"
+msgstr "მოსაწვევის შეტყობინება"
 
 #: src/ui/chatty-invite-page.ui:62
 msgid "_Accept"
-msgstr "_Acceptă"
+msgstr "_თანხმობა"
 
 #: src/ui/chatty-invite-page.ui:86
 msgid "_Reject"
-msgstr "_Respinge"
+msgstr "_უარყოფა"
 
 #: src/ui/chatty-ma-chat-info.ui:32
 msgid "Chat"
-msgstr "Discuție"
+msgstr "ჩატი"
 
 #: src/ui/chatty-ma-chat-info.ui:61 src/ui/chatty-ma-account-details.ui:210
 msgid "Matrix ID"
-msgstr "ID Matrix"
+msgstr "Matrix ID"
 
 #: src/ui/chatty-ma-chat-info.ui:89 src/ui/chatty-pp-chat-info.ui:242
 msgid "Chat settings"
-msgstr "Opțiunile discuției"
+msgstr "საუბრის მორგება"
 
 #: src/ui/chatty-ma-chat-info.ui:107 src/ui/chatty-pp-chat-info.ui:193
 #: src/ui/chatty-pp-chat-info.ui:292
 msgid "Encryption"
-msgstr "Cifrare"
+msgstr "დაშიფვრა"
 
 #: src/ui/chatty-ma-chat-info.ui:108 src/ui/chatty-pp-chat-info.ui:293
 msgid "Encrypt Messages"
-msgstr "Cifrare Mesaje"
+msgstr "შეტყობინებების დაშიფრვა"
 
 #: src/ui/chatty-main-view.ui:12 src/ui/chatty-settings-dialog.ui:14
 #: src/ui/chatty-side-bar.ui:19
 msgid "Back"
-msgstr "Înapoi"
+msgstr "უკან"
 
 #: src/ui/chatty-main-view.ui:41 src/ui/chatty-list-row.ui:169
 msgid "Call"
-msgstr "Apelează"
+msgstr "ზარი"
 
 #: src/ui/chatty-main-view.ui:137
 msgid "Leave Chat"
-msgstr "Părăsește discuția"
+msgstr "საუბრის დატოვება"
 
 #: src/ui/chatty-main-view.ui:145
 msgid "Block Contact"
-msgstr "Blochează contactul"
+msgstr "კონტაქტის დაბლოკვა"
 
 #: src/ui/chatty-main-view.ui:153
 msgid "Unblock Contact"
-msgstr "Deblochează contactul"
+msgstr "კონტაქტის განბლოკვა"
 
 #: src/ui/chatty-main-view.ui:161
 msgid "Archive chat"
-msgstr "Arhivează discuția"
+msgstr "ჩატის დაარქვება"
 
 #: src/ui/chatty-main-view.ui:169
 msgid "Unarchive chat"
-msgstr "Dezarhivează discuția"
+msgstr "ჩატის დეარქივირება"
 
 #: src/ui/chatty-main-view.ui:177
 msgid "Delete Chat"
-msgstr "Șterge discuția"
+msgstr "საუბრის წაშლა"
 
 #: src/ui/chatty-message-row.ui:160
 msgid "Copy Text"
-msgstr "Copiază textul"
+msgstr "ტექსტის კოპირება"
 
 #: src/ui/chatty-pp-chat-info.ui:34 src/ui/chatty-pp-account-details.ui:38
 msgid "Change Avatar"
-msgstr "Schimbă poza de profil"
+msgstr "ავატარის შეცვლა"
 
 #: src/ui/chatty-pp-chat-info.ui:47 src/ui/chatty-pp-account-details.ui:25
 msgid "Delete Avatar"
-msgstr "Șterge poza de profil"
+msgstr "ავატარის წაშლა"
 
 #: src/ui/chatty-pp-chat-info.ui:76
 msgid "Room topic"
-msgstr "Subiectul camerei"
+msgstr "ოთახის თემა"
 
 #: src/ui/chatty-pp-chat-info.ui:143
 msgid "User"
-msgstr "Utilizator"
+msgstr "მომხმარებელი"
 
 #: src/ui/chatty-pp-chat-info.ui:168
 msgid "XMPP ID"
-msgstr "ID XMPP"
+msgstr "XMPP ID"
 
 #: src/ui/chatty-pp-chat-info.ui:218 src/ui/chatty-ma-account-details.ui:54
 #: src/ui/chatty-pp-account-details.ui:105
 msgid "Status"
-msgstr "Stare"
+msgstr "სტატუსი"
 
 #: src/ui/chatty-pp-chat-info.ui:262
 msgid "Notifications"
-msgstr "Înștiințări"
+msgstr "გაფრთხილებები"
 
 #: src/ui/chatty-pp-chat-info.ui:277
 msgid "Status Messages"
-msgstr "Mesaje de stare"
+msgstr "მდგომარეობის შეტყობინებები"
 
 #: src/ui/chatty-pp-chat-info.ui:278
 msgid "Show status messages in chat"
-msgstr "Arată mesajele de stare în discuție"
+msgstr "მდგომარეობის შეტყობინების საუბრის დროს ჩვენება"
 
 #: src/ui/chatty-pp-chat-info.ui:313
 msgid "Fingerprints"
-msgstr "Amprente"
+msgstr "ანაბეჭდები"
 
 #: src/ui/chatty-mm-chat-info.ui:20
 msgid "Title"
-msgstr "Titlu"
+msgstr "სათაური"
 
 #: src/ui/chatty-mm-chat-info.ui:23
 msgid "Blank for default"
-msgstr "Gol pentru valoarea prestabilită"
+msgstr "ნაგულისხმევად ცარიელი"
 
 #: src/ui/chatty-mm-chat-info.ui:32
 msgid "Group Members"
-msgstr "Membrii grupului"
+msgstr "ჯგუფის წევრები"
 
 #: src/ui/chatty-list-row.ui:33
 msgid "Copy Number"
-msgstr "Copiază numărul"
+msgstr "ნომრის კოპირება"
 
 #: src/ui/chatty-ma-account-details.ui:78
 msgid "Name"
-msgstr "Nume"
+msgstr "სახელი"
 
 #: src/ui/chatty-ma-account-details.ui:106
 msgid "Email"
-msgstr "E-mail"
+msgstr "ელფოტა"
 
 #: src/ui/chatty-ma-account-details.ui:134
 msgid "Phone"
-msgstr "Telefon"
+msgstr "ტელეფონი"
 
 #: src/ui/chatty-ma-account-details.ui:174
 msgid "Advanced information"
-msgstr "Informații avansate"
+msgstr "დამატებითი ინფორმაცია"
 
 #: src/ui/chatty-ma-account-details.ui:186
 msgid "Homeserver"
-msgstr "Server de acasă"
+msgstr "სახლის სერვერი"
 
 #: src/ui/chatty-ma-account-details.ui:234
 msgid "Device ID"
-msgstr "ID-ul dispozitivului"
+msgstr "მოწყობილობის ID"
 
 #: src/ui/chatty-pp-account-details.ui:59
 msgid "Account ID"
-msgstr "ID-ul contului"
+msgstr "ანგარიშის ID"
 
 #: src/ui/chatty-pp-account-details.ui:168
 msgid "Own Fingerprint"
-msgstr "Amprenta proprie"
+msgstr "საკუთარი ანაბეჭდი"
 
 #: src/ui/chatty-settings-dialog.ui:35
 msgid "_Save"
-msgstr "_Salvează"
+msgstr "შ_ენახვა"
 
 #: src/ui/chatty-settings-dialog.ui:45
 msgid "_Apply"
-msgstr "_Aplică"
+msgstr "_გადატარება"
 
 #: src/ui/chatty-settings-dialog.ui:106
 msgid "Accounts"
-msgstr "Conturi"
+msgstr "ანგარიშები"
 
 #: src/ui/chatty-settings-dialog.ui:123 src/ui/chatty-settings-dialog.ui:467
 msgid "Privacy"
-msgstr "Confidențialitate"
+msgstr "პირადი ინფორმაცია"
 
 #: src/ui/chatty-settings-dialog.ui:128
 msgid "Read Receipts"
-msgstr "Confirmări de citire"
+msgstr "წაკითხულობის ანგარიშები"
 
 #: src/ui/chatty-settings-dialog.ui:141
 msgid "Typing Indicators"
-msgstr "Indicatoare de tastare"
+msgstr "კრეფის მაჩვენებლები"
 
 #: src/ui/chatty-settings-dialog.ui:154
 msgid "Remove Tracking IDs From URLs"
-msgstr "Elimină ID-urile de urmărire din URL-uri"
+msgstr "ტრეკინგის ID-ების წაშლა URL-ებიდან"
 
 #: src/ui/chatty-settings-dialog.ui:167
 msgid "Show Attachment Previews"
-msgstr "Arată previzualizările fișierelor atașate"
+msgstr "მიმაგრებული ფაილების მინიატურების ჩვენება"
 
 #: src/ui/chatty-settings-dialog.ui:183
 msgid "Editor"
-msgstr "Editor"
+msgstr "რედაქტორი"
 
 #: src/ui/chatty-settings-dialog.ui:187
 msgid "Convert Emoticons"
-msgstr "Convertește emoticoane"
+msgstr "სიცილაკების გადაყვანა"
 
 #: src/ui/chatty-settings-dialog.ui:188
 msgid "When you type :) it will be changed to 😃"
-msgstr "Dacă se tastează :) va fi schimbat în 😃"
+msgstr "თუ თქვენ აკრეფთ :) ის შეიცვლება 😃-ზე"
 
 #. TRANSLATORS: Return is the Enter key.
 #: src/ui/chatty-settings-dialog.ui:201
 msgid "Send Messages With Enter"
-msgstr "Trimite mesaje cu tasta Enter"
+msgstr "შეტყობინებების Enter ღილაკით გაგზავნა"
 
 #: src/ui/chatty-settings-dialog.ui:276
 msgid "Request Delivery Reports"
-msgstr "Solicită rapoarte de livrare"
+msgstr "შეტყობინების მიღების ანგარიშის მოთხოვნა"
 
 #: src/ui/chatty-settings-dialog.ui:289
 msgid "SMIL for MMS"
-msgstr "SMIL pentru MMS"
+msgstr "SMIL MMS-თვის"
 
 #: src/ui/chatty-settings-dialog.ui:321
 msgid "MMS Carrier Settings"
-msgstr "Opțiuni Operator MMS"
+msgstr "MMS-ის პროვაიდერის მორგება"
 
 #: src/ui/chatty-settings-dialog.ui:325
 msgid "Phone Number"
-msgstr "Număr de telefon"
+msgstr "ტელეფონის ნომერი"
 
 #: src/ui/chatty-settings-dialog.ui:331
 msgid "Your modem's phone number"
-msgstr "Numărul de telefon al modemului tău"
+msgstr "თქვენი მოდემის ტელეფონის ნომერი"
 
 #: src/ui/chatty-settings-dialog.ui:339
 msgid "MMSC"
@@ -1538,167 +1521,166 @@ msgstr "APN"
 
 #: src/ui/chatty-settings-dialog.ui:363
 msgid "Proxy"
-msgstr "Proxy"
+msgstr "პროქსი"
 
 #: src/ui/chatty-settings-dialog.ui:390
 msgid "You won't be notified by messages from blocked contacts"
-msgstr "Nu vei fi înștiințat dacă vei primi mesaje de la contactele blocate"
+msgstr ""
+"დაბლოკილი მომხმარებლებისგან შეტყობინებების შესახებ გაფრთხილებები აღარ მოგივათ"
 
 #: src/ui/chatty-settings-dialog.ui:421
 msgid "No Blocked Chats"
-msgstr "Nicio discuție blocată"
+msgstr "დაბლოკილი საუბრების გარეშე"
 
 #: src/ui/chatty-settings-dialog.ui:450
 msgid "Enable Purple Accounts"
-msgstr "Activează conturile Purple"
+msgstr "Purple-ის ანგარიშების ჩართვა"
 
 #: src/ui/chatty-settings-dialog.ui:473
 msgid "Message Archive Management"
-msgstr "Gestionarea Arhivei Mesajelor"
+msgstr "შეტყობინებების არქივის მართვა"
 
 #: src/ui/chatty-settings-dialog.ui:474
 msgid "Sync conversations with chat server"
-msgstr "Sincronizează conversațiile cu serverul de discuții"
+msgstr "საუბრის სერვერთან საუბრების სინქრონიზაცია"
 
 #: src/ui/chatty-settings-dialog.ui:488
 msgid "Message Carbon Copies"
-msgstr "Copiile mesajelor"
+msgstr "შეტყობინების ასლები"
 
 #: src/ui/chatty-settings-dialog.ui:603
 msgid "User ID"
-msgstr "ID-ul utilizatorului"
+msgstr "მომხმარებლის ID"
 
 #: src/ui/chatty-settings-dialog.ui:652
 msgid "Home server"
-msgstr "Server de acasă"
+msgstr "სახლის სერვერი"
 
 #: src/ui/chatty-settings-dialog.ui:670
 msgid "_Add"
-msgstr "_Adaugă"
+msgstr "_დამატება"
 
 #: src/ui/chatty-settings-dialog.ui:698
 msgid "Add _New Account"
-msgstr "Adaugă un cont _nou"
+msgstr "ახალი ა_ნგარიშის დამატება"
 
 #: src/ui/chatty-side-bar.ui:27
 msgid "Add Chat"
-msgstr "Adaugă o discuție"
+msgstr "საუბრის დამატება"
 
 #: src/ui/chatty-side-bar.ui:36
 msgid "Menu"
-msgstr "Opțiuni"
+msgstr "მენიუ"
 
 #: src/ui/chatty-side-bar.ui:44
 msgid "Search"
-msgstr "Caută"
+msgstr "ძებნა"
 
 #: src/ui/chatty-side-bar.ui:102
 msgctxt "show archived chat list when clicked"
 msgid "Archived"
-msgstr "Arhivate"
+msgstr "დაარქივებული"
 
 #: src/ui/chatty-side-bar.ui:117
 msgid "Keyboard _Shortcuts"
-msgstr "Taste _rapide"
+msgstr "_კლავიატურის მალსახმობები"
 
 #: src/ui/chatty-side-bar.ui:124
 msgid "Help"
-msgstr "Ajutor"
+msgstr "დახმარება"
 
 #: src/ui/chatty-side-bar.ui:132
 msgid "About Chats"
-msgstr "Despre Discuții"
+msgstr "Chats-ის შესახებ"
 
 #: src/ui/chatty-side-bar.ui:153
 msgid "New Message…"
-msgstr "Mesaj nou…"
+msgstr "ახალი შეტყობინება…"
 
 #: src/ui/chatty-side-bar.ui:159
 msgid "New SMS/MMS Message…"
-msgstr "Mesaj SMS/MMS nou…"
+msgstr "ახალი SMS/MMS შეტყობინება…"
 
 #: src/ui/chatty-side-bar.ui:165
 msgid "New Group Message…"
-msgstr "Mesaj nou în grup…"
+msgstr "ახალი ჯგუფური შეტყობინება…"
 
 #: src/ui/chatty-verification-page.ui:24
 msgid "Incoming Verification Request"
-msgstr "Se primește o cerere de verificare"
+msgstr "შემომავალი გადამოწმების მოთხოვნა"
 
 #: src/ui/chatty-verification-page.ui:42
 msgid "Verify this user to mark them as trusted."
-msgstr "Verifică acest utilizator pentru a ști că este de încredere."
+msgstr "სანდოდ მოსანიშნად, გადაამოწმეთ ეს მომხმარებელი."
 
 #: src/ui/chatty-verification-page.ui:78
 msgid ""
 "Verifying this user will mark their session as trusted, and also mark your "
 "session as trusted to them."
 msgstr ""
-"Verificarea acestui utilizator va marca activitatea acestuia ca fiind de "
-"încredere și, de asemenea, va marca activitatea ta ca fiind de încredere "
-"pentru el."
+"ამ მომხმარებლის გადამოწმება მის სესიებს სანდოდ მონიშნავს და თქვენი სესია "
+"მათთვისაც სანდოდ მოინიშნება."
 
 #: src/ui/chatty-verification-page.ui:98
 msgid "C_ontinue"
-msgstr "C_ontinuă"
+msgstr "_გაგრძელება"
 
 #: src/ui/chatty-verification-page.ui:201
 msgid ""
 "Verify this user by confirming the following emoji appears on their screen"
 msgstr ""
-"Verifică acest utilizator confirmând că următorul emoticon apare pe ecranul "
-"său"
+"გადაამოწმეთ ეს მომხმარებელი დადასტურებით, რომ ეს ემოჯი მის ეკრანზე გამოჩნდა"
 
 #: src/ui/chatty-verification-page.ui:378
 msgid ""
 "Verify this user by confirming the following number appears on their screen."
 msgstr ""
-"Verifică acest utilizator confirmând că următorul număr apare pe ecranul său."
+"გადაამოწმეთ ეს მომხმარებელი დადასტურებით, რომ ეს რიცხვი გამოჩნდა მის ეკრანზე."
 
 #: src/ui/chatty-verification-page.ui:413
 msgid "To be secure, do this in person or use a trusted way to communicate."
 msgstr ""
-"Pentru a fi sigur, acest lucru trebuie făcut personal sau folosind un mijloc "
-"de comunicare de încredere."
+"იმისათვის, რომ დაცულად ბრძანდებოდეთ, ეს პირადად, ან სანდო ურთიერთობის გზით "
+"გააკეთეთ."
 
 #: src/ui/chatty-verification-page.ui:424
 msgctxt "verb, which means 'both items are not the same'"
 msgid "_Don’t Match"
-msgstr "_Nu coincid"
+msgstr "_არ ემთხვევა"
 
 #: src/ui/chatty-verification-page.ui:434
 msgctxt "verb, which means 'both items are the same'"
 msgid "_Match"
-msgstr "_Coincid"
+msgstr "_ემთხვევა"
 
 #: src/ui/help-overlay.ui:14
 msgctxt "shortcut window"
 msgid "General"
-msgstr "Generale"
+msgstr "ზოგადი"
 
 #: src/ui/help-overlay.ui:19
 msgctxt "shortcut window"
 msgid "Open Menu"
-msgstr "Deschide opțiunile"
+msgstr "მენიუს გახსნა"
 
 #: src/ui/help-overlay.ui:27
 msgctxt "shortcut window"
 msgid "Open Search"
-msgstr "Caută"
+msgstr "ძებნის გახსნა"
 
 #: src/ui/help-overlay.ui:35
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
-msgstr "Taste rapide"
+msgstr "მალსახმობების ჩვენება"
 
 #: src/users/chatty-contact.c:324
 msgid "Mobile:"
-msgstr "Mobil:"
+msgstr "მობილური:"
 
 #: src/users/chatty-contact.c:326
 msgid "Work:"
-msgstr "Serviciu:"
+msgstr "სამსახური:"
 
 #: src/users/chatty-contact.c:328
 msgid "Other:"
-msgstr "Altele:"
+msgstr "სხვა:"
