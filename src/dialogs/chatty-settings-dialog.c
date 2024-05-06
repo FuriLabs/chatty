@@ -93,6 +93,7 @@ struct _ChattySettingsDialog
   GtkWidget      *new_password_entry;
 
   GtkWidget      *delivery_reports_switch;
+  GtkWidget      *clear_stuck_sms_switch;
   GtkWidget      *handle_smil_switch;
   GtkWidget      *blocked_list;
   GtkWidget      *phone_number_entry;
@@ -528,6 +529,15 @@ sms_mms_settings_row_activated_cb (ChattySettingsDialog *self)
   gtk_switch_set_state (GTK_SWITCH (self->delivery_reports_switch),
                         chatty_settings_request_sms_delivery_reports (self->settings));
 
+  gtk_switch_set_state (GTK_SWITCH (self->clear_stuck_sms_switch),
+                        chatty_settings_get_clear_out_stuck_sms (self->settings));
+
+  gtk_switch_set_active (GTK_SWITCH (self->delivery_reports_switch),
+                        chatty_settings_request_sms_delivery_reports (self->settings));
+
+  gtk_switch_set_active (GTK_SWITCH (self->clear_stuck_sms_switch),
+                        chatty_settings_get_clear_out_stuck_sms (self->settings));
+
   gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "message-settings-view");
 }
 
@@ -754,6 +764,11 @@ mms_carrier_settings_apply_button_clicked_cb (ChattySettingsDialog *self)
   g_object_set (self->settings,
                 "request-sms-delivery-reports",
                 gtk_switch_get_state (GTK_SWITCH (self->delivery_reports_switch)),
+                NULL);
+
+  g_object_set (self->settings,
+                "clear-out-stuck-sms",
+                gtk_switch_get_state (GTK_SWITCH (self->clear_stuck_sms_switch)),
                 NULL);
 
   chatty_settings_reset_window_ui (self);
@@ -1032,6 +1047,42 @@ row_unblock_button_clicked_cb (AdwActionRow *row)
   chatty_item_set_state (CHATTY_ITEM (chat), CHATTY_ITEM_VISIBLE);
 }
 
+
+static gboolean
+clear_stuck_sms_switch_switched_cb (ChattySettingsDialog *self,
+                                    gboolean state)
+{
+  AdwDialog *dialog;
+  GtkWindow *window;
+  gboolean show_dialog = FALSE;
+  ChattySettings *settings;
+
+  g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
+
+  settings = chatty_settings_get_default ();
+
+  show_dialog = !chatty_settings_get_clear_out_stuck_sms (settings);
+
+  /*
+   * Only show the dialog if the user is activating it, and it was not
+   * previously active in settings
+   */
+  if (!show_dialog || !state)
+    return FALSE;
+
+  window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
+  dialog = adw_alert_dialog_new (_("Experimental Setting!"),
+                                 _("This setting is experimental and may cause loss of SMS. Use at your own risk!"));
+  adw_alert_dialog_add_response (ADW_ALERT_DIALOG (dialog), "close", _("Close"));
+
+  adw_alert_dialog_set_default_response (ADW_ALERT_DIALOG (dialog), "close");
+  adw_alert_dialog_set_close_response (ADW_ALERT_DIALOG (dialog), "close");
+
+  adw_dialog_present (dialog, GTK_WIDGET (window));
+
+  return FALSE;
+}
+
 static GtkWidget *
 chatty_settings_blocked_row_new (ChattyChat           *chat,
                                  ChattySettingsDialog *self)
@@ -1191,6 +1242,7 @@ chatty_settings_dialog_class_init (ChattySettingsDialogClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, new_password_entry);
 
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, delivery_reports_switch);
+  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, clear_stuck_sms_switch);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, handle_smil_switch);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, blocked_list);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, phone_number_entry);
@@ -1222,6 +1274,7 @@ chatty_settings_dialog_class_init (ChattySettingsDialogClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, settings_phone_number_entry_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, mms_carrier_settings_cancel_button_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, mms_carrier_settings_apply_button_clicked_cb);
+  gtk_widget_class_bind_template_callback (widget_class, clear_stuck_sms_switch_switched_cb);
 
   gtk_widget_class_bind_template_callback (widget_class, account_list_row_activated_cb);
   gtk_widget_class_bind_template_callback (widget_class, blocked_list_action_activated_cb);

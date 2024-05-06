@@ -284,6 +284,19 @@
                             </child>
                             <child>
                               <object class="AdwActionRow">
+                                <property name="selectable">0</property>
+                                <property name="title" translatable="yes">Clear Stuck SMS</property>
+                                <property name="activatable-widget">clear_stuck_sms_switch</property>
+                                <child>
+                                  <object class="GtkSwitch" id="clear_stuck_sms_switch">
+                                    <property name="valign">center</property>
+                                    <signal name="state-set" handler="clear_stuck_sms_switch_switched_cb" swapped="yes"/>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="AdwActionRow">
                                 <property name="sensitive" bind-source="handle_smil_switch" bind-property="sensitive" bind-flags="sync-create"/>
                                 <property name="selectable">0</property>
                                 <property name="title" translatable="yes">SMIL for MMS</property>
