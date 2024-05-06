@@ -58,6 +58,9 @@ const char     *chatty_settings_get_country_iso_code         (ChattySettings *se
 void            chatty_settings_set_country_iso_code         (ChattySettings *self,
                                                               const char     *iso_code);
 gboolean        chatty_settings_request_sms_delivery_reports (ChattySettings *self);
+gboolean        chatty_settings_get_clear_out_stuck_sms      (ChattySettings *self);
+void            chatty_settings_set_clear_out_stuck_sms      (ChattySettings *self,
+                                                              gboolean clear_sms);
 gboolean        chatty_settings_get_experimental_features    (ChattySettings *self);
 void            chatty_settings_enable_experimental_features (ChattySettings *self,
                                                               gboolean        enable);

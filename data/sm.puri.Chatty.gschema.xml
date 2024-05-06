@@ -92,6 +92,12 @@
       <description>Whether to request delivery reports for outgoing SMS</description>
     </key>
 
+    <key name="clear-out-stuck-sms" type="b">
+      <default>false</default>
+      <summary>Clear out stuck SMS</summary>
+      <description>Whether Chatty should clear out SMS that are stuck in receiving/unknown state</description>
+    </key>
+
     <key name="experimental-features" type="b">
       <default>false</default>
       <summary>Enable experimental features</summary>

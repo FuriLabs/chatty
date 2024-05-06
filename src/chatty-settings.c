@@ -64,6 +64,7 @@ enum {
   PROP_CONVERT_EMOTICONS,
   PROP_RETURN_SENDS_MESSAGE,
   PROP_REQUEST_SMS_DELIVERY_REPORTS,
+  PROP_CLEAR_OUT_STUCK_SMS,
   PROP_MAM_ENABLED,
   PROP_PURPLE_ENABLED,
   N_PROPS
@@ -131,6 +132,10 @@ chatty_settings_get_property (GObject    *object,
 
     case PROP_REQUEST_SMS_DELIVERY_REPORTS:
       g_value_set_boolean (value, chatty_settings_request_sms_delivery_reports (self));
+      break;
+
+    case PROP_CLEAR_OUT_STUCK_SMS:
+      g_value_set_boolean (value, chatty_settings_get_clear_out_stuck_sms (self));
       break;
 
     case PROP_PURPLE_ENABLED:
@@ -219,6 +224,11 @@ chatty_settings_set_property (GObject      *object,
                               g_value_get_boolean (value));
       break;
 
+    case PROP_CLEAR_OUT_STUCK_SMS:
+      g_settings_set_boolean (self->settings, "clear-out-stuck-sms",
+                              g_value_get_boolean (value));
+      break;
+
     case PROP_PURPLE_ENABLED:
       g_settings_set_boolean (self->settings, "purple-enabled",
                               g_value_get_boolean (value));
@@ -259,6 +269,8 @@ chatty_settings_constructed (GObject *object)
                    self, "return-sends-message", G_SETTINGS_BIND_DEFAULT);
   g_settings_bind (self->settings, "request-sms-delivery-reports",
                    self, "request-sms-delivery-reports", G_SETTINGS_BIND_DEFAULT);
+  g_settings_bind (self->settings, "clear-out-stuck-sms",
+                   self, "clear-out-stuck-sms", G_SETTINGS_BIND_DEFAULT);
   self->country_code = g_settings_get_string (self->settings, "country-code");
 }
 
@@ -379,6 +391,13 @@ chatty_settings_class_init (ChattySettingsClass *klass)
     g_param_spec_boolean ("request-sms-delivery-reports",
                           "Request SMS delivery reports",
                           "Whether to request delivery reports for outgoing SMS",
+                          FALSE,
+                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  properties[PROP_CLEAR_OUT_STUCK_SMS] =
+    g_param_spec_boolean ("clear-out-stuck-sms",
+                          "Clear out stuck SMS",
+                          "Whether to clear out SMS that are stuck in receiving/unknown state",
                           FALSE,
                           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
@@ -556,6 +575,38 @@ chatty_settings_set_strip_url_tracking_ids_dialog (ChattySettings *self,
   g_return_if_fail (CHATTY_IS_SETTINGS (self));
 
   g_settings_set_boolean (G_SETTINGS (self->settings), "strip-url-tracking-id-dialog", !!shown);
+}
+
+/**
+ * chatty_settings_get_clear_out_stuck_sms:
+ * @self: A #ChattySettings
+ *
+ * Get if Chatty  Chatty clears out stuck SMS
+ *
+ * Returns: %TRUE if Chatty clears out stuck SMS.
+ * %FALSE otherwise
+ */
+gboolean
+chatty_settings_get_clear_out_stuck_sms (ChattySettings *self)
+{
+  g_return_val_if_fail (CHATTY_IS_SETTINGS (self), FALSE);
+
+  return g_settings_get_boolean (self->settings, "clear-out-stuck-sms");
+}
+
+/**
+ * chatty_settings_set_clear_out_stuck_sms:
+ * @self: A #ChattySettings
+ *
+ * Set if Chatty should clear out stuck SMS
+ */
+void
+chatty_settings_set_clear_out_stuck_sms (ChattySettings *self,
+                                         gboolean clear_sms)
+{
+  g_return_if_fail (CHATTY_IS_SETTINGS (self));
+
+  g_settings_set_boolean (G_SETTINGS (self->settings), "clear-out-stuck-sms", !!clear_sms);
 }
 
 /**
