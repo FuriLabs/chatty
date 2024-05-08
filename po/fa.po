@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-04-17 17:48+0000\n"
-"PO-Revision-Date: 2024-04-19 01:54+0330\n"
+"POT-Creation-Date: 2024-04-19 01:03+0000\n"
+"PO-Revision-Date: 2024-05-08 16:36+0330\n"
 "Last-Translator: Danial Behzadi <dani.behzi@ubuntu.com>\n"
 "Language-Team: Persian <fa@li.org>\n"
 "Language: fa\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.2.2\n"
 
 #: data/sm.puri.Chatty.desktop.in.in:3 data/sm.puri.Chatty.metainfo.xml.in.in:6
 #: src/chatty-application.c:164 src/chatty-application.c:412
@@ -1551,7 +1551,7 @@ msgstr "شناسهٔ کاربری"
 
 #: src/ui/chatty-settings-dialog.ui:652
 msgid "Home server"
-msgstr "کارساز خانیگ"
+msgstr "کارساز خانگی"
 
 #: src/ui/chatty-settings-dialog.ui:670
 msgid "_Add"
