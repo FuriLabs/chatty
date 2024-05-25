@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-04-19 12:27+0000\n"
-"PO-Revision-Date: 2024-04-21 21:56+0530\n"
+"POT-Creation-Date: 2024-05-12 13:11+0000\n"
+"PO-Revision-Date: 2024-05-12 21:31+0530\n"
 "Last-Translator: Scrambled777 <weblate.scrambled777@simplelogin.com>\n"
-"Language-Team: Hindi\n"
+"Language-Team: Hindi <indlinux-hindi@lists.sourceforge.net>\n"
 "Language: hi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Gtranslator 46.0\n"
+"X-Generator: Gtranslator 46.1\n"
 
 #: data/sm.puri.Chatty.desktop.in.in:3 data/sm.puri.Chatty.metainfo.xml.in.in:6
 #: src/chatty-application.c:164 src/chatty-application.c:412
@@ -58,7 +58,7 @@ msgstr "यदि पढ़ा गया है तो संदेश की �
 msgid "Message carbon copies"
 msgstr "संदेश की कार्बन प्रतियां"
 
-#: data/sm.puri.Chatty.gschema.xml:26 src/ui/chatty-settings-dialog.ui:489
+#: data/sm.puri.Chatty.gschema.xml:26 src/ui/chatty-settings-dialog.ui:502
 msgid "Share chat history among devices"
 msgstr "उपकरणों के बीच चैट इतिहास साझा करें"
 
@@ -143,26 +143,35 @@ msgid "Whether to request delivery reports for outgoing SMS"
 msgstr "क्या जावक SMS के लिए डिलीवरी रिपोर्ट का अनुरोध करना है"
 
 #: data/sm.puri.Chatty.gschema.xml:97
+msgid "Clear out stuck SMS"
+msgstr "अटके हुए SMS साफ करें"
+
+#: data/sm.puri.Chatty.gschema.xml:98
+msgid ""
+"Whether Chatty should clear out SMS that are stuck in receiving/unknown state"
+msgstr "क्या Chatty को उन SMS को साफ करना चाहिए जो प्राप्त/अज्ञात स्थिति में अटके हुए हैं"
+
+#: data/sm.puri.Chatty.gschema.xml:103
 msgid "Enable experimental features"
 msgstr "प्रायोगिक सुविधाएं सक्षम करें"
 
-#: data/sm.puri.Chatty.gschema.xml:98
+#: data/sm.puri.Chatty.gschema.xml:104
 msgid "Whether to enable experimental features"
 msgstr "क्या प्रायोगिक सुविधाओं को सक्षम करना है"
 
-#: data/sm.puri.Chatty.gschema.xml:103
+#: data/sm.puri.Chatty.gschema.xml:109
 msgid "Window maximized"
 msgstr "विंडो अधिकतम हुआ"
 
-#: data/sm.puri.Chatty.gschema.xml:104
+#: data/sm.puri.Chatty.gschema.xml:110
 msgid "Window maximized state"
 msgstr "विंडो की अधिकतम स्थिति"
 
-#: data/sm.puri.Chatty.gschema.xml:109
+#: data/sm.puri.Chatty.gschema.xml:115
 msgid "Window size"
 msgstr "विंडो का आकार"
 
-#: data/sm.puri.Chatty.gschema.xml:110
+#: data/sm.puri.Chatty.gschema.xml:116
 msgid "Window size (width, height)."
 msgstr "विंडो का आकार (चौड़ाई, ऊँचाई)।"
 
@@ -184,7 +193,7 @@ msgstr "चैट संदेश की विंडो"
 
 #: src/chatty-application.c:79
 msgid "Show release version"
-msgstr "रिलीज़ संस्करण दिखाएं"
+msgstr "रिलीज संस्करण दिखाएं"
 
 #: src/chatty-application.c:80
 msgid "Start in daemon mode"
@@ -220,10 +229,11 @@ msgstr ""
 "%s"
 
 #: src/chatty-application.c:202 src/chatty-manager.c:683
-#: src/chatty-message-bar.c:482 src/purple/chatty-purple-notify.c:35
+#: src/chatty-message-bar.c:489 src/purple/chatty-purple-notify.c:35
 #: src/purple/chatty-purple.c:199 src/purple/chatty-purple.c:619
 #: src/dialogs/chatty-new-chat-dialog.c:226
-#: src/dialogs/chatty-settings-dialog.c:201 src/ui/chatty-main-view.ui:73
+#: src/dialogs/chatty-settings-dialog.c:202
+#: src/dialogs/chatty-settings-dialog.c:1076 src/ui/chatty-main-view.ui:73
 msgid "Close"
 msgstr "बंद करे"
 
@@ -262,7 +272,7 @@ msgstr "यह एक MMS बातचीत है"
 #: src/chatty-chat-page.c:203 src/chatty-chat-page.c:218
 #: src/chatty-chat-page.c:224
 msgid "Your messages are not encrypted, and carrier rates may apply"
-msgstr "आपके संदेश एन्क्रिप्टेड नहीं हैं, और वाहक दरें लागू हो सकती हैं"
+msgstr "आपके संदेश कूटलेखित नहीं हैं, और वाहक दरें लागू हो सकती हैं"
 
 #: src/chatty-chat-page.c:213
 msgid "This is an SMS/MMS conversation"
@@ -278,11 +288,11 @@ msgstr "यह एक IM बातचीत है"
 
 #: src/chatty-chat-page.c:228
 msgid "Your messages are encrypted"
-msgstr "आपके संदेश एन्क्रिप्टेड हैं"
+msgstr "आपके संदेश कूटलेखित हैं"
 
 #: src/chatty-chat-page.c:231
 msgid "Your messages are not encrypted"
-msgstr "आपके संदेश एन्क्रिप्टेड नहीं हैं"
+msgstr "आपके संदेश कूटलेखित नहीं हैं"
 
 #: src/chatty-chat.c:726
 msgid "Empty room"
@@ -353,13 +363,16 @@ msgstr "बिता कल %H∶%M"
 msgid "Yesterday %I∶%M %p"
 msgstr "बिता कल %I∶%M %p"
 
+# Amended for Hindi Locale.
+#
+# Scrambled777
 #. TRANSLATORS: Timestamp from more than 7 days ago or future date
 #. * (eg: when the system time is wrong), e.g. “2022-01-01”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
 #: src/chatty-clock.c:152
 msgid "%Y-%m-%d"
-msgstr "%Y-%m-%d"
+msgstr "%d-%m-%Y"
 
 #: src/chatty-file-item.c:141
 msgid "Contact"
@@ -461,22 +474,22 @@ msgstr "खाता कनेक्ट हो रहा है…"
 msgid "“%s” is not a valid URI"
 msgstr "“%s” एक मान्य URI नहीं है"
 
-#: src/chatty-message-bar.c:480 src/purple/chatty-purple.c:195
+#: src/chatty-message-bar.c:487 src/purple/chatty-purple.c:195
 #: src/chatty-window.c:361
 msgid "Alert"
 msgstr "चेतावनी"
 
-#: src/chatty-message-bar.c:481
+#: src/chatty-message-bar.c:488
 msgid "Found and automatically deleted tracking IDs from the pasted link."
 msgstr "पेस्ट किए गए लिंक में ट्रैकिंग ID मिली और स्वचालित रूप से मिटा दी गई।"
 
-#: src/chatty-message-bar.c:483
+#: src/chatty-message-bar.c:490
 msgid "Don't Show Again"
 msgstr "दोबारा न दिखाएं"
 
 #: src/chatty-message.c:230
 msgid "Got an encrypted message, but couldn't decrypt due to missing keys"
-msgstr "एक एन्क्रिप्टेड संदेश मिला, लेकिन कुंजियां गुम होने के कारण डिक्रिप्ट नहीं किया जा सका"
+msgstr "एक कूटलेखित संदेश मिला, लेकिन कुंजियां गुम होने के कारण विकोड नहीं किया जा सका"
 
 #: src/chatty-notification.c:171
 #, c-format
@@ -506,21 +519,21 @@ msgstr[1] "%i संदेश"
 msgid "Any Protocol"
 msgstr "कोई प्रोटोकॉल"
 
-#: src/chatty-side-bar.c:325 src/ui/chatty-settings-dialog.ui:559
+#: src/chatty-side-bar.c:325 src/ui/chatty-settings-dialog.ui:572
 msgid "Matrix"
 msgstr "Matrix"
 
 #: src/chatty-side-bar.c:326 src/dialogs/chatty-new-chat-dialog.c:634
-#: src/dialogs/chatty-settings-dialog.c:656
+#: src/dialogs/chatty-settings-dialog.c:666
 #: src/ui/chatty-settings-dialog.ui:225
 msgid "SMS/MMS"
 msgstr "SMS/MMS"
 
-#: src/chatty-side-bar.c:329 src/ui/chatty-settings-dialog.ui:548
+#: src/chatty-side-bar.c:329 src/ui/chatty-settings-dialog.ui:561
 msgid "XMPP"
 msgstr "XMPP"
 
-#: src/chatty-side-bar.c:332 src/ui/chatty-settings-dialog.ui:572
+#: src/chatty-side-bar.c:332 src/ui/chatty-settings-dialog.ui:585
 msgid "Telegram"
 msgstr "Telegram"
 
@@ -530,7 +543,7 @@ msgstr "संग्रहीत"
 
 #: src/purple/chatty-purple-notify.c:26 src/purple/chatty-purple.c:613
 #: src/dialogs/chatty-new-chat-dialog.c:222
-#: src/dialogs/chatty-settings-dialog.c:197
+#: src/dialogs/chatty-settings-dialog.c:198
 msgid "Error"
 msgstr "त्रुटि"
 
@@ -547,7 +560,7 @@ msgstr "फाइल खोलें…"
 msgid "User %s has added %s to the contacts"
 msgstr "उपयोगकर्ता %s ने संपर्कों में %s जोड़ दिया है"
 
-#: src/purple/chatty-purple.c:283 src/dialogs/chatty-settings-dialog.c:460
+#: src/purple/chatty-purple.c:283 src/dialogs/chatty-settings-dialog.c:461
 #: src/ui/chatty-ma-account-details.ui:162
 #: src/ui/chatty-pp-account-details.ui:154
 msgid "Delete Account"
@@ -564,7 +577,7 @@ msgid "Add %s to contact list"
 msgstr "संपर्क सूची में %s जोड़ें"
 
 #: src/purple/chatty-purple.c:293 src/chatty-window.c:365
-#: src/chatty-window.c:463 src/dialogs/chatty-settings-dialog.c:466
+#: src/chatty-window.c:463 src/dialogs/chatty-settings-dialog.c:467
 #: src/ui/chatty-dialog-wrong-pw.ui:23 src/ui/chatty-dialog-new-chat.ui:36
 #: src/ui/chatty-settings-dialog.ui:25 src/ui/chatty-settings-dialog.ui:55
 #: src/ui/chatty-verification-page.ui:129
@@ -935,7 +948,7 @@ msgstr "समूह चैट “%s” को डिस्कनेक्ट �
 msgid "This removes chat from chats list"
 msgstr "यह चैट को चैट सूची से हटा देता है"
 
-#: src/chatty-window.c:464 src/dialogs/chatty-settings-dialog.c:467
+#: src/chatty-window.c:464 src/dialogs/chatty-settings-dialog.c:468
 msgid "Delete"
 msgstr "मिटाएं"
 
@@ -948,7 +961,7 @@ msgstr "आप"
 #: src/dialogs/chatty-ma-account-details.c:139
 #: src/dialogs/chatty-pp-account-details.c:115
 msgid "Set Avatar"
-msgstr "अवतार सेट करें"
+msgstr "अवतार निर्धारित करें"
 
 #: src/dialogs/chatty-pp-chat-info.c:118
 #: src/dialogs/chatty-ma-account-details.c:146
@@ -958,19 +971,19 @@ msgstr "छवियां"
 
 #: src/dialogs/chatty-pp-chat-info.c:221
 msgid "Encryption is not available"
-msgstr "एन्क्रिप्शन उपलब्ध नहीं है"
+msgstr "कूटलेखन उपलब्ध नहीं है"
 
 #: src/dialogs/chatty-pp-chat-info.c:225
 msgid "This chat is encrypted"
-msgstr "यह चैट एन्क्रिप्टेड है"
+msgstr "यह चैट कूटलेखित है"
 
 #: src/dialogs/chatty-pp-chat-info.c:229
 msgid "This chat is not encrypted"
-msgstr "यह चैट एन्क्रिप्टेड नहीं है"
+msgstr "यह चैट कूटलेखित नहीं है"
 
 #: src/dialogs/chatty-pp-chat-info.c:253
 msgid "Encryption not available"
-msgstr "एन्क्रिप्शन उपलब्ध नहीं है"
+msgstr "कूटलेखन उपलब्ध नहीं है"
 
 #: src/dialogs/chatty-pp-chat-info.c:274
 #, c-format
@@ -1035,60 +1048,69 @@ msgstr "जुड़ रहा है…"
 msgid "disconnected"
 msgstr "वियोजित"
 
-#: src/dialogs/chatty-settings-dialog.c:199
+#: src/dialogs/chatty-settings-dialog.c:200
 #, c-format
 msgid "Error saving account: %s"
 msgstr "खाता सहेजने में त्रुटि: %s"
 
-#: src/dialogs/chatty-settings-dialog.c:254
+#: src/dialogs/chatty-settings-dialog.c:255
 #, c-format
 msgid "Failed to verify server: %s"
 msgstr "सर्वर सत्यापित करने में विफल: %s"
 
-#: src/dialogs/chatty-settings-dialog.c:256
+#: src/dialogs/chatty-settings-dialog.c:257
 msgid "Failed to verify server"
 msgstr "सर्वर सत्यापित करने में विफल"
 
-#: src/dialogs/chatty-settings-dialog.c:262
+#: src/dialogs/chatty-settings-dialog.c:263
 msgid "Couldn't get Home server address"
 msgstr "घरेलू सर्वर का पता नहीं मिल सका"
 
-#: src/dialogs/chatty-settings-dialog.c:462
+#: src/dialogs/chatty-settings-dialog.c:463
 #, c-format
 msgid "Delete account %s?"
 msgstr "खाता %s मिटाएं?"
 
-#: src/dialogs/chatty-settings-dialog.c:642
+#: src/dialogs/chatty-settings-dialog.c:652
 msgid "Restart Chatty to disable Purple"
 msgstr "Purple को अक्षम करने के लिए Chatty को पुनरारंभ करें"
 
-#: src/dialogs/chatty-settings-dialog.c:658
+#: src/dialogs/chatty-settings-dialog.c:668
 #: src/ui/chatty-settings-dialog.ui:243
 msgid "Purple"
 msgstr "Purple"
 
-#: src/dialogs/chatty-settings-dialog.c:660
+#: src/dialogs/chatty-settings-dialog.c:670
 msgid "New Account"
 msgstr "नया खाता"
 
-#: src/dialogs/chatty-settings-dialog.c:662
-#: src/ui/chatty-settings-dialog.ui:303
+#: src/dialogs/chatty-settings-dialog.c:672
+#: src/ui/chatty-settings-dialog.ui:316
 msgid "Blocked Contacts"
 msgstr "अवरोधित संपर्क"
 
-#: src/dialogs/chatty-settings-dialog.c:664 src/ui/chatty-side-bar.ui:110
+#: src/dialogs/chatty-settings-dialog.c:674 src/ui/chatty-side-bar.ui:110
 msgid "Preferences"
 msgstr "प्राथमिकताएं"
 
-#: src/dialogs/chatty-settings-dialog.c:692
+#: src/dialogs/chatty-settings-dialog.c:702
 #: src/ui/chatty-pp-account-details.ui:81 src/ui/chatty-settings-dialog.ui:215
 msgid "Protocol"
 msgstr "प्रोटोकॉल"
 
 #. TRANSLATORS: Only translate 'or'
-#: src/dialogs/chatty-settings-dialog.c:948
+#: src/dialogs/chatty-settings-dialog.c:963
 msgid "@user:matrix.org or user@example.com"
 msgstr "@user:matrix.org या user@example.com"
+
+#: src/dialogs/chatty-settings-dialog.c:1074
+msgid "Experimental Setting!"
+msgstr "प्रायोगिक सेटिंग!"
+
+#: src/dialogs/chatty-settings-dialog.c:1075
+msgid ""
+"This setting is experimental and may cause loss of SMS. Use at your own risk!"
+msgstr "यह सेटिंग प्रायोगिक है और इससे SMS खो सकते हैं। अपने जोखिम पर उपयोग करें!"
 
 #: src/matrix/chatty-ma-account.c:78
 #, c-format
@@ -1127,12 +1149,15 @@ msgid_plural "Attachments are too large"
 msgstr[0] "संलग्नक बहुत बड़ा है"
 msgstr[1] "संलग्नक बहुत बड़े हैं"
 
+# Adapted for Hindi Locale.
+#
+# Scrambled777
 #. TRANSLATORS: Timestamp for minute accuracy, e.g. “2020-08-11 15:27”.
 #. See https://developer.gnome.org/glib/stable/glib-GDateTime.html#g-date-time-format
 #.
 #: src/mm/chatty-mmsd.c:984
 msgid "%Y-%m-%d %H∶%M"
-msgstr "%Y-%m-%d %H∶%M"
+msgstr "%d-%m-%Y %H∶%M"
 
 #: src/mm/chatty-mmsd.c:1298
 #, c-format
@@ -1185,12 +1210,12 @@ msgid_plural "Chatty cannot process %i MMSes..."
 msgstr[0] "Chatty %i MMS को संसाधित नहीं कर सकता"
 msgstr[1] "Chatty %i MMS's को संसाधित नहीं कर सकता..."
 
-#: src/mm/chatty-mm-account.c:319 src/mm/chatty-mm-account.c:370
+#: src/mm/chatty-mm-account.c:345 src/mm/chatty-mm-account.c:396
 #, c-format
 msgid "Error Sending SMS to %s"
 msgstr "%s पर SMS भेजने में त्रुटि"
 
-#: src/mm/chatty-mm-account.c:506
+#: src/mm/chatty-mm-account.c:532
 #, c-format
 msgid "Error Sending MMS to %s"
 msgstr "%s पर MMS भेजने में त्रुटि"
@@ -1212,13 +1237,13 @@ msgid "Please re-enter the Password."
 msgstr "कृपया पासवर्ड पुनः दर्ज करें।"
 
 #: src/ui/chatty-dialog-wrong-pw.ui:53 src/ui/chatty-pp-account-details.ui:129
-#: src/ui/chatty-settings-dialog.ui:626
+#: src/ui/chatty-settings-dialog.ui:639
 msgid "Password"
 msgstr "पासवर्ड"
 
 #: src/ui/chatty-dialog-join-muc.ui:7
 msgid "New Group Chat"
-msgstr "नया समूह चैट"
+msgstr "नई समूह चैट"
 
 #: src/ui/chatty-dialog-join-muc.ui:16 src/ui/chatty-info-dialog.ui:26
 #: src/ui/chatty-info-dialog.ui:35
@@ -1313,11 +1338,11 @@ msgstr "चैट सेटिंग्स"
 #: src/ui/chatty-ma-chat-info.ui:107 src/ui/chatty-pp-chat-info.ui:193
 #: src/ui/chatty-pp-chat-info.ui:292
 msgid "Encryption"
-msgstr "एन्क्रिप्शन"
+msgstr "कूटलेखन"
 
 #: src/ui/chatty-ma-chat-info.ui:108 src/ui/chatty-pp-chat-info.ui:293
 msgid "Encrypt Messages"
-msgstr "संदेशों को एन्क्रिप्ट करें"
+msgstr "संदेशों को कूटलेखित करें"
 
 #: src/ui/chatty-main-view.ui:12 src/ui/chatty-settings-dialog.ui:14
 #: src/ui/chatty-side-bar.ui:19
@@ -1403,7 +1428,7 @@ msgstr "शीर्षक"
 
 #: src/ui/chatty-mm-chat-info.ui:23
 msgid "Blank for default"
-msgstr "डिफ़ॉल्ट के लिए रिक्त"
+msgstr "तयशुदा के लिए रिक्त"
 
 #: src/ui/chatty-mm-chat-info.ui:32
 msgid "Group Members"
@@ -1451,13 +1476,13 @@ msgstr "सहेजें (_S)"
 
 #: src/ui/chatty-settings-dialog.ui:45
 msgid "_Apply"
-msgstr "लागू (_A)"
+msgstr "लागू करें (_A)"
 
 #: src/ui/chatty-settings-dialog.ui:106
 msgid "Accounts"
 msgstr "खाते"
 
-#: src/ui/chatty-settings-dialog.ui:123 src/ui/chatty-settings-dialog.ui:467
+#: src/ui/chatty-settings-dialog.ui:123 src/ui/chatty-settings-dialog.ui:480
 msgid "Privacy"
 msgstr "गोपनीयता"
 
@@ -1496,73 +1521,77 @@ msgstr "Enter के साथ संदेश भेजें"
 
 #: src/ui/chatty-settings-dialog.ui:276
 msgid "Request Delivery Reports"
-msgstr "डिलिवरी रिपोर्ट का अनुरोध करें"
+msgstr "वितरण रिपोर्ट का अनुरोध करें"
 
-#: src/ui/chatty-settings-dialog.ui:289
+#: src/ui/chatty-settings-dialog.ui:288
+msgid "Clear Stuck SMS"
+msgstr "अटके हुए SMS साफ करें"
+
+#: src/ui/chatty-settings-dialog.ui:302
 msgid "SMIL for MMS"
 msgstr "MMS के लिए SMIL"
 
-#: src/ui/chatty-settings-dialog.ui:321
+#: src/ui/chatty-settings-dialog.ui:334
 msgid "MMS Carrier Settings"
 msgstr "MMS वाहक सेटिंग्स"
 
-#: src/ui/chatty-settings-dialog.ui:325
+#: src/ui/chatty-settings-dialog.ui:338
 msgid "Phone Number"
 msgstr "फोन नंबर"
 
-#: src/ui/chatty-settings-dialog.ui:331
+#: src/ui/chatty-settings-dialog.ui:344
 msgid "Your modem's phone number"
 msgstr "आपके मॉडेम का फोन नंबर"
 
-#: src/ui/chatty-settings-dialog.ui:339
+#: src/ui/chatty-settings-dialog.ui:352
 msgid "MMSC"
 msgstr "MMSC"
 
-#: src/ui/chatty-settings-dialog.ui:351
+#: src/ui/chatty-settings-dialog.ui:364
 msgid "APN"
 msgstr "APN"
 
-#: src/ui/chatty-settings-dialog.ui:363
+#: src/ui/chatty-settings-dialog.ui:376
 msgid "Proxy"
 msgstr "प्रॉक्सी"
 
-#: src/ui/chatty-settings-dialog.ui:390
+#: src/ui/chatty-settings-dialog.ui:403
 msgid "You won't be notified by messages from blocked contacts"
 msgstr "आपको अवरुद्ध संपर्कों के संदेशों द्वारा सूचित नहीं किया जाएगा"
 
-#: src/ui/chatty-settings-dialog.ui:421
+#: src/ui/chatty-settings-dialog.ui:434
 msgid "No Blocked Chats"
 msgstr "कोई अवरुद्ध चैट नहीं"
 
-#: src/ui/chatty-settings-dialog.ui:450
+#: src/ui/chatty-settings-dialog.ui:463
 msgid "Enable Purple Accounts"
 msgstr "Purple खाते सक्षम करें"
 
-#: src/ui/chatty-settings-dialog.ui:473
+#: src/ui/chatty-settings-dialog.ui:486
 msgid "Message Archive Management"
 msgstr "संदेश संग्रह प्रबंधन"
 
-#: src/ui/chatty-settings-dialog.ui:474
+#: src/ui/chatty-settings-dialog.ui:487
 msgid "Sync conversations with chat server"
 msgstr "चैट सर्वर के साथ बातचीत समन्वयित करें"
 
-#: src/ui/chatty-settings-dialog.ui:488
+#: src/ui/chatty-settings-dialog.ui:501
 msgid "Message Carbon Copies"
-msgstr "संदेश कार्बन प्रतियां"
+msgstr "संदेश की कार्बन प्रतियां"
 
-#: src/ui/chatty-settings-dialog.ui:603
+#: src/ui/chatty-settings-dialog.ui:616
 msgid "User ID"
 msgstr "उपयोक्ता ID"
 
-#: src/ui/chatty-settings-dialog.ui:652
+#: src/ui/chatty-settings-dialog.ui:665
 msgid "Home server"
 msgstr "घरेलू सर्वर"
 
-#: src/ui/chatty-settings-dialog.ui:670
+#: src/ui/chatty-settings-dialog.ui:683
 msgid "_Add"
 msgstr "जोड़ें (_A)"
 
-#: src/ui/chatty-settings-dialog.ui:698
+#: src/ui/chatty-settings-dialog.ui:711
 msgid "Add _New Account"
 msgstr "नया खाता जोड़ें (_N)"
 
