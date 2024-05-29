@@ -72,6 +72,7 @@ build-alpine-edge:
         libadwaita-dev
         libgee-dev
         libphonenumber-dev
+        libsoup3-dev
         meson
         modemmanager-dev
         olm-dev
@@ -135,6 +136,7 @@ test:alpine-edge:
         libadwaita-dev
         libgee-dev
         libphonenumber-dev
+        libsoup3-dev
         meson
         modemmanager-dev
         olm-dev

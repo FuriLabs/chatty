@@ -22,7 +22,7 @@ Build-Depends:
  libpurple-dev,
  libolm-dev,
  libsecret-1-dev,
- libsoup2.4-dev,
+ libsoup-3.0-dev,
  libspelling-1-dev,
  libsqlite3-dev (>= 3.26.0),
  libebook1.2-dev,
