@@ -209,11 +209,11 @@ package:deb-debian-trixie:arm64:
     variables:
       - $FP_ONLY == "1"
 
-flatpak-gnome-45:
-  image: 'quay.io/gnome_infrastructure/gnome-runtime-images:gnome-45'
+flatpak-gnome-46:
+  image: 'quay.io/gnome_infrastructure/gnome-runtime-images:gnome-46'
   before_script: []
   extends: ".flatpak"
-  allow_failure: true
+  allow_failure: false
   variables:
     APP_ID: "sm.puri.Chatty.Devel"
     BUNDLE: "sm.puri.Chatty.Devel.flatpak"
