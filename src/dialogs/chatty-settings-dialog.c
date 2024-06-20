@@ -703,7 +703,7 @@ pgp_settings_save_button_clicked_cb (ChattySettingsDialog *self)
       pretty_fingerprint = chatty_pgp_get_pub_fingerprint (pgp_signing_id, TRUE);
       dialog_body = g_strdup_printf (_("The entered Key ID %s does not match the found PGP Key for %s:%s."), pgp_key_id, pgp_signing_id, pretty_fingerprint);
       window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
-      dialog = adw_alert_dialog_new (_("Cannot Signing Key"),
+      dialog = adw_alert_dialog_new (_("Cannot Find Signing Key"),
                                      dialog_body);
       adw_alert_dialog_add_response (ADW_ALERT_DIALOG (dialog), "close", _("Close"));
       adw_alert_dialog_add_response (ADW_ALERT_DIALOG (dialog), "i_know_what_im_doing", _("I Know What I am Doing"));
@@ -788,7 +788,7 @@ create_key_cb (GObject      *object,
 
   window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
   if (!chatty_pgp_create_key_finish (result, &error))
-    dialog = adw_alert_dialog_new (_("Cannot Signing Key"),
+    dialog = adw_alert_dialog_new (_("Cannot Create Signing Key"),
                                    _("Error creating the PGP ID. Please check the logs for more details."));
   else {
     g_autofree char *fingerprint = NULL;
@@ -870,7 +870,7 @@ pgp_settings_generate_button_clicked_cb (ChattySettingsDialog *self)
   if (pretty_fingerprint) {
     g_warning ("%s already has key with fingerprint %s", name_email, pretty_fingerprint);
     dialog_body = g_strdup_printf (_("%s already has key with fingerprint %s. Please choose a different PGP ID"), name_email, pretty_fingerprint);
-    dialog = adw_alert_dialog_new (_("Cannot Signing Key"),
+    dialog = adw_alert_dialog_new (_("Cannot Create Signing Key"),
                                      dialog_body);
     adw_alert_dialog_add_response (ADW_ALERT_DIALOG (dialog), "close", _("Close"));
 
