@@ -46,6 +46,7 @@
 #include "chatty-pp-account-details.h"
 #include "chatty-settings-dialog.h"
 #include "chatty-log.h"
+#include "chatty-pgp.h"
 
 /**
  * @short_description: Chatty settings Dialog
@@ -66,6 +67,9 @@ struct _ChattySettingsDialog
   GtkWidget      *save_button;
   GtkWidget      *mms_cancel_button;
   GtkWidget      *mms_save_button;
+  GtkWidget      *pgp_cancel_button;
+  GtkWidget      *pgp_save_button;
+  GtkWidget      *pgp_generate_button;
 
   GtkWidget      *notification_revealer;
   GtkWidget      *notification_label;
@@ -73,6 +77,7 @@ struct _ChattySettingsDialog
   GtkWidget      *main_stack;
   GtkWidget      *accounts_list_box;
   GtkWidget      *add_account_row;
+  GtkWidget      *pgp_settings_row;
 
   GtkWidget      *enable_purple_row;
   GtkWidget      *enable_purple_switch;
@@ -115,6 +120,12 @@ struct _ChattySettingsDialog
   GtkWidget      *purple_settings_row;
 
   GtkWidget      *matrix_homeserver_entry;
+
+  GtkWidget      *current_pgp_user_id_entry;
+  GtkWidget      *current_pgp_public_key_fingerprint_entry;
+  GtkWidget      *generate_pgp_user_id_entry;
+  GtkWidget      *generate_pgp_public_key_fingerprint_entry;
+  GtkWidget      *generate_pgp_passphrase_entry;
 
   ChattyMmAccount *mm_account;
   ChattySettings *settings;
@@ -542,6 +553,452 @@ sms_mms_settings_row_activated_cb (ChattySettingsDialog *self)
 }
 
 static void
+pgp_settings_save_current_key_signing_id (ChattySettingsDialog *self)
+{
+  const gchar *visible_child;
+  const char *pgp_key_id = NULL;
+  const char *pgp_signing_id = NULL;
+  GtkEntryBuffer *pgp_signing_id_buffer;
+  GtkEntryBuffer *pgp_key_id_buffer;
+
+  g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
+
+  pgp_signing_id_buffer = gtk_entry_get_buffer (GTK_ENTRY (self->current_pgp_user_id_entry));
+  pgp_key_id_buffer = gtk_entry_get_buffer (GTK_ENTRY (self->current_pgp_public_key_fingerprint_entry));
+
+  pgp_signing_id = gtk_entry_buffer_get_text (pgp_signing_id_buffer);
+  pgp_key_id = gtk_entry_buffer_get_text (pgp_key_id_buffer);
+
+  if (pgp_signing_id && *pgp_signing_id) {
+    g_autofree char *fingerprint = NULL;
+
+    fingerprint = chatty_pgp_get_pub_fingerprint (pgp_signing_id, FALSE);
+
+    if (!fingerprint || !*fingerprint) {
+      g_warning ("Cannot find a valid PGP Key for %s. Erasing the Settings", pgp_signing_id);
+      chatty_settings_set_pgp_user_id (self->settings, "");
+      chatty_settings_set_pgp_public_key_fingerprint (self->settings, "");
+    } else {
+      chatty_settings_set_pgp_user_id (self->settings, pgp_signing_id);
+
+      if (pgp_key_id && *pgp_key_id) {
+        unsigned int i;
+        GString *to_concat = g_string_new (NULL);
+        g_autofree char *formatted_key_id = NULL;
+        g_auto(GStrv) tokens = NULL;
+
+        tokens = g_strsplit_set (pgp_key_id, " ", -1);
+        for (i = 0; tokens[i] != NULL; i++) {
+          to_concat = g_string_append (to_concat, tokens[i]);
+        }
+        formatted_key_id = g_string_free (to_concat, FALSE);
+
+        if (g_strcmp0 (formatted_key_id, fingerprint) != 0)
+          g_warning ("The entered Key ID %s does not match the found PGP Key for %s:%s. User is (hopefully) aware", pgp_key_id, pgp_signing_id, fingerprint);
+
+        chatty_settings_set_pgp_public_key_fingerprint (self->settings, formatted_key_id);
+      } else
+        chatty_settings_set_pgp_public_key_fingerprint (self->settings, fingerprint);
+    }
+  } else {
+    chatty_settings_set_pgp_user_id (self->settings, "");
+    chatty_settings_set_pgp_public_key_fingerprint (self->settings, "");
+  }
+
+  visible_child = gtk_stack_get_visible_child_name (GTK_STACK (self->main_stack));
+
+  if (g_str_equal (visible_child, "generate-key-view"))
+    {
+      gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "pgp-settings-view");
+    }
+  else
+    {
+      gtk_widget_set_visible (self->pgp_cancel_button, FALSE);
+      gtk_widget_set_visible (self->pgp_save_button, FALSE);
+      gtk_widget_set_visible (self->back_button, FALSE);
+      adw_header_bar_set_show_end_title_buttons (ADW_HEADER_BAR (self->header_bar), TRUE);
+      gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "main-settings");
+    }
+}
+
+static void
+settings_dialog_key_id_error_cb (AdwMessageDialog *dialog,
+                                 const char       *response,
+                                 gpointer          user_data)
+
+{
+  ChattySettingsDialog *self = user_data;
+
+  g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
+
+  if (g_strcmp0 (response, "i_know_what_im_doing") == 0)
+    pgp_settings_save_current_key_signing_id (self);
+}
+
+
+static void
+pgp_settings_save_button_clicked_cb (ChattySettingsDialog *self)
+{
+  const char *pgp_key_id = NULL;
+  const char *pgp_signing_id = NULL;
+  GtkEntryBuffer *pgp_signing_id_buffer;
+  GtkEntryBuffer *pgp_key_id_buffer;
+
+  g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
+
+  pgp_signing_id_buffer = gtk_entry_get_buffer (GTK_ENTRY (self->current_pgp_user_id_entry));
+  pgp_key_id_buffer = gtk_entry_get_buffer (GTK_ENTRY (self->current_pgp_public_key_fingerprint_entry));
+
+  pgp_signing_id = gtk_entry_buffer_get_text (pgp_signing_id_buffer);
+  pgp_key_id = gtk_entry_buffer_get_text (pgp_key_id_buffer);
+
+
+  if (pgp_signing_id && *pgp_signing_id) {
+    g_autofree char *fingerprint = NULL;
+
+    fingerprint = chatty_pgp_get_pub_fingerprint (pgp_signing_id, FALSE);
+
+    if (!fingerprint || !*fingerprint) {
+      AdwDialog *dialog;
+      GtkWindow *window;
+      g_autofree char *dialog_body = NULL;
+
+      g_warning ("Invalid PGP Signing ID");
+      dialog_body = g_strdup_printf (_("Chatty cannot find a valid PGP Key for %s."), pgp_signing_id);
+      window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
+      dialog = adw_alert_dialog_new (_("Invalid Signing ID"),
+                                     dialog_body);
+      adw_alert_dialog_add_response (ADW_ALERT_DIALOG (dialog), "close", _("Close"));
+
+      adw_alert_dialog_set_default_response (ADW_ALERT_DIALOG (dialog), "close");
+      adw_alert_dialog_set_close_response (ADW_ALERT_DIALOG (dialog), "close");
+
+      adw_dialog_present (dialog, GTK_WIDGET (window));
+
+      return;
+    }
+
+    if (pgp_key_id && *pgp_key_id) {
+      unsigned int i;
+      GString *to_concat = g_string_new (NULL);
+      g_autofree char *formatted_key_id = NULL;
+      g_auto(GStrv) tokens = NULL;
+
+      tokens = g_strsplit_set (pgp_key_id, " ", -1);
+      for (i = 0; tokens[i] != NULL; i++) {
+        to_concat = g_string_append (to_concat, tokens[i]);
+      }
+     formatted_key_id = g_string_free (to_concat, FALSE);
+
+     if (g_strcmp0 (formatted_key_id, fingerprint) == 0)
+       pgp_settings_save_current_key_signing_id (self);
+     else {
+      AdwDialog *dialog;
+      GtkWindow *window;
+      g_autofree char *dialog_body = NULL;
+      g_autofree char *pretty_fingerprint = NULL;
+
+      g_warning ("Invalid PGP Signing ID");
+
+      pretty_fingerprint = chatty_pgp_get_pub_fingerprint (pgp_signing_id, TRUE);
+      dialog_body = g_strdup_printf (_("The entered Key ID %s does not match the found PGP Key for %s:%s."), pgp_key_id, pgp_signing_id, pretty_fingerprint);
+      window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
+      dialog = adw_alert_dialog_new (_("Cannot Signing Key"),
+                                     dialog_body);
+      adw_alert_dialog_add_response (ADW_ALERT_DIALOG (dialog), "close", _("Close"));
+      adw_alert_dialog_add_response (ADW_ALERT_DIALOG (dialog), "i_know_what_im_doing", _("I Know What I am Doing"));
+
+      adw_alert_dialog_set_default_response (ADW_ALERT_DIALOG (dialog), "close");
+      adw_alert_dialog_set_close_response (ADW_ALERT_DIALOG (dialog), "close");
+
+      adw_dialog_present (dialog, GTK_WIDGET (window));
+
+      g_signal_connect (dialog, "response", G_CALLBACK (settings_dialog_key_id_error_cb), self);
+      return;
+     }
+    } else
+      pgp_settings_save_current_key_signing_id (self);
+
+  } else
+    pgp_settings_save_current_key_signing_id (self);
+}
+
+static void
+pgp_settings_cancel_button_clicked_cb (ChattySettingsDialog *self)
+{
+  const gchar *visible_child;
+  g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
+
+  visible_child = gtk_stack_get_visible_child_name (GTK_STACK (self->main_stack));
+
+  if (g_str_equal (visible_child, "generate-key-view"))
+    {
+      GtkEntryBuffer *name_real_buffer;
+      GtkEntryBuffer *name_email_buffer;
+      GtkEntryBuffer *passphrase_buffer;
+
+      gtk_widget_set_visible (self->pgp_save_button, TRUE);
+      gtk_widget_set_visible (self->pgp_generate_button, FALSE);
+      gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "pgp-settings-view");
+      name_real_buffer = gtk_entry_get_buffer (GTK_ENTRY (self->generate_pgp_user_id_entry));
+      name_email_buffer = gtk_entry_get_buffer (GTK_ENTRY (self->generate_pgp_public_key_fingerprint_entry));
+      passphrase_buffer = gtk_entry_get_buffer (GTK_ENTRY (self->generate_pgp_passphrase_entry));
+      gtk_entry_buffer_set_text (name_real_buffer, "", -1);
+      gtk_entry_buffer_set_text (name_email_buffer, "", -1);
+      gtk_entry_buffer_set_text (passphrase_buffer, "", -1);
+    }
+  else
+    {
+      gtk_widget_set_visible (self->pgp_cancel_button, FALSE);
+      gtk_widget_set_visible (self->pgp_save_button, FALSE);
+      gtk_widget_set_visible (self->back_button, FALSE);
+      adw_header_bar_set_show_end_title_buttons (ADW_HEADER_BAR (self->header_bar), TRUE);
+      gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "main-settings");
+    }
+}
+
+static void
+create_key_cb (GObject      *object,
+               GAsyncResult *result,
+               gpointer      user_data)
+{
+  g_autoptr(GError) error = NULL;
+  ChattySettingsDialog *self = user_data;
+  const char *name_email = NULL;
+  GtkEntryBuffer *name_real_buffer;
+  GtkEntryBuffer *name_email_buffer;
+  GtkEntryBuffer *passphrase_buffer;
+  AdwDialog *dialog;
+  GtkWindow *window;
+
+  g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
+
+  gtk_widget_set_sensitive (self->generate_pgp_public_key_fingerprint_entry, TRUE);
+  gtk_widget_set_sensitive (self->generate_pgp_passphrase_entry, TRUE);
+  gtk_widget_set_sensitive (self->generate_pgp_user_id_entry, TRUE);
+  gtk_widget_set_sensitive (self->pgp_cancel_button, TRUE);
+  gtk_widget_set_sensitive (self->pgp_generate_button, TRUE);
+
+  name_real_buffer = gtk_entry_get_buffer (GTK_ENTRY (self->generate_pgp_user_id_entry));
+  name_email_buffer = gtk_entry_get_buffer (GTK_ENTRY (self->generate_pgp_public_key_fingerprint_entry));
+  passphrase_buffer = gtk_entry_get_buffer (GTK_ENTRY (self->generate_pgp_passphrase_entry));
+
+  name_email = gtk_entry_buffer_get_text (name_email_buffer);
+
+
+  window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
+  if (!chatty_pgp_create_key_finish (result, &error))
+    dialog = adw_alert_dialog_new (_("Cannot Signing Key"),
+                                   _("Error creating the PGP ID. Please check the logs for more details."));
+  else {
+    g_autofree char *fingerprint = NULL;
+    g_autofree char *pretty_fingerprint = NULL;
+    g_autofree char *dialog_body = NULL;
+    GtkEntryBuffer *pgp_signing_id_buffer;
+    GtkEntryBuffer *pgp_key_id_buffer;
+
+    pgp_signing_id_buffer = gtk_entry_get_buffer (GTK_ENTRY (self->current_pgp_user_id_entry));
+    pgp_key_id_buffer = gtk_entry_get_buffer (GTK_ENTRY (self->current_pgp_public_key_fingerprint_entry));
+
+    fingerprint = chatty_pgp_get_pub_fingerprint (name_email, FALSE);
+    pretty_fingerprint = chatty_pgp_get_pub_fingerprint (name_email, TRUE);
+    dialog_body = g_strdup_printf (_("Key %s was created for ID %s"), pretty_fingerprint, name_email);
+    dialog = adw_alert_dialog_new (_("Successfully Created Key"),
+                                   dialog_body);
+
+    chatty_settings_set_pgp_user_id (self->settings, name_email);
+    chatty_settings_set_pgp_public_key_fingerprint (self->settings, fingerprint);
+
+    gtk_entry_buffer_set_text (pgp_signing_id_buffer, name_email, -1);
+    gtk_entry_buffer_set_text (pgp_key_id_buffer, fingerprint, -1);
+
+    gtk_entry_buffer_set_text (name_real_buffer, "", -1);
+    gtk_entry_buffer_set_text (name_email_buffer, "", -1);
+    gtk_entry_buffer_set_text (passphrase_buffer, "", -1);
+
+    gtk_widget_set_visible (self->pgp_save_button, TRUE);
+    gtk_widget_set_visible (self->pgp_generate_button, FALSE);
+    gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "pgp-settings-view");
+  }
+
+  adw_alert_dialog_add_response (ADW_ALERT_DIALOG (dialog), "close", _("Close"));
+
+  adw_alert_dialog_set_default_response (ADW_ALERT_DIALOG (dialog), "close");
+  adw_alert_dialog_set_close_response (ADW_ALERT_DIALOG (dialog), "close");
+
+  adw_dialog_present (dialog, GTK_WIDGET (window));
+}
+
+static void
+pgp_settings_generate_button_clicked_cb (ChattySettingsDialog *self)
+{
+  AdwDialog *dialog;
+  GtkWindow *window;
+  g_autofree char *pretty_fingerprint = NULL;
+  g_autofree char *dialog_body = NULL;
+  const char *name_real = NULL;
+  const char *name_email = NULL;
+  const char *passphrase = NULL;
+  GtkEntryBuffer *name_real_buffer;
+  GtkEntryBuffer *name_email_buffer;
+  GtkEntryBuffer *passphrase_buffer;
+
+  g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
+
+  name_real_buffer = gtk_entry_get_buffer (GTK_ENTRY (self->generate_pgp_user_id_entry));
+  name_email_buffer = gtk_entry_get_buffer (GTK_ENTRY (self->generate_pgp_public_key_fingerprint_entry));
+  passphrase_buffer = gtk_entry_get_buffer (GTK_ENTRY (self->generate_pgp_passphrase_entry));
+
+  name_real = gtk_entry_buffer_get_text (name_real_buffer);
+  name_email = gtk_entry_buffer_get_text (name_email_buffer);
+  passphrase = gtk_entry_buffer_get_text (passphrase_buffer);
+
+  window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
+  if (!name_real || !*name_real || !name_email || !*name_email || !passphrase || !*passphrase) {
+      dialog = adw_alert_dialog_new (_("Empty Entries"),
+                                     _("All entries must be filled to create a PGP Key"));
+      adw_alert_dialog_add_response (ADW_ALERT_DIALOG (dialog), "close", _("Close"));
+
+      adw_alert_dialog_set_default_response (ADW_ALERT_DIALOG (dialog), "close");
+      adw_alert_dialog_set_close_response (ADW_ALERT_DIALOG (dialog), "close");
+
+      adw_dialog_present (dialog, GTK_WIDGET (window));
+      return;
+  }
+
+  pretty_fingerprint = chatty_pgp_get_pub_fingerprint (name_email, TRUE);
+  if (pretty_fingerprint) {
+    g_warning ("%s already has key with fingerprint %s", name_email, pretty_fingerprint);
+    dialog_body = g_strdup_printf (_("%s already has key with fingerprint %s. Please choose a different PGP ID"), name_email, pretty_fingerprint);
+    dialog = adw_alert_dialog_new (_("Cannot Signing Key"),
+                                     dialog_body);
+    adw_alert_dialog_add_response (ADW_ALERT_DIALOG (dialog), "close", _("Close"));
+
+    adw_alert_dialog_set_default_response (ADW_ALERT_DIALOG (dialog), "close");
+    adw_alert_dialog_set_close_response (ADW_ALERT_DIALOG (dialog), "close");
+
+    adw_dialog_present (dialog, GTK_WIDGET (window));
+    return;
+  }
+
+  if (!chatty_pgp_create_key_async (name_real,
+                                    name_email,
+                                    passphrase,
+                                    create_key_cb,
+                                    self)) {
+    dialog_body = g_strdup_printf (_("Error creating the PGP ID. Please check the logs for more details."));
+    dialog = adw_alert_dialog_new (_("Cannot Create Signing Key"),
+                                     dialog_body);
+    adw_alert_dialog_add_response (ADW_ALERT_DIALOG (dialog), "close", _("Close"));
+
+    adw_alert_dialog_set_default_response (ADW_ALERT_DIALOG (dialog), "close");
+    adw_alert_dialog_set_close_response (ADW_ALERT_DIALOG (dialog), "close");
+
+    adw_dialog_present (dialog, GTK_WIDGET (window));
+    return;
+  }
+
+  dialog_body = g_strdup_printf (_("Creating key for ID %s."), name_email);
+  dialog = adw_alert_dialog_new (_("Creating Key"),
+                                 dialog_body);
+  adw_alert_dialog_add_response (ADW_ALERT_DIALOG (dialog), "close", _("Close"));
+
+  adw_alert_dialog_set_default_response (ADW_ALERT_DIALOG (dialog), "close");
+  adw_alert_dialog_set_close_response (ADW_ALERT_DIALOG (dialog), "close");
+
+  adw_dialog_present (dialog, GTK_WIDGET (window));
+
+  gtk_widget_set_sensitive (self->generate_pgp_public_key_fingerprint_entry, FALSE);
+  gtk_widget_set_sensitive (self->generate_pgp_passphrase_entry, FALSE);
+  gtk_widget_set_sensitive (self->generate_pgp_user_id_entry, FALSE);
+  gtk_widget_set_sensitive (self->pgp_cancel_button, FALSE);
+  gtk_widget_set_sensitive (self->pgp_generate_button, FALSE);
+}
+
+static void
+settings_dialog_generate_key_error_cb (AdwMessageDialog *dialog,
+                                       const char       *response,
+                                       gpointer          user_data)
+
+{
+  ChattySettingsDialog *self = user_data;
+
+  g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
+
+  if (g_strcmp0 (response, "i_know_what_im_doing") == 0)
+    return;
+
+  pgp_settings_cancel_button_clicked_cb (self);
+}
+
+static void
+pgp_settings_generate_key_button_clicked_cb (ChattySettingsDialog *self)
+{
+  const char *pgp_signing_id = NULL;
+
+  g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
+
+  pgp_signing_id = chatty_settings_get_pgp_user_id (self->settings);
+
+  if (pgp_signing_id && *pgp_signing_id) {
+    AdwDialog *dialog;
+    GtkWindow *window;
+    g_autofree char *dialog_body = NULL;
+
+    g_warning ("Already have PGP Key");
+    dialog_body = g_strdup_printf (_("Chatty is currently set to use PGP key:%s. This will overwrite using the existing key!"), pgp_signing_id);
+    window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
+    dialog = adw_alert_dialog_new (_("Signing ID Present"),
+                                   dialog_body);
+    adw_alert_dialog_add_response (ADW_ALERT_DIALOG (dialog), "cancel", _("Cancel"));
+    adw_alert_dialog_add_response (ADW_ALERT_DIALOG (dialog), "i_know_what_im_doing", _("I Know What I am Doing"));
+
+    adw_alert_dialog_set_default_response (ADW_ALERT_DIALOG (dialog), "cancel");
+    adw_alert_dialog_set_close_response (ADW_ALERT_DIALOG (dialog), "cancel");
+
+    adw_dialog_present (dialog, GTK_WIDGET (window));
+
+    g_signal_connect (dialog, "response", G_CALLBACK (settings_dialog_generate_key_error_cb), self);
+  }
+  gtk_widget_set_visible (self->pgp_save_button, FALSE);
+  gtk_widget_set_visible (self->pgp_generate_button, TRUE);
+  gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "generate-key-view");
+}
+
+static void
+pgp_settings_row_activated_cb (ChattySettingsDialog *self)
+{
+  const char *pgp_signing_id = NULL;
+  const char *pgp_key_id = NULL;
+  GtkEntryBuffer *pgp_signing_id_buffer;
+  GtkEntryBuffer *pgp_key_id_buffer;
+  g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
+
+  pgp_signing_id = chatty_settings_get_pgp_user_id (self->settings);
+  pgp_key_id = chatty_settings_get_pgp_public_key_fingerprint (self->settings);
+
+  pgp_signing_id_buffer = gtk_entry_get_buffer (GTK_ENTRY (self->current_pgp_user_id_entry));
+  pgp_key_id_buffer = gtk_entry_get_buffer (GTK_ENTRY (self->current_pgp_public_key_fingerprint_entry));
+
+  if (pgp_signing_id && *pgp_signing_id)
+    gtk_entry_buffer_set_text (pgp_signing_id_buffer, pgp_signing_id, -1);
+  else
+    gtk_entry_buffer_set_text (pgp_signing_id_buffer, "", -1);
+
+  if (pgp_key_id && *pgp_key_id)
+    gtk_entry_buffer_set_text (pgp_key_id_buffer, pgp_key_id, -1);
+  else
+    gtk_entry_buffer_set_text (pgp_key_id_buffer, "", -1);
+
+  gtk_widget_set_visible (self->pgp_save_button, TRUE);
+  gtk_widget_set_visible (self->pgp_cancel_button, TRUE);
+  gtk_widget_set_visible (self->back_button, FALSE);
+  adw_header_bar_set_show_end_title_buttons (ADW_HEADER_BAR (self->header_bar), FALSE);
+
+  gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "pgp-settings-view");
+}
+
+static void
 purple_settings_row_activated_cb (ChattySettingsDialog *self)
 {
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
@@ -670,6 +1127,10 @@ settings_dialog_page_changed_cb (ChattySettingsDialog *self)
     adw_dialog_set_title (ADW_DIALOG (self), _("New Account"));
   else if (g_strcmp0 (name, "blocked-list-view") == 0)
     adw_dialog_set_title (ADW_DIALOG (self), _("Blocked Contacts"));
+  else if (g_strcmp0 (name, "pgp-settings-view") == 0)
+    adw_dialog_set_title (ADW_DIALOG (self), _("PGP Settings"));
+  else if (g_strcmp0 (name, "generate-key-view") == 0)
+    adw_dialog_set_title (ADW_DIALOG (self), _("New PGP Key"));
   else
     adw_dialog_set_title (ADW_DIALOG (self), _("Preferences"));
 }
@@ -1177,6 +1638,10 @@ chatty_settings_dialog_constructed (GObject *object)
   g_object_bind_property (settings, "return-sends-message",
                           self->return_sends_switch, "active",
                           G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
+
+  /* This isn't ready for general use yet */
+  gtk_widget_set_visible (self->pgp_settings_row,
+                          chatty_settings_get_experimental_features (self->settings));
 }
 
 static void
@@ -1215,6 +1680,9 @@ chatty_settings_dialog_class_init (ChattySettingsDialogClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, save_button);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, mms_cancel_button);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, mms_save_button);
+  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, pgp_cancel_button);
+  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, pgp_save_button);
+  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, pgp_generate_button);
 
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, notification_revealer);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, notification_label);
@@ -1225,6 +1693,7 @@ chatty_settings_dialog_class_init (ChattySettingsDialogClass *klass)
 
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, enable_purple_row);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, enable_purple_switch);
+  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, pgp_settings_row);
 
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, account_details_stack);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, pp_account_details);
@@ -1240,6 +1709,11 @@ chatty_settings_dialog_class_init (ChattySettingsDialogClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, new_account_settings_list);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, new_account_id_entry);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, new_password_entry);
+  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, current_pgp_user_id_entry);
+  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, current_pgp_public_key_fingerprint_entry);
+  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, generate_pgp_user_id_entry);
+  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, generate_pgp_public_key_fingerprint_entry);
+  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, generate_pgp_passphrase_entry);
 
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, delivery_reports_switch);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, clear_stuck_sms_switch);
@@ -1270,11 +1744,16 @@ chatty_settings_dialog_class_init (ChattySettingsDialogClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, settings_pp_details_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, settings_pp_details_delete_cb);
   gtk_widget_class_bind_template_callback (widget_class, sms_mms_settings_row_activated_cb);
+  gtk_widget_class_bind_template_callback (widget_class, pgp_settings_row_activated_cb);
   gtk_widget_class_bind_template_callback (widget_class, purple_settings_row_activated_cb);
   gtk_widget_class_bind_template_callback (widget_class, settings_phone_number_entry_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, mms_carrier_settings_cancel_button_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, mms_carrier_settings_apply_button_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, clear_stuck_sms_switch_switched_cb);
+  gtk_widget_class_bind_template_callback (widget_class, pgp_settings_cancel_button_clicked_cb);
+  gtk_widget_class_bind_template_callback (widget_class, pgp_settings_save_button_clicked_cb);
+  gtk_widget_class_bind_template_callback (widget_class, pgp_settings_generate_button_clicked_cb);
+  gtk_widget_class_bind_template_callback (widget_class, pgp_settings_generate_key_button_clicked_cb);
 
   gtk_widget_class_bind_template_callback (widget_class, account_list_row_activated_cb);
   gtk_widget_class_bind_template_callback (widget_class, blocked_list_action_activated_cb);
