@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-05-08 16:29+0000\n"
-"PO-Revision-Date: 2024-05-11 05:03+0200\n"
+"POT-Creation-Date: 2024-06-20 23:29+0000\n"
+"PO-Revision-Date: 2024-06-22 06:29+0200\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language-Team: Georgian <ka@li.org>\n"
 "Language: ka\n"
@@ -58,7 +58,7 @@ msgstr "გააგზავნოს თუ არა სტატუსი, �
 msgid "Message carbon copies"
 msgstr "შეტყობინების ასლები"
 
-#: data/sm.puri.Chatty.gschema.xml:26 src/ui/chatty-settings-dialog.ui:502
+#: data/sm.puri.Chatty.gschema.xml:26 src/ui/chatty-settings-dialog.ui:661
 msgid "Share chat history among devices"
 msgstr "საუბრის ისტორიის მოწყობილობებს შორის გაზიარება"
 
@@ -177,6 +177,26 @@ msgstr "ფანჯრის ზომა"
 msgid "Window size (width, height)."
 msgstr "ფანჯრის ზომა (სიგანე, სიმაღლე)"
 
+#: data/sm.puri.Chatty.gschema.xml:124
+msgid "PGP user ID"
+msgstr "PGP მომხმარებლის ID"
+
+#: data/sm.puri.Chatty.gschema.xml:125
+msgid "The user ID for PGP that Chatty will use for outgoing messages"
+msgstr ""
+"მომხმარებლის ID PGP-სთვის, რომელსაც Chatty გამავალი შეტყობინებებისთვის "
+"გამოიყენებს"
+
+#: data/sm.puri.Chatty.gschema.xml:130 src/ui/chatty-settings-dialog.ui:480
+msgid "Public Key Fingerprint"
+msgstr "საჯარო გასაღების ანაბეჭდი"
+
+#: data/sm.puri.Chatty.gschema.xml:131
+msgid "The default keyid the remote side should use to encrypt messages to us"
+msgstr ""
+"ნაგულისხმევი გასაღების ID დაშორებული მხრისთვის, რომელიც მან შეტყობინებების "
+"ჩვენთვის დასაშიფრად უნდა გამოიყენოს"
+
 #: data/sm.puri.Chatty.metainfo.xml.in.in:7
 msgid "Messaging application for mobile and desktop"
 msgstr "საუბრის აპლიკაცია კომპიუტერისა და მობილურისთვის"
@@ -233,11 +253,18 @@ msgstr ""
 "%s"
 
 #: src/chatty-application.c:202 src/chatty-manager.c:683
-#: src/chatty-message-bar.c:489 src/purple/chatty-purple-notify.c:35
+#: src/chatty-message-bar.c:493 src/purple/chatty-purple-notify.c:35
 #: src/purple/chatty-purple.c:199 src/purple/chatty-purple.c:619
 #: src/dialogs/chatty-new-chat-dialog.c:226
-#: src/dialogs/chatty-settings-dialog.c:202
-#: src/dialogs/chatty-settings-dialog.c:1076 src/ui/chatty-main-view.ui:73
+#: src/dialogs/chatty-settings-dialog.c:213
+#: src/dialogs/chatty-settings-dialog.c:671
+#: src/dialogs/chatty-settings-dialog.c:708
+#: src/dialogs/chatty-settings-dialog.c:824
+#: src/dialogs/chatty-settings-dialog.c:860
+#: src/dialogs/chatty-settings-dialog.c:875
+#: src/dialogs/chatty-settings-dialog.c:892
+#: src/dialogs/chatty-settings-dialog.c:904
+#: src/dialogs/chatty-settings-dialog.c:1537 src/ui/chatty-main-view.ui:73
 msgid "Close"
 msgstr "დახურვა"
 
@@ -473,16 +500,16 @@ msgstr "ანგარიშის დაკავშირება…"
 msgid "“%s” is not a valid URI"
 msgstr "%s არ წარმოადგენს სწორ URI-ის"
 
-#: src/chatty-message-bar.c:487 src/purple/chatty-purple.c:195
+#: src/chatty-message-bar.c:491 src/purple/chatty-purple.c:195
 #: src/chatty-window.c:361
 msgid "Alert"
 msgstr "გაფრთხილება"
 
-#: src/chatty-message-bar.c:488
+#: src/chatty-message-bar.c:492
 msgid "Found and automatically deleted tracking IDs from the pasted link."
 msgstr "ნაპოვნი და ავტომატურად წაშლილია ტრეკინგის ID-ები ჩასმული ბმულიდან."
 
-#: src/chatty-message-bar.c:490
+#: src/chatty-message-bar.c:494
 msgid "Don't Show Again"
 msgstr "აღარ მაჩვენო"
 
@@ -519,21 +546,21 @@ msgstr[0] "%i შეტყობინება"
 msgid "Any Protocol"
 msgstr "ნებისმიერი კლიენტი"
 
-#: src/chatty-side-bar.c:325 src/ui/chatty-settings-dialog.ui:572
+#: src/chatty-side-bar.c:325 src/ui/chatty-settings-dialog.ui:731
 msgid "Matrix"
 msgstr "Matrix"
 
 #: src/chatty-side-bar.c:326 src/dialogs/chatty-new-chat-dialog.c:634
-#: src/dialogs/chatty-settings-dialog.c:666
-#: src/ui/chatty-settings-dialog.ui:225
+#: src/dialogs/chatty-settings-dialog.c:1123
+#: src/ui/chatty-settings-dialog.ui:255
 msgid "SMS/MMS"
 msgstr "SMS/MMS"
 
-#: src/chatty-side-bar.c:329 src/ui/chatty-settings-dialog.ui:561
+#: src/chatty-side-bar.c:329 src/ui/chatty-settings-dialog.ui:720
 msgid "XMPP"
 msgstr "XMPP"
 
-#: src/chatty-side-bar.c:332 src/ui/chatty-settings-dialog.ui:585
+#: src/chatty-side-bar.c:332 src/ui/chatty-settings-dialog.ui:744
 msgid "Telegram"
 msgstr "ტელეგრამი"
 
@@ -543,7 +570,7 @@ msgstr "დაარქივებული"
 
 #: src/purple/chatty-purple-notify.c:26 src/purple/chatty-purple.c:613
 #: src/dialogs/chatty-new-chat-dialog.c:222
-#: src/dialogs/chatty-settings-dialog.c:198
+#: src/dialogs/chatty-settings-dialog.c:209
 msgid "Error"
 msgstr "შეცდომა"
 
@@ -560,7 +587,7 @@ msgstr "ფაილის გახსნა…"
 msgid "User %s has added %s to the contacts"
 msgstr "მომხმარებელმა %s-მა დაამატა %s კონტაქტებში"
 
-#: src/purple/chatty-purple.c:283 src/dialogs/chatty-settings-dialog.c:461
+#: src/purple/chatty-purple.c:283 src/dialogs/chatty-settings-dialog.c:472
 #: src/ui/chatty-ma-account-details.ui:162
 #: src/ui/chatty-pp-account-details.ui:154
 msgid "Delete Account"
@@ -577,10 +604,10 @@ msgid "Add %s to contact list"
 msgstr "%s-ის კონტაქტებში ჩამატება"
 
 #: src/purple/chatty-purple.c:293 src/chatty-window.c:365
-#: src/chatty-window.c:463 src/dialogs/chatty-settings-dialog.c:467
+#: src/chatty-window.c:463 src/dialogs/chatty-settings-dialog.c:478
 #: src/ui/chatty-dialog-wrong-pw.ui:23 src/ui/chatty-dialog-new-chat.ui:36
 #: src/ui/chatty-settings-dialog.ui:25 src/ui/chatty-settings-dialog.ui:55
-#: src/ui/chatty-verification-page.ui:129
+#: src/ui/chatty-settings-dialog.ui:75 src/ui/chatty-verification-page.ui:129
 #: src/ui/chatty-verification-page.ui:158
 msgid "_Cancel"
 msgstr "_გაუქმება"
@@ -948,7 +975,7 @@ msgstr "ჯგუფური ჩატი %s-დან გასვლა"
 msgid "This removes chat from chats list"
 msgstr "საუბრის საუბრების სიიდან წაშლა"
 
-#: src/chatty-window.c:464 src/dialogs/chatty-settings-dialog.c:468
+#: src/chatty-window.c:464 src/dialogs/chatty-settings-dialog.c:479
 msgid "Delete"
 msgstr "წაშლა"
 
@@ -1047,66 +1074,160 @@ msgstr "დაკავშირება…"
 msgid "disconnected"
 msgstr "გათიშულია"
 
-#: src/dialogs/chatty-settings-dialog.c:200
+#: src/dialogs/chatty-settings-dialog.c:211
 #, c-format
 msgid "Error saving account: %s"
 msgstr "ანგარიშის შენახვის შეცდომა: %s"
 
-#: src/dialogs/chatty-settings-dialog.c:255
+#: src/dialogs/chatty-settings-dialog.c:266
 #, c-format
 msgid "Failed to verify server: %s"
 msgstr "სერვერის შემოწმების შეცდომა: %s"
 
-#: src/dialogs/chatty-settings-dialog.c:257
+#: src/dialogs/chatty-settings-dialog.c:268
 msgid "Failed to verify server"
 msgstr "სერვერის შემოწმების შეცდომა"
 
-#: src/dialogs/chatty-settings-dialog.c:263
+#: src/dialogs/chatty-settings-dialog.c:274
 msgid "Couldn't get Home server address"
 msgstr "სახლის სერვერის მისამართის პოვნის შეცდომა"
 
-#: src/dialogs/chatty-settings-dialog.c:463
+#: src/dialogs/chatty-settings-dialog.c:474
 #, c-format
 msgid "Delete account %s?"
 msgstr "წავშალო ანგარიში %s?"
 
-#: src/dialogs/chatty-settings-dialog.c:652
+#: src/dialogs/chatty-settings-dialog.c:667
+#, c-format
+msgid "Chatty cannot find a valid PGP Key for %s."
+msgstr "Chatty-მა ვერ იპოვა სწორი PGP გასაღები %s-სთვის."
+
+#: src/dialogs/chatty-settings-dialog.c:669
+msgid "Invalid Signing ID"
+msgstr "არასწორი ხელმოწერის ID"
+
+#: src/dialogs/chatty-settings-dialog.c:704
+#, c-format
+msgid "The entered Key ID %s does not match the found PGP Key for %s:%s."
+msgstr ""
+"შეყვანილი გასაღები ID-ით %s აარ ემთხვევა აღმოჩენილ PGP გასაღებს %s-სთვის: %s."
+
+#: src/dialogs/chatty-settings-dialog.c:706
+msgid "Cannot Find Signing Key"
+msgstr "ხელმოწერის გასაღები ვერ ვიპოვე"
+
+#: src/dialogs/chatty-settings-dialog.c:709
+#: src/dialogs/chatty-settings-dialog.c:954
+msgid "I Know What I am Doing"
+msgstr "ვიცი, რას ვაკეთებ"
+
+#: src/dialogs/chatty-settings-dialog.c:791
+#: src/dialogs/chatty-settings-dialog.c:873
+#: src/dialogs/chatty-settings-dialog.c:890
+msgid "Cannot Create Signing Key"
+msgstr "ხელმოწერის გასაღების შექმნა შეუძლებელია"
+
+#: src/dialogs/chatty-settings-dialog.c:792
+#: src/dialogs/chatty-settings-dialog.c:889
+#, c-format
+msgid "Error creating the PGP ID. Please check the logs for more details."
+msgstr "PGP ID-ის შექმნის შეცდომა. მეტი დეტალებისთვის იხილეთ ჟურნალი."
+
+#: src/dialogs/chatty-settings-dialog.c:805
+#, c-format
+msgid "Key %s was created for ID %s"
+msgstr "შეიქმნა გასაღები %s ID-სთვის %s"
+
+#: src/dialogs/chatty-settings-dialog.c:806
+msgid "Successfully Created Key"
+msgstr "გასაღები წარმატებით შეიქმნა"
+
+#: src/dialogs/chatty-settings-dialog.c:858
+msgid "Empty Entries"
+msgstr "ცარიელი ჩანაწერები"
+
+#: src/dialogs/chatty-settings-dialog.c:859
+msgid "All entries must be filled to create a PGP Key"
+msgstr "PGP გასაღების შესაქმნელად ყველა ჩანაწერი უნდა შეავსოთ"
+
+#: src/dialogs/chatty-settings-dialog.c:872
+#, c-format
+msgid ""
+"%s already has key with fingerprint %s. Please choose a different PGP ID"
+msgstr "%s-ს უკვე აქვს გასაღები ანაბეჭდდით %s. აირჩიეთ სხვა PGP ID"
+
+#: src/dialogs/chatty-settings-dialog.c:901
+#, c-format
+msgid "Creating key for ID %s."
+msgstr "იქმნება გასაღები ID-სთვის %s."
+
+#: src/dialogs/chatty-settings-dialog.c:902
+msgid "Creating Key"
+msgstr "მიმდინარეობს გასაღების შექმნა"
+
+#: src/dialogs/chatty-settings-dialog.c:949
+#, c-format
+msgid ""
+"Chatty is currently set to use PGP key:%s. This will overwrite using the "
+"existing key!"
+msgstr ""
+"Chatty ამჟამად იყენებს PGP გასაღებს: %s. ეს არსებულ გასაღებს თავზე გადააწერს!"
+
+#: src/dialogs/chatty-settings-dialog.c:951
+msgid "Signing ID Present"
+msgstr "ხელმოწერის ID არსებობს"
+
+#: src/dialogs/chatty-settings-dialog.c:953 src/ui/chatty-dialog-join-muc.ui:16
+#: src/ui/chatty-info-dialog.ui:26 src/ui/chatty-info-dialog.ui:35
+msgid "Cancel"
+msgstr "გაუქმება"
+
+#: src/dialogs/chatty-settings-dialog.c:1109
 msgid "Restart Chatty to disable Purple"
 msgstr "Purple-ს გასათიშად გადატვირთეთ Chatty"
 
-#: src/dialogs/chatty-settings-dialog.c:668
-#: src/ui/chatty-settings-dialog.ui:243
+#: src/dialogs/chatty-settings-dialog.c:1125
+#: src/ui/chatty-settings-dialog.ui:290
 msgid "Purple"
 msgstr "იისფერი"
 
-#: src/dialogs/chatty-settings-dialog.c:670
+#: src/dialogs/chatty-settings-dialog.c:1127
 msgid "New Account"
 msgstr "ახალი ანგარიში"
 
-#: src/dialogs/chatty-settings-dialog.c:672
-#: src/ui/chatty-settings-dialog.ui:316
+#: src/dialogs/chatty-settings-dialog.c:1129
+#: src/ui/chatty-settings-dialog.ui:363
 msgid "Blocked Contacts"
 msgstr "დაბლოკილი კონტაქტები"
 
-#: src/dialogs/chatty-settings-dialog.c:674 src/ui/chatty-side-bar.ui:110
+#: src/dialogs/chatty-settings-dialog.c:1131
+#: src/ui/chatty-settings-dialog.ui:272
+msgid "PGP Settings"
+msgstr "PGP-ის მორგება"
+
+#: src/dialogs/chatty-settings-dialog.c:1133
+msgid "New PGP Key"
+msgstr "ახალი PGP გასაღები"
+
+#: src/dialogs/chatty-settings-dialog.c:1135 src/ui/chatty-side-bar.ui:110
 msgid "Preferences"
 msgstr "მორგება"
 
-#: src/dialogs/chatty-settings-dialog.c:702
-#: src/ui/chatty-pp-account-details.ui:81 src/ui/chatty-settings-dialog.ui:215
+#: src/dialogs/chatty-settings-dialog.c:1163
+#: src/ui/chatty-pp-account-details.ui:81 src/ui/chatty-settings-dialog.ui:245
 msgid "Protocol"
 msgstr "პროტოკოლი"
 
 #. TRANSLATORS: Only translate 'or'
-#: src/dialogs/chatty-settings-dialog.c:963
+#: src/dialogs/chatty-settings-dialog.c:1424
 msgid "@user:matrix.org or user@example.com"
 msgstr "@user:matrix.org ან user@example.com"
 
-#: src/dialogs/chatty-settings-dialog.c:1074
+#: src/dialogs/chatty-settings-dialog.c:1535
 msgid "Experimental Setting!"
 msgstr "ექსპერიმენტული თვისება!"
 
-#: src/dialogs/chatty-settings-dialog.c:1075
+#: src/dialogs/chatty-settings-dialog.c:1536
 msgid ""
 "This setting is experimental and may cause loss of SMS. Use at your own risk!"
 msgstr ""
@@ -1232,18 +1353,13 @@ msgid "Please re-enter the Password."
 msgstr "თავიდან შეიყვანეთ პაროლი."
 
 #: src/ui/chatty-dialog-wrong-pw.ui:53 src/ui/chatty-pp-account-details.ui:129
-#: src/ui/chatty-settings-dialog.ui:639
+#: src/ui/chatty-settings-dialog.ui:798
 msgid "Password"
 msgstr "პაროლი"
 
 #: src/ui/chatty-dialog-join-muc.ui:7
 msgid "New Group Chat"
 msgstr "ახალი ჯგუფური საუბარი"
-
-#: src/ui/chatty-dialog-join-muc.ui:16 src/ui/chatty-info-dialog.ui:26
-#: src/ui/chatty-info-dialog.ui:35
-msgid "Cancel"
-msgstr "გაუქმება"
 
 #: src/ui/chatty-dialog-join-muc.ui:22
 msgid "Join Chat"
@@ -1469,125 +1585,175 @@ msgstr "საკუთარი ანაბეჭდი"
 msgid "_Save"
 msgstr "შ_ენახვა"
 
-#: src/ui/chatty-settings-dialog.ui:45
+#: src/ui/chatty-settings-dialog.ui:45 src/ui/chatty-settings-dialog.ui:65
+#: src/ui/chatty-settings-dialog.ui:85
 msgid "_Apply"
 msgstr "_გადატარება"
 
-#: src/ui/chatty-settings-dialog.ui:106
+#: src/ui/chatty-settings-dialog.ui:136
 msgid "Accounts"
 msgstr "ანგარიშები"
 
-#: src/ui/chatty-settings-dialog.ui:123 src/ui/chatty-settings-dialog.ui:480
+#: src/ui/chatty-settings-dialog.ui:153 src/ui/chatty-settings-dialog.ui:639
 msgid "Privacy"
 msgstr "პირადი ინფორმაცია"
 
-#: src/ui/chatty-settings-dialog.ui:128
+#: src/ui/chatty-settings-dialog.ui:158
 msgid "Read Receipts"
 msgstr "წაკითხულობის ანგარიშები"
 
-#: src/ui/chatty-settings-dialog.ui:141
+#: src/ui/chatty-settings-dialog.ui:171
 msgid "Typing Indicators"
 msgstr "კრეფის მაჩვენებლები"
 
-#: src/ui/chatty-settings-dialog.ui:154
+#: src/ui/chatty-settings-dialog.ui:184
 msgid "Remove Tracking IDs From URLs"
 msgstr "ტრეკინგის ID-ების წაშლა URL-ებიდან"
 
-#: src/ui/chatty-settings-dialog.ui:167
+#: src/ui/chatty-settings-dialog.ui:197
 msgid "Show Attachment Previews"
 msgstr "მიმაგრებული ფაილების მინიატურების ჩვენება"
 
-#: src/ui/chatty-settings-dialog.ui:183
+#: src/ui/chatty-settings-dialog.ui:213
 msgid "Editor"
 msgstr "რედაქტორი"
 
-#: src/ui/chatty-settings-dialog.ui:187
+#: src/ui/chatty-settings-dialog.ui:217
 msgid "Convert Emoticons"
 msgstr "სიცილაკების გადაყვანა"
 
-#: src/ui/chatty-settings-dialog.ui:188
+#: src/ui/chatty-settings-dialog.ui:218
 msgid "When you type :) it will be changed to 😃"
 msgstr "თუ თქვენ აკრეფთ :) ის შეიცვლება 😃-ზე"
 
 #. TRANSLATORS: Return is the Enter key.
-#: src/ui/chatty-settings-dialog.ui:201
+#: src/ui/chatty-settings-dialog.ui:231
 msgid "Send Messages With Enter"
 msgstr "შეტყობინებების Enter ღილაკით გაგზავნა"
 
-#: src/ui/chatty-settings-dialog.ui:276
+#: src/ui/chatty-settings-dialog.ui:323
 msgid "Request Delivery Reports"
 msgstr "შეტყობინების მიღების ანგარიშის მოთხოვნა"
 
-#: src/ui/chatty-settings-dialog.ui:288
+#: src/ui/chatty-settings-dialog.ui:335
 msgid "Clear Stuck SMS"
 msgstr "გაჭედილი SMS-ების მოცილება"
 
-#: src/ui/chatty-settings-dialog.ui:302
+#: src/ui/chatty-settings-dialog.ui:349
 msgid "SMIL for MMS"
 msgstr "SMIL MMS-თვის"
 
-#: src/ui/chatty-settings-dialog.ui:334
+#: src/ui/chatty-settings-dialog.ui:381
 msgid "MMS Carrier Settings"
 msgstr "MMS-ის პროვაიდერის მორგება"
 
-#: src/ui/chatty-settings-dialog.ui:338
+#: src/ui/chatty-settings-dialog.ui:385
 msgid "Phone Number"
 msgstr "ტელეფონის ნომერი"
 
-#: src/ui/chatty-settings-dialog.ui:344
+#: src/ui/chatty-settings-dialog.ui:391
 msgid "Your modem's phone number"
 msgstr "თქვენი მოდემის ტელეფონის ნომერი"
 
-#: src/ui/chatty-settings-dialog.ui:352
+#: src/ui/chatty-settings-dialog.ui:399
 msgid "MMSC"
 msgstr "MMSC"
 
-#: src/ui/chatty-settings-dialog.ui:364
+#: src/ui/chatty-settings-dialog.ui:411
 msgid "APN"
 msgstr "APN"
 
-#: src/ui/chatty-settings-dialog.ui:376
+#: src/ui/chatty-settings-dialog.ui:423
 msgid "Proxy"
 msgstr "პროქსი"
 
-#: src/ui/chatty-settings-dialog.ui:403
+#: src/ui/chatty-settings-dialog.ui:447
+msgid "Current PGP Key"
+msgstr "მიმდინარე PGP გასაღები"
+
+#: src/ui/chatty-settings-dialog.ui:448
+msgid ""
+"Chatty can use any existing key embedded with gpg. However, you are given "
+"the option to generate a key specifically for Chatty below."
+msgstr ""
+"Chatty-ის შეუძლია, gpg-ით ნებისმიერი არსებული გასაღები გამოიყენოს. ამავე "
+"დროს გეძლევათ საშუალება, ქვემოთ, გასაღები, მხოლოდ, Chatty-სთვის დააგენერიროთ."
+
+#: src/ui/chatty-settings-dialog.ui:453
+msgid "Generate Chatty PGP Key"
+msgstr "Chatty-ის PGP გასაღებს გენერაცია"
+
+#: src/ui/chatty-settings-dialog.ui:467
+msgid "Signing ID"
+msgstr "ხელმოწერის ID"
+
+#: src/ui/chatty-settings-dialog.ui:472
+msgid "foo@example.com"
+msgstr "doylapia@gruzineti.com"
+
+#: src/ui/chatty-settings-dialog.ui:485
+msgid "Optional"
+msgstr "არასავალდებულო"
+
+#: src/ui/chatty-settings-dialog.ui:505
+msgid ""
+"This will generate a key for use with Chatty. Please note that this will not "
+"install the key on a smart card."
+msgstr ""
+"ეს Chatty-სთვის გასაღებს დააგენერირებს. დაიმახსოვრეთ, რომ ეს ამ გასაღებს "
+"ჭკვიან ბარათზე არ დააყენებს."
+
+#: src/ui/chatty-settings-dialog.ui:508
+msgid "Full Name"
+msgstr "სრული სახელი"
+
+#: src/ui/chatty-settings-dialog.ui:520
+#| msgid "XMPP ID"
+msgid "PGP ID"
+msgstr "PGP ID"
+
+#: src/ui/chatty-settings-dialog.ui:533
+msgid "PGP Passphrase"
+msgstr "PGP საკვანძო ფრაზა"
+
+#: src/ui/chatty-settings-dialog.ui:562
 msgid "You won't be notified by messages from blocked contacts"
 msgstr ""
 "დაბლოკილი მომხმარებლებისგან შეტყობინებების შესახებ გაფრთხილებები აღარ მოგივათ"
 
-#: src/ui/chatty-settings-dialog.ui:434
+#: src/ui/chatty-settings-dialog.ui:593
 msgid "No Blocked Chats"
 msgstr "დაბლოკილი საუბრების გარეშე"
 
-#: src/ui/chatty-settings-dialog.ui:463
+#: src/ui/chatty-settings-dialog.ui:622
 msgid "Enable Purple Accounts"
 msgstr "Purple-ის ანგარიშების ჩართვა"
 
-#: src/ui/chatty-settings-dialog.ui:486
+#: src/ui/chatty-settings-dialog.ui:645
 msgid "Message Archive Management"
 msgstr "შეტყობინებების არქივის მართვა"
 
-#: src/ui/chatty-settings-dialog.ui:487
+#: src/ui/chatty-settings-dialog.ui:646
 msgid "Sync conversations with chat server"
 msgstr "საუბრის სერვერთან საუბრების სინქრონიზაცია"
 
-#: src/ui/chatty-settings-dialog.ui:501
+#: src/ui/chatty-settings-dialog.ui:660
 msgid "Message Carbon Copies"
 msgstr "შეტყობინების ასლები"
 
-#: src/ui/chatty-settings-dialog.ui:616
+#: src/ui/chatty-settings-dialog.ui:775
 msgid "User ID"
 msgstr "მომხმარებლის ID"
 
-#: src/ui/chatty-settings-dialog.ui:665
+#: src/ui/chatty-settings-dialog.ui:824
 msgid "Home server"
 msgstr "სახლის სერვერი"
 
-#: src/ui/chatty-settings-dialog.ui:683
+#: src/ui/chatty-settings-dialog.ui:842
 msgid "_Add"
 msgstr "_დამატება"
 
-#: src/ui/chatty-settings-dialog.ui:711
+#: src/ui/chatty-settings-dialog.ui:870
 msgid "Add _New Account"
 msgstr "ახალი ა_ნგარიშის დამატება"
 
