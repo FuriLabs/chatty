@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-06-25 12:44+0000\n"
-"PO-Revision-Date: 2024-06-25 15:04+0200\n"
+"POT-Creation-Date: 2024-06-25 13:53+0000\n"
+"PO-Revision-Date: 2024-06-25 16:34+0200\n"
 "Last-Translator: Daniel Rusek <mail@asciiwolf.com>\n"
 "Language-Team: Czech\n"
 "Language: cs\n"
@@ -1174,10 +1174,10 @@ msgstr "Vytváření klíče"
 #: src/dialogs/chatty-settings-dialog.c:949
 #, c-format
 msgid ""
-"Chatty is currently set to use PGP key:%s. This will overwrite using the "
+"Chatty is currently set to use PGP key: %s. This will overwrite using the "
 "existing key!"
 msgstr ""
-"Chatty je aktuálně nastaveno na použití klíče PGP:%s. Tímto se přepíše "
+"Chatty je aktuálně nastaveno na použití klíče PGP: %s. Tímto se přepíše "
 "použití stávajícího klíče!"
 
 #: src/dialogs/chatty-settings-dialog.c:951
