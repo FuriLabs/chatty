@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-06-20 23:29+0000\n"
-"PO-Revision-Date: 2024-06-25 14:36+0200\n"
+"POT-Creation-Date: 2024-06-25 12:44+0000\n"
+"PO-Revision-Date: 2024-06-25 15:04+0200\n"
 "Last-Translator: Daniel Rusek <mail@asciiwolf.com>\n"
 "Language-Team: Czech\n"
 "Language: cs\n"
@@ -1178,7 +1178,7 @@ msgid ""
 "existing key!"
 msgstr ""
 "Chatty je aktuálně nastaveno na použití klíče PGP:%s. Tímto se přepíše "
-"pomocí stávajícího klíče!"
+"použití stávajícího klíče!"
 
 #: src/dialogs/chatty-settings-dialog.c:951
 msgid "Signing ID Present"
@@ -1719,7 +1719,6 @@ msgid "Full Name"
 msgstr "Celé jméno"
 
 #: src/ui/chatty-settings-dialog.ui:520
-#| msgid "XMPP ID"
 msgid "PGP ID"
 msgstr "PGP ID"
 
