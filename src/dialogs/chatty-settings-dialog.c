@@ -946,7 +946,7 @@ pgp_settings_generate_key_button_clicked_cb (ChattySettingsDialog *self)
     g_autofree char *dialog_body = NULL;
 
     g_warning ("Already have PGP Key");
-    dialog_body = g_strdup_printf (_("Chatty is currently set to use PGP key:%s. This will overwrite using the existing key!"), pgp_signing_id);
+    dialog_body = g_strdup_printf (_("Chatty is currently set to use PGP key: %s. This will overwrite using the existing key!"), pgp_signing_id);
     window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
     dialog = adw_alert_dialog_new (_("Signing ID Present"),
                                    dialog_body);
