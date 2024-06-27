@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-06-20 23:29+0000\n"
-"PO-Revision-Date: 2024-06-21 17:00+0300\n"
+"POT-Creation-Date: 2024-06-25 13:53+0000\n"
+"PO-Revision-Date: 2024-06-27 23:33+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian\n"
 "Language: uk\n"
@@ -183,26 +183,24 @@ msgid "Window size (width, height)."
 msgstr "Розмір вікна (ширина, висота)."
 
 #: data/sm.puri.Chatty.gschema.xml:124
-#| msgid "User ID"
 msgid "PGP user ID"
 msgstr "Ід. користувача PGP"
 
 #: data/sm.puri.Chatty.gschema.xml:125
 msgid "The user ID for PGP that Chatty will use for outgoing messages"
 msgstr ""
-"Ідентифікатор користувача для PGP, який Chatty використовуватиме для"
-" вихідних повідомлень"
+"Ідентифікатор користувача для PGP, який Chatty використовуватиме для "
+"вихідних повідомлень"
 
 #: data/sm.puri.Chatty.gschema.xml:130 src/ui/chatty-settings-dialog.ui:480
-#| msgid "Own Fingerprint"
 msgid "Public Key Fingerprint"
 msgstr "Відбиток відкритого ключа"
 
 #: data/sm.puri.Chatty.gschema.xml:131
 msgid "The default keyid the remote side should use to encrypt messages to us"
 msgstr ""
-"Типовий ідентифікатор ключа, який віддалена сторона має використовувати для"
-" шифрування повідомлень до нас"
+"Типовий ідентифікатор ключа, який віддалена сторона має використовувати для "
+"шифрування повідомлень до нас"
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:7
 msgid "Messaging application for mobile and desktop"
@@ -1156,8 +1154,8 @@ msgstr "Не вдалося створити ключ підписування"
 #, c-format
 msgid "Error creating the PGP ID. Please check the logs for more details."
 msgstr ""
-"Помилка під час спроби створити ідентифікатор PGP. Будь ласка, ознайомтеся"
-" із журналом, щоб дізнатися більше."
+"Помилка під час спроби створити ідентифікатор PGP. Будь ласка, ознайомтеся "
+"із журналом, щоб дізнатися більше."
 
 #: src/dialogs/chatty-settings-dialog.c:805
 #, c-format
@@ -1169,7 +1167,6 @@ msgid "Successfully Created Key"
 msgstr "Успішно створений ключ"
 
 #: src/dialogs/chatty-settings-dialog.c:858
-#| msgid "Empty room"
 msgid "Empty Entries"
 msgstr "Порожні записи"
 
@@ -1182,8 +1179,8 @@ msgstr "Для створення ключа PGP слід заповнити у�
 msgid ""
 "%s already has key with fingerprint %s. Please choose a different PGP ID"
 msgstr ""
-"%s уже містить ключ із відбитком %s. Будь ласка, виберіть інший"
-" ідентифікатор PGP"
+"%s уже містить ключ із відбитком %s. Будь ласка, виберіть інший "
+"ідентифікатор PGP"
 
 #: src/dialogs/chatty-settings-dialog.c:901
 #, c-format
@@ -1191,18 +1188,20 @@ msgid "Creating key for ID %s."
 msgstr "Створення ключа для ідентифікатора %s."
 
 #: src/dialogs/chatty-settings-dialog.c:902
-#| msgid "Create"
 msgid "Creating Key"
 msgstr "Створення ключа"
 
 #: src/dialogs/chatty-settings-dialog.c:949
 #, c-format
+#| msgid ""
+#| "Chatty is currently set to use PGP key:%s. This will overwrite using the "
+#| "existing key!"
 msgid ""
-"Chatty is currently set to use PGP key:%s. This will overwrite using the "
+"Chatty is currently set to use PGP key: %s. This will overwrite using the "
 "existing key!"
 msgstr ""
-"Зараз Chatty налаштовано на використання ключа PGP:%s. У результаті буде"
-" виконано перезапис з використанням наявного ключа!"
+"Зараз Chatty налаштовано на використання ключа PGP: %s. У результаті буде "
+"виконано перезапис з використанням наявного ключа!"
 
 #: src/dialogs/chatty-settings-dialog.c:951
 msgid "Signing ID Present"
@@ -1233,7 +1232,6 @@ msgstr "Заблоковані контакти"
 
 #: src/dialogs/chatty-settings-dialog.c:1131
 #: src/ui/chatty-settings-dialog.ui:272
-#| msgid "Purple Settings"
 msgid "PGP Settings"
 msgstr "Параметри PGP"
 
@@ -1714,9 +1712,9 @@ msgid ""
 "Chatty can use any existing key embedded with gpg. However, you are given "
 "the option to generate a key specifically for Chatty below."
 msgstr ""
-"Chatty може використовувати будь-який наявний ключ, який вбудовано за"
-" допомогою gpg. Втім, нижче ви можете вибрати варіант зі створенням ключа"
-" спеціально для Chatty."
+"Chatty може використовувати будь-який наявний ключ, який вбудовано за "
+"допомогою gpg. Втім, нижче ви можете вибрати варіант зі створенням ключа "
+"спеціально для Chatty."
 
 #: src/ui/chatty-settings-dialog.ui:453
 msgid "Generate Chatty PGP Key"
@@ -1731,7 +1729,6 @@ msgid "foo@example.com"
 msgstr "щось@example.com"
 
 #: src/ui/chatty-settings-dialog.ui:485
-#| msgid "Name (optional)"
 msgid "Optional"
 msgstr "Необов'язковий"
 
@@ -1740,16 +1737,14 @@ msgid ""
 "This will generate a key for use with Chatty. Please note that this will not "
 "install the key on a smart card."
 msgstr ""
-"У результаті буде створено ключ для використання у Chatty. Будь ласка,"
-" зауважте, що у результаті ключ не буде встановлено на картку пам'яті."
+"У результаті буде створено ключ для використання у Chatty. Будь ласка, "
+"зауважте, що у результаті ключ не буде встановлено на картку пам'яті."
 
 #: src/ui/chatty-settings-dialog.ui:508
-#| msgid "Name"
 msgid "Full Name"
 msgstr "Ім'я повністю"
 
 #: src/ui/chatty-settings-dialog.ui:520
-#| msgid "XMPP ID"
 msgid "PGP ID"
 msgstr "Ід. PGP"
 
