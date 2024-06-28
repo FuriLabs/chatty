@@ -31,6 +31,7 @@ const char       *chatty_ma_account_get_homeserver     (ChattyMaAccount *self);
 void              chatty_ma_account_set_homeserver     (ChattyMaAccount *self,
                                                         const char      *server_url);
 const char       *chatty_ma_account_get_device_id      (ChattyMaAccount *self);
+const char       *chatty_ma_account_get_access_token   (ChattyMaAccount *self);
 GListModel       *chatty_ma_account_get_chat_list      (ChattyMaAccount *self);
 void              chatty_ma_account_send_file          (ChattyMaAccount *self,
                                                         ChattyChat      *chat,

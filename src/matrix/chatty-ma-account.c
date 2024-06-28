@@ -716,6 +716,22 @@ chatty_ma_account_get_device_id (ChattyMaAccount *self)
   return "";
 }
 
+
+const char *
+chatty_ma_account_get_access_token (ChattyMaAccount *self)
+{
+  const char *access_token;
+  g_return_val_if_fail (CHATTY_IS_MA_ACCOUNT (self), "");
+
+  access_token = cm_client_get_access_token (self->cm_client);
+
+  if (access_token)
+    return access_token;
+
+  return "";
+}
+
+
 GListModel *
 chatty_ma_account_get_chat_list (ChattyMaAccount *self)
 {
