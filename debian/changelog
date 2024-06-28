@@ -1,3 +1,65 @@
+chatty (0.8.4) unstable; urgency=medium
+
+  [ Chris Talbot ]
+  * settings: Add setting on whether to clear out stuck SMS
+  * settings-dialog: Add switch for clear SMS
+  * mm-account: clear out stuck receiving messages
+  * Message-bar: have GtkSourceView account for dark and high contrast
+  * CI: Update dependencies to libsoup3
+  * contact-provider: always notify that eds is ready
+  * tests: don't test sms v0 sql files
+  * README: Comment on Experimental Features
+  * settings: Add settings for PGP signing and key ID
+  * pgp: Don't let pub-keys collide in filename
+  * pgp: Add abilty to generate PGP keys
+  * pgp: allow public fingerprint to have pretty formatting
+  * settings-dialog: Add option to set or generate PGP key
+  * settings-dialog: Fix title phrasing
+
+  [ Yaron Shahrabani ]
+  * Update Hebrew translation
+
+  [ Danial Behzadi ]
+  * Update Persian translation
+
+  [ Yuri Chornoivan ]
+  * Update Ukrainian translation
+
+  [ Ekaterine Papava ]
+  * Update Georgian translation
+
+  [ Scrambled 777 ]
+  * Add Hindi translation
+  * Update Hindi translation
+
+  [ Anders Jonsson ]
+  * Update Swedish translation
+
+  [ Daniel Rusek ]
+  * settings-dialog: Fix typo
+  * Update Czech translation
+
+  [ Daniel Șerbănescu ]
+  * Update Romanian translation
+
+  [ Juliano de Souza Camargo ]
+  * Update Brazilian Portuguese translation
+
+  [ Artur S0 ]
+  * Update Russian translation
+
+  [ Marco Ciampa ]
+  * Update Italian translation
+
+  [ Julian ]
+  * Update Flatpak manifest
+  * Update modules
+
+  [ Antonio Marin ]
+  * Update Romanian translation
+
+ -- Christopher Talbot <chris@talbothome.com>  Wed, 26 Jun 2024 21:05:12 -0600
+
 chatty (0.8.3) UNRELEASED; urgency=medium
 
   [ Chris Talbot ]
