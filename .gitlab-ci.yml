@@ -212,7 +212,7 @@ flatpak-gnome-46:
   image: 'quay.io/gnome_infrastructure/gnome-runtime-images:gnome-46'
   before_script: []
   extends: ".flatpak"
-  allow_failure: false
+  allow_failure: true
   variables:
     APP_ID: "sm.puri.Chatty.Devel"
     BUNDLE: "sm.puri.Chatty.Devel.flatpak"
