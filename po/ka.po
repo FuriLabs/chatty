@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-06-20 23:29+0000\n"
-"PO-Revision-Date: 2024-06-22 06:29+0200\n"
+"POT-Creation-Date: 2024-06-28 20:01+0000\n"
+"PO-Revision-Date: 2024-07-03 06:12+0200\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language-Team: Georgian <ka@li.org>\n"
 "Language: ka\n"
@@ -264,7 +264,7 @@ msgstr ""
 #: src/dialogs/chatty-settings-dialog.c:875
 #: src/dialogs/chatty-settings-dialog.c:892
 #: src/dialogs/chatty-settings-dialog.c:904
-#: src/dialogs/chatty-settings-dialog.c:1537 src/ui/chatty-main-view.ui:73
+#: src/dialogs/chatty-settings-dialog.c:1538 src/ui/chatty-main-view.ui:73
 msgid "Close"
 msgstr "დახურვა"
 
@@ -392,11 +392,20 @@ msgstr "გუშინ %H∶%M"
 msgid "Yesterday %I∶%M %p"
 msgstr "გუშინ %I∶%M %p"
 
-#. TRANSLATORS: Timestamp from more than 7 days ago or future date
-#. * (eg: when the system time is wrong), e.g. “2022-01-01”.
+#: src/chatty-clock.c:155
+#| msgid "%Y-%m-%d %H∶%M"
+msgid "%Y-%m-%d %H:%M"
+msgstr "%Y-%m-%d %H:%M"
+
+#. TRANSLATORS: Timestamp with 12 hour time, e.g. “Today 06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
-#: src/chatty-clock.c:152
+#: src/chatty-clock.c:160
+#| msgid "%Y-%m-%d %H∶%M"
+msgid "%Y-%m-%d %I:%M %p"
+msgstr "%Y-%m-%d %I:%M %p"
+
+#: src/chatty-clock.c:162
 msgid "%Y-%m-%d"
 msgstr "%Y-%m-%d"
 
@@ -551,7 +560,7 @@ msgid "Matrix"
 msgstr "Matrix"
 
 #: src/chatty-side-bar.c:326 src/dialogs/chatty-new-chat-dialog.c:634
-#: src/dialogs/chatty-settings-dialog.c:1123
+#: src/dialogs/chatty-settings-dialog.c:1124
 #: src/ui/chatty-settings-dialog.ui:255
 msgid "SMS/MMS"
 msgstr "SMS/MMS"
@@ -985,13 +994,13 @@ msgid "You"
 msgstr "თქვენ"
 
 #: src/dialogs/chatty-pp-chat-info.c:111
-#: src/dialogs/chatty-ma-account-details.c:139
+#: src/dialogs/chatty-ma-account-details.c:154
 #: src/dialogs/chatty-pp-account-details.c:115
 msgid "Set Avatar"
 msgstr "ავატარის დაყენება"
 
 #: src/dialogs/chatty-pp-chat-info.c:118
-#: src/dialogs/chatty-ma-account-details.c:146
+#: src/dialogs/chatty-ma-account-details.c:161
 #: src/dialogs/chatty-pp-account-details.c:122
 msgid "Images"
 msgstr "გამოსახულებები"
@@ -1059,17 +1068,17 @@ msgstr "SMS"
 msgid "You"
 msgstr "თქვენ"
 
-#: src/dialogs/chatty-ma-account-details.c:396
+#: src/dialogs/chatty-ma-account-details.c:411
 #: src/dialogs/chatty-pp-account-details.c:171
 msgid "connected"
 msgstr "დაკავშირებულია"
 
-#: src/dialogs/chatty-ma-account-details.c:398
+#: src/dialogs/chatty-ma-account-details.c:413
 #: src/dialogs/chatty-pp-account-details.c:173
 msgid "connecting…"
 msgstr "დაკავშირება…"
 
-#: src/dialogs/chatty-ma-account-details.c:400
+#: src/dialogs/chatty-ma-account-details.c:415
 #: src/dialogs/chatty-pp-account-details.c:175
 msgid "disconnected"
 msgstr "გათიშულია"
@@ -1117,7 +1126,7 @@ msgid "Cannot Find Signing Key"
 msgstr "ხელმოწერის გასაღები ვერ ვიპოვე"
 
 #: src/dialogs/chatty-settings-dialog.c:709
-#: src/dialogs/chatty-settings-dialog.c:954
+#: src/dialogs/chatty-settings-dialog.c:955
 msgid "I Know What I am Doing"
 msgstr "ვიცი, რას ვაკეთებ"
 
@@ -1165,69 +1174,71 @@ msgstr "იქმნება გასაღები ID-სთვის %s."
 msgid "Creating Key"
 msgstr "მიმდინარეობს გასაღების შექმნა"
 
-#: src/dialogs/chatty-settings-dialog.c:949
+#. Translators: This means that the existing key will be there, but there will be a new key that Chatty will use by default instead of the existing one.
+#: src/dialogs/chatty-settings-dialog.c:950
 #, c-format
 msgid ""
-"Chatty is currently set to use PGP key:%s. This will overwrite using the "
-"existing key!"
+"Chatty is currently set to use PGP key: %s. The new key will be used instead "
+"of the existing one!"
 msgstr ""
-"Chatty ამჟამად იყენებს PGP გასაღებს: %s. ეს არსებულ გასაღებს თავზე გადააწერს!"
+"Chatty ამჟამად იყენებს PGP გასაღებს: %s. არსებულის მაგიერ გამოყენებული "
+"იქნება ახალი გასაღები!"
 
-#: src/dialogs/chatty-settings-dialog.c:951
+#: src/dialogs/chatty-settings-dialog.c:952
 msgid "Signing ID Present"
 msgstr "ხელმოწერის ID არსებობს"
 
-#: src/dialogs/chatty-settings-dialog.c:953 src/ui/chatty-dialog-join-muc.ui:16
+#: src/dialogs/chatty-settings-dialog.c:954 src/ui/chatty-dialog-join-muc.ui:16
 #: src/ui/chatty-info-dialog.ui:26 src/ui/chatty-info-dialog.ui:35
 msgid "Cancel"
 msgstr "გაუქმება"
 
-#: src/dialogs/chatty-settings-dialog.c:1109
+#: src/dialogs/chatty-settings-dialog.c:1110
 msgid "Restart Chatty to disable Purple"
 msgstr "Purple-ს გასათიშად გადატვირთეთ Chatty"
 
-#: src/dialogs/chatty-settings-dialog.c:1125
+#: src/dialogs/chatty-settings-dialog.c:1126
 #: src/ui/chatty-settings-dialog.ui:290
 msgid "Purple"
 msgstr "იისფერი"
 
-#: src/dialogs/chatty-settings-dialog.c:1127
+#: src/dialogs/chatty-settings-dialog.c:1128
 msgid "New Account"
 msgstr "ახალი ანგარიში"
 
-#: src/dialogs/chatty-settings-dialog.c:1129
+#: src/dialogs/chatty-settings-dialog.c:1130
 #: src/ui/chatty-settings-dialog.ui:363
 msgid "Blocked Contacts"
 msgstr "დაბლოკილი კონტაქტები"
 
-#: src/dialogs/chatty-settings-dialog.c:1131
+#: src/dialogs/chatty-settings-dialog.c:1132
 #: src/ui/chatty-settings-dialog.ui:272
 msgid "PGP Settings"
 msgstr "PGP-ის მორგება"
 
-#: src/dialogs/chatty-settings-dialog.c:1133
+#: src/dialogs/chatty-settings-dialog.c:1134
 msgid "New PGP Key"
 msgstr "ახალი PGP გასაღები"
 
-#: src/dialogs/chatty-settings-dialog.c:1135 src/ui/chatty-side-bar.ui:110
+#: src/dialogs/chatty-settings-dialog.c:1136 src/ui/chatty-side-bar.ui:110
 msgid "Preferences"
 msgstr "მორგება"
 
-#: src/dialogs/chatty-settings-dialog.c:1163
+#: src/dialogs/chatty-settings-dialog.c:1164
 #: src/ui/chatty-pp-account-details.ui:81 src/ui/chatty-settings-dialog.ui:245
 msgid "Protocol"
 msgstr "პროტოკოლი"
 
 #. TRANSLATORS: Only translate 'or'
-#: src/dialogs/chatty-settings-dialog.c:1424
+#: src/dialogs/chatty-settings-dialog.c:1425
 msgid "@user:matrix.org or user@example.com"
 msgstr "@user:matrix.org ან user@example.com"
 
-#: src/dialogs/chatty-settings-dialog.c:1535
+#: src/dialogs/chatty-settings-dialog.c:1536
 msgid "Experimental Setting!"
 msgstr "ექსპერიმენტული თვისება!"
 
-#: src/dialogs/chatty-settings-dialog.c:1536
+#: src/dialogs/chatty-settings-dialog.c:1537
 msgid ""
 "This setting is experimental and may cause loss of SMS. Use at your own risk!"
 msgstr ""
@@ -1573,6 +1584,14 @@ msgstr "სახლის სერვერი"
 msgid "Device ID"
 msgstr "მოწყობილობის ID"
 
+#: src/ui/chatty-ma-account-details.ui:265
+msgid "Sensitive information"
+msgstr "მნიშვნელოვანი ინფორმაცია"
+
+#: src/ui/chatty-ma-account-details.ui:276
+msgid "Access token"
+msgstr "წვდომის კოდი"
+
 #: src/ui/chatty-pp-account-details.ui:59
 msgid "Account ID"
 msgstr "ანგარიშის ID"
@@ -1708,7 +1727,6 @@ msgid "Full Name"
 msgstr "სრული სახელი"
 
 #: src/ui/chatty-settings-dialog.ui:520
-#| msgid "XMPP ID"
 msgid "PGP ID"
 msgstr "PGP ID"
 
