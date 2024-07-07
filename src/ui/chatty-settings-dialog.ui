@@ -57,6 +57,36 @@
               </object>
             </child>
 
+            <!-- Save button pgp Settings-->
+            <child type="end">
+              <object class="GtkButton" id="pgp_save_button">
+                <property name="visible">0</property>
+                <property name="use-underline">1</property>
+                <property name="label" translatable="yes">_Apply</property>
+                <signal name="clicked" handler="pgp_settings_save_button_clicked_cb" swapped="yes"/>
+              </object>
+            </child>
+
+            <!-- Cancel button PGP Settings-->
+            <child type="start">
+              <object class="GtkButton" id="pgp_cancel_button">
+                <property name="visible">0</property>
+                <property name="use-underline">1</property>
+                <property name="label" translatable="yes">_Cancel</property>
+                <signal name="clicked" handler="pgp_settings_cancel_button_clicked_cb" swapped="yes"/>
+              </object>
+            </child>
+
+            <!-- Generate PGP Key -->
+            <child type="end">
+              <object class="GtkButton" id="pgp_generate_button">
+                <property name="visible">0</property>
+                <property name="use-underline">1</property>
+                <property name="label" translatable="yes">_Apply</property>
+                <signal name="clicked" handler="pgp_settings_generate_button_clicked_cb" swapped="yes"/>
+              </object>
+            </child>
+
             <child type="end">
               <object class="GtkSpinner" id="matrix_spinner">
                 <property name="halign">start</property>
@@ -236,6 +266,23 @@
                                   </object>
                                 </child>
                                 <child>
+                                  <object class="AdwActionRow" id="pgp_settings_row">
+                                    <property name="activatable">1</property>
+                                    <property name="selectable">0</property>
+                                    <property name="title" translatable="yes">PGP Settings</property>
+                                    <property name="use-underline">1</property>
+                                    <signal name="activated" handler="pgp_settings_row_activated_cb" swapped="yes"/>
+                                    <child>
+                                      <object class="GtkImage">
+                                        <property name="icon-name">go-next-symbolic</property>
+                                        <style>
+                                          <class name="dim-label"/>
+                                        </style>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child>
                                   <object class="AdwActionRow" id="purple_settings_row">
                                     <property name="visible">0</property>
                                     <property name="activatable">1</property>
@@ -278,6 +325,19 @@
                                 <child>
                                   <object class="GtkSwitch" id="delivery_reports_switch">
                                     <property name="valign">center</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="AdwActionRow">
+                                <property name="selectable">0</property>
+                                <property name="title" translatable="yes">Clear Stuck SMS</property>
+                                <property name="activatable-widget">clear_stuck_sms_switch</property>
+                                <child>
+                                  <object class="GtkSwitch" id="clear_stuck_sms_switch">
+                                    <property name="valign">center</property>
+                                    <signal name="state-set" handler="clear_stuck_sms_switch_switched_cb" swapped="yes"/>
                                   </object>
                                 </child>
                               </object>
@@ -372,6 +432,118 @@
                           </object>
                         </child>
 
+                      </object>
+                    </property>
+                  </object>
+                </child>
+
+                <child>
+                  <object class="GtkStackPage">
+                    <property name="name">pgp-settings-view</property>
+                    <property name="child">
+                      <object class="AdwPreferencesPage">
+                        <child>
+                          <object class="AdwPreferencesGroup">
+                            <property name="title" translatable="yes">Current PGP Key</property>
+                            <property name="description" translatable="yes">Chatty can use any existing key embedded with gpg. However, you are given the option to generate a key specifically for Chatty below.</property>
+                            <child>
+                              <object class="AdwActionRow">
+                                <property name="activatable">1</property>
+                                <property name="selectable">0</property>
+                                <property name="title" translatable="yes">Generate Chatty PGP Key</property>
+                                <signal name="activated" handler="pgp_settings_generate_key_button_clicked_cb" swapped="yes"/>
+                                <child>
+                                  <object class="GtkImage">
+                                    <property name="icon-name">go-next-symbolic</property>
+                                    <style>
+                                      <class name="dim-label"/>
+                                    </style>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="AdwActionRow">
+                                <property name="title" translatable="yes">Signing ID</property>
+                                <child>
+                                  <object class="GtkEntry" id="current_pgp_user_id_entry">
+                                    <property name="valign">center</property>
+                                    <property name="width-chars">25</property>
+                                    <property name="placeholder-text" translatable="yes">foo@example.com</property>
+                                    <property name="buffer">current_pgp_user_id_entry_buffer</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="AdwActionRow">
+                                <property name="title" translatable="yes">Public Key Fingerprint</property>
+                                <child>
+                                  <object class="GtkEntry" id="current_pgp_public_key_fingerprint_entry">
+                                    <property name="valign">center</property>
+                                    <property name="width-chars">25</property>
+                                    <property name="placeholder-text" translatable="yes">Optional</property>
+                                    <property name="buffer">current_pgp_public_key_fingerprint_entry_buffer</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+
+                <child>
+                  <object class="GtkStackPage">
+                    <property name="name">generate-key-view</property>
+                    <property name="child">
+                      <object class="AdwPreferencesPage">
+                        <child>
+                          <object class="AdwPreferencesGroup">
+                            <property name="description" translatable="yes">This will generate a key for use with Chatty. Please note that this will not install the key on a smart card.</property>
+                            <child>
+                              <object class="AdwActionRow">
+                                <property name="title" translatable="yes">Full Name</property>
+                                <child>
+                                  <object class="GtkEntry" id="generate_pgp_user_id_entry">
+                                    <property name="valign">center</property>
+                                    <property name="width-chars">25</property>
+                                    <property name="buffer">generate_pgp_user_id_entry_buffer</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="AdwActionRow">
+                                <property name="title" translatable="yes">PGP ID</property>
+                                <child>
+                                  <object class="GtkEntry" id="generate_pgp_public_key_fingerprint_entry">
+                                    <property name="valign">center</property>
+                                    <property name="width-chars">25</property>
+                                    <property name="placeholder-text">Phone Number or Email</property>
+                                    <property name="buffer">generate_pgp_public_key_fingerprint_entry_buffer</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="AdwActionRow">
+                                <property name="title" translatable="yes">PGP Passphrase</property>
+                                <child>
+                                  <object class="GtkEntry" id="generate_pgp_passphrase_entry">
+                                    <property name="valign">center</property>
+                                    <property name="width-chars">25</property>
+                                    <property name="input-purpose">GTK_INPUT_PURPOSE_PASSWORD</property>
+                                    <property name="visibility">false</property>
+                                    <property name="buffer">generate_pgp_passphrase_entry_buffer</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
                       </object>
                     </property>
                   </object>
@@ -707,4 +879,10 @@
       </object>
     </child>
   </object>
+
+<object class="GtkEntryBuffer" id="current_pgp_user_id_entry_buffer"/>
+<object class="GtkEntryBuffer" id="current_pgp_public_key_fingerprint_entry_buffer"/>
+<object class="GtkEntryBuffer" id="generate_pgp_public_key_fingerprint_entry_buffer"/>
+<object class="GtkEntryBuffer" id="generate_pgp_user_id_entry_buffer"/>
+<object class="GtkEntryBuffer" id="generate_pgp_passphrase_entry_buffer"/>
 </interface>

@@ -54,6 +54,8 @@ struct _ChattyMaAccountDetails
   GtkWidget     *homeserver_label;
   GtkWidget     *matrix_id_label;
   GtkWidget     *device_id_label;
+  GtkWidget     *access_token_label;
+  GtkWidget     *access_token_btn;
 
   guint          modified : 1;
   guint          is_deleting_avatar : 1;
@@ -75,6 +77,19 @@ static GParamSpec *properties[N_PROPS];
 static guint signals[N_SIGNALS];
 
 G_DEFINE_TYPE (ChattyMaAccountDetails, chatty_ma_account_details, ADW_TYPE_PREFERENCES_PAGE)
+
+
+
+static void
+on_copy_access_token_activated (GtkWidget *widget, const char *action_name, GVariant *unused)
+{
+  ChattyMaAccountDetails *self = CHATTY_MA_ACCOUNT_DETAILS (widget);
+  const char *token = gtk_label_get_label (GTK_LABEL (self->access_token_label));
+  GdkClipboard *clipboard =  gdk_display_get_clipboard(gdk_display_get_default());
+
+  gdk_clipboard_set_text (clipboard, token);
+}
+
 
 static void
 update_delete_avatar_button_state (ChattyMaAccountDetails *self)
@@ -414,6 +429,9 @@ ma_details_status_changed_cb (ChattyMaAccountDetails *self)
   gtk_label_set_text (GTK_LABEL (self->device_id_label),
                       chatty_ma_account_get_device_id (CHATTY_MA_ACCOUNT (self->account)));
 
+  gtk_label_set_text (GTK_LABEL (self->access_token_label),
+                      chatty_ma_account_get_access_token (CHATTY_MA_ACCOUNT (self->account)));
+
 }
 
 static void
@@ -444,6 +462,7 @@ chatty_ma_account_details_finalize (GObject *object)
 
   G_OBJECT_CLASS (chatty_ma_account_details_parent_class)->finalize (object);
 }
+
 
 static void
 chatty_ma_account_details_class_init (ChattyMaAccountDetailsClass *klass)
@@ -488,11 +507,15 @@ chatty_ma_account_details_class_init (ChattyMaAccountDetailsClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyMaAccountDetails, homeserver_label);
   gtk_widget_class_bind_template_child (widget_class, ChattyMaAccountDetails, matrix_id_label);
   gtk_widget_class_bind_template_child (widget_class, ChattyMaAccountDetails, device_id_label);
+  gtk_widget_class_bind_template_child (widget_class, ChattyMaAccountDetails, access_token_label);
 
   gtk_widget_class_bind_template_callback (widget_class, ma_details_avatar_button_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, ma_details_delete_avatar_button_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, ma_details_name_entry_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, ma_details_delete_account_clicked_cb);
+
+    gtk_widget_class_install_action (widget_class, "ma-account-details.copy-access-token", NULL,
+				     on_copy_access_token_activated);
 }
 
 static void

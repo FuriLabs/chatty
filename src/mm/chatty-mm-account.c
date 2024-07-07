@@ -26,6 +26,9 @@
 #include "chatty-mmsd.h"
 #include "chatty-mm-notify.h"
 
+#define RECIEVE_TIMEOUT_SECONDS  7*24*60*60 /* 1 week in seconds */
+#define RECIEVE_TIMEOUT_SECONDS_UNKNOWN_RECEIVE_TIME  3*24*60*60 /* 3 days in seconds */
+
 /**
  * SECTION: chatty-mm-account
  * @title: ChattyMmAccount
@@ -110,6 +113,7 @@ struct _ChattyMmAccount
   GListStore       *chat_list;
   GListStore       *blocked_chat_list;
   GHashTable       *pending_sms;
+  GHashTable       *stuck_sms;
   GCancellable     *cancellable;
 
   ChattyStatus      status;
@@ -126,7 +130,29 @@ typedef struct _MessagingData {
   char            *message_path;
 } MessagingData;
 
+typedef struct _StuckSmSPayload {
+  ChattyMmAccount *object;
+  ChattyMmDevice  *device;
+  MMSms           *sms;
+  guint            stuck_watch_id;
+} StuckSmSPayload;
+
 G_DEFINE_TYPE (ChattyMmAccount, chatty_mm_account, CHATTY_TYPE_ACCOUNT)
+
+
+static void
+stuck_sms_payload_free (gpointer data)
+{
+  StuckSmSPayload *payload = data;
+
+  g_clear_handle_id (&payload->stuck_watch_id,
+                     g_source_remove);
+
+  g_object_unref (payload->object);
+  g_object_unref (payload->device);
+  g_object_unref (payload->sms);
+  g_free (payload);
+}
 
 static int
 sort_strv (gconstpointer a,
@@ -579,6 +605,7 @@ mm_account_delete_message_async (ChattyMmAccount     *self,
   CHATTY_TRACE_MSG ("deleting message %s", sms_path);
   mm_modem_messaging_delete (mm_object_peek_modem_messaging (device->mm_object),
                              sms_path, self->cancellable, NULL, NULL);
+  g_hash_table_remove (self->stuck_sms, sms_path);
 }
 
 static gboolean
@@ -663,8 +690,118 @@ sms_state_changed_cb (ChattyMmAccount *self,
       mm_modem_messaging_delete (mm_object_peek_modem_messaging (device->mm_object),
                                  mm_sms_get_path (sms),
                                  NULL, NULL, NULL);
+      g_hash_table_remove (self->stuck_sms, mm_sms_get_path (sms));
     }
   }
+}
+
+static void
+mm_account_state_timeout_delete_cb (GObject      *object,
+                                    GAsyncResult *result,
+                                    gpointer      user_data)
+{
+  g_autoptr(GError) error = NULL;
+  MMModemMessaging *messaging = (MMModemMessaging *)object;
+
+  if (mm_modem_messaging_delete_finish (messaging, result, &error))
+    CHATTY_TRACE_MSG ("Timeout delete successful");
+  else if (error)
+    CHATTY_TRACE_MSG ("Timeout delete failed: %s", error->message);
+
+}
+
+static void
+mm_account_state_timeout (gpointer user_data)
+{
+  StuckSmSPayload *data = user_data;
+  ChattyMmAccount *self = data->object;
+
+  /*
+   * We are in the function stuck_watch_id called. Clear the ID so when
+   * the StuckSmSPayload is cleared, it doesn't try to remove the source again.
+   */
+  data->stuck_watch_id = 0;
+
+  g_assert (CHATTY_IS_MM_ACCOUNT (self));
+  CHATTY_TRACE_MSG ("timeout for message %s, timestamp %s, attempting to delete",
+                    mm_sms_get_path (data->sms), mm_sms_get_timestamp (data->sms));
+
+  mm_modem_messaging_delete (mm_object_peek_modem_messaging (data->device->mm_object),
+                             mm_sms_get_path (data->sms),
+                             NULL, mm_account_state_timeout_delete_cb, self);
+
+  g_hash_table_remove (self->stuck_sms, mm_sms_get_path (data->sms));
+}
+
+/*
+ * SMSes in the receiving and state build up in the modem
+ * manager queue. Once there are enough, the user silently stops getting
+ * SMSes.
+ *
+ * Receiving messages could have the rest sent in a bit, but if they are hanging
+ * then we should dispose of them.
+ */
+static void
+mm_account_check_state (ChattyMmAccount *self,
+                        ChattyMmDevice  *device,
+                        MMSms           *sms)
+{
+  const gchar *timestamp = NULL;
+  unsigned int receive_timeout;
+  g_autoptr(GDateTime) timestamp_time = NULL;
+  StuckSmSPayload *data;
+
+  g_assert (CHATTY_IS_MM_ACCOUNT (self));
+  g_assert (MM_IS_SMS (sms));
+
+  data = g_new0 (StuckSmSPayload, 1);
+  data->object = g_object_ref (self);
+  data->device = g_object_ref (device);
+  data->sms = g_object_ref (sms);
+
+  timestamp = mm_sms_get_timestamp (sms);
+
+  /*
+   * If we do not know when the SNS came in, give a few of days before we
+   * delete in case the user restarts or kills Chatty. If we know when it came
+   * in, we can give a longer time since we reliably know when the SMS was receieved
+   */
+  if (timestamp)
+    timestamp_time = g_date_time_new_from_iso8601 (timestamp, NULL);
+
+  if (!timestamp_time)
+    receive_timeout = RECIEVE_TIMEOUT_SECONDS_UNKNOWN_RECEIVE_TIME;
+  else {
+    g_autoptr(GDateTime) now = NULL;
+    gint64 now_unix_time, timestamp_unix_time;
+
+    now = g_date_time_new_now_local ();
+
+    now_unix_time = g_date_time_to_unix (now);
+    timestamp_unix_time = g_date_time_to_unix (timestamp_time);
+
+    /*
+     * The clock may be wrong and be set to e.g. 1970. If now is greater than
+     * timestamp_unix_time, we are reasonably sure the clock is right.
+     *
+     * If now is greater then the time received plus timeout, set to 1 second.
+     * this must be done to prevent an integer underflow on the second
+     * if statement
+     */
+    if (now_unix_time >= timestamp_unix_time + RECIEVE_TIMEOUT_SECONDS)
+      receive_timeout = 1;
+    else if (now_unix_time > timestamp_unix_time)
+      receive_timeout = timestamp_unix_time + RECIEVE_TIMEOUT_SECONDS - now_unix_time;
+    else
+      receive_timeout = RECIEVE_TIMEOUT_SECONDS;
+  }
+
+  data->stuck_watch_id = g_timeout_add_seconds_once (receive_timeout,
+                                                     mm_account_state_timeout,
+                                                     data);
+
+  /* If the key is a duplicate, it will get replaced here, so no need to remove first */
+  g_hash_table_insert (self->stuck_sms, g_strdup (mm_sms_get_path (data->sms)), data);
 }
 
 static void
@@ -675,10 +812,12 @@ parse_sms (ChattyMmAccount *self,
   MMSmsPduType type;
   MMSmsState state;
   guint sms_id;
+  ChattySettings *settings;
 
   g_assert (CHATTY_IS_MM_ACCOUNT (self));
   g_assert (MM_IS_SMS (sms));
 
+  settings = chatty_settings_get_default ();
   sms_id = mm_sms_get_message_reference (sms);
   g_debug ("parsing sms, id: %u, path: %s", sms_id, mm_sms_get_path (sms));
   state = mm_sms_get_state (sms);
@@ -687,6 +826,10 @@ parse_sms (ChattyMmAccount *self,
   if (state == MM_SMS_STATE_SENDING ||
       state == MM_SMS_STATE_SENT)
     return;
+
+  /* Unknown messages are generally messages that haven't been sent yet. Don't worry about them */
+  if (chatty_settings_get_clear_out_stuck_sms (settings) && state == MM_SMS_STATE_RECEIVING)
+    mm_account_check_state (self, device, sms);
 
   if (type == MM_SMS_PDU_TYPE_STATUS_REPORT) {
     guint delivery_state;
@@ -719,6 +862,7 @@ parse_sms (ChattyMmAccount *self,
         mm_modem_messaging_delete (mm_object_peek_modem_messaging (device->mm_object),
                                    mm_sms_get_path (sms),
                                    NULL, NULL, NULL);
+        g_hash_table_remove (self->stuck_sms, mm_sms_get_path (sms));
     } else if (state == MM_SMS_STATE_RECEIVING) {
       g_object_set_data_full (G_OBJECT (sms), "device",
                               g_object_ref (device),
@@ -889,6 +1033,28 @@ mm_object_added_cb (ChattyMmAccount *self,
                            data);
 }
 
+/*
+ * If a modem object is removed, it may have dangling StuckSmSPayloads.
+ * We should delete those
+ */
+static gboolean
+delete_stuck_sms (gpointer key,
+                  gpointer value,
+                  gpointer user_data)
+{
+  g_autofree char *mm_object_path = user_data;
+  StuckSmSPayload *data = value;
+  ChattyMmAccount *self = data->object;
+
+  g_assert (CHATTY_IS_MM_ACCOUNT (self));
+  g_assert (MM_IS_OBJECT (data->device->mm_object));
+
+  if (g_strcmp0 (mm_object_path, mm_object_get_path (data->device->mm_object)) == 0)
+    return TRUE;
+
+  return FALSE;
+}
+
 static void
 mm_object_removed_cb (ChattyMmAccount *self,
                       GDBusObject     *object)
@@ -907,6 +1073,7 @@ mm_object_removed_cb (ChattyMmAccount *self,
     if (g_strcmp0 (mm_object_get_path (MM_OBJECT (object)),
                    mm_object_get_path (device->mm_object)) == 0) {
       self->status = CHATTY_UNKNOWN;
+      g_hash_table_foreach_remove (self->stuck_sms, delete_stuck_sms, mm_object_dup_path (MM_OBJECT (object)));
       g_list_store_remove (self->device_list, i);
       break;
     }
@@ -1109,6 +1276,8 @@ chatty_mm_account_finalize (GObject *object)
   g_clear_object (&self->mmsd);
   g_clear_object (&self->blocked_chat_list);
   g_hash_table_unref (self->pending_sms);
+  g_hash_table_remove_all (self->stuck_sms);
+  g_hash_table_destroy (self->stuck_sms);
 
   G_OBJECT_CLASS (chatty_mm_account_parent_class)->finalize (object);
 }
@@ -1138,6 +1307,8 @@ chatty_mm_account_init (ChattyMmAccount *self)
   self->mmsd = chatty_mmsd_new (self);
   self->pending_sms = g_hash_table_new_full (g_direct_hash, g_direct_equal,
                                              NULL, g_object_unref);
+  self->stuck_sms = g_hash_table_new_full (g_str_hash, g_str_equal,
+                                           g_free, stuck_sms_payload_free);
   self->has_mms = FALSE;
 }
 

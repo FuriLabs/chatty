@@ -44,7 +44,10 @@ struct _ChattySettings
   GObject     parent_instance;
 
   GSettings  *settings;
+  GSettings  *pgp_settings;
   char       *country_code;
+  char       *pgp_user_id;
+  char       *pgp_public_key_fingerprint;
 };
 
 G_DEFINE_TYPE (ChattySettings, chatty_settings, G_TYPE_OBJECT)
@@ -64,6 +67,7 @@ enum {
   PROP_CONVERT_EMOTICONS,
   PROP_RETURN_SENDS_MESSAGE,
   PROP_REQUEST_SMS_DELIVERY_REPORTS,
+  PROP_CLEAR_OUT_STUCK_SMS,
   PROP_MAM_ENABLED,
   PROP_PURPLE_ENABLED,
   N_PROPS
@@ -131,6 +135,10 @@ chatty_settings_get_property (GObject    *object,
 
     case PROP_REQUEST_SMS_DELIVERY_REPORTS:
       g_value_set_boolean (value, chatty_settings_request_sms_delivery_reports (self));
+      break;
+
+    case PROP_CLEAR_OUT_STUCK_SMS:
+      g_value_set_boolean (value, chatty_settings_get_clear_out_stuck_sms (self));
       break;
 
     case PROP_PURPLE_ENABLED:
@@ -219,6 +227,11 @@ chatty_settings_set_property (GObject      *object,
                               g_value_get_boolean (value));
       break;
 
+    case PROP_CLEAR_OUT_STUCK_SMS:
+      g_settings_set_boolean (self->settings, "clear-out-stuck-sms",
+                              g_value_get_boolean (value));
+      break;
+
     case PROP_PURPLE_ENABLED:
       g_settings_set_boolean (self->settings, "purple-enabled",
                               g_value_get_boolean (value));
@@ -259,7 +272,11 @@ chatty_settings_constructed (GObject *object)
                    self, "return-sends-message", G_SETTINGS_BIND_DEFAULT);
   g_settings_bind (self->settings, "request-sms-delivery-reports",
                    self, "request-sms-delivery-reports", G_SETTINGS_BIND_DEFAULT);
+  g_settings_bind (self->settings, "clear-out-stuck-sms",
+                   self, "clear-out-stuck-sms", G_SETTINGS_BIND_DEFAULT);
   self->country_code = g_settings_get_string (self->settings, "country-code");
+  self->pgp_user_id = g_settings_get_string (self->pgp_settings, "user-id");
+  self->pgp_public_key_fingerprint = g_settings_get_string (self->pgp_settings, "public-key-fingerprint");
 }
 
 static void
@@ -270,6 +287,8 @@ chatty_settings_finalize (GObject *object)
   g_settings_set_boolean (self->settings, "first-start", FALSE);
   g_object_unref (self->settings);
   g_free (self->country_code);
+  g_free (self->pgp_user_id);
+  g_free (self->pgp_public_key_fingerprint);
 
   G_OBJECT_CLASS (chatty_settings_parent_class)->finalize (object);
 }
@@ -382,6 +401,13 @@ chatty_settings_class_init (ChattySettingsClass *klass)
                           FALSE,
                           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
+  properties[PROP_CLEAR_OUT_STUCK_SMS] =
+    g_param_spec_boolean ("clear-out-stuck-sms",
+                          "Clear out stuck SMS",
+                          "Whether to clear out SMS that are stuck in receiving/unknown state",
+                          FALSE,
+                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
@@ -389,6 +415,7 @@ static void
 chatty_settings_init (ChattySettings *self)
 {
   self->settings = g_settings_new ("sm.puri.Chatty");
+  self->pgp_settings = g_settings_new ("sm.puri.Chatty.pgp");
 }
 
 /**
@@ -559,6 +586,38 @@ chatty_settings_set_strip_url_tracking_ids_dialog (ChattySettings *self,
 }
 
 /**
+ * chatty_settings_get_clear_out_stuck_sms:
+ * @self: A #ChattySettings
+ *
+ * Get if Chatty  Chatty clears out stuck SMS
+ *
+ * Returns: %TRUE if Chatty clears out stuck SMS.
+ * %FALSE otherwise
+ */
+gboolean
+chatty_settings_get_clear_out_stuck_sms (ChattySettings *self)
+{
+  g_return_val_if_fail (CHATTY_IS_SETTINGS (self), FALSE);
+
+  return g_settings_get_boolean (self->settings, "clear-out-stuck-sms");
+}
+
+/**
+ * chatty_settings_set_clear_out_stuck_sms:
+ * @self: A #ChattySettings
+ *
+ * Set if Chatty should clear out stuck SMS
+ */
+void
+chatty_settings_set_clear_out_stuck_sms (ChattySettings *self,
+                                         gboolean clear_sms)
+{
+  g_return_if_fail (CHATTY_IS_SETTINGS (self));
+
+  g_settings_set_boolean (G_SETTINGS (self->settings), "clear-out-stuck-sms", !!clear_sms);
+}
+
+/**
  * chatty_settings_get_render_attachments:
  * @self: A #ChattySettings
  *
@@ -695,6 +754,52 @@ chatty_settings_set_country_iso_code (ChattySettings *self,
   g_free (self->country_code);
   self->country_code = g_strdup (country_code);
   g_settings_set (G_SETTINGS (self->settings), "country-code", "s", country_code);
+}
+
+const char *
+chatty_settings_get_pgp_user_id (ChattySettings *self)
+{
+  g_return_val_if_fail (CHATTY_IS_SETTINGS (self), NULL);
+
+  if (self->pgp_user_id && *self->pgp_user_id)
+    return self->pgp_user_id;
+
+  return NULL;
+}
+
+void
+chatty_settings_set_pgp_user_id (ChattySettings *self,
+                                 const char     *pgp_user_id)
+{
+  g_return_if_fail (CHATTY_IS_SETTINGS (self));
+
+  g_free (self->pgp_user_id);
+  self->pgp_user_id = g_strdup (pgp_user_id);
+  g_settings_set (G_SETTINGS (self->pgp_settings), "user-id", "s", pgp_user_id);
+  g_settings_apply (G_SETTINGS (self->pgp_settings));
+}
+
+const char *
+chatty_settings_get_pgp_public_key_fingerprint (ChattySettings *self)
+{
+  g_return_val_if_fail (CHATTY_IS_SETTINGS (self), NULL);
+
+  if (self->pgp_public_key_fingerprint && *self->pgp_public_key_fingerprint)
+    return self->pgp_public_key_fingerprint;
+
+  return NULL;
+}
+
+void
+chatty_settings_set_pgp_public_key_fingerprint (ChattySettings *self,
+                                                const char     *pgp_public_key_fingerprint)
+{
+  g_return_if_fail (CHATTY_IS_SETTINGS (self));
+
+  g_free (self->pgp_public_key_fingerprint);
+  self->pgp_public_key_fingerprint = g_strdup (pgp_public_key_fingerprint);
+  g_settings_set (G_SETTINGS (self->pgp_settings), "public-key-fingerprint", "s", pgp_public_key_fingerprint);
+  g_settings_apply (G_SETTINGS (self->pgp_settings));
 }
 
 gboolean

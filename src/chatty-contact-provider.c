@@ -307,12 +307,12 @@ chatty_eds_load_complete_cb (ChattyEds *self)
 
   g_log (G_LOG_DOMAIN, CHATTY_LOG_LEVEL_TRACE, "Loading eds complete");
 
-  if (!self->contacts_array || !self->contacts_array->len)
-    return;
+  if (self->contacts_array && (self->contacts_array->len > 0)) {
+    array = g_steal_pointer (&self->contacts_array);
+    g_list_store_splice (self->contacts_list, 0, 0, array->pdata, array->len);
+  }
 
-  array = g_steal_pointer (&self->contacts_array);
-  g_list_store_splice (self->contacts_list, 0, 0, array->pdata, array->len);
-
+  /* Notify that eds is ready even is there are no contacts */
   self->is_ready = TRUE;
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_IS_READY]);
 }
