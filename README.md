@@ -182,3 +182,11 @@ If you don't have an XMPP account yet and want to subscribe to a service then pl
 [0]: https://wiki.debian.org/HowToGetABacktrace
 [1]: https://docs.gtk.org/glib/running.html
 [2]: https://docs.gtk.org/gtk4/running.html
+
+### Experimental Features
+Sometimes things are hidden behind experiemental features. Do not enable
+unless you know what you are doing! To activate:
+```bash
+gsettings set sm.puri.Chatty experimental-features true
+```
+

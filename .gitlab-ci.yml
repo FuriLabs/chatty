@@ -72,6 +72,7 @@ build-alpine-edge:
         libadwaita-dev
         libgee-dev
         libphonenumber-dev
+        libsoup3-dev
         meson
         modemmanager-dev
         olm-dev
@@ -105,8 +106,7 @@ test:debian-gcc:
     - export G_DEBUG=fatal-warnings
     - export LC_ALL=C.UTF-8
     - xvfb-run -a -s "-screen 0 1024x768x24" ninja -C _build test
-# Disable until it works in trixie again
-#    - ninja -C _build coverage
+    - ninja -C _build coverage
   coverage: '/^\s+lines\.+:\s+([\d.]+\%)\s+/'
   except:
     variables:
@@ -135,6 +135,7 @@ test:alpine-edge:
         libadwaita-dev
         libgee-dev
         libphonenumber-dev
+        libsoup3-dev
         meson
         modemmanager-dev
         olm-dev
@@ -207,8 +208,8 @@ package:deb-debian-trixie:arm64:
     variables:
       - $FP_ONLY == "1"
 
-flatpak-gnome-45:
-  image: 'quay.io/gnome_infrastructure/gnome-runtime-images:gnome-45'
+flatpak-gnome-46:
+  image: 'quay.io/gnome_infrastructure/gnome-runtime-images:gnome-46'
   before_script: []
   extends: ".flatpak"
   allow_failure: true

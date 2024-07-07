@@ -1,7 +1,7 @@
 {
     "app-id": "sm.puri.Chatty.Devel",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "45",
+    "runtime-version": "46",
     "sdk": "org.gnome.Sdk",
     "command": "chatty",
     "finish-args": [
@@ -84,7 +84,8 @@
                 {
                     "type": "git",
                     "url": "https://github.com/libical/libical.git",
-                    "tag": "v3.0.16"
+                    "tag": "v3.0.18",
+                    "commit": "1b28a846d2dca16e5d15a433c6011cc2483555bb"
                 }
             ]
         },
@@ -100,7 +101,8 @@
                 {
                     "type": "git",
                     "url": "https://github.com/abseil/abseil-cpp",
-                    "tag": "20230125.3"
+                    "tag": "20240116.2",
+                    "commit": "d7aaad83b488fd62bd51c81ecf16cd938532cc0a"
                 }
             ]
         },
@@ -109,9 +111,10 @@
             "buildsystem": "simple",
             "sources": [
                 {
-                    "type": "archive",
-                    "url": "https://boostorg.jfrog.io/artifactory/main/release/1.75.0/source/boost_1_75_0.tar.gz",
-                    "sha256": "aeb26f80e80945e82ee93e5939baebdca47b9dee80a07d3144be1e1a6a66dd6a"
+                    "type": "git",
+                    "url": "https://github.com/boostorg/boost",
+                    "tag": "boost-1.85.0",
+                    "commit": "ab7968a0bbcf574a7859240d1d8443f58ed6f6cf"
                 }
             ],
             "build-commands": [
@@ -156,7 +159,8 @@
                 {
                     "type": "git",
                     "url": "https://github.com/google/libphonenumber",
-                    "tag": "v8.13.12"
+                    "tag": "v8.13.39",
+                    "commit": "ff7fbcb477d829a7e5087fea85d9831e5b8dc9cd"
                 }
             ]
         },
@@ -191,7 +195,8 @@
                 {
                     "type": "git",
                     "url": "https://gitlab.gnome.org/GNOME/evolution-data-server.git",
-                    "tag": "3.48.1"
+                    "tag": "3.52.2",
+                    "commit": "8ff10613cd83f29b2f1c46d89c7aa6fe9c2cb091"
                 }
             ]
         },
@@ -206,25 +211,27 @@
                 {
                     "type": "git",
                     "url": "https://source.puri.sm/Librem5/feedbackd.git",
-                    "tag": "v0.0.0+git20220520"
+                    "tag": "v0.3.0",
+                    "commit": "bf6928e47d6fc940986c06428e87a2eb95249ae0"
                 }
             ]
         },
         {
-          "name": "olm",
-          "buildsystem": "cmake-ninja",
-          "sources": [
-            {
-              "type": "git",
-              "tag" : "3.2.15",
-              "url": "https://gitlab.matrix.org/matrix-org/olm.git"
-            }
-          ]
+            "name": "olm",
+            "buildsystem": "cmake-ninja",
+            "sources": [
+                {
+                    "type": "git",
+                    "tag": "3.2.16",
+                    "url": "https://gitlab.matrix.org/matrix-org/olm.git",
+                    "commit": "7e0c8277032e40308987257b711b38af8d77cc69"
+                }
+            ]
         },
         {
-            "name" : "ModemManager",
-            "buildsystem" : "meson",
-            "config-opts" : [
+            "name": "ModemManager",
+            "buildsystem": "meson",
+            "config-opts": [
                 "-Dintrospection=false",
                 "-Dvapi=false",
                 "-Dudevdir=/app/lib",
@@ -233,15 +240,16 @@
                 "-Dqmi=false",
                 "-Dqrtr=false",
                 "-Dman=false",
-		"-Dgtk_doc=false",
+                "-Dgtk_doc=false",
                 "-Dexamples=false",
                 "-Dbash_completion=false"
             ],
-            "sources" : [
+            "sources": [
                 {
-                    "type" : "git",
-                    "url" : "https://gitlab.freedesktop.org/mobile-broadband/ModemManager",
-                    "tag" : "1.21.8-dev"
+                    "type": "git",
+                    "url": "https://gitlab.freedesktop.org/mobile-broadband/ModemManager",
+                    "tag": "1.22.0",
+                    "commit": "03f786ce66360d67c669f4f122f8aa458e6f01ea"
                 }
             ]
         },
@@ -252,7 +260,8 @@
                 {
                     "type": "git",
                     "url": "https://gitlab.gnome.org/GNOME/gnome-desktop",
-                    "tag": "44.0"
+                    "tag": "44.0",
+                    "commit": "97c0344b3ba955bb6f6fe74ca03cc399a81acaa5"
                 }
             ]
         },

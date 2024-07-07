@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-04-17 17:48+0000\n"
-"PO-Revision-Date: 2024-04-19 01:54+0330\n"
+"POT-Creation-Date: 2024-06-28 20:01+0000\n"
+"PO-Revision-Date: 2024-06-29 01:54+0330\n"
 "Last-Translator: Danial Behzadi <dani.behzi@ubuntu.com>\n"
 "Language-Team: Persian <fa@li.org>\n"
 "Language: fa\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.4.4\n"
 
 #: data/sm.puri.Chatty.desktop.in.in:3 data/sm.puri.Chatty.metainfo.xml.in.in:6
 #: src/chatty-application.c:164 src/chatty-application.c:412
@@ -58,7 +58,7 @@ msgstr "این که در صورت خوانده شدن وضعیت خواندن پ
 msgid "Message carbon copies"
 msgstr "رونوشت‌های کاربنی پیام"
 
-#: data/sm.puri.Chatty.gschema.xml:26 src/ui/chatty-settings-dialog.ui:489
+#: data/sm.puri.Chatty.gschema.xml:26 src/ui/chatty-settings-dialog.ui:661
 msgid "Share chat history among devices"
 msgstr "هم‌رسانی تاریخچهٔ گپ بین افزاره‌ها"
 
@@ -143,28 +143,56 @@ msgid "Whether to request delivery reports for outgoing SMS"
 msgstr "این که گزارش‌های تحویل پیامک برای پیامک‌های ارسالی درخواست شود یا نه"
 
 #: data/sm.puri.Chatty.gschema.xml:97
+msgid "Clear out stuck SMS"
+msgstr "پاک‌سازی پیامک‌های گیر کرده"
+
+#: data/sm.puri.Chatty.gschema.xml:98
+msgid ""
+"Whether Chatty should clear out SMS that are stuck in receiving/unknown state"
+msgstr ""
+"این که چتی باید پیامک‌هایی که در وضعیت گرفتن یا ناشناخته گیر کرده‌اند را پاک‌سازی "
+"کند یا نه"
+
+#: data/sm.puri.Chatty.gschema.xml:103
 msgid "Enable experimental features"
 msgstr "فعال‌سازی امکانات آزمایشی"
 
-#: data/sm.puri.Chatty.gschema.xml:98
+#: data/sm.puri.Chatty.gschema.xml:104
 msgid "Whether to enable experimental features"
 msgstr "این که ویژگی‌های آزمایشی به کار بیفتند یا نه"
 
-#: data/sm.puri.Chatty.gschema.xml:103
+#: data/sm.puri.Chatty.gschema.xml:109
 msgid "Window maximized"
 msgstr "پنجره بیشینه شد"
 
-#: data/sm.puri.Chatty.gschema.xml:104
+#: data/sm.puri.Chatty.gschema.xml:110
 msgid "Window maximized state"
 msgstr "وضعیت بیشینهٔ پنجره"
 
-#: data/sm.puri.Chatty.gschema.xml:109
+#: data/sm.puri.Chatty.gschema.xml:115
 msgid "Window size"
 msgstr "اندازهٔ پنجره"
 
-#: data/sm.puri.Chatty.gschema.xml:110
+#: data/sm.puri.Chatty.gschema.xml:116
 msgid "Window size (width, height)."
 msgstr "اندازهٔ پنجره (پهنا، بلندا)."
+
+#: data/sm.puri.Chatty.gschema.xml:124
+msgid "PGP user ID"
+msgstr "شناسهٔ کاربری PGP"
+
+#: data/sm.puri.Chatty.gschema.xml:125
+msgid "The user ID for PGP that Chatty will use for outgoing messages"
+msgstr "شناسهٔ کاربری برای PGP که چتی برای پیام‌های خروجی استفاده خواهد کرد"
+
+#: data/sm.puri.Chatty.gschema.xml:130 src/ui/chatty-settings-dialog.ui:480
+msgid "Public Key Fingerprint"
+msgstr "اثرانگشت کلید عمومی"
+
+#: data/sm.puri.Chatty.gschema.xml:131
+msgid "The default keyid the remote side should use to encrypt messages to us"
+msgstr ""
+"شناسهٔ کلید پیش‌گزیده‌ای که سمت دوردست باید برای رمزنگاری پیام‌ها با ما استفاده کند"
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:7
 msgid "Messaging application for mobile and desktop"
@@ -220,10 +248,18 @@ msgstr ""
 "%s"
 
 #: src/chatty-application.c:202 src/chatty-manager.c:683
-#: src/chatty-message-bar.c:482 src/purple/chatty-purple-notify.c:35
+#: src/chatty-message-bar.c:493 src/purple/chatty-purple-notify.c:35
 #: src/purple/chatty-purple.c:199 src/purple/chatty-purple.c:619
 #: src/dialogs/chatty-new-chat-dialog.c:226
-#: src/dialogs/chatty-settings-dialog.c:201 src/ui/chatty-main-view.ui:73
+#: src/dialogs/chatty-settings-dialog.c:213
+#: src/dialogs/chatty-settings-dialog.c:671
+#: src/dialogs/chatty-settings-dialog.c:708
+#: src/dialogs/chatty-settings-dialog.c:824
+#: src/dialogs/chatty-settings-dialog.c:860
+#: src/dialogs/chatty-settings-dialog.c:875
+#: src/dialogs/chatty-settings-dialog.c:892
+#: src/dialogs/chatty-settings-dialog.c:904
+#: src/dialogs/chatty-settings-dialog.c:1538 src/ui/chatty-main-view.ui:73
 msgid "Close"
 msgstr "بستن"
 
@@ -353,11 +389,18 @@ msgstr "دیروز %OH:%OM"
 msgid "Yesterday %I∶%M %p"
 msgstr "دیروز %OI:%OM %p"
 
-#. TRANSLATORS: Timestamp from more than 7 days ago or future date
-#. * (eg: when the system time is wrong), e.g. “2022-01-01”.
+#: src/chatty-clock.c:155
+msgid "%Y-%m-%d %H:%M"
+msgstr "%OH:%OM %Oy/%Om/%Od"
+
+#. TRANSLATORS: Timestamp with 12 hour time, e.g. “Today 06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
-#: src/chatty-clock.c:152
+#: src/chatty-clock.c:160
+msgid "%Y-%m-%d %I:%M %p"
+msgstr "%OI:%OM %Op %Oy/%Om/%Od"
+
+#: src/chatty-clock.c:162
 msgid "%Y-%m-%d"
 msgstr "%Oy/%Om/%Od"
 
@@ -461,16 +504,16 @@ msgstr "وصل شدن حساب…"
 msgid "“%s” is not a valid URI"
 msgstr "نشانی %s معتبر نیست"
 
-#: src/chatty-message-bar.c:480 src/purple/chatty-purple.c:195
+#: src/chatty-message-bar.c:491 src/purple/chatty-purple.c:195
 #: src/chatty-window.c:361
 msgid "Alert"
 msgstr "هشدار"
 
-#: src/chatty-message-bar.c:481
+#: src/chatty-message-bar.c:492
 msgid "Found and automatically deleted tracking IDs from the pasted link."
 msgstr "شناسه‌های ردیابی پیدا و به طور خودکار از پیوند جایگذاری شده حذف شدند."
 
-#: src/chatty-message-bar.c:483
+#: src/chatty-message-bar.c:494
 msgid "Don't Show Again"
 msgstr "دیگر نشان داده نشود"
 
@@ -506,20 +549,20 @@ msgstr[1] "%Ii پیام"
 msgid "Any Protocol"
 msgstr "هر شیوه‌نامه‌ای"
 
-#: src/chatty-side-bar.c:325 src/ui/chatty-settings-dialog.ui:559
+#: src/chatty-side-bar.c:325 src/ui/chatty-settings-dialog.ui:731
 msgid "Matrix"
 msgstr "ماتریکس"
 
 #: src/chatty-side-bar.c:326 src/dialogs/chatty-new-chat-dialog.c:634
-#: src/dialogs/chatty-settings-dialog.c:656 src/ui/chatty-settings-dialog.ui:225
+#: src/dialogs/chatty-settings-dialog.c:1124 src/ui/chatty-settings-dialog.ui:255
 msgid "SMS/MMS"
 msgstr "پیام کوتاه یا چندرسانه‌ای"
 
-#: src/chatty-side-bar.c:329 src/ui/chatty-settings-dialog.ui:548
+#: src/chatty-side-bar.c:329 src/ui/chatty-settings-dialog.ui:720
 msgid "XMPP"
 msgstr "XMPP"
 
-#: src/chatty-side-bar.c:332 src/ui/chatty-settings-dialog.ui:572
+#: src/chatty-side-bar.c:332 src/ui/chatty-settings-dialog.ui:744
 msgid "Telegram"
 msgstr "تلگرام"
 
@@ -529,7 +572,7 @@ msgstr "بایگانی شده"
 
 #: src/purple/chatty-purple-notify.c:26 src/purple/chatty-purple.c:613
 #: src/dialogs/chatty-new-chat-dialog.c:222
-#: src/dialogs/chatty-settings-dialog.c:197
+#: src/dialogs/chatty-settings-dialog.c:209
 msgid "Error"
 msgstr "خطا"
 
@@ -546,7 +589,7 @@ msgstr "گشودن پرونده…"
 msgid "User %s has added %s to the contacts"
 msgstr "کاربر %s، ‏%s را به آشنایان افزود"
 
-#: src/purple/chatty-purple.c:283 src/dialogs/chatty-settings-dialog.c:460
+#: src/purple/chatty-purple.c:283 src/dialogs/chatty-settings-dialog.c:472
 #: src/ui/chatty-ma-account-details.ui:162 src/ui/chatty-pp-account-details.ui:154
 msgid "Delete Account"
 msgstr "حذف حساب"
@@ -562,10 +605,10 @@ msgid "Add %s to contact list"
 msgstr "افزودن %s به سیاههٔ اشنایان"
 
 #: src/purple/chatty-purple.c:293 src/chatty-window.c:365 src/chatty-window.c:463
-#: src/dialogs/chatty-settings-dialog.c:466 src/ui/chatty-dialog-wrong-pw.ui:23
+#: src/dialogs/chatty-settings-dialog.c:478 src/ui/chatty-dialog-wrong-pw.ui:23
 #: src/ui/chatty-dialog-new-chat.ui:36 src/ui/chatty-settings-dialog.ui:25
-#: src/ui/chatty-settings-dialog.ui:55 src/ui/chatty-verification-page.ui:129
-#: src/ui/chatty-verification-page.ui:158
+#: src/ui/chatty-settings-dialog.ui:55 src/ui/chatty-settings-dialog.ui:75
+#: src/ui/chatty-verification-page.ui:129 src/ui/chatty-verification-page.ui:158
 msgid "_Cancel"
 msgstr "_لغو"
 
@@ -932,7 +975,7 @@ msgstr "قطع گپ گروهی «%s»"
 msgid "This removes chat from chats list"
 msgstr "این کار گپ را از سیاههٔ گپ‌ها برمی‌دارد"
 
-#: src/chatty-window.c:464 src/dialogs/chatty-settings-dialog.c:467
+#: src/chatty-window.c:464 src/dialogs/chatty-settings-dialog.c:479
 msgid "Delete"
 msgstr "حذف"
 
@@ -942,13 +985,13 @@ msgid "You"
 msgstr "شما"
 
 #: src/dialogs/chatty-pp-chat-info.c:111
-#: src/dialogs/chatty-ma-account-details.c:139
+#: src/dialogs/chatty-ma-account-details.c:154
 #: src/dialogs/chatty-pp-account-details.c:115
 msgid "Set Avatar"
 msgstr "تنظیم چهرک"
 
 #: src/dialogs/chatty-pp-chat-info.c:118
-#: src/dialogs/chatty-ma-account-details.c:146
+#: src/dialogs/chatty-ma-account-details.c:161
 #: src/dialogs/chatty-pp-account-details.c:122
 msgid "Images"
 msgstr "تصویرها"
@@ -1017,73 +1060,178 @@ msgstr "پیامک"
 msgid "You"
 msgstr "شما"
 
-#: src/dialogs/chatty-ma-account-details.c:396
+#: src/dialogs/chatty-ma-account-details.c:411
 #: src/dialogs/chatty-pp-account-details.c:171
 msgid "connected"
 msgstr "وصل شده"
 
-#: src/dialogs/chatty-ma-account-details.c:398
+#: src/dialogs/chatty-ma-account-details.c:413
 #: src/dialogs/chatty-pp-account-details.c:173
 msgid "connecting…"
 msgstr "درحال اتّصال…"
 
-#: src/dialogs/chatty-ma-account-details.c:400
+#: src/dialogs/chatty-ma-account-details.c:415
 #: src/dialogs/chatty-pp-account-details.c:175
 msgid "disconnected"
 msgstr "قطع شده"
 
-#: src/dialogs/chatty-settings-dialog.c:199
+#: src/dialogs/chatty-settings-dialog.c:211
 #, c-format
 msgid "Error saving account: %s"
 msgstr "خطا در ذخیرهٔ حساب: %s"
 
-#: src/dialogs/chatty-settings-dialog.c:254
+#: src/dialogs/chatty-settings-dialog.c:266
 #, c-format
 msgid "Failed to verify server: %s"
 msgstr "خطا در تأ‌یید کارساز: %s"
 
-#: src/dialogs/chatty-settings-dialog.c:256
+#: src/dialogs/chatty-settings-dialog.c:268
 msgid "Failed to verify server"
 msgstr "خطا در تأ‌یید کارساز"
 
-#: src/dialogs/chatty-settings-dialog.c:262
+#: src/dialogs/chatty-settings-dialog.c:274
 msgid "Couldn't get Home server address"
 msgstr "نتوانست نشانی کارساز خانگی را بگیرد"
 
-#: src/dialogs/chatty-settings-dialog.c:462
+#: src/dialogs/chatty-settings-dialog.c:474
 #, c-format
 msgid "Delete account %s?"
 msgstr "حذف حساب %s؟"
 
-#: src/dialogs/chatty-settings-dialog.c:642
+#: src/dialogs/chatty-settings-dialog.c:667
+#, c-format
+msgid "Chatty cannot find a valid PGP Key for %s."
+msgstr "چتی نمی‌تواند کلید PGP معتبری برای %s بیابد."
+
+#: src/dialogs/chatty-settings-dialog.c:669
+msgid "Invalid Signing ID"
+msgstr "شناسهٔ امضای نامعتبر"
+
+#: src/dialogs/chatty-settings-dialog.c:704
+#, c-format
+msgid "The entered Key ID %s does not match the found PGP Key for %s:%s."
+msgstr "شناسهٔ کلید %s وارد شده با کلید PGP یافته برای %s مطابق نیست: %s."
+
+#: src/dialogs/chatty-settings-dialog.c:706
+msgid "Cannot Find Signing Key"
+msgstr "نمی‌توان کلید امضا را یافت"
+
+#: src/dialogs/chatty-settings-dialog.c:709
+#: src/dialogs/chatty-settings-dialog.c:955
+msgid "I Know What I am Doing"
+msgstr "می‌دانم چه می‌کنم"
+
+#: src/dialogs/chatty-settings-dialog.c:791
+#: src/dialogs/chatty-settings-dialog.c:873
+#: src/dialogs/chatty-settings-dialog.c:890
+msgid "Cannot Create Signing Key"
+msgstr "نمی‌توان کلید امضا را ساخت"
+
+#: src/dialogs/chatty-settings-dialog.c:792
+#: src/dialogs/chatty-settings-dialog.c:889
+#, c-format
+msgid "Error creating the PGP ID. Please check the logs for more details."
+msgstr "خطای در ایجاد شناسهٔ PGP. برای جزییات بیش‌تر لطفاً گزارش‌ها را بررسی کنید."
+
+#: src/dialogs/chatty-settings-dialog.c:805
+#, c-format
+msgid "Key %s was created for ID %s"
+msgstr "کلید %s برای شناسهٔ %s ساخته شده"
+
+#: src/dialogs/chatty-settings-dialog.c:806
+msgid "Successfully Created Key"
+msgstr "کلید با موفّقیت ساخته شد"
+
+#: src/dialogs/chatty-settings-dialog.c:858
+msgid "Empty Entries"
+msgstr "ورودی‌های خالی"
+
+#: src/dialogs/chatty-settings-dialog.c:859
+msgid "All entries must be filled to create a PGP Key"
+msgstr "برای ایجاد کلید PGP باید همهٔ ورودی‌ها پر شوند"
+
+#: src/dialogs/chatty-settings-dialog.c:872
+#, c-format
+msgid "%s already has key with fingerprint %s. Please choose a different PGP ID"
+msgstr ""
+"از پیش کلیدی برای %s با اثر انگشت %s موجد است. لطفاً شناسهٔ PGP دیگری را برگزینید"
+
+#: src/dialogs/chatty-settings-dialog.c:901
+#, c-format
+msgid "Creating key for ID %s."
+msgstr "ایجااد کردن کلید برای شناسهٔ %s."
+
+#: src/dialogs/chatty-settings-dialog.c:902
+msgid "Creating Key"
+msgstr "ایجاد کردن کلید"
+
+#. Translators: This means that the existing key will be there, but there will be a new key that Chatty will use by default instead of the existing one.
+#: src/dialogs/chatty-settings-dialog.c:950
+#, c-format
+msgid ""
+"Chatty is currently set to use PGP key: %s. The new key will be used instead of "
+"the existing one!"
+msgstr ""
+"چتی هم‌اکنون برای استفاده از کلید PGP مقابل تنظیم شده: %s. کلید جدید به جای قبلی "
+"استفاده خواهد شد!"
+
+#: src/dialogs/chatty-settings-dialog.c:952
+msgid "Signing ID Present"
+msgstr "شناسهٔ امضا موجود"
+
+#: src/dialogs/chatty-settings-dialog.c:954 src/ui/chatty-dialog-join-muc.ui:16
+#: src/ui/chatty-info-dialog.ui:26 src/ui/chatty-info-dialog.ui:35
+msgid "Cancel"
+msgstr "لغو"
+
+#: src/dialogs/chatty-settings-dialog.c:1110
 msgid "Restart Chatty to disable Purple"
 msgstr "آغاز دوبارهٔ چتی برای از کار انداختن پرپل"
 
-#: src/dialogs/chatty-settings-dialog.c:658 src/ui/chatty-settings-dialog.ui:243
+#: src/dialogs/chatty-settings-dialog.c:1126 src/ui/chatty-settings-dialog.ui:290
 msgid "Purple"
 msgstr "بنفش"
 
-#: src/dialogs/chatty-settings-dialog.c:660
+#: src/dialogs/chatty-settings-dialog.c:1128
 msgid "New Account"
 msgstr "حساب جدید"
 
-#: src/dialogs/chatty-settings-dialog.c:662 src/ui/chatty-settings-dialog.ui:303
+#: src/dialogs/chatty-settings-dialog.c:1130 src/ui/chatty-settings-dialog.ui:363
 msgid "Blocked Contacts"
 msgstr "آشنایان مسدود"
 
-#: src/dialogs/chatty-settings-dialog.c:664 src/ui/chatty-side-bar.ui:110
+#: src/dialogs/chatty-settings-dialog.c:1132 src/ui/chatty-settings-dialog.ui:272
+msgid "PGP Settings"
+msgstr "تنظیمات PGP"
+
+#: src/dialogs/chatty-settings-dialog.c:1134
+msgid "New PGP Key"
+msgstr "کلید PGP جدید"
+
+#: src/dialogs/chatty-settings-dialog.c:1136 src/ui/chatty-side-bar.ui:110
 msgid "Preferences"
 msgstr "ترجیحات"
 
-#: src/dialogs/chatty-settings-dialog.c:692 src/ui/chatty-pp-account-details.ui:81
-#: src/ui/chatty-settings-dialog.ui:215
+#: src/dialogs/chatty-settings-dialog.c:1164
+#: src/ui/chatty-pp-account-details.ui:81 src/ui/chatty-settings-dialog.ui:245
 msgid "Protocol"
 msgstr "شیوه‌نامه"
 
 #. TRANSLATORS: Only translate 'or'
-#: src/dialogs/chatty-settings-dialog.c:948
+#: src/dialogs/chatty-settings-dialog.c:1425
 msgid "@user:matrix.org or user@example.com"
 msgstr "@user:matrix.org یا user@example.com"
+
+#: src/dialogs/chatty-settings-dialog.c:1536
+msgid "Experimental Setting!"
+msgstr "تنظیم آزمایشی!"
+
+#: src/dialogs/chatty-settings-dialog.c:1537
+msgid ""
+"This setting is experimental and may cause loss of SMS. Use at your own risk!"
+msgstr ""
+"این تنظیم آزمایشی بوده و ممکن است منجر به از دست رفتن پیامک شود. با مسئولیت "
+"خودتان استفاده شود!"
 
 #: src/matrix/chatty-ma-account.c:78
 #, c-format
@@ -1180,12 +1328,12 @@ msgid_plural "Chatty cannot process %i MMSes..."
 msgstr[0] "چتی نمی‌تواند %Ii پیام چندرسانه‌ای را پردازش کند"
 msgstr[1] "چتی نمی‌تواند %Ii پیام چندرسانه‌ای را پردازش کند…"
 
-#: src/mm/chatty-mm-account.c:319 src/mm/chatty-mm-account.c:370
+#: src/mm/chatty-mm-account.c:345 src/mm/chatty-mm-account.c:396
 #, c-format
 msgid "Error Sending SMS to %s"
 msgstr "خطای فرستادن پیامک به %s"
 
-#: src/mm/chatty-mm-account.c:506
+#: src/mm/chatty-mm-account.c:532
 #, c-format
 msgid "Error Sending MMS to %s"
 msgstr "خطای فرستادن پیام چندرسانه‌ای به %s"
@@ -1207,18 +1355,13 @@ msgid "Please re-enter the Password."
 msgstr "ورود دوبارهٔ گذرواژه لطفاً."
 
 #: src/ui/chatty-dialog-wrong-pw.ui:53 src/ui/chatty-pp-account-details.ui:129
-#: src/ui/chatty-settings-dialog.ui:626
+#: src/ui/chatty-settings-dialog.ui:798
 msgid "Password"
 msgstr "گذرواژه"
 
 #: src/ui/chatty-dialog-join-muc.ui:7
 msgid "New Group Chat"
 msgstr "گپ گروهی جدید"
-
-#: src/ui/chatty-dialog-join-muc.ui:16 src/ui/chatty-info-dialog.ui:26
-#: src/ui/chatty-info-dialog.ui:35
-msgid "Cancel"
-msgstr "لغو"
 
 #: src/ui/chatty-dialog-join-muc.ui:22
 msgid "Join Chat"
@@ -1432,6 +1575,14 @@ msgstr "کارساز خانگی"
 msgid "Device ID"
 msgstr "شناسه دستگاه"
 
+#: src/ui/chatty-ma-account-details.ui:265
+msgid "Sensitive information"
+msgstr "اطّلاعات حسّاس"
+
+#: src/ui/chatty-ma-account-details.ui:276
+msgid "Access token"
+msgstr "ژتون دسترسی"
+
 #: src/ui/chatty-pp-account-details.ui:59
 msgid "Account ID"
 msgstr "شناسهٔ حساب"
@@ -1444,120 +1595,173 @@ msgstr "اثرانگشت خود"
 msgid "_Save"
 msgstr "_ذخیره"
 
-#: src/ui/chatty-settings-dialog.ui:45
+#: src/ui/chatty-settings-dialog.ui:45 src/ui/chatty-settings-dialog.ui:65
+#: src/ui/chatty-settings-dialog.ui:85
 msgid "_Apply"
 msgstr "_اعمال"
 
-#: src/ui/chatty-settings-dialog.ui:106
+#: src/ui/chatty-settings-dialog.ui:136
 msgid "Accounts"
 msgstr "حساب‌ها"
 
-#: src/ui/chatty-settings-dialog.ui:123 src/ui/chatty-settings-dialog.ui:467
+#: src/ui/chatty-settings-dialog.ui:153 src/ui/chatty-settings-dialog.ui:639
 msgid "Privacy"
 msgstr "محرمانگی"
 
-#: src/ui/chatty-settings-dialog.ui:128
+#: src/ui/chatty-settings-dialog.ui:158
 msgid "Read Receipts"
 msgstr "رسید‌های خواندن"
 
-#: src/ui/chatty-settings-dialog.ui:141
+#: src/ui/chatty-settings-dialog.ui:171
 msgid "Typing Indicators"
 msgstr "نشانگرهای نوشتن"
 
-#: src/ui/chatty-settings-dialog.ui:154
+#: src/ui/chatty-settings-dialog.ui:184
 msgid "Remove Tracking IDs From URLs"
 msgstr "برداشتن شناسه‌های ردیابی از نشانی‌ها"
 
-#: src/ui/chatty-settings-dialog.ui:167
+#: src/ui/chatty-settings-dialog.ui:197
 msgid "Show Attachment Previews"
 msgstr "پیش‌نمایش پیوست‌ها"
 
-#: src/ui/chatty-settings-dialog.ui:183
+#: src/ui/chatty-settings-dialog.ui:213
 msgid "Editor"
 msgstr "ویراستار"
 
-#: src/ui/chatty-settings-dialog.ui:187
+#: src/ui/chatty-settings-dialog.ui:217
 msgid "Convert Emoticons"
 msgstr "تبدیل شکلک‌ها"
 
-#: src/ui/chatty-settings-dialog.ui:188
+#: src/ui/chatty-settings-dialog.ui:218
 msgid "When you type :) it will be changed to 😃"
 msgstr "دگرگونی به 😃 هنگام نوشتن (:"
 
 #. TRANSLATORS: Return is the Enter key.
-#: src/ui/chatty-settings-dialog.ui:201
+#: src/ui/chatty-settings-dialog.ui:231
 msgid "Send Messages With Enter"
 msgstr "فرستادن پیام‌ها با ورود"
 
-#: src/ui/chatty-settings-dialog.ui:276
+#: src/ui/chatty-settings-dialog.ui:323
 msgid "Request Delivery Reports"
 msgstr "درخواست گزارش‌های رسیدن"
 
-#: src/ui/chatty-settings-dialog.ui:289
+#: src/ui/chatty-settings-dialog.ui:335
+msgid "Clear Stuck SMS"
+msgstr "پاک‌سازی پیامک‌های گیر کرده"
+
+#: src/ui/chatty-settings-dialog.ui:349
 msgid "SMIL for MMS"
 msgstr "SMIL برای پیام چندرسانه‌ای"
 
-#: src/ui/chatty-settings-dialog.ui:321
+#: src/ui/chatty-settings-dialog.ui:381
 msgid "MMS Carrier Settings"
 msgstr "تنظیمات حامل پیام چندرسانه‌ای"
 
-#: src/ui/chatty-settings-dialog.ui:325
+#: src/ui/chatty-settings-dialog.ui:385
 msgid "Phone Number"
 msgstr "شماره تلفن"
 
-#: src/ui/chatty-settings-dialog.ui:331
+#: src/ui/chatty-settings-dialog.ui:391
 msgid "Your modem's phone number"
 msgstr "شماره تلفن موردمتان"
 
-#: src/ui/chatty-settings-dialog.ui:339
+#: src/ui/chatty-settings-dialog.ui:399
 msgid "MMSC"
 msgstr "MMSC"
 
-#: src/ui/chatty-settings-dialog.ui:351
+#: src/ui/chatty-settings-dialog.ui:411
 msgid "APN"
 msgstr "ای‌پی‌ان"
 
-#: src/ui/chatty-settings-dialog.ui:363
+#: src/ui/chatty-settings-dialog.ui:423
 msgid "Proxy"
 msgstr "پیشکار"
 
-#: src/ui/chatty-settings-dialog.ui:390
+#: src/ui/chatty-settings-dialog.ui:447
+msgid "Current PGP Key"
+msgstr "کلید PGP کنونی"
+
+#: src/ui/chatty-settings-dialog.ui:448
+msgid ""
+"Chatty can use any existing key embedded with gpg. However, you are given the "
+"option to generate a key specifically for Chatty below."
+msgstr ""
+"چتی می‌تواند از هر کلید موجود تعبیه‌شده‌ای با gpg استفاده کند. با این حال گزینهٔ "
+"ایجاد کلیدی مخصوص برای چتی در زیر داده شده."
+
+#: src/ui/chatty-settings-dialog.ui:453
+msgid "Generate Chatty PGP Key"
+msgstr "ایجاد کلید PGP چتی"
+
+#: src/ui/chatty-settings-dialog.ui:467
+msgid "Signing ID"
+msgstr "شناسهٔ امضا"
+
+#: src/ui/chatty-settings-dialog.ui:472
+msgid "foo@example.com"
+msgstr "foo@example.com"
+
+#: src/ui/chatty-settings-dialog.ui:485
+msgid "Optional"
+msgstr "اختیاری"
+
+#: src/ui/chatty-settings-dialog.ui:505
+msgid ""
+"This will generate a key for use with Chatty. Please note that this will not "
+"install the key on a smart card."
+msgstr ""
+"این کار کلیدی برای استفادهٔ چتی تولید می‌کند. توجّه داشته باشید که این کار کلید را "
+"روی کارت هوشمند نصب نخواهد کرد."
+
+#: src/ui/chatty-settings-dialog.ui:508
+msgid "Full Name"
+msgstr "نام کامل"
+
+#: src/ui/chatty-settings-dialog.ui:520
+msgid "PGP ID"
+msgstr "شناسهٔ PGP"
+
+#: src/ui/chatty-settings-dialog.ui:533
+msgid "PGP Passphrase"
+msgstr "عبارت عبور PGP"
+
+#: src/ui/chatty-settings-dialog.ui:562
 msgid "You won't be notified by messages from blocked contacts"
 msgstr "از پیام‌های آشنایان مسدود آگاه نخواهید شد"
 
-#: src/ui/chatty-settings-dialog.ui:421
+#: src/ui/chatty-settings-dialog.ui:593
 msgid "No Blocked Chats"
 msgstr "بدون گپ مسدود"
 
-#: src/ui/chatty-settings-dialog.ui:450
+#: src/ui/chatty-settings-dialog.ui:622
 msgid "Enable Purple Accounts"
 msgstr "به کار انداختن حساب‌های پرپل"
 
-#: src/ui/chatty-settings-dialog.ui:473
+#: src/ui/chatty-settings-dialog.ui:645
 msgid "Message Archive Management"
 msgstr "مدیریت بایگانی پیام"
 
-#: src/ui/chatty-settings-dialog.ui:474
+#: src/ui/chatty-settings-dialog.ui:646
 msgid "Sync conversations with chat server"
 msgstr "همگام سازی گفت‌وگوها با کارساز گپ"
 
-#: src/ui/chatty-settings-dialog.ui:488
+#: src/ui/chatty-settings-dialog.ui:660
 msgid "Message Carbon Copies"
 msgstr "رونوشت‌های کاربنی پیام"
 
-#: src/ui/chatty-settings-dialog.ui:603
+#: src/ui/chatty-settings-dialog.ui:775
 msgid "User ID"
 msgstr "شناسهٔ کاربری"
 
-#: src/ui/chatty-settings-dialog.ui:652
+#: src/ui/chatty-settings-dialog.ui:824
 msgid "Home server"
-msgstr "کارساز خانیگ"
+msgstr "کارساز خانگی"
 
-#: src/ui/chatty-settings-dialog.ui:670
+#: src/ui/chatty-settings-dialog.ui:842
 msgid "_Add"
 msgstr "_افزودن"
 
-#: src/ui/chatty-settings-dialog.ui:698
+#: src/ui/chatty-settings-dialog.ui:870
 msgid "Add _New Account"
 msgstr "افزودن حساب _جدید"
 

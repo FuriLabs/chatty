@@ -386,7 +386,7 @@ test_pgp_export_pub_key (void)
   g_assert_nonnull (pub_key);
 
   orig_pub_key = g_build_filename (PGP_TEST_DATA_DIR, "chatty-test.gpg.pub", NULL);
-  pub_key_to_check = g_build_filename (pub_key_save_dir, "pub_key.asc", NULL);
+  pub_key_to_check = g_file_get_path (pub_key);
 
   test_check_sha (orig_pub_key, pub_key_to_check);
   g_file_load_contents (pub_key, NULL, &pdu, &len, NULL, &error);
@@ -399,9 +399,109 @@ test_pgp_export_pub_key (void)
   g_assert_cmpint (CHATTY_PGP_PUBLIC_KEY, ==, chatty_pgp_check_pgp_type (pdu));
   g_assert_finalize_object (pub_key);
 
-  fingerprint = chatty_pgp_get_pub_fingerprint (signing_email);
+  fingerprint = chatty_pgp_get_pub_fingerprint (signing_email, FALSE);
 
   g_assert_cmpstr ("362E7448A9CEEBD2C045D9AD028782BB929585AA", ==, fingerprint);
+
+  fingerprint = chatty_pgp_get_pub_fingerprint (signing_email, TRUE);
+
+  g_assert_cmpstr ("362E 7448 A9CE EBD2 C045 D9AD 0287 82BB 9295 85AA", ==, fingerprint);
+}
+
+static void
+create_key_cb (GObject      *object,
+               GAsyncResult *result,
+               gpointer      user_data)
+{
+  const char *name_email = "john.doe@example.com";
+  g_autofree char *fingerprint = NULL;
+  g_autofree char *system_args = NULL;
+  g_autoptr(GError) error = NULL;
+  GMainLoop *loop = user_data;
+  gboolean success = FALSE;
+
+  g_assert_true (chatty_pgp_create_key_finish (result,
+                                               &error));
+  g_assert_null (error);
+
+  fingerprint = chatty_pgp_get_pub_fingerprint (name_email, FALSE);
+  g_assert_nonnull (fingerprint);
+
+  /* We can check the newly created key */
+  system ("gpg --list-keys");
+
+  /* Delete the key in case we run tests multiple times */
+  system_args = g_strdup_printf ("gpg --batch --yes --delete-secret-key %s < /dev/null > /dev/null 2>&1", fingerprint);
+  success = system (system_args);
+  if (success != 0)
+    g_warning ("Error Deleting Secret Key: %d", success);
+
+  g_free (system_args);
+  system_args = g_strdup_printf ("gpg --batch --delete-key %s < /dev/null > /dev/null 2>&1", fingerprint);
+  success = system (system_args);
+
+  if (success != 0)
+    g_warning ("Error Deleting Key: %d", success);
+
+  g_main_loop_quit (loop);
+}
+
+static void
+create_key_dont_reach_cb (GObject      *object,
+                          GAsyncResult *result,
+                          gpointer      user_data)
+{
+  GMainLoop *loop = user_data;
+
+  g_main_loop_quit (loop);
+  g_return_if_reached ();
+}
+
+static void
+test_pgp_create_key_async (void)
+{
+  const char *name_real = "John Doe";
+  const char *name_email = "john.doe@example.com";
+  const char *signing_email = "sender@example.com";
+  const char *passphrase = "abc";
+  g_autofree char *fingerprint = NULL;
+  g_autofree char *system_args = NULL;
+  GMainLoop *loop = g_main_loop_new (NULL, FALSE);
+
+
+  g_assert_false (chatty_pgp_create_key_async (NULL,
+                                               name_email,
+                                               passphrase,
+                                               create_key_dont_reach_cb,
+                                               loop));
+
+  g_assert_false (chatty_pgp_create_key_async (name_real,
+                                               NULL,
+                                               passphrase,
+                                               create_key_dont_reach_cb,
+                                               loop));
+
+  g_assert_false (chatty_pgp_create_key_async (name_real,
+                                               name_email,
+                                               NULL,
+                                               create_key_dont_reach_cb,
+                                               NULL));
+
+  /* We already have a valid key with the signing email, so we shouldn't create a new one */
+  g_assert_false (chatty_pgp_create_key_async (name_real,
+                                               signing_email,
+                                               passphrase,
+                                               create_key_dont_reach_cb,
+                                               loop));
+
+  g_assert_true (chatty_pgp_create_key_async (name_real,
+                                              name_email,
+                                              passphrase,
+                                              create_key_cb,
+                                              loop));
+
+  g_main_loop_run (loop);
+  g_main_loop_unref (loop);
 }
 
 int
@@ -460,7 +560,7 @@ main (int   argc,
   g_test_add_func ("/pgp/content", test_pgp_encode_decode);
   g_test_add_func ("/pgp/message and files", test_pgp_message_and_files);
   g_test_add_func ("/pgp/export public key", test_pgp_export_pub_key);
-
+  g_test_add_func ("/pgp/create key async", test_pgp_create_key_async);
 
   return g_test_run ();
 }

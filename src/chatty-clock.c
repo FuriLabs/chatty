@@ -138,8 +138,10 @@ clock_get_human_time (ChattyClock         *self,
 
   if (time_span <= G_TIME_SPAN_DAY * 7 &&
       (day_now - day) < 7) {
-    if (detailed)
-      return g_date_time_format (time, "%A");
+    if (detailed && clock_format == G_DESKTOP_CLOCK_FORMAT_24H)
+      return g_date_time_format (time, "%A %H:%M");
+    else if (detailed)
+      return g_date_time_format (time, "%A %I:%M %p");
 
     return g_date_time_format (time, "%a");
   }
@@ -149,6 +151,14 @@ clock_get_human_time (ChattyClock         *self,
    * (eg: when the system time is wrong), e.g. “2022-01-01”.
    * See https://docs.gtk.org/glib/method.DateTime.format.html
    */
+  if (detailed && clock_format == G_DESKTOP_CLOCK_FORMAT_24H)
+    return g_date_time_format (time, _("%Y-%m-%d %H:%M"));
+  else if (detailed) {
+  /* TRANSLATORS: Timestamp with 12 hour time, e.g. “Today 06∶42 PM”.
+   * See https://docs.gtk.org/glib/method.DateTime.format.html
+   */
+    return g_date_time_format (time, _("%Y-%m-%d %I:%M %p"));
+  }
   return g_date_time_format (time, _("%Y-%m-%d"));
 }
 

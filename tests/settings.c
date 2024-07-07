@@ -77,6 +77,7 @@ check_settings_false (ChattySettings *settings)
   g_assert_false (chatty_settings_get_strip_url_tracking_ids_dialog (settings));
   g_assert_false (chatty_settings_get_blur_idle_buddies (settings));
   g_assert_false (chatty_settings_get_indicate_unknown_contacts (settings));
+  g_assert_false (chatty_settings_get_clear_out_stuck_sms (settings));
   g_assert_false (chatty_settings_get_return_sends_message (settings));
 }
 

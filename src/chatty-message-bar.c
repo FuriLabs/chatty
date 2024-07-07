@@ -8,6 +8,10 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+/*
+ * The libspelling code was heavily inspired by gtranslator
+ * https://gitlab.gnome.org/GNOME/gtranslator/
+ */
 #define G_LOG_DOMAIN "chatty-message-bar"
 
 #ifdef HAVE_CONFIG_H
@@ -550,6 +554,44 @@ chatty_message_bar_map (GtkWidget *widget)
   gtk_widget_grab_focus (self->message_input);
 }
 
+/**
+ * chatty_message_bar_reload_scheme_color:
+ * @self: a #ChattyMessageBar
+ *
+ * Reloads the gtksourceview scheme color. Neccessary when the scheme color
+ * changes.
+ */
+static void
+chatty_message_bar_reload_scheme_color (ChattyMessageBar *self)
+{
+  GtkSourceBuffer *buf;
+  GtkSourceStyleScheme *scheme;
+  GtkSourceStyleSchemeManager *manager;
+  const gchar *scheme_id;
+  AdwStyleManager *style_manager;
+
+  style_manager = adw_style_manager_get_default ();
+  buf = GTK_SOURCE_BUFFER (gtk_text_view_get_buffer (GTK_TEXT_VIEW (self->message_input)));
+  manager = gtk_source_style_scheme_manager_get_default ();
+
+  if (adw_style_manager_get_dark (style_manager))
+    scheme_id = "Adwaita-dark";
+  else if (adw_style_manager_get_high_contrast (style_manager))
+    scheme_id = "Adwaita-high-contrast";
+  else
+    scheme_id = "Adwaita";
+
+  scheme = gtk_source_style_scheme_manager_get_scheme (manager, scheme_id);
+
+  gtk_source_buffer_set_style_scheme (buf, scheme);
+}
+
+static void
+notify_color_scheme_changed_cb (ChattyMessageBar *self)
+{
+  chatty_message_bar_reload_scheme_color (self);
+}
+
 static void
 chatty_message_bar_finalize (GObject *object)
 {
@@ -618,6 +660,7 @@ static void
 chatty_message_bar_init (ChattyMessageBar *self)
 {
   GListModel *files = NULL;
+  AdwStyleManager *manager;
 #ifdef LIBSPELL_ENABLED
   GMenuModel *extra_menu = NULL;
   g_autoptr(SpellingTextBufferAdapter) adapter = NULL;
@@ -642,6 +685,13 @@ chatty_message_bar_init (ChattyMessageBar *self)
 
   spelling_text_buffer_adapter_set_enabled (adapter, TRUE);
 #endif
+
+  chatty_message_bar_reload_scheme_color (self);
+  manager = adw_style_manager_get_default ();
+  g_signal_connect_swapped (manager, "notify::dark",
+                            G_CALLBACK (notify_color_scheme_changed_cb), self);
+  g_signal_connect_swapped (manager, "notify::high-contrast",
+                            G_CALLBACK (notify_color_scheme_changed_cb), self);
 }
 
 static void
