@@ -15,7 +15,7 @@
     <translation type="gettext">purism-chatty</translation>
     <update_contact>librem5-dev@lists.community.puri.sm</update_contact>
     <launchable type="desktop-id">@APP_ID@.desktop</launchable>
-    <developer id="@chatty@puri.sm">
+    <developer id="chatty.puri.sm">
       <name translate="no">The Chatty Team</name>
     </developer>
     <screenshots>
