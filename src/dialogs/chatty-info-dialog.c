@@ -233,7 +233,8 @@ chatty_info_dialog_set_chat (ChattyInfoDialog *self,
     chatty_chat_info_set_item (CHATTY_CHAT_INFO (self->ma_chat_info), chat);
     if (self->pp_chat_info)
       chatty_chat_info_set_item (CHATTY_CHAT_INFO (self->mm_chat_info), NULL);
-    chatty_chat_info_set_item (CHATTY_CHAT_INFO (self->pp_chat_info), NULL);
+    if (self->pp_chat_info)
+      chatty_chat_info_set_item (CHATTY_CHAT_INFO (self->pp_chat_info), NULL);
     gtk_stack_set_visible_child (GTK_STACK (self->chat_type_stack), self->ma_chat_info);
   } else if (CHATTY_IS_MM_CHAT (chat)) {
     chatty_chat_info_set_item (CHATTY_CHAT_INFO (self->ma_chat_info), NULL);
