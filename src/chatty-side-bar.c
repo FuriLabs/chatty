@@ -133,6 +133,9 @@ side_bar_search_enable_changed_cb (ChattySideBar *self)
   if (!enabled &&
       self->protocol_any_row != self->selected_protocol_row)
     gtk_widget_activate (self->protocol_any_row);
+
+  if (enabled)
+    gtk_widget_grab_focus (self->chats_search_entry);
 }
 
 static void
