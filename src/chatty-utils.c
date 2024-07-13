@@ -154,7 +154,7 @@ chatty_utils_strip_utm_from_url (const char *url_to_parse)
     return g_strdup (url_to_parse);
 
   url = g_uri_parse (url_to_parse, G_URI_FLAGS_NONE, NULL);
-  if (!url)
+  if (!url || !g_uri_get_query (url))
     return g_strdup (url_to_parse);
 
   tracking_ids = load_tracking_ids ();
