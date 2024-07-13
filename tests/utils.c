@@ -251,6 +251,15 @@ test_message_strip_utm_from_url (void)
      "http://utm_source.example.com/something?wowbraid=123"},
     {"https://breeo.co/pages/pizza-oven?utm_source=facebook&utm_medium=cpc&utm_campaign=Pizza+Launch+%257C+Full+Funnel+%257C+Conversion%257ERetargeting+Purchase+%257C+Traffic+Engagers+Purchasers&utm_content=Spec+Text+Callouts+IMG+%257C+X24+Pizza+Oven&ad_id=6598924229883&adset_id=6598924227883&campaign_id=6598902108283&ad_name=Spec+Text+Callouts+IMG+%257C+X24+Pizza+Oven&adset_name=Retargeting+Purchase+%257C+Traffic+Engagers+Purchasers&campaign_name=Pizza+Launch+%257C+Full+Funnel+%257C+Conversion&placement=Instagram_Reels",
      "https://breeo.co/pages/pizza-oven"},
+    {
+      "https://matrix.to/#/#matrix:matrix.org?web-instance%5Belement.io%5D=chat.mozilla.org",
+      "https://matrix.to/#/#matrix:matrix.org?web-instance%5Belement.io%5D=chat.mozilla.org"},
+    {
+      "https://matrix.to/#/#matrix:matrix.org?web-instance[element.io]=chat.mozilla.org",
+      "https://matrix.to/#/#matrix:matrix.org?web-instance[element.io]=chat.mozilla.org"},
+    {
+      "https://matrix.to/#/!SomeRoomId:matrix.org/$171871802092xTbEo:matrix.org?via=matrix.org&via=other.matrix-server.org",
+      "https://matrix.to/#/!SomeRoomId:matrix.org/$171871802092xTbEo:matrix.org?via=matrix.org&via=other.matrix-server.org"},
   };
 
   g_assert_null (chatty_utils_strip_utm_from_url (NULL));
@@ -312,6 +321,10 @@ test_message_strip_utm_from_message (void)
     {
      "Test message text before and after http://www.example.com/user's-image.png and after",
      "Test message text before and after http://www.example.com/user's-image.png and after"},
+    {
+      "Test message text before URL with fragment containing '?' but no query part https://matrix.to/#/!bla?via=matrix.org",
+      "Test message text before URL with fragment containing '?' but no query part https://matrix.to/#/!bla?via=matrix.org",
+    }
   };
 
   g_assert_null (chatty_utils_strip_utm_from_message (NULL));
