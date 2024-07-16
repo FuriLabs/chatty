@@ -33,7 +33,7 @@
               <object class="GtkShortcutsShortcut">
                 <property name="visible">1</property>
                 <property name="title" translatable="yes" context="shortcut window">Show Shortcuts</property>
-                <property name="accelerator">&lt;Primary&gt;F1</property>
+                <property name="action-name">win.show-help-overlay</property>
               </object>
             </child>
 
