@@ -578,11 +578,11 @@ chatty_settings_get_strip_url_tracking_ids_dialog (ChattySettings *self)
  */
 void
 chatty_settings_set_strip_url_tracking_ids_dialog (ChattySettings *self,
-                                                   gboolean shown)
+                                                   gboolean strip)
 {
   g_return_if_fail (CHATTY_IS_SETTINGS (self));
 
-  g_settings_set_boolean (G_SETTINGS (self->settings), "strip-url-tracking-id-dialog", !!shown);
+  g_settings_set_boolean (G_SETTINGS (self->settings), "strip-url-tracking-id-dialog", strip);
 }
 
 /**
@@ -614,7 +614,7 @@ chatty_settings_set_clear_out_stuck_sms (ChattySettings *self,
 {
   g_return_if_fail (CHATTY_IS_SETTINGS (self));
 
-  g_settings_set_boolean (G_SETTINGS (self->settings), "clear-out-stuck-sms", !!clear_sms);
+  g_settings_set_boolean (G_SETTINGS (self->settings), "clear-out-stuck-sms", clear_sms);
 }
 
 /**
@@ -695,7 +695,7 @@ chatty_settings_set_window_maximized (ChattySettings *self,
 {
   g_return_if_fail (CHATTY_IS_SETTINGS (self));
 
-  g_settings_set_boolean (G_SETTINGS (self->settings), "window-maximized", !!maximized);
+  g_settings_set_boolean (G_SETTINGS (self->settings), "window-maximized", maximized);
 }
 
 /**
@@ -825,5 +825,5 @@ chatty_settings_enable_experimental_features (ChattySettings *self,
 {
   g_return_if_fail (CHATTY_IS_SETTINGS (self));
 
-  g_settings_set_boolean (G_SETTINGS (self->settings), "experimental-features", !!enable);
+  g_settings_set_boolean (G_SETTINGS (self->settings), "experimental-features", enable);
 }
