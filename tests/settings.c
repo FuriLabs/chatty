@@ -41,12 +41,18 @@ set_settings_bool (ChattySettings *settings,
                 "send-receipts", value,
                 "message-carbons", value,
                 "send-typing", value,
+                "strip-url-tracking-id", value,
+                "strip-url-tracking-id-dialog", value,
                 "blur-idle-buddies", value,
                 "indicate-unknown-contacts", value,
+                "clear-out-stuck-sms", value,
                 "return-sends-message", value,
+                "render-attachments", value,
                 NULL);
 }
 
+/* set_settings(), check_settings_true() and check_settings_false()
+ * should stay in sync */
 static void
 check_settings_true (ChattySettings *settings)
 {
@@ -57,8 +63,11 @@ check_settings_true (ChattySettings *settings)
   g_assert_true (chatty_settings_get_send_receipts (settings));
   g_assert_true (chatty_settings_get_message_carbons (settings));
   g_assert_true (chatty_settings_get_send_typing (settings));
+  g_assert_true (chatty_settings_get_strip_url_tracking_ids (settings));
+  g_assert_true (chatty_settings_get_strip_url_tracking_ids_dialog (settings));
   g_assert_true (chatty_settings_get_blur_idle_buddies (settings));
   g_assert_true (chatty_settings_get_indicate_unknown_contacts (settings));
+  g_assert_true (chatty_settings_get_clear_out_stuck_sms (settings));
   g_assert_true (chatty_settings_get_return_sends_message (settings));
   g_assert_true (chatty_settings_get_render_attachments (settings));
 }
@@ -79,6 +88,7 @@ check_settings_false (ChattySettings *settings)
   g_assert_false (chatty_settings_get_indicate_unknown_contacts (settings));
   g_assert_false (chatty_settings_get_clear_out_stuck_sms (settings));
   g_assert_false (chatty_settings_get_return_sends_message (settings));
+  g_assert_false (chatty_settings_get_render_attachments (settings));
 }
 
 static void
