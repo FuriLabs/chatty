@@ -271,7 +271,6 @@ chat_page_message_row_new (ChattyMessage  *message,
   chatty_message_row_set_alias (CHATTY_MESSAGE_ROW (row),
                                 chatty_message_get_user_alias (message));
 
-  /* If we are close to bottom, mark as we should scroll after the row is added */
   if (chatty_chat_page_scroll_is_bottom (self))
     self->should_scroll = TRUE;
 
@@ -626,7 +625,12 @@ chatty_chat_page_set_chat (ChattyChatPage *self,
   chat_page_message_items_changed (self);
   chat_page_chat_changed_cb (self);
 
-  if (g_list_model_get_n_items (messages) <= 3)
+  /* FIXME we should rather check if we have (slightly more than) a page full of messages.
+   * loading of more messages is typically triggered by scrolling up.
+   * if we can't scroll up (because all messages fit into a single page)
+   * the user will be unable to load past history.
+   * see https://gitlab.gnome.org/World/Chatty/-/issues/906 */
+  if (g_list_model_get_n_items (messages) <= 20)
     chatty_chat_load_past_messages (chat, -1);
 
 
