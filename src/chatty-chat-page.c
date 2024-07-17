@@ -635,7 +635,7 @@ chatty_chat_page_set_chat (ChattyChatPage *self,
 
 
   gtk_list_box_bind_model (GTK_LIST_BOX (self->message_list),
-                           chatty_chat_get_messages (self->chat),
+                           messages,
                            (GtkListBoxCreateWidgetFunc)chat_page_message_row_new,
                            self, NULL);
   g_signal_connect_object (self->chat, "notify::buddy-typing",
