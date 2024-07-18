@@ -767,6 +767,16 @@ ma_chat_encryption_changed_cb (ChattyMaChat *self)
   g_object_notify (G_OBJECT (self), "encrypt");
 }
 
+
+static void
+ma_unread_count_changed_cb (ChattyMaChat *self)
+{
+  g_assert (CHATTY_IS_MA_CHAT (self));
+
+  g_signal_emit_by_name (self, "changed", 0);
+}
+
+
 static void
 joined_members_changed_cb (ChattyMaChat *self,
                            guint         position,
@@ -861,6 +871,9 @@ chatty_ma_chat_new_with_room (CmRoom *room)
                            self, G_CONNECT_SWAPPED);
   g_signal_connect_object (room, "notify::encrypted",
                            G_CALLBACK (ma_chat_encryption_changed_cb),
+                           self, G_CONNECT_SWAPPED);
+  g_signal_connect_object (room, "notify::unread-count",
+                           G_CALLBACK (ma_unread_count_changed_cb),
                            self, G_CONNECT_SWAPPED);
 
   members = cm_room_get_joined_members (room);
