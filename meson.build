@@ -121,12 +121,13 @@ libebook_dep = dependency('libebook-contacts-1.2')
 libfeedback_dep = dependency('libfeedback-0.0')
 libm_dep = cc.find_library('m')
 
-libcmatrix = subproject('libcmatrix',
-                        default_options: [
-                          'build-examples=false',
-                        ])
-libcmatrix_dep = libcmatrix.get_variable('libcmatrix_dep')
-
+libcmatrix_dep = dependency('libcmatrix',
+  version: '>= 0.0.1',
+  fallback: ['libcmatrix', 'libcmatrix_dep'],
+  default_options: [
+    'build-examples=false',
+    'gtk_doc=false',
+  ])
 
 subdir('completion')
 subdir('data')

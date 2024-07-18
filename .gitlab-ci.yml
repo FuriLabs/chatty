@@ -57,6 +57,7 @@ build-alpine-edge:
   before_script:
     - apk -q add
         build-base
+        git
         glib-dev
         dbus
         dbus-x11
@@ -120,6 +121,7 @@ test:alpine-edge:
   before_script:
     - apk -q add
         build-base
+        git
         glib-dev
         dbus
         dbus-x11

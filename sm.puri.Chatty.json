@@ -266,6 +266,18 @@
             ]
         },
         {
+            "name": "libcmatrix",
+            "buildsystem": "meson",
+            "sources": [
+                {
+                    "type": "git",
+                    "tag": "0.0.1",
+                    "tag": "ead86eec0ea77af5be3667c19d415cfb29d8651d",
+                    "commit": "https://source.puri.sm/Librem5/libcmatrix.git"
+                }
+            ]
+        },
+        {
             "name": "chatty",
             "buildsystem": "meson",
             "config-opts": [
