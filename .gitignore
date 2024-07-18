@@ -4,6 +4,11 @@
 build
 arm
 arm-build
+debian/.debhelper/
+debian/chatty.substvars
+debian/chatty/
+debian/debhelper-build-stamp
+debian/files
 .zanata-cache/
 .vscode
 .flatpak-builder/
