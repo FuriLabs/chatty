@@ -145,12 +145,16 @@ summary({'Target': system,
          'Compiler': cc.get_id(),
          'Version': cc.version(),
          'Linker': cc.get_linker_id(),
-        }, section: 'Toolchain')
+        },
+        bool_yn: true,
+        section: 'Toolchain')
 
 summary({'Build type': get_option('buildtype'),
          'libpurple': purple_dep.found(),
          'libspelling': libspell_dep.found(),
-        }, section: 'Configuration')
+        },
+        bool_yn: true,
+        section: 'Configuration')
 
 # gnome.post_install() is available since meson 0.59.0
 # Distributions use their own tooling (e.g. postinst, triggers, etc)
