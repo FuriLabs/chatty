@@ -19,7 +19,7 @@ Build-Depends:
  libjson-glib-dev,
  libmm-glib-dev (>= 1.12.0),
  libphonenumber-dev,
- libpurple-dev,
+ libpurple-dev <!pkg.chatty.nopurple>,
  libolm-dev,
  libsecret-1-dev,
  libsoup-3.0-dev,
