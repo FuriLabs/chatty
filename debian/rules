@@ -2,6 +2,12 @@
 
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 
+ifneq ($(filter pkg.chatty.nopurple,$(DEB_BUILD_PROFILES)),)
+    MESON_OPTS += -Dpurple=disabled
+else
+    MESON_OPTS += -Dpurple=enabled
+endif
+
 %:
 	dh $@ --builddirectory=_build
 
@@ -11,6 +17,12 @@ override_dh_installman:
 	help2man --no-info --name "SMS/MMS and Matrix messaging" --section=1 \
 		debian/chatty/usr/bin/chatty > \
 		debian/chatty/usr/share/man/man1/chatty.1
+
+override_dh_auto_configure:
+	dh_auto_configure -- $(MESON_OPTS)
+
+override_dh_shlibdeps:
+	dh_shlibdeps -l/usr/lib/purple-2
 
 # otherwise the tests running gtk-builder-tool to validate
 # .ui files might fail

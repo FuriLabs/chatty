@@ -30,7 +30,7 @@ Build-Depends:
  libmm-glib-dev (>= 1.12.0),
  libolm-dev,
  libphonenumber-dev,
- libpurple-dev (>= 2.14.9),
+ libpurple-dev (>= 2.14.9) <!pkg.chatty.nopurple>,
  libsecret-1-dev,
  libsoup-3.0-dev,
  libspelling-1-dev,
