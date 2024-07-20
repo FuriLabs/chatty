@@ -137,6 +137,21 @@ chatty_window_open_item (ChattyWindow *self,
   }
 }
 
+
+static void
+chatty_window_enable_per_chat_actions (ChattyWindow *self, gboolean enable)
+{
+  gtk_widget_action_set_enabled (GTK_WIDGET (self), "win.show-chat-details", enable);
+  gtk_widget_action_set_enabled (GTK_WIDGET (self), "win.leave-chat", enable);
+  gtk_widget_action_set_enabled (GTK_WIDGET (self), "win.block-chat", enable);
+  gtk_widget_action_set_enabled (GTK_WIDGET (self), "win.unblock-chat", enable);
+  gtk_widget_action_set_enabled (GTK_WIDGET (self), "win.archive-chat", enable);
+  gtk_widget_action_set_enabled (GTK_WIDGET (self), "win.unarchive-chat", enable);
+  gtk_widget_action_set_enabled (GTK_WIDGET (self), "win.delete-chat", enable);
+  gtk_widget_action_set_enabled (GTK_WIDGET (self), "win.call-user", enable);
+}
+
+
 static void
 window_chat_list_selection_changed (ChattyWindow   *self,
                                     ChattyChatList *list)
@@ -146,6 +161,8 @@ window_chat_list_selection_changed (ChattyWindow   *self,
 
   g_assert (CHATTY_IS_WINDOW (self));
   g_assert (CHATTY_IS_CHAT_LIST (list));
+
+  chatty_window_enable_per_chat_actions (self, FALSE);
 
   chat_list = chatty_chat_list_get_selected (list);
 
@@ -172,6 +189,8 @@ window_chat_list_selection_changed (ChattyWindow   *self,
 
     return;
   }
+
+  chatty_window_enable_per_chat_actions (self, TRUE);
 
 #ifdef PURPLE_ENABLED
   if (CHATTY_IS_PP_CHAT (chat))
@@ -770,6 +789,8 @@ chatty_window_init (ChattyWindow *self)
 {
   gboolean folded;
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  chatty_window_enable_per_chat_actions (self, FALSE);
 
   self->chat_list = chatty_side_bar_get_chat_list (CHATTY_SIDE_BAR (self->side_bar));
   self->manager = g_object_ref (chatty_manager_get_default ());
