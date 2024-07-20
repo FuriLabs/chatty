@@ -82,6 +82,36 @@
               </object>
             </child>
 
+            <!-- Topic -->
+            <child>
+              <object class="GtkLabel">
+                <property name="visible" bind-source="topic_label" bind-property="visible" bind-flags="sync-create"/>
+                <property name="xalign">1</property>
+                <property name="label" translatable="yes">Topic</property>
+                <style>
+                  <class name="dim-label"/>
+                </style>
+                <layout>
+                  <property name="column">0</property>
+                  <property name="row">2</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="topic_label">
+                <property name="hexpand">1</property>
+                <property name="vexpand">1</property>
+                <property name="halign">start</property>
+                <property name="wrap">1</property>
+                <property name="wrap-mode">word-char</property>
+                <property name="selectable">1</property>
+                <layout>
+                  <property name="column">1</property>
+                  <property name="row">2</property>
+                </layout>
+              </object>
+            </child>
+
             <child>
               <object class="GtkLabel" id="settings_label">
                 <property name="halign">start</property>

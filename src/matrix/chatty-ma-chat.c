@@ -933,3 +933,11 @@ chatty_ma_chat_matches_id (ChattyMaChat *self,
 
   return g_strcmp0 (self->room_id, room_id) == 0;
 }
+
+const char *
+chatty_ma_chat_get_topic (ChattyMaChat  *self)
+{
+  g_return_val_if_fail (CHATTY_IS_MA_CHAT (self), NULL);
+
+  return cm_room_get_topic (self->cm_room);
+}
