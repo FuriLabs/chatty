@@ -330,7 +330,6 @@ window_block_chat_response_cb (AdwMessageDialog *dialog,
 
 {
   ChattyWindow *self = CHATTY_WINDOW (user_data);
-  g_autoptr(GError) error = NULL;
 
   g_assert (CHATTY_IS_WINDOW (self));
   if (g_strcmp0 (response, "block") == 0) {
@@ -400,7 +399,6 @@ window_delete_chat_response_cb (AdwMessageDialog *dialog,
                                 gpointer          user_data)
 {
   ChattyWindow *self = CHATTY_WINDOW (user_data);
-  g_autoptr(GError) error = NULL;
 
   g_assert (CHATTY_IS_WINDOW (self));
 
@@ -439,7 +437,6 @@ chatty_window_delete_chat (GtkWidget  *widget,
   const char *name;
   GtkWindow *window;
   AdwDialog *dialog;
-  g_autofree char *secondary_text = NULL;
 
   g_assert (CHATTY_IS_WINDOW (self));
 
