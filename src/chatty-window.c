@@ -803,6 +803,9 @@ chatty_window_init (ChattyWindow *self)
   chatty_main_view_set_item (CHATTY_MAIN_VIEW (self->main_view), NULL);
 
   gtk_application_set_accels_for_action (GTK_APPLICATION (g_application_get_default ()),
+                                         "win.show-chat-details",
+                                         (const char *[]){"<ctrl>d", NULL, });
+  gtk_application_set_accels_for_action (GTK_APPLICATION (g_application_get_default ()),
                                          "win.search-chat",
                                          (const char *[]){"<ctrl>f", NULL, });
 }

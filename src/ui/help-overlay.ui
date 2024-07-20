@@ -40,6 +40,22 @@
           </object> <!-- ./GtkShortcutsGroup -->
         </child>
 
+        <child>
+          <object class="GtkShortcutsGroup">
+            <property name="visible">1</property>
+            <property name="title" translatable="yes" context="shortcut window">Chat</property>
+
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="visible">1</property>
+                <property name="title" translatable="yes" context="shortcut window">Show Details</property>
+                <property name="action-name">win.show-chat-details</property>
+              </object>
+            </child>
+
+          </object> <!-- ./GtkShortcutsGroup -->
+        </child>
+
       </object> <!-- ./GtkShortcutsSection -->
     </child>
 
