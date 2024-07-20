@@ -573,6 +573,14 @@ chatty_window_go_back (GtkWidget  *widget,
 }
 
 static void
+on_search_chat_activated (GtkWidget *widget, const char *action_name, GVariant *param)
+{
+  ChattyWindow *self = CHATTY_WINDOW (widget);
+
+  chatty_side_bar_toggle_search (CHATTY_SIDE_BAR (self->side_bar));
+}
+
+static void
 chatty_window_start_new_chat (GtkWidget  *widget,
                               const char *action_name,
                               GVariant   *param)
@@ -757,6 +765,7 @@ chatty_window_class_init (ChattyWindowClass *klass)
   gtk_widget_class_install_action (widget_class, "win.show-chat-details", NULL, chatty_window_show_chat_details);
   gtk_widget_class_install_action (widget_class, "win.show-settings", NULL, chatty_window_show_settings);
   gtk_widget_class_install_action (widget_class, "win.go-back", NULL, chatty_window_go_back);
+  gtk_widget_class_install_action (widget_class, "win.search-chat", NULL, on_search_chat_activated);
 }
 
 static void
@@ -776,6 +785,10 @@ chatty_window_init (ChattyWindow *self)
   folded = adw_navigation_split_view_get_collapsed (ADW_NAVIGATION_SPLIT_VIEW (self->split_view));
   chatty_side_bar_set_show_end_title_buttons (CHATTY_SIDE_BAR (self->side_bar), folded);
   chatty_main_view_set_item (CHATTY_MAIN_VIEW (self->main_view), NULL);
+
+  gtk_application_set_accels_for_action (GTK_APPLICATION (g_application_get_default ()),
+                                         "win.search-chat",
+                                         (const char *[]){"<ctrl>f", NULL, });
 }
 
 GtkWidget *

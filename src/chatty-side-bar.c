@@ -359,3 +359,15 @@ chatty_side_bar_set_show_archived (ChattySideBar *self,
   gtk_widget_set_visible (self->add_chat_button, !show_archived);
   chatty_chat_list_show_archived (CHATTY_CHAT_LIST (self->chat_list), show_archived);
 }
+
+
+void
+chatty_side_bar_toggle_search (ChattySideBar *self)
+{
+  gboolean active;
+
+  g_return_if_fail (CHATTY_IS_SIDE_BAR (self));
+
+  active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (self->search_button));
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (self->search_button), !active);
+}
