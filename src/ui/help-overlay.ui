@@ -25,7 +25,7 @@
               <object class="GtkShortcutsShortcut">
                 <property name="visible">1</property>
                 <property name="title" translatable="yes" context="shortcut window">Open Search</property>
-                <property name="accelerator">&lt;Primary&gt;F</property>
+                <property name="action-name">win.search-chat</property>
               </object>
             </child>
 
