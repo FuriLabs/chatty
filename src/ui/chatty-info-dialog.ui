@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="ChattyInfoDialog" parent="AdwWindow">
-    <property name="modal">1</property>
-    <property name="default-width">360</property>
-    <property name="default-height">576</property>
-    <property name="hide-on-close">1</property>
+  <template class="ChattyInfoDialog" parent="AdwDialog">
+    <property name="content-width">360</property>
     <property name="title" translatable="yes">Chat Details</property>
     <child>
       <object class="AdwToolbarView">

@@ -47,7 +47,6 @@ struct _ChattyWindow
   GtkWidget *main_view;
 
   GtkWidget *new_chat_dialog;
-  GtkWidget *chat_info_dialog;
 
   GtkWidget *settings_dialog;
 
@@ -546,10 +545,10 @@ chatty_window_show_chat_details (GtkWidget  *widget,
   chat = (ChattyChat *)chatty_main_view_get_item (CHATTY_MAIN_VIEW (self->main_view));
   g_return_if_fail (CHATTY_IS_CHAT (chat));
 
-  dialog = CHATTY_INFO_DIALOG (self->chat_info_dialog);
+  dialog = chatty_info_dialog_new ();
 
   chatty_info_dialog_set_chat (dialog, chat);
-  gtk_window_present (GTK_WINDOW (dialog));
+  adw_dialog_present (ADW_DIALOG (dialog), GTK_WIDGET (self));
 }
 
 static void
@@ -705,7 +704,6 @@ chatty_window_constructed (GObject *object)
                            G_CALLBACK (new_chat_selection_changed_cb),
                            self,
                            G_CONNECT_SWAPPED);
-  self->chat_info_dialog = chatty_info_dialog_new (GTK_WINDOW (self));
 
   G_OBJECT_CLASS (chatty_window_parent_class)->constructed (object);
 }

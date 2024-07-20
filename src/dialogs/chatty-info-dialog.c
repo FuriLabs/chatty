@@ -27,7 +27,7 @@
 
 struct _ChattyInfoDialog
 {
-  AdwWindow       parent_instance;
+  AdwDialog       parent_instance;
 
   GtkWidget      *main_stack;
   GtkWidget      *chat_type_stack;
@@ -48,7 +48,7 @@ struct _ChattyInfoDialog
   ChattyChat     *chat;
 };
 
-G_DEFINE_TYPE (ChattyInfoDialog, chatty_info_dialog, ADW_TYPE_WINDOW)
+G_DEFINE_TYPE (ChattyInfoDialog, chatty_info_dialog, ADW_TYPE_DIALOG)
 
 static void
 info_dialog_new_invite_clicked_cb (ChattyInfoDialog *self)
@@ -201,14 +201,10 @@ chatty_info_dialog_init (ChattyInfoDialog *self)
 #endif
 }
 
-GtkWidget *
-chatty_info_dialog_new (GtkWindow *parent_window)
+ChattyInfoDialog *
+chatty_info_dialog_new (void)
 {
-  g_return_val_if_fail (GTK_IS_WINDOW (parent_window), NULL);
-
-  return g_object_new (CHATTY_TYPE_INFO_DIALOG,
-                       "transient-for", parent_window,
-                       NULL);
+  return g_object_new (CHATTY_TYPE_INFO_DIALOG, NULL);
 }
 
 void
