@@ -322,7 +322,7 @@ matrix_save_account_cb (GObject      *object,
   ChattyMatrix *self;
   ChattyMaAccount *account;
   g_autoptr(GTask) task = user_data;
-  g_autoptr(GError) error = NULL;
+  GError *error = NULL;
   const char *username;
   gboolean saved;
 
