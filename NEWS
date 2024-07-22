@@ -1,16 +1,16 @@
-Overview of Changes in Chats 0.8.4. Won, 26 June 2024
+Overview of Changes in Chats 0.8.4. Wed, 26 June 2024
 ========================================================
 * Convert to Adw Alert Dialogs
 * re-add spell checking
 * Fix various small UI issues
 
-Overview of Changes in Chats 0.8.3. Won, 4 May 2024
+Overview of Changes in Chats 0.8.3. Sat, 4 May 2024
 ========================================================
 * Update GUI for libadwaita 1.5
   - Minimum libadwaita version is now 1.5
 * Fix various small UI issues
 
-Overview of Changes in Chats 0.8.2. Won, 15 March 2024
+Overview of Changes in Chats 0.8.2. Fri, 15 March 2024
 ========================================================
 * Update GUI for libadwaita 1.4
   - Minimum libadwaita version is now 1.4
@@ -18,7 +18,7 @@ Overview of Changes in Chats 0.8.2. Won, 15 March 2024
 * Let chat render animated images and videos
 * Have tracking ids stripped from pasting and chat
 
-Overview of Changes in Chats 0.8.1. Won, 19 January 2024
+Overview of Changes in Chats 0.8.1. Fri, 19 January 2024
 ========================================================
 * Address GTK4 deprecations
   - Minimum GTK4 version is now 4.10
@@ -27,7 +27,7 @@ Overview of Changes in Chats 0.8.1. Won, 19 January 2024
 * Fix link color in dark style
 * Update translations
 
-Overview of Changes in Chats 0.8.0. Won, 18 December 2023
+Overview of Changes in Chats 0.8.0. Mon, 18 December 2023
 =========================================================
 * Fix flaky tests
 * Fix various memory leaks
@@ -45,7 +45,7 @@ Overview of Changes in Chats 0.8.0. Won, 18 December 2023
   - Turkish
   - Ukrainian
 
-Overview of Changes in Chats 0.8.0.rc0. Won, 31 July 2023
+Overview of Changes in Chats 0.8.0.rc0. Mon, 31 July 2023
 ========================================================
 * Port to GTK4
 * Fix various memory leaks
