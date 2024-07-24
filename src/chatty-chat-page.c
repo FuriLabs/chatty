@@ -149,7 +149,7 @@ chatty_chat_page_scroll_is_bottom (ChattyChatPage *self)
   return ABS (upper - page_size - value) <= DBL_EPSILON;
 }
 
-static gboolean
+static void
 update_view_scroll (gpointer user_data)
 {
   ChattyChatPage *self = user_data;
@@ -171,13 +171,11 @@ update_view_scroll (gpointer user_data)
   }
 
   if (upper - size <= DBL_EPSILON)
-    return G_SOURCE_REMOVE;
+    return;
 
   /* If close to bottom, scroll to bottom */
   if (upper - value < (size * 1.75))
     gtk_adjustment_set_value (self->vadjustment, upper - size);
-
-  return G_SOURCE_REMOVE;
 }
 
 static void
@@ -349,7 +347,7 @@ chat_page_adjustment_value_changed_cb (ChattyChatPage *self)
 
   if (self->should_scroll) {
     g_clear_handle_id (&self->scroll_bottom_id, g_source_remove);
-    self->scroll_bottom_id = g_timeout_add (SCROLL_TIMEOUT, update_view_scroll, self);
+    self->scroll_bottom_id = g_timeout_add_once (SCROLL_TIMEOUT, update_view_scroll, self);
   }
 }
 
@@ -417,7 +415,7 @@ osk_properties_changed_cb (ChattyChatPage *self,
 
   if (value && g_variant_get_boolean (value)) {
     g_clear_handle_id (&self->scroll_bottom_id, g_source_remove);
-    self->scroll_bottom_id = g_timeout_add (SCROLL_TIMEOUT, update_view_scroll, self);
+    self->scroll_bottom_id = g_timeout_add_once (SCROLL_TIMEOUT, update_view_scroll, self);
   }
 }
 
