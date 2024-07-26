@@ -15,6 +15,7 @@
 #include <glib/gi18n.h>
 
 #include "chatty-ma-buddy.h"
+#include "chatty-log.h"
 
 struct _ChattyMaBuddy
 {
@@ -117,8 +118,13 @@ ma_buddy_get_avatar_cb (GObject      *object,
   if (error || !stream)
     return;
 
-  self->avatar = gdk_pixbuf_new_from_stream_at_scale (stream, 192, -1, TRUE, NULL, NULL);
-  g_signal_emit_by_name (self, "avatar-changed", 0);
+  self->avatar = gdk_pixbuf_new_from_stream_at_scale (stream, 192, -1, TRUE, NULL, &error);
+  if (self->avatar)
+    g_signal_emit_by_name (self, "avatar-changed", 0);
+  else
+    CHATTY_WARNING (chatty_ma_buddy_get_name (CHATTY_ITEM (self)),
+                    "Could not get avatar '%s' for matrix chat:",
+                    error->message);
 }
 
 static GdkPixbuf *
