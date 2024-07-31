@@ -493,11 +493,11 @@ chatty_utils_window_has_toplevel_focus (GtkWindow *window)
   return !!(state & GDK_TOPLEVEL_STATE_FOCUSED);
 }
 
-const char *
+char *
 chatty_utils_get_purple_dir (void)
 {
 #ifdef PURPLE_ENABLED
-  return purple_user_dir ();
+  return g_strdup (purple_user_dir ());
 #endif
   return g_build_filename (g_get_home_dir (), ".purple", NULL);
 }

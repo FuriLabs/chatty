@@ -398,6 +398,7 @@ chatty_application_startup (GApplication *application)
 {
   ChattyApplication *self = (ChattyApplication *)application;
   g_autofree char *db_path = NULL;
+  g_autofree char *purple_dir = NULL;
   const char *help_accels[] = { "F1", NULL };
 
   self->daemon = FALSE;
@@ -412,7 +413,8 @@ chatty_application_startup (GApplication *application)
   g_set_application_name (_("Chats"));
 
   lfb_init (CHATTY_APP_ID, NULL);
-  db_path =  g_build_filename (chatty_utils_get_purple_dir (), "chatty", "db", NULL);
+  purple_dir = chatty_utils_get_purple_dir ();
+  db_path =  g_build_filename (purple_dir, "chatty", "db", NULL);
   chatty_history_open (chatty_manager_get_history (self->manager),
                        db_path, "chatty-history.db");
 

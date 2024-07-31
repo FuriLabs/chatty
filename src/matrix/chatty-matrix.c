@@ -213,6 +213,7 @@ chatty_matrix_load (ChattyMatrix *self)
   g_autofree char *db_path = NULL;
   g_autofree char *data_path = NULL;
   g_autofree char *cache_path = NULL;
+  g_autofree char *purple_dir = NULL;
   GListModel *client_list;
 
   if (self->cm_matrix)
@@ -227,7 +228,8 @@ chatty_matrix_load (ChattyMatrix *self)
                            G_CALLBACK (matrix_client_list_changed_cb),
                            self, G_CONNECT_SWAPPED);
 
-  db_path = g_build_filename (chatty_utils_get_purple_dir (), "chatty", "db", NULL);
+  purple_dir = chatty_utils_get_purple_dir ();
+  db_path = g_build_filename (purple_dir, "chatty", "db", NULL);
   cm_matrix_open_async (self->cm_matrix, db_path, "matrix.db", NULL,
                         matrix_open_cb, g_object_ref (self));
 }

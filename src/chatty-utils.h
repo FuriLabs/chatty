@@ -16,7 +16,7 @@
 
 
 gboolean chatty_utils_window_has_toplevel_focus (GtkWindow *window);
-const char *chatty_utils_get_purple_dir (void);
+char *chatty_utils_get_purple_dir (void);
 char *chatty_utils_jabber_id_strip (const char *name);
 void chatty_utils_sanitize_filename (char *name);
 char *chatty_utils_find_url (const char  *buffer,
