@@ -190,3 +190,7 @@ unless you know what you are doing! To activate:
 gsettings set sm.puri.Chatty experimental-features true
 ```
 
+# Getting in Touch
+
+* Issue tracker: https://gitlab.gnome.org/World/Chatty/issues
+* Matrix: https://matrix.to/#/#chatty:talk.puri.sm
