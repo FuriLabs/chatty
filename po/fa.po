@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-06-28 20:01+0000\n"
-"PO-Revision-Date: 2024-06-29 01:54+0330\n"
+"POT-Creation-Date: 2024-08-01 05:20+0000\n"
+"PO-Revision-Date: 2024-08-02 01:14+0330\n"
 "Last-Translator: Danial Behzadi <dani.behzi@ubuntu.com>\n"
 "Language-Team: Persian <fa@li.org>\n"
 "Language: fa\n"
@@ -19,8 +19,8 @@ msgstr ""
 "X-Generator: Poedit 3.4.4\n"
 
 #: data/sm.puri.Chatty.desktop.in.in:3 data/sm.puri.Chatty.metainfo.xml.in.in:6
-#: src/chatty-application.c:164 src/chatty-application.c:412
-#: src/chatty-side-bar.c:354 src/ui/chatty-main-view.ui:4
+#: src/chatty-application.c:164 src/chatty-application.c:413
+#: src/chatty-side-bar.c:357 src/ui/chatty-main-view.ui:4
 #: src/ui/chatty-side-bar.ui:4 src/ui/chatty-side-bar.ui:12
 #: src/ui/chatty-window.ui:4
 msgid "Chats"
@@ -200,8 +200,8 @@ msgstr "برنامهٔ پیام‌رسامی برای تلفن همراه و م�
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:9
 msgid ""
-"Chats is a simple to use to messaging app for 1:1 communication and small "
-"groups supporting SMS, MMS, XMPP and Matrix."
+"Chats is a simple to use to messaging app for 1:1 communication and small groups "
+"supporting SMS, MMS, XMPP and Matrix."
 msgstr ""
 "گپ‌ها کارهٔ پیام‌رسانی آسانی برای ارتباطات یک به یک و گروه‌های کوچک با پشتیبانی از "
 "پیامک، پیام چندرسانه‌ای، XMPP و ماتریکس است."
@@ -291,32 +291,31 @@ msgstr "بدون گپ بایگانی شده"
 msgid "Start Chatting"
 msgstr "آغاز به گپ"
 
-#: src/chatty-chat-page.c:201 src/chatty-chat-page.c:210
+#: src/chatty-chat-page.c:195 src/chatty-chat-page.c:204
 msgid "This is an MMS conversation"
 msgstr "این گفت‌وگو چندرسانه‌ایست"
 
-#: src/chatty-chat-page.c:203 src/chatty-chat-page.c:218
-#: src/chatty-chat-page.c:224
+#: src/chatty-chat-page.c:197 src/chatty-chat-page.c:212 src/chatty-chat-page.c:218
 msgid "Your messages are not encrypted, and carrier rates may apply"
 msgstr "پیام‌هایتان رمزنگاری نشده و ممکن است هزینه‌های اوپراتور اعمال شود"
 
-#: src/chatty-chat-page.c:213
+#: src/chatty-chat-page.c:207
 msgid "This is an SMS/MMS conversation"
 msgstr "این گفت‌وگو پیام کوتاه یا چندرسانه‌ایست"
 
-#: src/chatty-chat-page.c:216
+#: src/chatty-chat-page.c:210
 msgid "This is an SMS conversation"
 msgstr "این گفت‌وگو پیامکیست"
 
-#: src/chatty-chat-page.c:222
+#: src/chatty-chat-page.c:216
 msgid "This is an IM conversation"
 msgstr "این گفت‌وگو پیام فوریست"
 
-#: src/chatty-chat-page.c:228
+#: src/chatty-chat-page.c:222
 msgid "Your messages are encrypted"
 msgstr "پیام‌هایتان رمزنگاری شده‌اند"
 
-#: src/chatty-chat-page.c:231
+#: src/chatty-chat-page.c:225
 msgid "Your messages are not encrypted"
 msgstr "پیام‌هایتان رمزنگاری نشده‌اند"
 
@@ -505,7 +504,7 @@ msgid "“%s” is not a valid URI"
 msgstr "نشانی %s معتبر نیست"
 
 #: src/chatty-message-bar.c:491 src/purple/chatty-purple.c:195
-#: src/chatty-window.c:361
+#: src/chatty-window.c:378
 msgid "Alert"
 msgstr "هشدار"
 
@@ -545,28 +544,28 @@ msgid_plural "%i Messages"
 msgstr[0] "%Ii پیام"
 msgstr[1] "%Ii پیام"
 
-#: src/chatty-side-bar.c:324
+#: src/chatty-side-bar.c:327
 msgid "Any Protocol"
 msgstr "هر شیوه‌نامه‌ای"
 
-#: src/chatty-side-bar.c:325 src/ui/chatty-settings-dialog.ui:731
+#: src/chatty-side-bar.c:328 src/ui/chatty-settings-dialog.ui:731
 msgid "Matrix"
 msgstr "ماتریکس"
 
-#: src/chatty-side-bar.c:326 src/dialogs/chatty-new-chat-dialog.c:634
+#: src/chatty-side-bar.c:329 src/dialogs/chatty-new-chat-dialog.c:634
 #: src/dialogs/chatty-settings-dialog.c:1124 src/ui/chatty-settings-dialog.ui:255
 msgid "SMS/MMS"
 msgstr "پیام کوتاه یا چندرسانه‌ای"
 
-#: src/chatty-side-bar.c:329 src/ui/chatty-settings-dialog.ui:720
+#: src/chatty-side-bar.c:332 src/ui/chatty-settings-dialog.ui:720
 msgid "XMPP"
 msgstr "XMPP"
 
-#: src/chatty-side-bar.c:332 src/ui/chatty-settings-dialog.ui:744
+#: src/chatty-side-bar.c:335 src/ui/chatty-settings-dialog.ui:744
 msgid "Telegram"
 msgstr "تلگرام"
 
-#: src/chatty-side-bar.c:354
+#: src/chatty-side-bar.c:357
 msgid "Archived"
 msgstr "بایگانی شده"
 
@@ -604,7 +603,7 @@ msgstr "تصدیق %s؟"
 msgid "Add %s to contact list"
 msgstr "افزودن %s به سیاههٔ اشنایان"
 
-#: src/purple/chatty-purple.c:293 src/chatty-window.c:365 src/chatty-window.c:463
+#: src/purple/chatty-purple.c:293 src/chatty-window.c:382 src/chatty-window.c:478
 #: src/dialogs/chatty-settings-dialog.c:478 src/ui/chatty-dialog-wrong-pw.ui:23
 #: src/ui/chatty-dialog-new-chat.ui:36 src/ui/chatty-settings-dialog.ui:25
 #: src/ui/chatty-settings-dialog.ui:55 src/ui/chatty-settings-dialog.ui:75
@@ -949,33 +948,33 @@ msgstr "نمایش شکلک‌ها"
 msgid "Show Numbers"
 msgstr "نمایش شماره‌ها"
 
-#: src/chatty-window.c:362
+#: src/chatty-window.c:379
 msgid "You shall no longer be notified for new messages, continue?"
 msgstr "دیگر برای پیام‌های جدید آگاه نخواهید شد. ادامه؟"
 
-#: src/chatty-window.c:366
+#: src/chatty-window.c:383
 msgid "Block"
 msgstr "بلوک"
 
-#: src/chatty-window.c:455
+#: src/chatty-window.c:470
 #, c-format
 msgid "Delete chat with “%s”"
 msgstr "حذف گپ با «%s»؟"
 
-#: src/chatty-window.c:456
+#: src/chatty-window.c:471
 msgid "This deletes the conversation history"
 msgstr "این کار تاریخچهٔ گفت‌وگو را حذف می‌کند"
 
-#: src/chatty-window.c:458
+#: src/chatty-window.c:473
 #, c-format
 msgid "Disconnect group chat “%s”"
 msgstr "قطع گپ گروهی «%s»"
 
-#: src/chatty-window.c:459
+#: src/chatty-window.c:474
 msgid "This removes chat from chats list"
 msgstr "این کار گپ را از سیاههٔ گپ‌ها برمی‌دارد"
 
-#: src/chatty-window.c:464 src/dialogs/chatty-settings-dialog.c:479
+#: src/chatty-window.c:479 src/dialogs/chatty-settings-dialog.c:479
 msgid "Delete"
 msgstr "حذف"
 
@@ -1180,7 +1179,7 @@ msgid "Signing ID Present"
 msgstr "شناسهٔ امضا موجود"
 
 #: src/dialogs/chatty-settings-dialog.c:954 src/ui/chatty-dialog-join-muc.ui:16
-#: src/ui/chatty-info-dialog.ui:26 src/ui/chatty-info-dialog.ui:35
+#: src/ui/chatty-info-dialog.ui:23 src/ui/chatty-info-dialog.ui:32
 msgid "Cancel"
 msgstr "لغو"
 
@@ -1208,12 +1207,12 @@ msgstr "تنظیمات PGP"
 msgid "New PGP Key"
 msgstr "کلید PGP جدید"
 
-#: src/dialogs/chatty-settings-dialog.c:1136 src/ui/chatty-side-bar.ui:110
+#: src/dialogs/chatty-settings-dialog.c:1136 src/ui/chatty-side-bar.ui:111
 msgid "Preferences"
 msgstr "ترجیحات"
 
-#: src/dialogs/chatty-settings-dialog.c:1164
-#: src/ui/chatty-pp-account-details.ui:81 src/ui/chatty-settings-dialog.ui:245
+#: src/dialogs/chatty-settings-dialog.c:1164 src/ui/chatty-pp-account-details.ui:81
+#: src/ui/chatty-settings-dialog.ui:245
 msgid "Protocol"
 msgstr "شیوه‌نامه"
 
@@ -1238,7 +1237,7 @@ msgstr ""
 msgid "Please enter password for “%s”, homeserver: %s"
 msgstr "ورود گذرواژه برای «%s»، کارساز خانگی: %s"
 
-#: src/matrix/chatty-ma-key-chat.c:62
+#: src/matrix/chatty-ma-key-chat.c:73
 msgid "Key Verification"
 msgstr "تأیید کلید"
 
@@ -1399,7 +1398,7 @@ msgstr "افزودن اعضا از آشنایان…"
 msgid "Send To:"
 msgstr "فرستادن به:"
 
-#: src/ui/chatty-dialog-new-chat.ui:215 src/ui/chatty-info-dialog.ui:117
+#: src/ui/chatty-dialog-new-chat.ui:215 src/ui/chatty-info-dialog.ui:114
 msgid "Contact ID"
 msgstr "شناسهٔ آشنا"
 
@@ -1411,20 +1410,20 @@ msgstr "نام (اختیاری)"
 msgid "Add to Contacts"
 msgstr "افزودن به آشنایان"
 
-#: src/ui/chatty-info-dialog.ui:8 src/ui/chatty-main-view.ui:126
+#: src/ui/chatty-info-dialog.ui:5 src/ui/chatty-main-view.ui:126
 msgid "Chat Details"
 msgstr "جزییات گپ"
 
-#: src/ui/chatty-info-dialog.ui:44
+#: src/ui/chatty-info-dialog.ui:41
 msgid "Apply"
 msgstr "اعمال"
 
 #. Translators: This is invite to a chat room
-#: src/ui/chatty-info-dialog.ui:58
+#: src/ui/chatty-info-dialog.ui:55
 msgid "Invite"
 msgstr "دعوت"
 
-#: src/ui/chatty-info-dialog.ui:137
+#: src/ui/chatty-info-dialog.ui:134
 msgid "Invite message"
 msgstr "پیام دعوت"
 
@@ -1444,16 +1443,20 @@ msgstr "گپ"
 msgid "Matrix ID"
 msgstr "شناسهٔ ماتریکس"
 
-#: src/ui/chatty-ma-chat-info.ui:89 src/ui/chatty-pp-chat-info.ui:242
+#: src/ui/chatty-ma-chat-info.ui:90
+msgid "Topic"
+msgstr "موضوع"
+
+#: src/ui/chatty-ma-chat-info.ui:119 src/ui/chatty-pp-chat-info.ui:242
 msgid "Chat settings"
 msgstr "تنظیمات گپ"
 
-#: src/ui/chatty-ma-chat-info.ui:107 src/ui/chatty-pp-chat-info.ui:193
+#: src/ui/chatty-ma-chat-info.ui:137 src/ui/chatty-pp-chat-info.ui:193
 #: src/ui/chatty-pp-chat-info.ui:292
 msgid "Encryption"
 msgstr "رمزنگاری"
 
-#: src/ui/chatty-ma-chat-info.ui:108 src/ui/chatty-pp-chat-info.ui:293
+#: src/ui/chatty-ma-chat-info.ui:138 src/ui/chatty-pp-chat-info.ui:293
 msgid "Encrypt Messages"
 msgstr "رمزنگاری پیام‌ها"
 
@@ -1773,36 +1776,36 @@ msgstr "افزودن گپ"
 msgid "Menu"
 msgstr "فهرست"
 
-#: src/ui/chatty-side-bar.ui:44
+#: src/ui/chatty-side-bar.ui:45
 msgid "Search"
 msgstr "جست‌وجو"
 
-#: src/ui/chatty-side-bar.ui:102
+#: src/ui/chatty-side-bar.ui:103
 msgctxt "show archived chat list when clicked"
 msgid "Archived"
 msgstr "بایگانی شده"
 
-#: src/ui/chatty-side-bar.ui:117
+#: src/ui/chatty-side-bar.ui:118
 msgid "Keyboard _Shortcuts"
 msgstr "_میان‌برهای صفحه‌کلید"
 
-#: src/ui/chatty-side-bar.ui:124
+#: src/ui/chatty-side-bar.ui:125
 msgid "Help"
 msgstr "راهنما"
 
-#: src/ui/chatty-side-bar.ui:132
+#: src/ui/chatty-side-bar.ui:133
 msgid "About Chats"
 msgstr "دربارهٔ گپ‌ها"
 
-#: src/ui/chatty-side-bar.ui:153
+#: src/ui/chatty-side-bar.ui:154
 msgid "New Message…"
 msgstr "پیام جدید…"
 
-#: src/ui/chatty-side-bar.ui:159
+#: src/ui/chatty-side-bar.ui:160
 msgid "New SMS/MMS Message…"
 msgstr "پیام کوتاه یا چندرسانه‌ای جدید…"
 
-#: src/ui/chatty-side-bar.ui:165
+#: src/ui/chatty-side-bar.ui:166
 msgid "New Group Message…"
 msgstr "پیام گروهی جدید…"
 
@@ -1868,6 +1871,16 @@ msgstr "گشودن جست‌وجو"
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
 msgstr "نمایش میان‌برها"
+
+#: src/ui/help-overlay.ui:46
+msgctxt "shortcut window"
+msgid "Chat"
+msgstr "گپ"
+
+#: src/ui/help-overlay.ui:51
+msgctxt "shortcut window"
+msgid "Show Details"
+msgstr "نمایش جزییات"
 
 #: src/users/chatty-contact.c:324
 msgid "Mobile:"
