@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-06-28 20:01+0000\n"
-"PO-Revision-Date: 2024-06-29 15:28+0200\n"
+"POT-Creation-Date: 2024-08-01 05:20+0000\n"
+"PO-Revision-Date: 2024-08-02 13:47+0200\n"
 "Last-Translator: Antonio Marin <gnmer.6qxyg@slmail.me>\n"
 "Language-Team: Romanian <gnomero-list@lists.sourceforge.net>\n"
 "Language: ro\n"
@@ -21,8 +21,8 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 
 #: data/sm.puri.Chatty.desktop.in.in:3 data/sm.puri.Chatty.metainfo.xml.in.in:6
-#: src/chatty-application.c:164 src/chatty-application.c:412
-#: src/chatty-side-bar.c:354 src/ui/chatty-main-view.ui:4
+#: src/chatty-application.c:164 src/chatty-application.c:413
+#: src/chatty-side-bar.c:357 src/ui/chatty-main-view.ui:4
 #: src/ui/chatty-side-bar.ui:4 src/ui/chatty-side-bar.ui:12
 #: src/ui/chatty-window.ui:4
 msgid "Chats"
@@ -299,32 +299,32 @@ msgstr "Nicio discuție arhivată"
 msgid "Start Chatting"
 msgstr "Începe discuția"
 
-#: src/chatty-chat-page.c:201 src/chatty-chat-page.c:210
+#: src/chatty-chat-page.c:195 src/chatty-chat-page.c:204
 msgid "This is an MMS conversation"
 msgstr "Aceasta este o conversație MMS"
 
-#: src/chatty-chat-page.c:203 src/chatty-chat-page.c:218
-#: src/chatty-chat-page.c:224
+#: src/chatty-chat-page.c:197 src/chatty-chat-page.c:212
+#: src/chatty-chat-page.c:218
 msgid "Your messages are not encrypted, and carrier rates may apply"
 msgstr "Mesajele nu sunt cifrate, și pot fi aplicate tarifele operatorului"
 
-#: src/chatty-chat-page.c:213
+#: src/chatty-chat-page.c:207
 msgid "This is an SMS/MMS conversation"
 msgstr "Aceasta este o conversație SMS/MMS"
 
-#: src/chatty-chat-page.c:216
+#: src/chatty-chat-page.c:210
 msgid "This is an SMS conversation"
 msgstr "Aceasta este o conversație SMS"
 
-#: src/chatty-chat-page.c:222
+#: src/chatty-chat-page.c:216
 msgid "This is an IM conversation"
 msgstr "Aceasta este o conversație IM"
 
-#: src/chatty-chat-page.c:228
+#: src/chatty-chat-page.c:222
 msgid "Your messages are encrypted"
 msgstr "Mesajele sunt cifrate"
 
-#: src/chatty-chat-page.c:231
+#: src/chatty-chat-page.c:225
 msgid "Your messages are not encrypted"
 msgstr "Mesajele nu sunt cifrate"
 
@@ -515,7 +515,7 @@ msgid "“%s” is not a valid URI"
 msgstr "„%s” nu este un URI valabil"
 
 #: src/chatty-message-bar.c:491 src/purple/chatty-purple.c:195
-#: src/chatty-window.c:361
+#: src/chatty-window.c:378
 msgid "Alert"
 msgstr "Alertă"
 
@@ -558,29 +558,29 @@ msgstr[0] "%i mesaj"
 msgstr[1] "%i mesaje"
 msgstr[2] "%i de mesaje"
 
-#: src/chatty-side-bar.c:324
+#: src/chatty-side-bar.c:327
 msgid "Any Protocol"
 msgstr "Orice Protocol"
 
-#: src/chatty-side-bar.c:325 src/ui/chatty-settings-dialog.ui:731
+#: src/chatty-side-bar.c:328 src/ui/chatty-settings-dialog.ui:731
 msgid "Matrix"
 msgstr "Matrix"
 
-#: src/chatty-side-bar.c:326 src/dialogs/chatty-new-chat-dialog.c:634
+#: src/chatty-side-bar.c:329 src/dialogs/chatty-new-chat-dialog.c:634
 #: src/dialogs/chatty-settings-dialog.c:1124
 #: src/ui/chatty-settings-dialog.ui:255
 msgid "SMS/MMS"
 msgstr "SMS/MMS"
 
-#: src/chatty-side-bar.c:329 src/ui/chatty-settings-dialog.ui:720
+#: src/chatty-side-bar.c:332 src/ui/chatty-settings-dialog.ui:720
 msgid "XMPP"
 msgstr "XMPP"
 
-#: src/chatty-side-bar.c:332 src/ui/chatty-settings-dialog.ui:744
+#: src/chatty-side-bar.c:335 src/ui/chatty-settings-dialog.ui:744
 msgid "Telegram"
 msgstr "Telegram"
 
-#: src/chatty-side-bar.c:354
+#: src/chatty-side-bar.c:357
 msgid "Archived"
 msgstr "Arhivată"
 
@@ -619,8 +619,8 @@ msgstr "Autorizezi %s?"
 msgid "Add %s to contact list"
 msgstr "Adaugă %s la lista de contacte"
 
-#: src/purple/chatty-purple.c:293 src/chatty-window.c:365
-#: src/chatty-window.c:463 src/dialogs/chatty-settings-dialog.c:478
+#: src/purple/chatty-purple.c:293 src/chatty-window.c:382
+#: src/chatty-window.c:478 src/dialogs/chatty-settings-dialog.c:478
 #: src/ui/chatty-dialog-wrong-pw.ui:23 src/ui/chatty-dialog-new-chat.ui:36
 #: src/ui/chatty-settings-dialog.ui:25 src/ui/chatty-settings-dialog.ui:55
 #: src/ui/chatty-settings-dialog.ui:75 src/ui/chatty-verification-page.ui:129
@@ -965,33 +965,33 @@ msgstr "Arată emoticoane"
 msgid "Show Numbers"
 msgstr "Arată numerele"
 
-#: src/chatty-window.c:362
+#: src/chatty-window.c:379
 msgid "You shall no longer be notified for new messages, continue?"
 msgstr "Nu vei mai fi înștiințat dacă vei primi mesaje noi. Continui?"
 
-#: src/chatty-window.c:366
+#: src/chatty-window.c:383
 msgid "Block"
 msgstr "Blochează"
 
-#: src/chatty-window.c:455
+#: src/chatty-window.c:470
 #, c-format
 msgid "Delete chat with “%s”"
 msgstr "Șterge discuția cu „%s”"
 
-#: src/chatty-window.c:456
+#: src/chatty-window.c:471
 msgid "This deletes the conversation history"
 msgstr "Aceasta șterge cronologia conversației"
 
-#: src/chatty-window.c:458
+#: src/chatty-window.c:473
 #, c-format
 msgid "Disconnect group chat “%s”"
 msgstr "Deconectează discuția în grup „%s”"
 
-#: src/chatty-window.c:459
+#: src/chatty-window.c:474
 msgid "This removes chat from chats list"
 msgstr "Aceasta elimină discuția din lista discuțiilor"
 
-#: src/chatty-window.c:464 src/dialogs/chatty-settings-dialog.c:479
+#: src/chatty-window.c:479 src/dialogs/chatty-settings-dialog.c:479
 msgid "Delete"
 msgstr "Șterge"
 
@@ -1198,7 +1198,7 @@ msgid "Signing ID Present"
 msgstr "ID-ul actual al semnăturii"
 
 #: src/dialogs/chatty-settings-dialog.c:954 src/ui/chatty-dialog-join-muc.ui:16
-#: src/ui/chatty-info-dialog.ui:26 src/ui/chatty-info-dialog.ui:35
+#: src/ui/chatty-info-dialog.ui:23 src/ui/chatty-info-dialog.ui:32
 msgid "Cancel"
 msgstr "Anulează"
 
@@ -1229,7 +1229,7 @@ msgstr "Opțiuni PGP"
 msgid "New PGP Key"
 msgstr "Cheia PGP nouă"
 
-#: src/dialogs/chatty-settings-dialog.c:1136 src/ui/chatty-side-bar.ui:110
+#: src/dialogs/chatty-settings-dialog.c:1136 src/ui/chatty-side-bar.ui:111
 msgid "Preferences"
 msgstr "Preferințe"
 
@@ -1259,7 +1259,7 @@ msgstr ""
 msgid "Please enter password for “%s”, homeserver: %s"
 msgstr "Introdu parola pentru „%s”, server de acasă: %s"
 
-#: src/matrix/chatty-ma-key-chat.c:62
+#: src/matrix/chatty-ma-key-chat.c:73
 msgid "Key Verification"
 msgstr "Verificarea cheii"
 
@@ -1423,7 +1423,7 @@ msgstr "Adaugă membri din contacte…"
 msgid "Send To:"
 msgstr "Trimite la:"
 
-#: src/ui/chatty-dialog-new-chat.ui:215 src/ui/chatty-info-dialog.ui:117
+#: src/ui/chatty-dialog-new-chat.ui:215 src/ui/chatty-info-dialog.ui:114
 msgid "Contact ID"
 msgstr "ID-ul contactului"
 
@@ -1435,20 +1435,20 @@ msgstr "Nume (opțional)"
 msgid "Add to Contacts"
 msgstr "Adaugă la contacte"
 
-#: src/ui/chatty-info-dialog.ui:8 src/ui/chatty-main-view.ui:126
+#: src/ui/chatty-info-dialog.ui:5 src/ui/chatty-main-view.ui:126
 msgid "Chat Details"
 msgstr "Detaliile discuției"
 
-#: src/ui/chatty-info-dialog.ui:44
+#: src/ui/chatty-info-dialog.ui:41
 msgid "Apply"
 msgstr "Aplică"
 
 #. Translators: This is invite to a chat room
-#: src/ui/chatty-info-dialog.ui:58
+#: src/ui/chatty-info-dialog.ui:55
 msgid "Invite"
 msgstr "Invită"
 
-#: src/ui/chatty-info-dialog.ui:137
+#: src/ui/chatty-info-dialog.ui:134
 msgid "Invite message"
 msgstr "Mesaj de invitație"
 
@@ -1468,16 +1468,20 @@ msgstr "Discuție"
 msgid "Matrix ID"
 msgstr "ID Matrix"
 
-#: src/ui/chatty-ma-chat-info.ui:89 src/ui/chatty-pp-chat-info.ui:242
+#: src/ui/chatty-ma-chat-info.ui:90
+msgid "Topic"
+msgstr "Subiect"
+
+#: src/ui/chatty-ma-chat-info.ui:119 src/ui/chatty-pp-chat-info.ui:242
 msgid "Chat settings"
 msgstr "Opțiunile discuției"
 
-#: src/ui/chatty-ma-chat-info.ui:107 src/ui/chatty-pp-chat-info.ui:193
+#: src/ui/chatty-ma-chat-info.ui:137 src/ui/chatty-pp-chat-info.ui:193
 #: src/ui/chatty-pp-chat-info.ui:292
 msgid "Encryption"
 msgstr "Cifrare"
 
-#: src/ui/chatty-ma-chat-info.ui:108 src/ui/chatty-pp-chat-info.ui:293
+#: src/ui/chatty-ma-chat-info.ui:138 src/ui/chatty-pp-chat-info.ui:293
 msgid "Encrypt Messages"
 msgstr "Cifrare Mesaje"
 
@@ -1797,36 +1801,36 @@ msgstr "Adaugă o discuție"
 msgid "Menu"
 msgstr "Opțiuni"
 
-#: src/ui/chatty-side-bar.ui:44
+#: src/ui/chatty-side-bar.ui:45
 msgid "Search"
 msgstr "Caută"
 
-#: src/ui/chatty-side-bar.ui:102
+#: src/ui/chatty-side-bar.ui:103
 msgctxt "show archived chat list when clicked"
 msgid "Archived"
 msgstr "Arhivate"
 
-#: src/ui/chatty-side-bar.ui:117
+#: src/ui/chatty-side-bar.ui:118
 msgid "Keyboard _Shortcuts"
 msgstr "Taste _rapide"
 
-#: src/ui/chatty-side-bar.ui:124
+#: src/ui/chatty-side-bar.ui:125
 msgid "Help"
 msgstr "Ajutor"
 
-#: src/ui/chatty-side-bar.ui:132
+#: src/ui/chatty-side-bar.ui:133
 msgid "About Chats"
 msgstr "Despre Discuții"
 
-#: src/ui/chatty-side-bar.ui:153
+#: src/ui/chatty-side-bar.ui:154
 msgid "New Message…"
 msgstr "Mesaj nou…"
 
-#: src/ui/chatty-side-bar.ui:159
+#: src/ui/chatty-side-bar.ui:160
 msgid "New SMS/MMS Message…"
 msgstr "Mesaj SMS/MMS nou…"
 
-#: src/ui/chatty-side-bar.ui:165
+#: src/ui/chatty-side-bar.ui:166
 msgid "New Group Message…"
 msgstr "Mesaj nou în grup…"
 
@@ -1899,6 +1903,16 @@ msgstr "Caută"
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
 msgstr "Taste rapide"
+
+#: src/ui/help-overlay.ui:46
+msgctxt "shortcut window"
+msgid "Chat"
+msgstr "Discuție"
+
+#: src/ui/help-overlay.ui:51
+msgctxt "shortcut window"
+msgid "Show Details"
+msgstr "Arată detalii"
 
 #: src/users/chatty-contact.c:324
 msgid "Mobile:"
