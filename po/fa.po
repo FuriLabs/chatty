@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-08-01 05:20+0000\n"
-"PO-Revision-Date: 2024-08-02 01:14+0330\n"
+"POT-Creation-Date: 2024-08-01 21:45+0000\n"
+"PO-Revision-Date: 2024-08-03 14:30+0330\n"
 "Last-Translator: Danial Behzadi <dani.behzi@ubuntu.com>\n"
 "Language-Team: Persian <fa@li.org>\n"
 "Language: fa\n"
@@ -954,7 +954,7 @@ msgstr "دیگر برای پیام‌های جدید آگاه نخواهید ش�
 
 #: src/chatty-window.c:383
 msgid "Block"
-msgstr "بلوک"
+msgstr "انسداد"
 
 #: src/chatty-window.c:470
 #, c-format
