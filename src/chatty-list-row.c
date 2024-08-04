@@ -233,6 +233,9 @@ chatty_list_row_update (ChattyListRow *self)
 #endif
       g_strstrip (message_stripped);
 
+      /* Most chat programs replace newline with a space for the preview */
+      g_strdelimit (message_stripped, "\n", ' ');
+
       settings = chatty_settings_get_default ();
 
       if (chatty_settings_get_strip_url_tracking_ids (settings)) {
