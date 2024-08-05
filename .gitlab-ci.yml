@@ -5,7 +5,7 @@ include:
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
-  IMAGE: debian:trixie
+  IMAGE: $CI_REGISTRY/world/chatty/debian:v0.0.2024-08-05
   ALPINE_IMAGE: alpine:edge
 
 stages:
