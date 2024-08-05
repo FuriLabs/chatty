@@ -26,8 +26,6 @@ build-debian-gcc-trixie-no-purple:
   image: ${IMAGE}
   stage: build
   script:
-    - apt-get -y build-dep .
-    - apt-get -y install git
     - export LC_ALL=C.UTF-8
     - meson setup _build -Dpurple=disabled
     - meson compile -C _build
@@ -39,8 +37,7 @@ build-debian-gcc-trixie:
   image: ${IMAGE}
   stage: build
   script:
-    - apt-get -y build-dep .
-    - apt-get -y install libgtk-4-bin xvfb git
+    - eatmydata apt-get -y install libgtk-4-bin xvfb
     - export LC_ALL=C.UTF-8
     - meson setup _build -Db_coverage=true --werror
     - meson compile -C _build
@@ -102,8 +99,7 @@ test:debian-gcc:
   dependencies:
     - build-debian-gcc-trixie
   script:
-    - apt-get -y build-dep .
-    - apt-get -y install libgtk-4-bin xvfb gcovr git
+    - eatmydata apt-get -y install libgtk-4-bin xvfb gcovr
     - export G_DEBUG=fatal-warnings
     - export LC_ALL=C.UTF-8
     - xvfb-run -a -s "-screen 0 1024x768x24" ninja -C _build test
@@ -166,12 +162,8 @@ asan-test:native-debian-trixie:
   image: ${IMAGE}
   tags: [ asan ]
   needs: []
-  before_script:
-    - export DEBIAN_FRONTEND=noninteractive
-    - apt-get -y update
-    - apt-get -y build-dep .
-    - apt-get -y install libgtk-4-bin xvfb gcovr git
   script:
+    - eatmydata apt-get -y install libgtk-4-bin xvfb gcovr
     - meson setup -Db_sanitize=address -Dbuildtype=debug _build-asan
     - meson compile -C _build-asan
     - ${XVFB_RUN} meson test -C _build-asan --verbose  clock history settings sms-uri mm-account
@@ -181,13 +173,11 @@ check-po:
   image: ${IMAGE}
   dependencies:
     - build-debian-gcc-trixie
-  before_script:
-    - apt-get -y update
-    - apt-get -y install intltool git
   script:
     # barf on untranslated C files. Seems intltool
     # can't be told to exit with non-zero exit status
     # in this case
+    - apt-get -y install intltool
     - cd po/
     - intltool-update -m 2>&1 | grep -qs '/.*\.\(c\|ui\|in\)' && { intltool-update -m; exit 1; } || exit 0
   except:
@@ -202,10 +192,6 @@ package:deb-debian-trixie:arm64:
   extends: .l5-build-debian-package
   tags:
     - aarch64
-  before_script:
-    - export DEBIAN_FRONTEND=noninteractive
-    - apt-get -y update
-    - apt-get -y install eatmydata
   except:
     variables:
       - $FP_ONLY == "1"
