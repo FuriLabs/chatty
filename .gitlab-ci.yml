@@ -219,3 +219,16 @@ check-consistency:
   image: ${IMAGE}
   stage: release
   extends: .phosh-check-consistency
+
+release-tarball:
+  stage: release
+  image: ${IMAGE}
+  extends: .phosh-check-dist
+  needs:
+    - build-debian-gcc-trixie
+  artifacts:
+    expose_as: "Release tarball"
+    paths:
+      - _build-dist/meson-dist/
+  rules:
+    - if: $CI_COMMIT_TAG
