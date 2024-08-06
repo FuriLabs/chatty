@@ -1,5 +1,8 @@
 include:
   - 'https://source.puri.sm/Librem5/librem5-ci/raw/master/librem5-pipeline-definitions.yml'
+  - project: 'guidog/meta-phosh'
+    ref: c63ce48348a61be7c74e952da5e30456ef0effd9
+    file: '/ci/phosh-common-jobs.yml'
   - project: 'gnome/citemplates'
     file: 'flatpak/flatpak-ci-initiative-sdk-extensions.yml'
 
@@ -13,6 +16,16 @@ stages:
   - test
   - package
   - test-package
+  - release
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    # Don't trigger a branch pipeline if there is an open MR
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH
 
 .tags: &tags
   tags:
@@ -207,3 +220,8 @@ flatpak-gnome-46:
     FLATPAK_MODULE: "chatty"
     MANIFEST_PATH: "sm.puri.Chatty.json"
     RUNTIME_REPO: "https://dl.flathub.org/repo/flathub.flatpakrepo"
+
+check-consistency:
+  image: ${IMAGE}
+  stage: release
+  extends: .phosh-check-consistency
