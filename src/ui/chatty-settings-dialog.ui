@@ -684,13 +684,13 @@
                         <child>
                           <object class="ChattyPpAccountDetails" id="pp_account_details">
                             <signal name="notify::modified" handler="settings_pp_details_changed_cb" swapped="yes"/>
-                            <signal name="delete-clicked" handler="settings_pp_details_delete_cb" swapped="yes"/>
+                            <signal name="delete-clicked" handler="settings_delete_account_clicked_cb" swapped="yes"/>
                           </object>
                         </child>
                         <child>
                           <object class="ChattyMaAccountDetails" id="ma_account_details">
                             <signal name="notify::modified" handler="settings_pp_details_changed_cb" swapped="yes"/>
-                            <signal name="delete-clicked" handler="settings_pp_details_delete_cb" swapped="yes"/>
+                            <signal name="delete-clicked" handler="settings_delete_account_clicked_cb" swapped="yes"/>
                           </object>
                         </child>
                       </object>

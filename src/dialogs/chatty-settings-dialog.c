@@ -490,14 +490,6 @@ settings_delete_account_clicked_cb (ChattySettingsDialog *self)
 }
 
 static void
-settings_pp_details_delete_cb (ChattySettingsDialog *self)
-{
-  g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
-
-  settings_delete_account_clicked_cb (self);
-}
-
-static void
 settings_dialog_load_mms_settings (ChattySettingsDialog *self)
 {
   g_autoptr(ChattyMmDevice) device = NULL;
@@ -1743,7 +1735,7 @@ chatty_settings_dialog_class_init (ChattySettingsDialogClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, chatty_settings_add_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, chatty_settings_save_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, settings_pp_details_changed_cb);
-  gtk_widget_class_bind_template_callback (widget_class, settings_pp_details_delete_cb);
+  gtk_widget_class_bind_template_callback (widget_class, settings_delete_account_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, sms_mms_settings_row_activated_cb);
   gtk_widget_class_bind_template_callback (widget_class, pgp_settings_row_activated_cb);
   gtk_widget_class_bind_template_callback (widget_class, purple_settings_row_activated_cb);
