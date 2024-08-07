@@ -22,7 +22,7 @@ cd Chatty/
 On a Debian based system run
 
 ``` bash
-    sudo apt-get -y install build-essential ccache
+    sudo apt-get -y install build-essential
     sudo apt-get -y build-dep .
 ```
 
