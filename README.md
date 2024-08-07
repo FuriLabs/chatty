@@ -1,5 +1,6 @@
 # Chatty
 
+This is the projects of the "Chats" application:
 A simple to use messaging app for 1:1 communication and small groups supporting
 SMS, MMS, matrix and XMPP through libpurple.
 
