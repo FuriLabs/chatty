@@ -2,7 +2,8 @@
 
 This is the projects of the "Chats" application:
 A simple to use messaging app for 1:1 communication and small groups supporting
-SMS, MMS, matrix and XMPP through libpurple.
+SMS/MMS using [ModemManager] and [mmsd-tng], matrix via [libcmatrix]
+and optionally XMPP through [libpurple].
 
 ## Build and install
 
@@ -195,3 +196,8 @@ gsettings set sm.puri.Chatty experimental-features true
 
 * Issue tracker: https://gitlab.gnome.org/World/Chatty/issues
 * Matrix: https://matrix.to/#/#chatty:talk.puri.sm
+
+[ModemManager]: https://modemmanager.org/
+[mmsd-tng]: https://gitlab.com/kop316/mmsd
+[libcmatrix]: https://source.puri.sm/Librem5/libcmatrix
+[libpurple]: https://developer.pidgin.im/wiki/WhatIsLibpurple
