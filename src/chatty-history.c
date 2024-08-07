@@ -3350,6 +3350,12 @@ chatty_history_close_async (ChattyHistory       *self,
   g_return_if_fail (CHATTY_IS_HISTORY (self));
 
   task = g_task_new (self, NULL, callback, user_data);
+
+  if (!self->db) {
+    g_task_return_boolean (task, TRUE);
+    return;
+  }
+
   g_task_set_source_tag (task, chatty_history_close_async);
   g_task_set_task_data (task, history_close_db, NULL);
 
