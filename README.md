@@ -34,26 +34,6 @@ Plugins are optional and can often be installed from your distribution sources.
 Installation from source is required only if you want to debug the plugin itself,
 or you have any reason to do so.
 
-### Build and install the 'carbons' plugin (Optional)
-Message synchronization between devices according to XEP-0280.
-On Debian and derivates you can install the `purple-xmpp-carbons` package.
-
-Alternativelly, to build from source, run:
-
-``` bash
-git clone https://github.com/gkdr/carbons.git
-cd carbons
-make
-make install
-```
-
-### Build and install the 'lurch' plugin (Optional)
-lurch plugin implements XEP-0384 (OMEMO Encryption).
-On Debian and derivates you can install `purple-lurch` package.
-
-To build from source see [lurch OMEMO plugin](https://github.com/gkdr/lurch)
-
-
 ### Build and install mmsd-tng (Optional)
 mmsd-tng provides MMS support.  On Debian and derivatives you
 can install `mmsd-tng` package.
@@ -170,7 +150,31 @@ You can contribute translations via [GNOME Damned Lies](https://l10n.gnome.org/m
 
 We follow [Phosh's Guidelines for Maintainers](https://gitlab.gnome.org/World/Phosh/phosh/-/wikis/Guidelines-for-maintainers).
 
-## XMPP account
+## XMPP
+
+XMPP support is not actively developed anymore and might be dropped completely in the future.
+If you would like to see that changed consider [stepping up](https://gitlab.gnome.org/World/Chatty/-/issues/842).
+
+### Build and install the 'carbons' plugin (Optional)
+Message synchronization between devices according to XEP-0280.
+On Debian and derivates you can install the `purple-xmpp-carbons` package.
+
+Alternativelly, to build from source, run:
+
+``` bash
+git clone https://github.com/gkdr/carbons.git
+cd carbons
+make
+make install
+```
+
+### Build and install the 'lurch' plugin (Optional)
+lurch plugin implements XEP-0384 (OMEMO Encryption).
+On Debian and derivates you can install `purple-lurch` package.
+
+To build from source see [lurch OMEMO plugin](https://github.com/gkdr/lurch)
+
+### XMPP account
 
 If you don't have an XMPP account yet and want to subscribe to a service then please make sure that the server supports the following XEPs:
 
