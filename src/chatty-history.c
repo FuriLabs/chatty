@@ -3345,7 +3345,7 @@ chatty_history_close_async (ChattyHistory       *self,
                             GAsyncReadyCallback  callback,
                             gpointer             user_data)
 {
-  GTask *task;
+  g_autoptr (GTask) task = NULL;
 
   g_return_if_fail (CHATTY_IS_HISTORY (self));
 
@@ -3353,7 +3353,7 @@ chatty_history_close_async (ChattyHistory       *self,
   g_task_set_source_tag (task, chatty_history_close_async);
   g_task_set_task_data (task, history_close_db, NULL);
 
-  g_async_queue_push (self->queue, task);
+  g_async_queue_push (self->queue, g_steal_pointer (&task));
 }
 
 /**
@@ -3405,7 +3405,7 @@ chatty_history_get_messages_async  (ChattyHistory       *self,
                                     GAsyncReadyCallback  callback,
                                     gpointer             user_data)
 {
-  GTask *task;
+  g_autoptr (GTask) task = NULL;
 
   g_return_if_fail (CHATTY_IS_HISTORY (self));
   g_return_if_fail (CHATTY_IS_CHAT (chat));
@@ -3421,7 +3421,7 @@ chatty_history_get_messages_async  (ChattyHistory       *self,
   g_object_set_data_full (G_OBJECT (task), "message", start, g_object_unref);
   g_object_set_data (G_OBJECT (task), "limit", GINT_TO_POINTER (limit));
 
-  g_async_queue_push (self->queue, task);
+  g_async_queue_push (self->queue, g_steal_pointer (&task));
 }
 
 /**
@@ -3455,7 +3455,7 @@ chatty_history_get_draft_async (ChattyHistory       *self,
                                 GAsyncReadyCallback  callback,
                                 gpointer             user_data)
 {
-  GTask *task;
+  g_autoptr (GTask) task = NULL;
 
   g_return_if_fail (CHATTY_IS_HISTORY (self));
   g_return_if_fail (CHATTY_IS_CHAT (chat));
@@ -3465,7 +3465,7 @@ chatty_history_get_draft_async (ChattyHistory       *self,
   g_task_set_task_data (task, history_get_chat_draft_message, NULL);
   g_object_set_data_full (G_OBJECT (task), "chat", g_object_ref (chat), g_object_unref);
 
-  g_async_queue_push_front (self->queue, task);
+  g_async_queue_push_front (self->queue, g_steal_pointer (&task));
 }
 
 char *
@@ -3497,7 +3497,7 @@ chatty_history_add_message_async (ChattyHistory       *self,
                                   GAsyncReadyCallback  callback,
                                   gpointer             user_data)
 {
-  GTask *task;
+  g_autoptr (GTask) task = NULL;
 
   g_return_if_fail (CHATTY_IS_HISTORY (self));
   g_return_if_fail (CHATTY_IS_CHAT (chat));
@@ -3509,7 +3509,7 @@ chatty_history_add_message_async (ChattyHistory       *self,
   g_object_set_data_full (G_OBJECT (task), "chat", g_object_ref (chat), g_object_unref);
   g_object_set_data_full (G_OBJECT (task), "message", g_object_ref (message), g_object_unref);
 
-  g_async_queue_push (self->queue, task);
+  g_async_queue_push (self->queue, g_steal_pointer (&task));
 }
 
 /**
@@ -3541,7 +3541,7 @@ chatty_history_get_chats_async (ChattyHistory       *self,
                                 GAsyncReadyCallback  callback,
                                 gpointer             user_data)
 {
-  GTask *task;
+  g_autoptr (GTask) task = NULL;
   const char *protocol;
 
   g_return_if_fail (CHATTY_IS_HISTORY (self));
@@ -3557,7 +3557,7 @@ chatty_history_get_chats_async (ChattyHistory       *self,
   g_task_set_task_data (task, history_get_chats, NULL);
   g_object_set_data_full (G_OBJECT (task), "account", g_object_ref (account), g_object_unref);
 
-  g_async_queue_push (self->queue, task);
+  g_async_queue_push (self->queue, g_steal_pointer (&task));
 }
 
 GPtrArray *
@@ -3584,12 +3584,11 @@ chatty_history_update_chat (ChattyHistory *self,
   g_return_val_if_fail (CHATTY_IS_CHAT (chat), FALSE);
 
   task = g_task_new (NULL, NULL, NULL, NULL);
-  g_object_ref (task);
   g_task_set_source_tag (task, chatty_history_update_chat);
   g_task_set_task_data (task, history_update_chat, NULL);
   g_object_set_data_full (G_OBJECT (task), "chat", g_object_ref (chat), g_object_unref);
 
-  g_async_queue_push (self->queue, task);
+  g_async_queue_push (self->queue, g_object_ref (task));
 
   history_db_wait_for_completion (task);
 
@@ -3613,13 +3612,12 @@ chatty_history_update_user (ChattyHistory *self,
   g_return_val_if_fail (CHATTY_IS_ACCOUNT (account), FALSE);
 
   task = g_task_new (NULL, NULL, NULL, NULL);
-  g_object_ref (task);
   g_task_set_source_tag (task, chatty_history_update_user);
   g_task_set_task_data (task, history_update_user, NULL);
   g_object_ref (account);
   g_object_set_data_full (G_OBJECT (task), "account", account, g_object_unref);
 
-  g_async_queue_push (self->queue, task);
+  g_async_queue_push (self->queue, g_object_ref (task));
 
   history_db_wait_for_completion (task);
 
@@ -3648,7 +3646,7 @@ chatty_history_delete_chat_async (ChattyHistory       *self,
                                   GAsyncReadyCallback  callback,
                                   gpointer             user_data)
 {
-  GTask *task;
+  g_autoptr (GTask) task = NULL;
 
   g_return_if_fail (CHATTY_IS_HISTORY (self));
   g_return_if_fail (CHATTY_IS_CHAT (chat));
@@ -3658,7 +3656,7 @@ chatty_history_delete_chat_async (ChattyHistory       *self,
   g_task_set_task_data (task, history_delete_chat, NULL);
   g_object_set_data_full (G_OBJECT (task), "chat", g_object_ref (chat), g_object_unref);
 
-  g_async_queue_push (self->queue, task);
+  g_async_queue_push (self->queue, g_steal_pointer (&task));
 }
 
 /**
@@ -3690,7 +3688,7 @@ chatty_history_load_account_async (ChattyHistory       *self,
                                    GAsyncReadyCallback  callback,
                                    gpointer             user_data)
 {
-  GTask *task;
+  g_autoptr (GTask) task = NULL;
 
   g_return_if_fail (CHATTY_IS_HISTORY (self));
   g_return_if_fail (CHATTY_IS_ACCOUNT (account));
@@ -3702,7 +3700,7 @@ chatty_history_load_account_async (ChattyHistory       *self,
   g_object_ref (account);
   g_object_set_data_full (G_OBJECT (task), "account", account, g_object_unref);
 
-  g_async_queue_push (self->queue, task);
+  g_async_queue_push (self->queue, g_steal_pointer (&task));
 }
 
 gboolean
@@ -3733,12 +3731,11 @@ chatty_history_set_last_read_msg (ChattyHistory *self,
     g_object_ref (message);
 
   task = g_task_new (NULL, NULL, NULL, NULL);
-  g_object_ref (task);
   g_task_set_task_data (task, history_set_last_read_msg, NULL);
   g_object_set_data_full (G_OBJECT (task), "chat", g_object_ref (chat), g_object_unref);
   g_object_set_data_full (G_OBJECT (task), "message", message, g_object_unref);
 
-  g_async_queue_push (self->queue, task);
+  g_async_queue_push (self->queue, g_object_ref (task));
 
   history_db_wait_for_completion (task);
 }
@@ -3837,12 +3834,11 @@ chatty_history_get_chat_timestamp (ChattyHistory *self,
   g_return_val_if_fail (self->db, FALSE);
 
   task = g_task_new (NULL, NULL, NULL, NULL);
-  g_object_ref (task);
   g_task_set_task_data (task, history_get_chat_timestamp, NULL);
   g_object_set_data_full (G_OBJECT (task), "uuid", g_strdup (uuid), g_free);
   g_object_set_data_full (G_OBJECT (task), "room", g_strdup (room), g_free);
 
-  g_async_queue_push (self->queue, task);
+  g_async_queue_push (self->queue, g_object_ref (task));
 
   history_db_wait_for_completion (task);
 
@@ -3886,12 +3882,11 @@ chatty_history_get_im_timestamp (ChattyHistory *self,
   g_return_val_if_fail (self->db, FALSE);
 
   task = g_task_new (NULL, NULL, NULL, NULL);
-  g_object_ref (task);
   g_task_set_task_data (task, history_get_im_timestamp, NULL);
   g_object_set_data_full (G_OBJECT (task), "uuid", g_strdup (uuid), g_free);
   g_object_set_data_full (G_OBJECT (task), "account", g_strdup (account), g_free);
 
-  g_async_queue_push (self->queue, task);
+  g_async_queue_push (self->queue, g_object_ref (task));
 
   history_db_wait_for_completion (task);
 
@@ -3934,13 +3929,12 @@ chatty_history_get_last_message_time (ChattyHistory *self,
   g_return_val_if_fail (self->db, 0);
 
   task = g_task_new (NULL, NULL, NULL, NULL);
-  g_object_ref (task);
   g_task_set_task_data (task, history_get_last_message_time, NULL);
 
   g_object_set_data_full (G_OBJECT (task), "account", g_strdup (account), g_free);
   g_object_set_data_full (G_OBJECT (task), "room", g_strdup (room), g_free);
 
-  g_async_queue_push (self->queue, task);
+  g_async_queue_push (self->queue, g_object_ref (task));
 
   history_db_wait_for_completion (task);
 
@@ -3989,13 +3983,12 @@ chatty_history_exists (ChattyHistory *self,
   g_return_val_if_fail (self->db, FALSE);
 
   task = g_task_new (NULL, NULL, NULL, NULL);
-  g_object_ref (task);
   g_task_set_task_data (task, history_exists, NULL);
   g_object_set_data_full (G_OBJECT (task), "account", g_strdup (account), g_free);
   g_object_set_data_full (G_OBJECT (task), "room", g_strdup (room), g_free);
   g_object_set_data_full (G_OBJECT (task), "who", g_strdup (who), g_free);
 
-  g_async_queue_push (self->queue, task);
+  g_async_queue_push (self->queue, g_object_ref (task));
 
   history_db_wait_for_completion (task);
 
