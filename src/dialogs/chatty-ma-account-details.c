@@ -252,7 +252,9 @@ ma_account_details_get_cb (GObject      *object,
   chatty_ma_account_get_details_finish (CHATTY_MA_ACCOUNT (self->account),
                                         result, &error);
 
-  if (error && !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
+  if (error &&
+      !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED) &&
+      !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_PENDING))
     g_warning ("Error getting details: %s", error->message);
 
   ma_account_details_update (self);
