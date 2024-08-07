@@ -3222,7 +3222,7 @@ chatty_history_class_init (ChattyHistoryClass *klass)
 static void
 chatty_history_init (ChattyHistory *self)
 {
-  self->queue = g_async_queue_new ();
+  self->queue = g_async_queue_new_full (g_object_unref);
 }
 
 /**
