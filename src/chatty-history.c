@@ -3620,8 +3620,7 @@ chatty_history_update_user (ChattyHistory *self,
   task = g_task_new (NULL, NULL, NULL, NULL);
   g_task_set_source_tag (task, chatty_history_update_user);
   g_task_set_task_data (task, history_update_user, NULL);
-  g_object_ref (account);
-  g_object_set_data_full (G_OBJECT (task), "account", account, g_object_unref);
+  g_object_set_data_full (G_OBJECT (task), "account", g_object_ref (account), g_object_unref);
 
   g_async_queue_push (self->queue, g_object_ref (task));
 
@@ -3703,8 +3702,7 @@ chatty_history_load_account_async (ChattyHistory       *self,
   task = g_task_new (self, NULL, callback, user_data);
   g_task_set_source_tag (task, chatty_history_load_account_async);
   g_task_set_task_data (task, history_load_account, NULL);
-  g_object_ref (account);
-  g_object_set_data_full (G_OBJECT (task), "account", account, g_object_unref);
+  g_object_set_data_full (G_OBJECT (task), "account", g_object_ref (account), g_object_unref);
 
   g_async_queue_push (self->queue, g_steal_pointer (&task));
 }
