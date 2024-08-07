@@ -3269,7 +3269,6 @@ chatty_history_open_async (ChattyHistory       *self,
   g_task_set_task_data (task, history_open_db, NULL);
 
   if (self->db) {
-    g_warning ("A DataBase is already open");
     g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_ALREADY_MOUNTED,
                              "Database is already open");
     return;
