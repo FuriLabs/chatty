@@ -489,7 +489,7 @@ chatty_ma_chat_send_message_async (ChattyChat          *chat,
   files = chatty_message_get_files (message);
 
   if (files && files->data && chatty_file_get_path (files->data))
-    file = g_file_new_for_path (files->data);
+    file = g_file_new_for_path (chatty_file_get_path (files->data));
 
   if (file) {
     g_object_set_data (G_OBJECT (task), "is-file", GINT_TO_POINTER (TRUE));
