@@ -436,6 +436,7 @@ ma_chat_send_message_cb (GObject      *object,
   g_autofree char *event_id = NULL;
   ChattyMessage *message;
   g_autoptr(GError) err = NULL;
+  gboolean is_file;
 
   g_assert (G_IS_TASK (task));
 
@@ -444,7 +445,12 @@ ma_chat_send_message_cb (GObject      *object,
   g_assert (CHATTY_IS_MA_CHAT (self));
   g_assert (CHATTY_IS_MESSAGE (message));
 
-  event_id = cm_room_send_text_finish (self->cm_room, result, &err);
+  is_file = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (task), "is-file"));
+
+  if (is_file)
+    event_id = cm_room_send_file_finish (self->cm_room, result, &err);
+  else
+    event_id = cm_room_send_text_finish (self->cm_room, result, &err);
 
   /* We add only failed to send messages.  If sending succeeded,
    * we shall get the same via the /sync responses */
@@ -465,11 +471,11 @@ chatty_ma_chat_send_message_async (ChattyChat          *chat,
                                    GAsyncReadyCallback  callback,
                                    gpointer             user_data)
 {
-  ChattyMaChat *self = (ChattyMaChat *)chat;
+  ChattyMaChat *self = CHATTY_MA_CHAT (chat);
+  g_autoptr (GTask) task = NULL;
   const char *event_id;
   GList *files = NULL;
   GFile *file = NULL;
-  GTask *task;
 
   g_assert (CHATTY_IS_MA_CHAT (self));
   g_assert (CHATTY_IS_MESSAGE (message));
@@ -485,15 +491,17 @@ chatty_ma_chat_send_message_async (ChattyChat          *chat,
   if (files && files->data && chatty_file_get_path (files->data))
     file = g_file_new_for_path (files->data);
 
-  if (file)
+  if (file) {
+    g_object_set_data (G_OBJECT (task), "is-file", GINT_TO_POINTER (TRUE));
     event_id = cm_room_send_file_async (self->cm_room, file, NULL,
                                         NULL, NULL, NULL,
-                                        ma_chat_send_message_cb, task);
-  else
+                                        ma_chat_send_message_cb, g_steal_pointer (&task));
+  } else {
     event_id = cm_room_send_text_async (self->cm_room,
                                         chatty_message_get_text (message),
                                         NULL,
-                                        ma_chat_send_message_cb, task);
+                                        ma_chat_send_message_cb, g_steal_pointer (&task));
+  }
   g_object_set_data_full (G_OBJECT (message), "event-id", g_strdup (event_id), g_free);
 }
 
