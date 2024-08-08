@@ -20,14 +20,15 @@
 
 struct _ChattyAttachment
 {
-  GtkBox       parent_instance;
+  GtkBox        parent_instance;
 
-  GtkWidget   *overlay;
-  GtkWidget   *label;
-  GtkWidget   *remove_button;
-  GtkWidget   *spinner;
+  GtkWidget    *overlay;
+  GtkWidget    *label;
+  GtkWidget    *remove_button;
+  GtkWidget    *spinner;
 
-  GFile       *file;
+  GCancellable *cancellable;
+  GFile        *file;
 };
 
 G_DEFINE_TYPE (ChattyAttachment, chatty_attachment, GTK_TYPE_BOX)
@@ -124,7 +125,18 @@ file_create_thumbnail_cb (GObject      *object,
                           GAsyncResult *result,
                           gpointer      user_data)
 {
-  g_autoptr(AttachmentData) data = user_data;
+  g_autoptr (AttachmentData) data = user_data;
+  g_autoptr (GError) error = NULL;
+
+  chatty_utils_create_thumbnail_finish (result, &error);
+
+  if (error && g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
+    return;
+
+  if (error) {
+    g_warning ("Error creating thumbnail: %s", error->message);
+    return;
+  }
 
   if (gtk_widget_in_destruction (GTK_WIDGET (data->self)))
     return;
@@ -145,6 +157,8 @@ chatty_attachment_finalize (GObject *object)
 {
   ChattyAttachment *self = (ChattyAttachment *)object;
 
+  g_cancellable_cancel (self->cancellable);
+  g_clear_object (&self->cancellable);
   g_clear_object (&self->file);
 
   G_OBJECT_CLASS (chatty_attachment_parent_class)->finalize (object);
@@ -181,6 +195,8 @@ static void
 chatty_attachment_init (ChattyAttachment *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  self->cancellable = g_cancellable_new ();
 }
 
 GtkWidget *
@@ -250,6 +266,7 @@ chatty_attachment_set_file (ChattyAttachment *self,
     data->self = g_object_ref (self);
     data->image = g_object_ref (image);
     chatty_utils_create_thumbnail_async (self->file,
+                                         self->cancellable,
                                          file_create_thumbnail_cb,
                                          data);
   }

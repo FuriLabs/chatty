@@ -728,6 +728,7 @@ utils_create_thumbnail (GTask        *task,
 
 void
 chatty_utils_create_thumbnail_async (GFile               *file,
+                                     GCancellable        *cancellable,
                                      GAsyncReadyCallback  callback,
                                      gpointer             user_data)
 {
@@ -736,7 +737,7 @@ chatty_utils_create_thumbnail_async (GFile               *file,
   g_return_if_fail (G_IS_FILE (file));
   g_return_if_fail (callback);
 
-  task = g_task_new (NULL, NULL, callback, user_data);
+  task = g_task_new (NULL, cancellable, callback, user_data);
   g_task_set_task_data (task, g_object_ref (file), g_object_unref);
 
   g_task_run_in_thread (task, utils_create_thumbnail);
