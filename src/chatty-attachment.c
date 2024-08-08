@@ -218,6 +218,13 @@ chatty_attachment_get_file (ChattyAttachment *self)
   return self->file;
 }
 
+/**
+ * chatty_attachment_set_file:
+ * @self: The attachment
+ * @file: (transfer full): The file
+ *
+ * Sets the file for the attachment
+ */
 void
 chatty_attachment_set_file (ChattyAttachment *self,
                             GFile            *file)
