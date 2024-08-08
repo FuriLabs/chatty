@@ -61,26 +61,39 @@ attachment_data_free (AttachmentData *data)
 }
 
 static void
-attachment_update_image (ChattyAttachment *self,
-                         GtkWidget        *image,
-                         GFile            *file)
+attachment_update_query_info_cb (GObject      *object,
+                                 GAsyncResult *result,
+                                 gpointer      user_data)
 {
-  g_autoptr (GError) error = NULL;
+  g_autoptr (AttachmentData) data = NULL;
   g_autoptr (GFileInfo) file_info = NULL;
+  g_autoptr (GError) error = NULL;
+  ChattyAttachment *self;
+  GFile *file;
+  GtkWidget *image;
   const char *thumbnail;
 
-  g_assert (CHATTY_IS_ATTACHMENT (self));
-  g_assert (image);
-  g_assert (file);
+  g_assert (user_data);
+  data = user_data;
 
-  file_info = g_file_query_info (file,
-                                 G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE ","
-                                 G_FILE_ATTRIBUTE_STANDARD_ICON ","
-                                 G_FILE_ATTRIBUTE_THUMBNAIL_PATH,
-                                 G_FILE_QUERY_INFO_NONE,
-                                 NULL, &error);
-  if (error)
+  g_assert (CHATTY_IS_ATTACHMENT (data->self));
+  self = CHATTY_ATTACHMENT (data->self);
+
+  g_assert (GTK_IS_WIDGET (data->image));
+  image = data->image;
+
+  g_assert (G_IS_FILE (object));
+  file = G_FILE (object);
+
+  file_info = g_file_query_info_finish (file, result, &error);
+
+  if (error && g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
+    return;
+
+  if (error) {
     g_warning ("Error querying info: %s", error->message);
+    return;
+  }
 
   thumbnail = g_file_info_get_attribute_byte_string (file_info, G_FILE_ATTRIBUTE_THUMBNAIL_PATH);
   gtk_widget_set_visible (self->spinner, FALSE);
@@ -118,6 +131,32 @@ attachment_update_image (ChattyAttachment *self,
   }
 
   gtk_overlay_add_overlay (GTK_OVERLAY (self->overlay), self->remove_button);
+}
+
+static void
+attachment_update_image (ChattyAttachment *self,
+                         GtkWidget        *image,
+                         GFile            *file)
+{
+  AttachmentData *data;
+
+  g_assert (CHATTY_IS_ATTACHMENT (self));
+  g_assert (image);
+  g_assert (file);
+
+  data = g_new0 (AttachmentData, 1);
+  data->self = g_object_ref (self);
+  data->image = g_object_ref (image);
+
+  g_file_query_info_async (file,
+                           G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE ","
+                           G_FILE_ATTRIBUTE_STANDARD_ICON ","
+                           G_FILE_ATTRIBUTE_THUMBNAIL_PATH,
+                           G_FILE_QUERY_INFO_NONE,
+                           G_PRIORITY_DEFAULT,
+                           self->cancellable,
+                           attachment_update_query_info_cb,
+                           data);
 }
 
 static void
@@ -218,38 +257,34 @@ chatty_attachment_get_file (ChattyAttachment *self)
   return self->file;
 }
 
-/**
- * chatty_attachment_set_file:
- * @self: The attachment
- * @file: (transfer full): The file
- *
- * Sets the file for the attachment
- */
-void
-chatty_attachment_set_file (ChattyAttachment *self,
-                            GFile            *file)
+static void
+attachment_set_file_query_info_cb (GObject      *object,
+                                   GAsyncResult *result,
+                                   gpointer      user_data)
 {
-  g_autoptr(GFileInfo) file_info = NULL;
-  g_autoptr(GError) error = NULL;
+  g_autoptr (ChattyAttachment) self = NULL;
+  g_autoptr (GFileInfo) file_info = NULL;
+  g_autoptr (GError) error = NULL;
+  GFile *file;
   const char *thumbnail;
   GtkWidget *image;
   gboolean thumbnail_failed, thumbnail_valid;
 
-  g_assert (CHATTY_IS_ATTACHMENT (self));
-  g_assert (G_IS_FILE (file));
+  g_assert (G_IS_FILE (object));
+  file = G_FILE (object);
 
-  g_set_object (&self->file, file);
+  g_assert (CHATTY_IS_ATTACHMENT (user_data));
+  self = CHATTY_ATTACHMENT (user_data);
 
-  file_info = g_file_query_info (file,
-                                 G_FILE_ATTRIBUTE_STANDARD_NAME ","
-                                 G_FILE_ATTRIBUTE_STANDARD_ICON ","
-                                 G_FILE_ATTRIBUTE_THUMBNAIL_PATH ","
-                                 G_FILE_ATTRIBUTE_THUMBNAIL_IS_VALID ","
-                                 G_FILE_ATTRIBUTE_THUMBNAILING_FAILED,
-                                 G_FILE_QUERY_INFO_NONE,
-                                 NULL, &error);
-  if (error)
+  file_info = g_file_query_info_finish (file, result, &error);
+
+  if (error && g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
+    return;
+
+  if (error) {
     g_warning ("Error querying info: %s", error->message);
+    return;
+  }
 
   image = gtk_image_new ();
   gtk_widget_set_tooltip_text (image, g_file_peek_path (file));
@@ -277,4 +312,33 @@ chatty_attachment_set_file (ChattyAttachment *self,
                                          file_create_thumbnail_cb,
                                          data);
   }
+}
+
+/**
+ * chatty_attachment_set_file:
+ * @self: The attachment
+ * @file: (transfer full): The file
+ *
+ * Sets the file for the attachment
+ */
+void
+chatty_attachment_set_file (ChattyAttachment *self,
+                            GFile            *file)
+{
+  g_assert (CHATTY_IS_ATTACHMENT (self));
+  g_assert (G_IS_FILE (file));
+
+  g_set_object (&self->file, file);
+
+  g_file_query_info_async (file,
+                           G_FILE_ATTRIBUTE_STANDARD_NAME ","
+                           G_FILE_ATTRIBUTE_STANDARD_ICON ","
+                           G_FILE_ATTRIBUTE_THUMBNAIL_PATH ","
+                           G_FILE_ATTRIBUTE_THUMBNAIL_IS_VALID ","
+                           G_FILE_ATTRIBUTE_THUMBNAILING_FAILED,
+                           G_FILE_QUERY_INFO_NONE,
+                           G_PRIORITY_DEFAULT,
+                           self->cancellable,
+                           attachment_set_file_query_info_cb,
+                           g_object_ref (self));
 }
