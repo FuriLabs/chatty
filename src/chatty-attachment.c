@@ -65,8 +65,8 @@ attachment_update_image (ChattyAttachment *self,
                          GtkWidget        *image,
                          GFile            *file)
 {
-  g_autoptr(GError) error = NULL;
-  GFileInfo *file_info;
+  g_autoptr (GError) error = NULL;
+  g_autoptr (GFileInfo) file_info = NULL;
   const char *thumbnail;
 
   g_assert (CHATTY_IS_ATTACHMENT (self));
