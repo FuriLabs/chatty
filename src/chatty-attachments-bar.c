@@ -140,11 +140,10 @@ chatty_attachments_bar_add_file (ChattyAttachmentsBar *self,
  * chatty_attachments_bar_get_files:
  * @self: A #ChattyAttachmentsBar
  *
- * Get the list of files attached. The list contains
- * ChattyFileInfo and the list should be freed with
- * g_list_free_full(list, (GDestroyNotify)chatty_file_info_free)
+ * Get the list of attached files.
  *
- * Returns: (transfer full) (nullable): A List of strings.
+ * Returns: (element-type ChattyFile)(transfer full) (nullable): List of files,
+ * free the list and elements when done, e.g. g_list_free_full(list, g_object_unref).
  */
 GList *
 chatty_attachments_bar_get_files (ChattyAttachmentsBar *self)
