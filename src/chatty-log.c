@@ -18,14 +18,14 @@
 
 #define DEFAULT_DOMAIN_PREFIX "chatty"
 
-FILE *ostream;
-char *domains;
+static FILE *ostream;
+static char *domains;
 static int verbosity;
-gboolean any_domain;
-gboolean no_anonymize;
-gboolean stderr_is_journal;
-gboolean fatal_criticals, fatal_warnings;
-gboolean enable_trace;
+static gboolean any_domain;
+static gboolean no_anonymize;
+static gboolean stderr_is_journal;
+static gboolean fatal_criticals, fatal_warnings;
+static gboolean enable_trace;
 
 /* Copied from GLib, LGPLv2.1+ */
 static void
