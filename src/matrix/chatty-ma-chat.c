@@ -116,18 +116,27 @@ ma_chat_get_past_events_cb (GObject      *object,
                             gpointer      user_data)
 {
   g_autoptr(ChattyMaChat) self = user_data;
-  /* g_autoptr(GPtrArray) events = NULL; */
   g_autoptr(GError) error = NULL;
+  CmRoom *room = CM_ROOM (object);
 
   g_assert (CHATTY_IS_MA_CHAT (self));
 
-  cm_room_load_past_events_finish (CM_ROOM (object), result, &error);
+  cm_room_load_past_events_finish (room, result, &error);
 
   self->history_is_loading = FALSE;
   g_object_notify (G_OBJECT (self), "loading-history");
 
-  if (error)
-    g_warning ("Error: %s", error->message);
+  if (error) {
+    g_autoptr(GString) str = NULL;
+
+    str = g_string_new (NULL);
+    g_string_append (str, "Error getting past events in room");
+    chatty_log_anonymize_value (str, cm_room_get_id (room));
+    g_string_append_printf (str, ": %s", error->message);
+
+    g_warning ("%s", str->str);
+
+  }
 }
 
 static gboolean
