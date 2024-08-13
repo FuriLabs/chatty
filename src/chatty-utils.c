@@ -10,6 +10,7 @@
 # include "config.h"
 #endif
 
+#include <glib/gi18n.h>
 #include <glib.h>
 #ifdef PURPLE_ENABLED
 # include <purple.h>
@@ -244,6 +245,143 @@ chatty_utils_strip_utm_from_message (const char *message)
   }
 
   return g_string_free (str, FALSE);
+}
+
+char *
+chatty_utils_vcard_get_contact_title (GFile* vcard)
+{
+  char *contact_title = NULL;
+  g_autofree char *contents = NULL;
+  g_autoptr(GError) error = NULL;
+  g_auto(GStrv) lines = NULL;
+  gsize length;
+
+  g_file_load_contents (vcard,
+                        NULL,
+                        &contents,
+                        &length,
+                        NULL,
+                        &error);
+
+  if (error) {
+    g_warning ("error opening file: %s", error->message);
+    return NULL;
+  }
+
+  lines = g_strsplit_set (contents, "\r\n", -1);
+  for (int i = 0; lines[i] != NULL; i++) {
+     if (g_str_has_prefix (lines[i], "FN:")) {
+       g_clear_pointer (&contact_title, g_free);
+
+       contact_title = g_strdup (lines[i] + 3);
+
+       /*
+        * Formatted name ("FN:") is better formatted and required in later versions
+        * of vCals vs. Name ("N:"). Since we found it, we can be done searching.
+        */
+       break;
+     }
+     if (g_str_has_prefix (lines[i], "N:")) {
+       g_auto(GStrv) tokens = NULL;
+       unsigned int token_length = 0;
+
+       if (g_strcmp0 (lines[i], "N:;;;;") == 0)
+         continue;
+
+       g_clear_pointer (&contact_title, g_free);
+
+       tokens = g_strsplit_set (lines[i] + 2, ";", 5);
+       token_length = g_strv_length (tokens);
+       /* https://www.rfc-editor.org/rfc/rfc2426#section-3.1.2  This should be a length of 5, but let's not risk it*/
+       /* Translators: Order is: Family Name, Given Name, Additional/Middle Names, Honorific Prefixes, and Honorific Suffixes */
+       if (token_length == 5) {
+         if (*tokens[3])
+           contact_title = g_strdup_printf (_("%s %s %s %s"), tokens[3], tokens[1], tokens[0], tokens[4]);
+         else
+           contact_title = g_strdup_printf (_("%s %s %s"), tokens[1], tokens[0], tokens[4]);
+
+       } else if (token_length == 4) {
+         if (*tokens[3])
+           contact_title = g_strdup_printf (_("%s %s %s"), tokens[3], tokens[1], tokens[0]);
+         else
+           contact_title = g_strdup_printf (_("%s %s"), tokens[1], tokens[0]);
+
+       } else if (token_length == 3 || token_length == 2)
+         contact_title = g_strdup_printf (_("%s %s"), tokens[1], tokens[0]);
+       else
+         contact_title = g_strdup (tokens[0]);
+
+       /*
+        * Formatted name ("FN:") is better formatted and required in later versions
+        * of vCals vs. Name ("N:"). So if we find Name ("N:"), let's keep
+        * searching for formatted name.
+        */
+       continue;
+     }
+     if (g_str_has_prefix (lines[i], "ORG:")) {
+       g_auto(GStrv) tokens = NULL;
+
+       /* Only process this if we cannot find FN or N */
+       if (contact_title != NULL)
+         continue;
+
+       if (g_strcmp0 (lines[i], "ORG:;") == 0)
+         continue;
+
+       if (g_strcmp0 (lines[i], "ORG:") == 0)
+         continue;
+
+       tokens = g_strsplit_set (lines[i] + 4, ";", 2);
+
+       contact_title = g_strdup (tokens[0]);
+       continue;
+     }
+  }
+
+ if (contact_title)
+   g_strstrip (contact_title);
+
+ return contact_title;
+}
+
+char *
+chatty_utils_vcal_get_event_title (GFile* vcal)
+{
+  char *event_title = NULL;
+  g_autofree char *contents = NULL;
+  g_autoptr(GError) error = NULL;
+  g_auto(GStrv) lines = NULL;
+  gsize length;
+
+  g_file_load_contents (vcal,
+                        NULL,
+                        &contents,
+                        &length,
+                        NULL,
+                        &error);
+
+  if (error) {
+    g_warning ("error opening file: %s", error->message);
+    return NULL;
+  }
+
+  lines = g_strsplit_set (contents, "\r\n", -1);
+  for (int i = 0; lines[i] != NULL; i++) {
+     if (g_str_has_prefix (lines[i], "SUMMARY")) {
+       g_auto(GStrv) tokens = NULL;
+       unsigned int token_length = 0;
+
+       tokens = g_strsplit_set (lines[i] + 2, ":", 2);
+       token_length = g_strv_length (tokens);
+       /* https://www.rfc-editor.org/rfc/rfc5545#section-3.8.1.12  This should be a length of 2, but let's not risk it*/
+       if (token_length == 2)
+         event_title = g_strdup (tokens[1]);
+
+       break;
+     }
+  }
+
+  return event_title;
 }
 
 /*

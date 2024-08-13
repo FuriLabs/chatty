@@ -23,6 +23,8 @@ char *chatty_utils_find_url (const char  *buffer,
                              char       **end);
 char *chatty_utils_strip_utm_from_url (const char *url_to_parse);
 char *chatty_utils_strip_utm_from_message (const char *message);
+char *chatty_utils_vcard_get_contact_title (GFile* vcard);
+char *chatty_utils_vcal_get_event_title (GFile* vcal);
 char *chatty_utils_check_phonenumber (const char *phone_number,
                                       const char *country);
 ChattyProtocol chatty_utils_username_is_valid  (const char     *name,
