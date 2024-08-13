@@ -140,7 +140,7 @@ chatty_avatar_class_init (ChattyAvatarClass *klass)
     g_param_spec_int ("size",
                       "Size",
                       "Size of avatar",
-                      0, 96, 32,
+                      0, INT_MAX, 32,
                       G_PARAM_WRITABLE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
