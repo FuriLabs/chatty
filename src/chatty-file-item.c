@@ -473,7 +473,7 @@ download_button_clicked (ChattyFileItem *self)
   g_autoptr(GFile) home_folder = NULL;
   g_autoptr(GError) error = NULL;
   GtkFileDialog *dialog;
-  GFileInfo *file_info;
+
   GtkWindow *window;
 
   window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
@@ -489,14 +489,31 @@ download_button_clicked (ChattyFileItem *self)
   home_folder = g_file_new_build_filename (g_get_home_dir (), NULL);
   gtk_file_dialog_set_initial_folder (dialog, home_folder);
 
-  file_info = g_file_query_info (file_to_save,
-                                 G_FILE_ATTRIBUTE_STANDARD_NAME,
-                                 G_FILE_QUERY_INFO_NONE,
-                                 NULL, &error);
-  if (error)
-    g_warning ("Error querying info: %s", error->message);
-  else
-    gtk_file_dialog_set_initial_name (dialog,  g_file_info_get_name (file_info));
+  if (strstr (chatty_file_get_mime_type (self->file), "vcard")) {
+    g_autofree char *contact_title = NULL;
+    g_autofree char *filename = NULL;
+
+    contact_title = chatty_utils_vcard_get_contact_title (file_to_save);
+    filename = g_strdup_printf ("%s.vcf", contact_title);
+    gtk_file_dialog_set_initial_name (dialog,  filename);
+  } else if (strstr (chatty_file_get_mime_type (self->file), "calendar")) {
+    g_autofree char *event_title = NULL;
+    g_autofree char *filename = NULL;
+
+    event_title = chatty_utils_vcal_get_event_title (file_to_save);
+    filename = g_strdup_printf ("%s.ics", event_title);
+    gtk_file_dialog_set_initial_name (dialog,  filename);
+  } else {
+    GFileInfo *file_info;
+    file_info = g_file_query_info (file_to_save,
+                                   G_FILE_ATTRIBUTE_STANDARD_NAME,
+                                   G_FILE_QUERY_INFO_NONE,
+                                   NULL, &error);
+    if (error)
+      g_warning ("Error querying info: %s", error->message);
+    else
+      gtk_file_dialog_set_initial_name (dialog,  g_file_info_get_name (file_info));
+  }
 
   gtk_file_dialog_set_modal (dialog, TRUE);
   gtk_file_dialog_set_title (dialog, "Save File as....");
