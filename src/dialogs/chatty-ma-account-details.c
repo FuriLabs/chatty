@@ -55,7 +55,6 @@ struct _ChattyMaAccountDetails
   GtkWidget     *matrix_id_label;
   GtkWidget     *device_id_label;
   GtkWidget     *access_token_label;
-  GtkWidget     *access_token_btn;
 
   guint          modified : 1;
   guint          is_deleting_avatar : 1;
