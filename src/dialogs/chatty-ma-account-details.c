@@ -85,7 +85,7 @@ on_copy_access_token_activated (GtkWidget *widget, const char *action_name, GVar
 {
   ChattyMaAccountDetails *self = CHATTY_MA_ACCOUNT_DETAILS (widget);
   const char *token = gtk_label_get_label (GTK_LABEL (self->access_token_label));
-  GdkClipboard *clipboard =  gdk_display_get_clipboard(gdk_display_get_default());
+  GdkClipboard *clipboard =  gdk_display_get_clipboard (gdk_display_get_default());
 
   gdk_clipboard_set_text (clipboard, token);
 }
@@ -516,8 +516,8 @@ chatty_ma_account_details_class_init (ChattyMaAccountDetailsClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, ma_details_name_entry_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, ma_details_delete_account_clicked_cb);
 
-    gtk_widget_class_install_action (widget_class, "ma-account-details.copy-access-token", NULL,
-				     on_copy_access_token_activated);
+  gtk_widget_class_install_action (widget_class, "ma-account-details.copy-access-token", NULL,
+                                   on_copy_access_token_activated);
 }
 
 static void
