@@ -80,13 +80,28 @@ G_DEFINE_TYPE (ChattyMaAccountDetails, chatty_ma_account_details, ADW_TYPE_PREFE
 
 
 static void
-on_copy_access_token_activated (GtkWidget *widget, const char *action_name, GVariant *unused)
+on_copy_action_activated (GtkWidget *widget, const char *action_name, GVariant *target)
 {
   ChattyMaAccountDetails *self = CHATTY_MA_ACCOUNT_DETAILS (widget);
-  const char *token = gtk_label_get_label (GTK_LABEL (self->access_token_label));
   GdkClipboard *clipboard =  gdk_display_get_clipboard (gdk_display_get_default());
+  const char *copy_text = NULL;
+  const char *target_str = g_variant_get_string (target, NULL);
 
-  gdk_clipboard_set_text (clipboard, token);
+  if (g_strcmp0 (target_str, "access-token") == 0)
+    copy_text = gtk_label_get_label (GTK_LABEL (self->access_token_label));
+  else if (g_strcmp0 (target_str, "homeserver") == 0)
+    copy_text = gtk_label_get_label (GTK_LABEL (self->homeserver_label));
+  else if (g_strcmp0 (target_str, "matrix-id") == 0)
+    copy_text = gtk_label_get_label (GTK_LABEL (self->matrix_id_label));
+  else if (g_strcmp0 (target_str, "device-id") == 0)
+    copy_text = gtk_label_get_label (GTK_LABEL (self->device_id_label));
+
+  if (!copy_text) {
+    g_warning ("Unknown target for copy action: '%s'", target_str);
+    return;
+  }
+
+  gdk_clipboard_set_text (clipboard, copy_text);
 }
 
 
@@ -515,8 +530,8 @@ chatty_ma_account_details_class_init (ChattyMaAccountDetailsClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, ma_details_name_entry_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, ma_details_delete_account_clicked_cb);
 
-  gtk_widget_class_install_action (widget_class, "ma-account-details.copy-access-token", NULL,
-                                   on_copy_access_token_activated);
+  gtk_widget_class_install_action (widget_class, "ma-account-details.copy", "s",
+                                   on_copy_action_activated);
 }
 
 static void
