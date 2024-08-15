@@ -1,4 +1,4 @@
 [wrap-git]
 directory=libcmatrix
 url=https://source.puri.sm/Librem5/libcmatrix
-revision=610563550d612612ada0ef764a36a51d01067b42
+revision=v0.0.2

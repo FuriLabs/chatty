@@ -122,7 +122,7 @@ libfeedback_dep = dependency('libfeedback-0.0')
 libm_dep = cc.find_library('m')
 
 libcmatrix_dep = dependency('libcmatrix',
-  version: '>= 0.0.1',
+  version: '>= 0.0.2',
   fallback: ['libcmatrix', 'libcmatrix_dep'],
   default_options: [
     'build-examples=false',
