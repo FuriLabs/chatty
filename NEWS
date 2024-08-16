@@ -1,3 +1,40 @@
+chatty 0.8.5
+------------
+Released August 2024
+* Add Ctrl+F to search in the chat list
+* Add Ctrl+D to open chat details
+* More mature matrix support through libcmatrix 0.0.2
+* Build system improvements
+* Fix various papercuts all over
+* Issues fixed:
+    * https://gitlab.gnome.org/World/Chatty/-/issues/426
+    * https://gitlab.gnome.org/World/Chatty/-/issues/839
+    * https://gitlab.gnome.org/World/Chatty/-/issues/901
+    * https://gitlab.gnome.org/World/Chatty/-/issues/903
+    * https://gitlab.gnome.org/World/Chatty/-/issues/904
+    * https://gitlab.gnome.org/World/Chatty/-/issues/908
+    * https://gitlab.gnome.org/World/Chatty/-/issues/927
+    * https://gitlab.gnome.org/World/Chatty/-/issues/929
+    * https://gitlab.gnome.org/World/Chatty/-/issues/931
+* Contributors:
+    * Chris Talbot
+    * Evangelos Ribeiro Tzaras
+    * Guido Günther
+    * Julian
+* UI translations:
+    * Antonio Marin (ro)
+    * Artur S0 (ru)
+    * Danial Behzadi (fa)
+    * Daniel Rusek (cs)
+    * Daniel Șerbănescu (ro)
+    * Ekaterine Papava (ka)
+    * Emin Tufan Çetin (tr)
+    * Juliano de Souza Camargo (pt_BR)
+    * Jürgen Benvenuti (de)
+    * Martin (sl)
+    * Scrambled 777 (hi)
+    * Yuri Chornoivan (uk)
+
 Overview of Changes in Chats 0.8.4. Wed, 26 June 2024
 ========================================================
 * Convert to Adw Alert Dialogs

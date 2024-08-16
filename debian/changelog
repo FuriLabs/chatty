@@ -1,3 +1,140 @@
+chatty (0.8.5) unstable; urgency=medium
+
+  [ Scrambled 777 ]
+  * Update Hindi translation
+  * Update Hindi translation
+
+  [ Guido Günther ]
+  * metainfo: Drop unused replacement
+  * info-dialog: Fix critical when built without purple support
+  * build: Only build library once
+  * side-bar: Fix activation via F10
+  * side-bar: Make search entry grab focus when search is activated
+  * help-overlay: Fix keybinding for shortcut window
+  * db: Don't blindly iterate the NULL context
+  * ma-key-chat: Implement get_messages
+  * matrix: Don't free error when saving account fails
+  * window: Make ctrl-f open chat search
+  * help-overlay: Use action-name
+  * build: Make summary a bit more colorful
+  * packaging: Add build profiles to disable libpurple
+  * libcmatrix: Update to 69ab951 ("room: Allow to fetch topic")
+  * window: Remove unused variables
+  * window: Disable per chat actions when no chat is set
+  * info-dialog: Use AdwDialog
+  * window: Open chat details with CTRL-D
+  * matrix: Show room topic in chat info
+  * README: Mention matrix channel and issue tracker
+  * libcmatrix: Forward to 5f3bc12 ("Merge branch 'weak-pointers' into 'main'")
+  * ma-chat: Emit changed when unread count changes
+  * ci: Ignore generated files
+  * treewide: Switch libcmatrix to a subproject
+  * packaging: Add a build profile to disable libcmatrix deps
+  * matrix: Chase API changes
+  * treewide: Require libcmatrix 0.0.2
+  * flatpak: Make libcmatrix commit match v0.0.2 tag
+
+  [ Evangelos Ribeiro Tzaras ]
+  * ma-chat: Don't emit avatar-changed signal for invalid avatar
+  * tests: Add more URIs to utm stripping tests
+  * utils: Abort stripping UTM from URIs without query part
+  * log: Fix G_DEBUG env variable parsing
+  * tests/settings: Sync up boolean settings tests
+  * settings: No need for double negation of booleans
+  * settings: Prefer public setters in _set_property
+  * message-bar: Fix name of activated action
+  * libcmatrix: Start tracking tagged releases
+  * ma-buddy: Don't emit avatar-changed signal for invalid avatar
+  * chat-page: Increase number of messages initially loaded
+  * chat-page: Refer to listmodel in set_chat() consistently
+  * chat-page: Prefer g_timeout_add_once for one-time sources
+  * chat-page: Rework scroll-to-bottom logic
+  * utils: Use consistent ownership of returned purple directory
+  * gitlab-ci: Use prebuilt containers
+  * ci: Switch to prebuilt container image
+  * ci: Don't repeat steps from before_script in script
+  * ma-account-details: Don't raise warning if info is already getting loaded
+  * settings-dialog: Remove unnecessary proxy function
+  * settings-dialog: Rename signal handler to get rid of "pp" prefix
+  * history: Don't raise warning in chatty_history_open_async()
+  * history: Unref remaining queued tasks
+  * history: Consistently use g_autoptr for tasks we pass to the queue
+  * history: Do not attempt closing the database twice
+  * history: Pair g_object_ref and g_object_unref invocations
+  * readme: Mention "Chats" (Closes: #426)
+  * readme: Expand first paragraph
+  * readme: Remove ccache from build dependency description
+  * readme: Make XMPP support less prominent
+  * ma-chat: Call the correct finish function when sending file
+  * attachment-bar: Fix documentation for chatty_attachments_bar_add_file()
+  * message-bar: Add note to recheck why we're always using CHATTY_MESSAGE_TEXT
+  * ma-chat: Fix sending attachments
+  * utils: Allow thumbnail creation to be cancelled
+  * attachment: Add docstring for chatty_attachment_set_file()
+  * attachment: Fix memory leak in attachment_update_image()
+  * attachment: Query file info asynchronously
+  * log: Make variables static
+  * ma-chat: Be more verbose when warning about failing to retrieve past events
+  * avatar: Don't constrain avatar to tiny sizes
+  * invite-page: Increase avatar size
+  * d/gbp.conf: Switch debian-branch to main
+  * ci: Update shared scripts to 2aeb9bf
+  * ci: Run version number consistency check
+  * ci: Use check-po job from meta-phosh
+  * ci: Build a release tarball
+  * ma-account-details: Remove unused widget variable
+  * ma-account-details: Make labels selectable
+  * ma-account-details: Add copy button for homeserver, matrix and device id
+
+  [ Jürgen Benvenuti ]
+  * Update German translation
+
+  [ Yuri Chornoivan ]
+  * Update Ukrainian translation
+  * Update Ukrainian translation
+
+  [ Danial Behzadi ]
+  * Update Persian translation
+  * Update Persian translation
+  * Update Persian translation
+
+  [ Daniel Rusek ]
+  * Update Czech translation
+
+  [ Daniel Șerbănescu ]
+  * Update Romanian translation
+
+  [ Ekaterine Papava ]
+  * Update Georgian translation
+  * Update Georgian translation
+
+  [ Chris Talbot ]
+  * list-row: replace newlines with a space in the message preview
+  * file-item: Move vcal and vcard processing to utils
+  * file-item: name vcard and vcal after contact and event name if saving
+
+  [ Martin ]
+  * Add Slovenian translation
+  * Update Slovenian translation
+
+  [ Emin Tufan Çetin ]
+  * Update Turkish translation
+
+  [ Julian ]
+  * flatpak: Update modules
+  * flatpak: Fix libcmatrix dependency in Flatpak
+
+  [ Artur S0 ]
+  * Update Russian translation
+
+  [ Antonio Marin ]
+  * Update Romanian translation
+
+  [ Juliano de Souza Camargo ]
+  * Update Brazilian Portuguese translation
+
+ -- Evangelos Ribeiro Tzaras <devrtz-debian@fortysixandtwo.eu>  Tue, 20 Aug 2024 20:43:44 +0200
+
 chatty (0.8.4) unstable; urgency=medium
 
   [ Chris Talbot ]
