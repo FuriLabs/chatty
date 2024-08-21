@@ -15,7 +15,7 @@ Build-Depends:
  gsettings-desktop-schemas-dev,
  help2man,
  itstool,
- libadwaita-1-dev (>= 1.4.0),
+ libadwaita-1-dev (>= 1.5.0),
  libebook-contacts1.2-dev,
  libebook1.2-dev,
  libfeedback-dev,
