@@ -25,7 +25,7 @@
               <object class="GtkShortcutsShortcut">
                 <property name="visible">1</property>
                 <property name="title" translatable="yes" context="shortcut window">Open Search</property>
-                <property name="accelerator">&lt;Primary&gt;F</property>
+                <property name="action-name">win.search-chat</property>
               </object>
             </child>
 
@@ -33,7 +33,23 @@
               <object class="GtkShortcutsShortcut">
                 <property name="visible">1</property>
                 <property name="title" translatable="yes" context="shortcut window">Show Shortcuts</property>
-                <property name="accelerator">&lt;Primary&gt;F1</property>
+                <property name="action-name">win.show-help-overlay</property>
+              </object>
+            </child>
+
+          </object> <!-- ./GtkShortcutsGroup -->
+        </child>
+
+        <child>
+          <object class="GtkShortcutsGroup">
+            <property name="visible">1</property>
+            <property name="title" translatable="yes" context="shortcut window">Chat</property>
+
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="visible">1</property>
+                <property name="title" translatable="yes" context="shortcut window">Show Details</property>
+                <property name="action-name">win.show-chat-details</property>
               </object>
             </child>
 

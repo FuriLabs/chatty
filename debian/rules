@@ -2,8 +2,18 @@
 
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 
+MESON_OPTS=--wrap-mode=default
+ifneq ($(filter pkg.chatty.nopurple,$(DEB_BUILD_PROFILES)),)
+    MESON_OPTS += -Dpurple=disabled
+else
+    MESON_OPTS += -Dpurple=enabled
+endif
+
 %:
 	dh $@ --builddirectory=_build
+
+override_dh_auto_configure:
+	dh_auto_configure -- $(MESON_OPTS)
 
 override_dh_shlibdeps:
 	dh_shlibdeps -l/usr/lib/purple-2

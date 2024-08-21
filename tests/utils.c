@@ -15,9 +15,16 @@
 #undef G_DISABLE_CAST_CHECKS
 #undef G_LOG_DOMAIN
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include "chatty-settings.h"
 #include "chatty-phone-utils.h"
 #include "chatty-utils.h"
+
+#define VCARD_TEST_DATA_DIR SOURCE_DIR "/tests/vcard"
+#define VCAL_TEST_DATA_DIR SOURCE_DIR "/tests/vcal"
 
 const char *valid[][2] = {
   {"9633123456", "IN"},
@@ -251,6 +258,15 @@ test_message_strip_utm_from_url (void)
      "http://utm_source.example.com/something?wowbraid=123"},
     {"https://breeo.co/pages/pizza-oven?utm_source=facebook&utm_medium=cpc&utm_campaign=Pizza+Launch+%257C+Full+Funnel+%257C+Conversion%257ERetargeting+Purchase+%257C+Traffic+Engagers+Purchasers&utm_content=Spec+Text+Callouts+IMG+%257C+X24+Pizza+Oven&ad_id=6598924229883&adset_id=6598924227883&campaign_id=6598902108283&ad_name=Spec+Text+Callouts+IMG+%257C+X24+Pizza+Oven&adset_name=Retargeting+Purchase+%257C+Traffic+Engagers+Purchasers&campaign_name=Pizza+Launch+%257C+Full+Funnel+%257C+Conversion&placement=Instagram_Reels",
      "https://breeo.co/pages/pizza-oven"},
+    {
+      "https://matrix.to/#/#matrix:matrix.org?web-instance%5Belement.io%5D=chat.mozilla.org",
+      "https://matrix.to/#/#matrix:matrix.org?web-instance%5Belement.io%5D=chat.mozilla.org"},
+    {
+      "https://matrix.to/#/#matrix:matrix.org?web-instance[element.io]=chat.mozilla.org",
+      "https://matrix.to/#/#matrix:matrix.org?web-instance[element.io]=chat.mozilla.org"},
+    {
+      "https://matrix.to/#/!SomeRoomId:matrix.org/$171871802092xTbEo:matrix.org?via=matrix.org&via=other.matrix-server.org",
+      "https://matrix.to/#/!SomeRoomId:matrix.org/$171871802092xTbEo:matrix.org?via=matrix.org&via=other.matrix-server.org"},
   };
 
   g_assert_null (chatty_utils_strip_utm_from_url (NULL));
@@ -312,6 +328,10 @@ test_message_strip_utm_from_message (void)
     {
      "Test message text before and after http://www.example.com/user's-image.png and after",
      "Test message text before and after http://www.example.com/user's-image.png and after"},
+    {
+      "Test message text before URL with fragment containing '?' but no query part https://matrix.to/#/!bla?via=matrix.org",
+      "Test message text before URL with fragment containing '?' but no query part https://matrix.to/#/!bla?via=matrix.org",
+    }
   };
 
   g_assert_null (chatty_utils_strip_utm_from_message (NULL));
@@ -321,6 +341,85 @@ test_message_strip_utm_from_message (void)
 
     content = chatty_utils_strip_utm_from_message (array[i].text);
     g_assert_cmpstr (content, ==, array[i].check);
+  }
+}
+
+static void
+test_vcard_find_vcard_contact_name (void)
+{
+  typedef struct data {
+    char *file_name;
+    char *check;
+  } data;
+  data array[] = {
+    {
+      "Postcard_Jane_Doe.vcf",
+      "Jane Doe"},
+    {
+      "EmptyADRfield.vcf",
+      "John Empty"},
+    /* Empty N;, But ORG is populated */
+    {
+      "southwest_suites.vcf",
+      "Southwest Suites"},
+    /*
+     * Has FN and N. I intentionally make N different than FN.
+     * also has ORG tag
+     */
+    {
+      "fn_test.vcf",
+      "Megan Smith"},
+    /* Has ORG tag and N tag */
+    {
+      "Postcard_John_Doe.vcf",
+      "John Doe"}
+  };
+
+  g_assert_null (chatty_utils_strip_utm_from_message (NULL));
+
+  for (guint i = 0; i < G_N_ELEMENTS (array); i++) {
+    g_autofree char *vcard_filepath = NULL;
+    g_autofree char *contact_name = NULL;
+    g_autoptr(GFile) vcard = NULL;
+
+    vcard_filepath = g_build_filename (VCARD_TEST_DATA_DIR, array[i].file_name, NULL);
+    vcard = g_file_new_build_filename (vcard_filepath, NULL);
+
+    contact_name = chatty_utils_vcard_get_contact_title (vcard);
+
+    g_assert_cmpstr (contact_name, ==, array[i].check);
+  }
+}
+
+static void
+test_vcal_find_vcal_event_name (void)
+{
+  typedef struct data {
+    char *file_name;
+    char *check;
+  } data;
+  data array[] = {
+    {
+      "Christmas.vcs",
+      "Christmas"},
+    {
+      "WrapPresents.vcs",
+      "Wrap presents"}
+  };
+
+  g_assert_null (chatty_utils_strip_utm_from_message (NULL));
+
+  for (guint i = 0; i < G_N_ELEMENTS (array); i++) {
+    g_autofree char *vcal_filepath = NULL;
+    g_autofree char *event_name = NULL;
+    g_autoptr(GFile) vcal = NULL;
+
+    vcal_filepath = g_build_filename (VCAL_TEST_DATA_DIR, array[i].file_name, NULL);
+    vcal = g_file_new_build_filename (vcal_filepath, NULL);
+
+    event_name = chatty_utils_vcal_get_event_title (vcal);
+
+    g_assert_cmpstr (event_name, ==, array[i].check);
   }
 }
 
@@ -337,6 +436,8 @@ main (int   argc,
   g_test_add_func ("/utils/jabber_id_strip", test_utils_jabber_id_strip);
   g_test_add_func ("/message-text/strip_utmstrip_utm_from_url", test_message_strip_utm_from_url);
   g_test_add_func ("/message-text/strip_utmstrip_utm_from_message", test_message_strip_utm_from_message);
+  g_test_add_func ("/utils/find_contact_name", test_vcard_find_vcard_contact_name);
+  g_test_add_func ("/utils/find_calendar_event_name", test_vcal_find_vcal_event_name);
 
   return g_test_run ();
 }

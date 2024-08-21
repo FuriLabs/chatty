@@ -1,16 +1,53 @@
-Overview of Changes in Chats 0.8.4. Won, 26 June 2024
+chatty 0.8.5
+------------
+Released August 2024
+* Add Ctrl+F to search in the chat list
+* Add Ctrl+D to open chat details
+* More mature matrix support through libcmatrix 0.0.2
+* Build system improvements
+* Fix various papercuts all over
+* Issues fixed:
+    * https://gitlab.gnome.org/World/Chatty/-/issues/426
+    * https://gitlab.gnome.org/World/Chatty/-/issues/839
+    * https://gitlab.gnome.org/World/Chatty/-/issues/901
+    * https://gitlab.gnome.org/World/Chatty/-/issues/903
+    * https://gitlab.gnome.org/World/Chatty/-/issues/904
+    * https://gitlab.gnome.org/World/Chatty/-/issues/908
+    * https://gitlab.gnome.org/World/Chatty/-/issues/927
+    * https://gitlab.gnome.org/World/Chatty/-/issues/929
+    * https://gitlab.gnome.org/World/Chatty/-/issues/931
+* Contributors:
+    * Chris Talbot
+    * Evangelos Ribeiro Tzaras
+    * Guido Günther
+    * Julian
+* UI translations:
+    * Antonio Marin (ro)
+    * Artur S0 (ru)
+    * Danial Behzadi (fa)
+    * Daniel Rusek (cs)
+    * Daniel Șerbănescu (ro)
+    * Ekaterine Papava (ka)
+    * Emin Tufan Çetin (tr)
+    * Juliano de Souza Camargo (pt_BR)
+    * Jürgen Benvenuti (de)
+    * Martin (sl)
+    * Scrambled 777 (hi)
+    * Yuri Chornoivan (uk)
+
+Overview of Changes in Chats 0.8.4. Wed, 26 June 2024
 ========================================================
 * Convert to Adw Alert Dialogs
 * re-add spell checking
 * Fix various small UI issues
 
-Overview of Changes in Chats 0.8.3. Won, 4 May 2024
+Overview of Changes in Chats 0.8.3. Sat, 4 May 2024
 ========================================================
 * Update GUI for libadwaita 1.5
   - Minimum libadwaita version is now 1.5
 * Fix various small UI issues
 
-Overview of Changes in Chats 0.8.2. Won, 15 March 2024
+Overview of Changes in Chats 0.8.2. Fri, 15 March 2024
 ========================================================
 * Update GUI for libadwaita 1.4
   - Minimum libadwaita version is now 1.4
@@ -18,7 +55,7 @@ Overview of Changes in Chats 0.8.2. Won, 15 March 2024
 * Let chat render animated images and videos
 * Have tracking ids stripped from pasting and chat
 
-Overview of Changes in Chats 0.8.1. Won, 19 January 2024
+Overview of Changes in Chats 0.8.1. Fri, 19 January 2024
 ========================================================
 * Address GTK4 deprecations
   - Minimum GTK4 version is now 4.10
@@ -27,7 +64,7 @@ Overview of Changes in Chats 0.8.1. Won, 19 January 2024
 * Fix link color in dark style
 * Update translations
 
-Overview of Changes in Chats 0.8.0. Won, 18 December 2023
+Overview of Changes in Chats 0.8.0. Mon, 18 December 2023
 =========================================================
 * Fix flaky tests
 * Fix various memory leaks
@@ -45,7 +82,7 @@ Overview of Changes in Chats 0.8.0. Won, 18 December 2023
   - Turkish
   - Ukrainian
 
-Overview of Changes in Chats 0.8.0.rc0. Won, 31 July 2023
+Overview of Changes in Chats 0.8.0.rc0. Mon, 31 July 2023
 ========================================================
 * Port to GTK4
 * Fix various memory leaks

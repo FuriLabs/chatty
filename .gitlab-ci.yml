@@ -1,11 +1,14 @@
 include:
   - 'https://source.puri.sm/Librem5/librem5-ci/raw/master/librem5-pipeline-definitions.yml'
+  - project: 'guidog/meta-phosh'
+    ref: c63ce48348a61be7c74e952da5e30456ef0effd9
+    file: '/ci/phosh-common-jobs.yml'
   - project: 'gnome/citemplates'
     file: 'flatpak/flatpak-ci-initiative-sdk-extensions.yml'
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
-  IMAGE: debian:trixie
+  IMAGE: $CI_REGISTRY/world/chatty/debian:v0.0.2024-08-05
   ALPINE_IMAGE: alpine:edge
 
 stages:
@@ -13,6 +16,16 @@ stages:
   - test
   - package
   - test-package
+  - release
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    # Don't trigger a branch pipeline if there is an open MR
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH
 
 .tags: &tags
   tags:
@@ -26,8 +39,6 @@ build-debian-gcc-trixie-no-purple:
   image: ${IMAGE}
   stage: build
   script:
-    - apt-get -y build-dep .
-    - apt-get -y install git
     - export LC_ALL=C.UTF-8
     - meson setup _build -Dpurple=disabled
     - meson compile -C _build
@@ -39,8 +50,7 @@ build-debian-gcc-trixie:
   image: ${IMAGE}
   stage: build
   script:
-    - apt-get -y build-dep .
-    - apt-get -y install libgtk-4-bin xvfb git
+    - eatmydata apt-get -y install libgtk-4-bin xvfb
     - export LC_ALL=C.UTF-8
     - meson setup _build -Db_coverage=true --werror
     - meson compile -C _build
@@ -57,6 +67,7 @@ build-alpine-edge:
   before_script:
     - apk -q add
         build-base
+        git
         glib-dev
         dbus
         dbus-x11
@@ -101,8 +112,7 @@ test:debian-gcc:
   dependencies:
     - build-debian-gcc-trixie
   script:
-    - apt-get -y build-dep .
-    - apt-get -y install libgtk-4-bin xvfb gcovr git
+    - eatmydata apt-get -y install libgtk-4-bin xvfb gcovr
     - export G_DEBUG=fatal-warnings
     - export LC_ALL=C.UTF-8
     - xvfb-run -a -s "-screen 0 1024x768x24" ninja -C _build test
@@ -120,6 +130,7 @@ test:alpine-edge:
   before_script:
     - apk -q add
         build-base
+        git
         glib-dev
         dbus
         dbus-x11
@@ -164,12 +175,8 @@ asan-test:native-debian-trixie:
   image: ${IMAGE}
   tags: [ asan ]
   needs: []
-  before_script:
-    - export DEBIAN_FRONTEND=noninteractive
-    - apt-get -y update
-    - apt-get -y build-dep .
-    - apt-get -y install libgtk-4-bin xvfb gcovr git
   script:
+    - eatmydata apt-get -y install libgtk-4-bin xvfb gcovr
     - meson setup -Db_sanitize=address -Dbuildtype=debug _build-asan
     - meson compile -C _build-asan
     - ${XVFB_RUN} meson test -C _build-asan --verbose  clock history settings sms-uri mm-account
@@ -179,15 +186,7 @@ check-po:
   image: ${IMAGE}
   dependencies:
     - build-debian-gcc-trixie
-  before_script:
-    - apt-get -y update
-    - apt-get -y install intltool git
-  script:
-    # barf on untranslated C files. Seems intltool
-    # can't be told to exit with non-zero exit status
-    # in this case
-    - cd po/
-    - intltool-update -m 2>&1 | grep -qs '/.*\.\(c\|ui\|in\)' && { intltool-update -m; exit 1; } || exit 0
+  extends: .phosh-check-po
   except:
     variables:
       - $FP_ONLY == "1"
@@ -200,10 +199,6 @@ package:deb-debian-trixie:arm64:
   extends: .l5-build-debian-package
   tags:
     - aarch64
-  before_script:
-    - export DEBIAN_FRONTEND=noninteractive
-    - apt-get -y update
-    - apt-get -y install eatmydata
   except:
     variables:
       - $FP_ONLY == "1"
@@ -219,3 +214,21 @@ flatpak-gnome-46:
     FLATPAK_MODULE: "chatty"
     MANIFEST_PATH: "sm.puri.Chatty.json"
     RUNTIME_REPO: "https://dl.flathub.org/repo/flathub.flatpakrepo"
+
+check-consistency:
+  image: ${IMAGE}
+  stage: release
+  extends: .phosh-check-consistency
+
+release-tarball:
+  stage: release
+  image: ${IMAGE}
+  extends: .phosh-check-dist
+  needs:
+    - build-debian-gcc-trixie
+  artifacts:
+    expose_as: "Release tarball"
+    paths:
+      - _build-dist/meson-dist/
+  rules:
+    - if: $CI_COMMIT_TAG

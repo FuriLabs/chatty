@@ -1,19 +1,25 @@
 stages:
   - build
+  - check
   - deploy
+
+default:
+  image: debian:trixie
+
+variables:
+  PKGS: ccache meson gcovr gcc
+      libsqlite3-dev libjson-glib-dev libgcrypt20-dev
+      libsoup-3.0-dev libolm-dev libsecret-1-dev
 
 build-soup3:
   tags:
     - librem5:arm64
-  image: debian:bookworm
   stage: build
   variables:
     CCACHE_DIR: "${CI_PROJECT_DIR}/_ccache"
     MESON_ARGS: "--buildtype=debugoptimized"
   before_script:
-    - apt-get update -qq && apt-get install -qq ccache meson gcovr gcc
-      libsoup2.4-dev libsqlite3-dev libjson-glib-dev libgcrypt20-dev
-      libsoup-3.0-dev libolm-dev libsecret-1-dev
+    - apt-get update -qq && apt-get install -qq $PKGS
   script:
     - meson ${MESON_ARGS} -Db_coverage=true _build
     - ccache --zero-stats
@@ -31,16 +37,73 @@ build-soup3:
     paths:
       - _build
 
+asan-test:
+  tags:
+    - librem5:arm64
+  stage: check
+  needs:
+    - build-soup3
+  variables:
+    CCACHE_DIR: "${CI_PROJECT_DIR}/_ccache"
+    MESON_ARGS: "--buildtype=debug -Db_sanitize=address"
+  before_script:
+    - apt-get update -qq && apt-get install -qq $PKGS
+  script:
+    - meson ${MESON_ARGS} _build-asan
+    - ccache --zero-stats
+    - meson test -C _build-asan
+    - ccache --show-stats
+  cache:
+    key: build-cmatrix-asan
+    paths:
+      - _ccache/
+  artifacts:
+    when: always
+    paths:
+      - _build-asan
+
+check-lib:
+  tags:
+    - librem5:arm64
+  stage: check
+  needs: []
+  variables:
+    CCACHE_DIR: "${CI_PROJECT_DIR}/_ccache"
+  before_script:
+    - apt-get update -qq && apt-get install -qq $PKGS
+  script:
+    - meson setup _build-inst
+    - meson install -C _build-inst
+    # Ensure cmatrix headers are self contained and we can link against the lib
+    - gcc -Wall examples/simple-client.c $(pkgconf --cflags libcmatrix) $(pkgconf --libs libcmatrix)
+  cache:
+    key: build-cmatrix-check-lib
+    paths:
+      - _ccache/
+  artifacts:
+    when: always
+    paths:
+      - _build
+
+check-pkg:
+  tags:
+    - librem5:arm64
+  stage: check
+  needs: []
+  before_script:
+    - apt-get update -qq &&
+      apt-get -y install build-essential &&
+      apt-get -y build-dep .
+  script:
+    - dpkg-buildpackage -uc -us -rfakeroot
+
 doc:
   tags:
     - librem5:arm64
-  image: debian:bookworm
   stage: build
   before_script:
-    - apt-get update -qq && apt-get install -qq ccache meson gcovr gcc
-      libsoup2.4-dev libsqlite3-dev libjson-glib-dev libgcrypt20-dev
-      libolm-dev gi-docgen libgirepository1.0-dev libsecret-1-dev
-      libsoup-3.0-dev
+    - apt-get update -qq && apt-get install -qq $PKGS
+      gi-docgen libgirepository1.0-dev
   variables:
     BUILD_OPTS: >-
       -Dgtk_doc=true

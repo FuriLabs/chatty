@@ -213,6 +213,7 @@ chatty_matrix_load (ChattyMatrix *self)
   g_autofree char *db_path = NULL;
   g_autofree char *data_path = NULL;
   g_autofree char *cache_path = NULL;
+  g_autofree char *purple_dir = NULL;
   GListModel *client_list;
 
   if (self->cm_matrix)
@@ -227,7 +228,8 @@ chatty_matrix_load (ChattyMatrix *self)
                            G_CALLBACK (matrix_client_list_changed_cb),
                            self, G_CONNECT_SWAPPED);
 
-  db_path = g_build_filename (chatty_utils_get_purple_dir (), "chatty", "db", NULL);
+  purple_dir = chatty_utils_get_purple_dir ();
+  db_path = g_build_filename (purple_dir, "chatty", "db", NULL);
   cm_matrix_open_async (self->cm_matrix, db_path, "matrix.db", NULL,
                         matrix_open_cb, g_object_ref (self));
 }
@@ -251,8 +253,8 @@ chatty_matrix_get_chat_list (ChattyMatrix *self)
 
 static void
 matrix_account_delete_cb (GObject      *object,
-                           GAsyncResult *result,
-                           gpointer      user_data)
+                          GAsyncResult *result,
+                          gpointer      user_data)
 {
   ChattyMatrix *self;
   ChattyMaAccount *account;
@@ -299,6 +301,7 @@ chatty_matrix_delete_account_async (ChattyMatrix        *self,
   CHATTY_DEBUG (chatty_item_get_username (CHATTY_ITEM (account)), "Deleting account");
   cm_matrix_delete_client_async (self->cm_matrix,
                                  chatty_ma_account_get_cm_client (CHATTY_MA_ACCOUNT (account)),
+                                 cancellable,
                                  matrix_account_delete_cb, task);
 }
 
@@ -322,7 +325,7 @@ matrix_save_account_cb (GObject      *object,
   ChattyMatrix *self;
   ChattyMaAccount *account;
   g_autoptr(GTask) task = user_data;
-  g_autoptr(GError) error = NULL;
+  GError *error = NULL;
   const char *username;
   gboolean saved;
 
@@ -369,6 +372,7 @@ chatty_matrix_save_account_async (ChattyMatrix        *self,
   task = g_task_new (self, cancellable, callback, user_data);
   g_task_set_task_data (task, g_object_ref (account), g_object_unref);
   cm_matrix_save_client_async (self->cm_matrix, cm_client,
+                               cancellable,
                                matrix_save_account_cb, task);
 }
 

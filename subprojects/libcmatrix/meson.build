@@ -1,12 +1,13 @@
 project('libcmatrix', 'c',
-          version: '0.0.0',
+          version: '0.0.2',
           license: 'LGPL-2.1-or-later',
-    meson_version: '>= 0.56.0',
+    meson_version: '>= 0.63.0',
   default_options: [ 'warning_level=2', 'buildtype=debugoptimized', 'c_std=gnu18' ],
 )
 
-gnome = import('gnome')
-i18n  = import('i18n')
+gnome     = import('gnome')
+i18n      = import('i18n')
+pkgconfig = import('pkgconfig')
 
 VERSION = meson.project_version()
 ABI_MAJOR = VERSION.split('.')[0]
@@ -18,12 +19,11 @@ bindir = join_paths(prefix, get_option('bindir'))
 datadir = join_paths(prefix, get_option('datadir'))
 localedir = join_paths(prefix, get_option('localedir'))
 libdir = join_paths(prefix, get_option('libdir'))
+includedir = prefix / get_option('includedir') / 'libcmatrix'
 
 cc = meson.get_compiler('c')
 
-global_c_args = [
-  '-DCMATRIX_COMPILATION',
-]
+global_c_args = []
 
 test_c_args = [
   '-Wcast-align',
@@ -76,7 +76,6 @@ add_project_arguments(
 )
 
 add_project_arguments([
-  '-DHAVE_CONFIG_H',
   '-DCMATRIX_COMPILATION',
   '-DCMATRIX_USE_EXPERIMENTAL_API',
 ], language: 'c')
@@ -86,36 +85,26 @@ config_h.set10('HAVE_EXPLICIT_BZERO', cc.has_function('explicit_bzero'))
 config_h.set_quoted('GETTEXT_PACKAGE', 'libcmatrix')
 config_h.set_quoted('LOCALEDIR', localedir)
 
-libolm_dep = cc.find_library('olm', required: true)
-
-if (cc.has_function('olm_account_unpublished_fallback_key', dependencies: libolm_dep))
-  config_h.set('OLM_ACCOUNT_PICKLE_V4', true)
-else
-  config_h.set('OLM_ACCOUNT_PICKLE_V4', false)
-endif
-
-if (cc.has_function('olm_pk_key_from_private', dependencies: libolm_dep))
-  config_h.set('HAVE_OLM3', true)
-else
-  config_h.set('HAVE_OLM2', true)
-endif
-
 configure_file(
-  output: 'config.h',
+  output: 'cm-config.h',
   configuration: config_h,
 )
+
+install_lib = not meson.is_subproject()
 
 root_inc = include_directories('.')
 src_inc = include_directories('src')
 
+libolm_dep = dependency('olm', version: '>= 3.2.11')
 gio_dep = dependency('gio-2.0', version: '>= 2.70')
-soup_dep = dependency('libsoup-3.0', required: true)
+soup_dep = dependency('libsoup-3.0', version: '>= 3.4.4')
+json_glib_dep = dependency('json-glib-1.0', version: '>= 1.8.0')
 
 cmatrix_deps = [
   dependency('libgcrypt'),
   dependency('libsecret-1'),
-  dependency('json-glib-1.0'),
   dependency('sqlite3', version: '>=3.26.0'),
+  json_glib_dep,
   libolm_dep,
   soup_dep,
   gio_dep,
@@ -125,7 +114,14 @@ cmatrix_deps = [
 subdir('src')
 subdir('tests')
 subdir('doc')
+subdir('examples')
 
-if (get_option('build-examples'))
-  subdir('examples')
-endif
+summary({
+    'Build Examples': get_option('build-examples'),
+    'Build Tests': get_option('build-tests'),
+    'Introspection': get_option('introspection'),
+    'Documentation': get_option('gtk_doc'),
+    'Install lib': install_lib,
+  },
+  bool_yn: true,
+)

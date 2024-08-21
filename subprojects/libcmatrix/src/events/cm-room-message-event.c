@@ -9,9 +9,7 @@
 
 #define G_LOG_DOMAIN "cm-room-message-event"
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
+#include "cm-config.h"
 
 #include "cm-utils-private.h"
 #include "cm-common.h"
@@ -244,6 +242,14 @@ cm_room_message_event_new_from_json (JsonObject *root)
   return CM_ROOM_EVENT (self);
 }
 
+/**
+ * cm_room_message_event_get_msg_type:
+ * @self: The message
+ *
+ * Gets the content type (like text or image) of a room message.
+ *
+ * Returns: The message's content type
+ */
 CmContentType
 cm_room_message_event_get_msg_type (CmRoomMessageEvent *self)
 {
@@ -336,6 +342,19 @@ message_file_stream_cb (GObject      *obj,
     }
 }
 
+/**
+ * cm_room_message_event_get_file_async:
+ * @self: The room message event
+ * @cancellable: (nullable): A #GCancellable
+ * @progress_callback:(scope async): A #GFileProgressCallback
+ * @progress_user_data: The user data for @progress_callback.
+ * @callback: A #GAsyncReadyCallback
+ * @user_data: The user data for @callback.
+ *
+ * Download a file asynchronously.
+ *
+ * Run [method@Client.get_homeserver_finish] to get an input stream.
+ */
 void
 cm_room_message_event_get_file_async (CmRoomMessageEvent    *self,
                                       GCancellable          *cancellable,
@@ -392,6 +411,16 @@ cm_room_message_event_get_file_async (CmRoomMessageEvent    *self,
                                    g_steal_pointer (&task));
 }
 
+/**
+ * cm_room_message_event_get_file_finish:
+ * @self: The room message event
+ * @result: `GAsyncResult`
+ * @error: The return location for a recoverable error.
+ *
+ * Finishes an asynchronous operation started with [method@RoomMessageEvent.get_file_async].
+ *
+ * Returns:(transfer full): The input stream for the file.
+ */
 GInputStream *
 cm_room_message_event_get_file_finish (CmRoomMessageEvent  *self,
                                        GAsyncResult        *result,

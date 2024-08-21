@@ -1,12 +1,14 @@
 # Chatty
 
+This is the projects of the "Chats" application:
 A simple to use messaging app for 1:1 communication and small groups supporting
-SMS, MMS, matrix and XMPP through libpurple.
+SMS/MMS using [ModemManager] and [mmsd-tng], matrix via [libcmatrix]
+and optionally XMPP through [libpurple].
 
 ## Build and install
 
 In case you want to disable the libpurple plugin support
-have a look at [meson_options](meson_options)
+have a look at [meson_options.txt](meson_options.txt)
 
 ### Getting the source
 
@@ -20,7 +22,7 @@ cd Chatty/
 On a Debian based system run
 
 ``` bash
-    sudo apt-get -y install build-essential ccache
+    sudo apt-get -y install build-essential
     sudo apt-get -y build-dep .
 ```
 
@@ -31,26 +33,6 @@ file.
 Plugins are optional and can often be installed from your distribution sources.
 Installation from source is required only if you want to debug the plugin itself,
 or you have any reason to do so.
-
-### Build and install the 'carbons' plugin (Optional)
-Message synchronization between devices according to XEP-0280.
-On Debian and derivates you can install the `purple-xmpp-carbons` package.
-
-Alternativelly, to build from source, run:
-
-``` bash
-git clone https://github.com/gkdr/carbons.git
-cd carbons
-make
-make install
-```
-
-### Build and install the 'lurch' plugin (Optional)
-lurch plugin implements XEP-0384 (OMEMO Encryption).
-On Debian and derivates you can install `purple-lurch` package.
-
-To build from source see [lurch OMEMO plugin](https://github.com/gkdr/lurch)
-
 
 ### Build and install mmsd-tng (Optional)
 mmsd-tng provides MMS support.  On Debian and derivatives you
@@ -168,7 +150,31 @@ You can contribute translations via [GNOME Damned Lies](https://l10n.gnome.org/m
 
 We follow [Phosh's Guidelines for Maintainers](https://gitlab.gnome.org/World/Phosh/phosh/-/wikis/Guidelines-for-maintainers).
 
-## XMPP account
+## XMPP
+
+XMPP support is not actively developed anymore and might be dropped completely in the future.
+If you would like to see that changed consider [stepping up](https://gitlab.gnome.org/World/Chatty/-/issues/842).
+
+### Build and install the 'carbons' plugin (Optional)
+Message synchronization between devices according to XEP-0280.
+On Debian and derivates you can install the `purple-xmpp-carbons` package.
+
+Alternativelly, to build from source, run:
+
+``` bash
+git clone https://github.com/gkdr/carbons.git
+cd carbons
+make
+make install
+```
+
+### Build and install the 'lurch' plugin (Optional)
+lurch plugin implements XEP-0384 (OMEMO Encryption).
+On Debian and derivates you can install `purple-lurch` package.
+
+To build from source see [lurch OMEMO plugin](https://github.com/gkdr/lurch)
+
+### XMPP account
 
 If you don't have an XMPP account yet and want to subscribe to a service then please make sure that the server supports the following XEPs:
 
@@ -190,3 +196,12 @@ unless you know what you are doing! To activate:
 gsettings set sm.puri.Chatty experimental-features true
 ```
 
+# Getting in Touch
+
+* Issue tracker: https://gitlab.gnome.org/World/Chatty/issues
+* Matrix: https://matrix.to/#/#chatty:talk.puri.sm
+
+[ModemManager]: https://modemmanager.org/
+[mmsd-tng]: https://gitlab.com/kop316/mmsd
+[libcmatrix]: https://source.puri.sm/Librem5/libcmatrix
+[libpurple]: https://developer.pidgin.im/wiki/WhatIsLibpurple

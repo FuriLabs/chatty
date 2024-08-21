@@ -36,6 +36,7 @@
                 <property name="tooltip-text" translatable="yes">Menu</property>
                 <property name="icon-name">open-menu-symbolic</property>
                 <property name="popover">main_menu_popover</property>
+                <property name="primary">True</property>
               </object>
             </child>
 

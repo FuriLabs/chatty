@@ -16,13 +16,15 @@
 
 
 gboolean chatty_utils_window_has_toplevel_focus (GtkWindow *window);
-const char *chatty_utils_get_purple_dir (void);
+char *chatty_utils_get_purple_dir (void);
 char *chatty_utils_jabber_id_strip (const char *name);
 void chatty_utils_sanitize_filename (char *name);
 char *chatty_utils_find_url (const char  *buffer,
                              char       **end);
 char *chatty_utils_strip_utm_from_url (const char *url_to_parse);
 char *chatty_utils_strip_utm_from_message (const char *message);
+char *chatty_utils_vcard_get_contact_title (GFile* vcard);
+char *chatty_utils_vcal_get_event_title (GFile* vcal);
 char *chatty_utils_check_phonenumber (const char *phone_number,
                                       const char *country);
 ChattyProtocol chatty_utils_username_is_valid  (const char     *name,
@@ -37,6 +39,7 @@ gboolean chatty_utils_remove_list_item  (GListStore *store,
 GdkPixbuf           *chatty_utils_get_pixbuf_from_data  (const guchar *buf,
                                                          gsize         count);
 void      chatty_utils_create_thumbnail_async  (GFile               *file,
+                                                GCancellable        *cancellable,
                                                 GAsyncReadyCallback callback,
                                                 gpointer       user_data);
 gboolean  chatty_utils_create_thumbnail_finish (GAsyncResult  *result,

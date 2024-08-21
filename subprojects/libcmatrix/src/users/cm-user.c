@@ -10,9 +10,7 @@
 
 #define G_LOG_DOMAIN "cm-user"
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
+#include "cm-config.h"
 
 #include "cm-utils-private.h"
 #include "cm-client-private.h"
@@ -75,6 +73,8 @@ cm_user_finalize (GObject *object)
 
   g_clear_object (&priv->avatar_file);
   g_clear_pointer (&priv->generated_json, json_object_unref);
+
+  g_clear_weak_pointer (&priv->cm_client);
 
   G_OBJECT_CLASS (cm_user_parent_class)->finalize (object);
 }
@@ -179,8 +179,7 @@ cm_user_set_client (CmUser   *self,
   g_return_if_fail (CM_IS_USER (self));
   g_return_if_fail (CM_IS_CLIENT (client));
 
-  if (!priv->cm_client)
-    priv->cm_client = g_object_ref (client);
+  g_set_weak_pointer (&priv->cm_client, client);
 }
 
 CmClient *
@@ -252,6 +251,14 @@ cm_user_set_details (CmUser     *self,
     g_signal_emit (self, signals[CHANGED], 0);
 }
 
+/**
+ * cm_user_get_id:
+ * @self: The user
+ *
+ * Get the user's matrix id
+ *
+ * Returns: The user's matrix id
+ */
 GRefString *
 cm_user_get_id (CmUser *self)
 {
@@ -262,6 +269,14 @@ cm_user_get_id (CmUser *self)
   return priv->user_id;
 }
 
+/**
+ * cm_user_get_display_name:
+ * @self: The user
+ *
+ * Get the user's human readable display name
+ *
+ * Returns:(nullable): The user's display name
+ */
 const char *
 cm_user_get_display_name (CmUser *self)
 {
@@ -379,11 +394,17 @@ cm_user_get_avatar_async (CmUser              *self,
   if (priv->avatar_file)
     {
       GInputStream *istream;
+      GError *error = NULL;
 
-      istream = (GInputStream *)g_file_read (priv->avatar_file, NULL, NULL);
-      g_object_set_data_full (G_OBJECT (priv->avatar_file), "stream",
-                              istream, g_object_unref);
-      g_task_return_pointer (task, g_object_ref (istream), g_object_unref);
+      istream = G_INPUT_STREAM (g_file_read (priv->avatar_file, cancellable, &error));
+
+      if (istream) {
+        g_object_set_data_full (G_OBJECT (priv->avatar_file), "stream",
+                                istream, g_object_unref);
+        g_task_return_pointer (task, g_object_ref (istream), g_object_unref);
+      } else
+        g_task_return_error (task, error);
+
       return;
     }
 
@@ -406,7 +427,7 @@ cm_user_get_avatar_async (CmUser              *self,
     cm_user_load_info_async (self, cancellable,
                              avatar_get_user_info_cb,
                              g_steal_pointer (&task));
-  else if (priv->avatar_url)
+  else if (priv->avatar_url && *priv->avatar_url)
     {
       g_autofree char *file_name = NULL;
       const char *path;
@@ -426,6 +447,16 @@ cm_user_get_avatar_async (CmUser              *self,
     g_task_return_pointer (task, NULL, NULL);
 }
 
+/**
+ * cm_user_get_avatar_finish:
+ * @self: The user
+ * @result: `GAsyncResult`
+ * @error: The return location for a recoverable error.
+ *
+ * Finishes an asynchronous operation started with [method@User.get_avatar_async].
+ *
+ * Returns:(transfer full): The input stream.
+ */
 GInputStream *
 cm_user_get_avatar_finish (CmUser        *self,
                            GAsyncResult  *result,
@@ -705,7 +736,8 @@ cm_user_add_one_time_keys (CmUser     *self,
 
       if (!child)
         {
-          g_debug ("device '%s' doesn't have any keys", device_id);
+          g_debug ("device '%s' of user '%s' doesn't have any keys",
+                   device_id, priv->user_id);
           continue;
         }
 

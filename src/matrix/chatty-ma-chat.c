@@ -116,18 +116,27 @@ ma_chat_get_past_events_cb (GObject      *object,
                             gpointer      user_data)
 {
   g_autoptr(ChattyMaChat) self = user_data;
-  /* g_autoptr(GPtrArray) events = NULL; */
   g_autoptr(GError) error = NULL;
+  CmRoom *room = CM_ROOM (object);
 
   g_assert (CHATTY_IS_MA_CHAT (self));
 
-  cm_room_load_past_events_finish (CM_ROOM (object), result, &error);
+  cm_room_load_past_events_finish (room, result, &error);
 
   self->history_is_loading = FALSE;
   g_object_notify (G_OBJECT (self), "loading-history");
 
-  if (error)
-    g_warning ("Error: %s", error->message);
+  if (error) {
+    g_autoptr(GString) str = NULL;
+
+    str = g_string_new (NULL);
+    g_string_append (str, "Error getting past events in room");
+    chatty_log_anonymize_value (str, cm_room_get_id (room));
+    g_string_append_printf (str, ": %s", error->message);
+
+    g_warning ("%s", str->str);
+
+  }
 }
 
 static gboolean
@@ -436,6 +445,7 @@ ma_chat_send_message_cb (GObject      *object,
   g_autofree char *event_id = NULL;
   ChattyMessage *message;
   g_autoptr(GError) err = NULL;
+  gboolean is_file;
 
   g_assert (G_IS_TASK (task));
 
@@ -444,7 +454,12 @@ ma_chat_send_message_cb (GObject      *object,
   g_assert (CHATTY_IS_MA_CHAT (self));
   g_assert (CHATTY_IS_MESSAGE (message));
 
-  event_id = cm_room_send_text_finish (self->cm_room, result, &err);
+  is_file = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (task), "is-file"));
+
+  if (is_file)
+    event_id = cm_room_send_file_finish (self->cm_room, result, &err);
+  else
+    event_id = cm_room_send_text_finish (self->cm_room, result, &err);
 
   /* We add only failed to send messages.  If sending succeeded,
    * we shall get the same via the /sync responses */
@@ -465,11 +480,11 @@ chatty_ma_chat_send_message_async (ChattyChat          *chat,
                                    GAsyncReadyCallback  callback,
                                    gpointer             user_data)
 {
-  ChattyMaChat *self = (ChattyMaChat *)chat;
+  ChattyMaChat *self = CHATTY_MA_CHAT (chat);
+  g_autoptr (GTask) task = NULL;
   const char *event_id;
   GList *files = NULL;
   GFile *file = NULL;
-  GTask *task;
 
   g_assert (CHATTY_IS_MA_CHAT (self));
   g_assert (CHATTY_IS_MESSAGE (message));
@@ -483,17 +498,19 @@ chatty_ma_chat_send_message_async (ChattyChat          *chat,
   files = chatty_message_get_files (message);
 
   if (files && files->data && chatty_file_get_path (files->data))
-    file = g_file_new_for_path (files->data);
+    file = g_file_new_for_path (chatty_file_get_path (files->data));
 
-  if (file)
+  if (file) {
+    g_object_set_data (G_OBJECT (task), "is-file", GINT_TO_POINTER (TRUE));
     event_id = cm_room_send_file_async (self->cm_room, file, NULL,
                                         NULL, NULL, NULL,
-                                        ma_chat_send_message_cb, task);
-  else
+                                        ma_chat_send_message_cb, g_steal_pointer (&task));
+  } else {
     event_id = cm_room_send_text_async (self->cm_room,
                                         chatty_message_get_text (message),
                                         NULL,
-                                        ma_chat_send_message_cb, task);
+                                        ma_chat_send_message_cb, g_steal_pointer (&task));
+  }
   g_object_set_data_full (G_OBJECT (message), "event-id", g_strdup (event_id), g_free);
 }
 
@@ -654,8 +671,13 @@ ma_chat_get_avatar_cb (GObject      *object,
   if (error || !stream)
     return;
 
-  self->avatar = gdk_pixbuf_new_from_stream_at_scale (stream, 192, -1, TRUE, NULL, NULL);
-  g_signal_emit_by_name (self, "avatar-changed", 0);
+  self->avatar = gdk_pixbuf_new_from_stream_at_scale (stream, 192, -1, TRUE, NULL, &error);
+  if (self->avatar)
+    g_signal_emit_by_name (self, "avatar-changed", 0);
+  else
+    CHATTY_WARNING (chatty_ma_chat_get_chat_name (CHATTY_CHAT (self)),
+                    "Could not get avatar '%s' for matrix chat:",
+                    error->message);
 }
 
 static GdkPixbuf *
@@ -762,6 +784,16 @@ ma_chat_encryption_changed_cb (ChattyMaChat *self)
   g_object_notify (G_OBJECT (self), "encrypt");
 }
 
+
+static void
+ma_unread_count_changed_cb (ChattyMaChat *self)
+{
+  g_assert (CHATTY_IS_MA_CHAT (self));
+
+  g_signal_emit_by_name (self, "changed", 0);
+}
+
+
 static void
 joined_members_changed_cb (ChattyMaChat *self,
                            guint         position,
@@ -857,6 +889,9 @@ chatty_ma_chat_new_with_room (CmRoom *room)
   g_signal_connect_object (room, "notify::encrypted",
                            G_CALLBACK (ma_chat_encryption_changed_cb),
                            self, G_CONNECT_SWAPPED);
+  g_signal_connect_object (room, "notify::unread-count",
+                           G_CALLBACK (ma_unread_count_changed_cb),
+                           self, G_CONNECT_SWAPPED);
 
   members = cm_room_get_joined_members (room);
   g_signal_connect_object (members, "items-changed",
@@ -927,4 +962,12 @@ chatty_ma_chat_matches_id (ChattyMaChat *self,
     return FALSE;
 
   return g_strcmp0 (self->room_id, room_id) == 0;
+}
+
+const char *
+chatty_ma_chat_get_topic (ChattyMaChat  *self)
+{
+  g_return_val_if_fail (CHATTY_IS_MA_CHAT (self), NULL);
+
+  return cm_room_get_topic (self->cm_room);
 }

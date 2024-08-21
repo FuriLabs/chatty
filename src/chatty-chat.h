@@ -23,6 +23,12 @@ G_BEGIN_DECLS
 
 G_DECLARE_DERIVABLE_TYPE (ChattyChat, chatty_chat, CHATTY, CHAT, ChattyItem)
 
+/**
+ * ChattyChatClass
+ *
+ * @get_messages: Get a list store of messages. Overriding this is mandatory
+ *   for derived classes.
+ */
 struct _ChattyChatClass
 {
   ChattyItemClass  parent_class;

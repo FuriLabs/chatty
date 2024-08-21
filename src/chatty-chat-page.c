@@ -47,9 +47,12 @@ struct _ChattyChatPage
   guint       scroll_bottom_id;
   guint       osk_id;
   guint       history_load_id;
-  gboolean    should_scroll;
+  double      value_adjust;
+  gboolean    is_bottom;
 };
 
+/* how close to the bottom is considered "at the bottom" */
+#define SCROLL_THRESHOLD 2 * DBL_EPSILON
 #define SCROLL_TIMEOUT       60  /* milliseconds */
 #define HISTORY_WAIT_TIMEOUT 100 /* milliseconds */
 #define INDICATOR_WIDTH   60
@@ -146,10 +149,10 @@ chatty_chat_page_scroll_is_bottom (ChattyChatPage *self)
   upper = gtk_adjustment_get_upper (self->vadjustment);
   page_size = gtk_adjustment_get_page_size (self->vadjustment);
 
-  return ABS (upper - page_size - value) <= DBL_EPSILON;
+  return ABS (upper - page_size - value) <= SCROLL_THRESHOLD;
 }
 
-static gboolean
+static void
 update_view_scroll (gpointer user_data)
 {
   ChattyChatPage *self = user_data;
@@ -163,21 +166,12 @@ update_view_scroll (gpointer user_data)
   value = gtk_adjustment_get_value (self->vadjustment);
   upper = gtk_adjustment_get_upper (self->vadjustment);
 
-  if (self->should_scroll) {
-    self->should_scroll = FALSE;
-    gtk_adjustment_set_value (self->vadjustment, upper - size);
-
-    return G_SOURCE_REMOVE;
-  }
-
-  if (upper - size <= DBL_EPSILON)
-    return G_SOURCE_REMOVE;
+  if (upper - size <= SCROLL_THRESHOLD)
+    return;
 
   /* If close to bottom, scroll to bottom */
   if (upper - value < (size * 1.75))
     gtk_adjustment_set_value (self->vadjustment, upper - size);
-
-  return G_SOURCE_REMOVE;
 }
 
 static void
@@ -271,10 +265,6 @@ chat_page_message_row_new (ChattyMessage  *message,
   chatty_message_row_set_alias (CHATTY_MESSAGE_ROW (row),
                                 chatty_message_get_user_alias (message));
 
-  /* If we are close to bottom, mark as we should scroll after the row is added */
-  if (chatty_chat_page_scroll_is_bottom (self))
-    self->should_scroll = TRUE;
-
   return GTK_WIDGET (row);
 }
 
@@ -343,15 +333,32 @@ chat_page_chat_changed_cb (ChattyChatPage *self)
 static void
 chat_page_adjustment_value_changed_cb (ChattyChatPage *self)
 {
+  double value;
+  gboolean is_bottom;
+  gboolean is_scroll = FALSE;
+
   g_assert (CHATTY_IS_CHAT_PAGE (self));
 
-  gtk_widget_set_visible (self->scroll_down_button,
-                          !chatty_chat_page_scroll_is_bottom (self));
-
-  if (self->should_scroll) {
-    g_clear_handle_id (&self->scroll_bottom_id, g_source_remove);
-    self->scroll_bottom_id = g_timeout_add (SCROLL_TIMEOUT, update_view_scroll, self);
+  value = gtk_adjustment_get_value (self->vadjustment);
+  if (!G_APPROX_VALUE (value, self->value_adjust, SCROLL_THRESHOLD)) {
+    is_scroll = TRUE;
+    self->value_adjust = value;
   }
+
+  is_bottom = chatty_chat_page_scroll_is_bottom (self);
+  gtk_widget_set_visible (self->scroll_down_button, !is_bottom);
+
+  g_debug ("is bottom %d, has changed %d, user is scrolling %d",
+           is_bottom, is_bottom != self->is_bottom, is_scroll);
+
+  if ((is_bottom != self->is_bottom) && !is_scroll) {
+    g_clear_handle_id (&self->scroll_bottom_id, g_source_remove);
+    self->scroll_bottom_id = g_timeout_add_once (SCROLL_TIMEOUT, update_view_scroll, self);
+
+    gtk_widget_set_visible (self->scroll_down_button, FALSE); /* avoids flickering the button */
+  }
+
+  self->is_bottom = is_bottom;
 }
 
 static void
@@ -418,7 +425,7 @@ osk_properties_changed_cb (ChattyChatPage *self,
 
   if (value && g_variant_get_boolean (value)) {
     g_clear_handle_id (&self->scroll_bottom_id, g_source_remove);
-    self->scroll_bottom_id = g_timeout_add (SCROLL_TIMEOUT, update_view_scroll, self);
+    self->scroll_bottom_id = g_timeout_add_once (SCROLL_TIMEOUT, update_view_scroll, self);
   }
 }
 
@@ -567,7 +574,6 @@ chat_page_history_wait_timeout_cb (gpointer user_data)
   g_assert (CHATTY_IS_CHAT_PAGE (self));
 
   self->history_load_id = 0;
-  self->should_scroll = TRUE;
 
   chat_page_adjustment_value_changed_cb (self);
 
@@ -600,7 +606,6 @@ chatty_chat_page_set_chat (ChattyChatPage *self,
                                           self);
 
     gtk_widget_set_visible (self->scroll_down_button, FALSE);
-    self->should_scroll = TRUE;
     g_clear_handle_id (&self->history_load_id, g_source_remove);
   }
 
@@ -626,12 +631,17 @@ chatty_chat_page_set_chat (ChattyChatPage *self,
   chat_page_message_items_changed (self);
   chat_page_chat_changed_cb (self);
 
-  if (g_list_model_get_n_items (messages) <= 3)
+  /* FIXME we should rather check if we have (slightly more than) a page full of messages.
+   * loading of more messages is typically triggered by scrolling up.
+   * if we can't scroll up (because all messages fit into a single page)
+   * the user will be unable to load past history.
+   * see https://gitlab.gnome.org/World/Chatty/-/issues/906 */
+  if (g_list_model_get_n_items (messages) <= 20)
     chatty_chat_load_past_messages (chat, -1);
 
 
   gtk_list_box_bind_model (GTK_LIST_BOX (self->message_list),
-                           chatty_chat_get_messages (self->chat),
+                           messages,
                            (GtkListBoxCreateWidgetFunc)chat_page_message_row_new,
                            self, NULL);
   g_signal_connect_object (self->chat, "notify::buddy-typing",

@@ -40,6 +40,8 @@ src/purple/chatty-purple.c
 src/chatty-settings.c
 src/chatty-settings.h
 src/chatty-verification-page.c
+src/chatty-utils.c
+src/chatty-utils.h
 src/chatty-window.c
 src/chatty-window.h
 src/dialogs/chatty-info-dialog.c

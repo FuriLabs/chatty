@@ -6,9 +6,7 @@
 
 #define G_LOG_DOMAIN "cm-event"
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
+#include "cm-config.h"
 
 #include "cm-room-private.h"
 #include "users/cm-account.h"
@@ -152,6 +150,13 @@ cm_event_class_init (CmEventClass *klass)
   event_class->generate_json = cm_event_real_generate_json;
   event_class->get_api_url = cm_event_real_get_api_url;
 
+  /**
+   * CmEvent::updated:
+   * @self: The event
+   *
+   * Emitted when the state of the event changed. See
+   * [type@EventState] and [method@Event.get_state].
+   */
   signals [UPDATED] =
     g_signal_new ("updated",
                   G_TYPE_FROM_CLASS (klass),
@@ -294,6 +299,18 @@ cm_event_get_state_key (CmEvent *self)
   return NULL;
 }
 
+/**
+ * cm_event_get_m_type:
+ * @self: The event
+ *
+ * Get the Matrix type of an event.
+ *
+ * The method is called `cm_event_get_m_type()` to not conflict with
+ * `cm_event_get_type()` which gets the type in the GObject type
+ * system.
+ *
+ * Returns: The message type
+ */
 CmEventType
 cm_event_get_m_type (CmEvent *self)
 {
@@ -493,6 +510,14 @@ cm_event_get_sender_id (CmEvent *self)
   return priv->sender_id;
 }
 
+/**
+ * cm_event_get_sender:
+ * @self: The event
+ *
+ * Get the sender of the event
+ *
+ * Returns:(transfer none): The sender
+ */
 CmUser *
 cm_event_get_sender (CmEvent *self)
 {

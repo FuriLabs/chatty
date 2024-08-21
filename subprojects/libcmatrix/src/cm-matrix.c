@@ -6,9 +6,7 @@
 
 #define G_LOG_DOMAIN "cm-matrix"
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
+#include "cm-config.h"
 
 #define GCRYPT_NO_DEPRECATED
 #include <gcrypt.h>
@@ -27,6 +25,16 @@
 #include "cm-matrix.h"
 #include "cm-matrix-private.h"
 
+/**
+ * CmMatrix:
+ *
+ * The main matrix object.
+ *
+ * This object needs to be created after calling [func@init] and
+ * before adding any [type@Client]s. After creating the object you can
+ * open the database and load known clients via
+ * [method@Matrix.open_async] and and [method@Matrix.client_new].
+ */
 struct _CmMatrix
 {
   GObject parent_instance;
@@ -52,10 +60,15 @@ struct _CmMatrix
   gboolean disable_auto_login;
 };
 
+typedef struct
+{
+  GAsyncResult *res;
+  GMainLoop *loop;
+} CmMatrixSyncData;
 
 #define RECONNECT_TIMEOUT    500 /* milliseconds */
 
-char *cmatrix_data_dir, *cmatrix_app_id;
+static char *cmatrix_data_dir, *cmatrix_app_id;
 
 G_DEFINE_TYPE (CmMatrix, cm_matrix, G_TYPE_OBJECT)
 
@@ -120,7 +133,7 @@ matrix_has_client (CmMatrix *self,
   return FALSE;
 }
 
-static gboolean
+static void
 matrix_reconnect (gpointer user_data)
 {
   CmMatrix *self = user_data;
@@ -143,8 +156,6 @@ matrix_reconnect (gpointer user_data)
     else
       cm_client_stop_sync (client);
   }
-
-  return G_SOURCE_REMOVE;
 }
 
 static void
@@ -159,8 +170,8 @@ matrix_network_changed_cb (CmMatrix        *self,
     return;
 
   g_clear_handle_id (&self->network_change_id, g_source_remove);
-  self->network_change_id = g_timeout_add (RECONNECT_TIMEOUT,
-                                           matrix_reconnect, self);
+  self->network_change_id = g_timeout_add_once (RECONNECT_TIMEOUT,
+                                                matrix_reconnect, self);
 }
 
 static void
@@ -333,7 +344,7 @@ cm_matrix_new (const char *data_dir,
  * @init_gcrypt: Whether to initialize gcrypt
  *
  * This function should be called to initialize the library.
- * You may call this in main()
+ * You may call this in `main()`
  *
  * If you don't initialize gcrypt, you should do it yourself
  */
@@ -388,14 +399,14 @@ load_accounts_from_secrets (CmMatrix  *self,
       if (!client)
         continue;
 
-      g_ptr_array_add (clients, client);
-
       if (!g_object_get_data (G_OBJECT (self->secret_store), "force-save")) {
         g_list_store_append (self->clients_list, client);
 
         if (!self->disable_auto_login)
           cm_client_enable_as_in_store (client);
       }
+
+      g_ptr_array_add (clients, g_steal_pointer (&client));
     }
 
   if (g_object_get_data (G_OBJECT (self->secret_store), "force-save")) {
@@ -502,10 +513,9 @@ matrix_store_load_cb (GObject      *object,
  * @callback: The callback to run when ready
  * @user_data: user data for @callback
  *
- * Open the matrix E2EE db which shall be used by clients
- * when required.
+ * Open the matrix db and loads already known clients.
  *
- * Run cm_matrix_open_finish() to get the result.
+ * Run [method@Matrix.open_finish] to get the result.
  */
 void
 cm_matrix_open_async (CmMatrix            *self,
@@ -593,6 +603,14 @@ cm_matrix_is_ready (CmMatrix *self)
   return self->db_loaded || self->secrets_loaded;
 }
 
+/**
+ * cm_matrix_get_clients_list:
+ * @self: The matrix
+ *
+ * Get the list of clients.
+ *
+ * Returns:(transfer none): The clients as list model.
+ */
 GListModel *
 cm_matrix_get_clients_list (CmMatrix *self)
 {
@@ -636,9 +654,8 @@ cm_matrix_has_client_with_id (CmMatrix   *self,
  * cm_matrix_client_new:
  * @self: A #CmMatrix
  *
- * Create a new #CmClient.  It's an error
- * to create a new client before opening
- the db with cm_matrix_open_async()
+ * Create a new [type@Client]. It's an error to create a new client
+ * before opening the db with [method@Matrix.open_async].
  *
  * Returns: (transfer full): A #CmClient
  */
@@ -701,9 +718,23 @@ matrix_save_client_cb (GObject      *object,
   g_object_set_data (object, "enable", GINT_TO_POINTER (FALSE));
 }
 
+/**
+ * cm_matrix_save_client_async:
+ * @self: The matrix
+ * @client: The client to save
+ * @cancellable: A cancellable
+ * @callback: The callback to call when the asynchronous task completes
+ * @user_data: user data to pass to the @callback
+ *
+ * Save the client to database and keyring.
+ *
+ * This is a asynchronous method. See [method@Matrix.save_client_sync]
+ * for the synchronous version.
+ */
 void
 cm_matrix_save_client_async (CmMatrix            *self,
                              CmClient            *client,
+                             GCancellable        *cancellable,
                              GAsyncReadyCallback  callback,
                              gpointer             user_data)
 {
@@ -736,10 +767,21 @@ cm_matrix_save_client_async (CmMatrix            *self,
   g_hash_table_insert (self->clients_to_save, g_strdup (login_id), g_object_ref (client));
   g_object_set_data (G_OBJECT (client), "enable", GINT_TO_POINTER (TRUE));
   cm_client_save_secrets_async (client,
+                                cancellable,
                                 matrix_save_client_cb,
                                 task);
 }
 
+/**
+ * cm_matrix_save_client_finish:
+ * @self: The matrix
+ * @result: The result
+ * @error: The return location of a recoverable error
+ *
+ * Finish call to [method@Matrix.save_client_async]
+ *
+ * Returns: `TRUE` if saving the client succeeded, `FALSE` otherwise
+ */
 gboolean
 cm_matrix_save_client_finish (CmMatrix      *self,
                               GAsyncResult  *result,
@@ -749,6 +791,70 @@ cm_matrix_save_client_finish (CmMatrix      *self,
   g_return_val_if_fail (G_IS_TASK (result), FALSE);
 
   return g_task_propagate_boolean (G_TASK (result), error);
+}
+
+static void
+cm_matrix_save_client_sync_cb (GObject      *object,
+                               GAsyncResult *res,
+                               gpointer      user_data)
+{
+  CmMatrixSyncData *data = user_data;
+
+  data->res = g_object_ref (res);
+  g_main_loop_quit (data->loop);
+}
+
+/**
+ * cm_matrix_save_client_sync:
+ * @self: The matrix
+ * @client: The client to save
+ * @cancellable: A cancellable
+ * @error: The return location for a recoverable error
+ *
+ * Save client to database and keyring.
+ *
+ * This is a synchronous method. See [method@Matrix.save_client_async]
+ * for an asynchronous version.
+ *
+ * Returns: `TRUE` if saving succeeded, `FALSE` otherwise.
+ *
+ * Since: 0.0.2
+ */
+gboolean
+cm_matrix_save_client_sync (CmMatrix     *self,
+                            CmClient     *client,
+                            GCancellable *cancellable,
+                            GError      **error)
+{
+  CmMatrixSyncData data;
+  g_autoptr (GMainContext) context = g_main_context_new ();
+  g_autoptr (GMainLoop) loop = NULL;
+  gboolean success;
+
+  g_main_context_push_thread_default (context);
+  loop = g_main_loop_new (context, FALSE);
+
+  data = (CmMatrixSyncData) {
+    .loop = loop,
+    .res = NULL,
+  };
+
+  cm_matrix_save_client_async (self,
+                               client,
+                               cancellable,
+                               cm_matrix_save_client_sync_cb,
+                               &data);
+
+  g_main_loop_run (data.loop);
+
+  success = cm_matrix_save_client_finish (self, data.res, error);
+
+  if (data.res)
+    g_object_unref (data.res);
+
+  g_main_context_pop_thread_default (context);
+
+  return success;
 }
 
 static void
@@ -787,6 +893,7 @@ matrix_delete_client_cb (GObject      *object,
 void
 cm_matrix_delete_client_async (CmMatrix            *self,
                                CmClient            *client,
+                               GCancellable        *cancellable,
                                GAsyncReadyCallback  callback,
                                gpointer             user_data)
 {
@@ -800,6 +907,7 @@ cm_matrix_delete_client_async (CmMatrix            *self,
   g_task_set_task_data (task, g_object_ref (client), g_object_unref);
 
   cm_client_delete_secrets_async (client,
+                                  cancellable,
                                   matrix_delete_client_cb,
                                   task);
 }
@@ -842,6 +950,7 @@ matrix_save_client (GObject      *object,
 {
   CmMatrix *self;
   g_autoptr(GTask) task = user_data;
+  GCancellable *cancellable;
   GPtrArray *clients;
   CmClient *client;
 
@@ -870,12 +979,23 @@ matrix_save_client (GObject      *object,
   client = g_ptr_array_steal_index (clients, 0);
   g_object_set_data_full (user_data, "client", client, g_object_unref);
 
+  cancellable = g_task_get_cancellable (task);
   g_debug ("(%p) Save client %p, %u left to save", self, client, clients->len);
   cm_client_save_secrets_async (client,
+                                cancellable,
                                 matrix_save_client,
                                 g_steal_pointer (&task));
 }
 
+/**
+ * cm_matrix_add_clients_async:
+ * @self: The matrix to add the clients to
+ * @secrets:(element-type SecretRetrievable): The secrets to build the clients from
+ * @callback: A `GAsyncReadyCallback` to call when the request is satisfied.
+ * @user_data: The data to pass to callback function.
+ *
+ * Add clients identified by their secrets.
+ */
 void
 cm_matrix_add_clients_async (CmMatrix            *self,
                              GPtrArray           *secrets,

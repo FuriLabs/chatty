@@ -1,6 +1,6 @@
 project(
   'chatty', 'c', 'cpp',
-  version: '0.8.4',
+  version: '0.8.5',
   meson_version: '>= 0.56.0',
 )
 
@@ -121,12 +121,13 @@ libebook_dep = dependency('libebook-contacts-1.2')
 libfeedback_dep = dependency('libfeedback-0.0')
 libm_dep = cc.find_library('m')
 
-libcmatrix = subproject('libcmatrix',
-                        default_options: [
-                          'build-examples=false',
-                        ])
-libcmatrix_dep = libcmatrix.get_variable('libcmatrix_dep')
-
+libcmatrix_dep = dependency('libcmatrix',
+  version: '>= 0.0.2',
+  fallback: ['libcmatrix', 'libcmatrix_dep'],
+  default_options: [
+    'build-examples=false',
+    'gtk_doc=false',
+  ])
 
 subdir('completion')
 subdir('data')
@@ -145,12 +146,16 @@ summary({'Target': system,
          'Compiler': cc.get_id(),
          'Version': cc.version(),
          'Linker': cc.get_linker_id(),
-        }, section: 'Toolchain')
+        },
+        bool_yn: true,
+        section: 'Toolchain')
 
 summary({'Build type': get_option('buildtype'),
          'libpurple': purple_dep.found(),
          'libspelling': libspell_dep.found(),
-        }, section: 'Configuration')
+        },
+        bool_yn: true,
+        section: 'Configuration')
 
 # gnome.post_install() is available since meson 0.59.0
 # Distributions use their own tooling (e.g. postinst, triggers, etc)

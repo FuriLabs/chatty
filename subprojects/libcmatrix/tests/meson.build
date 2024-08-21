@@ -1,3 +1,7 @@
+if not get_option('build-tests')
+  subdir_done()
+endif
+
 tests_inc = [
   root_inc,
   src_inc,
@@ -7,6 +11,9 @@ env = environment()
 env.set('G_TEST_SRCDIR', meson.current_source_dir())
 env.set('G_TEST_BUILDDIR', meson.current_build_dir())
 env.set('MALLOC_CHECK_', '2')
+# For -Db_sanitize=address
+env.set('LSAN_OPTIONS',
+        'suppressions=@0@/leak-suppress.txt'.format(meson.project_source_root()))
 
 test_items = []
 
@@ -15,6 +22,7 @@ test_items = [
   'enc-chat',
   'cm-db',
   'cm-enc',
+  'pusher',
   'room',
   'room-member',
   'cm-utils',

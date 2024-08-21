@@ -29,8 +29,8 @@
 
             <child>
               <object class="ChattyAvatar" id="chat_avatar">
-                <property name="width-request">96</property>
-                <property name="height-request">96</property>
+                <property name="size">192</property>
+                <property name="margin-bottom">18</property>
               </object>
             </child>
 
