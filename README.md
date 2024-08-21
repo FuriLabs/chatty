@@ -8,7 +8,7 @@ and optionally XMPP through [libpurple].
 ## Build and install
 
 In case you want to disable the libpurple plugin support
-have a look at [meson_options](meson_options)
+have a look at [meson_options.txt](meson_options.txt)
 
 ### Getting the source
 
