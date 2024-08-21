@@ -27,7 +27,7 @@
 
 struct _ChattyInfoDialog
 {
-  AdwWindow       parent_instance;
+  AdwDialog       parent_instance;
 
   GtkWidget      *main_stack;
   GtkWidget      *chat_type_stack;
@@ -48,7 +48,7 @@ struct _ChattyInfoDialog
   ChattyChat     *chat;
 };
 
-G_DEFINE_TYPE (ChattyInfoDialog, chatty_info_dialog, ADW_TYPE_WINDOW)
+G_DEFINE_TYPE (ChattyInfoDialog, chatty_info_dialog, ADW_TYPE_DIALOG)
 
 static void
 info_dialog_new_invite_clicked_cb (ChattyInfoDialog *self)
@@ -201,14 +201,10 @@ chatty_info_dialog_init (ChattyInfoDialog *self)
 #endif
 }
 
-GtkWidget *
-chatty_info_dialog_new (GtkWindow *parent_window)
+ChattyInfoDialog *
+chatty_info_dialog_new (void)
 {
-  g_return_val_if_fail (GTK_IS_WINDOW (parent_window), NULL);
-
-  return g_object_new (CHATTY_TYPE_INFO_DIALOG,
-                       "transient-for", parent_window,
-                       NULL);
+  return g_object_new (CHATTY_TYPE_INFO_DIALOG, NULL);
 }
 
 void
@@ -233,7 +229,8 @@ chatty_info_dialog_set_chat (ChattyInfoDialog *self,
     chatty_chat_info_set_item (CHATTY_CHAT_INFO (self->ma_chat_info), chat);
     if (self->pp_chat_info)
       chatty_chat_info_set_item (CHATTY_CHAT_INFO (self->mm_chat_info), NULL);
-    chatty_chat_info_set_item (CHATTY_CHAT_INFO (self->pp_chat_info), NULL);
+    if (self->pp_chat_info)
+      chatty_chat_info_set_item (CHATTY_CHAT_INFO (self->pp_chat_info), NULL);
     gtk_stack_set_visible_child (GTK_STACK (self->chat_type_stack), self->ma_chat_info);
   } else if (CHATTY_IS_MM_CHAT (chat)) {
     chatty_chat_info_set_item (CHATTY_CHAT_INFO (self->ma_chat_info), NULL);

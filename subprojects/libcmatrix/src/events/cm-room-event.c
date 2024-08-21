@@ -6,9 +6,7 @@
 
 #define G_LOG_DOMAIN "cm-room-event"
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
+#include "cm-config.h"
 
 #include "cm-room.h"
 #include "cm-room-private.h"
@@ -18,16 +16,32 @@
 #include "cm-room-event-private.h"
 #include "cm-room-event.h"
 
+/**
+ * CmRoomEvent:
+ *
+ * An event that is associated with a matrix room like e.g. a
+ * topic change or member event. Basically Matrix message of type
+ * `m.room.*`.
+ *
+ * This class somewhat confusingly represents different room event
+ * types and is *also* used as base class for more specific room events
+ * like `CmRoomMessageEvent`.
+ */
 typedef struct
 {
   CmRoom        *room;
   char          *room_name;
   char          *encryption;
   GRefString    *member_id;
-  char          *replacement_room_id;
   GPtrArray     *users;
   JsonObject    *json;
   CmStatus       member_status;
+
+  /* Content fetched for different events */
+  union {
+    char        *replacement_room_id;
+    char        *topic;
+  } c;
 
   guint          enc_rotation_count;
   guint          enc_rotation_time;
@@ -60,9 +74,23 @@ cm_room_event_finalize (GObject *object)
   g_free (priv->room_name);
   g_free (priv->encryption);
   g_clear_pointer (&priv->member_id, g_ref_string_release);
-  g_free (priv->replacement_room_id);
   g_clear_pointer (&priv->users, g_ptr_array_unref);
   g_clear_pointer (&priv->json, json_object_unref);
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wswitch-enum"
+  switch (cm_event_get_m_type (CM_EVENT (self)))
+    {
+      case CM_M_ROOM_TOMBSTONE:
+        g_clear_pointer (&priv->c.replacement_room_id, g_free);
+        break;
+      case CM_M_ROOM_TOPIC:
+        g_clear_pointer (&priv->c.topic, g_free);
+        break;
+      default:
+        break;
+    }
+#pragma GCC diagnostic pop
 
   G_OBJECT_CLASS (cm_room_event_parent_class)->finalize (object);
 }
@@ -169,12 +197,25 @@ cm_room_event_new_from_json (gpointer    room,
   else if (type == CM_M_ROOM_TOMBSTONE)
     {
       value = cm_utils_json_object_get_string (child, "replacement_room");
-      priv->replacement_room_id = g_strdup (value);
+      priv->c.replacement_room_id = g_strdup (value);
+    }
+  else if (type == CM_M_ROOM_TOPIC)
+    {
+      value = cm_utils_json_object_get_string (child, "topic");
+      priv->c.topic = g_strdup (value);
     }
 
   return self;
 }
 
+/**
+ * cm_room_event_get_room:
+ * @self: The room event
+ *
+ * Get the room this event belongs to
+ *
+ * Returns:(transfer none): The room
+ */
 CmRoom *
 cm_room_event_get_room (CmRoomEvent *self)
 {
@@ -252,6 +293,14 @@ cm_room_event_set_room_member (CmRoomEvent *self,
   g_ptr_array_add (priv->users, g_object_ref (user));
 }
 
+/**
+ * cm_room_event_get_room_member:
+ * @self: The room event
+ *
+ * Get the room member of this room event
+ *
+ * Returns:(transfer none):The room member
+ */
 CmUser *
 cm_room_event_get_room_member (CmRoomEvent *self)
 {
@@ -449,7 +498,7 @@ cm_room_event_get_replacement_room_id (CmRoomEvent *self)
   g_return_val_if_fail (CM_IS_ROOM_EVENT (self), NULL);
   ret_val_if_fail (self, CM_M_ROOM_TOMBSTONE, 0, NULL);
 
-  return priv->replacement_room_id;
+  return priv->c.replacement_room_id;
 }
 
 guint
@@ -472,4 +521,15 @@ cm_room_event_get_rotation_time (CmRoomEvent *self)
   ret_val_if_fail (self, CM_M_ROOM_ENCRYPTION, 0, 100);
 
   return priv->enc_rotation_time;
+}
+
+const char *
+cm_room_event_get_topic (CmRoomEvent *self)
+{
+  CmRoomEventPrivate *priv = cm_room_event_get_instance_private (self);
+
+  g_return_val_if_fail (CM_IS_ROOM_EVENT (self), NULL);
+  ret_val_if_fail (self, CM_M_ROOM_TOPIC, 0, NULL);
+
+  return priv->c.topic;
 }

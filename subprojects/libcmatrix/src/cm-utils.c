@@ -7,9 +7,7 @@
 #define G_LOG_DOMAIN "cm-utils"
 #define BUFFER_SIZE 256
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
+#include "cm-config.h"
 
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <stdio.h>
@@ -22,6 +20,7 @@
 #include "cm-enc-private.h"
 #include "cm-enums.h"
 #include "cm-utils-private.h"
+#include "cm-utils.h"
 
 static const char *error_codes[] = {
   "", /* Index 0 is reserved for no error */
@@ -58,6 +57,11 @@ static const char *error_codes[] = {
   "M_RESOURCE_LIMIT_EXCEEDED",
   "M_CANNOT_LEAVE_SERVER_NOTICE_ROOM",
 };
+
+typedef struct {
+  GMainLoop *loop;
+  GAsyncResult *res;
+} CmUtilsSyncData;
 
 const char *
 cm_utils_log_bool_str (gboolean value,
@@ -645,12 +649,12 @@ utils_json_canonical_array (JsonArray *array,
 
   /* The order of array members shouldn’t be changed */
   for (GList *item = elements; item; item = item->next)
-{
-    utils_handle_node (item->data, out);
+    {
+      utils_handle_node (item->data, out);
 
-    if (item->next)
-      g_string_append_c (out, ',');
-  }
+      if (item->next)
+        g_string_append_c (out, ',');
+    }
 
   g_string_append_c (out, ']');
 }
@@ -681,17 +685,17 @@ cm_utils_json_get_canonical (JsonObject *object,
   members = g_list_sort (members, (GCompareFunc)g_strcmp0);
 
   for (GList *item = members; item; item = item->next)
-{
-    JsonNode *node;
+    {
+      JsonNode *node;
 
-    g_string_append_printf (out, "\"%s\":", (char *)item->data);
+      g_string_append_printf (out, "\"%s\":", (char *)item->data);
 
-    node = json_object_get_member (object, item->data);
-    utils_handle_node (node, out);
+      node = json_object_get_member (object, item->data);
+      utils_handle_node (node, out);
 
-    if (item->next)
-      g_string_append_c (out, ',');
-  }
+      if (item->next)
+        g_string_append_c (out, ',');
+    }
 
   g_string_append_c (out, '}');
 
@@ -918,33 +922,33 @@ uri_file_read_cb (GObject      *object,
     return;
 
   if (error)
-{
-    g_task_return_error (task, error);
-    return;
-  }
+    {
+      g_task_return_error (task, error);
+      return;
+    }
 
   err_flags = soup_message_get_tls_peer_certificate_errors (message);
 
   if (message && err_flags)
-{
-    guint timeout_id, timeout;
+    {
+      guint timeout_id, timeout;
 
-    timeout = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (task), "timeout"));
-    timeout_id = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (task), "timeout-id"));
-    g_clear_handle_id (&timeout_id, g_source_remove);
-    g_object_unref (task);
+      timeout = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (task), "timeout"));
+      timeout_id = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (task), "timeout-id"));
+      g_clear_handle_id (&timeout_id, g_source_remove);
+      g_object_unref (task);
 
-    /* fixme: handle SSL errors */
-    /* if (cm_utils_handle_ssl_error (message)) */
-    /*   { */
-    /*     g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_CANCELLED, */
-    /*                              "Cancelled"); */
-    /*     return; */
-    /*   } */
+      /* fixme: handle SSL errors */
+      /* if (cm_utils_handle_ssl_error (message)) */
+      /*   { */
+      /*     g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_CANCELLED, */
+      /*                              "Cancelled"); */
+      /*     return; */
+      /*   } */
 
-    timeout_id = g_timeout_add_seconds (timeout, cancel_read_uri, g_object_ref (task));
-    g_object_set_data (G_OBJECT (task), "timeout-id", GUINT_TO_POINTER (timeout_id));
-  }
+      timeout_id = g_timeout_add_seconds (timeout, cancel_read_uri, g_object_ref (task));
+      g_object_set_data (G_OBJECT (task), "timeout-id", GUINT_TO_POINTER (timeout_id));
+    }
 
   cancellable = g_task_get_cancellable (task);
   parser = json_parser_new ();
@@ -1013,11 +1017,11 @@ cm_utils_read_uri_async (const char          *uri,
 
   message = soup_message_new (SOUP_METHOD_GET, uri);
   if (!message)
-{
-    g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_INVALID_FILENAME,
-                             "%s is not a valid uri", uri);
-    return;
-  }
+    {
+      g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_INVALID_FILENAME,
+                               "%s is not a valid uri", uri);
+      return;
+    }
 
   soup_message_set_flags (message, SOUP_MESSAGE_NO_REDIRECT);
   g_object_set_data_full (G_OBJECT (task), "message", g_object_ref (message), g_object_unref);
@@ -1069,7 +1073,7 @@ get_homeserver_cb (GObject      *obj,
         g_task_return_pointer (task, NULL, NULL);
 
       return;
-  }
+    }
 
   g_object_set_data_full (G_OBJECT (task), "address",
                           g_object_steal_data (G_OBJECT (result), "address"),
@@ -1093,13 +1097,13 @@ get_homeserver_cb (GObject      *obj,
 
 /**
  * cm_utils_get_homeserver_async:
- * @username: A complete matrix username
+ * @username: A matrix id
  * @timeout: timeout in seconds
  * @cancellable: (nullable): A #GCancellable
  * @callback: The callback to run
  * @user_data: (nullable): The data passed to @callback
  *
- * Get homeserver from the given @username.  @userename
+ * Get homeserver from the given @username.  @username
  * should be in complete form (eg: @user:example.org)
  *
  * @timeout is clamped between 5 and 60 seconds.
@@ -1108,6 +1112,8 @@ get_homeserver_cb (GObject      *obj,
  * network to fetch homeserver details.
  *
  * See https://matrix.org/docs/spec/client_server/r0.6.1#server-discovery
+ *
+ * Since: 0.0.2
  */
 void
 cm_utils_get_homeserver_async (const char          *username,
@@ -1128,11 +1134,11 @@ cm_utils_get_homeserver_async (const char          *username,
   g_task_set_source_tag (task, cm_utils_get_homeserver_async);
 
   if (!cm_utils_user_name_valid (username))
-{
-    g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_INVALID_FILENAME,
-                             "Username '%s' is not a complete matrix id", username);
-    return;
-  }
+    {
+      g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_INVALID_FILENAME,
+                               "Username '%s' is not a complete matrix id", username);
+      return;
+    }
 
   url = cm_utils_get_url_from_user_id (username);
   uri = g_strconcat ("https://", url, "/.well-known/matrix/client", NULL);
@@ -1143,13 +1149,15 @@ cm_utils_get_homeserver_async (const char          *username,
 
 /**
  * cm_utils_get_homeserver_finish:
- * @result: A #GAsyncResult
- * @error: (optional): A #GError
+ * @result: The result
+ * @error: The location of a recoverable error
  *
  * Finish call to cm_utils_get_homeserver_async().
  *
- * Returns: (nullable) : The homeserver string or %NULL
- * on error.  Free with g_free().
+ * Returns: (nullable) (transfer full): The homeserver string or `NULL`
+ * on error.  Free with `g_free()`.
+ *
+ * Since: 0.0.2
  */
 char *
 cm_utils_get_homeserver_finish (GAsyncResult  *result,
@@ -1161,6 +1169,70 @@ cm_utils_get_homeserver_finish (GAsyncResult  *result,
   g_return_val_if_fail (g_task_get_source_tag (task) == cm_utils_get_homeserver_async, NULL);
 
   return g_task_propagate_pointer (G_TASK (result), error);
+}
+
+static void
+cm_utils_get_homeserver_sync_cb (GObject      *object,
+                                 GAsyncResult *res,
+                                 gpointer      user_data)
+{
+  CmUtilsSyncData *data = user_data;
+
+  data->res = g_object_ref (res);
+  g_main_loop_quit (data->loop);
+}
+
+/**
+ * cm_utils_get_homeserver_sync:
+ * @username: A matrix id
+ * @error: The location of a recoverable error
+ *
+ * Get homeserver from the given @username.  @username
+ * should be in complete form (eg: @user:example.org)
+ *
+ * This is a synchronous method. See [cm_utils_get_homeserver_async]
+ * for an asynchronous version.
+ *
+ * Returns: (nullable) (transfer full): The homeserver string or `NULL`
+ * on error.  Free with `g_free()`.
+ *
+ * Since: 0.0.2
+ */
+char *
+cm_utils_get_homeserver_sync (const char *username,
+                              GError    **error)
+{
+  CmUtilsSyncData data;
+  g_autoptr (GMainContext) context = g_main_context_new ();
+  g_autoptr (GMainLoop) loop = NULL;
+  char *homeserver;
+
+  g_return_val_if_fail (username && *username, NULL);
+
+  g_main_context_push_thread_default (context);
+  loop = g_main_loop_new (context, FALSE);
+
+  data = (CmUtilsSyncData) {
+    .loop = loop,
+    .res = NULL,
+  };
+
+  cm_utils_get_homeserver_async (username,
+                                 60,
+                                 NULL,
+                                 cm_utils_get_homeserver_sync_cb,
+                                 &data);
+
+  g_main_loop_run (data.loop);
+
+  homeserver = cm_utils_get_homeserver_finish (data.res, error);
+
+  if (data.res)
+    g_object_unref (data.res);
+
+  g_main_context_pop_thread_default (context);
+
+  return homeserver;
 }
 
 static void
@@ -1187,14 +1259,14 @@ api_get_version_cb (GObject      *obj,
   if (!root ||
       g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED) ||
       g_error_matches (error, G_IO_ERROR, G_IO_ERROR_TIMED_OUT))
-{
-    if (error)
-      g_task_return_error (task, error);
-    else
-      g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_FAILED,
-                               "Failed to get version for server '%s'", server);
-    return;
-  }
+    {
+      if (error)
+        g_task_return_error (task, error);
+      else
+        g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_FAILED,
+                                 "Failed to get version for server '%s'", server);
+      return;
+    }
 
   g_object_set_data_full (G_OBJECT (task), "address",
                           g_object_steal_data (G_OBJECT (result), "address"),
@@ -1205,30 +1277,30 @@ api_get_version_cb (GObject      *obj,
   valid = FALSE;
 
   if (array)
-{
-    g_autoptr(GString) versions = NULL;
-    guint length;
+    {
+      g_autoptr(GString) versions = NULL;
+      guint length;
 
-    versions = g_string_new ("");
-    length = json_array_get_length (array);
+      versions = g_string_new ("");
+      length = json_array_get_length (array);
 
-    for (guint i = 0; i < length; i++)
-{
-      const char *version;
+      for (guint i = 0; i < length; i++)
+        {
+          const char *version;
 
-      version = json_array_get_string_element (array, i);
-      g_string_append_printf (versions, " %s", version);
+          version = json_array_get_string_element (array, i);
+          g_string_append_printf (versions, " %s", version);
 
-      /* We have tested only with r0.6.x and r0.5.0 */
-      if (g_str_has_prefix (version, "r0.5.") ||
-          g_str_has_prefix (version, "r0.6.") ||
-          g_str_has_prefix (version, "v1."))
-        valid = TRUE;
+          /* We have tested only with r0.6.x and r0.5.0 */
+          if (g_str_has_prefix (version, "r0.5.") ||
+              g_str_has_prefix (version, "r0.6.") ||
+              g_str_has_prefix (version, "v1."))
+            valid = TRUE;
+        }
+
+      g_debug ("'%s' has versions:%s, valid: %d",
+               server, versions->str, valid);
     }
-
-    g_debug ("'%s' has versions:%s, valid: %d",
-             server, versions->str, valid);
-  }
 
   g_task_return_boolean (task, valid);
 }
@@ -1252,12 +1324,12 @@ cm_utils_verify_homeserver_async (const char          *server,
 
   if (!server || !*server ||
       !g_str_has_prefix (server, "http"))
-{
-    g_task_return_new_error (task, G_IO_ERROR,
-                             G_IO_ERROR_INVALID_DATA,
-                             "URI '%s' is invalid", server);
-    return;
-  }
+    {
+      g_task_return_new_error (task, G_IO_ERROR,
+                               G_IO_ERROR_INVALID_DATA,
+                               "URI '%s' is invalid", server);
+      return;
+    }
 
   uri = g_strconcat (server, "/_matrix/client/versions", NULL);
   cm_utils_read_uri_async (uri, timeout, cancellable,

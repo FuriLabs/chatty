@@ -10,9 +10,7 @@
 
 #define G_LOG_DOMAIN "cm-user-list"
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
+#include "cm-config.h"
 
 #include <libsoup/soup.h>
 #include <json-glib/json-glib.h>
@@ -291,10 +289,14 @@ cm_user_list_finalize (GObject *object)
 {
   CmUserList *self = (CmUserList *)object;
 
-  g_clear_object (&self->client);
-  g_hash_table_unref (self->users_table);
+  /* TODO ideally we should cancel the tasks in the queue */
+  g_assert (g_queue_get_length (self->device_request_queue) == 0);
+  g_queue_free_full (self->device_request_queue, g_object_unref);
+  g_clear_pointer (&self->users_table, g_hash_table_unref);
   g_clear_object (&self->current_request);
-  g_hash_table_unref (self->changed_users);
+  g_clear_pointer (&self->changed_users, g_hash_table_unref);
+
+  g_clear_weak_pointer (&self->client);
 
   G_OBJECT_CLASS (cm_user_list_parent_class)->finalize (object);
 }
@@ -362,7 +364,7 @@ cm_user_list_new (CmClient *client)
   g_return_val_if_fail (CM_IS_CLIENT (client), NULL);
 
   self = g_object_new (CM_TYPE_USER_LIST, NULL);
-  self->client = g_object_ref (client);
+  g_set_weak_pointer (&self->client, client);
 
   g_debug ("(%p) New user list with client %p created", self, client);
 
@@ -429,7 +431,7 @@ cm_user_list_find_user (CmUserList *self,
                         GRefString *user_id,
                         gboolean    create_if_missing)
 {
-  CmUser *user;
+  g_autoptr (CmUser) user = NULL;
 
   g_return_val_if_fail (CM_IS_USER_LIST (self), NULL);
   g_return_val_if_fail (user_id && *user_id == '@', NULL);
@@ -437,12 +439,13 @@ cm_user_list_find_user (CmUserList *self,
   user = g_hash_table_lookup (self->users_table, user_id);
 
   if (user || !create_if_missing)
-    return user;
+    return g_steal_pointer (&user);
 
   user = (CmUser *)cm_room_member_new (user_id);
   cm_user_set_client (user, self->client);
+
   g_hash_table_insert (self->users_table,
-                       g_ref_string_acquire (user_id), user);
+                       g_ref_string_acquire (user_id), g_object_ref (user));
 
   return user;
 }
@@ -475,7 +478,7 @@ cm_user_list_set_account (CmUserList *self,
   g_return_if_fail (g_hash_table_size (self->users_table) == 0);
 
   g_hash_table_insert (self->users_table,
-                       g_ref_string_acquire (user_id), account);
+                       g_ref_string_acquire (user_id), g_object_ref (account));
 }
 
 /**
@@ -502,6 +505,7 @@ cm_user_list_load_devices_async (CmUserList          *self,
   g_debug ("(%p) Queue Load %p user devices, users count: %u",
            self->client, users, users->len);
 
+  /* TODO this could use a cancellable */
   task = g_task_new (self, NULL, callback, user_data);
   g_task_set_task_data (task, g_ptr_array_ref (users),
                         (GDestroyNotify)g_ptr_array_unref);

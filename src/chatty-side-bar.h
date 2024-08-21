@@ -18,5 +18,6 @@ void        chatty_side_bar_set_show_archived     (ChattySideBar *self,
                                                    gboolean       show_archived);
 void        chatty_side_bar_set_show_end_title_buttons     (ChattySideBar *self,
                                                             gboolean       visible);
+void        chatty_side_bar_toggle_search         (ChattySideBar *self);
 
 G_END_DECLS

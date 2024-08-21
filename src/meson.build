@@ -141,16 +141,8 @@ resources = gnome.compile_resources('chatty-resources',
   c_name: 'chatty'
 )
 
-libchatty_shared = shared_library(
+libchatty = both_libraries(
   'chatty', [libsrc, 'library.c'],
-  resources,
-  include_directories: src_inc,
-  install: false,
-  dependencies: chatty_deps,
-)
-
-libchatty_static = static_library(
-  'chatty', libsrc,
   resources,
   include_directories: src_inc,
   dependencies: chatty_deps,
@@ -170,7 +162,7 @@ libchatty_static = static_library(
 executable('chatty', chatty_sources, resources,
   include_directories: src_inc,
   dependencies: chatty_deps,
-  link_with: libchatty_static,
+  link_with: libchatty.get_static_lib(),
   install: true,
   install_rpath: purple_plugdir,
 )

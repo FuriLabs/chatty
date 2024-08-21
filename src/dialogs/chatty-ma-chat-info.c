@@ -46,6 +46,7 @@ struct _ChattyMaChatInfo
 
   GtkWidget     *name_label;
   GtkWidget     *matrix_id_label;
+  GtkWidget     *topic_label;
   GtkWidget     *encryption_spinner;
   GtkWidget     *encryption_switch;
 };
@@ -124,6 +125,8 @@ chatty_ma_chat_info_set_item (ChattyChatInfo *info,
                       chatty_chat_get_chat_name (self->chat));
   gtk_label_set_text (GTK_LABEL (self->name_label),
                       chatty_item_get_name (CHATTY_ITEM (self->chat)));
+  gtk_label_set_text (GTK_LABEL (self->topic_label),
+                      chatty_ma_chat_get_topic (CHATTY_MA_CHAT (self->chat)));
 
   g_signal_connect_swapped (self->chat, "notify::encrypt",
                             G_CALLBACK (ma_chat_encrypt_changed_cb),
@@ -162,6 +165,7 @@ chatty_ma_chat_info_class_init (ChattyMaChatInfoClass *klass)
 
   gtk_widget_class_bind_template_child (widget_class, ChattyMaChatInfo, name_label);
   gtk_widget_class_bind_template_child (widget_class, ChattyMaChatInfo, matrix_id_label);
+  gtk_widget_class_bind_template_child (widget_class, ChattyMaChatInfo, topic_label);
   gtk_widget_class_bind_template_child (widget_class, ChattyMaChatInfo, encryption_spinner);
   gtk_widget_class_bind_template_child (widget_class, ChattyMaChatInfo, encryption_switch);
 

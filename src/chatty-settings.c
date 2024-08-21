@@ -193,8 +193,7 @@ chatty_settings_set_property (GObject      *object,
       break;
 
     case PROP_STRIP_URL_TRACKING_IDS_DIALOG:
-      g_settings_set_boolean (self->settings, "strip-url-tracking-id-dialog",
-                              g_value_get_boolean (value));
+      chatty_settings_set_strip_url_tracking_ids_dialog (self, g_value_get_boolean (value));
       break;
 
     case PROP_RENDER_ATTACHMENTS:
@@ -228,8 +227,7 @@ chatty_settings_set_property (GObject      *object,
       break;
 
     case PROP_CLEAR_OUT_STUCK_SMS:
-      g_settings_set_boolean (self->settings, "clear-out-stuck-sms",
-                              g_value_get_boolean (value));
+      chatty_settings_set_clear_out_stuck_sms (self, g_value_get_boolean (value));
       break;
 
     case PROP_PURPLE_ENABLED:
@@ -479,7 +477,7 @@ chatty_settings_get_send_receipts (ChattySettings *self)
  * chatty_settings_get_message_carbons:
  * @self: A #ChattySettings
  *
- * Get wether the chat history is shared among devices.
+ * Get whether the chat history is shared among devices.
  *
  * Returns: %TRUE if message carbons should be sent.
  * %FALSE otherwise.
@@ -578,11 +576,11 @@ chatty_settings_get_strip_url_tracking_ids_dialog (ChattySettings *self)
  */
 void
 chatty_settings_set_strip_url_tracking_ids_dialog (ChattySettings *self,
-                                                   gboolean shown)
+                                                   gboolean strip)
 {
   g_return_if_fail (CHATTY_IS_SETTINGS (self));
 
-  g_settings_set_boolean (G_SETTINGS (self->settings), "strip-url-tracking-id-dialog", !!shown);
+  g_settings_set_boolean (G_SETTINGS (self->settings), "strip-url-tracking-id-dialog", strip);
 }
 
 /**
@@ -614,7 +612,7 @@ chatty_settings_set_clear_out_stuck_sms (ChattySettings *self,
 {
   g_return_if_fail (CHATTY_IS_SETTINGS (self));
 
-  g_settings_set_boolean (G_SETTINGS (self->settings), "clear-out-stuck-sms", !!clear_sms);
+  g_settings_set_boolean (G_SETTINGS (self->settings), "clear-out-stuck-sms", clear_sms);
 }
 
 /**
@@ -695,7 +693,7 @@ chatty_settings_set_window_maximized (ChattySettings *self,
 {
   g_return_if_fail (CHATTY_IS_SETTINGS (self));
 
-  g_settings_set_boolean (G_SETTINGS (self->settings), "window-maximized", !!maximized);
+  g_settings_set_boolean (G_SETTINGS (self->settings), "window-maximized", maximized);
 }
 
 /**
@@ -825,5 +823,5 @@ chatty_settings_enable_experimental_features (ChattySettings *self,
 {
   g_return_if_fail (CHATTY_IS_SETTINGS (self));
 
-  g_settings_set_boolean (G_SETTINGS (self->settings), "experimental-features", !!enable);
+  g_settings_set_boolean (G_SETTINGS (self->settings), "experimental-features", enable);
 }

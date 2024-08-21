@@ -10,3 +10,16 @@ build
 GPATH
 GTAGS
 GRTAGS
+
+debian/.debhelper/
+debian/debhelper-build-stamp
+debian/*.debhelper.log
+debian/files
+debian/gir1.2-cm-0.0/
+debian/libcmatrix0u/
+debian/libcmatrix-dev/
+debian/libcmatrix-doc/
+debian/*.substvars
+debian/tmp/
+
+.meson-subproject-wrap-hash.txt

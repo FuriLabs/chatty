@@ -47,7 +47,6 @@ struct _ChattyWindow
   GtkWidget *main_view;
 
   GtkWidget *new_chat_dialog;
-  GtkWidget *chat_info_dialog;
 
   GtkWidget *settings_dialog;
 
@@ -137,6 +136,21 @@ chatty_window_open_item (ChattyWindow *self,
   }
 }
 
+
+static void
+chatty_window_enable_per_chat_actions (ChattyWindow *self, gboolean enable)
+{
+  gtk_widget_action_set_enabled (GTK_WIDGET (self), "win.show-chat-details", enable);
+  gtk_widget_action_set_enabled (GTK_WIDGET (self), "win.leave-chat", enable);
+  gtk_widget_action_set_enabled (GTK_WIDGET (self), "win.block-chat", enable);
+  gtk_widget_action_set_enabled (GTK_WIDGET (self), "win.unblock-chat", enable);
+  gtk_widget_action_set_enabled (GTK_WIDGET (self), "win.archive-chat", enable);
+  gtk_widget_action_set_enabled (GTK_WIDGET (self), "win.unarchive-chat", enable);
+  gtk_widget_action_set_enabled (GTK_WIDGET (self), "win.delete-chat", enable);
+  gtk_widget_action_set_enabled (GTK_WIDGET (self), "win.call-user", enable);
+}
+
+
 static void
 window_chat_list_selection_changed (ChattyWindow   *self,
                                     ChattyChatList *list)
@@ -146,6 +160,8 @@ window_chat_list_selection_changed (ChattyWindow   *self,
 
   g_assert (CHATTY_IS_WINDOW (self));
   g_assert (CHATTY_IS_CHAT_LIST (list));
+
+  chatty_window_enable_per_chat_actions (self, FALSE);
 
   chat_list = chatty_chat_list_get_selected (list);
 
@@ -172,6 +188,8 @@ window_chat_list_selection_changed (ChattyWindow   *self,
 
     return;
   }
+
+  chatty_window_enable_per_chat_actions (self, TRUE);
 
 #ifdef PURPLE_ENABLED
   if (CHATTY_IS_PP_CHAT (chat))
@@ -330,7 +348,6 @@ window_block_chat_response_cb (AdwMessageDialog *dialog,
 
 {
   ChattyWindow *self = CHATTY_WINDOW (user_data);
-  g_autoptr(GError) error = NULL;
 
   g_assert (CHATTY_IS_WINDOW (self));
   if (g_strcmp0 (response, "block") == 0) {
@@ -400,7 +417,6 @@ window_delete_chat_response_cb (AdwMessageDialog *dialog,
                                 gpointer          user_data)
 {
   ChattyWindow *self = CHATTY_WINDOW (user_data);
-  g_autoptr(GError) error = NULL;
 
   g_assert (CHATTY_IS_WINDOW (self));
 
@@ -439,7 +455,6 @@ chatty_window_delete_chat (GtkWidget  *widget,
   const char *name;
   GtkWindow *window;
   AdwDialog *dialog;
-  g_autofree char *secondary_text = NULL;
 
   g_assert (CHATTY_IS_WINDOW (self));
 
@@ -530,10 +545,10 @@ chatty_window_show_chat_details (GtkWidget  *widget,
   chat = (ChattyChat *)chatty_main_view_get_item (CHATTY_MAIN_VIEW (self->main_view));
   g_return_if_fail (CHATTY_IS_CHAT (chat));
 
-  dialog = CHATTY_INFO_DIALOG (self->chat_info_dialog);
+  dialog = chatty_info_dialog_new ();
 
   chatty_info_dialog_set_chat (dialog, chat);
-  gtk_window_present (GTK_WINDOW (dialog));
+  adw_dialog_present (ADW_DIALOG (dialog), GTK_WIDGET (self));
 }
 
 static void
@@ -570,6 +585,14 @@ chatty_window_go_back (GtkWidget  *widget,
   g_assert (CHATTY_IS_WINDOW (self));
 
   window_chat_list_hiding (self);
+}
+
+static void
+on_search_chat_activated (GtkWidget *widget, const char *action_name, GVariant *param)
+{
+  ChattyWindow *self = CHATTY_WINDOW (widget);
+
+  chatty_side_bar_toggle_search (CHATTY_SIDE_BAR (self->side_bar));
 }
 
 static void
@@ -681,7 +704,6 @@ chatty_window_constructed (GObject *object)
                            G_CALLBACK (new_chat_selection_changed_cb),
                            self,
                            G_CONNECT_SWAPPED);
-  self->chat_info_dialog = chatty_info_dialog_new (GTK_WINDOW (self));
 
   G_OBJECT_CLASS (chatty_window_parent_class)->constructed (object);
 }
@@ -757,6 +779,7 @@ chatty_window_class_init (ChattyWindowClass *klass)
   gtk_widget_class_install_action (widget_class, "win.show-chat-details", NULL, chatty_window_show_chat_details);
   gtk_widget_class_install_action (widget_class, "win.show-settings", NULL, chatty_window_show_settings);
   gtk_widget_class_install_action (widget_class, "win.go-back", NULL, chatty_window_go_back);
+  gtk_widget_class_install_action (widget_class, "win.search-chat", NULL, on_search_chat_activated);
 }
 
 static void
@@ -764,6 +787,8 @@ chatty_window_init (ChattyWindow *self)
 {
   gboolean folded;
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  chatty_window_enable_per_chat_actions (self, FALSE);
 
   self->chat_list = chatty_side_bar_get_chat_list (CHATTY_SIDE_BAR (self->side_bar));
   self->manager = g_object_ref (chatty_manager_get_default ());
@@ -776,6 +801,13 @@ chatty_window_init (ChattyWindow *self)
   folded = adw_navigation_split_view_get_collapsed (ADW_NAVIGATION_SPLIT_VIEW (self->split_view));
   chatty_side_bar_set_show_end_title_buttons (CHATTY_SIDE_BAR (self->side_bar), folded);
   chatty_main_view_set_item (CHATTY_MAIN_VIEW (self->main_view), NULL);
+
+  gtk_application_set_accels_for_action (GTK_APPLICATION (g_application_get_default ()),
+                                         "win.show-chat-details",
+                                         (const char *[]){"<ctrl>d", NULL, });
+  gtk_application_set_accels_for_action (GTK_APPLICATION (g_application_get_default ()),
+                                         "win.search-chat",
+                                         (const char *[]){"<ctrl>f", NULL, });
 }
 
 GtkWidget *

@@ -18,14 +18,14 @@
 
 #define DEFAULT_DOMAIN_PREFIX "chatty"
 
-FILE *ostream;
-char *domains;
+static FILE *ostream;
+static char *domains;
 static int verbosity;
-gboolean any_domain;
-gboolean no_anonymize;
-gboolean stderr_is_journal;
-gboolean fatal_criticals, fatal_warnings;
-gboolean enable_trace;
+static gboolean any_domain;
+static gboolean no_anonymize;
+static gboolean stderr_is_journal;
+static gboolean fatal_criticals, fatal_warnings;
+static gboolean enable_trace;
 
 /* Copied from GLib, LGPLv2.1+ */
 static void
@@ -440,9 +440,9 @@ chatty_log_init (void)
         g_mem_gc_friendly = TRUE;
 
       if (flags & G_LOG_LEVEL_WARNING)
-        fatal_criticals = TRUE;
-      if (flags & G_LOG_LEVEL_CRITICAL)
         fatal_warnings = TRUE;
+      if (flags & G_LOG_LEVEL_CRITICAL)
+        fatal_criticals = TRUE;
 
       stderr_is_journal = g_log_writer_is_journald (fileno (stderr));
       g_log_set_writer_func (chatty_log_handler, NULL, NULL);

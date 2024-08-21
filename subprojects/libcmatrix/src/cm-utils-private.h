@@ -4,9 +4,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later
  */
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
+#include "cm-config.h"
 
 #include <glib-object.h>
 #include <json-glib/json-glib.h>
@@ -76,13 +74,6 @@ void          cm_utils_read_uri_async           (const char          *uri,
                                                  GAsyncReadyCallback  callback,
                                                  gpointer             user_data);
 gpointer      cm_utils_read_uri_finish          (GAsyncResult        *result,
-                                                 GError             **error);
-void          cm_utils_get_homeserver_async     (const char          *username,
-                                                 guint                timeout,
-                                                 GCancellable        *cancellable,
-                                                 GAsyncReadyCallback  callback,
-                                                 gpointer             user_data);
-char         *cm_utils_get_homeserver_finish    (GAsyncResult        *result,
                                                  GError             **error);
 void          cm_utils_verify_homeserver_async  (const char          *server,
                                                  guint                timeout,

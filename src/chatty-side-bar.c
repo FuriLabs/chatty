@@ -133,6 +133,9 @@ side_bar_search_enable_changed_cb (ChattySideBar *self)
   if (!enabled &&
       self->protocol_any_row != self->selected_protocol_row)
     gtk_widget_activate (self->protocol_any_row);
+
+  if (enabled)
+    gtk_widget_grab_focus (self->chats_search_entry);
 }
 
 static void
@@ -355,4 +358,16 @@ chatty_side_bar_set_show_archived (ChattySideBar *self,
   gtk_widget_set_visible (self->back_button, show_archived);
   gtk_widget_set_visible (self->add_chat_button, !show_archived);
   chatty_chat_list_show_archived (CHATTY_CHAT_LIST (self->chat_list), show_archived);
+}
+
+
+void
+chatty_side_bar_toggle_search (ChattySideBar *self)
+{
+  gboolean active;
+
+  g_return_if_fail (CHATTY_IS_SIDE_BAR (self));
+
+  active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (self->search_button));
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (self->search_button), !active);
 }

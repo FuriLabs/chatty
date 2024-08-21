@@ -20,6 +20,7 @@
 #include "chatty-message.h"
 #include "chatty-file-item.h"
 #include "chatty-settings.h"
+#include "chatty-utils.h"
 
 
 struct _ChattyFileItem
@@ -132,127 +133,46 @@ image_item_update_animation_cb (gpointer user_data)
 static void
 process_vcard (ChattyFileItem *self)
 {
-  g_autoptr(GFile) text_file = NULL;
-  g_autofree char *contents = NULL;
-  g_autoptr(GError) error = NULL;
-  g_auto(GStrv) lines = NULL;
-  gsize length;
+  g_autofree char *contact_title = NULL;
+  g_autoptr(GFile) vcard = NULL;
 
   gtk_label_set_text (GTK_LABEL (self->file_title), _("Contact"));
 
   if (chatty_message_get_cm_event (self->message))
-    text_file = g_file_new_build_filename (chatty_file_get_path (self->file), NULL);
+    vcard = g_file_new_build_filename (chatty_file_get_path (self->file), NULL);
   else
-    text_file = g_file_new_build_filename (g_get_user_data_dir (), "chatty", chatty_file_get_path (self->file), NULL);
+    vcard = g_file_new_build_filename (g_get_user_data_dir (), "chatty", chatty_file_get_path (self->file), NULL);
 
-  g_file_load_contents (text_file,
-                        NULL,
-                        &contents,
-                        &length,
-                        NULL,
-                        &error);
+   contact_title = chatty_utils_vcard_get_contact_title (vcard);
 
-  if (error) {
-    g_warning ("error opening file: %s", error->message);
-    return;
-  }
+   if (contact_title) {
+     g_autofree char *file_item_title = NULL;
 
-  lines = g_strsplit_set (contents, "\r\n", -1);
-  for (int i = 0; lines[i] != NULL; i++) {
-     if (g_str_has_prefix (lines[i], "FN:")) {
-       g_autofree char *contact = NULL;
-
-       contact = g_strdup_printf (_("Contact: %s"), lines[i] + 3);
-       gtk_label_set_text (GTK_LABEL (self->file_title), contact);
-       /*
-        * Formatted name ("FN:") is better formatted and required in later versions
-        * of vCals vs. Name ("N:"). Since we found it, we can be done searching.
-        */
-       break;
-     }
-     if (g_str_has_prefix (lines[i], "N:")) {
-       g_autofree char *contact = NULL;
-       g_auto(GStrv) tokens = NULL;
-       unsigned int token_length = 0;
-
-       tokens = g_strsplit_set (lines[i] + 2, ";", 5);
-       token_length = g_strv_length (tokens);
-       /* https://www.rfc-editor.org/rfc/rfc2426#section-3.1.2  This should be a length of 5, but let's not risk it*/
-       /* Translators: Order is: Family Name, Given Name, Additional/Middle Names, Honorific Prefixes, and Honorific Suffixes */
-       if (token_length == 5) {
-         if (*tokens[3])
-           contact = g_strdup_printf (_("Contact: %s %s %s %s"), tokens[3], tokens[1], tokens[0], tokens[4]);
-         else
-           contact = g_strdup_printf (_("Contact: %s %s %s"), tokens[1], tokens[0], tokens[4]);
-
-       } else if (token_length == 4) {
-         if (*tokens[3])
-           contact = g_strdup_printf (_("Contact: %s %s %s"), tokens[3], tokens[1], tokens[0]);
-         else
-           contact = g_strdup_printf (_("Contact: %s %s"), tokens[1], tokens[0]);
-
-       } else if (token_length == 3 || token_length == 2)
-         contact = g_strdup_printf (_("Contact: %s %s"), tokens[1], tokens[0]);
-       else
-         contact = g_strdup_printf (_("Contact: %s"), tokens[0]);
-
-       gtk_label_set_text (GTK_LABEL (self->file_title), contact);
-       /*
-        * Formatted name ("FN:") is better formatted and required in later versions
-        * of vCals vs. Name ("N:"). So if we find Name ("N:"), let's keep
-        * searching for formatted name.
-        */
-       continue;
-     }
-  }
+     file_item_title = g_strdup_printf (_("Contact: %s"), contact_title);
+     gtk_label_set_text (GTK_LABEL (self->file_title), file_item_title);
+   } else
+     gtk_label_set_text (GTK_LABEL (self->file_title), _("Contact"));
 }
 
 static void
 process_vcal (ChattyFileItem *self)
 {
-  g_autoptr(GFile) text_file = NULL;
-  g_autofree char *contents = NULL;
-  g_autoptr(GError) error = NULL;
-  g_auto(GStrv) lines = NULL;
-  gsize length;
-
-  gtk_label_set_text (GTK_LABEL (self->file_title), C_("Invitation to event", "Invite"));
+  g_autoptr(GFile) vcal = NULL;
+  g_autofree char *event_title = NULL;
 
   if (chatty_message_get_cm_event (self->message))
-    text_file = g_file_new_build_filename (chatty_file_get_path (self->file), NULL);
+    vcal = g_file_new_build_filename (chatty_file_get_path (self->file), NULL);
   else
-    text_file = g_file_new_build_filename (g_get_user_data_dir (), "chatty", chatty_file_get_path (self->file), NULL);
+    vcal = g_file_new_build_filename (g_get_user_data_dir (), "chatty", chatty_file_get_path (self->file), NULL);
 
-  g_file_load_contents (text_file,
-                        NULL,
-                        &contents,
-                        &length,
-                        NULL,
-                        &error);
+  event_title = chatty_utils_vcal_get_event_title (vcal);
 
-  if (error) {
-    g_warning ("error opening file: %s", error->message);
-    return;
-  }
-
-  lines = g_strsplit_set (contents, "\r\n", -1);
-  for (int i = 0; lines[i] != NULL; i++) {
-     if (g_str_has_prefix (lines[i], "SUMMARY")) {
-       g_auto(GStrv) tokens = NULL;
-       unsigned int token_length = 0;
-
-       tokens = g_strsplit_set (lines[i] + 2, ":", 2);
-       token_length = g_strv_length (tokens);
-       /* https://www.rfc-editor.org/rfc/rfc5545#section-3.8.1.12  This should be a length of 2, but let's not risk it*/
-       if (token_length == 2) {
-         g_autofree char *calendar = NULL;
-         calendar = g_strdup_printf (_("Invite: %s"), tokens[1]);
-         gtk_label_set_text (GTK_LABEL (self->file_title), calendar);
-       }
-
-       break;
-     }
-  }
+  if (event_title) {
+    g_autofree char *calendar_title = NULL;
+    calendar_title = g_strdup_printf (_("Invite: %s"), event_title);
+    gtk_label_set_text (GTK_LABEL (self->file_title), calendar_title);
+  } else
+    gtk_label_set_text (GTK_LABEL (self->file_title), C_("Invitation to event", "Invitation"));
 }
 
 static void
@@ -553,7 +473,7 @@ download_button_clicked (ChattyFileItem *self)
   g_autoptr(GFile) home_folder = NULL;
   g_autoptr(GError) error = NULL;
   GtkFileDialog *dialog;
-  GFileInfo *file_info;
+
   GtkWindow *window;
 
   window = gtk_application_get_active_window (GTK_APPLICATION (g_application_get_default ()));
@@ -569,14 +489,31 @@ download_button_clicked (ChattyFileItem *self)
   home_folder = g_file_new_build_filename (g_get_home_dir (), NULL);
   gtk_file_dialog_set_initial_folder (dialog, home_folder);
 
-  file_info = g_file_query_info (file_to_save,
-                                 G_FILE_ATTRIBUTE_STANDARD_NAME,
-                                 G_FILE_QUERY_INFO_NONE,
-                                 NULL, &error);
-  if (error)
-    g_warning ("Error querying info: %s", error->message);
-  else
-    gtk_file_dialog_set_initial_name (dialog,  g_file_info_get_name (file_info));
+  if (strstr (chatty_file_get_mime_type (self->file), "vcard")) {
+    g_autofree char *contact_title = NULL;
+    g_autofree char *filename = NULL;
+
+    contact_title = chatty_utils_vcard_get_contact_title (file_to_save);
+    filename = g_strdup_printf ("%s.vcf", contact_title);
+    gtk_file_dialog_set_initial_name (dialog,  filename);
+  } else if (strstr (chatty_file_get_mime_type (self->file), "calendar")) {
+    g_autofree char *event_title = NULL;
+    g_autofree char *filename = NULL;
+
+    event_title = chatty_utils_vcal_get_event_title (file_to_save);
+    filename = g_strdup_printf ("%s.ics", event_title);
+    gtk_file_dialog_set_initial_name (dialog,  filename);
+  } else {
+    GFileInfo *file_info;
+    file_info = g_file_query_info (file_to_save,
+                                   G_FILE_ATTRIBUTE_STANDARD_NAME,
+                                   G_FILE_QUERY_INFO_NONE,
+                                   NULL, &error);
+    if (error)
+      g_warning ("Error querying info: %s", error->message);
+    else
+      gtk_file_dialog_set_initial_name (dialog,  g_file_info_get_name (file_info));
+  }
 
   gtk_file_dialog_set_modal (dialog, TRUE);
   gtk_file_dialog_set_title (dialog, "Save File as....");

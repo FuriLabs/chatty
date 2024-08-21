@@ -10,9 +10,7 @@
 
 #define G_LOG_DOMAIN "cm-enc"
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
+#include "cm-config.h"
 
 #include <json-glib/json-glib.h>
 #include <olm/olm.h>
@@ -1131,12 +1129,14 @@ cm_enc_handle_join_room_encrypted (CmEnc      *self,
         g_hash_table_insert (self->in_group_sessions, g_strdup (session_id), session);
     }
 
+  /* TODO bubble up invalid session error */
   if (!session)
     return NULL;
 
-  g_return_val_if_fail (session, NULL);
-
   plaintext = cm_olm_decrypt (session, 0, ciphertext);
+  /* TODO bubble up decryption error */
+  if (!plaintext)
+    return NULL;
 
   if (strstr (plaintext, "\"key_ops\""))
     cm_enc_save_file_enc (self, plaintext);

@@ -198,8 +198,20 @@
                   <object class="GtkLabel" id="homeserver_label">
                     <property name="halign">start</property>
                     <property name="ellipsize">end</property>
+                    <property name="selectable">1</property>
                     <layout>
                       <property name="column">1</property>
+                      <property name="row">0</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton" id="homeserver_btn">
+                    <property name="icon-name">edit-copy-symbolic</property>
+                    <property name="action-name">ma-account-details.copy</property>
+                    <property name="action-target">"homeserver"</property>
+                    <layout>
+                      <property name="column">2</property>
                       <property name="row">0</property>
                     </layout>
                   </object>
@@ -222,8 +234,20 @@
                   <object class="GtkLabel" id="matrix_id_label">
                     <property name="halign">start</property>
                     <property name="ellipsize">end</property>
+                    <property name="selectable">1</property>
                     <layout>
                       <property name="column">1</property>
+                      <property name="row">1</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton" id="matrix_id_btn">
+                    <property name="icon-name">edit-copy-symbolic</property>
+                    <property name="action-name">ma-account-details.copy</property>
+                    <property name="action-target">"matrix-id"</property>
+                    <layout>
+                      <property name="column">2</property>
                       <property name="row">1</property>
                     </layout>
                   </object>
@@ -245,8 +269,20 @@
                 <child>
                   <object class="GtkLabel" id="device_id_label">
                     <property name="halign">start</property>
+                    <property name="selectable">1</property>
                     <layout>
                       <property name="column">1</property>
+                      <property name="row">2</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton" id="device_id_btn">
+                    <property name="icon-name">edit-copy-symbolic</property>
+                    <property name="action-name">ma-account-details.copy</property>
+                    <property name="action-target">"device-id"</property>
+                    <layout>
+                      <property name="column">2</property>
                       <property name="row">2</property>
                     </layout>
                   </object>
@@ -284,12 +320,14 @@
                       <object class="GtkLabel" id="access_token_label">
                         <property name="halign">start</property>
                         <property name="ellipsize">end</property>
+                        <property name="selectable">1</property>
                       </object>
                     </child>
                     <child>
                       <object class="GtkButton" id="access_token_btn">
                         <property name="icon-name">edit-copy-symbolic</property>
-                        <property name="action-name">ma-account-details.copy-access-token</property>
+                        <property name="action-name">ma-account-details.copy</property>
+                        <property name="action-target">"access-token"</property>
                       </object>
                     </child>
                   </object>

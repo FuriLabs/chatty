@@ -6,9 +6,7 @@
 
 #define G_LOG_DOMAIN "cm-room"
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
+#include "cm-config.h"
 
 #include "cm-input-stream-private.h"
 #include "cm-client-private.h"
@@ -31,6 +29,12 @@
 #define KEY_TIMEOUT         10000 /* milliseconds */
 #define TYPING_TIMEOUT      4     /* seconds */
 
+/**
+ * CmRoom:
+ *
+ * A Matrix room. This class provides access to properties of the room
+ * including a list of events maintained as a `GListModel`.
+ */
 struct _CmRoom
 {
   GObject parent_instance;
@@ -106,10 +110,17 @@ enum {
   PROP_0,
   PROP_ENCRYPTED,
   PROP_NAME,
+  PROP_UNREAD_COUNT,
   N_PROPS
 };
 
 static GParamSpec *properties[N_PROPS];
+
+typedef struct
+{
+  GAsyncResult *res;
+  GMainLoop *loop;
+} CmRoomSyncData;
 
 /* static gboolean room_resend_message          (gpointer user_data); */
 static void     room_send_message_from_queue (CmRoom *self);
@@ -420,6 +431,10 @@ cm_room_get_property (GObject    *object,
       g_value_set_string (value, cm_room_get_name (self));
       break;
 
+    case PROP_UNREAD_COUNT:
+      g_value_set_uint (value, cm_room_get_unread_notification_counts (self));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -479,6 +494,17 @@ cm_room_class_init (CmRoomClass *klass)
                          "The room name",
                          NULL,
                          G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+  /**
+   * CmRoom:unread-count:
+   *
+   * The number of unread notifications in this room
+   *
+   * Since: 0.0.2
+   */
+  properties[PROP_UNREAD_COUNT] =
+    g_param_spec_int ("unread-count", "", "",
+                       0, G_MAXINT, 0,
+                       G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
@@ -535,6 +561,7 @@ cm_room_new_from_json (const char *room_id,
 {
   g_autoptr(GString) str = NULL;
   CmRoom *self;
+  gint old_unread;
 
   self = cm_room_new (room_id);
 
@@ -542,6 +569,7 @@ cm_room_new_from_json (const char *room_id,
   cm_utils_anonymize (str, room_id);
   CM_TRACE ("(%p) new room '%s' from json", self, str->str);
 
+  old_unread = self->unread_count;
   if (root)
     {
       JsonObject *local, *child;
@@ -562,6 +590,9 @@ cm_room_new_from_json (const char *room_id,
       if (last_event)
         g_debug ("(%p) Added 1 event from db", self);
     }
+
+  if (old_unread != self->unread_count)
+    g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_UNREAD_COUNT]);
 
   return self;
 }
@@ -845,6 +876,14 @@ cm_room_is_encrypted (CmRoom *self)
   return !!event;
 }
 
+/**
+ * cm_room_get_joined_members:
+ * @self: The room
+ *
+ * Get the currently joined members of a room.
+ *
+ * Returns:(transfer none): The members as list model.
+ */
 GListModel *
 cm_room_get_joined_members (CmRoom *self)
 {
@@ -853,6 +892,14 @@ cm_room_get_joined_members (CmRoom *self)
   return G_LIST_MODEL (self->joined_members);
 }
 
+/**
+ * cm_room_get_events_list:
+ * @self: The room
+ *
+ * Get a list model of currently known room events.
+ *
+ * Returns:(transfer none): The room event list
+ */
 GListModel *
 cm_room_get_events_list (CmRoom *self)
 {
@@ -1010,6 +1057,16 @@ cm_room_get_avatar_async (CmRoom              *self,
     g_task_return_pointer (task, NULL, NULL);
 }
 
+/**
+ * cm_room_get_avatar_finish:
+ * @self: The room
+ * @result: `GAsyncResult`
+ * @error: The return location for a recoverable error.
+ *
+ * Finishes an asynchronous operation started with [method@Room.get_avatar_async].
+ *
+ * Returns:(transfer full): The input stream
+ */
 GInputStream *
 cm_room_get_avatar_finish (CmRoom        *self,
                            GAsyncResult  *result,
@@ -1090,12 +1147,14 @@ cm_room_set_data (CmRoom     *self,
   JsonObject *child, *local;
   JsonArray *array;
   guint length = 0;
+  gint old_unread;
 
   g_return_val_if_fail (CM_IS_ROOM (self), NULL);
   g_return_val_if_fail (object, NULL);
 
   child = cm_utils_json_object_get_object (object, "unread_notifications");
 
+  old_unread = self->unread_count;
   if (child)
     {
       local = cm_room_event_list_get_local_json (self->room_event);
@@ -1155,6 +1214,9 @@ cm_room_set_data (CmRoom     *self,
 
   self->initial_sync_done = TRUE;
   cm_room_save (self);
+
+  if (old_unread != self->unread_count)
+    g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_UNREAD_COUNT]);
 
   return g_steal_pointer (&events);
 }
@@ -1524,7 +1586,7 @@ room_accept_invite_cb (GObject      *object,
   gboolean success;
 
   self = g_task_get_source_object (task);
-  success = cm_client_join_room_by_id_finish (self->client, result, &error);
+  success = cm_client_join_room_finish (self->client, result, &error);
 
   self->invite_accept_success = success;
   self->is_accepting_invite = FALSE;
@@ -1584,10 +1646,10 @@ cm_room_accept_invite_async (CmRoom              *self,
 
   self->is_accepting_invite = TRUE;
 
-  cm_client_join_room_by_id_async (self->client, self->room_id,
-                                   cancellable,
-                                   room_accept_invite_cb,
-                                   g_steal_pointer (&task));
+  cm_client_join_room_async (self->client, self->room_id,
+                             cancellable,
+                             room_accept_invite_cb,
+                             g_steal_pointer (&task));
 }
 
 gboolean
@@ -1767,6 +1829,19 @@ cm_room_send_text_finish (CmRoom       *self,
   return g_task_propagate_pointer (G_TASK (result), error);
 }
 
+/**
+ * cm_room_send_file_async:
+ * @self: The room
+ * @progress_callback:(scope async): The callback to run when ready
+ * @progress_user_data: user data for @progress_callback
+ * @cancellable: (nullable): A #GCancellable
+ * @callback: The callback to run when ready
+ * @user_data: user data for @callback
+ *
+ * Send a file.
+ *
+ * Run [method@Room.send_file_finish] to get the result.
+ */
 const char *
 cm_room_send_file_async (CmRoom                *self,
                          GFile                 *file,
@@ -2339,6 +2414,18 @@ room_load_sync_cb (GObject      *object,
   cm_room_load_past_events_async (self, callback, cb_user_data);
 }
 
+/**
+ * cm_room_load_past_events_async:
+ * @self: The room
+ * @callback: A `GAsyncReadyCallback` to call when the request is satisfied.
+ * @user_data: The data to pass to callback function.
+ *
+ * Get the next batch of past events from the database. If the room
+ * wasn't ever synced from the server, do that first. A batch is
+ * currently 30 events.
+ *
+ * Run [method@Room.load_past_events_finish] to get the result.
+ */
 void
 cm_room_load_past_events_async (CmRoom              *self,
                                 GAsyncReadyCallback  callback,
@@ -2383,6 +2470,18 @@ cm_room_load_past_events_async (CmRoom              *self,
                                g_steal_pointer (&task));
 }
 
+/**
+ * cm_room_load_past_events_finish:
+ * @self: The room
+ * @result: `GAsyncResult`
+ * @error: The return location for a recoverable error.
+ *
+ * Finishes an asynchronous operation started with [method@Room.load_past_events_async].
+ *
+ * In case of error `FALSE` is returned and `error` is set.
+ *
+ * Returns: `TRUE` if the load succeeded, otherwise `FALSE`
+ */
 gboolean
 cm_room_load_past_events_finish (CmRoom        *self,
                                  GAsyncResult  *result,
@@ -2394,6 +2493,62 @@ cm_room_load_past_events_finish (CmRoom        *self,
 
   return g_task_propagate_boolean (G_TASK (result), error);
 }
+
+static void
+cm_room_load_past_events_sync_cb (GObject         *object,
+                                  GAsyncResult    *res,
+                                  gpointer         user_data)
+{
+  CmRoomSyncData *data = user_data;
+  data->res = g_object_ref (res);
+  g_main_loop_quit (data->loop);
+}
+
+/**
+ * cm_room_load_past_events_sync:
+ * @self: The room
+ * @error: The return location for a recoverable error.
+ *
+ * Load past events.
+ *
+ * This is a synchronous method. See [method@Room.load_past_events_async] for
+ * an asynchronous version.
+ *
+ * Returns: `TRUE` if the load succeeded, otherwise `FALSE`
+ *
+ * Since: 0.0.2
+ */
+gboolean
+cm_room_load_past_events_sync (CmRoom        *self,
+                               GError       **error)
+{
+  CmRoomSyncData data;
+  g_autoptr (GMainContext) context = g_main_context_new ();
+  g_autoptr (GMainLoop) loop = NULL;
+  gboolean success;
+
+  g_main_context_push_thread_default (context);
+  loop = g_main_loop_new (context, FALSE);
+
+  data = (CmRoomSyncData) {
+    .loop = loop,
+    .res = NULL,
+  };
+
+  cm_room_load_past_events_async (self,
+                                  cm_room_load_past_events_sync_cb,
+                                  &data);
+  g_main_loop_run (data.loop);
+
+  success = cm_room_load_past_events_finish (self, data.res, error);
+
+  if (data.res)
+    g_object_unref (data.res);
+  g_main_context_pop_thread_default (context);
+
+  return success;
+}
+
 
 static void
 get_joined_members_cb (GObject      *obj,
@@ -2748,4 +2903,190 @@ cm_room_update_user (CmRoom  *self,
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_NAME]);
       self->db_save_pending = TRUE;
     }
+}
+
+static void
+room_get_event_cb (GObject      *object,
+                   GAsyncResult *result,
+                   gpointer      user_data)
+{
+  CmRoom *self;
+  g_autoptr (GPtrArray) events = NULL;
+  g_autoptr(GTask) task = user_data;
+  JsonObject *event, *root;
+  JsonArray *array;
+  GError *error = NULL;
+
+  self = g_task_get_source_object (task);
+  g_assert (CM_IS_ROOM (self));
+
+  event = g_task_propagate_pointer (G_TASK (result), &error);
+  if (error) {
+    g_task_return_error (task, error);
+    return;
+  }
+
+  /* Wrap our event in an array */
+  array = json_array_new ();
+  json_array_add_object_element (array, event);
+  root = json_object_new ();
+  json_object_set_array_member (root, "events", array);
+
+  events = g_ptr_array_new_full (1, NULL);
+  cm_room_event_list_parse_events (self->room_event, root, events, FALSE);
+  /* TODO: should we persist the event by default ? */
+
+  if (events->len == 0) {
+    g_task_return_new_error (task, CM_ERROR, CM_ERROR_BAD_JSON, "Failed to parse event");
+    return;
+  }
+
+  g_assert (events->len == 1);
+  g_task_return_pointer (task, events->pdata[0], g_object_unref);
+}
+
+/**
+ * cm_room_event_get_async:
+ * @self: The room to get the event in
+ * @event_id: The id of the event to get
+ * @cancellable: Optional GCancellable object, NULL to ignore.
+ * @callback: A `GAsyncReadyCallback` to call when the request is satisfied.
+ * @user_data: The data to pass to callback function.
+ *
+ * Get a single event.
+ *
+ * Run [method@Room.get_event_finish] to get the result.
+ */
+void
+cm_room_get_event_async (CmRoom              *self,
+                         const char          *event_id,
+                         GCancellable        *cancellable,
+                         GAsyncReadyCallback  callback,
+                         gpointer             user_data)
+{
+  g_autoptr(GTask) task = NULL;
+  g_autofree char *url = NULL;
+
+  g_return_if_fail (CM_IS_ROOM (self));
+  g_return_if_fail (event_id);
+  g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  task = g_task_new (self, cancellable, callback, user_data);
+
+  g_debug ("(%p) Fetch event %s", self, event_id);
+
+  url = g_strdup_printf ("/_matrix/client/r0/rooms/%s/event/%s", self->room_id, event_id);
+  cm_net_send_data_async (cm_client_get_net (self->client), 0, NULL, 0,
+                          url, SOUP_METHOD_GET, NULL,
+                          cancellable,
+                          room_get_event_cb,
+                          g_steal_pointer (&task));
+}
+
+/**
+ * cm_room_get_event_finish:
+ * @self: The room
+ * @result: `GAsyncResult`
+ * @error: The return location for a recoverable error.
+ *
+ * Finishes an asynchronous operation started with [method@Room.get_event_async].
+ *
+ * Gets the event. If the event is already in the list of events (see
+ * [method@Room.get_events_list]) `NULL` is returned. In case of error
+ * `NULL` is returned and `error` is set.
+ *
+ * Returns:(transfer full): A [type@Event] or `NULL`
+ */
+CmEvent *
+cm_room_get_event_finish (CmRoom        *self,
+                          GAsyncResult  *result,
+                          GError       **error)
+{
+  g_return_val_if_fail (CM_IS_ROOM (self), FALSE);
+  g_return_val_if_fail (G_IS_TASK (result), FALSE);
+  g_return_val_if_fail (!error || !*error, FALSE);
+
+  return g_task_propagate_pointer (G_TASK (result), error);
+}
+
+
+static void
+cm_room_get_event_sync_cb (GObject         *object,
+                           GAsyncResult    *res,
+                           gpointer         user_data)
+{
+  CmRoomSyncData *data = user_data;
+  data->res = g_object_ref (res);
+  g_main_loop_quit (data->loop);
+}
+
+/**
+ * cm_room_get_event_sync:
+ * @self: The room
+ * @event_id: The id of the event to get
+ * @cancellable: Optional GCancellable object, NULL to ignore.
+ * @error: The return location for a recoverable error.
+ *
+ * Get a single event.
+ *
+ * This is a synchronous method. See [method@Room.get_event_async] for
+ * an asynchronous version.
+ *
+ * Returns:(transfer full): A [type@CmEvent] or `NULL` if the operation failed.
+ */
+CmEvent *
+cm_room_get_event_sync (CmRoom        *self,
+                        const char    *event_id,
+                        GCancellable  *cancellable,
+                        GError       **error)
+{
+  CmEvent *event;
+  CmRoomSyncData data;
+  g_autoptr (GMainContext) context = g_main_context_new ();
+  g_autoptr (GMainLoop) loop = NULL;
+
+  g_main_context_push_thread_default (context);
+  loop = g_main_loop_new (context, FALSE);
+
+  data = (CmRoomSyncData) {
+    .loop = loop,
+    .res = NULL,
+  };
+
+  cm_room_get_event_async (self, event_id, cancellable,
+                           cm_room_get_event_sync_cb,
+                           &data);
+  g_main_loop_run (data.loop);
+
+  event = cm_room_get_event_finish (self, data.res, error);
+
+  if (data.res)
+    g_object_unref (data.res);
+  g_main_context_pop_thread_default (context);
+
+  return event;
+}
+
+/**
+ * cm_room_get_topic:
+ * @self: A #CmRoom
+ *
+ * Get matrix room's topic.
+ *
+ * Returns:(nullable): The room topic
+ *
+ * Since: 0.0.2
+ */
+const char *
+cm_room_get_topic (CmRoom *self)
+{
+  CmEvent *event;
+
+  g_return_val_if_fail (CM_IS_ROOM (self), NULL);
+
+  event = cm_room_event_list_get_event (self->room_event, CM_M_ROOM_TOPIC);
+  if (!event)
+    return NULL;
+
+  return cm_room_event_get_topic (CM_ROOM_EVENT (event));
 }

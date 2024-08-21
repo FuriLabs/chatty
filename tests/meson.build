@@ -34,7 +34,7 @@ foreach item: test_items
     item,
     item + '.c',
     include_directories: tests_inc,
-    link_with: libchatty_static,
+    link_with: libchatty.get_static_lib(),
     dependencies: chatty_deps,
   )
   test(item, t, env: env, timeout: 300)
@@ -50,7 +50,7 @@ foreach item: test_items_shared_lib
     item,
     item + '.c',
     include_directories: tests_inc,
-    link_with: libchatty_shared,
+    link_with: libchatty,
     dependencies: chatty_deps,
   )
   test(item, t, env: env, timeout: 300)

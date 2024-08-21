@@ -31,6 +31,7 @@ typedef enum {
   CM_ERROR_LIMIT_EXCEEDED,
   CM_ERROR_UNKNOWN,
   CM_ERROR_UNRECOGNIZED,
+  /* 1x */
   CM_ERROR_UNAUTHORIZED,
   CM_ERROR_USER_DEACTIVATED,
   CM_ERROR_USER_IN_USE,
@@ -41,6 +42,7 @@ typedef enum {
   CM_ERROR_THREEPID_NOT_FOUND,
   CM_ERROR_THREEPID_AUTH_FAILED,
   CM_ERROR_THREEPID_DENIED,
+  /* 2x */
   CM_ERROR_SERVER_NOT_TRUSTED,
   CM_ERROR_UNSUPPORTED_ROOM_VERSION,
   CM_ERROR_INCOMPATIBLE_ROOM_VERSION,
@@ -51,15 +53,17 @@ typedef enum {
   CM_ERROR_MISSING_PARAM,
   CM_ERROR_INVALID_PARAM,
   CM_ERROR_TOO_LARGE,
+  /* 3x */
   CM_ERROR_EXCLUSIVE,
   CM_ERROR_RESOURCE_LIMIT_EXCEEDED,
   CM_ERROR_CANNOT_LEAVE_SERVER_NOTICE_ROOM,
 
   /* Local errors */
-  CM_ERROR_BAD_PASSWORD,
-  CM_ERROR_NO_HOME_SERVER,
-  CM_ERROR_BAD_HOME_SERVER,
-  CM_ERROR_USER_DEVICE_CHANGED,
+  CM_ERROR_BAD_PASSWORD = -1,
+  CM_ERROR_NO_HOME_SERVER = -2,
+  CM_ERROR_BAD_HOME_SERVER = -3,
+  CM_ERROR_USER_DEVICE_CHANGED = -4,
+  CM_ERROR_BAD_PUSH_GATEWAY = -5,
 } CmError;
 
 typedef enum {
@@ -71,6 +75,12 @@ typedef enum {
   CM_STATUS_KNOCK
 } CmStatus;
 
+/**
+ * CmContentType:
+ * @CM_CONTENT_TYPE_UNKNOWN: The content type is unknown
+ * @CM_CONTENT_TYPE_TEXT: The event has a text content
+ * @CM_CONTENT_TYPE_IMAGE: The event has an image content
+ */
 typedef enum {
   CM_CONTENT_TYPE_UNKNOWN,
   CM_CONTENT_TYPE_TEXT,
@@ -84,6 +94,18 @@ typedef enum {
   CM_CONTENT_TYPE_SERVER_NOTICE,
 } CmContentType;
 
+/**
+ * CmEventType:
+ * @CM_M_UNKNOWN: The event type is unknown
+ * @CM_M_ROOM_MESSAGE: An event representing a message sent to a room.
+ *    See [class@RoomMessageEvent].
+ * @CM_M_ROOM_ENCRYPTED: An event in an encypted room. This is the majority
+ *    of events when a room is encrypted.
+ *
+ * The type of a Matrix event.
+ *
+ * See [method@Event.get_m_type].
+ */
 /*
  * The order of the enum items SHOULD NEVER
  * be changed as they are used in database.

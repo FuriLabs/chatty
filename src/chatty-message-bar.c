@@ -405,6 +405,8 @@ message_bar_send_message_button_clicked_cb (ChattyMessageBar *self)
       escaped = purple_markup_escape_text (message, -1);
 #endif
 
+    /* XXX it's confusing that we're setting the message type
+       to CHATTY_MESSAGE_TEXT (almost) unconditionally. what's up with that? */
     msg = chatty_message_new (NULL, escaped ? escaped : message,
                               NULL, time (NULL),
                               escaped ? CHATTY_MESSAGE_HTML_ESCAPED : CHATTY_MESSAGE_TEXT,

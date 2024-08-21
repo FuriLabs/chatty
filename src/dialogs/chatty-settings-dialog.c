@@ -420,9 +420,9 @@ chatty_settings_save_clicked_cb (ChattySettingsDialog *self)
 }
 
 static void
-settings_pp_details_changed_cb (ChattySettingsDialog *self,
-                                GParamSpec           *pspec,
-                                GtkWidget            *details)
+settings_account_details_changed_cb (ChattySettingsDialog *self,
+                                     GParamSpec           *pspec,
+                                     GtkWidget            *details)
 {
   gboolean modified;
 
@@ -487,14 +487,6 @@ settings_delete_account_clicked_cb (ChattySettingsDialog *self)
   g_signal_connect (dialog, "response", G_CALLBACK (settings_delete_account_response_cb), self);
 
   adw_dialog_present (dialog, GTK_WIDGET (window));
-}
-
-static void
-settings_pp_details_delete_cb (ChattySettingsDialog *self)
-{
-  g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
-
-  settings_delete_account_clicked_cb (self);
 }
 
 static void
@@ -1742,8 +1734,8 @@ chatty_settings_dialog_class_init (ChattySettingsDialogClass *klass)
 
   gtk_widget_class_bind_template_callback (widget_class, chatty_settings_add_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, chatty_settings_save_clicked_cb);
-  gtk_widget_class_bind_template_callback (widget_class, settings_pp_details_changed_cb);
-  gtk_widget_class_bind_template_callback (widget_class, settings_pp_details_delete_cb);
+  gtk_widget_class_bind_template_callback (widget_class, settings_account_details_changed_cb);
+  gtk_widget_class_bind_template_callback (widget_class, settings_delete_account_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, sms_mms_settings_row_activated_cb);
   gtk_widget_class_bind_template_callback (widget_class, pgp_settings_row_activated_cb);
   gtk_widget_class_bind_template_callback (widget_class, purple_settings_row_activated_cb);

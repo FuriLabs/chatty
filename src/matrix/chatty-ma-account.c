@@ -92,11 +92,11 @@ handle_password_login (ChattyMaAccount *self,
 }
 
 static void
-cm_account_sync_cb (gpointer   user_data,
-                    CmClient  *cm_client,
+cm_account_sync_cb (CmClient  *cm_client,
                     CmRoom    *cm_room,
                     GPtrArray *events,
-                    GError    *error)
+                    GError    *error,
+                    gpointer   user_data)
 {
   ChattyMaAccount *self = user_data;
 

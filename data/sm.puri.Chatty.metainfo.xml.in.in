@@ -15,7 +15,7 @@
     <translation type="gettext">purism-chatty</translation>
     <update_contact>librem5-dev@lists.community.puri.sm</update_contact>
     <launchable type="desktop-id">@APP_ID@.desktop</launchable>
-    <developer id="@chatty@puri.sm">
+    <developer id="chatty.puri.sm">
       <name translate="no">The Chatty Team</name>
     </developer>
     <screenshots>
@@ -32,6 +32,16 @@
         <content_attribute id="social-chat">intense</content_attribute>
     </content_rating>
     <releases>
+      <release version="0.8.5" date="2024-08-16">
+        <description>
+          <ul>
+            <li>Added some more keyboard shortcuts</li>
+            <li>More mature matrix support</li>
+            <li>Fixed various papercuts all over the place</li>
+            <li>Update Translations</li>
+          </ul>
+        </description>
+      </release>
       <release version="0.7.3" date="2023-05-13">
         <description>
           <ul>

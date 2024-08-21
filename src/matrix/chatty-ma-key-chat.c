@@ -29,6 +29,7 @@ struct _ChattyMaKeyChat
   ChattyMaAccount *ma_account;
   CmClient        *cm_client;
   ChattyMaBuddy   *buddy;
+  GListStore      *empty;
 
   CmVerificationEvent *key_event;
   ChattyChatState  chat_state;
@@ -56,6 +57,16 @@ chatty_ma_key_chat_get_account (ChattyChat *chat)
   return CHATTY_ACCOUNT (self->ma_account);
 }
 
+static GListModel *
+chatty_ma_key_chat_get_messages (ChattyChat *chat)
+{
+  ChattyMaKeyChat *self = CHATTY_MA_KEY_CHAT (chat);
+
+  g_assert (CHATTY_IS_MA_KEY_CHAT (self));
+
+  return G_LIST_MODEL (self->empty);
+}
+
 static const char *
 chatty_ma_key_chat_get_name (ChattyItem *item)
 {
@@ -76,6 +87,7 @@ chatty_ma_key_chat_finalize (GObject *object)
   g_clear_object (&self->key_event);
   g_clear_object (&self->cm_client);
   g_clear_object (&self->buddy);
+  g_clear_object (&self->empty);
 
   G_OBJECT_CLASS (chatty_ma_key_chat_parent_class)->finalize (object);
 }
@@ -94,12 +106,15 @@ chatty_ma_key_chat_class_init (ChattyMaKeyChatClass *klass)
 
   chat_class->get_chat_state = chatty_ma_key_chat_get_chat_state;
   chat_class->get_account  = chatty_ma_key_chat_get_account;
+  chat_class->get_messages = chatty_ma_key_chat_get_messages;
 }
 
 static void
 chatty_ma_key_chat_init (ChattyMaKeyChat *self)
 {
   self->chat_state = CHATTY_CHAT_VERIFICATION;
+
+  self->empty = g_list_store_new (CHATTY_TYPE_MESSAGE);
 }
 
 static void

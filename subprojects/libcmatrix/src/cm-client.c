@@ -10,9 +10,7 @@
 
 #define G_LOG_DOMAIN "cm-client"
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
+#include "cm-config.h"
 
 #define GCRYPT_NO_DEPRECATED
 #include <gcrypt.h>
@@ -20,6 +18,7 @@
 #include <libsoup/soup.h>
 
 #include "cm-net-private.h"
+#include "cm-utils.h"
 #include "cm-utils-private.h"
 #include "cm-common.h"
 #include "cm-db-private.h"
@@ -29,6 +28,7 @@
 #include "events/cm-event-private.h"
 #include "events/cm-verification-event.h"
 #include "events/cm-verification-event-private.h"
+#include "cm-pusher.h"
 #include "users/cm-room-member-private.h"
 #include "users/cm-user-private.h"
 #include "users/cm-user-list-private.h"
@@ -40,10 +40,18 @@
 #include "cm-client.h"
 
 /**
- * SECTION: cm-client
- * @title: CmClient
- * @short_description:
- * @include: "cm-client.h"
+ * CmClient:
+ *
+ * A Matrix client.
+ *
+ * A client represents a Matrix account on a device. See
+ * [method@Client.get_account] and [method@Client.get_device_id].
+ *
+ * Is responsible for logging in a user and interfacing with the user's home
+ * server.
+ *
+ * It can inform you about new events using a callback (see
+ * [method@Client.set_sync_callback]).
  */
 
 #define KEY_TIMEOUT         10000 /* milliseconds */
@@ -114,6 +122,12 @@ struct _CmClient
 };
 
 G_DEFINE_TYPE (CmClient, cm_client, G_TYPE_OBJECT)
+
+typedef struct
+{
+  GAsyncResult *res;
+  GMainLoop *loop;
+} CmClientSyncData;
 
 enum {
   PROP_0,
@@ -289,7 +303,7 @@ send_json_cb (GObject      *obj,
   g_task_return_pointer (task, g_steal_pointer (&root), (GDestroyNotify)json_object_unref);
 }
 
-static gboolean
+static void
 schedule_resync (gpointer user_data)
 {
   CmClient *self = user_data;
@@ -303,10 +317,8 @@ schedule_resync (gpointer user_data)
   if (sync_now)
     matrix_start_sync (self, NULL);
   else
-    self->resync_id = g_timeout_add_seconds (URI_REQUEST_TIMEOUT,
-                                             schedule_resync, self);
-
-  return G_SOURCE_REMOVE;
+    self->resync_id = g_timeout_add_seconds_once (URI_REQUEST_TIMEOUT,
+                                                  schedule_resync, self);
 }
 
 static gboolean
@@ -349,8 +361,8 @@ handle_matrix_glitches (CmClient *self,
           CM_TRACE ("(%p) Handle glitch, network error", self);
           g_clear_handle_id (&self->resync_id, g_source_remove);
 
-          self->resync_id = g_timeout_add_seconds (URI_REQUEST_TIMEOUT,
-                                                   schedule_resync, self);
+          self->resync_id = g_timeout_add_seconds_once (URI_REQUEST_TIMEOUT,
+                                                        schedule_resync, self);
           return TRUE;
         }
     }
@@ -402,6 +414,7 @@ client_login_with_password_async (CmClient            *self,
   json_object_set_object_member (object, "identifier", child);
 
   task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_source_tag (task, client_login_with_password_async);
   cm_net_send_json_async (self->cm_net, 2, object,
                           "/_matrix/client/r0/login", SOUP_METHOD_POST,
                           NULL, cancellable, send_json_cb,
@@ -519,15 +532,21 @@ cm_client_finalize (GObject *object)
 {
   CmClient *self = (CmClient *)object;
 
+  cm_client_set_sync_callback (self, NULL, NULL, NULL);
+
   if (self->cancellable)
     g_cancellable_cancel (self->cancellable);
   g_clear_object (&self->cancellable);
 
   g_clear_object (&self->cm_account);
   g_clear_object (&self->cm_net);
+  g_clear_object (&self->user_list);
 
   g_list_store_remove_all (self->joined_rooms);
   g_clear_object (&self->joined_rooms);
+
+  g_list_store_remove_all (self->invited_rooms);
+  g_clear_object (&self->invited_rooms);
 
   g_list_store_remove_all (self->key_verifications);
   g_clear_object (&self->key_verifications);
@@ -754,6 +773,7 @@ save_secrets_cb (GObject      *object,
 
 void
 cm_client_save_secrets_async (CmClient            *self,
+                              GCancellable        *cancellable,
                               GAsyncReadyCallback  callback,
                               gpointer             user_data)
 {
@@ -763,6 +783,7 @@ cm_client_save_secrets_async (CmClient            *self,
   g_return_if_fail (CM_IS_CLIENT (self));
 
   task = g_task_new (self, NULL, callback, user_data);
+  g_task_set_source_tag (task, cm_client_save_secrets_async);
 
   if (g_object_get_data (G_OBJECT (self), "no-save"))
     {
@@ -786,7 +807,7 @@ cm_client_save_secrets_async (CmClient            *self,
 
   cm_secret_store_save_async (NULL, self,
                               g_strdup (cm_client_get_access_token (self)),
-                              pickle_key, NULL,
+                              pickle_key, cancellable,
                               save_secrets_cb,
                               g_steal_pointer (&task));
 }
@@ -832,6 +853,7 @@ delete_secrets_cb (GObject      *object,
 
 void
 cm_client_delete_secrets_async (CmClient            *self,
+                                GCancellable        *cancellable,
                                 GAsyncReadyCallback  callback,
                                 gpointer             user_data)
 {
@@ -840,8 +862,9 @@ cm_client_delete_secrets_async (CmClient            *self,
   g_return_if_fail (CM_IS_CLIENT (self));
 
   task = g_task_new (self, NULL, callback, user_data);
+  g_task_set_source_tag (task, cm_client_delete_secrets_async);
   cm_client_set_enabled (self, FALSE);
-  cm_secret_store_delete_async (NULL, self, NULL,
+  cm_secret_store_delete_async (NULL, self, cancellable,
                                 delete_secrets_cb, task);
 }
 
@@ -856,6 +879,14 @@ cm_client_delete_secrets_finish (CmClient      *self,
   return g_task_propagate_boolean (G_TASK (result), error);
 }
 
+/**
+ * cm_client_get_account:
+ * @self: The client
+ *
+ * Get the account associated with the client.
+ *
+ * Returns:(transfer none): The account
+ */
 CmAccount *
 cm_client_get_account (CmClient *self)
 {
@@ -1135,13 +1166,10 @@ db_save_cb (GObject      *object,
 }
 
 /**
- * cm_client_set_enabled:
+ * cm_client_save:
  * @self: A #CmClient
- * @force: Whether to force saving to db
  *
  * Save the changes to associated CmDb.
- * Set @force to %TRUE to force saving to
- * db even when no changes are made
  */
 void
 cm_client_save (CmClient *self)
@@ -1172,7 +1200,7 @@ cm_client_save (CmClient *self)
     }
 
   if (self->save_secret_pending && !self->is_saving_secret)
-    cm_client_save_secrets_async (self, NULL, NULL);
+    cm_client_save_secrets_async (self, NULL, NULL, NULL);
 }
 
 /**
@@ -1200,32 +1228,32 @@ cm_client_get_enabled (CmClient *self)
 /**
  * cm_client_set_sync_callback:
  * @self: A #CmClient
- * @callback: A #CmCallback
- * @callback_data: A #GObject derived object for @callback user_data
- * @callback_data_destroy: (nullable): The method to destroy @callback_data
+ * @callback:(nullable): A #CmCallback
+ * @user_data:(nullable): The user data passed to @callback
+ * @destroy_data: (nullable): Function to call when the callback is removed
  *
- * Set the sync callback which shall be executed for the
- * events happening in @self.
+ * Set the sync callback which shall be executed for the events
+ * happening in @self. Set this early after creating the client so any
+ * async operations syncing the client state with the server can
+ * invoke it already.
  *
- * @callback_data_destroy() shall be executead only if @callback_data
- * is not NULL.
+ * Passing `NULL` for the callback removes an existing callback.
  */
 void
 cm_client_set_sync_callback (CmClient       *self,
                              CmCallback      callback,
-                             gpointer        callback_data,
-                             GDestroyNotify  callback_data_destroy)
+                             gpointer        user_data,
+                             GDestroyNotify  destroy_data)
 {
   g_return_if_fail (CM_IS_CLIENT (self));
-  g_return_if_fail (callback);
 
   if (self->cb_data &&
       self->cb_destroy)
     self->cb_destroy (self->cb_data);
 
   self->callback = callback;
-  self->cb_data = callback_data;
-  self->cb_destroy = callback_data_destroy;
+  self->cb_data = user_data;
+  self->cb_destroy = destroy_data;
 }
 
 /**
@@ -1283,12 +1311,12 @@ cm_client_set_user_id (CmClient   *self,
  * cm_client_get_user_id:
  * @self: A #CmClient
  *
- * Get the matrix user ID of the client @self.
- * user ID may be available only after the
- * login has succeeded and may return %NULL
+ * Get the matrix user ID of the client @self.  The User ID may be
+ * available only after the login has succeeded and may return %NULL
  * otherwise.
+ * If you need the login id before that use [method@Account.get_login_id].
  *
- * Returns: (nullable) (transfer none): The matrix user ID of the client
+ * Returns: The matrix user ID of the client
  */
 GRefString *
 cm_client_get_user_id (CmClient *self)
@@ -1539,7 +1567,7 @@ cm_client_set_device_name (CmClient   *self,
  * @self: A #CmClient
  *
  * Get the device name of the client @self
- * as set with cm_client_set_device_name().
+ * as set with [method@Client.set_device_name].
  *
  * Returns: (nullable): The Device name string
  */
@@ -1610,9 +1638,9 @@ cm_client_get_ed25519_key (CmClient *self)
 }
 
 static void
-client_join_room_by_id_cb (GObject      *obj,
-                           GAsyncResult *result,
-                           gpointer      user_data)
+client_join_room_cb (GObject      *obj,
+                     GAsyncResult *result,
+                     gpointer      user_data)
 {
   g_autoptr(GTask) task = user_data;
   g_autoptr(JsonObject) object = NULL;
@@ -1626,36 +1654,60 @@ client_join_room_by_id_cb (GObject      *obj,
     g_task_return_boolean (task, TRUE);
 }
 
+/**
+ * cm_client_join_room_async:
+ * @self: The client
+ * @id_or_alias: The id or alias of the room to join
+ * @cancellable: (nullable): Optional #GCancellable object, %NULL to ignore.
+ * @callback: The callback to invoke
+ * @user_data: (nullable): The user data for @callback.
+ *
+ * Tries to join a room by it's room id.
+ *
+ * Run [method@Client.join_room_finish] to get the result.
+ */
 void
-cm_client_join_room_by_id_async (CmClient            *self,
-                                 const char          *room_id,
-                                 GCancellable        *cancellable,
-                                 GAsyncReadyCallback  callback,
-                                 gpointer             user_data)
+cm_client_join_room_async (CmClient            *self,
+                           const char          *id_or_alias,
+                           GCancellable        *cancellable,
+                           GAsyncReadyCallback  callback,
+                           gpointer             user_data)
 {
   g_autofree char *uri = NULL;
   GTask *task;
 
   g_return_if_fail (CM_IS_CLIENT (self));
-  g_return_if_fail (room_id && *room_id == '!');
+  g_return_if_fail (id_or_alias &&
+                    (*id_or_alias == '!' || *id_or_alias == '#'));
   g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
 
   if (!cancellable)
     cancellable = self->cancellable;
 
   task = g_task_new (self, cancellable, callback, user_data);
-  uri = g_strconcat ("/_matrix/client/r0/join/", room_id, NULL);
+  g_task_set_source_tag (task, cm_client_join_room_async);
+  uri = g_strconcat ("/_matrix/client/r0/join/", id_or_alias, NULL);
   cm_net_send_data_async (self->cm_net, 2, NULL, 0,
                           uri, SOUP_METHOD_POST, NULL,
                           cancellable,
-                          client_join_room_by_id_cb,
+                          client_join_room_cb,
                           task);
 }
 
+/**
+ * cm_client_join_room_finish:
+ * @self: The client
+ * @result: The #GAsyncResult passed to your callback
+ * @error: The return location for a recoverable error.
+ *
+ * Finishes an asynchronous operation started with [method@Client.join_room_async].
+ *
+ * Returns: %TRUE if joined successfully, %FALSE otherwise.
+ */
 gboolean
-cm_client_join_room_by_id_finish (CmClient      *self,
-                                  GAsyncResult  *result,
-                                  GError       **error)
+cm_client_join_room_finish (CmClient      *self,
+                            GAsyncResult  *result,
+                            GError       **error)
 {
   g_return_val_if_fail (CM_IS_CLIENT (self), FALSE);
   g_return_val_if_fail (G_IS_TASK (result), FALSE);
@@ -1663,6 +1715,75 @@ cm_client_join_room_by_id_finish (CmClient      *self,
   return g_task_propagate_boolean (G_TASK (result), error);
 }
 
+static void
+cm_client_join_room_sync_cb (GObject      *object,
+                             GAsyncResult *res,
+                             gpointer      user_data)
+{
+  CmClientSyncData *data = user_data;
+  data->res = g_object_ref (res);
+
+  g_main_loop_quit (data->loop);
+}
+
+/**
+ * cm_client_join_room_sync:
+ * @self: The client
+ * @id_or_alias: The id or alias of the room to join
+ * @error: The return location for a recoverable error.
+ *
+ * Returns: %TRUE if joined successfully, %FALSE otherwise.
+ *
+ * Since: 0.0.2
+ */
+gboolean
+cm_client_join_room_sync (CmClient   *self,
+                          const char *id_or_alias,
+                          GError    **error)
+{
+  g_autoptr (GMainContext) context = g_main_context_new ();
+  g_autoptr (GMainLoop) loop = NULL;
+  CmClientSyncData data;
+  gboolean success;
+
+  g_return_val_if_fail (CM_IS_CLIENT (self), FALSE);
+
+  g_main_context_push_thread_default (context);
+  loop = g_main_loop_new (context, FALSE);
+
+  data = (CmClientSyncData) {
+    .loop = loop,
+    .res = NULL,
+  };
+
+  cm_client_join_room_async (self,
+                             id_or_alias,
+                             NULL,
+                             cm_client_join_room_sync_cb,
+                             &data);
+  g_main_loop_run (data.loop);
+
+  success = cm_client_join_room_finish (self, data.res, error);
+
+  if (data.res)
+    g_object_unref (data.res);
+  g_main_context_pop_thread_default (context);
+
+  return success;
+}
+
+/**
+ * cm_client_get_homeserver_async:
+ * @self: The client
+ * @cancellable: (nullable): A #GCancellable
+ * @callback: A #GAsyncReadyCallback
+ * @user_data: The user data for @callback.
+ *
+ * Tries to determine the home server based on the user data set on
+ * the [type@Account].
+ *
+ * Run [method@Client.get_homeserver_finish] to get the result.
+ */
 void
 cm_client_get_homeserver_async (CmClient            *self,
                                 GCancellable        *cancellable,
@@ -1704,6 +1825,16 @@ cm_client_get_homeserver_async (CmClient            *self,
   matrix_start_sync (self, g_steal_pointer (&task));
 }
 
+/**
+ * cm_client_get_homeserver_finish:
+ * @self: The client
+ * @result: `GAsyncResult`
+ * @error: The return location for a recoverable error.
+ *
+ * Finishes an asynchronous operation started with [method@Client.get_homeserver_async].
+ *
+ * Returns:(transfer none): The home server
+ */
 const char *
 cm_client_get_homeserver_finish (CmClient      *self,
                                  GAsyncResult  *result,
@@ -1766,7 +1897,7 @@ client_verify_homeserver_cb (GObject      *obj,
       g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_FAILED,
                                "Failed to verify homeserver");
       if (self->callback)
-        self->callback (self->cb_data, self, NULL, NULL, error);
+        self->callback (self, NULL, NULL, error, self->cb_data);
     }
 }
 
@@ -1805,7 +1936,7 @@ client_password_login_cb (GObject      *obj,
       client_set_login_state (self, FALSE, FALSE);
 
       if (!handle_matrix_glitches (self, error) && self->callback)
-        self->callback (self->cb_data, self, NULL, NULL, error);
+        self->callback (self, NULL, NULL, error, self->cb_data);
 
       g_task_return_error (task, g_steal_pointer (&error));
       return;
@@ -2231,7 +2362,7 @@ handle_room_join (CmClient   *self,
       cm_db_add_room_events (self->cm_db, room, events, FALSE);
 
       if (self->callback)
-        self->callback (self->cb_data, self, room, events, NULL);
+        self->callback (self, room, events, NULL, self->cb_data);
 
       cm_utils_remove_list_item (self->invited_rooms, room);
 
@@ -2270,7 +2401,7 @@ handle_room_leave (CmClient   *self,
       cm_db_add_room_events (self->cm_db, room, events, FALSE);
 
       if (self->callback)
-        self->callback (self->cb_data, self, room, events, NULL);
+        self->callback (self, room, events, NULL, self->cb_data);
 
       cm_utils_remove_list_item (self->joined_rooms, room);
     }
@@ -2313,7 +2444,7 @@ handle_room_invite (CmClient   *self,
         cm_db_add_room_events (self->cm_db, room, events, FALSE);
 
       if (self->callback)
-        self->callback (self->cb_data, self, room, events, NULL);
+        self->callback (self, room, events, NULL, self->cb_data);
     }
 }
 
@@ -2385,7 +2516,7 @@ matrix_take_red_pill_cb (GObject      *obj,
       self->sync_failed = TRUE;
       client_set_login_state (self, FALSE, FALSE);
       if (!handle_matrix_glitches (self, error))
-        self->callback (self->cb_data, self, NULL, NULL, error);
+        self->callback (self, NULL, NULL, error, self->cb_data);
       else if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
         g_debug ("Error syncing with time %s: %s", self->next_batch, error->message);
       return;
@@ -2490,7 +2621,7 @@ client_get_homeserver_cb (GObject      *obj,
       g_task_return_new_error (task, CM_ERROR, CM_ERROR_NO_HOME_SERVER,
                                "Couldn't fetch homeserver");
       if (self->callback)
-        self->callback (self->cb_data, self, NULL, NULL, error);
+        self->callback (self, NULL, NULL, error, self->cb_data);
 
       return;
     }
@@ -2509,6 +2640,15 @@ client_get_homeserver_cb (GObject      *obj,
   matrix_start_sync (self, g_steal_pointer (&task));
 }
 
+/**
+ * cm_client_get_logging_in:
+ *
+ * Gets whether the user is currently being logged in.
+ *
+ * See [method@Client.get_logged_in].
+ *
+ * Returns: `TRUE` when logging in is in progress.
+ */
 gboolean
 cm_client_get_logging_in (CmClient *self)
 {
@@ -2517,6 +2657,21 @@ cm_client_get_logging_in (CmClient *self)
   return self->is_logging_in;
 }
 
+/**
+ * cm_client_get_logged_in:
+ *
+ * Gets whether the user is currently logged in.
+ *
+ * Logging in with libcmatrix is a multi step process. This function
+ * returns `TRUE` when all steps (like connecting to the home server,
+ * logging in with password, getting an access token, …) were
+ * performed successfully.
+ *
+ * Use [method@Client.get_logging_in] to check whether the login process
+ * is currently ongoing.
+ *
+ * Returns: `TRUE` when log in was successful, otherwise `FALSE`.
+ */
 gboolean
 cm_client_get_logged_in (CmClient *self)
 {
@@ -2632,16 +2787,17 @@ matrix_start_sync (CmClient *self,
 
   self->sync_failed = FALSE;
 
+  if (self->db_loading || self->room_list_loading || self->direct_room_list_loading)
+    return;
+
   if (!task)
     {
       task = g_task_new (self, self->cancellable, NULL, NULL);
+      g_task_set_source_tag (task, matrix_start_sync);
       cancellable = self->cancellable;
     }
 
   cancellable = g_task_get_cancellable (task);
-
-  if (self->db_loading || self->room_list_loading || self->direct_room_list_loading)
-    return;
 
   if (!self->db_loaded)
     {
@@ -2694,7 +2850,7 @@ matrix_start_sync (CmClient *self,
       error = g_error_new (CM_ERROR, CM_ERROR_BAD_PASSWORD, "No Password provided");
 
       if (self->callback)
-        self->callback (self->cb_data, self, NULL, NULL, error);
+        self->callback (self, NULL, NULL, error, self->cb_data);
 
       g_task_return_error (task, error);
     }
@@ -2895,6 +3051,14 @@ cm_client_get_invited_rooms (CmClient *self)
   return G_LIST_MODEL (self->invited_rooms);
 }
 
+/**
+ * cm_client_get_key_verifications:
+ * @self: The client
+ *
+ * Get the key verifications
+ *
+ * Returns:(transfer none): Get the key verifications as list model
+ */
 GListModel *
 cm_client_get_key_verifications (CmClient *self)
 {
@@ -2968,6 +3132,7 @@ cm_client_get_file_async (CmClient              *self,
   g_return_if_fail (uri && *uri);
 
   task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_source_tag (task, cm_client_get_file_async);
   g_task_set_task_data (task, g_strdup (uri), g_free);
 
   cm_enc_find_file_enc_async (self->cm_enc, uri,
@@ -2984,4 +3149,522 @@ cm_client_get_file_finish (CmClient      *self,
   g_return_val_if_fail (!error || !*error, FALSE);
 
   return g_task_propagate_pointer (G_TASK (result), error);
+}
+
+
+static void
+get_pushers_cb (GObject      *obj,
+                GAsyncResult *result,
+                gpointer      user_data)
+{
+  CmAccount *self;
+  g_autoptr(GTask) task = G_TASK (user_data);
+  g_autoptr(JsonObject) object = NULL;
+  g_autoptr(GPtrArray) pushers = g_ptr_array_new_full (1, g_object_unref);
+  GError *error = NULL;
+  JsonArray *elems;
+  guint length;
+
+  g_assert (G_IS_TASK (task));
+
+  self = g_task_get_source_object (task);
+  g_assert (CM_IS_CLIENT (self));
+
+  object = g_task_propagate_pointer (G_TASK (result), &error);
+  if (error) {
+    g_task_return_error (task, error);
+    return;
+  }
+
+  elems = json_object_get_array_member (object, "pushers");
+  if (!pushers) {
+    g_task_return_pointer (task, g_steal_pointer (&pushers),
+                           (GDestroyNotify)g_ptr_array_unref);
+    return;
+  }
+
+  length = json_array_get_length (elems);
+  if (!length) {
+    g_task_return_pointer (task, g_steal_pointer (&pushers),
+                           (GDestroyNotify)g_ptr_array_unref);
+    return;
+  }
+
+  for (guint i = 0; i < length; i++)
+    {
+      g_autoptr(CmPusher) pusher = cm_pusher_new ();
+      JsonObject *elem;
+      const char *str;
+
+      elem = json_array_get_object_element (elems, i);
+      if (!elem)
+        continue;
+
+      str = json_object_get_string_member_with_default (elem, "kind", NULL);
+      cm_pusher_set_kind_from_string (pusher, str);
+
+      str = json_object_get_string_member (elem, "app_display_name");
+      cm_pusher_set_app_display_name (pusher, str);
+
+      str = json_object_get_string_member (elem, "app_id");
+      cm_pusher_set_app_id (pusher, str);
+
+      str = json_object_get_string_member (elem, "device_display_name");
+      cm_pusher_set_device_display_name (pusher, str);
+
+      str = json_object_get_string_member (elem, "lang");
+      cm_pusher_set_lang (pusher, str);
+
+      str = json_object_get_string_member (elem, "profile_tag");
+      cm_pusher_set_profile_tag (pusher, str);
+
+      str = json_object_get_string_member (elem, "pushkey");
+      cm_pusher_set_pushkey (pusher, str);
+
+      if (cm_pusher_get_kind (pusher) == CM_PUSHER_KIND_HTTP)
+	{
+	  JsonObject *data_elem = json_object_get_object_member (elem, "data");
+
+	  str = json_object_get_string_member_with_default (data_elem, "url", NULL);
+	  cm_pusher_set_url (pusher, str);
+	}
+
+      g_ptr_array_add (pushers, g_steal_pointer (&pusher));
+    }
+
+  g_task_return_pointer (task, g_steal_pointer (&pushers),
+			 (GDestroyNotify)g_ptr_array_unref);
+}
+
+/**
+ * cm_client_get_pushers_async:
+ * @self: The client
+ * @cancellable: (nullable): Optional `GCancellable` object, `NULL` to ignore.
+ * @callback: A `GAsyncReadyCallback`
+ * @user_data: The user data for @callback.
+ *
+ * Get the currently configured push servers.
+ *
+ * This is a asynchronous method. See [method@Client.get_pushers_sync] for
+ * an synchronous version.
+ *
+ * Since: 0.0.1
+ */
+void
+cm_client_get_pushers_async (CmClient              *self,
+                             GCancellable          *cancellable,
+                             GAsyncReadyCallback    callback,
+                             gpointer               user_data)
+{
+  g_autoptr(GTask) task = NULL;
+
+  g_return_if_fail (CM_IS_CLIENT (self));
+  g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_source_tag (task, cm_client_get_pushers_async);
+
+  cm_net_send_data_async (self->cm_net, 0, NULL, 0,
+                          "/_matrix/client/r0/pushers", SOUP_METHOD_GET,
+                          NULL, self->cancellable, get_pushers_cb,
+                          g_steal_pointer (&task));
+}
+
+/**
+ * cm_client_get_pushers_finish:
+ * @self: The client
+ * @result: `GAsyncResult`
+ * @error: The return location for a recoverable error.
+ *
+ * Finishes an asynchronous operation started with
+ * [method@Client.get_pushers_async] and returns an array
+ * of configured pushers. Destroy with `g_ptr_array_unref`.
+ *
+ * Returns:(transfer full)(element-type CmPusher): The array of pushers.
+ *
+ * Since: 0.0.1
+ */
+GPtrArray *
+cm_client_get_pushers_finish (CmClient      *self,
+                              GAsyncResult  *result,
+                              GError       **error)
+{
+  g_return_val_if_fail (CM_IS_CLIENT (self), FALSE);
+  g_return_val_if_fail (G_IS_TASK (result), FALSE);
+  g_return_val_if_fail (!error || !*error, FALSE);
+
+  return g_task_propagate_pointer (G_TASK (result), error);
+}
+
+
+static void
+cm_client_get_pushers_sync_cb (GObject         *object,
+                               GAsyncResult    *res,
+                               gpointer         user_data)
+{
+  CmClientSyncData *data = user_data;
+  data->res = g_object_ref (res);
+
+  g_main_loop_quit (data->loop);
+}
+
+/**
+ * cm_client_get_pushers_sync:
+ * @self: The client
+ * @cancellable: Optional `GCancellable` object, `NULL` to ignore.
+ * @error: The return location for a recoverable error.
+ *
+ * Get the currently configured push servers.
+ *
+ * This is a synchronous method. See [method@Client.get_pushers_async] for
+ * an asynchronous version.
+ *
+ * Returns:(transfer full)(element-type CmPusher): The array of pushers stream.
+ *
+ * Since: 0.0.1
+ */
+GPtrArray *
+cm_client_get_pushers_sync (CmClient              *self,
+                            GCancellable          *cancellable,
+                            GError               **error)
+{
+  GPtrArray *pushers;
+  CmClientSyncData data;
+  g_autoptr (GMainContext) context = g_main_context_new ();
+  g_autoptr (GMainLoop) loop = NULL;
+
+  g_main_context_push_thread_default (context);
+  loop = g_main_loop_new (context, FALSE);
+
+  data = (CmClientSyncData) {
+    .loop = loop,
+    .res = NULL,
+  };
+
+  cm_client_get_pushers_async (self, cancellable,
+                               cm_client_get_pushers_sync_cb,
+                               &data);
+  g_main_loop_run (data.loop);
+
+  pushers = cm_client_get_pushers_finish (self, data.res, error);
+
+  if (data.res)
+    g_object_unref (data.res);
+  g_main_context_pop_thread_default (context);
+
+  return pushers;
+}
+
+
+static void
+add_pusher_cb (GObject      *obj,
+               GAsyncResult *result,
+               gpointer      user_data)
+{
+  g_autoptr(GTask) task = G_TASK (user_data);
+  g_autoptr(JsonObject) object = NULL;
+  GError *error = NULL;
+
+  object = g_task_propagate_pointer (G_TASK (result), &error);
+
+  if (error) {
+    g_task_return_error (task, error);
+    return;
+  }
+
+  g_task_return_boolean (task, TRUE);
+}
+
+
+static JsonObject *
+build_pusher_json (CmPusher *pusher)
+{
+  JsonObject *object = json_object_new ();
+
+  json_object_set_string_member (object, "kind", cm_pusher_get_kind_as_string (pusher));
+  json_object_set_string_member (object, "app_display_name", cm_pusher_get_app_display_name (pusher));
+  json_object_set_string_member (object, "app_id", cm_pusher_get_app_id (pusher));
+  json_object_set_string_member (object, "device_display_name", cm_pusher_get_device_display_name (pusher));
+  json_object_set_string_member (object, "lang", cm_pusher_get_lang (pusher));
+  json_object_set_string_member (object, "profile_tag", cm_pusher_get_profile_tag (pusher));
+  json_object_set_string_member (object, "pushkey", cm_pusher_get_pushkey (pusher));
+
+  if (cm_pusher_get_kind (pusher) == CM_PUSHER_KIND_HTTP)
+    {
+      JsonObject *data = json_object_new ();
+
+      json_object_set_string_member (data, "url", cm_pusher_get_url (pusher));
+      json_object_set_string_member (data, "format", "event_id_only");
+      json_object_set_object_member (object, "data", data);
+    }
+
+  return object;
+}
+
+/**
+ * cm_client_add_pusher_async:
+ * @self: The client
+ * @pusher: The pusher to set
+ * @cancellable: (nullable): Optional `GCancellable` object, `NULL` to ignore.
+ * @callback: A #GAsyncReadyCallback
+ * @user_data: The user data for @callback.
+ *
+ * Add a pusher to the list of pushers for this client.
+ *
+ * Since: 0.0.1
+ */
+void
+cm_client_add_pusher_async (CmClient              *self,
+                            CmPusher              *pusher,
+                            GCancellable          *cancellable,
+                            GAsyncReadyCallback    callback,
+                            gpointer               user_data)
+{
+  g_autoptr(GTask) task = NULL;
+  JsonObject *object = NULL;
+
+  g_return_if_fail (CM_IS_CLIENT (self));
+  g_return_if_fail (CM_IS_PUSHER (pusher));
+  g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_source_tag (task, cm_client_add_pusher_async);
+
+  object = build_pusher_json (pusher);
+
+  cm_net_send_json_async (self->cm_net, 0, object,
+                          "/_matrix/client/r0/pushers/set", SOUP_METHOD_POST,
+                          NULL, self->cancellable, add_pusher_cb,
+                          g_steal_pointer (&task));
+}
+
+/**
+ * cm_client_add_pusher_finish:
+ * @self: The client
+ * @result: `GAsyncResult`
+ * @error: The return location for a recoverable error.
+ *
+ * Finishes an asynchronous operation started with
+ * [method@Client.add_pusher_async].
+ *
+ * Returns: `TRUE` if the operation was successful otherwise `FALSE`
+ *
+ * Since: 0.0.1
+ */
+gboolean
+cm_client_add_pusher_finish (CmClient      *self,
+                             GAsyncResult  *result,
+                             GError       **error)
+{
+  g_return_val_if_fail (CM_IS_CLIENT (self), FALSE);
+  g_return_val_if_fail (G_IS_TASK (result), FALSE);
+  g_return_val_if_fail (!error || !*error, FALSE);
+
+  return g_task_propagate_boolean (G_TASK (result), error);
+}
+
+static void
+cm_client_add_pusher_sync_cb (GObject         *object,
+                                 GAsyncResult    *res,
+                                 gpointer         user_data)
+{
+  CmClientSyncData *data = user_data;
+  data->res = g_object_ref (res);
+
+  g_main_loop_quit (data->loop);
+}
+
+/**
+ * cm_client_add_pusher_sync:
+ * @self: The client
+ * @pusher: The pusher to add
+ * @cancellable: Optional `GCancellable` object, `NULL` to ignore.
+ * @error: The return location for a recoverable error.
+ *
+ * Add a pusher to the list of pushers known for this client.
+ *
+ * This is a synchronous method. See [method@Client.add_pusher_async] for
+ * an asynchronous version.
+ *
+ * Returns: `TRUE` if the operation was successful otherwise `FALSE`
+ *
+ * Since: 0.0.1
+ */
+gboolean
+cm_client_add_pusher_sync (CmClient              *self,
+                           CmPusher              *pusher,
+                           GCancellable          *cancellable,
+                           GError               **error)
+{
+  gboolean success;
+  CmClientSyncData data;
+  g_autoptr (GMainContext) context = g_main_context_new ();
+  g_autoptr (GMainLoop) loop = NULL;
+
+  g_main_context_push_thread_default (context);
+  loop = g_main_loop_new (context, FALSE);
+
+  data = (CmClientSyncData) {
+    .loop = loop,
+    .res = NULL,
+  };
+
+  cm_client_add_pusher_async (self, pusher,
+                              cancellable,
+                              cm_client_add_pusher_sync_cb,
+                              &data);
+  g_main_loop_run (data.loop);
+
+  success = cm_client_add_pusher_finish (self, data.res, error);
+
+  if (data.res)
+    g_object_unref (data.res);
+  g_main_context_pop_thread_default (context);
+
+  return success;
+}
+
+
+static void
+remove_pusher_cb (GObject      *obj,
+                  GAsyncResult *result,
+                  gpointer      user_data)
+{
+  g_autoptr(GTask) task = G_TASK (user_data);
+  g_autoptr(JsonObject) object = NULL;
+  GError *error = NULL;
+
+  object = g_task_propagate_pointer (G_TASK (result), &error);
+
+  if (error) {
+    g_task_return_error (task, error);
+    return;
+  }
+
+  g_task_return_boolean (task, TRUE);
+}
+
+/**
+ * cm_client_remove_pusher_async:
+ * @self: The client
+ * @pusher: The pusher to remove
+ * @cancellable: (nullable): Optional `GCancellable` object, `NULL` to ignore.
+ * @callback: Callback function to invoke when the information is ready.
+ * @user_data: The user data for @callback.
+ *
+ * Remove a pusher from the list of pushers known for the client.
+ *
+ * Since: 0.0.1
+ */
+void
+cm_client_remove_pusher_async (CmClient              *self,
+                               CmPusher              *pusher,
+                               GCancellable          *cancellable,
+                               GAsyncReadyCallback    callback,
+                               gpointer               user_data)
+{
+  g_autoptr(GTask) task = NULL;
+  JsonObject *object = NULL;
+
+  g_return_if_fail (CM_IS_CLIENT (self));
+  g_return_if_fail (CM_IS_PUSHER (pusher));
+  g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_source_tag (task, cm_client_remove_pusher_async);
+
+  object = build_pusher_json (pusher);
+  /* NULL means delete: */
+  json_object_set_string_member(object, "kind", NULL);
+
+  cm_net_send_json_async (self->cm_net, 0, object,
+                          "/_matrix/client/r0/pushers/set", SOUP_METHOD_POST,
+                          NULL, self->cancellable, remove_pusher_cb,
+                          g_steal_pointer (&task));
+}
+
+/**
+ * cm_client_remove_pusher_finish:
+ * @self: The client
+ * @result: `GAsyncResult`
+ * @error: The return location for a recoverable error.
+ *
+ * Finishes an asynchronous operation started with
+ * [method@Client.remove_pusher_async].
+ *
+ * Returns: `TRUE` if the operation was successful otherwise `FALSE`
+ *
+ * Since: 0.0.1
+ */
+gboolean
+cm_client_remove_pusher_finish (CmClient      *self,
+                                GAsyncResult  *result,
+                                GError       **error)
+{
+  g_return_val_if_fail (CM_IS_CLIENT (self), FALSE);
+  g_return_val_if_fail (G_IS_TASK (result), FALSE);
+  g_return_val_if_fail (!error || !*error, FALSE);
+
+  return g_task_propagate_boolean (G_TASK (result), error);
+}
+
+static void
+cm_client_remove_pusher_sync_cb (GObject         *object,
+                                 GAsyncResult    *res,
+                                 gpointer         user_data)
+{
+  CmClientSyncData *data = user_data;
+  data->res = g_object_ref (res);
+
+  g_main_loop_quit (data->loop);
+}
+
+/**
+ * cm_client_remove_pusher_sync:
+ * @self: The client
+ * @pusher: The pusher to remove
+ * @cancellable: Optional `GCancellable` object, `NULL` to ignore.
+ * @error: The return location for a recoverable error.
+ *
+ * Remove a pusher from the list of pushers known for the client.
+ *
+ * This is a synchronous method. See [method@Client.remove_pusher_async] for
+ * an asynchronous version.
+ *
+ * Returns: `TRUE` if the operation was successful otherwise `FALSE`
+ *
+ * Since: 0.0.1
+ */
+gboolean
+cm_client_remove_pusher_sync (CmClient              *self,
+                              CmPusher              *pusher,
+                              GCancellable          *cancellable,
+                              GError               **error)
+{
+  gboolean success;
+  CmClientSyncData data;
+  g_autoptr (GMainContext) context = g_main_context_new ();
+  g_autoptr (GMainLoop) loop = NULL;
+
+  g_main_context_push_thread_default (context);
+  loop = g_main_loop_new (context, FALSE);
+
+  data = (CmClientSyncData) {
+    .loop = loop,
+    .res = NULL,
+  };
+
+  cm_client_remove_pusher_async (self, pusher,
+                                 cancellable,
+                                 cm_client_remove_pusher_sync_cb,
+                                 &data);
+  g_main_loop_run (data.loop);
+
+  success = cm_client_remove_pusher_finish (self, data.res, error);
+
+  if (data.res)
+    g_object_unref (data.res);
+  g_main_context_pop_thread_default (context);
+
+  return success;
 }
