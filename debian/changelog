@@ -1,8 +1,17 @@
-chatty (0.8.5-1) UNRELEASED; urgency=medium
+chatty (0.8.5-1) unstable; urgency=medium
 
+  [ Evangelos Ribeiro Tzaras ]
   * New upstream release
+  * d/control: Tighten adwaita dependency to >= 1.5
 
- -- Evangelos Ribeiro Tzaras <devrtz-debian@fortysixandtwo.eu>  Wed, 21 Aug 2024 23:35:17 +0200
+  [ Chris Talbot ]
+  * d/control: recommend libgdk-pixbuf2.0-bin
+
+  [ Guido Günther ]
+  * packaging: Add build profiles to disable libpurple
+  * packaging: Add a build profile to disable libcmatrix deps
+
+ -- Evangelos Ribeiro Tzaras <devrtz-debian@fortysixandtwo.eu>  Thu, 22 Aug 2024 00:32:39 +0200
 
 chatty (0.8.4-1) unstable; urgency=medium
 
