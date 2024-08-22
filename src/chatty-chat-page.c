@@ -378,8 +378,7 @@ chat_page_update_header_func (ChattyMessageRow *row,
   a_time = chatty_message_get_time (a);
   b_time = chatty_message_get_time (b);
 
-  if (chatty_message_user_matches (a, b))
-    chatty_message_row_hide_user_detail (row);
+  chatty_message_row_show_user_detail (row, !chatty_message_user_matches (a, b));
 
   /* Don't hide footers in outgoing SMS as it helps understanding
    * the delivery status of the message

@@ -27,6 +27,7 @@ ChattyMessage *chatty_message_row_get_item         (ChattyMessageRow *self);
 void           chatty_message_row_hide_footer      (ChattyMessageRow *self);
 void           chatty_message_row_set_alias        (ChattyMessageRow *self,
                                                     const char       *alias);
-void           chatty_message_row_hide_user_detail (ChattyMessageRow *self);
+void           chatty_message_row_show_user_detail (ChattyMessageRow *self,
+                                                    gboolean          show);
 
 G_END_DECLS
