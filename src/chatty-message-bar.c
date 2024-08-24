@@ -34,6 +34,7 @@
 #include "chatty-purple.h"
 #include "chatty-settings.h"
 #include "chatty-message-bar.h"
+#include "chatty-entry.h"
 
 struct _ChattyMessageBar
 {
@@ -640,6 +641,8 @@ chatty_message_bar_class_init (ChattyMessageBarClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, message_bar_text_buffer_clipboard_paste_done_cb);
 
   gtk_widget_class_install_action (widget_class, "message-bar.activate", NULL, message_bar_activate);
+
+  g_type_ensure (CHATTY_TYPE_ENTRY);
 }
 
 static void
