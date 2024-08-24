@@ -48,115 +48,34 @@
             </child>
 
             <child>
-              <object class="GtkGrid">
-                <property name="halign">start</property>
-                <property name="margin-bottom">24</property>
-                <property name="row-spacing">12</property>
-                <property name="column-spacing">6</property>
+              <object class="AdwPreferencesGroup">
                 <child>
-                  <object class="GtkLabel">
-                    <property name="xalign">1</property>
-                    <property name="label" translatable="yes">Account ID</property>
-                    <style>
-                      <class name="dim-label"/>
-                    </style>
-                    <layout>
-                      <property name="column">0</property>
-                      <property name="row">0</property>
-                    </layout>
+                  <object class="AdwActionRow" id="account_id_row">
+                    <property name="title" translatable="yes">Account ID</property>
                   </object>
                 </child>
                 <child>
-                  <object class="GtkLabel" id="account_id_label">
-                    <property name="halign">start</property>
-                    <layout>
-                      <property name="column">1</property>
-                      <property name="row">0</property>
-                    </layout>
+                  <object class="AdwActionRow" id="account_protocol_row">
+                    <property name="title" translatable="yes">Protocol</property>
                   </object>
                 </child>
                 <child>
-                  <object class="GtkLabel">
-                    <property name="xalign">1</property>
-                    <property name="label" translatable="yes">Protocol</property>
-                    <style>
-                      <class name="dim-label"/>
-                    </style>
-                    <layout>
-                      <property name="column">0</property>
-                      <property name="row">1</property>
-                    </layout>
+                  <object class="AdwActionRow" id="status_row">
+                    <property name="title" translatable="yes">Status</property>
                   </object>
                 </child>
                 <child>
-                  <object class="GtkLabel" id="account_protocol_label">
-                    <property name="xalign">0</property>
-                    <property name="ellipsize">end</property>
-                    <layout>
-                      <property name="column">1</property>
-                      <property name="row">1</property>
-                      <property name="column-span">2</property>
-                    </layout>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="xalign">1</property>
-                    <property name="label" translatable="yes">Status</property>
-                    <style>
-                      <class name="dim-label"/>
-                    </style>
-                    <layout>
-                      <property name="column">0</property>
-                      <property name="row">2</property>
-                    </layout>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="status_label">
-                    <property name="xalign">0</property>
-                    <property name="ellipsize">end</property>
-                    <layout>
-                      <property name="column">1</property>
-                      <property name="row">2</property>
-                      <property name="column-span">2</property>
-                    </layout>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="xalign">1</property>
-                    <property name="label" translatable="yes">Password</property>
-                    <style>
-                      <class name="dim-label"/>
-                    </style>
-                    <layout>
-                      <property name="column">0</property>
-                      <property name="row">3</property>
-                    </layout>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkPasswordEntry" id="password_entry">
-                    <property name="hexpand">1</property>
-                    <property name="show-peek-icon">1</property>
-                    <signal name="changed" handler="pa_details_pw_entry_changed_cb" swapped="yes"/>
-                    <layout>
-                      <property name="column">1</property>
-                      <property name="row">3</property>
-                    </layout>
+                  <object class="AdwPasswordEntryRow" id="password_row">
+                    <property name="title" translatable="yes">Password</property>
+                    <signal name="changed" handler="pa_details_pw_entry_changed_cb" swapped="True"/>
                   </object>
                 </child>
                 <child>
                   <object class="GtkButton" id="delete_account_button">
-                    <property name="halign">start</property>
+                    <property name="halign">center</property>
                     <property name="margin-top">12</property>
                     <property name="label" translatable="yes">Delete Account</property>
                     <signal name="clicked" handler="pa_details_delete_account_clicked_cb" swapped="yes"/>
-                    <layout>
-                      <property name="column">1</property>
-                      <property name="row">4</property>
-                    </layout>
                   </object>
                 </child>
               </object>
