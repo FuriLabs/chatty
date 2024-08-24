@@ -51,9 +51,9 @@ struct _ChattyMaAccountDetails
   GtkWidget     *email_box;
   GtkWidget     *phone_box;
 
-  GtkWidget     *homeserver_label;
-  GtkWidget     *matrix_id_label;
-  GtkWidget     *device_id_label;
+  GtkWidget     *homeserver_row;
+  GtkWidget     *matrix_id_row;
+  GtkWidget     *device_id_row;
   GtkWidget     *access_token_row;
 
   guint          modified : 1;
@@ -90,11 +90,11 @@ on_copy_action_activated (GtkWidget *widget, const char *action_name, GVariant *
   if (g_strcmp0 (target_str, "access-token") == 0)
     copy_text = adw_action_row_get_subtitle (ADW_ACTION_ROW (self->access_token_row));
   else if (g_strcmp0 (target_str, "homeserver") == 0)
-    copy_text = gtk_label_get_label (GTK_LABEL (self->homeserver_label));
+    copy_text = adw_action_row_get_subtitle (ADW_ACTION_ROW (self->homeserver_row));
   else if (g_strcmp0 (target_str, "matrix-id") == 0)
-    copy_text = gtk_label_get_label (GTK_LABEL (self->matrix_id_label));
+    copy_text = adw_action_row_get_subtitle (ADW_ACTION_ROW (self->matrix_id_row));
   else if (g_strcmp0 (target_str, "device-id") == 0)
-    copy_text = gtk_label_get_label (GTK_LABEL (self->device_id_label));
+    copy_text = adw_action_row_get_subtitle (ADW_ACTION_ROW (self->device_id_row));
 
   if (!copy_text) {
     g_warning ("Unknown target for copy action: '%s'", target_str);
@@ -442,8 +442,8 @@ ma_details_status_changed_cb (ChattyMaAccountDetails *self)
                                       g_object_ref (self));
   }
 
-  gtk_label_set_text (GTK_LABEL (self->device_id_label),
-                      chatty_ma_account_get_device_id (CHATTY_MA_ACCOUNT (self->account)));
+  adw_action_row_set_subtitle (ADW_ACTION_ROW (self->device_id_row),
+                               chatty_ma_account_get_device_id (CHATTY_MA_ACCOUNT (self->account)));
 
   adw_action_row_set_subtitle (ADW_ACTION_ROW (self->access_token_row),
                                chatty_ma_account_get_access_token (CHATTY_MA_ACCOUNT (self->account)));
@@ -520,9 +520,9 @@ chatty_ma_account_details_class_init (ChattyMaAccountDetailsClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyMaAccountDetails, email_box);
   gtk_widget_class_bind_template_child (widget_class, ChattyMaAccountDetails, phone_box);
 
-  gtk_widget_class_bind_template_child (widget_class, ChattyMaAccountDetails, homeserver_label);
-  gtk_widget_class_bind_template_child (widget_class, ChattyMaAccountDetails, matrix_id_label);
-  gtk_widget_class_bind_template_child (widget_class, ChattyMaAccountDetails, device_id_label);
+  gtk_widget_class_bind_template_child (widget_class, ChattyMaAccountDetails, homeserver_row);
+  gtk_widget_class_bind_template_child (widget_class, ChattyMaAccountDetails, matrix_id_row);
+  gtk_widget_class_bind_template_child (widget_class, ChattyMaAccountDetails, device_id_row);
   gtk_widget_class_bind_template_child (widget_class, ChattyMaAccountDetails, access_token_row);
 
   gtk_widget_class_bind_template_callback (widget_class, ma_details_avatar_button_clicked_cb);
@@ -663,10 +663,10 @@ chatty_ma_account_details_set_item (ChattyMaAccountDetails *self,
   if (!g_set_object (&self->account, account) || !account)
     return;
 
-  gtk_label_set_text (GTK_LABEL (self->homeserver_label),
-                      chatty_ma_account_get_homeserver (CHATTY_MA_ACCOUNT (self->account)));
-  gtk_label_set_text (GTK_LABEL (self->matrix_id_label),
-                      chatty_item_get_username (CHATTY_ITEM (account)));
+  adw_action_row_set_subtitle (ADW_ACTION_ROW (self->homeserver_row),
+                               chatty_ma_account_get_homeserver (CHATTY_MA_ACCOUNT (self->account)));
+  adw_action_row_set_subtitle (ADW_ACTION_ROW (self->matrix_id_row),
+                               chatty_item_get_username (CHATTY_ITEM (account)));
 
   chatty_avatar_set_item (CHATTY_AVATAR (self->avatar_image), CHATTY_ITEM (account));
 

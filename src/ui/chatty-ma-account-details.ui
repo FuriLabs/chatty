@@ -173,121 +173,42 @@
           <object class="AdwExpanderRow">
             <property name="title" translatable="yes">Advanced information</property>
             <child>
-              <object class="GtkGrid">
-                <property name="margin-start">12</property>
-                <property name="margin-end">12</property>
-                <property name="margin-top">12</property>
-                <property name="margin-bottom">12</property>
-                <property name="column-spacing">12</property>
-                <property name="row-spacing">6</property>
-
-                <child>
-                  <object class="GtkLabel">
-                    <property name="label" translatable="yes">Homeserver</property>
-                    <property name="halign">end</property>
-                    <style>
-                      <class name="dim-label"/>
-                    </style>
-                    <layout>
-                      <property name="column">0</property>
-                      <property name="row">0</property>
-                    </layout>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="homeserver_label">
-                    <property name="halign">start</property>
-                    <property name="ellipsize">end</property>
-                    <property name="selectable">1</property>
-                    <layout>
-                      <property name="column">1</property>
-                      <property name="row">0</property>
-                    </layout>
-                  </object>
-                </child>
+              <object class="AdwActionRow" id="homeserver_row">
+                <property name="title" translatable="yes">Homeserver</property>
                 <child>
                   <object class="GtkButton" id="homeserver_btn">
                     <property name="icon-name">edit-copy-symbolic</property>
                     <property name="action-name">ma-account-details.copy</property>
                     <property name="action-target">"homeserver"</property>
-                    <layout>
-                      <property name="column">2</property>
-                      <property name="row">0</property>
-                    </layout>
+                    <property name="valign">3</property>
                   </object>
                 </child>
-
-                <child>
-                  <object class="GtkLabel">
-                    <property name="label" translatable="yes">Matrix ID</property>
-                    <property name="halign">end</property>
-                    <style>
-                      <class name="dim-label"/>
-                    </style>
-                    <layout>
-                      <property name="column">0</property>
-                      <property name="row">1</property>
-                    </layout>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="matrix_id_label">
-                    <property name="halign">start</property>
-                    <property name="ellipsize">end</property>
-                    <property name="selectable">1</property>
-                    <layout>
-                      <property name="column">1</property>
-                      <property name="row">1</property>
-                    </layout>
-                  </object>
-                </child>
+              </object>
+            </child>
+            <child>
+              <object class="AdwActionRow" id="matrix_id_row">
+                <property name="title" translatable="yes">Matrix ID</property>
                 <child>
                   <object class="GtkButton" id="matrix_id_btn">
                     <property name="icon-name">edit-copy-symbolic</property>
                     <property name="action-name">ma-account-details.copy</property>
                     <property name="action-target">"matrix-id"</property>
-                    <layout>
-                      <property name="column">2</property>
-                      <property name="row">1</property>
-                    </layout>
+                    <property name="valign">3</property>
                   </object>
                 </child>
-
-                <child>
-                  <object class="GtkLabel">
-                    <property name="label" translatable="yes">Device ID</property>
-                    <property name="halign">end</property>
-                    <style>
-                      <class name="dim-label"/>
-                    </style>
-                    <layout>
-                      <property name="column">0</property>
-                      <property name="row">2</property>
-                    </layout>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="device_id_label">
-                    <property name="halign">start</property>
-                    <property name="selectable">1</property>
-                    <layout>
-                      <property name="column">1</property>
-                      <property name="row">2</property>
-                    </layout>
-                  </object>
-                </child>
+              </object>
+            </child>
+            <child>
+              <object class="AdwActionRow" id="device_id_row">
+                <property name="title" translatable="yes">Device ID</property>
                 <child>
                   <object class="GtkButton" id="device_id_btn">
                     <property name="icon-name">edit-copy-symbolic</property>
                     <property name="action-name">ma-account-details.copy</property>
                     <property name="action-target">"device-id"</property>
-                    <layout>
-                      <property name="column">2</property>
-                      <property name="row">2</property>
-                    </layout>
+                    <property name="valign">3</property>
                   </object>
                 </child>
-
               </object>
             </child>
           </object> <!-- ./AdwExpanderRow -->
