@@ -46,10 +46,10 @@ struct _ChattyMaAccountDetails
   GtkWidget     *delete_button_image;
   GtkWidget     *delete_avatar_spinner;
 
-  GtkWidget     *status_label;
-  GtkWidget     *name_entry;
-  GtkWidget     *email_box;
-  GtkWidget     *phone_box;
+  GtkWidget     *status_row;
+  GtkWidget     *name_row;
+  GtkWidget     *email_row;
+  GtkWidget     *phone_row;
 
   GtkWidget     *homeserver_row;
   GtkWidget     *matrix_id_row;
@@ -211,13 +211,13 @@ ma_details_delete_avatar_button_clicked_cb (ChattyMaAccountDetails *self)
 }
 
 static void
-ma_details_name_entry_changed_cb (ChattyMaAccountDetails *self,
-                                  GtkEntry               *entry)
+ma_details_name_row_changed_cb (ChattyMaAccountDetails *self,
+                                AdwEntryRow            *entry)
 {
   const char *old, *new;
 
   g_assert (CHATTY_IS_MA_ACCOUNT_DETAILS (self));
-  g_assert (GTK_IS_ENTRY (entry));
+  g_assert (ADW_IS_ENTRY_ROW (entry));
 
   old = g_object_get_data (G_OBJECT (entry), "name");
   new = gtk_editable_get_text (GTK_EDITABLE (entry));
@@ -247,10 +247,10 @@ ma_account_details_update (ChattyMaAccountDetails *self)
 
   name = chatty_item_get_name (CHATTY_ITEM (self->account));
 
-  g_object_set_data_full (G_OBJECT (self->name_entry),
+  g_object_set_data_full (G_OBJECT (self->name_row),
                           "name", g_strdup (name), g_free);
-  gtk_editable_set_text (GTK_EDITABLE (self->name_entry), name);
-  gtk_widget_set_sensitive (self->name_entry, TRUE);
+  gtk_editable_set_text (GTK_EDITABLE (self->name_row), name);
+  gtk_widget_set_sensitive (self->name_row, TRUE);
 }
 
 static void
@@ -347,20 +347,12 @@ ma_details_delete_3pid_clicked (ChattyMaAccountDetails *self,
 
 static void
 ma_account_details_add_entry (ChattyMaAccountDetails *self,
-                              GtkWidget              *box,
+                              GtkWidget              *row,
                               const char             *value)
 {
-  GtkWidget *entry, *row, *button, *stack, *spinner, *image;
+  GtkWidget *button, *stack, *spinner, *image;
 
-  row = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
-  gtk_widget_add_css_class (row, "linked");
-
-  entry = gtk_entry_new ();
-  gtk_widget_set_visible (entry, TRUE);
-  gtk_widget_set_hexpand (entry, TRUE);
-  gtk_widget_set_sensitive (entry, FALSE);
-  gtk_editable_set_text (GTK_EDITABLE (entry), value);
-  gtk_box_append (GTK_BOX (row), entry);
+  adw_action_row_set_subtitle (ADW_ACTION_ROW (row), value);
 
   stack = gtk_stack_new ();
   image = gtk_image_new_from_icon_name ("user-trash-symbolic");
@@ -371,18 +363,17 @@ ma_account_details_add_entry (ChattyMaAccountDetails *self,
 
   button = gtk_button_new ();
   g_object_set_data_full (G_OBJECT (button), "value", g_strdup (value), g_free);
-  if (box == self->phone_box)
+  if (row == self->phone_row)
     g_object_set_data (G_OBJECT (button), "type", GINT_TO_POINTER (CHATTY_ID_PHONE));
   else
     g_object_set_data (G_OBJECT (button), "type", GINT_TO_POINTER (CHATTY_ID_EMAIL));
 
   gtk_button_set_child (GTK_BUTTON (button), stack);
-  gtk_box_append (GTK_BOX (row), button);
 
   g_signal_connect_swapped (button, "clicked",
                             (GCallback)ma_details_delete_3pid_clicked, self);
 
-  gtk_box_append (GTK_BOX (box), row);
+  adw_action_row_add_suffix (ADW_ACTION_ROW (row), button);
 }
 
 static void
@@ -404,13 +395,13 @@ ma_account_get_3pid_cb (GObject      *object,
     g_warning ("Error getting 3pid: %s", error->message);
 
   for (guint i = 0; emails && i < emails->len; i++)
-    ma_account_details_add_entry (self, self->email_box, emails->pdata[i]);
+    ma_account_details_add_entry (self, self->email_row, emails->pdata[i]);
 
   for (guint i = 0; phones && i < phones->len; i++)
-    ma_account_details_add_entry (self, self->phone_box, phones->pdata[i]);
+    ma_account_details_add_entry (self, self->phone_row, phones->pdata[i]);
 
-  gtk_widget_set_visible (self->email_box, emails && emails->len > 0);
-  gtk_widget_set_visible (self->phone_box, phones && phones->len > 0);
+  gtk_widget_set_visible (self->email_row, emails && emails->len > 0);
+  gtk_widget_set_visible (self->phone_row, phones && phones->len > 0);
 }
 
 static void
@@ -430,7 +421,7 @@ ma_details_status_changed_cb (ChattyMaAccountDetails *self)
   else
     status_text = _("disconnected");
 
-  gtk_label_set_text (GTK_LABEL (self->status_label), status_text);
+  adw_action_row_set_subtitle (ADW_ACTION_ROW (self->status_row), status_text);
   update_delete_avatar_button_state (self);
 
   if (status == CHATTY_CONNECTED) {
@@ -515,10 +506,10 @@ chatty_ma_account_details_class_init (ChattyMaAccountDetailsClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyMaAccountDetails, delete_button_image);
   gtk_widget_class_bind_template_child (widget_class, ChattyMaAccountDetails, delete_avatar_spinner);
 
-  gtk_widget_class_bind_template_child (widget_class, ChattyMaAccountDetails, status_label);
-  gtk_widget_class_bind_template_child (widget_class, ChattyMaAccountDetails, name_entry);
-  gtk_widget_class_bind_template_child (widget_class, ChattyMaAccountDetails, email_box);
-  gtk_widget_class_bind_template_child (widget_class, ChattyMaAccountDetails, phone_box);
+  gtk_widget_class_bind_template_child (widget_class, ChattyMaAccountDetails, status_row);
+  gtk_widget_class_bind_template_child (widget_class, ChattyMaAccountDetails, name_row);
+  gtk_widget_class_bind_template_child (widget_class, ChattyMaAccountDetails, email_row);
+  gtk_widget_class_bind_template_child (widget_class, ChattyMaAccountDetails, phone_row);
 
   gtk_widget_class_bind_template_child (widget_class, ChattyMaAccountDetails, homeserver_row);
   gtk_widget_class_bind_template_child (widget_class, ChattyMaAccountDetails, matrix_id_row);
@@ -527,7 +518,7 @@ chatty_ma_account_details_class_init (ChattyMaAccountDetailsClass *klass)
 
   gtk_widget_class_bind_template_callback (widget_class, ma_details_avatar_button_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, ma_details_delete_avatar_button_clicked_cb);
-  gtk_widget_class_bind_template_callback (widget_class, ma_details_name_entry_changed_cb);
+  gtk_widget_class_bind_template_callback (widget_class, ma_details_name_row_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, ma_details_delete_account_clicked_cb);
 
   gtk_widget_class_install_action (widget_class, "ma-account-details.copy", "s",
@@ -582,7 +573,7 @@ ma_details_set_name_cb (GObject      *object,
     g_task_return_boolean (task, TRUE);
 
   name = chatty_item_get_name (CHATTY_ITEM (self->account));
-  g_object_set_data_full (G_OBJECT (self->name_entry),
+  g_object_set_data_full (G_OBJECT (self->name_row),
                           "name", g_strdup (name), g_free);
   self->modified = FALSE;
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_MODIFIED]);
@@ -603,7 +594,7 @@ chatty_ma_account_details_save_async (ChattyMaAccountDetails *self,
   if (self->modified) {
     const char *name;
 
-    name = gtk_editable_get_text (GTK_EDITABLE (self->name_entry));
+    name = gtk_editable_get_text (GTK_EDITABLE (self->name_row));
     chatty_ma_account_set_name_async (CHATTY_MA_ACCOUNT (self->account),
                                       name, NULL,
                                       ma_details_set_name_cb,
@@ -638,26 +629,10 @@ chatty_ma_account_details_set_item (ChattyMaAccountDetails *self,
   g_return_if_fail (!account || CHATTY_IS_MA_ACCOUNT (account));
 
   if (self->account != account) {
-    GtkWidget *child;
-
     g_clear_signal_handler (&self->status_id, self->account);
-    gtk_editable_set_text (GTK_EDITABLE (self->name_entry), "");
-    gtk_widget_set_visible (self->email_box, FALSE);
-    gtk_widget_set_visible (self->phone_box, FALSE);
-
-    do {
-      child = gtk_widget_get_first_child (GTK_WIDGET (self->email_box));
-
-      if (child)
-        gtk_box_remove (GTK_BOX (self->email_box), child);
-    } while (child);
-
-    do {
-      child = gtk_widget_get_first_child (GTK_WIDGET (self->phone_box));
-
-      if (child)
-        gtk_box_remove (GTK_BOX (self->phone_box), child);
-    } while (child);
+    gtk_editable_set_text (GTK_EDITABLE (self->name_row), "");
+    gtk_widget_set_visible (self->email_row, FALSE);
+    gtk_widget_set_visible (self->phone_row, FALSE);
   }
 
   if (!g_set_object (&self->account, account) || !account)

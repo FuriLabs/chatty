@@ -43,117 +43,29 @@
         </child>
 
         <child>
-          <object class="GtkGrid">
-            <property name="margin-bottom">24</property>
-            <property name="row-spacing">12</property>
-            <property name="column-spacing">6</property>
-
+          <object class="AdwPreferencesGroup">
             <child>
-              <object class="GtkLabel">
-                <property name="xalign">1</property>
-                <property name="label" translatable="yes">Status</property>
-                <style>
-                  <class name="dim-label"/>
-                </style>
-                <layout>
-                  <property name="column">0</property>
-                  <property name="row">0</property>
-                </layout>
+              <object class="AdwActionRow" id="status_row">
+                <property name="title" translatable="yes">Status</property>
               </object>
             </child>
             <child>
-              <object class="GtkLabel" id="status_label">
-                <property name="xalign">0</property>
-                <property name="ellipsize">end</property>
-                <layout>
-                  <property name="column">1</property>
-                  <property name="row">0</property>
-                </layout>
-              </object>
-            </child>
-
-            <child>
-              <object class="GtkLabel">
-                <property name="xalign">1</property>
-                <property name="label" translatable="yes">Name</property>
-                <style>
-                  <class name="dim-label"/>
-                </style>
-                <layout>
-                  <property name="column">0</property>
-                  <property name="row">1</property>
-                </layout>
+              <object class="AdwEntryRow" id="name_row">
+                <property name="title" translatable="yes">Name</property>
+                <signal name="changed" handler="ma_details_name_row_changed_cb" swapped="True"/>
               </object>
             </child>
             <child>
-              <object class="GtkEntry" id="name_entry">
-                <property name="hexpand">1</property>
-                <property name="sensitive">0</property>
-                <signal name="changed" handler="ma_details_name_entry_changed_cb" swapped="yes"/>
-                <layout>
-                  <property name="column">1</property>
-                  <property name="row">1</property>
-                </layout>
-              </object>
-            </child>
-
-            <child>
-              <object class="GtkLabel">
-                <property name="visible" bind-source="email_box" bind-property="visible" bind-flags="sync-create"/>
-                <property name="valign">start</property>
-                <property name="margin-top">6</property>
-                <property name="xalign">1</property>
-                <property name="label" translatable="yes">Email</property>
-                <style>
-                  <class name="dim-label"/>
-                </style>
-                <layout>
-                  <property name="column">0</property>
-                  <property name="row">2</property>
-                </layout>
+              <object class="AdwActionRow" id="email_row">
+                <property name="title" translatable="yes">Email</property>
               </object>
             </child>
             <child>
-              <object class="GtkBox" id="email_box">
-                <property name="hexpand">1</property>
-                <property name="spacing">6</property>
-                <property name="orientation">vertical</property>
-                <layout>
-                  <property name="column">1</property>
-                  <property name="row">2</property>
-                </layout>
+              <object class="AdwActionRow" id="phone_row">
+                <property name="title" translatable="yes">Phone</property>
               </object>
             </child>
-
-            <child>
-              <object class="GtkLabel">
-                <property name="visible" bind-source="phone_box" bind-property="visible" bind-flags="sync-create"/>
-                <property name="valign">start</property>
-                <property name="margin-top">6</property>
-                <property name="xalign">1</property>
-                <property name="label" translatable="yes">Phone</property>
-                <style>
-                  <class name="dim-label"/>
-                </style>
-                <layout>
-                  <property name="column">0</property>
-                  <property name="row">3</property>
-                </layout>
-              </object>
-            </child>
-            <child>
-              <object class="GtkBox" id="phone_box">
-                <property name="hexpand">1</property>
-                <property name="spacing">6</property>
-                <property name="orientation">vertical</property>
-                <layout>
-                  <property name="column">1</property>
-                  <property name="row">3</property>
-                </layout>
-              </object>
-            </child>
-
-          </object> <!-- ./GtkGrid -->
+          </object>
         </child>
 
         <child>
