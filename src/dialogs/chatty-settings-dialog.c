@@ -95,7 +95,7 @@ struct _ChattySettingsDialog
   GtkWidget      *telegram_radio_button;
   GtkWidget      *new_account_settings_list;
   GtkWidget      *new_account_id_entry;
-  GtkWidget      *new_password_entry;
+  GtkWidget      *new_password_entry_row;
 
   GtkWidget      *delivery_reports_switch;
   GtkWidget      *clear_stuck_sms_switch;
@@ -338,7 +338,7 @@ chatty_settings_add_clicked_cb (ChattySettingsDialog *self)
 
   manager  = chatty_manager_get_default ();
   user_id  = gtk_editable_get_text (GTK_EDITABLE (self->new_account_id_entry));
-  password = gtk_editable_get_text (GTK_EDITABLE (self->new_password_entry));
+  password = gtk_editable_get_text (GTK_EDITABLE (self->new_password_entry_row));
 
   is_matrix = gtk_check_button_get_active (GTK_CHECK_BUTTON (self->matrix_radio_button));
   is_telegram = gtk_check_button_get_active (GTK_CHECK_BUTTON (self->telegram_radio_button));
@@ -1136,7 +1136,7 @@ settings_update_new_account_view (ChattySettingsDialog *self)
 
   gtk_editable_set_text (GTK_EDITABLE (self->matrix_homeserver_entry), "");
   gtk_editable_set_text (GTK_EDITABLE (self->new_account_id_entry), "");
-  gtk_editable_set_text (GTK_EDITABLE (self->new_password_entry), "");
+  gtk_editable_set_text (GTK_EDITABLE (self->new_password_entry_row), "");
 
   self->selected_account = NULL;
   gtk_widget_grab_focus (self->new_account_id_entry);
@@ -1343,12 +1343,12 @@ settings_new_detail_changed_cb (ChattySettingsDialog *self)
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
 
   id = gtk_editable_get_text (GTK_EDITABLE (self->new_account_id_entry));
-  password = gtk_editable_get_text (GTK_EDITABLE (self->new_password_entry));
+  password = gtk_editable_get_text (GTK_EDITABLE (self->new_password_entry_row));
 
   if (password && *password)
-    settings_remove_style (GTK_WIDGET (self->new_password_entry), "error");
+    settings_remove_style (GTK_WIDGET (self->new_password_entry_row), "error");
   else
-    settings_apply_style (GTK_WIDGET (self->new_password_entry), "error");
+    settings_apply_style (GTK_WIDGET (self->new_password_entry_row), "error");
 
   if (!id || !*id) {
     gtk_editable_set_text (GTK_EDITABLE (self->matrix_homeserver_entry), "");
@@ -1700,7 +1700,7 @@ chatty_settings_dialog_class_init (ChattySettingsDialogClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, telegram_radio_button);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, new_account_settings_list);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, new_account_id_entry);
-  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, new_password_entry);
+  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, new_password_entry_row);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, current_pgp_user_id_entry);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, current_pgp_public_key_fingerprint_entry);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, generate_pgp_user_id_entry);

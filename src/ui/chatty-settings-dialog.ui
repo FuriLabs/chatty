@@ -790,26 +790,9 @@
                                   </object>
                                 </child>
                                 <child>
-                                  <object class="AdwActionRow">
-                                    <property name="selectable">0</property>
-                                    <property name="activatable">0</property>
-                                    <child type="prefix">
-                                      <object class="GtkLabel">
-                                        <property name="label" translatable="yes">Password</property>
-                                        <property name="xalign">1</property>
-                                        <property name="halign">start</property>
-                                      </object>
-                                    </child>
-                                    <child>
-                                      <object class="GtkPasswordEntry" id="new_password_entry">
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="activates_default">1</property>
-                                        <property name="hexpand">0</property>
-                                        <property name="show-peek-icon">1</property>
-                                        <signal name="changed" handler="settings_new_detail_changed_cb" swapped="yes"/>
-                                      </object>
-                                    </child>
+                                  <object class="AdwPasswordEntryRow" id="new_password_entry_row">
+                                    <property name="title" translatable="true">Password</property>
+                                    <signal name="changed" handler="settings_new_detail_changed_cb" swapped="True"/>
                                   </object>
                                 </child>
                                 <child>
