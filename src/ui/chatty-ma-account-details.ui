@@ -300,31 +300,12 @@
               <object class="AdwExpanderRow">
                 <property name="title" translatable="yes">Sensitive information</property>
                 <child>
-                  <object class="GtkBox">
-                    <property name="margin-start">12</property>
-                    <property name="margin-end">12</property>
-                    <property name="margin-top">12</property>
-                    <property name="margin-bottom">12</property>
-                    <property name="spacing">6</property>
-
-                    <child>
-                      <object class="GtkLabel">
-                        <property name="label" translatable="yes">Access token</property>
-                        <property name="halign">end</property>
-                        <style>
-                          <class name="dim-label"/>
-                        </style>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="access_token_label">
-                        <property name="halign">start</property>
-                        <property name="ellipsize">end</property>
-                        <property name="selectable">1</property>
-                      </object>
-                    </child>
-                    <child>
+                  <object class="AdwActionRow" id="access_token_row">
+                    <property name="title" translatable="yes">Access token</property>
+                    <property name="subtitle-lines">1</property>
+                    <child type="suffix">
                       <object class="GtkButton" id="access_token_btn">
+                        <property name="valign">3</property>
                         <property name="icon-name">edit-copy-symbolic</property>
                         <property name="action-name">ma-account-details.copy</property>
                         <property name="action-target">"access-token"</property>

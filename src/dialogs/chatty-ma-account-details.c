@@ -54,7 +54,7 @@ struct _ChattyMaAccountDetails
   GtkWidget     *homeserver_label;
   GtkWidget     *matrix_id_label;
   GtkWidget     *device_id_label;
-  GtkWidget     *access_token_label;
+  GtkWidget     *access_token_row;
 
   guint          modified : 1;
   guint          is_deleting_avatar : 1;
@@ -88,7 +88,7 @@ on_copy_action_activated (GtkWidget *widget, const char *action_name, GVariant *
   const char *target_str = g_variant_get_string (target, NULL);
 
   if (g_strcmp0 (target_str, "access-token") == 0)
-    copy_text = gtk_label_get_label (GTK_LABEL (self->access_token_label));
+    copy_text = adw_action_row_get_subtitle (ADW_ACTION_ROW (self->access_token_row));
   else if (g_strcmp0 (target_str, "homeserver") == 0)
     copy_text = gtk_label_get_label (GTK_LABEL (self->homeserver_label));
   else if (g_strcmp0 (target_str, "matrix-id") == 0)
@@ -445,8 +445,8 @@ ma_details_status_changed_cb (ChattyMaAccountDetails *self)
   gtk_label_set_text (GTK_LABEL (self->device_id_label),
                       chatty_ma_account_get_device_id (CHATTY_MA_ACCOUNT (self->account)));
 
-  gtk_label_set_text (GTK_LABEL (self->access_token_label),
-                      chatty_ma_account_get_access_token (CHATTY_MA_ACCOUNT (self->account)));
+  adw_action_row_set_subtitle (ADW_ACTION_ROW (self->access_token_row),
+                               chatty_ma_account_get_access_token (CHATTY_MA_ACCOUNT (self->account)));
 
 }
 
@@ -523,7 +523,7 @@ chatty_ma_account_details_class_init (ChattyMaAccountDetailsClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyMaAccountDetails, homeserver_label);
   gtk_widget_class_bind_template_child (widget_class, ChattyMaAccountDetails, matrix_id_label);
   gtk_widget_class_bind_template_child (widget_class, ChattyMaAccountDetails, device_id_label);
-  gtk_widget_class_bind_template_child (widget_class, ChattyMaAccountDetails, access_token_label);
+  gtk_widget_class_bind_template_child (widget_class, ChattyMaAccountDetails, access_token_row);
 
   gtk_widget_class_bind_template_callback (widget_class, ma_details_avatar_button_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, ma_details_delete_avatar_button_clicked_cb);
