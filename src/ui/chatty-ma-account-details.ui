@@ -3,157 +3,148 @@
   <template class="ChattyMaAccountDetails" parent="AdwPreferencesPage">
     <child>
       <object class="AdwPreferencesGroup">
-
         <child>
-          <object class="GtkOverlay">
-            <property name="halign">center</property>
-            <property name="valign">center</property>
+          <object class="GtkBox">
+            <property name="orientation">vertical</property>
+            <property name="spacing">12</property>
+
             <child>
-              <object class="ChattyAvatar" id="avatar_image">
-                <property name="size">96</property>
+              <object class="GtkOverlay">
+                <property name="halign">center</property>
+                <property name="valign">center</property>
+                <child>
+                  <object class="ChattyAvatar" id="avatar_image">
+                    <property name="size">96</property>
+                  </object>
+                </child>
+
+                <child type="overlay">
+                  <object class="GtkButton" id="delete_avatar_button">
+                    <property name="halign">end</property>
+                    <property name="valign">end</property>
+                    <signal name="clicked" handler="ma_details_delete_avatar_button_clicked_cb" swapped="yes"/>
+                    <child>
+                      <object class="GtkStack" id="delete_button_stack">
+                        <property name="width-request">24</property>
+                        <property name="height-request">24</property>
+                        <child>
+                          <object class="GtkImage" id="delete_button_image">
+                            <property name="icon-name">user-trash-symbolic</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSpinner" id="delete_avatar_spinner"/>
+                        </child>
+                      </object>
+                    </child>
+                    <style>
+                      <class name="circular"/>
+                    </style>
+                  </object>
+                </child>
+
               </object>
             </child>
 
-            <child type="overlay">
-              <object class="GtkButton" id="delete_avatar_button">
-                <property name="halign">end</property>
-                <property name="valign">end</property>
-                <signal name="clicked" handler="ma_details_delete_avatar_button_clicked_cb" swapped="yes"/>
+            <child>
+              <object class="AdwPreferencesGroup">
                 <child>
-                  <object class="GtkStack" id="delete_button_stack">
-                    <property name="width-request">24</property>
-                    <property name="height-request">24</property>
+                  <object class="AdwActionRow" id="status_row">
+                    <property name="title" translatable="yes">Status</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="AdwEntryRow" id="name_row">
+                    <property name="title" translatable="yes">Name</property>
+                    <signal name="changed" handler="ma_details_name_row_changed_cb" swapped="True"/>
+                  </object>
+                </child>
+                <child>
+                  <object class="AdwActionRow" id="email_row">
+                    <property name="title" translatable="yes">Email</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="AdwActionRow" id="phone_row">
+                    <property name="title" translatable="yes">Phone</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="AdwExpanderRow">
+                    <property name="title" translatable="yes">Advanced information</property>
                     <child>
-                      <object class="GtkImage" id="delete_button_image">
-                        <property name="icon-name">user-trash-symbolic</property>
+                      <object class="AdwActionRow" id="homeserver_row">
+                        <property name="title" translatable="yes">Homeserver</property>
+                        <child>
+                          <object class="GtkButton" id="homeserver_btn">
+                            <property name="icon-name">edit-copy-symbolic</property>
+                            <property name="action-name">ma-account-details.copy</property>
+                            <property name="action-target">"homeserver"</property>
+                            <property name="valign">center</property>
+                          </object>
+                        </child>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkSpinner" id="delete_avatar_spinner"/>
+                      <object class="AdwActionRow" id="matrix_id_row">
+                        <property name="title" translatable="yes">Matrix ID</property>
+                        <child>
+                          <object class="GtkButton" id="matrix_id_btn">
+                            <property name="icon-name">edit-copy-symbolic</property>
+                            <property name="action-name">ma-account-details.copy</property>
+                            <property name="action-target">"matrix-id"</property>
+                            <property name="valign">center</property>
+                          </object>
+                        </child>
+                      </object>
                     </child>
-                  </object>
+                    <child>
+                      <object class="AdwActionRow" id="device_id_row">
+                        <property name="title" translatable="yes">Device ID</property>
+                        <child>
+                          <object class="GtkButton" id="device_id_btn">
+                            <property name="icon-name">edit-copy-symbolic</property>
+                            <property name="action-name">ma-account-details.copy</property>
+                            <property name="action-target">"device-id"</property>
+                            <property name="valign">center</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object> <!-- ./AdwExpanderRow -->
                 </child>
-                <style>
-                  <class name="circular"/>
-                </style>
+                <child>
+                <object class="AdwExpanderRow">
+                  <property name="title" translatable="yes">Sensitive information</property>
+                  <child>
+                    <object class="AdwActionRow" id="access_token_row">
+                      <property name="title" translatable="yes">Access token</property>
+                      <property name="subtitle-lines">1</property>
+                      <child type="suffix">
+                        <object class="GtkButton" id="access_token_btn">
+                          <property name="valign">center</property>
+                          <property name="icon-name">edit-copy-symbolic</property>
+                          <property name="action-name">ma-account-details.copy</property>
+                          <property name="action-target">"access-token"</property>
+                        </object>
+                      </child>
+                    </object>
+                  </child>
+                </object> <!-- ./AdwExpanderRow -->
+                </child>
               </object>
             </child>
 
-          </object>
-        </child>
-
-        <child>
-          <object class="AdwPreferencesGroup">
             <child>
-              <object class="AdwActionRow" id="status_row">
-                <property name="title" translatable="yes">Status</property>
-              </object>
-            </child>
-            <child>
-              <object class="AdwEntryRow" id="name_row">
-                <property name="title" translatable="yes">Name</property>
-                <signal name="changed" handler="ma_details_name_row_changed_cb" swapped="True"/>
-              </object>
-            </child>
-            <child>
-              <object class="AdwActionRow" id="email_row">
-                <property name="title" translatable="yes">Email</property>
-              </object>
-            </child>
-            <child>
-              <object class="AdwActionRow" id="phone_row">
-                <property name="title" translatable="yes">Phone</property>
+              <object class="GtkButton">
+                <property name="halign">center</property>
+                <property name="label" translatable="yes">Delete Account</property>
+                <signal name="clicked" handler="ma_details_delete_account_clicked_cb" swapped="yes"/>
               </object>
             </child>
           </object>
         </child>
-
-        <child>
-          <object class="GtkButton">
-            <property name="halign">center</property>
-            <property name="label" translatable="yes">Delete Account</property>
-            <signal name="clicked" handler="ma_details_delete_account_clicked_cb" swapped="yes"/>
-          </object>
-        </child>
-
       </object> <!-- ./AdwPreferencesGroup -->
     </child>
-
-    <child>
-      <object class="AdwPreferencesGroup">
-        <child>
-          <object class="AdwExpanderRow">
-            <property name="title" translatable="yes">Advanced information</property>
-            <child>
-              <object class="AdwActionRow" id="homeserver_row">
-                <property name="title" translatable="yes">Homeserver</property>
-                <child>
-                  <object class="GtkButton" id="homeserver_btn">
-                    <property name="icon-name">edit-copy-symbolic</property>
-                    <property name="action-name">ma-account-details.copy</property>
-                    <property name="action-target">"homeserver"</property>
-                    <property name="valign">3</property>
-                  </object>
-                </child>
-              </object>
-            </child>
-            <child>
-              <object class="AdwActionRow" id="matrix_id_row">
-                <property name="title" translatable="yes">Matrix ID</property>
-                <child>
-                  <object class="GtkButton" id="matrix_id_btn">
-                    <property name="icon-name">edit-copy-symbolic</property>
-                    <property name="action-name">ma-account-details.copy</property>
-                    <property name="action-target">"matrix-id"</property>
-                    <property name="valign">3</property>
-                  </object>
-                </child>
-              </object>
-            </child>
-            <child>
-              <object class="AdwActionRow" id="device_id_row">
-                <property name="title" translatable="yes">Device ID</property>
-                <child>
-                  <object class="GtkButton" id="device_id_btn">
-                    <property name="icon-name">edit-copy-symbolic</property>
-                    <property name="action-name">ma-account-details.copy</property>
-                    <property name="action-target">"device-id"</property>
-                    <property name="valign">3</property>
-                  </object>
-                </child>
-              </object>
-            </child>
-          </object> <!-- ./AdwExpanderRow -->
-        </child>
-
-        <child>
-          <object class="AdwPreferencesGroup">
-            <property name="margin-top">12</property>
-            <child>
-              <object class="AdwExpanderRow">
-                <property name="title" translatable="yes">Sensitive information</property>
-                <child>
-                  <object class="AdwActionRow" id="access_token_row">
-                    <property name="title" translatable="yes">Access token</property>
-                    <property name="subtitle-lines">1</property>
-                    <child type="suffix">
-                      <object class="GtkButton" id="access_token_btn">
-                        <property name="valign">3</property>
-                        <property name="icon-name">edit-copy-symbolic</property>
-                        <property name="action-name">ma-account-details.copy</property>
-                        <property name="action-target">"access-token"</property>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-              </object> <!-- ./AdwExpanderRow -->
-
-            </child>
-          </object>
-        </child>
-
-      </object>
-    </child>
-
   </template>
 </interface>
