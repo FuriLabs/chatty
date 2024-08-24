@@ -6,6 +6,7 @@
         <child>
           <object class="GtkBox">
             <property name="orientation">vertical</property>
+            <property name="spacing">12</property>
 
             <child>
               <object class="GtkOverlay">
@@ -70,14 +71,14 @@
                     <signal name="changed" handler="pa_details_pw_entry_changed_cb" swapped="True"/>
                   </object>
                 </child>
-                <child>
-                  <object class="GtkButton" id="delete_account_button">
-                    <property name="halign">center</property>
-                    <property name="margin-top">12</property>
-                    <property name="label" translatable="yes">Delete Account</property>
-                    <signal name="clicked" handler="pa_details_delete_account_clicked_cb" swapped="yes"/>
-                  </object>
-                </child>
+              </object>
+            </child>
+
+            <child>
+              <object class="GtkButton" id="delete_account_button">
+                <property name="halign">center</property>
+                <property name="label" translatable="yes">Delete Account</property>
+                <signal name="clicked" handler="pa_details_delete_account_clicked_cb" swapped="yes"/>
               </object>
             </child>
 
