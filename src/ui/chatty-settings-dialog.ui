@@ -796,25 +796,10 @@
                                   </object>
                                 </child>
                                 <child>
-                                  <object class="AdwActionRow">
-                                    <property name="visible" bind-source="matrix_homeserver_entry" bind-property="visible" bind-flags="sync-create"/>
-                                    <property name="selectable">0</property>
-                                    <property name="activatable">0</property>
-                                    <child type="prefix">
-                                      <object class="GtkLabel">
-                                        <property name="wrap">1</property>
-                                        <property name="xalign">0.0</property>
-                                        <property name="label" translatable="yes">Home server</property>
-                                      </object>
-                                    </child>
-                                    <child>
-                                      <object class="GtkEntry" id="matrix_homeserver_entry">
-                                        <property name="visible">0</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <signal name="changed" handler="settings_homeserver_entry_changed" swapped="yes"/>
-                                      </object>
-                                    </child>
+                                  <object class="AdwEntryRow" id="matrix_homeserver_entry_row">
+                                    <property name="title" translatable="yes">Home server</property>
+                                    <property name="visible">false</property>
+                                    <signal name="changed" handler="settings_homeserver_entry_row_changed" swapped="True"/>
                                   </object>
                                 </child>
                               </object>
