@@ -98,7 +98,7 @@ chatty_message_chat_encrypt_changed_cb (ChattyMessageBar *self)
 static void
 message_bar_file_chooser_response_cb (GObject         *dialog,
                                       GAsyncResult    *response,
-                                      gpointer        user_data)
+                                      gpointer         user_data)
 
 {
   ChattyMessageBar *self = CHATTY_MESSAGE_BAR (user_data);
