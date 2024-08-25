@@ -76,24 +76,22 @@ attachment_update_query_info_cb (GObject      *object,
   g_assert (user_data);
   data = user_data;
 
-  g_assert (CHATTY_IS_ATTACHMENT (data->self));
-  self = CHATTY_ATTACHMENT (data->self);
-
-  g_assert (GTK_IS_WIDGET (data->image));
-  image = data->image;
-
   g_assert (G_IS_FILE (object));
   file = G_FILE (object);
 
   file_info = g_file_query_info_finish (file, result, &error);
 
-  if (error && g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
-    return;
-
   if (error) {
-    g_warning ("Error querying info: %s", error->message);
+    if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
+      g_warning ("Error querying info: %s", error->message);
     return;
   }
+
+  g_assert (CHATTY_IS_ATTACHMENT (data->self));
+  self = CHATTY_ATTACHMENT (data->self);
+
+  g_assert (GTK_IS_WIDGET (data->image));
+  image = data->image;
 
   thumbnail = g_file_info_get_attribute_byte_string (file_info, G_FILE_ATTRIBUTE_THUMBNAIL_PATH);
   gtk_widget_set_visible (self->spinner, FALSE);
@@ -169,11 +167,9 @@ file_create_thumbnail_cb (GObject      *object,
 
   chatty_utils_create_thumbnail_finish (result, &error);
 
-  if (error && g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
-    return;
-
   if (error) {
-    g_warning ("Error creating thumbnail: %s", error->message);
+    if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
+      g_warning ("Error creating thumbnail: %s", error->message);
     return;
   }
 
@@ -273,18 +269,16 @@ attachment_set_file_query_info_cb (GObject      *object,
   g_assert (G_IS_FILE (object));
   file = G_FILE (object);
 
-  g_assert (CHATTY_IS_ATTACHMENT (user_data));
-  self = CHATTY_ATTACHMENT (user_data);
-
   file_info = g_file_query_info_finish (file, result, &error);
 
-  if (error && g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
-    return;
-
   if (error) {
-    g_warning ("Error querying info: %s", error->message);
+    if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
+      g_warning ("Error querying info: %s", error->message);
     return;
   }
+
+  g_assert (CHATTY_IS_ATTACHMENT (user_data));
+  self = CHATTY_ATTACHMENT (user_data);
 
   image = gtk_image_new ();
   gtk_widget_set_tooltip_text (image, g_file_peek_path (file));
