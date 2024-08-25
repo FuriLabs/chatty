@@ -24,6 +24,7 @@ struct _ChattyAttachment
 
   GtkWidget    *overlay;
   GtkWidget    *label;
+  GtkWidget    *preview;
   GtkWidget    *remove_button;
   GtkWidget    *spinner;
 
@@ -33,11 +34,6 @@ struct _ChattyAttachment
 
 G_DEFINE_TYPE (ChattyAttachment, chatty_attachment, GTK_TYPE_BOX)
 
-typedef struct _AttachmentData {
-  ChattyAttachment *self;
-  GtkWidget *image;
-} AttachmentData;
-
 enum {
   DELETED,
   N_SIGNALS
@@ -45,36 +41,16 @@ enum {
 
 static guint signals[N_SIGNALS];
 
-static void attachment_data_free (AttachmentData *data);
-
-G_DEFINE_AUTOPTR_CLEANUP_FUNC (AttachmentData, attachment_data_free)
-
-static void
-attachment_data_free (AttachmentData *data)
-{
-  if (!data)
-    return;
-
-  g_clear_object (&data->image);
-  g_clear_object (&data->self);
-  g_free (data);
-}
-
 static void
 attachment_update_query_info_cb (GObject      *object,
                                  GAsyncResult *result,
                                  gpointer      user_data)
 {
-  g_autoptr (AttachmentData) data = NULL;
   g_autoptr (GFileInfo) file_info = NULL;
   g_autoptr (GError) error = NULL;
   ChattyAttachment *self;
   GFile *file;
-  GtkWidget *image;
   const char *thumbnail;
-
-  g_assert (user_data);
-  data = user_data;
 
   g_assert (G_IS_FILE (object));
   file = G_FILE (object);
@@ -87,11 +63,8 @@ attachment_update_query_info_cb (GObject      *object,
     return;
   }
 
-  g_assert (CHATTY_IS_ATTACHMENT (data->self));
-  self = CHATTY_ATTACHMENT (data->self);
-
-  g_assert (GTK_IS_WIDGET (data->image));
-  image = data->image;
+  g_assert (CHATTY_IS_ATTACHMENT (user_data));
+  self = CHATTY_ATTACHMENT (user_data);
 
   thumbnail = g_file_info_get_attribute_byte_string (file_info, G_FILE_ATTRIBUTE_THUMBNAIL_PATH);
   gtk_widget_set_visible (self->spinner, FALSE);
@@ -102,30 +75,30 @@ attachment_update_query_info_cb (GObject      *object,
     frame = gtk_frame_new (NULL);
     gtk_widget_set_margin_end (frame, 6);
     gtk_widget_set_margin_top (frame, 6);
-    gtk_image_set_from_file (GTK_IMAGE (image), thumbnail);
-    gtk_image_set_pixel_size (GTK_IMAGE (image), 96);
-    gtk_frame_set_child (GTK_FRAME (frame), image);
+    gtk_image_set_from_file (GTK_IMAGE (self->preview), thumbnail);
+    gtk_image_set_pixel_size (GTK_IMAGE (self->preview), 96);
+    gtk_frame_set_child (GTK_FRAME (frame), self->preview);
     gtk_overlay_set_child (GTK_OVERLAY (self->overlay), frame);
   } else {
     g_autofree char *file_mime_type = NULL;
 
-    gtk_widget_set_margin_end (image, 6);
+    gtk_widget_set_margin_end (self->preview, 6);
     file_mime_type = g_content_type_get_mime_type (g_file_info_get_content_type (file_info));
 
     if (!file_mime_type)
-      gtk_image_set_from_icon_name (GTK_IMAGE (image), "text-x-generic-symbolic");
+      gtk_image_set_from_icon_name (GTK_IMAGE (self->preview), "text-x-generic-symbolic");
     else if (strstr (file_mime_type, "vcard"))
-      gtk_image_set_from_icon_name (GTK_IMAGE (image), "contact-new-symbolic");
+      gtk_image_set_from_icon_name (GTK_IMAGE (self->preview), "contact-new-symbolic");
     else if (strstr (file_mime_type, "calendar"))
-      gtk_image_set_from_icon_name (GTK_IMAGE (image), "x-office-calendar-symbolic");
+      gtk_image_set_from_icon_name (GTK_IMAGE (self->preview), "x-office-calendar-symbolic");
     else {
       g_autoptr(GIcon) icon = NULL;
 
       icon = g_content_type_get_symbolic_icon (file_mime_type);
-      gtk_image_set_from_gicon (GTK_IMAGE (image), icon);
+      gtk_image_set_from_gicon (GTK_IMAGE (self->preview), icon);
     }
-    gtk_image_set_pixel_size (GTK_IMAGE (image), 96);
-    gtk_overlay_set_child (GTK_OVERLAY (self->overlay), image);
+    gtk_image_set_pixel_size (GTK_IMAGE (self->preview), 96);
+    gtk_overlay_set_child (GTK_OVERLAY (self->overlay), self->preview);
   }
 
   gtk_overlay_add_overlay (GTK_OVERLAY (self->overlay), self->remove_button);
@@ -133,18 +106,10 @@ attachment_update_query_info_cb (GObject      *object,
 
 static void
 attachment_update_image (ChattyAttachment *self,
-                         GtkWidget        *image,
                          GFile            *file)
 {
-  AttachmentData *data;
-
   g_assert (CHATTY_IS_ATTACHMENT (self));
-  g_assert (image);
   g_assert (file);
-
-  data = g_new0 (AttachmentData, 1);
-  data->self = g_object_ref (self);
-  data->image = g_object_ref (image);
 
   g_file_query_info_async (file,
                            G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE ","
@@ -154,7 +119,7 @@ attachment_update_image (ChattyAttachment *self,
                            G_PRIORITY_DEFAULT,
                            self->cancellable,
                            attachment_update_query_info_cb,
-                           data);
+                           self);
 }
 
 static void
@@ -162,8 +127,8 @@ file_create_thumbnail_cb (GObject      *object,
                           GAsyncResult *result,
                           gpointer      user_data)
 {
-  g_autoptr (AttachmentData) data = user_data;
   g_autoptr (GError) error = NULL;
+  ChattyAttachment *self;
 
   chatty_utils_create_thumbnail_finish (result, &error);
 
@@ -173,10 +138,13 @@ file_create_thumbnail_cb (GObject      *object,
     return;
   }
 
-  if (gtk_widget_in_destruction (GTK_WIDGET (data->self)))
+  g_assert (CHATTY_IS_ATTACHMENT (user_data));
+  self = CHATTY_ATTACHMENT (user_data);
+
+  if (gtk_widget_in_destruction (GTK_WIDGET (self)))
     return;
 
-  attachment_update_image (data->self, data->image, data->self->file);
+  attachment_update_image (self, self->file);
 }
 
 static void
@@ -222,6 +190,7 @@ chatty_attachment_class_init (ChattyAttachmentClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyAttachment, label);
   gtk_widget_class_bind_template_child (widget_class, ChattyAttachment, spinner);
   gtk_widget_class_bind_template_child (widget_class, ChattyAttachment, remove_button);
+  gtk_widget_class_bind_template_child (widget_class, ChattyAttachment, preview);
 
   gtk_widget_class_bind_template_callback (widget_class, attachment_remove_clicked_cb);
 }
@@ -258,12 +227,11 @@ attachment_set_file_query_info_cb (GObject      *object,
                                    GAsyncResult *result,
                                    gpointer      user_data)
 {
-  g_autoptr (ChattyAttachment) self = NULL;
+  ChattyAttachment *self;
   g_autoptr (GFileInfo) file_info = NULL;
   g_autoptr (GError) error = NULL;
   GFile *file;
   const char *thumbnail;
-  GtkWidget *image;
   gboolean thumbnail_failed, thumbnail_valid;
 
   g_assert (G_IS_FILE (object));
@@ -280,9 +248,7 @@ attachment_set_file_query_info_cb (GObject      *object,
   g_assert (CHATTY_IS_ATTACHMENT (user_data));
   self = CHATTY_ATTACHMENT (user_data);
 
-  image = gtk_image_new ();
-  gtk_widget_set_tooltip_text (image, g_file_peek_path (file));
-  gtk_widget_set_size_request (image, -1, 96);
+  gtk_widget_set_tooltip_text (self->preview, g_file_peek_path (file));
   thumbnail = g_file_info_get_attribute_byte_string (file_info, G_FILE_ATTRIBUTE_THUMBNAIL_PATH);
   thumbnail_failed = g_file_info_get_attribute_boolean (file_info, G_FILE_ATTRIBUTE_THUMBNAILING_FAILED);
   thumbnail_valid = g_file_info_get_attribute_boolean (file_info, G_FILE_ATTRIBUTE_THUMBNAIL_IS_VALID);
@@ -293,18 +259,13 @@ attachment_set_file_query_info_cb (GObject      *object,
   gtk_label_set_text (GTK_LABEL (self->label), g_file_info_get_name (file_info));
 
   if (thumbnail || (thumbnail_failed && thumbnail_valid)) {
-    attachment_update_image (self, image, file);
+    attachment_update_image (self, file);
   } else {
-    AttachmentData *data;
-
     gtk_widget_set_visible (self->spinner, TRUE);
-    data = g_new0 (AttachmentData, 1);
-    data->self = g_object_ref (self);
-    data->image = g_object_ref (image);
     chatty_utils_create_thumbnail_async (self->file,
                                          self->cancellable,
                                          file_create_thumbnail_cb,
-                                         data);
+                                         self);
   }
 }
 
@@ -334,5 +295,5 @@ chatty_attachment_set_file (ChattyAttachment *self,
                            G_PRIORITY_DEFAULT,
                            self->cancellable,
                            attachment_set_file_query_info_cb,
-                           g_object_ref (self));
+                           self);
 }
