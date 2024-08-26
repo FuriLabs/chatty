@@ -72,28 +72,22 @@ libsrc += [
   version_h,
 ]
 
-ui_files = files (
+ui_files = files(
   'ui/chatty-chat-page.ui',
   'ui/chatty-contact-row.ui',
-  # FIXME: Testing this fails in CI,
-  # but works fine locally
   'ui/chatty-info-dialog.ui',
   'ui/chatty-dialog-join-muc.ui',
   'ui/chatty-dialog-wrong-pw.ui',
-  # Can't test as this requires chatty-contact-list,
-  # 'ui/chatty-dialog-new-chat.ui',
+  'ui/chatty-dialog-new-chat.ui',
   'ui/chatty-fp-row.ui',
   'ui/chatty-list-row.ui',
   'ui/chatty-message-row.ui',
-  # FIXME
   'ui/chatty-pp-account-details.ui',
   'ui/chatty-ma-chat-info.ui',
   'ui/chatty-pp-chat-info.ui',
   'ui/chatty-mm-chat-info.ui',
   'ui/chatty-settings-dialog.ui',
-  # Can't test as this requires chatty-chat-list,
-  # which is not in libsrc
-  # 'ui/chatty-window.ui',
+  'ui/chatty-window.ui',
 )
 
 chatty_sources += [
@@ -154,16 +148,19 @@ libchatty_dep = declare_dependency(
   dependencies: chatty_deps,
 )
 
-# xxx: Requires GTK 4.10, seems to fail with older GTK.  To be enabled in the future
-# gtk_builder_tool = find_program('gtk4-builder-tool', required: false)
-# if gtk_builder_tool.found()
-#   preload_env = 'LD_PRELOAD=libadwaita-1.so:@0@'.format(libchatty_shared.full_path())
-#   foreach file: ui_files
-#     test('Validate @0@'.format(file), gtk_builder_tool,
-#          env: [preload_env],
-#          args: ['validate', file])
-#   endforeach
-# endif
+ gtk_builder_tool = find_program('gtk4-builder-tool', required: false)
+ if gtk_builder_tool.found()
+   preload_env = 'LD_PRELOAD=libadwaita-1.so:@0@'.format(libchatty.get_shared_lib().full_path())
+   schema_backend_env = 'GSETTINGS_BACKEND=memory'
+   schema_dir_env = 'GSETTINGS_SCHEMA_DIR=@0@'.format(join_paths(meson.project_build_root(), 'data'))
+
+   foreach file: ui_files
+     test('Validate @0@'.format(file.full_path()), gtk_builder_tool,
+          env: [preload_env, schema_backend_env, schema_dir_env],
+          args: ['validate', file],
+          depends: libchatty.get_shared_lib())
+   endforeach
+ endif
 
 executable('chatty', chatty_sources,
   include_directories: src_inc,
