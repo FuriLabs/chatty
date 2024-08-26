@@ -280,8 +280,8 @@ void
 chatty_attachment_set_file (ChattyAttachment *self,
                             GFile            *file)
 {
-  g_assert (CHATTY_IS_ATTACHMENT (self));
-  g_assert (G_IS_FILE (file));
+  g_return_if_fail (CHATTY_IS_ATTACHMENT (self));
+  g_return_if_fail (G_IS_FILE (file));
 
   g_set_object (&self->file, file);
 
