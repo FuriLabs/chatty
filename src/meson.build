@@ -137,16 +137,24 @@ resources = gnome.compile_resources('chatty-resources',
   c_name: 'chatty'
 )
 
-libchatty = both_libraries(
-  'chatty', libsrc,
+chatty_enum_headers = files(['chatty-enums.h'])
+chatty_enums = gnome.mkenums_simple('enum-types',
+                                    sources: chatty_enum_headers)
+generated_sources = [
   resources,
+  chatty_enums,
+]
+
+libchatty = both_libraries(
+  'chatty', [libsrc, generated_sources],
   include_directories: src_inc,
   dependencies: chatty_deps,
 )
 
 libchatty_dep = declare_dependency(
-  sources: [resources],
+  sources: generated_sources,
   include_directories: src_inc,
+  link_with: libchatty.get_static_lib(),
   dependencies: chatty_deps,
 )
 
@@ -165,11 +173,9 @@ libchatty_dep = declare_dependency(
  endif
 
 executable('chatty', chatty_sources,
-  include_directories: src_inc,
-  dependencies: libchatty_dep,
-  link_with: libchatty.get_static_lib(),
   install: true,
   install_rpath: purple_plugdir,
+  dependencies: libchatty_dep,
 )
 
 
