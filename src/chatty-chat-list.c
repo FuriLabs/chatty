@@ -49,7 +49,7 @@ struct _ChattyChatList
   GtkCustomFilter    *filter;
   GtkFilterListModel *filter_model;
   GtkFilterListModel *archive_filter_model;
-  ChattyProtocol     protocol_filter;
+  ChattyProtocol      protocol_filter;
 
   ChattyManager     *manager;
   GPtrArray         *selected_items;
