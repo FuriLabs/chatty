@@ -134,6 +134,7 @@ subdir('help')
 subdir('src')
 subdir('tests')
 subdir('po')
+subdir('docs')
 
 system = target_machine.system()
 if system == 'linux'
@@ -152,6 +153,7 @@ summary({'Target': system,
 summary({'Build type': get_option('buildtype'),
          'libpurple': purple_dep.found(),
          'libspelling': libspell_dep.found(),
+         'Documentation:': get_option('gtk_doc'),
         },
         bool_yn: true,
         section: 'Configuration')

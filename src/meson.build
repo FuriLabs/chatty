@@ -148,6 +148,12 @@ libchatty = both_libraries(
   dependencies: chatty_deps,
 )
 
+libchatty_dep = declare_dependency(
+  sources: [resources],
+  include_directories: src_inc,
+  dependencies: chatty_deps,
+)
+
 # xxx: Requires GTK 4.10, seems to fail with older GTK.  To be enabled in the future
 # gtk_builder_tool = find_program('gtk4-builder-tool', required: false)
 # if gtk_builder_tool.found()
@@ -161,8 +167,37 @@ libchatty = both_libraries(
 
 executable('chatty', chatty_sources,
   include_directories: src_inc,
-  dependencies: chatty_deps,
+  dependencies: libchatty_dep,
   link_with: libchatty.get_static_lib(),
   install: true,
   install_rpath: purple_plugdir,
 )
+
+
+if get_option('gtk_doc')
+
+chatty_gir_sources = [ libsrc,
+                       chatty_sources,
+                       resources,
+                    ]
+
+chatty_gir_extra_args = [
+  '--quiet',
+]
+
+chatty_gir = gnome.generate_gir(libchatty,
+              sources : chatty_gir_sources,
+            nsversion : '0',
+            namespace : 'Chatty',
+      export_packages : 'libchatty-0',
+        symbol_prefix : 'chatty',
+    identifier_prefix : 'Chatty',
+            link_with : libchatty.get_static_lib(),
+             includes : ['Gio-2.0', 'Gtk-4.0', 'Adw-1',
+                         'GnomeDesktop-4.0', 'Soup-3.0'],
+           extra_args : chatty_gir_extra_args,
+         dependencies : libchatty_dep,
+       fatal_warnings : false,
+ )
+
+endif

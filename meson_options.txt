@@ -1,4 +1,11 @@
-option('purple', type: 'feature', value: 'auto', description: 'Enable libpurple plugin')
+option('purple', type: 'feature', value: 'auto',
+       description: 'Enable libpurple plugin')
+
 option('profile', type: 'combo', choices: ['default','devel'], value: 'default')
-option('tests', type: 'boolean', value: true)
+
+option('tests', type: 'boolean', value: true,
+       description: 'Whether to run the testsuite')
+
+option('gtk_doc', type: 'boolean', value: false,
+       description: 'Whether to generate the API reference for Chatty')
 
