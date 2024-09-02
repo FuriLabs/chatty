@@ -451,7 +451,6 @@ settings_delete_account_response_cb (AdwMessageDialog *dialog,
     gtk_widget_set_visible (self->save_button, FALSE);
     gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "main-settings");
   }
-  g_clear_object (&dialog);
 }
 
 static void
