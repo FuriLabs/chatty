@@ -299,6 +299,7 @@ chatty_matrix_delete_account_async (ChattyMatrix        *self,
   g_return_if_fail (CHATTY_IS_MA_ACCOUNT (account));
 
   task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_source_tag (task, chatty_matrix_delete_account_async);
   g_task_set_task_data (task, g_object_ref (account), g_object_unref);
 
   chatty_account_set_enabled (account, FALSE);
@@ -375,6 +376,7 @@ chatty_matrix_save_account_async (ChattyMatrix        *self,
   g_return_if_fail (CM_IS_CLIENT (cm_client));
 
   task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_source_tag (task, chatty_matrix_save_account_async);
   g_task_set_task_data (task, g_object_ref (account), g_object_unref);
   cm_matrix_save_client_async (self->cm_matrix, cm_client,
                                cancellable,
