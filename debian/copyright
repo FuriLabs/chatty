@@ -7,6 +7,12 @@ Comment: The protocol icons were removed because they had unclear licenses
 
 Files: *
 Copyright: 2018-2023 Purism SPC
+           2023-2024 The Chatty Developers
+License: GPL-3+
+
+Files: debian/*
+Copyright: 2018-2023 Purism SPC
+           2020-2024 Evangelos Ribeiro Tzaras <devrtz-debian@fortysixandtwo.eu>
 License: GPL-3+
 
 Files: data/icons/*
@@ -14,28 +20,27 @@ Copyright: 2018-2020 Purism SPC
            2018 GNOME Design Team
 License: CC-BY-SA-4.0
 
-Files: debian/*
-Copyright: 2018-2023 Purism SPC
-           2020-2023 Evangelos Ribeiro Tzaras <devrtz-debian@fortysixandtwo.eu>
-License: GPL-3+
-
-Files: data/sm.puri.Chatty.metainfo.xml.in
+Files: data/sm.puri.Chatty.metainfo.xml.in.in
 Copyright: 2018-2020 Purism SPC
+License: CC0-1.0
+
+Files: data/screenshots/*
+Copyright: 2024      The Chatty Developers
 License: CC0-1.0
 
 Files:
  src/chatty-media*
  src/dialogs/chatty-mm-chat-info*
  src/mm/chatty-mmsd*
- src/mm/chatty-mm-notifty*
+ src/mm/chatty-mm-notify*
 Copyright: 2020-2023 Purism SPC
            2021-2023 Chris Talbot
 License: GPL-3+
 
 Files: src/chatty-pgp*
 Copyright: 1999-2008 Novell, Inc
-           2023 Purism SPC
-           2023 Chris Talbot
+           2023      Purism SPC
+           2023-2024 Chris Talbot
 License: GPL-3+
 
 Files: src/contrib/*
@@ -47,6 +52,7 @@ License: LGPL-2+
 
 Files: subprojects/libcmatrix/
 Copyright: 2022-2023 Purism SPC
+           2023-2024 The libcmatrix Developers
 License: LGPL-2.1+
 
 Files: po/*
