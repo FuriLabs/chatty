@@ -2,8 +2,8 @@
 Name=Chats
 Exec=chatty %u
 Icon=@APP_ID@
-Comment=SMS and XMPP chat application
-Keywords=XMPP;SMS;chat;jabber;messaging;modem
+Comment=SMS/MMS, Matrix and XMPP chat application
+Keywords=XMPP;SMS;chat;jabber;messaging;modem;matrix
 Terminal=false
 Type=Application
 Categories=Network;GNOME;GTK;Chat;InstantMessaging
