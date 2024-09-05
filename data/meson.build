@@ -34,7 +34,7 @@ if desktop_utils.found()
   )
 endif
 
-appstream_file = i18n.merge_file(
+metainfo_file = i18n.merge_file(
   input: configure_file(
     input: 'sm.puri.Chatty.metainfo.xml.in.in',
     output: '@0@.metainfo.xml.in'.format(app_id),
@@ -48,8 +48,8 @@ appstream_file = i18n.merge_file(
 
 appstreamcli = find_program('appstreamcli', required: false)
 if appstreamcli.found()
-  test('Validate appstream file', appstreamcli,
-    args: ['validate', '--no-net', '--explain', appstream_file]
+  test('Validate metainfo file', appstreamcli,
+    args: ['validate', '--no-net', '--explain', metainfo_file]
   )
 endif
 
