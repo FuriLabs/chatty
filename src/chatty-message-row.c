@@ -31,7 +31,6 @@ struct _ChattyMessageRow
 
   GtkWidget  *content_grid;
   GtkWidget  *avatar_image;
-  GtkWidget  *hidden_box;
   GtkWidget  *author_label;
 
   GtkWidget  *message_content;
@@ -366,7 +365,6 @@ chatty_message_row_class_init (ChattyMessageRowClass *klass)
                                                "ui/chatty-message-row.ui");
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, content_grid);
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, avatar_image);
-  gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, hidden_box);
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, author_label);
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, popover);
 
@@ -561,6 +559,5 @@ chatty_message_row_hide_user_detail (ChattyMessageRow *self)
   gtk_widget_set_visible (self->author_label, FALSE);
   if (gtk_widget_get_visible (self->avatar_image)) {
     gtk_widget_set_visible (self->avatar_image, FALSE);
-    gtk_widget_set_visible (self->hidden_box, TRUE);
   }
 }
