@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-08-18 19:26+0000\n"
-"PO-Revision-Date: 2024-08-19 21:45+0300\n"
+"POT-Creation-Date: 2024-09-05 13:12+0000\n"
+"PO-Revision-Date: 2024-09-05 21:51+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -28,14 +28,16 @@ msgid "Chats"
 msgstr "Спілкування"
 
 #: data/sm.puri.Chatty.desktop.in.in:6
-msgid "SMS and XMPP chat application"
-msgstr "Програма для спілкування за допомогою SMS і XMPP"
+#| msgid "SMS and XMPP chat application"
+msgid "SMS/MMS, Matrix and XMPP chat application"
+msgstr "Програма для спілкування за допомогою SMS/MMS, Matrix і XMPP"
 
 #: data/sm.puri.Chatty.desktop.in.in:7
-msgid "XMPP;SMS;chat;jabber;messaging;modem"
+#| msgid "XMPP;SMS;chat;jabber;messaging;modem"
+msgid "XMPP;SMS;chat;jabber;messaging;modem;matrix"
 msgstr ""
 "XMPP;SMS;chat;jabber;messaging;modem;есемес;чат;балачка;спілкування;джабер;"
-"повідомлення;модем;"
+"повідомлення;модем;матрикс;метрікс"
 
 #: data/sm.puri.Chatty.gschema.xml:7 data/sm.puri.Chatty.gschema.xml:8
 msgid "Whether the application is launching the first time"
@@ -264,14 +266,14 @@ msgstr ""
 #: src/purple/chatty-purple.c:199 src/purple/chatty-purple.c:619
 #: src/dialogs/chatty-new-chat-dialog.c:226
 #: src/dialogs/chatty-settings-dialog.c:213
-#: src/dialogs/chatty-settings-dialog.c:663
-#: src/dialogs/chatty-settings-dialog.c:700
-#: src/dialogs/chatty-settings-dialog.c:816
-#: src/dialogs/chatty-settings-dialog.c:852
-#: src/dialogs/chatty-settings-dialog.c:867
-#: src/dialogs/chatty-settings-dialog.c:884
-#: src/dialogs/chatty-settings-dialog.c:896
-#: src/dialogs/chatty-settings-dialog.c:1530 src/ui/chatty-main-view.ui:73
+#: src/dialogs/chatty-settings-dialog.c:662
+#: src/dialogs/chatty-settings-dialog.c:699
+#: src/dialogs/chatty-settings-dialog.c:815
+#: src/dialogs/chatty-settings-dialog.c:851
+#: src/dialogs/chatty-settings-dialog.c:866
+#: src/dialogs/chatty-settings-dialog.c:883
+#: src/dialogs/chatty-settings-dialog.c:895
+#: src/dialogs/chatty-settings-dialog.c:1529 src/ui/chatty-main-view.ui:73
 msgid "Close"
 msgstr "Закрити"
 
@@ -438,8 +440,6 @@ msgid "Invite: %s"
 msgstr "Запросити: %s"
 
 #: src/chatty-file-item.c:175
-#| msgctxt "Invitation to event"
-#| msgid "Invite"
 msgctxt "Invitation to event"
 msgid "Invitation"
 msgstr "Запрошення"
@@ -565,7 +565,7 @@ msgid "Matrix"
 msgstr "Matrix"
 
 #: src/chatty-side-bar.c:329 src/dialogs/chatty-new-chat-dialog.c:634
-#: src/dialogs/chatty-settings-dialog.c:1116
+#: src/dialogs/chatty-settings-dialog.c:1115
 #: src/ui/chatty-settings-dialog.ui:255
 msgid "SMS/MMS"
 msgstr "SMS/MMS"
@@ -601,7 +601,7 @@ msgstr "Відкрити файл…"
 msgid "User %s has added %s to the contacts"
 msgstr "Користувач %s додав %s до контактів"
 
-#: src/purple/chatty-purple.c:283 src/dialogs/chatty-settings-dialog.c:472
+#: src/purple/chatty-purple.c:283 src/dialogs/chatty-settings-dialog.c:471
 #: src/ui/chatty-ma-account-details.ui:162
 #: src/ui/chatty-pp-account-details.ui:154
 msgid "Delete Account"
@@ -618,7 +618,7 @@ msgid "Add %s to contact list"
 msgstr "Додати %s до списку контактів"
 
 #: src/purple/chatty-purple.c:293 src/chatty-window.c:382
-#: src/chatty-window.c:478 src/dialogs/chatty-settings-dialog.c:478
+#: src/chatty-window.c:478 src/dialogs/chatty-settings-dialog.c:477
 #: src/ui/chatty-dialog-wrong-pw.ui:23 src/ui/chatty-dialog-new-chat.ui:36
 #: src/ui/chatty-settings-dialog.ui:25 src/ui/chatty-settings-dialog.ui:55
 #: src/ui/chatty-settings-dialog.ui:75 src/ui/chatty-verification-page.ui:129
@@ -965,13 +965,11 @@ msgstr "Показувати номери"
 
 #: src/chatty-utils.c:299
 #, c-format
-#| msgid "Contact: %s %s %s %s"
 msgid "%s %s %s %s"
 msgstr "%s %s %s %s"
 
 #: src/chatty-utils.c:301 src/chatty-utils.c:305
 #, c-format
-#| msgid "Contact: %s %s %s"
 msgid "%s %s %s"
 msgstr "%s %s %s"
 
@@ -1006,7 +1004,7 @@ msgstr "Від'єднатися від групового спілкування
 msgid "This removes chat from chats list"
 msgstr "У результаті спілкування буде вилучено зі списку спілкувань"
 
-#: src/chatty-window.c:479 src/dialogs/chatty-settings-dialog.c:479
+#: src/chatty-window.c:479 src/dialogs/chatty-settings-dialog.c:478
 msgid "Delete"
 msgstr "Вилучити"
 
@@ -1016,13 +1014,13 @@ msgid "You"
 msgstr "Ви"
 
 #: src/dialogs/chatty-pp-chat-info.c:111
-#: src/dialogs/chatty-ma-account-details.c:154
+#: src/dialogs/chatty-ma-account-details.c:168
 #: src/dialogs/chatty-pp-account-details.c:115
 msgid "Set Avatar"
 msgstr "Встановити аватар"
 
 #: src/dialogs/chatty-pp-chat-info.c:118
-#: src/dialogs/chatty-ma-account-details.c:161
+#: src/dialogs/chatty-ma-account-details.c:175
 #: src/dialogs/chatty-pp-account-details.c:122
 msgid "Images"
 msgstr "Зображення"
@@ -1092,17 +1090,17 @@ msgstr "SMS"
 msgid "You"
 msgstr "Ви"
 
-#: src/dialogs/chatty-ma-account-details.c:413
+#: src/dialogs/chatty-ma-account-details.c:427
 #: src/dialogs/chatty-pp-account-details.c:171
 msgid "connected"
 msgstr "з'єднано"
 
-#: src/dialogs/chatty-ma-account-details.c:415
+#: src/dialogs/chatty-ma-account-details.c:429
 #: src/dialogs/chatty-pp-account-details.c:173
 msgid "connecting…"
 msgstr "З'єднання…"
 
-#: src/dialogs/chatty-ma-account-details.c:417
+#: src/dialogs/chatty-ma-account-details.c:431
 #: src/dialogs/chatty-pp-account-details.c:175
 msgid "disconnected"
 msgstr "від'єднано"
@@ -1125,67 +1123,67 @@ msgstr "Не вдалося перевірити сервер"
 msgid "Couldn't get Home server address"
 msgstr "Не вдалося отримати адресу домашнього сервера."
 
-#: src/dialogs/chatty-settings-dialog.c:474
+#: src/dialogs/chatty-settings-dialog.c:473
 #, c-format
 msgid "Delete account %s?"
 msgstr "Вилучити запис %s?"
 
-#: src/dialogs/chatty-settings-dialog.c:659
+#: src/dialogs/chatty-settings-dialog.c:658
 #, c-format
 msgid "Chatty cannot find a valid PGP Key for %s."
 msgstr "Chatty не може знайти коректного ключа PGP для %s."
 
-#: src/dialogs/chatty-settings-dialog.c:661
+#: src/dialogs/chatty-settings-dialog.c:660
 msgid "Invalid Signing ID"
 msgstr "Некоректний ідентифікатор підписування"
 
-#: src/dialogs/chatty-settings-dialog.c:696
+#: src/dialogs/chatty-settings-dialog.c:695
 #, c-format
 msgid "The entered Key ID %s does not match the found PGP Key for %s:%s."
 msgstr ""
 "Введений ідентифікатор ключа %s не відповідає знайденому ключу PGP для %s:%s."
 
-#: src/dialogs/chatty-settings-dialog.c:698
+#: src/dialogs/chatty-settings-dialog.c:697
 msgid "Cannot Find Signing Key"
 msgstr "Не вдалося знайти ключ підписування"
 
-#: src/dialogs/chatty-settings-dialog.c:701
-#: src/dialogs/chatty-settings-dialog.c:947
+#: src/dialogs/chatty-settings-dialog.c:700
+#: src/dialogs/chatty-settings-dialog.c:946
 msgid "I Know What I am Doing"
 msgstr "Я розумію наслідки своїх дій"
 
-#: src/dialogs/chatty-settings-dialog.c:783
-#: src/dialogs/chatty-settings-dialog.c:865
-#: src/dialogs/chatty-settings-dialog.c:882
+#: src/dialogs/chatty-settings-dialog.c:782
+#: src/dialogs/chatty-settings-dialog.c:864
+#: src/dialogs/chatty-settings-dialog.c:881
 msgid "Cannot Create Signing Key"
 msgstr "Не вдалося створити ключ підписування"
 
-#: src/dialogs/chatty-settings-dialog.c:784
-#: src/dialogs/chatty-settings-dialog.c:881
+#: src/dialogs/chatty-settings-dialog.c:783
+#: src/dialogs/chatty-settings-dialog.c:880
 #, c-format
 msgid "Error creating the PGP ID. Please check the logs for more details."
 msgstr ""
 "Помилка під час спроби створити ідентифікатор PGP. Будь ласка, ознайомтеся "
 "із журналом, щоб дізнатися більше."
 
-#: src/dialogs/chatty-settings-dialog.c:797
+#: src/dialogs/chatty-settings-dialog.c:796
 #, c-format
 msgid "Key %s was created for ID %s"
 msgstr "Ключ %s було створено для ідентифікатора %s"
 
-#: src/dialogs/chatty-settings-dialog.c:798
+#: src/dialogs/chatty-settings-dialog.c:797
 msgid "Successfully Created Key"
 msgstr "Успішно створений ключ"
 
-#: src/dialogs/chatty-settings-dialog.c:850
+#: src/dialogs/chatty-settings-dialog.c:849
 msgid "Empty Entries"
 msgstr "Порожні записи"
 
-#: src/dialogs/chatty-settings-dialog.c:851
+#: src/dialogs/chatty-settings-dialog.c:850
 msgid "All entries must be filled to create a PGP Key"
 msgstr "Для створення ключа PGP слід заповнити усі записи"
 
-#: src/dialogs/chatty-settings-dialog.c:864
+#: src/dialogs/chatty-settings-dialog.c:863
 #, c-format
 msgid ""
 "%s already has key with fingerprint %s. Please choose a different PGP ID"
@@ -1193,17 +1191,17 @@ msgstr ""
 "%s уже містить ключ із відбитком %s. Будь ласка, виберіть інший "
 "ідентифікатор PGP"
 
-#: src/dialogs/chatty-settings-dialog.c:893
+#: src/dialogs/chatty-settings-dialog.c:892
 #, c-format
 msgid "Creating key for ID %s."
 msgstr "Створення ключа для ідентифікатора %s."
 
-#: src/dialogs/chatty-settings-dialog.c:894
+#: src/dialogs/chatty-settings-dialog.c:893
 msgid "Creating Key"
 msgstr "Створення ключа"
 
 #. Translators: This means that the existing key will be there, but there will be a new key that Chatty will use by default instead of the existing one.
-#: src/dialogs/chatty-settings-dialog.c:942
+#: src/dialogs/chatty-settings-dialog.c:941
 #, c-format
 msgid ""
 "Chatty is currently set to use PGP key: %s. The new key will be used instead "
@@ -1212,61 +1210,61 @@ msgstr ""
 "Зараз Chatty налаштовано на використання ключа PGP: %s. Новий ключ буде "
 "використано замість наявного!"
 
-#: src/dialogs/chatty-settings-dialog.c:944
+#: src/dialogs/chatty-settings-dialog.c:943
 msgid "Signing ID Present"
 msgstr "Наявний ідентифікатор підписування"
 
-#: src/dialogs/chatty-settings-dialog.c:946 src/ui/chatty-dialog-join-muc.ui:16
+#: src/dialogs/chatty-settings-dialog.c:945 src/ui/chatty-dialog-join-muc.ui:16
 #: src/ui/chatty-info-dialog.ui:23 src/ui/chatty-info-dialog.ui:32
 msgid "Cancel"
 msgstr "Скасувати"
 
-#: src/dialogs/chatty-settings-dialog.c:1102
+#: src/dialogs/chatty-settings-dialog.c:1101
 msgid "Restart Chatty to disable Purple"
 msgstr "Перезапустіть Chatty, щоб вимкнути Purple"
 
-#: src/dialogs/chatty-settings-dialog.c:1118
+#: src/dialogs/chatty-settings-dialog.c:1117
 #: src/ui/chatty-settings-dialog.ui:290
 msgid "Purple"
 msgstr "Purple"
 
-#: src/dialogs/chatty-settings-dialog.c:1120
+#: src/dialogs/chatty-settings-dialog.c:1119
 msgid "New Account"
 msgstr "Новий обліковий запис"
 
-#: src/dialogs/chatty-settings-dialog.c:1122
+#: src/dialogs/chatty-settings-dialog.c:1121
 #: src/ui/chatty-settings-dialog.ui:363
 msgid "Blocked Contacts"
 msgstr "Заблоковані контакти"
 
-#: src/dialogs/chatty-settings-dialog.c:1124
+#: src/dialogs/chatty-settings-dialog.c:1123
 #: src/ui/chatty-settings-dialog.ui:272
 msgid "PGP Settings"
 msgstr "Параметри PGP"
 
-#: src/dialogs/chatty-settings-dialog.c:1126
+#: src/dialogs/chatty-settings-dialog.c:1125
 msgid "New PGP Key"
 msgstr "Новий ключ PGP"
 
-#: src/dialogs/chatty-settings-dialog.c:1128 src/ui/chatty-side-bar.ui:111
+#: src/dialogs/chatty-settings-dialog.c:1127 src/ui/chatty-side-bar.ui:111
 msgid "Preferences"
 msgstr "Параметри"
 
-#: src/dialogs/chatty-settings-dialog.c:1156
+#: src/dialogs/chatty-settings-dialog.c:1155
 #: src/ui/chatty-pp-account-details.ui:81 src/ui/chatty-settings-dialog.ui:245
 msgid "Protocol"
 msgstr "Протокол"
 
 #. TRANSLATORS: Only translate 'or'
-#: src/dialogs/chatty-settings-dialog.c:1417
+#: src/dialogs/chatty-settings-dialog.c:1416
 msgid "@user:matrix.org or user@example.com"
 msgstr "@user:matrix.org або user@example.com"
 
-#: src/dialogs/chatty-settings-dialog.c:1528
+#: src/dialogs/chatty-settings-dialog.c:1527
 msgid "Experimental Setting!"
 msgstr "Експериментальна можливість!"
 
-#: src/dialogs/chatty-settings-dialog.c:1529
+#: src/dialogs/chatty-settings-dialog.c:1528
 msgid ""
 "This setting is experimental and may cause loss of SMS. Use at your own risk!"
 msgstr ""
@@ -1483,7 +1481,7 @@ msgstr "Від_!мовити"
 msgid "Chat"
 msgstr "Спілкування"
 
-#: src/ui/chatty-ma-chat-info.ui:61 src/ui/chatty-ma-account-details.ui:210
+#: src/ui/chatty-ma-chat-info.ui:61 src/ui/chatty-ma-account-details.ui:222
 msgid "Matrix ID"
 msgstr "Ід. Matrix"
 
@@ -1618,15 +1616,15 @@ msgstr "Додаткові відомості"
 msgid "Homeserver"
 msgstr "Домашній сервер"
 
-#: src/ui/chatty-ma-account-details.ui:234
+#: src/ui/chatty-ma-account-details.ui:258
 msgid "Device ID"
 msgstr "Ід. пристрою"
 
-#: src/ui/chatty-ma-account-details.ui:265
+#: src/ui/chatty-ma-account-details.ui:301
 msgid "Sensitive information"
 msgstr "Конфіденційні відомості"
 
-#: src/ui/chatty-ma-account-details.ui:276
+#: src/ui/chatty-ma-account-details.ui:312
 msgid "Access token"
 msgstr "Жетон доступу"
 
