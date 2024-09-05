@@ -97,7 +97,7 @@ mamm_free(void *ptr)
   g_free(mm);
 }
 
-/**
+/*
  * MAM Context Management API
  */
 
@@ -183,7 +183,7 @@ chatty_mam_ctx_del(PurpleAccount *pa)
   g_hash_table_remove(ht_mam_ctx, purple_account_get_username(pa));
 }
 
-/**
+/*
  * MAM Query Handlers
  */
 
@@ -767,7 +767,7 @@ cb_chatty_mam_msg_received (PurpleConnection *pc,
     peer = from;
   }
   CHATTY_DEBUG (peer, "Stealing parser for MAM, ID %s user:", stanza_id);
-  /**
+  /*
    * Before we resume message processing we need to pre-cook the message.
    * If there's no body the whole server_got_stuff is skipped, so we may never
    * see the conversation. On the other hand making full parsing with html and
