@@ -3,11 +3,8 @@ Section: net
 Priority: optional
 Maintainer: Mohammed Sadiq <sadiq@sadiqpk.org>
 Build-Depends:
- appstream,
- appstream-util,
  debhelper-compat (= 13),
  desktop-file-utils,
- gnupg <!nocheck>,
  itstool,
  libgtk-4-dev,
  libadwaita-1-dev (>= 1.5~),
@@ -28,10 +25,12 @@ Build-Depends:
  gsettings-desktop-schemas-dev,
  meson,
 # to run the tests
- at-spi2-core,
- dbus-x11,
- xvfb,
- xauth,
+ appstream <!nocheck>,
+ at-spi2-core <!nocheck>,
+ dbus-x11 <!nocheck>,
+ gnupg <!nocheck>,
+ xvfb <!nocheck>,
+ xauth <!nocheck>,
 Standards-Version: 4.2.1
 Homepage: https://gitlab.gnome.org/World/Chatty
 Rules-Requires-Root: no
