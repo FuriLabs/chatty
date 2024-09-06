@@ -286,7 +286,7 @@ chatty_message_get_encrypted (ChattyMessage *self)
 }
 
 /**
- * chatty_message_set_files:
+ * chatty_message_get_files:
  * @self: A #ChattyMessage
  *
  * Get List of files
