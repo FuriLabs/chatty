@@ -9,6 +9,13 @@ else
     MESON_OPTS += -Dpurple=enabled
 endif
 
+ifneq ($(filter nodoc,$(DEB_BUILD_PROFILES)),)
+    MESON_OPTS += -Dgtk_doc=false
+else
+    MESON_OPTS += -Dgtk_doc=true
+endif
+
+
 %:
 	dh $@ --builddirectory=_build
 
