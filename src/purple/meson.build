@@ -15,18 +15,16 @@ chatty_deps += [
 ]
 
 libsrc += files([
-  'chatty-pp-buddy.c',
-  'chatty-pp-account.c',
-  'chatty-pp-chat.c',
-  'chatty-pp-utils.c',
+  'chatty-pp-buddy.c', 'chatty-pp-buddy.h',
+  'chatty-pp-account.c', 'chatty-pp-account.h',
+  'chatty-pp-chat.c', 'chatty-pp-chat.h',
+  'chatty-pp-utils.c', 'chatty-pp-utils.h',
+  'chatty-purple.c', 'chatty-purple.h',
+  'xeps/xeps.c', 'xeps/xeps.h',
+  'xeps/chatty-xep-0184.c', 'xeps/chatty-xep-0184.h',
+  'xeps/chatty-xep-0313.c', 'xeps/chatty-xep-0313.h',
+  'xeps/chatty-xep-0352.c', 'xeps/chatty-xep-0352.h',
+  'chatty-purple-request.c', 'chatty-purple-request.h',
+  'chatty-purple-notify.c', 'chatty-purple-notify.h',
 ])
 
-chatty_sources += files([
-  'chatty-purple.c',
-  'xeps/xeps.c',
-  'xeps/chatty-xep-0184.c',
-  'xeps/chatty-xep-0313.c',
-  'xeps/chatty-xep-0352.c',
-  'chatty-purple-request.c',
-  'chatty-purple-notify.c',
-])
