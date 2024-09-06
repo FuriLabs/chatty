@@ -53,7 +53,7 @@
  *
  */
 
-/**
+/*
  * mmsd Context Connection:
  *
  * The enumerations if mmsd has a bearer handler error.
