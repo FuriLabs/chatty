@@ -5,7 +5,7 @@ Maintainer: Mohammed Sadiq <sadiq@sadiqpk.org>
 Build-Depends:
  appstream,
  appstream-util,
- debhelper (>= 11),
+ debhelper-compat (= 13),
  desktop-file-utils,
  gnupg <!nocheck>,
  itstool,
