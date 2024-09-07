@@ -191,6 +191,19 @@ check-po:
     variables:
       - $FP_ONLY == "1"
 
+build-docs:
+  stage: test
+  image: ${IMAGE}
+  dependencies:
+    - build-debian-gcc-trixie
+  script:
+    - meson setup -Dgtk_doc=true _build
+    - meson compile -C _build
+    - mv _build/docs/chatty-0 _docs
+  artifacts:
+    paths:
+      - _docs
+
 package:deb-debian-trixie:arm64:
   variables:
     L5_DOCKER_IMAGE: debian:trixie
