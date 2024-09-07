@@ -8,7 +8,7 @@ include:
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
-  IMAGE: $CI_REGISTRY/world/chatty/debian:v0.0.2024-08-05
+  IMAGE: $CI_REGISTRY/world/chatty/debian:v0.0.2025-02-23
   ALPINE_IMAGE: alpine:edge
 
 stages:
