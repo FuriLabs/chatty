@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include "chatty-ma-account.h"
+
 #include <adwaita.h>
 
 G_BEGIN_DECLS
