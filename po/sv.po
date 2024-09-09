@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-08-20 16:37+0000\n"
-"PO-Revision-Date: 2024-08-18 22:36+0200\n"
+"POT-Creation-Date: 2024-09-05 13:12+0000\n"
+"PO-Revision-Date: 2024-09-05 17:02+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -28,12 +28,12 @@ msgid "Chats"
 msgstr "Chattar"
 
 #: data/sm.puri.Chatty.desktop.in.in:6
-msgid "SMS and XMPP chat application"
-msgstr "SMS- och XMPP-chattprogram"
+msgid "SMS/MMS, Matrix and XMPP chat application"
+msgstr "SMS/MMS-, Matrix- och XMPP-chattprogram"
 
 #: data/sm.puri.Chatty.desktop.in.in:7
-msgid "XMPP;SMS;chat;jabber;messaging;modem"
-msgstr "XMPP;SMS;chatt;jabber;meddelanden;modem"
+msgid "XMPP;SMS;chat;jabber;messaging;modem;matrix"
+msgstr "XMPP;SMS;chatt;jabber;meddelanden;modem;matrix"
 
 #: data/sm.puri.Chatty.gschema.xml:7 data/sm.puri.Chatty.gschema.xml:8
 msgid "Whether the application is launching the first time"
@@ -258,14 +258,14 @@ msgstr ""
 #: src/purple/chatty-purple.c:199 src/purple/chatty-purple.c:619
 #: src/dialogs/chatty-new-chat-dialog.c:226
 #: src/dialogs/chatty-settings-dialog.c:213
-#: src/dialogs/chatty-settings-dialog.c:663
-#: src/dialogs/chatty-settings-dialog.c:700
-#: src/dialogs/chatty-settings-dialog.c:816
-#: src/dialogs/chatty-settings-dialog.c:852
-#: src/dialogs/chatty-settings-dialog.c:867
-#: src/dialogs/chatty-settings-dialog.c:884
-#: src/dialogs/chatty-settings-dialog.c:896
-#: src/dialogs/chatty-settings-dialog.c:1530 src/ui/chatty-main-view.ui:73
+#: src/dialogs/chatty-settings-dialog.c:662
+#: src/dialogs/chatty-settings-dialog.c:699
+#: src/dialogs/chatty-settings-dialog.c:815
+#: src/dialogs/chatty-settings-dialog.c:851
+#: src/dialogs/chatty-settings-dialog.c:866
+#: src/dialogs/chatty-settings-dialog.c:883
+#: src/dialogs/chatty-settings-dialog.c:895
+#: src/dialogs/chatty-settings-dialog.c:1529 src/ui/chatty-main-view.ui:73
 msgid "Close"
 msgstr "Stäng"
 
@@ -550,7 +550,7 @@ msgid "Matrix"
 msgstr "Matrix"
 
 #: src/chatty-side-bar.c:329 src/dialogs/chatty-new-chat-dialog.c:634
-#: src/dialogs/chatty-settings-dialog.c:1116
+#: src/dialogs/chatty-settings-dialog.c:1115
 #: src/ui/chatty-settings-dialog.ui:255
 msgid "SMS/MMS"
 msgstr "SMS/MMS"
@@ -586,7 +586,7 @@ msgstr "Öppna fil…"
 msgid "User %s has added %s to the contacts"
 msgstr "Användaren %s har lagt till %s till kontakterna"
 
-#: src/purple/chatty-purple.c:283 src/dialogs/chatty-settings-dialog.c:472
+#: src/purple/chatty-purple.c:283 src/dialogs/chatty-settings-dialog.c:471
 #: src/ui/chatty-ma-account-details.ui:162
 #: src/ui/chatty-pp-account-details.ui:154
 msgid "Delete Account"
@@ -603,7 +603,7 @@ msgid "Add %s to contact list"
 msgstr "Lägg till %s till kontaktlista"
 
 #: src/purple/chatty-purple.c:293 src/chatty-window.c:382
-#: src/chatty-window.c:478 src/dialogs/chatty-settings-dialog.c:478
+#: src/chatty-window.c:478 src/dialogs/chatty-settings-dialog.c:477
 #: src/ui/chatty-dialog-wrong-pw.ui:23 src/ui/chatty-dialog-new-chat.ui:36
 #: src/ui/chatty-settings-dialog.ui:25 src/ui/chatty-settings-dialog.ui:55
 #: src/ui/chatty-settings-dialog.ui:75 src/ui/chatty-verification-page.ui:129
@@ -989,7 +989,7 @@ msgstr "Lämna gruppchatten ”%s”"
 msgid "This removes chat from chats list"
 msgstr "Detta tar bort chatten från chattlistan"
 
-#: src/chatty-window.c:479 src/dialogs/chatty-settings-dialog.c:479
+#: src/chatty-window.c:479 src/dialogs/chatty-settings-dialog.c:478
 msgid "Delete"
 msgstr "Ta bort"
 
@@ -1107,81 +1107,81 @@ msgstr "Misslyckades med att verifiera server"
 msgid "Couldn't get Home server address"
 msgstr "Kunde inte erhålla hemserverns adress"
 
-#: src/dialogs/chatty-settings-dialog.c:474
+#: src/dialogs/chatty-settings-dialog.c:473
 #, c-format
 msgid "Delete account %s?"
 msgstr "Ta bort kontot %s?"
 
-#: src/dialogs/chatty-settings-dialog.c:659
+#: src/dialogs/chatty-settings-dialog.c:658
 #, c-format
 msgid "Chatty cannot find a valid PGP Key for %s."
 msgstr "Chatty kan inte hitta en giltig PGP-nyckel för %s."
 
-#: src/dialogs/chatty-settings-dialog.c:661
+#: src/dialogs/chatty-settings-dialog.c:660
 msgid "Invalid Signing ID"
 msgstr "Ogiltigt signerings-ID"
 
-#: src/dialogs/chatty-settings-dialog.c:696
+#: src/dialogs/chatty-settings-dialog.c:695
 #, c-format
 msgid "The entered Key ID %s does not match the found PGP Key for %s:%s."
 msgstr ""
 "Det inmatade nyckel-ID:t %s matchar inte den hittade PGP-nyckeln för %s:%s."
 
-#: src/dialogs/chatty-settings-dialog.c:698
+#: src/dialogs/chatty-settings-dialog.c:697
 msgid "Cannot Find Signing Key"
 msgstr "Kan inte hitta nyckel för signering"
 
-#: src/dialogs/chatty-settings-dialog.c:701
-#: src/dialogs/chatty-settings-dialog.c:947
+#: src/dialogs/chatty-settings-dialog.c:700
+#: src/dialogs/chatty-settings-dialog.c:946
 msgid "I Know What I am Doing"
 msgstr "Jag vet vad jag gör"
 
-#: src/dialogs/chatty-settings-dialog.c:783
-#: src/dialogs/chatty-settings-dialog.c:865
-#: src/dialogs/chatty-settings-dialog.c:882
+#: src/dialogs/chatty-settings-dialog.c:782
+#: src/dialogs/chatty-settings-dialog.c:864
+#: src/dialogs/chatty-settings-dialog.c:881
 msgid "Cannot Create Signing Key"
 msgstr "Kan inte skapa nyckel för signering"
 
-#: src/dialogs/chatty-settings-dialog.c:784
-#: src/dialogs/chatty-settings-dialog.c:881
+#: src/dialogs/chatty-settings-dialog.c:783
+#: src/dialogs/chatty-settings-dialog.c:880
 #, c-format
 msgid "Error creating the PGP ID. Please check the logs for more details."
 msgstr "Fel vid skapande av PGP-ID:t. Se loggarna för mer detaljer."
 
-#: src/dialogs/chatty-settings-dialog.c:797
+#: src/dialogs/chatty-settings-dialog.c:796
 #, c-format
 msgid "Key %s was created for ID %s"
 msgstr "Nyckel %s skapades för ID %s"
 
-#: src/dialogs/chatty-settings-dialog.c:798
+#: src/dialogs/chatty-settings-dialog.c:797
 msgid "Successfully Created Key"
 msgstr "Lyckades skapa nyckel"
 
-#: src/dialogs/chatty-settings-dialog.c:850
+#: src/dialogs/chatty-settings-dialog.c:849
 msgid "Empty Entries"
 msgstr "Tomma fält"
 
-#: src/dialogs/chatty-settings-dialog.c:851
+#: src/dialogs/chatty-settings-dialog.c:850
 msgid "All entries must be filled to create a PGP Key"
 msgstr "Alla fält måste fyllas i för att skapa en PGP-nyckel"
 
-#: src/dialogs/chatty-settings-dialog.c:864
+#: src/dialogs/chatty-settings-dialog.c:863
 #, c-format
 msgid ""
 "%s already has key with fingerprint %s. Please choose a different PGP ID"
 msgstr "%s har redan en nyckel med fingeravtrycket %s. Välj ett annat PGP-ID"
 
-#: src/dialogs/chatty-settings-dialog.c:893
+#: src/dialogs/chatty-settings-dialog.c:892
 #, c-format
 msgid "Creating key for ID %s."
 msgstr "Skapar nyckel för ID %s."
 
-#: src/dialogs/chatty-settings-dialog.c:894
+#: src/dialogs/chatty-settings-dialog.c:893
 msgid "Creating Key"
 msgstr "Skapar nyckel"
 
 #. Translators: This means that the existing key will be there, but there will be a new key that Chatty will use by default instead of the existing one.
-#: src/dialogs/chatty-settings-dialog.c:942
+#: src/dialogs/chatty-settings-dialog.c:941
 #, c-format
 msgid ""
 "Chatty is currently set to use PGP key: %s. The new key will be used instead "
@@ -1190,61 +1190,61 @@ msgstr ""
 "Chatty är för närvarande inställt att använda PGP-nyckel: %s. Den nya "
 "nyckeln kommer att användas i stället för den befintliga!"
 
-#: src/dialogs/chatty-settings-dialog.c:944
+#: src/dialogs/chatty-settings-dialog.c:943
 msgid "Signing ID Present"
 msgstr "Signerings-ID finns"
 
-#: src/dialogs/chatty-settings-dialog.c:946 src/ui/chatty-dialog-join-muc.ui:16
+#: src/dialogs/chatty-settings-dialog.c:945 src/ui/chatty-dialog-join-muc.ui:16
 #: src/ui/chatty-info-dialog.ui:23 src/ui/chatty-info-dialog.ui:32
 msgid "Cancel"
 msgstr "Avbryt"
 
-#: src/dialogs/chatty-settings-dialog.c:1102
+#: src/dialogs/chatty-settings-dialog.c:1101
 msgid "Restart Chatty to disable Purple"
 msgstr "Starta om Chatty för att inaktivera Purple"
 
-#: src/dialogs/chatty-settings-dialog.c:1118
+#: src/dialogs/chatty-settings-dialog.c:1117
 #: src/ui/chatty-settings-dialog.ui:290
 msgid "Purple"
 msgstr "Purple"
 
-#: src/dialogs/chatty-settings-dialog.c:1120
+#: src/dialogs/chatty-settings-dialog.c:1119
 msgid "New Account"
 msgstr "Nytt konto"
 
-#: src/dialogs/chatty-settings-dialog.c:1122
+#: src/dialogs/chatty-settings-dialog.c:1121
 #: src/ui/chatty-settings-dialog.ui:363
 msgid "Blocked Contacts"
 msgstr "Blockerade kontakter"
 
-#: src/dialogs/chatty-settings-dialog.c:1124
+#: src/dialogs/chatty-settings-dialog.c:1123
 #: src/ui/chatty-settings-dialog.ui:272
 msgid "PGP Settings"
 msgstr "PGP-inställningar"
 
-#: src/dialogs/chatty-settings-dialog.c:1126
+#: src/dialogs/chatty-settings-dialog.c:1125
 msgid "New PGP Key"
 msgstr "Ny PGP-nyckel"
 
-#: src/dialogs/chatty-settings-dialog.c:1128 src/ui/chatty-side-bar.ui:111
+#: src/dialogs/chatty-settings-dialog.c:1127 src/ui/chatty-side-bar.ui:111
 msgid "Preferences"
 msgstr "Inställningar"
 
-#: src/dialogs/chatty-settings-dialog.c:1156
+#: src/dialogs/chatty-settings-dialog.c:1155
 #: src/ui/chatty-pp-account-details.ui:81 src/ui/chatty-settings-dialog.ui:245
 msgid "Protocol"
 msgstr "Protokoll"
 
 #. TRANSLATORS: Only translate 'or'
-#: src/dialogs/chatty-settings-dialog.c:1417
+#: src/dialogs/chatty-settings-dialog.c:1416
 msgid "@user:matrix.org or user@example.com"
 msgstr "@user:matrix.org eller user@example.com"
 
-#: src/dialogs/chatty-settings-dialog.c:1528
+#: src/dialogs/chatty-settings-dialog.c:1527
 msgid "Experimental Setting!"
 msgstr "Experimentell inställning!"
 
-#: src/dialogs/chatty-settings-dialog.c:1529
+#: src/dialogs/chatty-settings-dialog.c:1528
 msgid ""
 "This setting is experimental and may cause loss of SMS. Use at your own risk!"
 msgstr ""
