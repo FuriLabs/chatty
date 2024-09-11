@@ -118,7 +118,6 @@ chatty_deps += [
   libadwaita_dep,
   libgtk_dep,
   libebook_dep,
-  libfeedback_dep,
   libm_dep,
   libphonenumber_dep,
   libcmatrix_dep,

@@ -201,22 +201,6 @@
             ]
         },
         {
-            "name": "libfeedback",
-            "buildsystem": "meson",
-            "config-opts": [
-                "-Dtests=false",
-                "-Ddaemon=false"
-            ],
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://source.puri.sm/Librem5/feedbackd.git",
-                    "tag": "v0.4.1",
-                    "commit": "427058750263fc196cd3d5dd2f62058ed0ea7c18"
-                }
-            ]
-        },
-        {
             "name": "olm",
             "buildsystem": "cmake-ninja",
             "sources": [

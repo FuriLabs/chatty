@@ -43,9 +43,6 @@
 #include "chatty-clock.h"
 #include "chatty-log.h"
 
-#define LIBFEEDBACK_USE_UNSTABLE_API
-#include <libfeedback.h>
-
 /**
  * SECTION: chatty-application
  * @title: ChattyApplication
@@ -415,7 +412,6 @@ chatty_application_startup (GApplication *application)
   if (!gtk_window_get_default_icon_name ())
     gtk_window_set_default_icon_name (CHATTY_APP_ID);
 
-  lfb_init (CHATTY_APP_ID, NULL);
   purple_dir = chatty_utils_get_purple_dir ();
   db_path =  g_build_filename (purple_dir, "chatty", "db", NULL);
   chatty_history_open (chatty_manager_get_history (self->manager),
@@ -472,7 +468,6 @@ chatty_application_shutdown (GApplication *application)
 
   g_object_unref (chatty_settings_get_default ());
   chatty_history_close (chatty_manager_get_history (self->manager));
-  lfb_uninit ();
 
   G_APPLICATION_CLASS (chatty_application_parent_class)->shutdown (application);
 }
