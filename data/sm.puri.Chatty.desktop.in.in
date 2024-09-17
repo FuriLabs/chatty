@@ -9,6 +9,7 @@ Type=Application
 Categories=Network;GNOME;GTK;Chat;InstantMessaging;
 StartupNotify=true
 MimeType=x-scheme-handler/sms
+DBusActivatable=true
 # Translators: Do NOT translate or transliterate this text (these are enum types)!
 X-Purism-FormFactor=Workstation;Mobile;
 X-Phosh-UsesFeedback=true

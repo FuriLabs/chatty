@@ -69,4 +69,17 @@ if compile_schemas.found()
   )
 endif
 
+# DBus service
+service_data = configuration_data()
+service_data.set('appid', app_id)
+service_data.set('bindir', get_option('prefix') / get_option('bindir'))
+service_file = '@0@.service'.format(app_id)
+configure_file(
+  input : service_file + '.in',
+  output : service_file,
+  configuration : service_data,
+  install : true,
+  install_dir : get_option('datadir') / 'dbus-1' / 'services'
+)
+
 subdir('icons')
