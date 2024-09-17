@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Chats (daemon)
-Exec=chatty --daemon
+Exec=chatty --gapplication-service
 Icon=@APP_ID@
 Comment=SMS/MMS, Matrix and XMPP chat application (daemon mode)
 Keywords=XMPP;SMS;chat;jabber;messaging;modem;matrix;

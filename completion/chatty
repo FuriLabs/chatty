@@ -10,7 +10,7 @@ __app ()
   CURRENT=${COMP_WORDS[COMP_CWORD]}
   cur="${COMP_WORDS[COMP_CWORD]}"
   prev="${COMP_WORDS[COMP_CWORD-1]}"
-  options="--daemon --debug --help --nologin --verbose --version"
+  options="--gapplication-service --debug --help --nologin --verbose --version"
 
   case "$cur" in
     *)
