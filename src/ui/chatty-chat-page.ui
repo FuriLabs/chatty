@@ -24,6 +24,7 @@
                         <property name="visible">0</property>
                         <property name="margin-bottom">18</property>
                         <property name="margin-end">18</property>
+                        <property name="can-focus">0</property>
                         <signal name="clicked" handler="chat_page_scroll_down_clicked_cb" swapped="yes"/>
                         <style>
                           <class name="osd"/>
