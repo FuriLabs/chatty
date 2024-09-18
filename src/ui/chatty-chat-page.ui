@@ -15,13 +15,13 @@
             <child>
               <object class="GtkOverlay">
                 <child type="overlay">
-                  <object class="GtkRevealer">
-                    <property name="reveal-child">1</property>
+                  <object class="GtkRevealer" id="scroll_down_revealer">
+                    <property name="reveal-child">0</property>
                     <property name="halign">end</property>
                     <property name="valign">end</property>
+                    <property name="transition-type">slide-up</property>
                     <property name="child">
                       <object class="GtkButton" id="scroll_down_button">
-                        <property name="visible">0</property>
                         <property name="margin-bottom">18</property>
                         <property name="margin-end">18</property>
                         <property name="can-focus">0</property>
