@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-09-05 13:12+0000\n"
-"PO-Revision-Date: 2024-09-07 11:36+0330\n"
+"POT-Creation-Date: 2024-09-20 15:50+0000\n"
+"PO-Revision-Date: 2024-09-21 01:08+0330\n"
 "Last-Translator: Danial Behzadi <dani.behzi@ubuntu.com>\n"
 "Language-Team: Persian <fa@li.org>\n"
 "Language: fa\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 3.4.4\n"
+"X-Generator: Poedit 3.5\n"
 
 #: data/sm.puri.Chatty.desktop.in.in:3 data/sm.puri.Chatty.metainfo.xml.in.in:6
 #: src/chatty-application.c:164 src/chatty-application.c:413
@@ -207,8 +207,47 @@ msgstr ""
 "پیامک، پیام چندرسانه‌ای، XMPP و ماتریکس است."
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:23
-msgid "Chats message window"
-msgstr "پنجرهٔ پیام گپ‌ها"
+msgid "Folded view of a chat using the light theme."
+msgstr "نمای جمع شدهٔ گپ با زمینهٔ روشن."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:27
+msgid "Folded view of a chat using the dark theme."
+msgstr "نمای جمع شدهٔ گپ با زمینهٔ تیره."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:31
+msgid "Unfolded view of a chat and the chat list in the sidebar."
+msgstr "نمای باز شدهٔ گپ و سیاههٔ گپ‌ها در نوار کناری."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:35
+msgid ""
+"The chat view using the dark theme as seen on a mobile phone running Phosh with "
+"unfolded keyboard."
+msgstr ""
+"نمای گپ با زمینهٔ تیره به صورتی که روی تلفن همراهی که فوش را اجرا می‌کند با "
+"صفحه‌کلید باز شده دیده می‌شود."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:39
+msgid ""
+"The chat list view using the light theme as seen on a mobile phone running Phosh."
+msgstr ""
+"نمای سیاههٔ گپ‌ها با زمینهٔ روشن به صورتی که روی تلفن همراهی که فوش را اجرا می‌کند "
+"دیده می‌شود."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:43
+msgid ""
+"The SMS/MMS preferences using the light theme as seen on a mobile phone running "
+"Phosh."
+msgstr ""
+"ترجیحات پیامک/پیام چندرسانه‌ای با زمینهٔ روشن به صورتی که روی تلفن همراهی که فوش "
+"را اجرا می‌کند دیده می‌شود."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:48
+msgid ""
+"The chat details view using the dark theme as seen on a mobile phone running "
+"Phosh."
+msgstr ""
+"نمای حزییات گپ با زمینهٔ تیره به صورتی که روی تلفن همراهی که فوش را اجرا می‌کند "
+"دیده می‌شود."
 
 #: src/chatty-application.c:79
 msgid "Show release version"
@@ -1893,6 +1932,9 @@ msgstr "کاری:"
 #: src/users/chatty-contact.c:328
 msgid "Other:"
 msgstr "دیگر:"
+
+#~ msgid "Chats message window"
+#~ msgstr "پنجرهٔ پیام گپ‌ها"
 
 #, c-format
 #~ msgid "Contact: %s %s"
