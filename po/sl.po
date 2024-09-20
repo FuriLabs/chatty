@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-09-05 13:12+0000\n"
-"PO-Revision-Date: 2024-09-05 17:38+0200\n"
+"POT-Creation-Date: 2024-09-20 15:50+0000\n"
+"PO-Revision-Date: 2024-09-20 19:14+0200\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian <gnome-si@googlegroups.com>\n"
 "Language: sl\n"
@@ -212,8 +212,48 @@ msgstr ""
 "podpira SMS, MMS, XMPP in Matrix."
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:23
-msgid "Chats message window"
-msgstr "Okno sporočila klepeta"
+msgid "Folded view of a chat using the light theme."
+msgstr "Zložen pogled na klepet s svetlo temo."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:27
+msgid "Folded view of a chat using the dark theme."
+msgstr "Zložen pogled klepeta s temno temo."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:31
+msgid "Unfolded view of a chat and the chat list in the sidebar."
+msgstr "Razpostrt pogled klepeta in seznam klepetov v stranski vrstici."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:35
+msgid ""
+"The chat view using the dark theme as seen on a mobile phone running Phosh "
+"with unfolded keyboard."
+msgstr ""
+"Pogled klepeta z uporabo temne teme, kot je prikazan na mobilnem telefonu, "
+"ki ga poganja Phosh z razpostrto tipkovnico."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:39
+msgid ""
+"The chat list view using the light theme as seen on a mobile phone running "
+"Phosh."
+msgstr ""
+"Pogled klepeta z uporabo temne teme, kot je prikazan na mobilnem telefonu, "
+"ki ga poganja Phosh."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:43
+msgid ""
+"The SMS/MMS preferences using the light theme as seen on a mobile phone "
+"running Phosh."
+msgstr ""
+"Nastavitve SMS/MMS z uporabo svetle teme, kot je prikazano na mobilnem "
+"telefonu, ki ga poganja Phosh."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:48
+msgid ""
+"The chat details view using the dark theme as seen on a mobile phone running "
+"Phosh."
+msgstr ""
+"Podrobnosti klepeta so prikazane s temno temo, kot je prikazana na mobilnem "
+"telefonu, ki ga poganja Phosh."
 
 #: src/chatty-application.c:79
 msgid "Show release version"
