@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-09-05 13:12+0000\n"
-"PO-Revision-Date: 2024-09-05 21:51+0300\n"
+"POT-Creation-Date: 2024-09-20 15:50+0000\n"
+"PO-Revision-Date: 2024-09-20 21:54+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -28,12 +28,10 @@ msgid "Chats"
 msgstr "Спілкування"
 
 #: data/sm.puri.Chatty.desktop.in.in:6
-#| msgid "SMS and XMPP chat application"
 msgid "SMS/MMS, Matrix and XMPP chat application"
 msgstr "Програма для спілкування за допомогою SMS/MMS, Matrix і XMPP"
 
 #: data/sm.puri.Chatty.desktop.in.in:7
-#| msgid "XMPP;SMS;chat;jabber;messaging;modem"
 msgid "XMPP;SMS;chat;jabber;messaging;modem;matrix"
 msgstr ""
 "XMPP;SMS;chat;jabber;messaging;modem;есемес;чат;балачка;спілкування;джабер;"
@@ -219,8 +217,49 @@ msgstr ""
 "Matrix."
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:23
-msgid "Chats message window"
-msgstr "Вікно повідомлень спілкування"
+msgid "Folded view of a chat using the light theme."
+msgstr "Згорнутий перегляд спілкування, використано світлу тему."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:27
+msgid "Folded view of a chat using the dark theme."
+msgstr "Згорнутий перегляд спілкування, використано темну тему."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:31
+msgid "Unfolded view of a chat and the chat list in the sidebar."
+msgstr ""
+"Розгорнутий перегляд спілкування та список спілкування на бічній панелі."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:35
+msgid ""
+"The chat view using the dark theme as seen on a mobile phone running Phosh "
+"with unfolded keyboard."
+msgstr ""
+"Перегляд спілкування, використано темну тему, показано на мобільному"
+" телефоні із запущеним Phosh із розгорнутою клавіатурою."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:39
+msgid ""
+"The chat list view using the light theme as seen on a mobile phone running "
+"Phosh."
+msgstr ""
+"Перегляд спілкування, використано світлу тему, показано на мобільному"
+" телефоні із запущеним Phosh."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:43
+msgid ""
+"The SMS/MMS preferences using the light theme as seen on a mobile phone "
+"running Phosh."
+msgstr ""
+"Налаштування SMS/MMS, використано світлу тему, перегляд на мобільному"
+" телефоні, де запущено Phosh."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:48
+msgid ""
+"The chat details view using the dark theme as seen on a mobile phone running "
+"Phosh."
+msgstr ""
+"Панель подробиць спілкування, використано темну тему, перегляд на мобільному"
+" телефоні, де запущено Phosh."
 
 #: src/chatty-application.c:79
 msgid "Show release version"
@@ -1945,6 +1984,9 @@ msgstr "Робочий:"
 #: src/users/chatty-contact.c:328
 msgid "Other:"
 msgstr "Інший:"
+
+#~ msgid "Chats message window"
+#~ msgstr "Вікно повідомлень спілкування"
 
 #, c-format
 #~ msgid "Contact: %s %s"
