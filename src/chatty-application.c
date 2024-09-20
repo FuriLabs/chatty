@@ -412,6 +412,9 @@ chatty_application_startup (GApplication *application)
 
   g_set_application_name (_("Chats"));
 
+  if (!gtk_window_get_default_icon_name ())
+    gtk_window_set_default_icon_name (CHATTY_APP_ID);
+
   lfb_init (CHATTY_APP_ID, NULL);
   purple_dir = chatty_utils_get_purple_dir ();
   db_path =  g_build_filename (purple_dir, "chatty", "db", NULL);
