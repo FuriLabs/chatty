@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-09-05 13:12+0000\n"
-"PO-Revision-Date: 2024-09-05 10:31-0300\n"
+"POT-Creation-Date: 2024-09-20 15:50+0000\n"
+"PO-Revision-Date: 2024-09-21 09:40-0300\n"
 "Last-Translator: Juliano de Souza Camargo <julianosc@pm.me>\n"
 "Language-Team: Brazilian Portuguese <https://br.gnome.org/traducao>>\n"
 "Language: pt_BR\n"
@@ -211,8 +211,48 @@ msgstr ""
 "pequenos grupos, com suporte a SMS, MMS, XMPP e Matrix."
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:23
-msgid "Chats message window"
-msgstr "Janela de mensagens"
+msgid "Folded view of a chat using the light theme."
+msgstr "Vista dobrada da conversa usando o tema claro."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:27
+msgid "Folded view of a chat using the dark theme."
+msgstr "Vista dobrada da conversa usando o tema escuro."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:31
+msgid "Unfolded view of a chat and the chat list in the sidebar."
+msgstr "Vista desdobrada da conversa e a lista da conversa na barra lateral."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:35
+msgid ""
+"The chat view using the dark theme as seen on a mobile phone running Phosh "
+"with unfolded keyboard."
+msgstr ""
+"A vista da conversa usando o tema escuro como visto num celular rodando "
+"Phosh com teclado desdobrado."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:39
+msgid ""
+"The chat list view using the light theme as seen on a mobile phone running "
+"Phosh."
+msgstr ""
+"A vista da lista da conversa usando o tema claro como visto num celular "
+"rodando Phosh."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:43
+msgid ""
+"The SMS/MMS preferences using the light theme as seen on a mobile phone "
+"running Phosh."
+msgstr ""
+"As preferências de SMS/MMS usando o tema claro como visto num celular "
+"rodando Phosh."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:48
+msgid ""
+"The chat details view using the dark theme as seen on a mobile phone running "
+"Phosh."
+msgstr ""
+"A vista dos detalhes da conversa usando o tema escuro como visto num celular "
+"rodando Phosh."
 
 #: src/chatty-application.c:79
 msgid "Show release version"
@@ -1929,6 +1969,9 @@ msgstr "Trabalho:"
 #: src/users/chatty-contact.c:328
 msgid "Other:"
 msgstr "Outro: "
+
+#~ msgid "Chats message window"
+#~ msgstr "Janela de mensagens"
 
 #~ msgid "Contact: %s %s"
 #~ msgstr "Contato: %s %s"
