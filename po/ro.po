@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-09-05 13:12+0000\n"
-"PO-Revision-Date: 2024-09-08 13:35+0200\n"
+"POT-Creation-Date: 2024-09-20 15:50+0000\n"
+"PO-Revision-Date: 2024-09-21 19:02+0200\n"
 "Last-Translator: Antonio Marin <gnmer.6qxyg@slmail.me>\n"
 "Language-Team: Romanian <gnomero-list@lists.sourceforge.net>\n"
 "Language: ro\n"
@@ -213,8 +213,49 @@ msgstr ""
 "folosit, pentru comunicare 1:1 și grupuri mici."
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:23
-msgid "Chats message window"
-msgstr "Fereastra de mesaj pentru Discuții"
+msgid "Folded view of a chat using the light theme."
+msgstr "Vedere compactă a discuției folosind aspectul luminos."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:27
+msgid "Folded view of a chat using the dark theme."
+msgstr "Vedere compactă a discuției folosind aspectul întunecos."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:31
+msgid "Unfolded view of a chat and the chat list in the sidebar."
+msgstr ""
+"Vedere extinsă a unei discuții și lista discuțiilor în partea laterală."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:35
+msgid ""
+"The chat view using the dark theme as seen on a mobile phone running Phosh "
+"with unfolded keyboard."
+msgstr ""
+"Discuția folosind aspectul întunecos, așa cum se vede pe un telefon mobil "
+"care utilizează Phosh cu tastatura desfășurată."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:39
+msgid ""
+"The chat list view using the light theme as seen on a mobile phone running "
+"Phosh."
+msgstr ""
+"Lista discuțiilor folosind aspectul luminos, așa cum se vede pe un telefon "
+"mobil care utilizează Phosh."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:43
+msgid ""
+"The SMS/MMS preferences using the light theme as seen on a mobile phone "
+"running Phosh."
+msgstr ""
+"Preferințele SMS/MMS folosind aspectul luminos, așa cum se văd pe un telefon "
+"mobil care utilizează Phosh."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:48
+msgid ""
+"The chat details view using the dark theme as seen on a mobile phone running "
+"Phosh."
+msgstr ""
+"Detaliile discuției folosind aspectul întunecos, așa cum se văd pe un "
+"telefon mobil care utilizează Phosh."
 
 #: src/chatty-application.c:79
 msgid "Show release version"
