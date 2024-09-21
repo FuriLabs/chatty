@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
 "POT-Creation-Date: 2024-09-20 15:50+0000\n"
-"PO-Revision-Date: 2024-09-21 09:40-0300\n"
+"PO-Revision-Date: 2024-09-21 09:46-0300\n"
 "Last-Translator: Juliano de Souza Camargo <julianosc@pm.me>\n"
 "Language-Team: Brazilian Portuguese <https://br.gnome.org/traducao>>\n"
 "Language: pt_BR\n"
@@ -340,7 +340,7 @@ msgstr "Nenhuma conversa arquivada"
 
 #: src/chatty-chat-list.c:222
 msgid "Start Chatting"
-msgstr "Começar a conversar"
+msgstr "Comece a conversar"
 
 #: src/chatty-chat-page.c:195 src/chatty-chat-page.c:204
 msgid "This is an MMS conversation"
@@ -1731,7 +1731,7 @@ msgstr "Configurações de MMS da operadora"
 
 #: src/ui/chatty-settings-dialog.ui:385
 msgid "Phone Number"
-msgstr "Número de telefone"
+msgstr "Número do telefone"
 
 #: src/ui/chatty-settings-dialog.ui:391
 msgid "Your modem's phone number"
