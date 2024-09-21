@@ -25,7 +25,7 @@
         <!-- Avatar placeholder -->
         <!-- HACK to keep the width of avatar when hidden (box and avatar are in the same sizegroup) -->
         <child>
-          <object class="GtkBox">
+          <object class="GtkBox" id="hidden_box">
             <property name="visible" bind-source="avatar_image" bind-property="visible" bind-flags="invert-boolean"/>
             <layout>
               <property name="column">0</property>
