@@ -1,5 +1,6 @@
 config_data = configuration_data()
 config_data.set('APP_ID', app_id)
+config_data.set('LOWERCASE_APP_ID', app_id.to_lower())
 
 desktop_file = i18n.merge_file(
   input: configure_file(
