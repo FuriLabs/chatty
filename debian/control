@@ -50,6 +50,8 @@ Recommends:
  libgdk-pixbuf2.0-bin,
 Suggests:
  calls,
+Breaks:
+ phoc (<< 0.42~),
 Description: Messaging application for mobile and desktop
  Chatty is a simple to use to messaging app for 1:1 communication and small
  groups supporting SMS, MMS, XMPP and Matrix.
