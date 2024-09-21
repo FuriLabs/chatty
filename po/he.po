@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-09-05 13:12+0000\n"
-"PO-Revision-Date: 2024-09-06 09:58+0300\n"
+"POT-Creation-Date: 2024-09-20 15:50+0000\n"
+"PO-Revision-Date: 2024-09-21 23:08+0300\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language-Team: Hebrew\n"
 "Language: he\n"
@@ -210,8 +210,44 @@ msgstr ""
 "MMS, XMPP ו־Matrix."
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:23
-msgid "Chats message window"
-msgstr "חלון ההודעות של התכתבויות"
+msgid "Folded view of a chat using the light theme."
+msgstr "תצוגה מקופלת של התכתבות עם ערכת העיצוב הבהירה."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:27
+msgid "Folded view of a chat using the dark theme."
+msgstr "תצוגה מקופלת של התכתבות עם ערכת העיצוב הכהה."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:31
+msgid "Unfolded view of a chat and the chat list in the sidebar."
+msgstr "תצוגה לא מקופלת של התכתבות ורשימת ההתכתבויות בסרגל הצד."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:35
+msgid ""
+"The chat view using the dark theme as seen on a mobile phone running Phosh "
+"with unfolded keyboard."
+msgstr ""
+"תצוגת התכתבות עם ערכת העיצוב הכהה כפי שמופיע בטלפון נייד שמריץ את Phosh עם "
+"מקלדת פתוחה."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:39
+msgid ""
+"The chat list view using the light theme as seen on a mobile phone running "
+"Phosh."
+msgstr "תצוגת התכתבות עם הערכה הבהירה כפי שמופיע בטלפון נייד שמריץ Phosh."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:43
+msgid ""
+"The SMS/MMS preferences using the light theme as seen on a mobile phone "
+"running Phosh."
+msgstr ""
+"העדפות מסרונים/הודעות מולטימדיה עם ערכת העיצוב הבהירה כפי שמופיע בטלפון נייד "
+"שמריץ Phosh."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:48
+msgid ""
+"The chat details view using the dark theme as seen on a mobile phone running "
+"Phosh."
+msgstr "פרטי ההתכתבות עם ערכת העיצוב הכהה שפי שמופיע בטלפון נייד שמריץ Phosh."
 
 #: src/chatty-application.c:79
 msgid "Show release version"
@@ -951,13 +987,11 @@ msgstr "הצגת מספרים"
 
 #: src/chatty-utils.c:299
 #, c-format
-#| msgid "Contact: %s %s %s %s"
 msgid "%s %s %s %s"
 msgstr "%s %s %s %s"
 
 #: src/chatty-utils.c:301 src/chatty-utils.c:305
 #, c-format
-#| msgid "Contact: %s %s %s"
 msgid "%s %s %s"
 msgstr "%s %s %s"
 
@@ -1925,6 +1959,9 @@ msgstr "עבודה:"
 #: src/users/chatty-contact.c:328
 msgid "Other:"
 msgstr "אחר:"
+
+#~ msgid "Chats message window"
+#~ msgstr "חלון ההודעות של התכתבויות"
 
 #, c-format
 #~ msgid "Contact: %s %s"
