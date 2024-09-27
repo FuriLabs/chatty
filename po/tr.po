@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-09-05 13:12+0000\n"
-"PO-Revision-Date: 2024-09-09 08:00+0300\n"
+"POT-Creation-Date: 2024-09-20 15:50+0000\n"
+"PO-Revision-Date: 2024-09-27 08:00+0300\n"
 "Last-Translator: Emin Tufan Çetin <etcetin@gmail.com>\n"
 "Language-Team: Turkish <takim@gnome.org.tr>\n"
 "Language: tr\n"
@@ -213,8 +213,47 @@ msgstr ""
 "Matrix’i destekleyen kullanımı basit mesajlaşma uygulamasıdır."
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:23
-msgid "Chats message window"
-msgstr "Konuşmalar ileti penceresi"
+msgid "Folded view of a chat using the light theme."
+msgstr "Konuşmanın aydınlık gövdeli katlanık görünümü."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:27
+msgid "Folded view of a chat using the dark theme."
+msgstr "Konuşmanın karanlık gövdeli katlanık görünümü."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:31
+msgid "Unfolded view of a chat and the chat list in the sidebar."
+msgstr "Konuşmanın açık görünümü ve kenarda konuşma listesi."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:35
+msgid ""
+"The chat view using the dark theme as seen on a mobile phone running Phosh "
+"with unfolded keyboard."
+msgstr ""
+"Karanlık gövdeli konuşmanın Phosh ile açık klavye kullanan bir mobil "
+"telefondaki görünümü."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:39
+msgid ""
+"The chat list view using the light theme as seen on a mobile phone running "
+"Phosh."
+msgstr ""
+"Açık gövdeli konuşmanın Phosh kullanan bir mobil telefondaki görünümü."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:43
+msgid ""
+"The SMS/MMS preferences using the light theme as seen on a mobile phone "
+"running Phosh."
+msgstr ""
+"Açık gövdeli SMS/MMS tercihlerinin Phosh çalıştıran mobil telefondaki "
+"görünümü."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:48
+msgid ""
+"The chat details view using the dark theme as seen on a mobile phone running "
+"Phosh."
+msgstr ""
+"Karanlık gövdeli konuşma ayrıntılarının Phosh çalıştıran mobil telefondaki "
+"görünümü."
 
 #: src/chatty-application.c:79
 msgid "Show release version"
@@ -1915,3 +1954,6 @@ msgstr "İş:"
 #: src/users/chatty-contact.c:328
 msgid "Other:"
 msgstr "Diğer:"
+
+#~ msgid "Chats message window"
+#~ msgstr "Konuşmalar ileti penceresi"
