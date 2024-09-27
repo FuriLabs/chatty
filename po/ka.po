@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-09-05 13:12+0000\n"
-"PO-Revision-Date: 2024-09-12 03:12+0200\n"
+"POT-Creation-Date: 2024-09-20 15:50+0000\n"
+"PO-Revision-Date: 2024-09-27 15:37+0200\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language-Team: Georgian <ka@li.org>\n"
 "Language: ka\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.3.2\n"
+"X-Generator: Poedit 3.5\n"
 
 #: data/sm.puri.Chatty.desktop.in.in:3 data/sm.puri.Chatty.metainfo.xml.in.in:6
 #: src/chatty-application.c:164 src/chatty-application.c:413
@@ -210,8 +210,48 @@ msgstr ""
 "MMS, XMPP და Matrix-ის მხარდაჭერით."
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:23
-msgid "Chats message window"
-msgstr "Chats-ის სასაუბრო ფანჯარა"
+msgid "Folded view of a chat using the light theme."
+msgstr "ჩატის დაკეცილი ხედი ღია თემის გამოყენებით."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:27
+msgid "Folded view of a chat using the dark theme."
+msgstr "ჩატის დაკეცილი ხედი მუქი თემის გამოყენებით."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:31
+msgid "Unfolded view of a chat and the chat list in the sidebar."
+msgstr "ჩატისა და ჩატის სიის გაშლილი ხედი გვერდითა ზოლში."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:35
+msgid ""
+"The chat view using the dark theme as seen on a mobile phone running Phosh "
+"with unfolded keyboard."
+msgstr ""
+"ჩეთის ხედი მუქი თემის გამოყენებით, როგორც ჩანს მობილური ტელეფონით, რომელიც "
+"მუშაობს Phosh გაშლილი კლავიატურით."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:39
+msgid ""
+"The chat list view using the light theme as seen on a mobile phone running "
+"Phosh."
+msgstr ""
+"ჩეთის სია უყურებს სინათლის თემას, როგორც ჩანს მობილური ტელეფონით, რომელიც "
+"მუშაობს Phosh."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:43
+msgid ""
+"The SMS/MMS preferences using the light theme as seen on a mobile phone "
+"running Phosh."
+msgstr ""
+"SMS/MMS პარამეტრები ღია თემის გამოყენებით, როგორც ჩანს მობილური ტელეფონით, "
+"რომელიც მუშაობს Phosh."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:48
+msgid ""
+"The chat details view using the dark theme as seen on a mobile phone running "
+"Phosh."
+msgstr ""
+"ჩეთის დეტალები ხედი მუქი თემის გამოყენებისას, როგორც ჩანს მობილური "
+"ტელეფონით, რომელიც მუშაობს Phosh."
 
 #: src/chatty-application.c:79
 msgid "Show release version"
@@ -1907,6 +1947,9 @@ msgstr "სამსახური:"
 #: src/users/chatty-contact.c:328
 msgid "Other:"
 msgstr "სხვა:"
+
+#~ msgid "Chats message window"
+#~ msgstr "Chats-ის სასაუბრო ფანჯარა"
 
 #, c-format
 #~ msgid "Contact: %s %s"
