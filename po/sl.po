@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-09-20 15:50+0000\n"
-"PO-Revision-Date: 2024-09-20 19:14+0200\n"
+"POT-Creation-Date: 2024-09-28 01:43+0000\n"
+"PO-Revision-Date: 2024-09-28 09:34+0200\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian <gnome-si@googlegroups.com>\n"
 "Language: sl\n"
@@ -295,7 +295,7 @@ msgstr ""
 "%s"
 
 #: src/chatty-application.c:202 src/chatty-manager.c:683
-#: src/chatty-message-bar.c:495 src/purple/chatty-purple-notify.c:35
+#: src/chatty-message-bar.c:496 src/purple/chatty-purple-notify.c:35
 #: src/purple/chatty-purple.c:199 src/purple/chatty-purple.c:619
 #: src/dialogs/chatty-new-chat-dialog.c:226
 #: src/dialogs/chatty-settings-dialog.c:213
@@ -543,17 +543,17 @@ msgstr "Povezovanje računa ..."
 msgid "“%s” is not a valid URI"
 msgstr "»%s« ni veljaven URI"
 
-#: src/chatty-message-bar.c:493 src/purple/chatty-purple.c:195
+#: src/chatty-message-bar.c:494 src/purple/chatty-purple.c:195
 #: src/chatty-window.c:378
 msgid "Alert"
 msgstr "Opozorilo"
 
-#: src/chatty-message-bar.c:494
+#: src/chatty-message-bar.c:495
 msgid "Found and automatically deleted tracking IDs from the pasted link."
 msgstr ""
 "Najdeni in samodejno izbrisani ID-ji za sledenje iz prilepljene povezave."
 
-#: src/chatty-message-bar.c:496
+#: src/chatty-message-bar.c:497
 msgid "Don't Show Again"
 msgstr "Ne kaži več"
 
@@ -635,8 +635,8 @@ msgid "User %s has added %s to the contacts"
 msgstr "Uporabnik %s je dodal %s k stikom"
 
 #: src/purple/chatty-purple.c:283 src/dialogs/chatty-settings-dialog.c:471
-#: src/ui/chatty-ma-account-details.ui:162
-#: src/ui/chatty-pp-account-details.ui:154
+#: src/ui/chatty-ma-account-details.ui:141
+#: src/ui/chatty-pp-account-details.ui:80
 msgid "Delete Account"
 msgstr "Izbriši račun"
 
@@ -1046,35 +1046,35 @@ msgctxt "Refer to self in contact list"
 msgid "You"
 msgstr "Vi"
 
-#: src/dialogs/chatty-pp-chat-info.c:111
+#: src/dialogs/chatty-pp-chat-info.c:108
 #: src/dialogs/chatty-ma-account-details.c:168
 #: src/dialogs/chatty-pp-account-details.c:115
 msgid "Set Avatar"
 msgstr "Določi avatar"
 
-#: src/dialogs/chatty-pp-chat-info.c:118
+#: src/dialogs/chatty-pp-chat-info.c:115
 #: src/dialogs/chatty-ma-account-details.c:175
 #: src/dialogs/chatty-pp-account-details.c:122
 msgid "Images"
 msgstr "Slike"
 
-#: src/dialogs/chatty-pp-chat-info.c:221
+#: src/dialogs/chatty-pp-chat-info.c:204
 msgid "Encryption is not available"
 msgstr "Šifriranje ni na voljo"
 
-#: src/dialogs/chatty-pp-chat-info.c:225
+#: src/dialogs/chatty-pp-chat-info.c:208
 msgid "This chat is encrypted"
 msgstr "Ta klepet je šifriran"
 
-#: src/dialogs/chatty-pp-chat-info.c:229
+#: src/dialogs/chatty-pp-chat-info.c:212
 msgid "This chat is not encrypted"
 msgstr "Ta klepet ni šifriran"
 
-#: src/dialogs/chatty-pp-chat-info.c:253
+#: src/dialogs/chatty-pp-chat-info.c:236
 msgid "Encryption not available"
 msgstr "Šifriranje ni na voljo"
 
-#: src/dialogs/chatty-pp-chat-info.c:274
+#: src/dialogs/chatty-pp-chat-info.c:257
 #, c-format
 msgid "%u Member"
 msgid_plural "%u Members"
@@ -1083,21 +1083,22 @@ msgstr[1] "%u člana"
 msgstr[2] "%u člani"
 msgstr[3] "%u članov"
 
-#: src/dialogs/chatty-pp-chat-info.c:308
-msgid "Phone Number:"
-msgstr "Telefonska številka:"
+#: src/dialogs/chatty-pp-chat-info.c:292 src/ui/chatty-settings-dialog.ui:385
+msgid "Phone Number"
+msgstr "Telefonska številka"
 
-#: src/dialogs/chatty-pp-chat-info.c:310
-msgid "XMPP ID:"
-msgstr "ID za XMPP:"
+#: src/dialogs/chatty-pp-chat-info.c:295 src/ui/chatty-pp-chat-info.ui:88
+msgid "XMPP ID"
+msgstr "ID XMPP"
 
-#: src/dialogs/chatty-pp-chat-info.c:315
-msgid "Matrix ID:"
-msgstr "ID za matrix:"
+#: src/dialogs/chatty-pp-chat-info.c:301 src/ui/chatty-ma-chat-info.ui:28
+#: src/ui/chatty-ma-account-details.ui:90
+msgid "Matrix ID"
+msgstr "ID za matrix"
 
-#: src/dialogs/chatty-pp-chat-info.c:318
-msgid "Telegram ID:"
-msgstr "ID za Telegram:"
+#: src/dialogs/chatty-pp-chat-info.c:305
+msgid "Telegram ID"
+msgstr "ID za Telegram"
 
 #: src/dialogs/chatty-new-chat-dialog.c:170
 msgid "Add"
@@ -1124,17 +1125,17 @@ msgstr "SMS"
 msgid "You"
 msgstr "Vi"
 
-#: src/dialogs/chatty-ma-account-details.c:427
+#: src/dialogs/chatty-ma-account-details.c:418
 #: src/dialogs/chatty-pp-account-details.c:171
 msgid "connected"
 msgstr "povezani"
 
-#: src/dialogs/chatty-ma-account-details.c:429
+#: src/dialogs/chatty-ma-account-details.c:420
 #: src/dialogs/chatty-pp-account-details.c:173
 msgid "connecting…"
 msgstr "povezovanje poteka ..."
 
-#: src/dialogs/chatty-ma-account-details.c:431
+#: src/dialogs/chatty-ma-account-details.c:422
 #: src/dialogs/chatty-pp-account-details.c:175
 msgid "disconnected"
 msgstr "razvezani"
@@ -1281,7 +1282,7 @@ msgid "Preferences"
 msgstr "Nastavitve"
 
 #: src/dialogs/chatty-settings-dialog.c:1155
-#: src/ui/chatty-pp-account-details.ui:81 src/ui/chatty-settings-dialog.ui:245
+#: src/ui/chatty-pp-account-details.ui:60 src/ui/chatty-settings-dialog.ui:245
 msgid "Protocol"
 msgstr "Protokol"
 
@@ -1428,8 +1429,8 @@ msgstr "V _redu"
 msgid "Please re-enter the Password."
 msgstr "Ponovno vnesite geslo."
 
-#: src/ui/chatty-dialog-wrong-pw.ui:53 src/ui/chatty-pp-account-details.ui:129
-#: src/ui/chatty-settings-dialog.ui:798
+#: src/ui/chatty-dialog-wrong-pw.ui:53 src/ui/chatty-pp-account-details.ui:70
+#: src/ui/chatty-settings-dialog.ui:794
 msgid "Password"
 msgstr "Geslo"
 
@@ -1510,28 +1511,24 @@ msgstr "_Sprejmi"
 msgid "_Reject"
 msgstr "_Zavrni"
 
-#: src/ui/chatty-ma-chat-info.ui:32
+#: src/ui/chatty-ma-chat-info.ui:21 src/ui/chatty-pp-chat-info.ui:59
 msgid "Chat"
 msgstr "Klepet"
 
-#: src/ui/chatty-ma-chat-info.ui:61 src/ui/chatty-ma-account-details.ui:222
-msgid "Matrix ID"
-msgstr "ID za matrix"
-
-#: src/ui/chatty-ma-chat-info.ui:90
+#: src/ui/chatty-ma-chat-info.ui:35
 msgid "Topic"
 msgstr "Tema"
 
-#: src/ui/chatty-ma-chat-info.ui:119 src/ui/chatty-pp-chat-info.ui:242
+#: src/ui/chatty-ma-chat-info.ui:43 src/ui/chatty-pp-chat-info.ui:110
 msgid "Chat settings"
 msgstr "Nastavitve klepeta"
 
-#: src/ui/chatty-ma-chat-info.ui:137 src/ui/chatty-pp-chat-info.ui:193
-#: src/ui/chatty-pp-chat-info.ui:292
+#: src/ui/chatty-ma-chat-info.ui:46 src/ui/chatty-pp-chat-info.ui:95
+#: src/ui/chatty-pp-chat-info.ui:132
 msgid "Encryption"
 msgstr "Šifriranje"
 
-#: src/ui/chatty-ma-chat-info.ui:138 src/ui/chatty-pp-chat-info.ui:293
+#: src/ui/chatty-ma-chat-info.ui:47 src/ui/chatty-pp-chat-info.ui:133
 msgid "Encrypt Messages"
 msgstr "Šifriraj sporočila"
 
@@ -1572,46 +1569,46 @@ msgstr "Izbriši klepet"
 msgid "Copy Text"
 msgstr "Kopiraj besedilo"
 
-#: src/ui/chatty-pp-chat-info.ui:34 src/ui/chatty-pp-account-details.ui:38
+#: src/ui/chatty-pp-chat-info.ui:23 src/ui/chatty-pp-account-details.ui:39
 msgid "Change Avatar"
 msgstr "Spremeni avatar"
 
-#: src/ui/chatty-pp-chat-info.ui:47 src/ui/chatty-pp-account-details.ui:25
+#: src/ui/chatty-pp-chat-info.ui:36 src/ui/chatty-pp-account-details.ui:26
 msgid "Delete Avatar"
 msgstr "Izbriši avatar"
 
-#: src/ui/chatty-pp-chat-info.ui:76
+#: src/ui/chatty-pp-chat-info.ui:67
 msgid "Room topic"
 msgstr "Tema sobe"
 
-#: src/ui/chatty-pp-chat-info.ui:143
+#: src/ui/chatty-pp-chat-info.ui:81
 msgid "User"
 msgstr "Uporabnik"
 
-#: src/ui/chatty-pp-chat-info.ui:168
-msgid "XMPP ID"
-msgstr "ID XMPP"
-
-#: src/ui/chatty-pp-chat-info.ui:218 src/ui/chatty-ma-account-details.ui:54
-#: src/ui/chatty-pp-account-details.ui:105
+#: src/ui/chatty-pp-chat-info.ui:102 src/ui/chatty-ma-account-details.ui:53
+#: src/ui/chatty-pp-account-details.ui:65
 msgid "Status"
 msgstr "Stanje"
 
-#: src/ui/chatty-pp-chat-info.ui:262
+#: src/ui/chatty-pp-chat-info.ui:115
 msgid "Notifications"
 msgstr "Obvestila"
 
-#: src/ui/chatty-pp-chat-info.ui:277
+#: src/ui/chatty-pp-chat-info.ui:123
 msgid "Status Messages"
 msgstr "Sporočila o stanju"
 
-#: src/ui/chatty-pp-chat-info.ui:278
+#: src/ui/chatty-pp-chat-info.ui:124
 msgid "Show status messages in chat"
 msgstr "Pokaži poročila o stanju v klepetu"
 
-#: src/ui/chatty-pp-chat-info.ui:313
+#: src/ui/chatty-pp-chat-info.ui:143
 msgid "Fingerprints"
 msgstr "Prstni odtisi"
+
+#: src/ui/chatty-pp-chat-info.ui:162
+msgid "User List"
+msgstr "Seznam uporabnikov"
 
 #: src/ui/chatty-mm-chat-info.ui:20
 msgid "Title"
@@ -1629,43 +1626,43 @@ msgstr "Člani skupine"
 msgid "Copy Number"
 msgstr "Kopiraj številko"
 
-#: src/ui/chatty-ma-account-details.ui:78
+#: src/ui/chatty-ma-account-details.ui:58
 msgid "Name"
 msgstr "Ime"
 
-#: src/ui/chatty-ma-account-details.ui:106
+#: src/ui/chatty-ma-account-details.ui:64
 msgid "Email"
 msgstr "E-pošta"
 
-#: src/ui/chatty-ma-account-details.ui:134
+#: src/ui/chatty-ma-account-details.ui:69
 msgid "Phone"
 msgstr "Telefon"
 
-#: src/ui/chatty-ma-account-details.ui:174
+#: src/ui/chatty-ma-account-details.ui:74
 msgid "Advanced information"
 msgstr "Napredni podatki"
 
-#: src/ui/chatty-ma-account-details.ui:186
+#: src/ui/chatty-ma-account-details.ui:77
 msgid "Homeserver"
 msgstr "Domači strežnik"
 
-#: src/ui/chatty-ma-account-details.ui:258
+#: src/ui/chatty-ma-account-details.ui:103
 msgid "Device ID"
 msgstr "ID naprave"
 
-#: src/ui/chatty-ma-account-details.ui:301
+#: src/ui/chatty-ma-account-details.ui:118
 msgid "Sensitive information"
 msgstr "Občutljivi podatki"
 
-#: src/ui/chatty-ma-account-details.ui:312
+#: src/ui/chatty-ma-account-details.ui:121
 msgid "Access token"
 msgstr "Žeton dostopa"
 
-#: src/ui/chatty-pp-account-details.ui:59
+#: src/ui/chatty-pp-account-details.ui:55
 msgid "Account ID"
 msgstr "ID računa"
 
-#: src/ui/chatty-pp-account-details.ui:168
+#: src/ui/chatty-pp-account-details.ui:88
 msgid "Own Fingerprint"
 msgstr "Lasten prstni odtis"
 
@@ -1734,10 +1731,6 @@ msgstr "SMIL za MMS"
 #: src/ui/chatty-settings-dialog.ui:381
 msgid "MMS Carrier Settings"
 msgstr "Nastavitve MMS operaterja"
-
-#: src/ui/chatty-settings-dialog.ui:385
-msgid "Phone Number"
-msgstr "Telefonska številka"
 
 #: src/ui/chatty-settings-dialog.ui:391
 msgid "Your modem's phone number"
@@ -1831,15 +1824,15 @@ msgstr "Skrite kopije sporočil"
 msgid "User ID"
 msgstr "ID uporabnika"
 
-#: src/ui/chatty-settings-dialog.ui:824
+#: src/ui/chatty-settings-dialog.ui:800
 msgid "Home server"
 msgstr "Domači strežnik"
 
-#: src/ui/chatty-settings-dialog.ui:842
+#: src/ui/chatty-settings-dialog.ui:810
 msgid "_Add"
 msgstr "_Dodaj"
 
-#: src/ui/chatty-settings-dialog.ui:870
+#: src/ui/chatty-settings-dialog.ui:838
 msgid "Add _New Account"
 msgstr "Dodaj _nov račun"
 
