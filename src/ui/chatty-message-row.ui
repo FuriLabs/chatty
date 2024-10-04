@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="ChattyMessageRow" parent="GtkListBoxRow">
+    <property name="can-focus">0</property>
     <property name="selectable">0</property>
     <property name="activatable">0</property>
 
