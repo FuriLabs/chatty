@@ -200,8 +200,6 @@ main (int   argc,
 
   chatty_log_init ();
 
-  g_setenv ("GSETTINGS_BACKEND", "memory", TRUE);
-
   g_test_add_func ("/clock/new", test_clock_new);
   g_test_add_func ("/clock/human-time", test_clock_human_time);
 

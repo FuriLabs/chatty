@@ -132,8 +132,6 @@ main (int   argc,
 {
   g_test_init (&argc, &argv, NULL);
 
-  g_setenv ("GSETTINGS_BACKEND", "memory", TRUE);
-
   g_test_add_func ("/mm/account/new", test_mm_account_new);
   g_test_add_func ("/mm/account/find-chat", test_mm_account_find_chat);
 
