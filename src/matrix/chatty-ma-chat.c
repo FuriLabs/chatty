@@ -336,6 +336,7 @@ chatty_ma_chat_accept_invite_async (ChattyChat          *chat,
 
   task = g_task_new (self, NULL, callback, user_data);
   g_task_set_source_tag (task, chatty_ma_chat_accept_invite_async);
+
   cm_room_accept_invite_async (self->cm_room, NULL,
                                ma_chat_accept_invite_cb,
                                task);
@@ -384,6 +385,7 @@ chatty_ma_chat_reject_invite_async (ChattyChat          *chat,
 
   task = g_task_new (self, NULL, callback, user_data);
   g_task_set_source_tag (task, chatty_ma_chat_reject_invite_async);
+
   cm_room_reject_invite_async (self->cm_room, NULL,
                                ma_chat_reject_invite_cb,
                                task);
