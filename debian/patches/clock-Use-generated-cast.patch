@@ -1,0 +1,22 @@
+From: =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
+Date: Tue, 8 Oct 2024 09:07:33 +0200
+Subject: clock: Use generated cast
+
+Avoids an alignment warning on armhf
+---
+ src/chatty-clock.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/chatty-clock.c b/src/chatty-clock.c
+index be29ad9..ba69963 100644
+--- a/src/chatty-clock.c
++++ b/src/chatty-clock.c
+@@ -237,7 +237,7 @@ sync_time_source (ChattyClock *self)
+ static void
+ chatty_clock_finalize (GObject *object)
+ {
+-  ChattyClock *self = (ChattyClock *)object;
++  ChattyClock *self = CHATTY_CLOCK (object);
+ 
+   g_clear_handle_id (&self->sync_timeout_id, g_source_remove);
+   g_clear_handle_id (&self->timeout_id, g_source_remove);

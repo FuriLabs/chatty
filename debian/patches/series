@@ -1,1 +1,3 @@
+clock-Use-correct-format-specifier.patch
+clock-Use-generated-cast.patch
 0001-Disable-Clock-History-and-pgp-tests.patch

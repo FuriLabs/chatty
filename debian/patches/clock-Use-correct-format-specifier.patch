@@ -1,0 +1,23 @@
+From: =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
+Date: Tue, 8 Oct 2024 09:05:37 +0200
+Subject: clock: Use correct format specifier
+
+This fixes printing of time deltas on armhf
+---
+ src/chatty-clock.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/chatty-clock.c b/src/chatty-clock.c
+index e03f2e2..be29ad9 100644
+--- a/src/chatty-clock.c
++++ b/src/chatty-clock.c
+@@ -100,7 +100,8 @@ clock_get_human_time (ChattyClock         *self,
+ 
+   if (detailed && time_span < G_TIME_SPAN_HOUR)
+     return g_strdup_printf (g_dngettext (GETTEXT_PACKAGE,
+-                                         "%lu minute ago", "%lu minutes ago",
++                                         "%" G_GINT64_FORMAT " minute ago",
++                                         "%" G_GINT64_FORMAT " minutes ago",
+                                          time_span / G_TIME_SPAN_MINUTE),
+                             time_span / G_TIME_SPAN_MINUTE);
+   /* The day can be same, but from two different years, so check the time span too */
