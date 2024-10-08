@@ -100,7 +100,8 @@ clock_get_human_time (ChattyClock         *self,
 
   if (detailed && time_span < G_TIME_SPAN_HOUR)
     return g_strdup_printf (g_dngettext (GETTEXT_PACKAGE,
-                                         "%lu minute ago", "%lu minutes ago",
+                                         "%" G_GINT64_FORMAT " minute ago",
+                                         "%" G_GINT64_FORMAT " minutes ago",
                                          time_span / G_TIME_SPAN_MINUTE),
                             time_span / G_TIME_SPAN_MINUTE);
   /* The day can be same, but from two different years, so check the time span too */
