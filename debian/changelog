@@ -1,3 +1,9 @@
+chatty (0.8.5-2) unstable; urgency=medium
+
+  * Fix and enable clock test
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 08 Oct 2024 10:01:51 +0200
+
 chatty (0.8.5-1) unstable; urgency=medium
 
   [ Evangelos Ribeiro Tzaras ]
