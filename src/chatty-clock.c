@@ -246,7 +246,7 @@ sync_time_source (ChattyClock *self)
 static void
 chatty_clock_finalize (GObject *object)
 {
-  ChattyClock *self = (ChattyClock *)object;
+  ChattyClock *self = CHATTY_CLOCK (object);
 
   g_clear_handle_id (&self->sync_timeout_id, g_source_remove);
   g_clear_handle_id (&self->timeout_id, g_source_remove);
