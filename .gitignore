@@ -12,4 +12,5 @@ debian/files
 .vscode
 .flatpak-builder/
 .#*
+po/purims-chatty.pot
 subprojects/libcmatrix/
