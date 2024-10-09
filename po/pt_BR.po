@@ -4,22 +4,22 @@
 # Luís Fernando Stürmer da Rosa <luisfsr@dismail.de>, 2018-2020.
 # Bruno Lopes <brunolopesdsilv@gmail.com>, 2020.
 # Matheus Barbosa <mdpb.matheus@gmail.com>, 2022.
-# Juliano de Souza Camargo <julianosc@pm.me>, 2024.
 # Rafael Fontenelle <rafaelff@gnome.org>, 2020-2024.
+# Juliano de Souza Camargo <julianosc@pm.me>, 2024.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-10-08 12:01+0000\n"
-"PO-Revision-Date: 2024-10-08 16:25-0300\n"
-"Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
+"POT-Creation-Date: 2024-10-09 13:08+0000\n"
+"PO-Revision-Date: 2024-10-09 11:19-0300\n"
+"Last-Translator: Juliano de Souza Camargo <julianosc@pm.me>\n"
 "Language-Team: Brazilian Portuguese <https://br.gnome.org/traducao>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Gtranslator 47.0\n"
 
 #: data/sm.puri.Chatty.desktop.in.in:3 data/sm.puri.Chatty.metainfo.xml.in.in:6
@@ -403,57 +403,58 @@ msgstr ""
 msgid "No Contacts"
 msgstr "Sem contatos"
 
-#: src/chatty-clock.c:85
+#: src/chatty-clock.c:87
 msgid "Just Now"
 msgstr "Agora"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
-#: src/chatty-clock.c:94 src/chatty-clock.c:125
+#: src/chatty-clock.c:96 src/chatty-clock.c:127
 msgid "%I∶%M %p"
 msgstr "%I∶%M %p"
 
-#: src/chatty-clock.c:103
-msgid "%"
-msgid_plural "%"
-msgstr[0] "%"
-msgstr[1] "%"
+#: src/chatty-clock.c:105
+#, c-format
+msgid "%<PRIi64> minute ago"
+msgid_plural "%<PRIi64> minutes ago"
+msgstr[0] "%<PRIi64> minuto atrás"
+msgstr[1] "%<PRIi64> minutos atrás"
 
-#: src/chatty-clock.c:112
+#: src/chatty-clock.c:114
 msgid "Today %H∶%M"
 msgstr "Hoje %H∶%M"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “Today 06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
-#: src/chatty-clock.c:120
+#: src/chatty-clock.c:122
 msgid "Today %I∶%M %p"
 msgstr "Hoje %I∶%M %p"
 
-#: src/chatty-clock.c:132
+#: src/chatty-clock.c:134
 msgid "Yesterday %H∶%M"
 msgstr "Ontem %H∶%M"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “Yesterday 06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
-#: src/chatty-clock.c:137
+#: src/chatty-clock.c:139
 msgid "Yesterday %I∶%M %p"
 msgstr "Ontem %I∶%M %p"
 
-#: src/chatty-clock.c:156
+#: src/chatty-clock.c:158
 msgid "%Y-%m-%d %H:%M"
 msgstr "%d-%m-%Y %H:%M"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “Today 06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
-#: src/chatty-clock.c:161
+#: src/chatty-clock.c:163
 msgid "%Y-%m-%d %I:%M %p"
 msgstr "%d-%m-%Y, %I:%M %p"
 
-#: src/chatty-clock.c:163
+#: src/chatty-clock.c:165
 msgid "%Y-%m-%d"
 msgstr "%d-%m-%Y"
 
@@ -1962,11 +1963,10 @@ msgstr "Trabalho:"
 msgid "Other:"
 msgstr "Outro: "
 
-#, c-format
-#~ msgid "%lu minute ago"
-#~ msgid_plural "%lu minutes ago"
-#~ msgstr[0] "há %lu minuto"
-#~ msgstr[1] "há %lu minutos"
+#~ msgid "%"
+#~ msgid_plural "%"
+#~ msgstr[0] "%"
+#~ msgstr[1] "%"
 
 #~ msgid "Phone Number:"
 #~ msgstr "Número do telefone:"
