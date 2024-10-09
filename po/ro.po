@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-09-28 01:43+0000\n"
-"PO-Revision-Date: 2024-09-29 15:52+0200\n"
+"POT-Creation-Date: 2024-10-08 12:01+0000\n"
+"PO-Revision-Date: 2024-10-09 13:13+0200\n"
 "Last-Translator: Antonio Marin <gnmer.6qxyg@slmail.me>\n"
 "Language-Team: Romanian <gnomero-list@lists.sourceforge.net>\n"
 "Language: ro\n"
@@ -21,7 +21,7 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 
 #: data/sm.puri.Chatty.desktop.in.in:3 data/sm.puri.Chatty.metainfo.xml.in.in:6
-#: src/chatty-application.c:164 src/chatty-application.c:413
+#: src/chatty-application.c:161 src/chatty-application.c:410
 #: src/chatty-side-bar.c:357 src/ui/chatty-main-view.ui:4
 #: src/ui/chatty-side-bar.ui:4 src/ui/chatty-side-bar.ui:12
 #: src/ui/chatty-window.ui:4
@@ -257,37 +257,37 @@ msgstr ""
 "Detaliile discuției folosind aspectul întunecos, așa cum se văd pe un "
 "telefon mobil care utilizează Phosh."
 
-#: src/chatty-application.c:79
+#: src/chatty-application.c:76
 msgid "Show release version"
 msgstr "Arată versiunea"
 
-#: src/chatty-application.c:80
+#: src/chatty-application.c:77
 msgid "Start in daemon mode"
 msgstr "Pornește în modul serviciu"
 
-#: src/chatty-application.c:81
+#: src/chatty-application.c:78
 msgid "Disable all accounts"
 msgstr "Dezactivează toate conturile"
 
-#: src/chatty-application.c:83
+#: src/chatty-application.c:80
 msgid "Enable libpurple debug messages"
 msgstr "Activează mesajele de depanare libpurple"
 
-#: src/chatty-application.c:86
+#: src/chatty-application.c:83
 msgid "Enable verbose debug messages (repeat option for more verbosity)"
 msgstr ""
 "Activează mesajele detaliate de depanare (repetă opțiunea pentru mai multe "
 "detalii)"
 
-#: src/chatty-application.c:167
+#: src/chatty-application.c:164
 msgid "An SMS and XMPP messaging client"
 msgstr "Aplicație de mesagerie SMS și XMPP"
 
-#: src/chatty-application.c:175
+#: src/chatty-application.c:172
 msgid "translator-credits"
 msgstr "libre (Antonio Marin) <gnmer.6qxyg@slmail.me>"
 
-#: src/chatty-application.c:200
+#: src/chatty-application.c:197
 #, c-format
 msgid ""
 "There was an error displaying help:\n"
@@ -296,8 +296,8 @@ msgstr ""
 "S-a produs o eroare la afișarea ajutorului:\n"
 "%s"
 
-#: src/chatty-application.c:202 src/chatty-manager.c:683
-#: src/chatty-message-bar.c:496 src/purple/chatty-purple-notify.c:35
+#: src/chatty-application.c:199 src/chatty-manager.c:681
+#: src/chatty-message-bar.c:467 src/purple/chatty-purple-notify.c:35
 #: src/purple/chatty-purple.c:199 src/purple/chatty-purple.c:619
 #: src/dialogs/chatty-new-chat-dialog.c:226
 #: src/dialogs/chatty-settings-dialog.c:213
@@ -406,52 +406,51 @@ msgstr "Chiar acum"
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
-#: src/chatty-clock.c:94 src/chatty-clock.c:124
+#: src/chatty-clock.c:94 src/chatty-clock.c:125
 msgid "%I∶%M %p"
 msgstr "%I∶%M %p"
 
 #: src/chatty-clock.c:103
-#, c-format
-msgid "%lu minute ago"
-msgid_plural "%lu minutes ago"
-msgstr[0] "Acum %lu minut"
-msgstr[1] "Acum %lu minute"
-msgstr[2] "Acum %lu de minute"
+msgid "%"
+msgid_plural "%"
+msgstr[0] "%"
+msgstr[1] "%"
+msgstr[2] "%"
 
-#: src/chatty-clock.c:111
+#: src/chatty-clock.c:112
 msgid "Today %H∶%M"
 msgstr "Azi %H∶%M"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “Today 06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
-#: src/chatty-clock.c:119
+#: src/chatty-clock.c:120
 msgid "Today %I∶%M %p"
 msgstr "Azi %I∶%M %p"
 
-#: src/chatty-clock.c:131
+#: src/chatty-clock.c:132
 msgid "Yesterday %H∶%M"
 msgstr "Ieri %H∶%M"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “Yesterday 06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
-#: src/chatty-clock.c:136
+#: src/chatty-clock.c:137
 msgid "Yesterday %I∶%M %p"
 msgstr "Ieri %I∶%M %p"
 
-#: src/chatty-clock.c:155
+#: src/chatty-clock.c:156
 msgid "%Y-%m-%d %H:%M"
 msgstr "%Y-%m-%d %H:%M"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “Today 06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
-#: src/chatty-clock.c:160
+#: src/chatty-clock.c:161
 msgid "%Y-%m-%d %I:%M %p"
 msgstr "%Y-%m-%d %I:%M %p"
 
-#: src/chatty-clock.c:162
+#: src/chatty-clock.c:163
 msgid "%Y-%m-%d"
 msgstr "%Y-%m-%d"
 
@@ -498,11 +497,11 @@ msgstr "Moderator"
 msgid "Member"
 msgstr "Membru"
 
-#: src/chatty-list-row.c:264 src/chatty-notification.c:201
+#: src/chatty-list-row.c:264 src/chatty-notification.c:180
 msgid "Picture"
 msgstr "Poze"
 
-#: src/chatty-list-row.c:267 src/chatty-notification.c:205
+#: src/chatty-list-row.c:267 src/chatty-notification.c:184
 msgid "Video"
 msgstr "Video"
 
@@ -515,7 +514,7 @@ msgid "Location"
 msgstr "Poziția"
 
 #: src/chatty-list-row.c:276 src/chatty-list-row.c:293
-#: src/chatty-notification.c:197
+#: src/chatty-notification.c:176
 msgid "File"
 msgstr "Fișier"
 
@@ -535,21 +534,21 @@ msgstr "Cont deconectat"
 msgid "Account connecting…"
 msgstr "Se conectează contul…"
 
-#: src/chatty-manager.c:681
+#: src/chatty-manager.c:679
 #, c-format
 msgid "“%s” is not a valid URI"
 msgstr "„%s” nu este un URI valabil"
 
-#: src/chatty-message-bar.c:494 src/purple/chatty-purple.c:195
+#: src/chatty-message-bar.c:465 src/purple/chatty-purple.c:195
 #: src/chatty-window.c:378
 msgid "Alert"
 msgstr "Alertă"
 
-#: src/chatty-message-bar.c:495
+#: src/chatty-message-bar.c:466
 msgid "Found and automatically deleted tracking IDs from the pasted link."
 msgstr "ID-uri de urmărire găsite și șterse automat din adresa web lipită."
 
-#: src/chatty-message-bar.c:497
+#: src/chatty-message-bar.c:468
 msgid "Don't Show Again"
 msgstr "Nu mai arăta asta"
 
@@ -559,24 +558,24 @@ msgstr ""
 "S-a primit un mesaj cifrat, dar nu a putut fi descifrat din cauza lipsei "
 "cheilor"
 
-#: src/chatty-notification.c:171
+#: src/chatty-notification.c:150
 #, c-format
 msgid "New message from %s"
 msgstr "Mesaj nou de la %s"
 
-#: src/chatty-notification.c:173
+#: src/chatty-notification.c:152
 msgid "Message Received"
 msgstr "Mesaj primit"
 
-#: src/chatty-notification.c:209
+#: src/chatty-notification.c:188
 msgid "Audio File"
 msgstr "Fișier audio"
 
-#: src/chatty-notification.c:216
+#: src/chatty-notification.c:195
 msgid "MMS"
 msgstr "MMS"
 
-#: src/chatty-notification.c:228
+#: src/chatty-notification.c:207
 #, c-format
 msgid "%i Message"
 msgid_plural "%i Messages"
@@ -1556,7 +1555,7 @@ msgstr "Dezarhivează discuția"
 msgid "Delete Chat"
 msgstr "Șterge discuția"
 
-#: src/ui/chatty-message-row.ui:160
+#: src/ui/chatty-message-row.ui:161
 msgid "Copy Text"
 msgstr "Copiază textul"
 
