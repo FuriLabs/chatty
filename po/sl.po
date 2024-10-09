@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-10-08 12:01+0000\n"
-"PO-Revision-Date: 2024-10-08 14:13+0200\n"
+"POT-Creation-Date: 2024-10-09 13:08+0000\n"
+"PO-Revision-Date: 2024-10-09 21:05+0200\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian <gnome-si@googlegroups.com>\n"
 "Language: sl\n"
@@ -401,59 +401,60 @@ msgstr ""
 msgid "No Contacts"
 msgstr "Ni stikov"
 
-#: src/chatty-clock.c:85
+#: src/chatty-clock.c:87
 msgid "Just Now"
 msgstr "Ravnokar"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
-#: src/chatty-clock.c:94 src/chatty-clock.c:125
+#: src/chatty-clock.c:96 src/chatty-clock.c:127
 msgid "%I∶%M %p"
 msgstr "%I∶%M %p"
 
-#: src/chatty-clock.c:103
-msgid "%"
-msgid_plural "%"
-msgstr[0] " %"
-msgstr[1] " %"
-msgstr[2] " %"
-msgstr[3] " %"
+#: src/chatty-clock.c:105
+#, c-format
+msgid "%<PRIi64> minute ago"
+msgid_plural "%<PRIi64> minutes ago"
+msgstr[0] "pred %<PRIi64> minutami"
+msgstr[1] "pred %<PRIi64> minuto"
+msgstr[2] "pred %<PRIi64> minutama"
+msgstr[3] "pred %<PRIi64> minutami"
 
-#: src/chatty-clock.c:112
+#: src/chatty-clock.c:114
 msgid "Today %H∶%M"
 msgstr "Danes, %H∶%M"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “Today 06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
-#: src/chatty-clock.c:120
+#: src/chatty-clock.c:122
 msgid "Today %I∶%M %p"
 msgstr "Danes, %I∶%M %p"
 
-#: src/chatty-clock.c:132
+#: src/chatty-clock.c:134
 msgid "Yesterday %H∶%M"
 msgstr "Včeraj, %H∶%M"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “Yesterday 06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
-#: src/chatty-clock.c:137
+#: src/chatty-clock.c:139
 msgid "Yesterday %I∶%M %p"
 msgstr "Včeraj, %I∶%M %p"
 
-#: src/chatty-clock.c:156
+#: src/chatty-clock.c:158
 msgid "%Y-%m-%d %H:%M"
 msgstr "%Y-%m-%d %H:%M"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “Today 06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
-#: src/chatty-clock.c:161
+#: src/chatty-clock.c:163
 msgid "%Y-%m-%d %I:%M %p"
 msgstr "%Y-%m-%d %I:%M %p"
 
-#: src/chatty-clock.c:163
+#: src/chatty-clock.c:165
 msgid "%Y-%m-%d"
 msgstr "%Y-%m-%d"
 
