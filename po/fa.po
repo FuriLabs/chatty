@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-09-28 01:43+0000\n"
-"PO-Revision-Date: 2024-09-28 12:41+0330\n"
+"POT-Creation-Date: 2024-10-09 13:08+0000\n"
+"PO-Revision-Date: 2024-10-10 18:34+0330\n"
 "Last-Translator: Danial Behzadi <dani.behzi@ubuntu.com>\n"
 "Language-Team: Persian <fa@li.org>\n"
 "Language: fa\n"
@@ -16,10 +16,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 3.4.4\n"
+"X-Generator: Poedit 3.5\n"
 
 #: data/sm.puri.Chatty.desktop.in.in:3 data/sm.puri.Chatty.metainfo.xml.in.in:6
-#: src/chatty-application.c:164 src/chatty-application.c:413
+#: src/chatty-application.c:161 src/chatty-application.c:410
 #: src/chatty-side-bar.c:357 src/ui/chatty-main-view.ui:4
 #: src/ui/chatty-side-bar.ui:4 src/ui/chatty-side-bar.ui:12
 #: src/ui/chatty-window.ui:4
@@ -249,35 +249,35 @@ msgstr ""
 "نمای حزییات گپ با زمینهٔ تیره به صورتی که روی تلفن همراهی که فوش را اجرا می‌کند "
 "دیده می‌شود."
 
-#: src/chatty-application.c:79
+#: src/chatty-application.c:76
 msgid "Show release version"
 msgstr "نمایش نسخهٔ انتشار"
 
-#: src/chatty-application.c:80
+#: src/chatty-application.c:77
 msgid "Start in daemon mode"
 msgstr "آغاز در حالت خدمت"
 
-#: src/chatty-application.c:81
+#: src/chatty-application.c:78
 msgid "Disable all accounts"
 msgstr "از کار انداختن همهٔ حساب‌ها"
 
-#: src/chatty-application.c:83
+#: src/chatty-application.c:80
 msgid "Enable libpurple debug messages"
 msgstr "به کار انداختن پیام‌های رفع اشکال libpurple"
 
-#: src/chatty-application.c:86
+#: src/chatty-application.c:83
 msgid "Enable verbose debug messages (repeat option for more verbosity)"
 msgstr "به کار انداختن پیام‌های رفع اشکال پرگو (تکرار گزینه برای پرگویی بیش‌تر)"
 
-#: src/chatty-application.c:167
+#: src/chatty-application.c:164
 msgid "An SMS and XMPP messaging client"
 msgstr "کارخواه پیام‌رسانی برای پیامک و XMPP"
 
-#: src/chatty-application.c:175
+#: src/chatty-application.c:172
 msgid "translator-credits"
 msgstr "دانیال بهزادی <dani.behzi@ubuntu.com>"
 
-#: src/chatty-application.c:200
+#: src/chatty-application.c:197
 #, c-format
 msgid ""
 "There was an error displaying help:\n"
@@ -286,8 +286,8 @@ msgstr ""
 "خطایی هنگام نمایش راهنما رخ داد: \n"
 "%s"
 
-#: src/chatty-application.c:202 src/chatty-manager.c:683
-#: src/chatty-message-bar.c:496 src/purple/chatty-purple-notify.c:35
+#: src/chatty-application.c:199 src/chatty-manager.c:681
+#: src/chatty-message-bar.c:467 src/purple/chatty-purple-notify.c:35
 #: src/purple/chatty-purple.c:199 src/purple/chatty-purple.c:619
 #: src/dialogs/chatty-new-chat-dialog.c:226
 #: src/dialogs/chatty-settings-dialog.c:213
@@ -387,58 +387,58 @@ msgstr "آزمودن جست‌وجویی دیگر یا نوشتن شماره‌�
 msgid "No Contacts"
 msgstr "بدون آشنا"
 
-#: src/chatty-clock.c:85
+#: src/chatty-clock.c:87
 msgid "Just Now"
 msgstr "هم‌اکنون"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
-#: src/chatty-clock.c:94 src/chatty-clock.c:124
+#: src/chatty-clock.c:96 src/chatty-clock.c:127
 msgid "%I∶%M %p"
 msgstr "%OH:%OM"
 
-#: src/chatty-clock.c:103
+#: src/chatty-clock.c:105
 #, c-format
-msgid "%lu minute ago"
-msgid_plural "%lu minutes ago"
-msgstr[0] "%Ilu دقیقه پیش"
-msgstr[1] "%Ilu دقیقه پیش"
+msgid "%<PRIi64> minute ago"
+msgid_plural "%<PRIi64> minutes ago"
+msgstr[0] "%<PRIi64> دقیقه پیش"
+msgstr[1] "%<PRIi64> دقیقه پیش"
 
-#: src/chatty-clock.c:111
+#: src/chatty-clock.c:114
 msgid "Today %H∶%M"
 msgstr "امروز %OH:%OM"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “Today 06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
-#: src/chatty-clock.c:119
+#: src/chatty-clock.c:122
 msgid "Today %I∶%M %p"
 msgstr "امروز %OI:%OM %p"
 
-#: src/chatty-clock.c:131
+#: src/chatty-clock.c:134
 msgid "Yesterday %H∶%M"
 msgstr "دیروز %OH:%OM"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “Yesterday 06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
-#: src/chatty-clock.c:136
+#: src/chatty-clock.c:139
 msgid "Yesterday %I∶%M %p"
 msgstr "دیروز %OI:%OM %p"
 
-#: src/chatty-clock.c:155
+#: src/chatty-clock.c:158
 msgid "%Y-%m-%d %H:%M"
 msgstr "%OH:%OM %Oy/%Om/%Od"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “Today 06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
-#: src/chatty-clock.c:160
+#: src/chatty-clock.c:163
 msgid "%Y-%m-%d %I:%M %p"
 msgstr "%OI:%OM %Op %Oy/%Om/%Od"
 
-#: src/chatty-clock.c:162
+#: src/chatty-clock.c:165
 msgid "%Y-%m-%d"
 msgstr "%Oy/%Om/%Od"
 
@@ -485,11 +485,11 @@ msgstr "ناظمر"
 msgid "Member"
 msgstr "عضو"
 
-#: src/chatty-list-row.c:264 src/chatty-notification.c:201
+#: src/chatty-list-row.c:264 src/chatty-notification.c:180
 msgid "Picture"
 msgstr "نگاره"
 
-#: src/chatty-list-row.c:267 src/chatty-notification.c:205
+#: src/chatty-list-row.c:267 src/chatty-notification.c:184
 msgid "Video"
 msgstr "ویدیو"
 
@@ -502,7 +502,7 @@ msgid "Location"
 msgstr "مکان"
 
 #: src/chatty-list-row.c:276 src/chatty-list-row.c:293
-#: src/chatty-notification.c:197
+#: src/chatty-notification.c:176
 msgid "File"
 msgstr "پرونده"
 
@@ -522,21 +522,21 @@ msgstr "حساب قطع شد"
 msgid "Account connecting…"
 msgstr "وصل شدن حساب…"
 
-#: src/chatty-manager.c:681
+#: src/chatty-manager.c:679
 #, c-format
 msgid "“%s” is not a valid URI"
 msgstr "نشانی %s معتبر نیست"
 
-#: src/chatty-message-bar.c:494 src/purple/chatty-purple.c:195
+#: src/chatty-message-bar.c:465 src/purple/chatty-purple.c:195
 #: src/chatty-window.c:378
 msgid "Alert"
 msgstr "هشدار"
 
-#: src/chatty-message-bar.c:495
+#: src/chatty-message-bar.c:466
 msgid "Found and automatically deleted tracking IDs from the pasted link."
 msgstr "شناسه‌های ردیابی پیدا و به طور خودکار از پیوند جایگذاری شده حذف شدند."
 
-#: src/chatty-message-bar.c:497
+#: src/chatty-message-bar.c:468
 msgid "Don't Show Again"
 msgstr "دیگر نشان داده نشود"
 
@@ -544,24 +544,24 @@ msgstr "دیگر نشان داده نشود"
 msgid "Got an encrypted message, but couldn't decrypt due to missing keys"
 msgstr "پیامی رمزنگاشته گرفته شد؛ ولی به خاطر نبودن کلید نتوانست رمزگشاییش کند"
 
-#: src/chatty-notification.c:171
+#: src/chatty-notification.c:150
 #, c-format
 msgid "New message from %s"
 msgstr "پیام جدید از %s"
 
-#: src/chatty-notification.c:173
+#: src/chatty-notification.c:152
 msgid "Message Received"
 msgstr "پیام رسید"
 
-#: src/chatty-notification.c:209
+#: src/chatty-notification.c:188
 msgid "Audio File"
 msgstr "پروندهٔ صوتی"
 
-#: src/chatty-notification.c:216
+#: src/chatty-notification.c:195
 msgid "MMS"
 msgstr "پیام چندرسانه‌ای"
 
-#: src/chatty-notification.c:228
+#: src/chatty-notification.c:207
 #, c-format
 msgid "%i Message"
 msgid_plural "%i Messages"
@@ -1529,7 +1529,7 @@ msgstr "در آوردن گپ از بایگانی"
 msgid "Delete Chat"
 msgstr "حذف گپ"
 
-#: src/ui/chatty-message-row.ui:160
+#: src/ui/chatty-message-row.ui:161
 msgid "Copy Text"
 msgstr "رونوشت متن"
 
