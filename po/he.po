@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-09-20 15:50+0000\n"
-"PO-Revision-Date: 2024-09-21 23:08+0300\n"
+"POT-Creation-Date: 2024-10-09 13:08+0000\n"
+"PO-Revision-Date: 2024-10-12 14:53+0300\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language-Team: Hebrew\n"
 "Language: he\n"
@@ -21,7 +21,7 @@ msgstr ""
 "X-Generator: Poedit 3.4.2\n"
 
 #: data/sm.puri.Chatty.desktop.in.in:3 data/sm.puri.Chatty.metainfo.xml.in.in:6
-#: src/chatty-application.c:164 src/chatty-application.c:413
+#: src/chatty-application.c:161 src/chatty-application.c:410
 #: src/chatty-side-bar.c:357 src/ui/chatty-main-view.ui:4
 #: src/ui/chatty-side-bar.ui:4 src/ui/chatty-side-bar.ui:12
 #: src/ui/chatty-window.ui:4
@@ -249,38 +249,38 @@ msgid ""
 "Phosh."
 msgstr "פרטי ההתכתבות עם ערכת העיצוב הכהה שפי שמופיע בטלפון נייד שמריץ Phosh."
 
-#: src/chatty-application.c:79
+#: src/chatty-application.c:76
 msgid "Show release version"
 msgstr "להציג גרסה"
 
-#: src/chatty-application.c:80
+#: src/chatty-application.c:77
 msgid "Start in daemon mode"
 msgstr "לעלות במצב רקע"
 
-#: src/chatty-application.c:81
+#: src/chatty-application.c:78
 msgid "Disable all accounts"
 msgstr "להשבית את כל החשבונות"
 
-#: src/chatty-application.c:83
+#: src/chatty-application.c:80
 msgid "Enable libpurple debug messages"
 msgstr "לאפשר הודעות ניפוי שגיאות של libpurple"
 
-#: src/chatty-application.c:86
+#: src/chatty-application.c:83
 msgid "Enable verbose debug messages (repeat option for more verbosity)"
 msgstr "Enable verbose debug messages (repeat option for more verbosity)"
 
-#: src/chatty-application.c:167
+#: src/chatty-application.c:164
 msgid "An SMS and XMPP messaging client"
 msgstr "לקוח התכתבות במסרונים וב־XMPP"
 
-#: src/chatty-application.c:175
+#: src/chatty-application.c:172
 msgid "translator-credits"
 msgstr ""
 "ירון שהרבני <sh.yaron@gmail.com>\n"
 "יוסף אור בוצ׳קו <yoseforb@gmail.com>\n"
 "מיזם תרגום GNOME לעברית https://l10n.gnome.org/teams/he/"
 
-#: src/chatty-application.c:200
+#: src/chatty-application.c:197
 #, c-format
 msgid ""
 "There was an error displaying help:\n"
@@ -289,8 +289,8 @@ msgstr ""
 "אירעה שגיאה בהצגת העזרה:\n"
 "%s"
 
-#: src/chatty-application.c:202 src/chatty-manager.c:683
-#: src/chatty-message-bar.c:495 src/purple/chatty-purple-notify.c:35
+#: src/chatty-application.c:199 src/chatty-manager.c:681
+#: src/chatty-message-bar.c:467 src/purple/chatty-purple-notify.c:35
 #: src/purple/chatty-purple.c:199 src/purple/chatty-purple.c:619
 #: src/dialogs/chatty-new-chat-dialog.c:226
 #: src/dialogs/chatty-settings-dialog.c:213
@@ -393,60 +393,60 @@ msgstr "כדאי לנסות חיפוש אחר או להקליד מספר טלפ�
 msgid "No Contacts"
 msgstr "אין אנשי קשר"
 
-#: src/chatty-clock.c:85
+#: src/chatty-clock.c:87
 msgid "Just Now"
 msgstr "ממש עכשיו"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
-#: src/chatty-clock.c:94 src/chatty-clock.c:124
+#: src/chatty-clock.c:96 src/chatty-clock.c:127
 msgid "%I∶%M %p"
 msgstr "%I:%M %p"
 
-#: src/chatty-clock.c:103
+#: src/chatty-clock.c:105
 #, c-format
-msgid "%lu minute ago"
-msgid_plural "%lu minutes ago"
+msgid "%<PRIi64> minute ago"
+msgid_plural "%<PRIi64> minutes ago"
 msgstr[0] "לפני דקה"
-msgstr[1] "לפני %lu דקות"
-msgstr[2] "לפני %lu דקות"
-msgstr[3] "לפני %lu דקות"
+msgstr[1] "לפני שתי דקות"
+msgstr[2] "לפני %<PRIi64> דקות"
+msgstr[3] "לפני %<PRIi64> דקות"
 
-#: src/chatty-clock.c:111
+#: src/chatty-clock.c:114
 msgid "Today %H∶%M"
 msgstr "היום, ‎%H∶%M"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “Today 06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
-#: src/chatty-clock.c:119
+#: src/chatty-clock.c:122
 msgid "Today %I∶%M %p"
 msgstr "היום, ‎%H∶%M ‏%p"
 
-#: src/chatty-clock.c:131
+#: src/chatty-clock.c:134
 msgid "Yesterday %H∶%M"
 msgstr "אתמול, ‎%H∶%M"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “Yesterday 06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
-#: src/chatty-clock.c:136
+#: src/chatty-clock.c:139
 msgid "Yesterday %I∶%M %p"
 msgstr "אתמול, ‎%H∶%M ‏%p"
 
-#: src/chatty-clock.c:155
+#: src/chatty-clock.c:158
 msgid "%Y-%m-%d %H:%M"
 msgstr "%Y-%m-%d %H:%M"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “Today 06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
-#: src/chatty-clock.c:160
+#: src/chatty-clock.c:163
 msgid "%Y-%m-%d %I:%M %p"
 msgstr "%Y-%m-%d %I:%M %p"
 
-#: src/chatty-clock.c:162
+#: src/chatty-clock.c:165
 msgid "%Y-%m-%d"
 msgstr "%Y-%m-%d"
 
@@ -493,11 +493,11 @@ msgstr "מפקח"
 msgid "Member"
 msgstr "חבר"
 
-#: src/chatty-list-row.c:264 src/chatty-notification.c:201
+#: src/chatty-list-row.c:264 src/chatty-notification.c:180
 msgid "Picture"
 msgstr "תמונה"
 
-#: src/chatty-list-row.c:267 src/chatty-notification.c:205
+#: src/chatty-list-row.c:267 src/chatty-notification.c:184
 msgid "Video"
 msgstr "סרטון"
 
@@ -510,7 +510,7 @@ msgid "Location"
 msgstr "מקום"
 
 #: src/chatty-list-row.c:276 src/chatty-list-row.c:293
-#: src/chatty-notification.c:197
+#: src/chatty-notification.c:176
 msgid "File"
 msgstr "קובץ"
 
@@ -530,21 +530,21 @@ msgstr "החשבון מנותק"
 msgid "Account connecting…"
 msgstr "מתחבר לחשבון…"
 
-#: src/chatty-manager.c:681
+#: src/chatty-manager.c:679
 #, c-format
 msgid "“%s” is not a valid URI"
 msgstr "הכתובת „%s” אינה תקינה"
 
-#: src/chatty-message-bar.c:493 src/purple/chatty-purple.c:195
+#: src/chatty-message-bar.c:465 src/purple/chatty-purple.c:195
 #: src/chatty-window.c:378
 msgid "Alert"
 msgstr "התראה"
 
-#: src/chatty-message-bar.c:494
+#: src/chatty-message-bar.c:466
 msgid "Found and automatically deleted tracking IDs from the pasted link."
 msgstr "נמצאו מזהי מעקב בקישור שהודבק והם הוסרו אוטומטית."
 
-#: src/chatty-message-bar.c:496
+#: src/chatty-message-bar.c:468
 msgid "Don't Show Again"
 msgstr "לא להציג שוב"
 
@@ -552,24 +552,24 @@ msgstr "לא להציג שוב"
 msgid "Got an encrypted message, but couldn't decrypt due to missing keys"
 msgstr "התקבלה הודעה מוצפנת, אך לא ניתן לפענח אותה עקב מחסור במפתחות"
 
-#: src/chatty-notification.c:171
+#: src/chatty-notification.c:150
 #, c-format
 msgid "New message from %s"
 msgstr "הודעה חדשה מאת %s"
 
-#: src/chatty-notification.c:173
+#: src/chatty-notification.c:152
 msgid "Message Received"
 msgstr "התקבלה הודעה"
 
-#: src/chatty-notification.c:209
+#: src/chatty-notification.c:188
 msgid "Audio File"
 msgstr "קובץ שמע"
 
-#: src/chatty-notification.c:216
+#: src/chatty-notification.c:195
 msgid "MMS"
 msgstr "הודעת מולטימדיה"
 
-#: src/chatty-notification.c:228
+#: src/chatty-notification.c:207
 #, c-format
 msgid "%i Message"
 msgid_plural "%i Messages"
@@ -624,8 +624,8 @@ msgid "User %s has added %s to the contacts"
 msgstr "המשתמש %s הוסיף את %s לאנשי קשר"
 
 #: src/purple/chatty-purple.c:283 src/dialogs/chatty-settings-dialog.c:471
-#: src/ui/chatty-ma-account-details.ui:162
-#: src/ui/chatty-pp-account-details.ui:154
+#: src/ui/chatty-ma-account-details.ui:141
+#: src/ui/chatty-pp-account-details.ui:80
 msgid "Delete Account"
 msgstr "מחיקת חשבון"
 
@@ -1035,35 +1035,35 @@ msgctxt "Refer to self in contact list"
 msgid "You"
 msgstr "אני"
 
-#: src/dialogs/chatty-pp-chat-info.c:111
+#: src/dialogs/chatty-pp-chat-info.c:108
 #: src/dialogs/chatty-ma-account-details.c:168
 #: src/dialogs/chatty-pp-account-details.c:115
 msgid "Set Avatar"
 msgstr "הגדרת תמונה ייצוגית"
 
-#: src/dialogs/chatty-pp-chat-info.c:118
+#: src/dialogs/chatty-pp-chat-info.c:115
 #: src/dialogs/chatty-ma-account-details.c:175
 #: src/dialogs/chatty-pp-account-details.c:122
 msgid "Images"
 msgstr "תמונות"
 
-#: src/dialogs/chatty-pp-chat-info.c:221
+#: src/dialogs/chatty-pp-chat-info.c:204
 msgid "Encryption is not available"
 msgstr "אין הצפנה זמינה"
 
-#: src/dialogs/chatty-pp-chat-info.c:225
+#: src/dialogs/chatty-pp-chat-info.c:208
 msgid "This chat is encrypted"
 msgstr "התכתבות זו מוצפנת"
 
-#: src/dialogs/chatty-pp-chat-info.c:229
+#: src/dialogs/chatty-pp-chat-info.c:212
 msgid "This chat is not encrypted"
 msgstr "התכתבות זו אינה מוצפנת"
 
-#: src/dialogs/chatty-pp-chat-info.c:253
+#: src/dialogs/chatty-pp-chat-info.c:236
 msgid "Encryption not available"
 msgstr "הצפנה אינה זמינה"
 
-#: src/dialogs/chatty-pp-chat-info.c:274
+#: src/dialogs/chatty-pp-chat-info.c:257
 #, c-format
 msgid "%u Member"
 msgid_plural "%u Members"
@@ -1072,21 +1072,22 @@ msgstr[1] "שני חברים"
 msgstr[2] "‫%u חברים"
 msgstr[3] "‫%u חברים"
 
-#: src/dialogs/chatty-pp-chat-info.c:308
-msgid "Phone Number:"
-msgstr "מספר טלפון:"
+#: src/dialogs/chatty-pp-chat-info.c:292 src/ui/chatty-settings-dialog.ui:385
+msgid "Phone Number"
+msgstr "מספר טלפון"
 
-#: src/dialogs/chatty-pp-chat-info.c:310
-msgid "XMPP ID:"
-msgstr "מזהה XMPP:"
+#: src/dialogs/chatty-pp-chat-info.c:295 src/ui/chatty-pp-chat-info.ui:88
+msgid "XMPP ID"
+msgstr "מזהה XMPP"
 
-#: src/dialogs/chatty-pp-chat-info.c:315
-msgid "Matrix ID:"
-msgstr "מזהה Matrix:"
+#: src/dialogs/chatty-pp-chat-info.c:301 src/ui/chatty-ma-chat-info.ui:28
+#: src/ui/chatty-ma-account-details.ui:90
+msgid "Matrix ID"
+msgstr "מזהה Matrix"
 
-#: src/dialogs/chatty-pp-chat-info.c:318
-msgid "Telegram ID:"
-msgstr "מזהה טלגרם:"
+#: src/dialogs/chatty-pp-chat-info.c:305
+msgid "Telegram ID"
+msgstr "מזהה טלגרם"
 
 #: src/dialogs/chatty-new-chat-dialog.c:170
 msgid "Add"
@@ -1113,17 +1114,17 @@ msgstr "SMS"
 msgid "You"
 msgstr "אני"
 
-#: src/dialogs/chatty-ma-account-details.c:427
+#: src/dialogs/chatty-ma-account-details.c:418
 #: src/dialogs/chatty-pp-account-details.c:171
 msgid "connected"
 msgstr "מחובר"
 
-#: src/dialogs/chatty-ma-account-details.c:429
+#: src/dialogs/chatty-ma-account-details.c:420
 #: src/dialogs/chatty-pp-account-details.c:173
 msgid "connecting…"
 msgstr "מתחבר…"
 
-#: src/dialogs/chatty-ma-account-details.c:431
+#: src/dialogs/chatty-ma-account-details.c:422
 #: src/dialogs/chatty-pp-account-details.c:175
 msgid "disconnected"
 msgstr "מנותק"
@@ -1268,7 +1269,7 @@ msgid "Preferences"
 msgstr "העדפות"
 
 #: src/dialogs/chatty-settings-dialog.c:1155
-#: src/ui/chatty-pp-account-details.ui:81 src/ui/chatty-settings-dialog.ui:245
+#: src/ui/chatty-pp-account-details.ui:60 src/ui/chatty-settings-dialog.ui:245
 msgid "Protocol"
 msgstr "פרוטוקול"
 
@@ -1414,8 +1415,8 @@ msgstr "_אישור"
 msgid "Please re-enter the Password."
 msgstr "נא למלא את הסיסמה מחדש."
 
-#: src/ui/chatty-dialog-wrong-pw.ui:53 src/ui/chatty-pp-account-details.ui:129
-#: src/ui/chatty-settings-dialog.ui:798
+#: src/ui/chatty-dialog-wrong-pw.ui:53 src/ui/chatty-pp-account-details.ui:70
+#: src/ui/chatty-settings-dialog.ui:794
 msgid "Password"
 msgstr "ססמה"
 
@@ -1496,28 +1497,24 @@ msgstr "ל_קבל"
 msgid "_Reject"
 msgstr "ל_דחות"
 
-#: src/ui/chatty-ma-chat-info.ui:32
+#: src/ui/chatty-ma-chat-info.ui:21 src/ui/chatty-pp-chat-info.ui:59
 msgid "Chat"
 msgstr "התכתבות"
 
-#: src/ui/chatty-ma-chat-info.ui:61 src/ui/chatty-ma-account-details.ui:222
-msgid "Matrix ID"
-msgstr "מזהה Matrix"
-
-#: src/ui/chatty-ma-chat-info.ui:90
+#: src/ui/chatty-ma-chat-info.ui:35
 msgid "Topic"
 msgstr "נושא"
 
-#: src/ui/chatty-ma-chat-info.ui:119 src/ui/chatty-pp-chat-info.ui:242
+#: src/ui/chatty-ma-chat-info.ui:43 src/ui/chatty-pp-chat-info.ui:110
 msgid "Chat settings"
 msgstr "הגדרות התכתבות"
 
-#: src/ui/chatty-ma-chat-info.ui:137 src/ui/chatty-pp-chat-info.ui:193
-#: src/ui/chatty-pp-chat-info.ui:292
+#: src/ui/chatty-ma-chat-info.ui:46 src/ui/chatty-pp-chat-info.ui:95
+#: src/ui/chatty-pp-chat-info.ui:132
 msgid "Encryption"
 msgstr "הצפנה"
 
-#: src/ui/chatty-ma-chat-info.ui:138 src/ui/chatty-pp-chat-info.ui:293
+#: src/ui/chatty-ma-chat-info.ui:47 src/ui/chatty-pp-chat-info.ui:133
 msgid "Encrypt Messages"
 msgstr "הצפנת הודעות"
 
@@ -1554,50 +1551,50 @@ msgstr "הוצאת שיחה מארכיון"
 msgid "Delete Chat"
 msgstr "למחוק התכתבות"
 
-#: src/ui/chatty-message-row.ui:160
+#: src/ui/chatty-message-row.ui:161
 msgid "Copy Text"
 msgstr "העתקת טקסט"
 
-#: src/ui/chatty-pp-chat-info.ui:34 src/ui/chatty-pp-account-details.ui:38
+#: src/ui/chatty-pp-chat-info.ui:23 src/ui/chatty-pp-account-details.ui:39
 msgid "Change Avatar"
 msgstr "שינוי תמונה ייצוגית"
 
-#: src/ui/chatty-pp-chat-info.ui:47 src/ui/chatty-pp-account-details.ui:25
+#: src/ui/chatty-pp-chat-info.ui:36 src/ui/chatty-pp-account-details.ui:26
 msgid "Delete Avatar"
 msgstr "מחיקת תמונה ייצוגית"
 
-#: src/ui/chatty-pp-chat-info.ui:76
+#: src/ui/chatty-pp-chat-info.ui:67
 msgid "Room topic"
 msgstr "נושא החדר"
 
-#: src/ui/chatty-pp-chat-info.ui:143
+#: src/ui/chatty-pp-chat-info.ui:81
 msgid "User"
 msgstr "משתמש"
 
-#: src/ui/chatty-pp-chat-info.ui:168
-msgid "XMPP ID"
-msgstr "מזהה XMPP"
-
-#: src/ui/chatty-pp-chat-info.ui:218 src/ui/chatty-ma-account-details.ui:54
-#: src/ui/chatty-pp-account-details.ui:105
+#: src/ui/chatty-pp-chat-info.ui:102 src/ui/chatty-ma-account-details.ui:53
+#: src/ui/chatty-pp-account-details.ui:65
 msgid "Status"
 msgstr "מצב"
 
-#: src/ui/chatty-pp-chat-info.ui:262
+#: src/ui/chatty-pp-chat-info.ui:115
 msgid "Notifications"
 msgstr "התראות"
 
-#: src/ui/chatty-pp-chat-info.ui:277
+#: src/ui/chatty-pp-chat-info.ui:123
 msgid "Status Messages"
 msgstr "הודעות מצב"
 
-#: src/ui/chatty-pp-chat-info.ui:278
+#: src/ui/chatty-pp-chat-info.ui:124
 msgid "Show status messages in chat"
 msgstr "להציג הודעות מצב בהתכתבות"
 
-#: src/ui/chatty-pp-chat-info.ui:313
+#: src/ui/chatty-pp-chat-info.ui:143
 msgid "Fingerprints"
 msgstr "טביעות אצבע"
+
+#: src/ui/chatty-pp-chat-info.ui:162
+msgid "User List"
+msgstr "רשימת משתמשים"
 
 #: src/ui/chatty-mm-chat-info.ui:20
 msgid "Title"
@@ -1615,43 +1612,43 @@ msgstr "חברי הקבוצה"
 msgid "Copy Number"
 msgstr "העתקת מספר"
 
-#: src/ui/chatty-ma-account-details.ui:78
+#: src/ui/chatty-ma-account-details.ui:58
 msgid "Name"
 msgstr "שם"
 
-#: src/ui/chatty-ma-account-details.ui:106
+#: src/ui/chatty-ma-account-details.ui:64
 msgid "Email"
 msgstr "דוא״ל"
 
-#: src/ui/chatty-ma-account-details.ui:134
+#: src/ui/chatty-ma-account-details.ui:69
 msgid "Phone"
 msgstr "טלפון"
 
-#: src/ui/chatty-ma-account-details.ui:174
+#: src/ui/chatty-ma-account-details.ui:74
 msgid "Advanced information"
 msgstr "מידע מתקדם"
 
-#: src/ui/chatty-ma-account-details.ui:186
+#: src/ui/chatty-ma-account-details.ui:77
 msgid "Homeserver"
 msgstr "שם שרת"
 
-#: src/ui/chatty-ma-account-details.ui:258
+#: src/ui/chatty-ma-account-details.ui:103
 msgid "Device ID"
 msgstr "מזהה התקן"
 
-#: src/ui/chatty-ma-account-details.ui:301
+#: src/ui/chatty-ma-account-details.ui:118
 msgid "Sensitive information"
 msgstr "פרטים רגישים"
 
-#: src/ui/chatty-ma-account-details.ui:312
+#: src/ui/chatty-ma-account-details.ui:121
 msgid "Access token"
 msgstr "אסימון גישה"
 
-#: src/ui/chatty-pp-account-details.ui:59
+#: src/ui/chatty-pp-account-details.ui:55
 msgid "Account ID"
 msgstr "מזהה חשבון"
 
-#: src/ui/chatty-pp-account-details.ui:168
+#: src/ui/chatty-pp-account-details.ui:88
 msgid "Own Fingerprint"
 msgstr "טביעת אצבע עצמית"
 
@@ -1720,10 +1717,6 @@ msgstr "‏SMIL עבור MMS"
 #: src/ui/chatty-settings-dialog.ui:381
 msgid "MMS Carrier Settings"
 msgstr "הגדרות חברה ל־MMS"
-
-#: src/ui/chatty-settings-dialog.ui:385
-msgid "Phone Number"
-msgstr "מספר טלפון"
 
 #: src/ui/chatty-settings-dialog.ui:391
 msgid "Your modem's phone number"
@@ -1817,15 +1810,15 @@ msgstr "עותקים של הודעות"
 msgid "User ID"
 msgstr "מזהה משתמש"
 
-#: src/ui/chatty-settings-dialog.ui:824
+#: src/ui/chatty-settings-dialog.ui:800
 msgid "Home server"
 msgstr "שרת ביתי"
 
-#: src/ui/chatty-settings-dialog.ui:842
+#: src/ui/chatty-settings-dialog.ui:810
 msgid "_Add"
 msgstr "_הוספה"
 
-#: src/ui/chatty-settings-dialog.ui:870
+#: src/ui/chatty-settings-dialog.ui:838
 msgid "Add _New Account"
 msgstr "הו_ספת חשבון חדש"
 
@@ -1959,6 +1952,15 @@ msgstr "עבודה:"
 #: src/users/chatty-contact.c:328
 msgid "Other:"
 msgstr "אחר:"
+
+#~ msgid "Phone Number:"
+#~ msgstr "מספר טלפון:"
+
+#~ msgid "XMPP ID:"
+#~ msgstr "מזהה XMPP:"
+
+#~ msgid "Matrix ID:"
+#~ msgstr "מזהה Matrix:"
 
 #~ msgid "Chats message window"
 #~ msgstr "חלון ההודעות של התכתבויות"
@@ -2140,9 +2142,6 @@ msgstr "אחר:"
 
 #~ msgid "Start Chat"
 #~ msgstr "להתחיל התכתבות"
-
-#~ msgid "Chats List"
-#~ msgstr "רשימת התכתבויות"
 
 #~ msgid "Indicate Offline Contacts"
 #~ msgstr "לציין אנשי קשר בלתי מקוונים"
