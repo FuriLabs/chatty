@@ -49,6 +49,7 @@ struct _ChattyChatPage
   guint       history_load_id;
   double      value_adjust;
   gboolean    is_bottom;
+  gboolean    first_load;
 };
 
 /* how close to the bottom is considered "at the bottom" */
@@ -331,6 +332,13 @@ chat_page_chat_changed_cb (ChattyChatPage *self)
 }
 
 static void
+scroll_to_bottom_cb (gpointer user_data)
+{
+  ChattyChatPage *self = user_data;
+  chat_page_scroll_down_clicked_cb(self);
+}
+
+static void
 chat_page_adjustment_value_changed_cb (ChattyChatPage *self)
 {
   double value;
@@ -338,6 +346,11 @@ chat_page_adjustment_value_changed_cb (ChattyChatPage *self)
   gboolean is_scroll = FALSE;
 
   g_assert (CHATTY_IS_CHAT_PAGE (self));
+
+  if (!self->first_load) {
+    self->first_load = TRUE;
+    g_timeout_add_once (100, scroll_to_bottom_cb, self);
+  }
 
   value = gtk_adjustment_get_value (self->vadjustment);
   if (!G_APPROX_VALUE (value, self->value_adjust, SCROLL_THRESHOLD)) {
