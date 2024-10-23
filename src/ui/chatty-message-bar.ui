@@ -35,7 +35,7 @@
           <object class="ChattyEntry">
             <child>
               <object class="GtkScrolledWindow" id="scrolled_window">
-                <property name="valign">center</property>
+                <property name="valign">fill</property>
                 <property name="max-content-height">96</property>
                 <property name="propagate-natural-height">1</property>
                 <property name="vscrollbar-policy">never</property>
