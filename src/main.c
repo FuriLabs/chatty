@@ -22,6 +22,9 @@ main (int   argc,
 {
   g_autoptr(ChattyApplication) application = NULL;
 
+  gtk_init ();
+  adw_init ();
+
   g_set_prgname (CHATTY_APP_ID);
   chatty_log_init ();
   /* You have to do this for gtk_source if libspelling is not enabled */

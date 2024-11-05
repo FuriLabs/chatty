@@ -142,7 +142,7 @@ resources = gnome.compile_resources('chatty-resources',
 )
 
 libchatty = both_libraries(
-  'chatty', [libsrc, 'library.c'],
+  'chatty', libsrc,
   resources,
   include_directories: src_inc,
   dependencies: chatty_deps,
