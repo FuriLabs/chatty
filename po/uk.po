@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-10-09 13:08+0000\n"
-"PO-Revision-Date: 2024-10-09 22:07+0300\n"
+"POT-Creation-Date: 2024-11-14 10:42+0000\n"
+"PO-Revision-Date: 2024-11-14 19:03+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -20,7 +20,7 @@ msgstr ""
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 
 #: data/sm.puri.Chatty.desktop.in.in:3 data/sm.puri.Chatty.metainfo.xml.in.in:6
-#: src/chatty-application.c:161 src/chatty-application.c:410
+#: src/chatty-application.c:157 src/chatty-application.c:389
 #: src/chatty-side-bar.c:357 src/ui/chatty-main-view.ui:4
 #: src/ui/chatty-side-bar.ui:4 src/ui/chatty-side-bar.ui:12
 #: src/ui/chatty-window.ui:4
@@ -32,10 +32,11 @@ msgid "SMS/MMS, Matrix and XMPP chat application"
 msgstr "Програма для спілкування за допомогою SMS/MMS, Matrix і XMPP"
 
 #: data/sm.puri.Chatty.desktop.in.in:7
-msgid "XMPP;SMS;chat;jabber;messaging;modem;matrix"
+#| msgid "XMPP;SMS;chat;jabber;messaging;modem;matrix"
+msgid "XMPP;SMS;chat;jabber;messaging;modem;matrix;"
 msgstr ""
 "XMPP;SMS;chat;jabber;messaging;modem;есемес;чат;балачка;спілкування;джабер;"
-"повідомлення;модем;матрикс;метрікс"
+"повідомлення;модем;матрикс;метрікс;"
 
 #: data/sm.puri.Chatty.gschema.xml:7 data/sm.puri.Chatty.gschema.xml:8
 msgid "Whether the application is launching the first time"
@@ -261,37 +262,33 @@ msgstr ""
 "Панель подробиць спілкування, використано темну тему, перегляд на мобільному "
 "телефоні, де запущено Phosh."
 
-#: src/chatty-application.c:76
+#: src/chatty-application.c:73
 msgid "Show release version"
 msgstr "Показати версію випуску"
 
-#: src/chatty-application.c:77
-msgid "Start in daemon mode"
-msgstr "Запускати у режимі служби"
-
-#: src/chatty-application.c:78
+#: src/chatty-application.c:74
 msgid "Disable all accounts"
 msgstr "Вимкнути усі облікові записи"
 
-#: src/chatty-application.c:80
+#: src/chatty-application.c:76
 msgid "Enable libpurple debug messages"
 msgstr "Увімкнути діагностичні повідомлення libpurple"
 
-#: src/chatty-application.c:83
+#: src/chatty-application.c:79
 msgid "Enable verbose debug messages (repeat option for more verbosity)"
 msgstr ""
 "Увімкнути докладні діагностичні повідомлення (повторіть параметр, щоб "
 "збільшити докладність)"
 
-#: src/chatty-application.c:164
+#: src/chatty-application.c:160
 msgid "An SMS and XMPP messaging client"
 msgstr "Клієнт обміну повідомленнями SMS і XMPP"
 
-#: src/chatty-application.c:172
+#: src/chatty-application.c:168
 msgid "translator-credits"
 msgstr "Юрій Чорноіван <yurchor@ukr.net>, 2020"
 
-#: src/chatty-application.c:197
+#: src/chatty-application.c:193
 #, c-format
 msgid ""
 "There was an error displaying help:\n"
@@ -300,7 +297,7 @@ msgstr ""
 "Спроба показати довідку завершилася помилкою:\n"
 "%s"
 
-#: src/chatty-application.c:199 src/chatty-manager.c:681
+#: src/chatty-application.c:195 src/chatty-manager.c:681
 #: src/chatty-message-bar.c:467 src/purple/chatty-purple-notify.c:35
 #: src/purple/chatty-purple.c:199 src/purple/chatty-purple.c:619
 #: src/dialogs/chatty-new-chat-dialog.c:226
@@ -345,34 +342,34 @@ msgstr "Немає архівованих спілкувань"
 msgid "Start Chatting"
 msgstr "Почати спілкування"
 
-#: src/chatty-chat-page.c:195 src/chatty-chat-page.c:204
+#: src/chatty-chat-page.c:196 src/chatty-chat-page.c:205
 msgid "This is an MMS conversation"
 msgstr "Це обмін повідомленнями MMS"
 
-#: src/chatty-chat-page.c:197 src/chatty-chat-page.c:212
-#: src/chatty-chat-page.c:218
+#: src/chatty-chat-page.c:198 src/chatty-chat-page.c:213
+#: src/chatty-chat-page.c:219
 msgid "Your messages are not encrypted, and carrier rates may apply"
 msgstr ""
 "Ваші повідомлення не зашифровано, оператор може стягувати сплату за "
 "передавання даних"
 
-#: src/chatty-chat-page.c:207
+#: src/chatty-chat-page.c:208
 msgid "This is an SMS/MMS conversation"
 msgstr "Це обмін повідомленнями SMS/MMS"
 
-#: src/chatty-chat-page.c:210
+#: src/chatty-chat-page.c:211
 msgid "This is an SMS conversation"
 msgstr "Це обмін повідомленнями SMS"
 
-#: src/chatty-chat-page.c:216
+#: src/chatty-chat-page.c:217
 msgid "This is an IM conversation"
 msgstr "Це спілкування у службі обміну повідомленнями"
 
-#: src/chatty-chat-page.c:222
+#: src/chatty-chat-page.c:223
 msgid "Your messages are encrypted"
 msgstr "Ваші повідомлення зашифровано"
 
-#: src/chatty-chat-page.c:225
+#: src/chatty-chat-page.c:226
 msgid "Your messages are not encrypted"
 msgstr "Ваші повідомлення не зашифровано"
 
@@ -421,8 +418,6 @@ msgstr "%H:%M"
 
 #: src/chatty-clock.c:105
 #, c-format
-#| msgid "%lu minute ago"
-#| msgid_plural "%lu minutes ago"
 msgid "%<PRIi64> minute ago"
 msgid_plural "%<PRIi64> minutes ago"
 msgstr[0] "%<PRIi64> хвилину тому"
@@ -1979,6 +1974,9 @@ msgstr "Робочий:"
 #: src/users/chatty-contact.c:328
 msgid "Other:"
 msgstr "Інший:"
+
+#~ msgid "Start in daemon mode"
+#~ msgstr "Запускати у режимі служби"
 
 #~| msgid "%s"
 #~ msgid "%"
