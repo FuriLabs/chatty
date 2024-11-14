@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-10-09 13:08+0000\n"
-"PO-Revision-Date: 2024-10-10 18:34+0330\n"
+"POT-Creation-Date: 2024-11-14 10:42+0000\n"
+"PO-Revision-Date: 2024-11-15 02:52+0330\n"
 "Last-Translator: Danial Behzadi <dani.behzi@ubuntu.com>\n"
 "Language-Team: Persian <fa@li.org>\n"
 "Language: fa\n"
@@ -19,7 +19,7 @@ msgstr ""
 "X-Generator: Poedit 3.5\n"
 
 #: data/sm.puri.Chatty.desktop.in.in:3 data/sm.puri.Chatty.metainfo.xml.in.in:6
-#: src/chatty-application.c:161 src/chatty-application.c:410
+#: src/chatty-application.c:157 src/chatty-application.c:389
 #: src/chatty-side-bar.c:357 src/ui/chatty-main-view.ui:4
 #: src/ui/chatty-side-bar.ui:4 src/ui/chatty-side-bar.ui:12
 #: src/ui/chatty-window.ui:4
@@ -31,8 +31,9 @@ msgid "SMS/MMS, Matrix and XMPP chat application"
 msgstr "برنامهٔ گپ XMPP، ماتریکس و پیامک"
 
 #: data/sm.puri.Chatty.desktop.in.in:7
-msgid "XMPP;SMS;chat;jabber;messaging;modem;matrix"
-msgstr "XMPP;SMS;chat;jabber;messaging;modem;matrix;پیامک;گپ;جبر;پیام;مودم;ماتریکس"
+msgid "XMPP;SMS;chat;jabber;messaging;modem;matrix;"
+msgstr ""
+"XMPP;SMS;chat;jabber;messaging;modem;matrix;پیامک;گپ;جبر;پیام;مودم;ماتریکس;"
 
 #: data/sm.puri.Chatty.gschema.xml:7 data/sm.puri.Chatty.gschema.xml:8
 msgid "Whether the application is launching the first time"
@@ -249,35 +250,31 @@ msgstr ""
 "نمای حزییات گپ با زمینهٔ تیره به صورتی که روی تلفن همراهی که فوش را اجرا می‌کند "
 "دیده می‌شود."
 
-#: src/chatty-application.c:76
+#: src/chatty-application.c:73
 msgid "Show release version"
 msgstr "نمایش نسخهٔ انتشار"
 
-#: src/chatty-application.c:77
-msgid "Start in daemon mode"
-msgstr "آغاز در حالت خدمت"
-
-#: src/chatty-application.c:78
+#: src/chatty-application.c:74
 msgid "Disable all accounts"
 msgstr "از کار انداختن همهٔ حساب‌ها"
 
-#: src/chatty-application.c:80
+#: src/chatty-application.c:76
 msgid "Enable libpurple debug messages"
 msgstr "به کار انداختن پیام‌های رفع اشکال libpurple"
 
-#: src/chatty-application.c:83
+#: src/chatty-application.c:79
 msgid "Enable verbose debug messages (repeat option for more verbosity)"
 msgstr "به کار انداختن پیام‌های رفع اشکال پرگو (تکرار گزینه برای پرگویی بیش‌تر)"
 
-#: src/chatty-application.c:164
+#: src/chatty-application.c:160
 msgid "An SMS and XMPP messaging client"
 msgstr "کارخواه پیام‌رسانی برای پیامک و XMPP"
 
-#: src/chatty-application.c:172
+#: src/chatty-application.c:168
 msgid "translator-credits"
 msgstr "دانیال بهزادی <dani.behzi@ubuntu.com>"
 
-#: src/chatty-application.c:197
+#: src/chatty-application.c:193
 #, c-format
 msgid ""
 "There was an error displaying help:\n"
@@ -286,7 +283,7 @@ msgstr ""
 "خطایی هنگام نمایش راهنما رخ داد: \n"
 "%s"
 
-#: src/chatty-application.c:199 src/chatty-manager.c:681
+#: src/chatty-application.c:195 src/chatty-manager.c:681
 #: src/chatty-message-bar.c:467 src/purple/chatty-purple-notify.c:35
 #: src/purple/chatty-purple.c:199 src/purple/chatty-purple.c:619
 #: src/dialogs/chatty-new-chat-dialog.c:226
@@ -330,31 +327,31 @@ msgstr "بدون گپ بایگانی شده"
 msgid "Start Chatting"
 msgstr "آغاز به گپ"
 
-#: src/chatty-chat-page.c:195 src/chatty-chat-page.c:204
+#: src/chatty-chat-page.c:196 src/chatty-chat-page.c:205
 msgid "This is an MMS conversation"
 msgstr "این گفت‌وگو چندرسانه‌ایست"
 
-#: src/chatty-chat-page.c:197 src/chatty-chat-page.c:212 src/chatty-chat-page.c:218
+#: src/chatty-chat-page.c:198 src/chatty-chat-page.c:213 src/chatty-chat-page.c:219
 msgid "Your messages are not encrypted, and carrier rates may apply"
 msgstr "پیام‌هایتان رمزنگاری نشده و ممکن است هزینه‌های اوپراتور اعمال شود"
 
-#: src/chatty-chat-page.c:207
+#: src/chatty-chat-page.c:208
 msgid "This is an SMS/MMS conversation"
 msgstr "این گفت‌وگو پیام کوتاه یا چندرسانه‌ایست"
 
-#: src/chatty-chat-page.c:210
+#: src/chatty-chat-page.c:211
 msgid "This is an SMS conversation"
 msgstr "این گفت‌وگو پیامکیست"
 
-#: src/chatty-chat-page.c:216
+#: src/chatty-chat-page.c:217
 msgid "This is an IM conversation"
 msgstr "این گفت‌وگو پیام فوریست"
 
-#: src/chatty-chat-page.c:222
+#: src/chatty-chat-page.c:223
 msgid "Your messages are encrypted"
 msgstr "پیام‌هایتان رمزنگاری شده‌اند"
 
-#: src/chatty-chat-page.c:225
+#: src/chatty-chat-page.c:226
 msgid "Your messages are not encrypted"
 msgstr "پیام‌هایتان رمزنگاری نشده‌اند"
 
@@ -1925,6 +1922,9 @@ msgstr "کاری:"
 #: src/users/chatty-contact.c:328
 msgid "Other:"
 msgstr "دیگر:"
+
+#~ msgid "Start in daemon mode"
+#~ msgstr "آغاز در حالت خدمت"
 
 #~ msgid "Phone Number:"
 #~ msgstr "شماره تلفن:"
