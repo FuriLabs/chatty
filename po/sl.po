@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-10-09 13:08+0000\n"
-"PO-Revision-Date: 2024-10-09 21:05+0200\n"
+"POT-Creation-Date: 2024-11-14 10:42+0000\n"
+"PO-Revision-Date: 2024-11-14 17:57+0100\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian <gnome-si@googlegroups.com>\n"
 "Language: sl\n"
@@ -23,7 +23,7 @@ msgstr ""
 "X-Poedit-SourceCharset: ISO-8859-1\n"
 
 #: data/sm.puri.Chatty.desktop.in.in:3 data/sm.puri.Chatty.metainfo.xml.in.in:6
-#: src/chatty-application.c:161 src/chatty-application.c:410
+#: src/chatty-application.c:157 src/chatty-application.c:389
 #: src/chatty-side-bar.c:357 src/ui/chatty-main-view.ui:4
 #: src/ui/chatty-side-bar.ui:4 src/ui/chatty-side-bar.ui:12
 #: src/ui/chatty-window.ui:4
@@ -35,7 +35,7 @@ msgid "SMS/MMS, Matrix and XMPP chat application"
 msgstr "Programček za klepet SMS, Matrix in XMPP"
 
 #: data/sm.puri.Chatty.desktop.in.in:7
-msgid "XMPP;SMS;chat;jabber;messaging;modem;matrix"
+msgid "XMPP;SMS;chat;jabber;messaging;modem;matrix;"
 msgstr "XMPP;SMS;klepet;jabber;chat;sporočanje;sporočila;modem;matrix;"
 
 #: data/sm.puri.Chatty.gschema.xml:7 data/sm.puri.Chatty.gschema.xml:8
@@ -255,37 +255,33 @@ msgstr ""
 "Podrobnosti klepeta so prikazane s temno temo, kot je prikazana na mobilnem "
 "telefonu, ki ga poganja Phosh."
 
-#: src/chatty-application.c:76
+#: src/chatty-application.c:73
 msgid "Show release version"
 msgstr "Pokaži različico izdaje"
 
-#: src/chatty-application.c:77
-msgid "Start in daemon mode"
-msgstr "Zaženi v načinu prikritega procesa"
-
-#: src/chatty-application.c:78
+#: src/chatty-application.c:74
 msgid "Disable all accounts"
 msgstr "Onemogoči vse račune"
 
-#: src/chatty-application.c:80
+#: src/chatty-application.c:76
 msgid "Enable libpurple debug messages"
 msgstr "Omogoči sporočila razhroščevanja libpurple"
 
-#: src/chatty-application.c:83
+#: src/chatty-application.c:79
 msgid "Enable verbose debug messages (repeat option for more verbosity)"
 msgstr ""
 "Omogoči podrobna sporočila za odpravljanje napak (možnost ponovitve za večjo "
 "podrobnost)"
 
-#: src/chatty-application.c:164
+#: src/chatty-application.c:160
 msgid "An SMS and XMPP messaging client"
 msgstr "Odjemalec za klepete SMS in XMPP"
 
-#: src/chatty-application.c:172
+#: src/chatty-application.c:168
 msgid "translator-credits"
 msgstr "miles"
 
-#: src/chatty-application.c:197
+#: src/chatty-application.c:193
 #, c-format
 msgid ""
 "There was an error displaying help:\n"
@@ -294,7 +290,7 @@ msgstr ""
 "Pri izpisu pomoči je prišlo do napake:\n"
 "%s"
 
-#: src/chatty-application.c:199 src/chatty-manager.c:681
+#: src/chatty-application.c:195 src/chatty-manager.c:681
 #: src/chatty-message-bar.c:467 src/purple/chatty-purple-notify.c:35
 #: src/purple/chatty-purple.c:199 src/purple/chatty-purple.c:619
 #: src/dialogs/chatty-new-chat-dialog.c:226
@@ -338,33 +334,33 @@ msgstr "Ni arhiviranih klepetov"
 msgid "Start Chatting"
 msgstr "Začni klepet"
 
-#: src/chatty-chat-page.c:195 src/chatty-chat-page.c:204
+#: src/chatty-chat-page.c:196 src/chatty-chat-page.c:205
 msgid "This is an MMS conversation"
 msgstr "To je MMS-klepet"
 
-#: src/chatty-chat-page.c:197 src/chatty-chat-page.c:212
-#: src/chatty-chat-page.c:218
+#: src/chatty-chat-page.c:198 src/chatty-chat-page.c:213
+#: src/chatty-chat-page.c:219
 msgid "Your messages are not encrypted, and carrier rates may apply"
 msgstr ""
 "Vaša sporočila niso šifrirana, morda bodo nastali stroški pri operaterju"
 
-#: src/chatty-chat-page.c:207
+#: src/chatty-chat-page.c:208
 msgid "This is an SMS/MMS conversation"
 msgstr "To je SMS/MMS-klepet"
 
-#: src/chatty-chat-page.c:210
+#: src/chatty-chat-page.c:211
 msgid "This is an SMS conversation"
 msgstr "To je SMS-klepet"
 
-#: src/chatty-chat-page.c:216
+#: src/chatty-chat-page.c:217
 msgid "This is an IM conversation"
 msgstr "To je neposredni klepet"
 
-#: src/chatty-chat-page.c:222
+#: src/chatty-chat-page.c:223
 msgid "Your messages are encrypted"
 msgstr "Vaša sporočila so šifrirana"
 
-#: src/chatty-chat-page.c:225
+#: src/chatty-chat-page.c:226
 msgid "Your messages are not encrypted"
 msgstr "Vaša sporočila niso šifrirana"
 
