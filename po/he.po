@@ -1,27 +1,32 @@
 # Hebrew translation for chatty.
 # Copyright (C) 2021 chatty's COPYRIGHT HOLDER
 # This file is distributed under the same license as the chatty package.
-# Yaron Shahrabani <sh.yaron@gmail.com>, 2021.
 # Yosef Or Boczko <yoseforb@gmail.com>, 2022-2023.
+# Yaron Shahrabani <sh.yaron@gmail.com>, 2021-2024.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: chatty master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-10-09 13:08+0000\n"
-"PO-Revision-Date: 2024-10-12 14:53+0300\n"
+"POT-Creation-Date: 2024-11-14 10:42+0000\n"
+"PO-Revision-Date: 2024-11-15 03:51+0200\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
-"Language-Team: Hebrew\n"
+"Language-Team: Hebrew <heb-bugzap@hamakor.org.il>\n"
 "Language: he\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : n==2 ? 1 : n>10 && n%10==0 ? "
-"2 : 3);\n"
-"X-Generator: Poedit 3.4.2\n"
+"Plural-Forms: ‪nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && "
+"n % 10 == 0) ? 2 : 3));\n"
+"X-Generator: Gtranslator 47.0\n"
+"X-DL-Lang: he\n"
+"X-DL-Module: chatty\n"
+"X-DL-Branch: main\n"
+"X-DL-Domain: po\n"
+"X-DL-State: None\n"
 
 #: data/sm.puri.Chatty.desktop.in.in:3 data/sm.puri.Chatty.metainfo.xml.in.in:6
-#: src/chatty-application.c:161 src/chatty-application.c:410
+#: src/chatty-application.c:157 src/chatty-application.c:389
 #: src/chatty-side-bar.c:357 src/ui/chatty-main-view.ui:4
 #: src/ui/chatty-side-bar.ui:4 src/ui/chatty-side-bar.ui:12
 #: src/ui/chatty-window.ui:4
@@ -33,10 +38,10 @@ msgid "SMS/MMS, Matrix and XMPP chat application"
 msgstr "יישום התכתבות במסרונים, Matrix וב־XMPP"
 
 #: data/sm.puri.Chatty.desktop.in.in:7
-msgid "XMPP;SMS;chat;jabber;messaging;modem;matrix"
+msgid "XMPP;SMS;chat;jabber;messaging;modem;matrix;"
 msgstr ""
 "XMPP;מסרון;מסרונים;אס אם אס;SMS;התכתבות;צ׳אט;שיח;מודם;ג׳אבר;ג'אבר;מטריקס;"
-"מאטריקס"
+"מאטריקס;מודם;"
 
 #: data/sm.puri.Chatty.gschema.xml:7 data/sm.puri.Chatty.gschema.xml:8
 msgid "Whether the application is launching the first time"
@@ -249,38 +254,34 @@ msgid ""
 "Phosh."
 msgstr "פרטי ההתכתבות עם ערכת העיצוב הכהה שפי שמופיע בטלפון נייד שמריץ Phosh."
 
-#: src/chatty-application.c:76
+#: src/chatty-application.c:73
 msgid "Show release version"
 msgstr "להציג גרסה"
 
-#: src/chatty-application.c:77
-msgid "Start in daemon mode"
-msgstr "לעלות במצב רקע"
-
-#: src/chatty-application.c:78
+#: src/chatty-application.c:74
 msgid "Disable all accounts"
 msgstr "להשבית את כל החשבונות"
 
-#: src/chatty-application.c:80
+#: src/chatty-application.c:76
 msgid "Enable libpurple debug messages"
 msgstr "לאפשר הודעות ניפוי שגיאות של libpurple"
 
-#: src/chatty-application.c:83
+#: src/chatty-application.c:79
 msgid "Enable verbose debug messages (repeat option for more verbosity)"
 msgstr "Enable verbose debug messages (repeat option for more verbosity)"
 
-#: src/chatty-application.c:164
+#: src/chatty-application.c:160
 msgid "An SMS and XMPP messaging client"
 msgstr "לקוח התכתבות במסרונים וב־XMPP"
 
-#: src/chatty-application.c:172
+#: src/chatty-application.c:168
 msgid "translator-credits"
 msgstr ""
 "ירון שהרבני <sh.yaron@gmail.com>\n"
 "יוסף אור בוצ׳קו <yoseforb@gmail.com>\n"
 "מיזם תרגום GNOME לעברית https://l10n.gnome.org/teams/he/"
 
-#: src/chatty-application.c:197
+#: src/chatty-application.c:193
 #, c-format
 msgid ""
 "There was an error displaying help:\n"
@@ -289,7 +290,7 @@ msgstr ""
 "אירעה שגיאה בהצגת העזרה:\n"
 "%s"
 
-#: src/chatty-application.c:199 src/chatty-manager.c:681
+#: src/chatty-application.c:195 src/chatty-manager.c:681
 #: src/chatty-message-bar.c:467 src/purple/chatty-purple-notify.c:35
 #: src/purple/chatty-purple.c:199 src/purple/chatty-purple.c:619
 #: src/dialogs/chatty-new-chat-dialog.c:226
@@ -333,32 +334,32 @@ msgstr "אין שיחות מאורכבות"
 msgid "Start Chatting"
 msgstr "התחלת התכתבות"
 
-#: src/chatty-chat-page.c:195 src/chatty-chat-page.c:204
+#: src/chatty-chat-page.c:196 src/chatty-chat-page.c:205
 msgid "This is an MMS conversation"
 msgstr "זה דיון בהודעות מולטימדיה"
 
-#: src/chatty-chat-page.c:197 src/chatty-chat-page.c:212
-#: src/chatty-chat-page.c:218
+#: src/chatty-chat-page.c:198 src/chatty-chat-page.c:213
+#: src/chatty-chat-page.c:219
 msgid "Your messages are not encrypted, and carrier rates may apply"
 msgstr "ההודעות שלך אינן מוצפנות, ויתכנו חיובים מהספק"
 
-#: src/chatty-chat-page.c:207
+#: src/chatty-chat-page.c:208
 msgid "This is an SMS/MMS conversation"
 msgstr "זה דיון במסרונים/הודעות מולטימדיה"
 
-#: src/chatty-chat-page.c:210
+#: src/chatty-chat-page.c:211
 msgid "This is an SMS conversation"
 msgstr "זו התכתבות במסרונים (התמסררות)"
 
-#: src/chatty-chat-page.c:216
+#: src/chatty-chat-page.c:217
 msgid "This is an IM conversation"
 msgstr "זאת שיחה בהודעות פרטיות"
 
-#: src/chatty-chat-page.c:222
+#: src/chatty-chat-page.c:223
 msgid "Your messages are encrypted"
 msgstr "ההודעות שלך מוצפנות"
 
-#: src/chatty-chat-page.c:225
+#: src/chatty-chat-page.c:226
 msgid "Your messages are not encrypted"
 msgstr "ההודעות שלך אינן מוצפנות"
 
@@ -1952,6 +1953,9 @@ msgstr "עבודה:"
 #: src/users/chatty-contact.c:328
 msgid "Other:"
 msgstr "אחר:"
+
+#~ msgid "Start in daemon mode"
+#~ msgstr "לעלות במצב רקע"
 
 #~ msgid "Phone Number:"
 #~ msgstr "מספר טלפון:"
