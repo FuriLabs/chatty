@@ -24,17 +24,18 @@
 #include <libspelling.h>
 #endif
 
+#include "chatty-message-bar.h"
+
 #include "chatty-account.h"
 #include "chatty-attachments-bar.h"
+#include "chatty-entry.h"
 #include "chatty-history.h"
 #include "chatty-log.h"
-#include "chatty-message.h"
 #include "chatty-ma-chat.h"
+#include "chatty-message.h"
 #include "chatty-mm-chat.h"
 #include "chatty-purple.h"
 #include "chatty-settings.h"
-#include "chatty-message-bar.h"
-#include "chatty-entry.h"
 
 struct _ChattyMessageBar
 {
