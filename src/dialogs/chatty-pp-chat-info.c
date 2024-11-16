@@ -42,26 +42,23 @@ struct _ChattyPpChatInfo
 
   ChattyChat    *chat;
 
-  GtkWidget     *room_name;
   GtkWidget     *avatar;
   GtkWidget     *edit_avatar_button;
   GtkWidget     *delete_avatar_button;
-  GtkWidget     *room_topic_view;
-  GtkTextBuffer *topic_buffer;
 
-  GtkWidget     *name_label;
-  GtkWidget     *user_id_title;
-  GtkWidget     *user_id_label;
-  GtkWidget     *encryption_label;
-  GtkWidget     *status_label;
-  GtkWidget     *settings_label;
+  GtkWidget     *room_name_row;
+  GtkWidget     *room_topic_row;
+  GtkWidget     *name_row;
+  GtkWidget     *user_id_row;
+  GtkWidget     *encryption_row;
+  GtkWidget     *status_row;
 
-  GtkWidget     *notification_switch;
-  GtkWidget     *show_status_switch;
-  GtkWidget     *encryption_switch;
+  GtkWidget     *notification_row;
+  GtkWidget     *show_status_row;
+  GtkWidget     *encryption_switch_row;
 
   GtkWidget     *key_list;
-  GtkWidget     *user_list_label;
+  GtkWidget     *user_group;
   GtkWidget     *user_list;
 
   GBinding      *binding;
@@ -151,51 +148,38 @@ pp_info_avatar_changed_cb (ChattyPpChatInfo *self)
 }
 
 static void
-pp_chat_info_edit_topic_clicked_cb (ChattyPpChatInfo *self,
-                                    GtkToggleButton  *edit_button)
+pp_chat_info_room_topic_applied_cb (ChattyPpChatInfo *self,
+                                    AdwEntryRow      *entry_row)
 {
-  gboolean editable;
+  const char* text;
 
   g_assert (CHATTY_IS_PP_CHAT_INFO (self));
-  g_assert (GTK_IS_TOGGLE_BUTTON (edit_button));
+  g_assert (ADW_IS_ENTRY_ROW (entry_row));
 
-  editable = gtk_toggle_button_get_active (edit_button);
-  gtk_text_view_set_editable (GTK_TEXT_VIEW (self->room_topic_view), editable);
-  gtk_text_view_set_cursor_visible (GTK_TEXT_VIEW (self->room_topic_view), editable);
-  gtk_widget_set_can_focus (self->room_topic_view, editable);
-
-  if (editable) {
-    gtk_widget_grab_focus (self->room_topic_view);
-  } else if (gtk_text_buffer_get_modified (self->topic_buffer)) {
-    g_autofree char *text = NULL;
-
-    g_object_get (self->topic_buffer, "text", &text, NULL);
-    chatty_chat_set_topic (CHATTY_CHAT (self->chat), text);
-  }
-
-  gtk_text_buffer_set_modified (self->topic_buffer, FALSE);
+  text = gtk_editable_get_text (GTK_EDITABLE (entry_row));
+  chatty_chat_set_topic (CHATTY_CHAT (self->chat), text);
 }
 
 static void
-pp_chat_info_notification_switch_changed_cb (ChattyPpChatInfo *self)
+pp_chat_info_notification_row_changed_cb (ChattyPpChatInfo *self)
 {
   gboolean active;
 
   g_assert (CHATTY_IS_PP_CHAT_INFO (self));
 
-  active = gtk_switch_get_active (GTK_SWITCH (self->notification_switch));
+  active = adw_switch_row_get_active (ADW_SWITCH_ROW (self->notification_row));
   chatty_pp_chat_set_show_notifications (CHATTY_PP_CHAT (self->chat), active);
 }
 
 static void
-pp_chat_info_show_status_switch_changed_cb (ChattyPpChatInfo *self)
+pp_chat_info_show_status_row_changed_cb (ChattyPpChatInfo *self)
 {
   gboolean active;
 
   g_assert (CHATTY_IS_PP_CHAT_INFO (self));
   g_return_if_fail (CHATTY_IS_PP_CHAT (self->chat));
 
-  active = gtk_switch_get_active (GTK_SWITCH (self->show_status_switch));
+  active = adw_switch_row_get_active(ADW_SWITCH_ROW (self->show_status_row));
   chatty_pp_chat_set_show_status_msg (CHATTY_PP_CHAT (self->chat), active);
 }
 
@@ -211,8 +195,7 @@ pp_chat_info_encrypt_changed_cb (ChattyPpChatInfo *self)
   encryption = chatty_chat_get_encryption (self->chat);
   has_encryption = encryption != CHATTY_ENCRYPTION_UNSUPPORTED;
 
-  gtk_widget_set_visible (self->settings_label, CHATTY_IS_PP_CHAT (self->chat));
-  gtk_widget_set_visible (self->encryption_switch,
+  gtk_widget_set_visible (self->encryption_switch_row,
                           has_encryption && CHATTY_IS_PP_CHAT (self->chat));
 
   switch (encryption) {
@@ -233,7 +216,7 @@ pp_chat_info_encrypt_changed_cb (ChattyPpChatInfo *self)
     g_return_if_reached ();
   }
 
-  gtk_label_set_text (GTK_LABEL (self->encryption_label), status_msg);
+  adw_action_row_set_subtitle (ADW_ACTION_ROW (self->encryption_row), status_msg);
 }
 
 static void
@@ -250,7 +233,7 @@ pp_chat_info_list_fp_cb (GObject      *object,
 
   if (!chatty_pp_chat_load_fp_list_finish (chat, result, NULL)) {
     gtk_widget_set_visible (self->key_list, FALSE);
-    gtk_label_set_text (GTK_LABEL (self->encryption_label), _("Encryption not available"));
+    adw_action_row_set_subtitle (ADW_ACTION_ROW (self->encryption_row), _("Encryption not available"));
   } else {
     gtk_widget_set_visible (self->key_list, TRUE);
     gtk_list_box_bind_model (GTK_LIST_BOX (self->key_list),
@@ -274,7 +257,7 @@ chatty_pp_chat_info_list_users (ChattyPpChatInfo *self)
   count_str = g_strdup_printf (g_dngettext (GETTEXT_PACKAGE, "%u Member",
                                             "%u Members", n_items),
                                n_items);
-  gtk_label_set_text (GTK_LABEL (self->user_list_label), count_str);
+  adw_preferences_group_set_title (ADW_PREFERENCES_GROUP (self->user_group), count_str);
   gtk_list_box_bind_model (GTK_LIST_BOX (self->user_list), user_list,
                            (GtkListBoxCreateWidgetFunc)chatty_list_row_new,
                            NULL, NULL);
@@ -295,7 +278,7 @@ chatty_pp_chat_info_update (ChattyPpChatInfo *self)
   chatty_avatar_set_item (CHATTY_AVATAR (self->avatar), CHATTY_ITEM (self->chat));
 
   self->binding = g_object_bind_property (self->chat, "encrypt",
-                                          self->encryption_switch, "active",
+                                          self->encryption_switch_row, "active",
                                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   g_signal_connect_object (self->chat, "notify::encrypt",
                            G_CALLBACK (pp_chat_info_encrypt_changed_cb),
@@ -305,34 +288,38 @@ chatty_pp_chat_info_update (ChattyPpChatInfo *self)
 
   if (protocol == CHATTY_PROTOCOL_MMS_SMS ||
       protocol == CHATTY_PROTOCOL_MMS) {
-    gtk_label_set_text (GTK_LABEL (self->user_id_title), _("Phone Number:"));
+    adw_preferences_row_set_title(ADW_PREFERENCES_ROW (self->user_id_row),
+                              _("Phone Number"));
   } else if (protocol == CHATTY_PROTOCOL_XMPP) {
-    gtk_label_set_text (GTK_LABEL (self->user_id_title), _("XMPP ID:"));
-    gtk_widget_set_visible (GTK_WIDGET (self->status_label), TRUE);
-    gtk_label_set_text (GTK_LABEL (self->status_label),
-                        chatty_pp_chat_get_status (CHATTY_PP_CHAT (self->chat)));
+    adw_preferences_row_set_title(ADW_PREFERENCES_ROW (self->user_id_row),
+                              _("XMPP ID"));
+    gtk_widget_set_visible (GTK_WIDGET (self->status_row), TRUE);
+    adw_action_row_set_subtitle (ADW_ACTION_ROW (self->status_row),
+                                 chatty_pp_chat_get_status (CHATTY_PP_CHAT (self->chat)));
   } else if (protocol == CHATTY_PROTOCOL_MATRIX) {
-    gtk_label_set_text (GTK_LABEL (self->user_id_title), _("Matrix ID:"));
-    gtk_widget_set_visible (self->user_id_label, FALSE);
+    adw_preferences_row_set_title(ADW_PREFERENCES_ROW (self->user_id_row),
+                              _("Matrix ID"));
+    gtk_widget_set_visible (self->user_id_row, FALSE);
   } else if (protocol == CHATTY_PROTOCOL_TELEGRAM) {
-    gtk_label_set_text (GTK_LABEL (self->user_id_title), _("Telegram ID:"));
+    adw_preferences_row_set_title(ADW_PREFERENCES_ROW (self->user_id_row),
+                              _("Telegram ID"));
   }
 
   if (chatty_chat_is_im (self->chat))
-    gtk_label_set_text (GTK_LABEL (self->user_id_label),
-                        chatty_chat_get_chat_name (self->chat));
-  gtk_label_set_text (GTK_LABEL (self->name_label),
-                      chatty_item_get_name (CHATTY_ITEM (self->chat)));
+    adw_action_row_set_subtitle (ADW_ACTION_ROW (self->user_id_row),
+                                 chatty_chat_get_chat_name (self->chat));
+  adw_action_row_set_subtitle (ADW_ACTION_ROW (self->name_row),
+                               chatty_item_get_name (CHATTY_ITEM (self->chat)));
 
   if (chatty_chat_is_im (self->chat)) {
-    gtk_widget_set_visible (self->user_id_label, TRUE);
-    gtk_widget_set_visible (self->name_label, TRUE);
+    gtk_widget_set_visible (self->user_id_row, TRUE);
+    gtk_widget_set_visible (self->name_row, TRUE);
   } else {
-    gtk_widget_set_visible (self->user_id_label, FALSE);
-    gtk_widget_set_visible (self->name_label, FALSE);
-    gtk_widget_set_visible (self->room_name, TRUE);
-    gtk_label_set_text (GTK_LABEL (self->room_name),
-                        chatty_item_get_name (CHATTY_ITEM (self->chat)));
+    gtk_widget_set_visible (self->user_id_row, FALSE);
+    gtk_widget_set_visible (self->name_row, FALSE);
+    gtk_widget_set_visible (self->room_name_row, TRUE);
+    adw_action_row_set_subtitle (ADW_ACTION_ROW (self->room_name_row),
+                                 chatty_item_get_name (CHATTY_ITEM (self->chat)));
   }
 
   gtk_list_box_bind_model (GTK_LIST_BOX (self->key_list),
@@ -340,41 +327,41 @@ chatty_pp_chat_info_update (ChattyPpChatInfo *self)
 
   if (protocol == CHATTY_PROTOCOL_XMPP &&
       chatty_chat_is_im (self->chat)) {
-    gtk_widget_set_visible (self->encryption_label, TRUE);
-    gtk_widget_set_visible (self->status_label, TRUE);
+    gtk_widget_set_visible (self->encryption_row, TRUE);
+    gtk_widget_set_visible (self->status_row, TRUE);
     chatty_pp_chat_load_fp_list_async (CHATTY_PP_CHAT (self->chat),
                                        pp_chat_info_list_fp_cb, self);
   } else {
-    gtk_widget_set_visible (self->encryption_label, FALSE);
-    gtk_widget_set_visible (self->status_label, FALSE);
+    gtk_widget_set_visible (self->encryption_row, FALSE);
+    gtk_widget_set_visible (self->status_row, FALSE);
   }
 
-  gtk_widget_set_visible (self->notification_switch, CHATTY_IS_PP_CHAT (self->chat));
+  gtk_widget_set_visible (self->notification_row, CHATTY_IS_PP_CHAT (self->chat));
   if (CHATTY_IS_PP_CHAT (self->chat))
-    gtk_switch_set_state (GTK_SWITCH (self->notification_switch),
-                          chatty_pp_chat_get_show_notifications (CHATTY_PP_CHAT (self->chat)));
+    adw_switch_row_set_active (ADW_SWITCH_ROW (self->notification_row),
+                               chatty_pp_chat_get_show_notifications (CHATTY_PP_CHAT (self->chat)));
 
   if ((protocol == CHATTY_PROTOCOL_XMPP ||
        protocol == CHATTY_PROTOCOL_TELEGRAM) &&
       !chatty_chat_is_im (self->chat)) {
-    gtk_widget_set_visible (self->show_status_switch, TRUE);
+    gtk_widget_set_visible (self->show_status_row, TRUE);
   } else {
-    gtk_widget_set_visible (self->show_status_switch, FALSE);
+    gtk_widget_set_visible (self->show_status_row, FALSE);
   }
 
   if (protocol == CHATTY_PROTOCOL_XMPP &&
       !chatty_chat_is_im (self->chat)) {
-    gtk_widget_set_visible (self->room_topic_view, TRUE);
+    gtk_widget_set_visible (self->room_topic_row, TRUE);
     gtk_widget_set_visible (self->user_list, TRUE);
     chatty_pp_chat_info_list_users (self);
-    gtk_switch_set_state (GTK_SWITCH (self->show_status_switch),
-                          chatty_pp_chat_get_show_status_msg (CHATTY_PP_CHAT (self->chat)));
-    gtk_text_buffer_set_text (self->topic_buffer,
-                              chatty_chat_get_topic (self->chat), -1);
+    adw_switch_row_set_active (ADW_SWITCH_ROW (self->show_status_row),
+                               chatty_pp_chat_get_show_status_msg (CHATTY_PP_CHAT (self->chat)));
+    gtk_editable_set_text (GTK_EDITABLE (self->room_topic_row),
+                           chatty_chat_get_topic (self->chat));
   } else {
     gtk_widget_set_visible (self->user_list, FALSE);
-    gtk_widget_set_visible (self->show_status_switch, FALSE);
-    gtk_widget_set_visible (self->room_topic_view, FALSE);
+    gtk_widget_set_visible (self->show_status_row, FALSE);
+    gtk_widget_set_visible (self->room_topic_row, FALSE);
   }
 }
 
@@ -404,7 +391,7 @@ chatty_pp_chat_info_set_item (ChattyChatInfo *info,
                                                      G_CALLBACK (pp_info_avatar_changed_cb),
                                                      self, G_CONNECT_SWAPPED);
   pp_info_avatar_changed_cb (self);
-  gtk_text_buffer_set_text (self->topic_buffer, "", 0);
+  gtk_editable_set_text (GTK_EDITABLE (self->room_topic_row), "");
   gtk_widget_set_visible (self->key_list, FALSE);
 
   index = 0;
@@ -444,34 +431,30 @@ chatty_pp_chat_info_class_init (ChattyPpChatInfoClass *klass)
                                                "/sm/puri/Chatty/"
                                                "ui/chatty-pp-chat-info.ui");
 
-  gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, room_name);
   gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, avatar);
   gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, edit_avatar_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, delete_avatar_button);
-  gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, room_topic_view);
 
-  gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, name_label);
-  gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, user_id_title);
-  gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, user_id_label);
-  gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, encryption_label);
-  gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, status_label);
-  gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, settings_label);
+  gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, room_name_row);
+  gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, room_topic_row);
+  gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, name_row);
+  gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, user_id_row);
+  gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, encryption_row);
+  gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, status_row);
 
-  gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, notification_switch);
-  gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, show_status_switch);
-  gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, encryption_switch);
+  gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, notification_row);
+  gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, show_status_row);
+  gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, encryption_switch_row);
 
   gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, key_list);
-  gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, user_list_label);
+  gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, user_group);
   gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, user_list);
-
-  gtk_widget_class_bind_template_child (widget_class, ChattyPpChatInfo, topic_buffer);
 
   gtk_widget_class_bind_template_callback (widget_class, pp_info_edit_avatar_button_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, pp_info_delete_avatar_button_clicked_cb);
-  gtk_widget_class_bind_template_callback (widget_class, pp_chat_info_edit_topic_clicked_cb);
-  gtk_widget_class_bind_template_callback (widget_class, pp_chat_info_notification_switch_changed_cb);
-  gtk_widget_class_bind_template_callback (widget_class, pp_chat_info_show_status_switch_changed_cb);
+  gtk_widget_class_bind_template_callback (widget_class, pp_chat_info_room_topic_applied_cb);
+  gtk_widget_class_bind_template_callback (widget_class, pp_chat_info_notification_row_changed_cb);
+  gtk_widget_class_bind_template_callback (widget_class, pp_chat_info_show_status_row_changed_cb);
 }
 
 static void

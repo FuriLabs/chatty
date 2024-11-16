@@ -261,6 +261,7 @@ matrix_account_delete_cb (GObject      *object,
   g_autoptr(GTask) task = user_data;
   GError *error = NULL;
   const char *username;
+  gboolean deleted;
 
   g_assert (G_IS_TASK (task));
 
@@ -270,15 +271,19 @@ matrix_account_delete_cb (GObject      *object,
   g_assert (CHATTY_IS_MATRIX (self));
   g_assert (CHATTY_IS_MA_ACCOUNT (account));
 
-  cm_matrix_delete_client_finish (self->cm_matrix, result, &error);
+  deleted = cm_matrix_delete_client_finish (self->cm_matrix, result, &error);
 
   username = chatty_item_get_username (CHATTY_ITEM (account));
   if (!username || !*username)
     username = chatty_ma_account_get_login_username (account);
   CHATTY_DEBUG_DETAILED (username, "Deleting %s, account:", CHATTY_LOG_SUCESS (!error));
 
-  if (error)
+  if (error) {
     g_task_return_error (task, error);
+    return;
+  }
+
+  g_task_return_boolean (task, deleted);
 }
 
 void
@@ -294,6 +299,7 @@ chatty_matrix_delete_account_async (ChattyMatrix        *self,
   g_return_if_fail (CHATTY_IS_MA_ACCOUNT (account));
 
   task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_source_tag (task, chatty_matrix_delete_account_async);
   g_task_set_task_data (task, g_object_ref (account), g_object_unref);
 
   chatty_account_set_enabled (account, FALSE);
@@ -370,6 +376,7 @@ chatty_matrix_save_account_async (ChattyMatrix        *self,
   g_return_if_fail (CM_IS_CLIENT (cm_client));
 
   task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_source_tag (task, chatty_matrix_save_account_async);
   g_task_set_task_data (task, g_object_ref (account), g_object_unref);
   cm_matrix_save_client_async (self->cm_matrix, cm_client,
                                cancellable,

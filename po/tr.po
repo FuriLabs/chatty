@@ -3,14 +3,14 @@
 # This file is distributed under the same license as the chatty package.
 #
 # Sabri Ünal <yakushabb@gmail.com>, 2023, 2024.
-# Emin Tufan Çetin <etcetin@gmail.com>, 2019, 2020, 2021, 2022, 2023, 2024.
+# Emin Tufan Çetin <etcetin@gmail.com>, 2019-2024.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-08-04 13:21+0000\n"
-"PO-Revision-Date: 2024-08-05 08:00+0300\n"
+"POT-Creation-Date: 2024-09-20 15:50+0000\n"
+"PO-Revision-Date: 2024-09-27 08:00+0300\n"
 "Last-Translator: Emin Tufan Çetin <etcetin@gmail.com>\n"
 "Language-Team: Turkish <takim@gnome.org.tr>\n"
 "Language: tr\n"
@@ -29,15 +29,15 @@ msgid "Chats"
 msgstr "Konuşmalar"
 
 #: data/sm.puri.Chatty.desktop.in.in:6
-msgid "SMS and XMPP chat application"
-msgstr "SMS ve XMPP konuşma uygulaması"
+msgid "SMS/MMS, Matrix and XMPP chat application"
+msgstr "SMS/MMS, Matrix ve XMPP konuşma uygulaması"
 
 #: data/sm.puri.Chatty.desktop.in.in:7
-msgid "XMPP;SMS;chat;jabber;messaging;modem"
+msgid "XMPP;SMS;chat;jabber;messaging;modem;matrix"
 msgstr ""
-"XMPP;SMS;chat;chats;jabber;messaging;modem;mesajlaşma;iletişim;ileti;kısamesaj;"
-"kısaileti;MMS;multimedyamesajı;multimedyailetisi;çokluortammesajı;"
-"çokluortamiletisi;"
+"XMPP;SMS;chat;chats;jabber;messaging;modem;mesajlaşma;iletişim;ileti;"
+"kısamesaj;kısaileti;MMS;multimedyamesajı;multimedyailetisi;çokluortammesajı;"
+"çokluortamiletisi;matrix;matriks;"
 
 #: data/sm.puri.Chatty.gschema.xml:7 data/sm.puri.Chatty.gschema.xml:8
 msgid "Whether the application is launching the first time"
@@ -213,8 +213,47 @@ msgstr ""
 "Matrix’i destekleyen kullanımı basit mesajlaşma uygulamasıdır."
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:23
-msgid "Chats message window"
-msgstr "Konuşmalar ileti penceresi"
+msgid "Folded view of a chat using the light theme."
+msgstr "Konuşmanın aydınlık gövdeli katlanık görünümü."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:27
+msgid "Folded view of a chat using the dark theme."
+msgstr "Konuşmanın karanlık gövdeli katlanık görünümü."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:31
+msgid "Unfolded view of a chat and the chat list in the sidebar."
+msgstr "Konuşmanın açık görünümü ve kenarda konuşma listesi."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:35
+msgid ""
+"The chat view using the dark theme as seen on a mobile phone running Phosh "
+"with unfolded keyboard."
+msgstr ""
+"Karanlık gövdeli konuşmanın Phosh ile açık klavye kullanan bir mobil "
+"telefondaki görünümü."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:39
+msgid ""
+"The chat list view using the light theme as seen on a mobile phone running "
+"Phosh."
+msgstr ""
+"Açık gövdeli konuşmanın Phosh kullanan bir mobil telefondaki görünümü."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:43
+msgid ""
+"The SMS/MMS preferences using the light theme as seen on a mobile phone "
+"running Phosh."
+msgstr ""
+"Açık gövdeli SMS/MMS tercihlerinin Phosh çalıştıran mobil telefondaki "
+"görünümü."
+
+#: data/sm.puri.Chatty.metainfo.xml.in.in:48
+msgid ""
+"The chat details view using the dark theme as seen on a mobile phone running "
+"Phosh."
+msgstr ""
+"Karanlık gövdeli konuşma ayrıntılarının Phosh çalıştıran mobil telefondaki "
+"görünümü."
 
 #: src/chatty-application.c:79
 msgid "Show release version"
@@ -256,18 +295,18 @@ msgstr ""
 "%s"
 
 #: src/chatty-application.c:202 src/chatty-manager.c:683
-#: src/chatty-message-bar.c:493 src/purple/chatty-purple-notify.c:35
+#: src/chatty-message-bar.c:495 src/purple/chatty-purple-notify.c:35
 #: src/purple/chatty-purple.c:199 src/purple/chatty-purple.c:619
 #: src/dialogs/chatty-new-chat-dialog.c:226
 #: src/dialogs/chatty-settings-dialog.c:213
-#: src/dialogs/chatty-settings-dialog.c:671
-#: src/dialogs/chatty-settings-dialog.c:708
-#: src/dialogs/chatty-settings-dialog.c:824
-#: src/dialogs/chatty-settings-dialog.c:860
-#: src/dialogs/chatty-settings-dialog.c:875
-#: src/dialogs/chatty-settings-dialog.c:892
-#: src/dialogs/chatty-settings-dialog.c:904
-#: src/dialogs/chatty-settings-dialog.c:1538 src/ui/chatty-main-view.ui:73
+#: src/dialogs/chatty-settings-dialog.c:662
+#: src/dialogs/chatty-settings-dialog.c:699
+#: src/dialogs/chatty-settings-dialog.c:815
+#: src/dialogs/chatty-settings-dialog.c:851
+#: src/dialogs/chatty-settings-dialog.c:866
+#: src/dialogs/chatty-settings-dialog.c:883
+#: src/dialogs/chatty-settings-dialog.c:895
+#: src/dialogs/chatty-settings-dialog.c:1529 src/ui/chatty-main-view.ui:73
 msgid "Close"
 msgstr "Kapat"
 
@@ -410,39 +449,24 @@ msgstr "%Y-%m-%d %I:%M %p"
 msgid "%Y-%m-%d"
 msgstr "%Y-%m-%d"
 
-#: src/chatty-file-item.c:141
+#: src/chatty-file-item.c:139 src/chatty-file-item.c:154
 msgid "Contact"
 msgstr "Kişi"
 
-#: src/chatty-file-item.c:165 src/chatty-file-item.c:197
+#: src/chatty-file-item.c:151
 #, c-format
 msgid "Contact: %s"
 msgstr "Kişi: %s"
 
-#: src/chatty-file-item.c:184
-#, c-format
-msgid "Contact: %s %s %s %s"
-msgstr "Kişi: %s %s %s %s"
-
-#: src/chatty-file-item.c:186 src/chatty-file-item.c:190
-#, c-format
-msgid "Contact: %s %s %s"
-msgstr "Kişi: %s %s %s"
-
-#: src/chatty-file-item.c:192 src/chatty-file-item.c:195
-#, c-format
-msgid "Contact: %s %s"
-msgstr "Kişi: %s %s"
-
-#: src/chatty-file-item.c:219
-msgctxt "Invitation to event"
-msgid "Invite"
-msgstr "Davet"
-
-#: src/chatty-file-item.c:249
+#: src/chatty-file-item.c:172
 #, c-format
 msgid "Invite: %s"
 msgstr "Davet Et: %s"
+
+#: src/chatty-file-item.c:175
+msgctxt "Invitation to event"
+msgid "Invitation"
+msgstr "Davet"
 
 #. TRANSLATORS: %s is the Device ID
 #: src/chatty-fp-row.c:130
@@ -510,17 +534,17 @@ msgstr "Hesap bağlanıyor…"
 msgid "“%s” is not a valid URI"
 msgstr "“%s” geçerli URI değil"
 
-#: src/chatty-message-bar.c:491 src/purple/chatty-purple.c:195
+#: src/chatty-message-bar.c:493 src/purple/chatty-purple.c:195
 #: src/chatty-window.c:378
 msgid "Alert"
 msgstr "Uyarı"
 
-#: src/chatty-message-bar.c:492
+#: src/chatty-message-bar.c:494
 msgid "Found and automatically deleted tracking IDs from the pasted link."
 msgstr ""
 "Yapıştırılan bağlantıdan izleme kimlikleri bulundu ve kendiliğinden silindi."
 
-#: src/chatty-message-bar.c:494
+#: src/chatty-message-bar.c:496
 msgid "Don't Show Again"
 msgstr "Bir Daha Gösterme"
 
@@ -561,7 +585,7 @@ msgid "Matrix"
 msgstr "Matrix"
 
 #: src/chatty-side-bar.c:329 src/dialogs/chatty-new-chat-dialog.c:634
-#: src/dialogs/chatty-settings-dialog.c:1124
+#: src/dialogs/chatty-settings-dialog.c:1115
 #: src/ui/chatty-settings-dialog.ui:255
 msgid "SMS/MMS"
 msgstr "SMS/MMS"
@@ -597,7 +621,7 @@ msgstr "Dosyayı Aç…"
 msgid "User %s has added %s to the contacts"
 msgstr "%s kullanıcısı, %s kişisini kişilerine ekledi"
 
-#: src/purple/chatty-purple.c:283 src/dialogs/chatty-settings-dialog.c:472
+#: src/purple/chatty-purple.c:283 src/dialogs/chatty-settings-dialog.c:471
 #: src/ui/chatty-ma-account-details.ui:162
 #: src/ui/chatty-pp-account-details.ui:154
 msgid "Delete Account"
@@ -614,7 +638,7 @@ msgid "Add %s to contact list"
 msgstr "%s kişisini kişi listesine ekle"
 
 #: src/purple/chatty-purple.c:293 src/chatty-window.c:382
-#: src/chatty-window.c:478 src/dialogs/chatty-settings-dialog.c:478
+#: src/chatty-window.c:478 src/dialogs/chatty-settings-dialog.c:477
 #: src/ui/chatty-dialog-wrong-pw.ui:23 src/ui/chatty-dialog-new-chat.ui:36
 #: src/ui/chatty-settings-dialog.ui:25 src/ui/chatty-settings-dialog.ui:55
 #: src/ui/chatty-settings-dialog.ui:75 src/ui/chatty-verification-page.ui:129
@@ -960,6 +984,21 @@ msgstr "Emojileri Göster"
 msgid "Show Numbers"
 msgstr "Numaraları Göster"
 
+#: src/chatty-utils.c:299
+#, c-format
+msgid "%s %s %s %s"
+msgstr "%s %s %s %s"
+
+#: src/chatty-utils.c:301 src/chatty-utils.c:305
+#, c-format
+msgid "%s %s %s"
+msgstr "%s %s %s"
+
+#: src/chatty-utils.c:307 src/chatty-utils.c:310
+#, c-format
+msgid "%s %s"
+msgstr "%s %s"
+
 #: src/chatty-window.c:379
 msgid "You shall no longer be notified for new messages, continue?"
 msgstr "Bundan sonra yeni iletiler bildirilmeyecek, sürdürülsün mü?"
@@ -986,7 +1025,7 @@ msgstr "“%s” küme konuşmasından ayrıl"
 msgid "This removes chat from chats list"
 msgstr "Bu, konuşmayı konuşma listesinden kaldırır"
 
-#: src/chatty-window.c:479 src/dialogs/chatty-settings-dialog.c:479
+#: src/chatty-window.c:479 src/dialogs/chatty-settings-dialog.c:478
 msgid "Delete"
 msgstr "Sil"
 
@@ -996,13 +1035,13 @@ msgid "You"
 msgstr "Siz"
 
 #: src/dialogs/chatty-pp-chat-info.c:111
-#: src/dialogs/chatty-ma-account-details.c:154
+#: src/dialogs/chatty-ma-account-details.c:168
 #: src/dialogs/chatty-pp-account-details.c:115
 msgid "Set Avatar"
 msgstr "Profil Resmi Belirle"
 
 #: src/dialogs/chatty-pp-chat-info.c:118
-#: src/dialogs/chatty-ma-account-details.c:161
+#: src/dialogs/chatty-ma-account-details.c:175
 #: src/dialogs/chatty-pp-account-details.c:122
 msgid "Images"
 msgstr "Resimler"
@@ -1070,17 +1109,17 @@ msgstr "SMS"
 msgid "You"
 msgstr "Siz"
 
-#: src/dialogs/chatty-ma-account-details.c:411
+#: src/dialogs/chatty-ma-account-details.c:427
 #: src/dialogs/chatty-pp-account-details.c:171
 msgid "connected"
 msgstr "bağlandı"
 
-#: src/dialogs/chatty-ma-account-details.c:413
+#: src/dialogs/chatty-ma-account-details.c:429
 #: src/dialogs/chatty-pp-account-details.c:173
 msgid "connecting…"
 msgstr "bağlanıyor…"
 
-#: src/dialogs/chatty-ma-account-details.c:415
+#: src/dialogs/chatty-ma-account-details.c:431
 #: src/dialogs/chatty-pp-account-details.c:175
 msgid "disconnected"
 msgstr "bağlantı kesildi"
@@ -1103,85 +1142,84 @@ msgstr "Sunucu doğrulanamadı"
 msgid "Couldn't get Home server address"
 msgstr "Ev sunucusu adresi alınamadı"
 
-#: src/dialogs/chatty-settings-dialog.c:474
+#: src/dialogs/chatty-settings-dialog.c:473
 #, c-format
 msgid "Delete account %s?"
 msgstr "%s hesabını sil?"
 
-#: src/dialogs/chatty-settings-dialog.c:667
+#: src/dialogs/chatty-settings-dialog.c:658
 #, c-format
 msgid "Chatty cannot find a valid PGP Key for %s."
 msgstr "Chatty %s için geçerli PGP Anahtarı bulamadı."
 
-#: src/dialogs/chatty-settings-dialog.c:669
+#: src/dialogs/chatty-settings-dialog.c:660
 msgid "Invalid Signing ID"
 msgstr "Geçersiz İmzalama Kimliği"
 
-#: src/dialogs/chatty-settings-dialog.c:704
+#: src/dialogs/chatty-settings-dialog.c:695
 #, c-format
 msgid "The entered Key ID %s does not match the found PGP Key for %s:%s."
 msgstr ""
 "Girilen Anahtar Kimliği %s, %s:%s için bulunan PGP Anahtarı ile eşleşmiyor."
 
-#: src/dialogs/chatty-settings-dialog.c:706
+#: src/dialogs/chatty-settings-dialog.c:697
 msgid "Cannot Find Signing Key"
 msgstr "İmzalama Anahtarı Bulunamadı"
 
-#: src/dialogs/chatty-settings-dialog.c:709
-#: src/dialogs/chatty-settings-dialog.c:955
+#: src/dialogs/chatty-settings-dialog.c:700
+#: src/dialogs/chatty-settings-dialog.c:946
 msgid "I Know What I am Doing"
 msgstr "Ne Yaptığımı Biliyorum"
 
-#: src/dialogs/chatty-settings-dialog.c:791
-#: src/dialogs/chatty-settings-dialog.c:873
-#: src/dialogs/chatty-settings-dialog.c:890
+#: src/dialogs/chatty-settings-dialog.c:782
+#: src/dialogs/chatty-settings-dialog.c:864
+#: src/dialogs/chatty-settings-dialog.c:881
 msgid "Cannot Create Signing Key"
 msgstr "İmzalama Anahtarı Oluşturulamadı"
 
-#: src/dialogs/chatty-settings-dialog.c:792
-#: src/dialogs/chatty-settings-dialog.c:889
+#: src/dialogs/chatty-settings-dialog.c:783
+#: src/dialogs/chatty-settings-dialog.c:880
 #, c-format
 msgid "Error creating the PGP ID. Please check the logs for more details."
 msgstr ""
 "PGP kimliği oluşturulurken hata. Daha çok ayrıntı için lütfen günlükleri "
 "denetleyin."
 
-#: src/dialogs/chatty-settings-dialog.c:805
+#: src/dialogs/chatty-settings-dialog.c:796
 #, c-format
 msgid "Key %s was created for ID %s"
 msgstr "%1$s kimliği için %2$s anahtarı oluşturuldu"
 
-#: src/dialogs/chatty-settings-dialog.c:806
+#: src/dialogs/chatty-settings-dialog.c:797
 msgid "Successfully Created Key"
 msgstr "Anahtar Oluşturuldu"
 
-#: src/dialogs/chatty-settings-dialog.c:858
+#: src/dialogs/chatty-settings-dialog.c:849
 msgid "Empty Entries"
 msgstr "Girdileri Boşalt"
 
-#: src/dialogs/chatty-settings-dialog.c:859
+#: src/dialogs/chatty-settings-dialog.c:850
 msgid "All entries must be filled to create a PGP Key"
 msgstr "PGP Anahtarı oluşturmak için tüm girdiler doldurulmalıdır"
 
-#: src/dialogs/chatty-settings-dialog.c:872
+#: src/dialogs/chatty-settings-dialog.c:863
 #, c-format
 msgid ""
 "%s already has key with fingerprint %s. Please choose a different PGP ID"
 msgstr ""
-"%s zaten %s parmak iziyle bir anahtara sahip. Lütfen başka PGP kimliği "
-"seçin"
+"%s zaten %s parmak iziyle bir anahtara sahip. Lütfen başka PGP kimliği seçin"
 
-#: src/dialogs/chatty-settings-dialog.c:901
+#: src/dialogs/chatty-settings-dialog.c:892
 #, c-format
 msgid "Creating key for ID %s."
 msgstr "%s kimliği için anahtar oluşturuluyor."
 
-#: src/dialogs/chatty-settings-dialog.c:902
+#: src/dialogs/chatty-settings-dialog.c:893
 msgid "Creating Key"
 msgstr "Anahtar Oluşturuluyor"
 
 #. Translators: This means that the existing key will be there, but there will be a new key that Chatty will use by default instead of the existing one.
-#: src/dialogs/chatty-settings-dialog.c:950
+#: src/dialogs/chatty-settings-dialog.c:941
 #, c-format
 msgid ""
 "Chatty is currently set to use PGP key: %s. The new key will be used instead "
@@ -1190,62 +1228,62 @@ msgstr ""
 "Chatty şu anda %s PGP anahtarını kullanacak biçimde ayarlandı. Yeni anahtar "
 "var olan anahtar yerine kullanılacak."
 
-#: src/dialogs/chatty-settings-dialog.c:952
+#: src/dialogs/chatty-settings-dialog.c:943
 msgid "Signing ID Present"
 msgstr "İmzalayan Kimlik Var"
 
-#: src/dialogs/chatty-settings-dialog.c:954 src/ui/chatty-dialog-join-muc.ui:16
+#: src/dialogs/chatty-settings-dialog.c:945 src/ui/chatty-dialog-join-muc.ui:16
 #: src/ui/chatty-info-dialog.ui:23 src/ui/chatty-info-dialog.ui:32
 msgid "Cancel"
 msgstr "İptal Et"
 
-#: src/dialogs/chatty-settings-dialog.c:1110
+#: src/dialogs/chatty-settings-dialog.c:1101
 msgid "Restart Chatty to disable Purple"
 msgstr "Purple’ı devre dışı bırakmak için Chatty’yi yeniden başlat"
 
 # Renk anlamında değil. Bir yapay zeka botu.
-#: src/dialogs/chatty-settings-dialog.c:1126
+#: src/dialogs/chatty-settings-dialog.c:1117
 #: src/ui/chatty-settings-dialog.ui:290
 msgid "Purple"
 msgstr "Purple"
 
-#: src/dialogs/chatty-settings-dialog.c:1128
+#: src/dialogs/chatty-settings-dialog.c:1119
 msgid "New Account"
 msgstr "Yeni Hesap"
 
-#: src/dialogs/chatty-settings-dialog.c:1130
+#: src/dialogs/chatty-settings-dialog.c:1121
 #: src/ui/chatty-settings-dialog.ui:363
 msgid "Blocked Contacts"
 msgstr "Engellenen Kişiler"
 
-#: src/dialogs/chatty-settings-dialog.c:1132
+#: src/dialogs/chatty-settings-dialog.c:1123
 #: src/ui/chatty-settings-dialog.ui:272
 msgid "PGP Settings"
 msgstr "PGP Ayarları"
 
-#: src/dialogs/chatty-settings-dialog.c:1134
+#: src/dialogs/chatty-settings-dialog.c:1125
 msgid "New PGP Key"
 msgstr "Yeni PGP Anahtarı"
 
-#: src/dialogs/chatty-settings-dialog.c:1136 src/ui/chatty-side-bar.ui:111
+#: src/dialogs/chatty-settings-dialog.c:1127 src/ui/chatty-side-bar.ui:111
 msgid "Preferences"
 msgstr "Tercihler"
 
-#: src/dialogs/chatty-settings-dialog.c:1164
+#: src/dialogs/chatty-settings-dialog.c:1155
 #: src/ui/chatty-pp-account-details.ui:81 src/ui/chatty-settings-dialog.ui:245
 msgid "Protocol"
 msgstr "İletişim Kuralı"
 
 #. TRANSLATORS: Only translate 'or'
-#: src/dialogs/chatty-settings-dialog.c:1425
+#: src/dialogs/chatty-settings-dialog.c:1416
 msgid "@user:matrix.org or user@example.com"
 msgstr "@kullanici:matrix.org veya kullanici@ornek.com"
 
-#: src/dialogs/chatty-settings-dialog.c:1536
+#: src/dialogs/chatty-settings-dialog.c:1527
 msgid "Experimental Setting!"
 msgstr "Deneysel özellikler!"
 
-#: src/dialogs/chatty-settings-dialog.c:1537
+#: src/dialogs/chatty-settings-dialog.c:1528
 msgid ""
 "This setting is experimental and may cause loss of SMS. Use at your own risk!"
 msgstr ""
@@ -1456,7 +1494,7 @@ msgstr "_Reddet"
 msgid "Chat"
 msgstr "Konuşma"
 
-#: src/ui/chatty-ma-chat-info.ui:61 src/ui/chatty-ma-account-details.ui:210
+#: src/ui/chatty-ma-chat-info.ui:61 src/ui/chatty-ma-account-details.ui:222
 msgid "Matrix ID"
 msgstr "Matrix Kimliği"
 
@@ -1591,15 +1629,15 @@ msgstr "Gelişmiş bilgi"
 msgid "Homeserver"
 msgstr "Ev Sunucusu"
 
-#: src/ui/chatty-ma-account-details.ui:234
+#: src/ui/chatty-ma-account-details.ui:258
 msgid "Device ID"
 msgstr "Aygıt kimliği"
 
-#: src/ui/chatty-ma-account-details.ui:265
+#: src/ui/chatty-ma-account-details.ui:301
 msgid "Sensitive information"
 msgstr "Hassas bilgi"
 
-#: src/ui/chatty-ma-account-details.ui:276
+#: src/ui/chatty-ma-account-details.ui:312
 msgid "Access token"
 msgstr "Erişim jetonu"
 
@@ -1916,3 +1954,6 @@ msgstr "İş:"
 #: src/users/chatty-contact.c:328
 msgid "Other:"
 msgstr "Diğer:"
+
+#~ msgid "Chats message window"
+#~ msgstr "Konuşmalar ileti penceresi"

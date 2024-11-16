@@ -1,3 +1,44 @@
+chatty 0.8.6~rc.0
+-----------------
+Released November 2024
+* Updated screenshots
+* Updated libcmatrix to support authenticated media
+* No longer uses libfeedback and
+  instead lets the notification daemon handle feedback
+* Modernized preferences UI
+* Fixed clock test on armhf
+* Issues fixed:
+    * https://gitlab.gnome.org/World/Chatty/-/issues/912
+    * https://gitlab.gnome.org/World/Chatty/-/issues/920
+    * https://gitlab.gnome.org/World/Chatty/-/issues/920
+    * https://gitlab.gnome.org/World/Chatty/-/issues/657
+    * https://gitlab.gnome.org/World/Chatty/-/issues/948
+* Contributors:
+    * Angelo Verlain
+    * Balló György
+    * Chris Talbot
+    * Evangelos Ribeiro Tzaras
+    * Guido Günther
+    * sloth
+* UI translations:
+    * Anders Jonsson (sv)
+    * Andi Chandler (en_GB)
+    * Antonio Marin (ro)
+    * Artur S0 (ru)
+    * Danial Behzadi (fa)
+    * Daniel Rusek (cs)
+    * Ekaterine Papava (ka)
+    * Emin Tufan Çetin (tr)
+    * Juliano de Souza Camargo (pt_BR)
+    * Jürgen Benvenuti (de)
+    * Martin (sl)
+    * Nathan Follens (nl)
+    * Rafael Fontenelle (pt_BR)
+    * Sabri Ünal (tr)
+    * Scrambled 777 (hi)
+    * Yaron Shahrabani (he)
+    * Yuri Chornoivan (uk)
+
 chatty 0.8.5
 ------------
 Released August 2024

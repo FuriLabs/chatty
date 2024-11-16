@@ -32,43 +32,41 @@
         </child>
 
         <child>
-          <object class="GtkScrolledWindow" id="scrolled_window">
-            <property name="valign">center</property>
-            <property name="max-content-height">96</property>
-            <property name="propagate-natural-height">1</property>
-            <property name="vscrollbar-policy">never</property>
-            <style>
-              <class name="view"/>
-              <class name="frame"/>
-            </style>
-            <property name="child">
-              <object class="GtkSourceView" id="message_input">
-                <property name="hexpand">1</property>
+          <object class="ChattyEntry">
+            <child>
+              <object class="GtkScrolledWindow" id="scrolled_window">
                 <property name="valign">fill</property>
-                <!-- Needs to be sensitive for OSK to work in Phosh: https://gitlab.gnome.org/GNOME/libadwaita/-/issues/791 -->
-                <property name="sensitive">1</property>
-                <property name="wrap-mode">word-char</property>
-                <property name="buffer">message_buffer</property>
-                <property name="left-margin">6</property>
-                <property name="right-margin">6</property>
-                <property name="top-margin">6</property>
-                <property name="bottom-margin">6</property>
-                <property name="input-hints">word-completion</property>
-                <signal name="preedit-changed" handler="message_bar_text_view_preddit_changed_cb" swapped="yes"/>
-                <child>
-                  <object class="GtkShortcutController">
-                    <property name="scope">local</property>
-                    <property name="propagation-phase">capture</property>
+                <property name="max-content-height">96</property>
+                <property name="propagate-natural-height">1</property>
+                <property name="vscrollbar-policy">never</property>
+                <property name="child">
+                  <object class="GtkSourceView" id="message_input">
+                    <property name="hexpand">1</property>
+                    <property name="valign">fill</property>
+                    <!-- Needs to be sensitive for OSK to work in Phosh: https://gitlab.gnome.org/GNOME/libadwaita/-/issues/791 -->
+                    <property name="sensitive">1</property>
+                    <property name="wrap-mode">word-char</property>
+                    <property name="buffer">message_buffer</property>
+                    <property name="left-margin">0</property>
+                    <property name="right-margin">0</property>
+                    <property name="input-hints">word-completion</property>
+                    <signal name="preedit-changed" handler="message_bar_text_view_preddit_changed_cb" swapped="yes"/>
                     <child>
-                      <object class="GtkShortcut">
-                        <property name="trigger">Return</property>
-                        <property name="action">action(message-bar.activate)</property>
+                      <object class="GtkShortcutController">
+                        <property name="scope">local</property>
+                        <property name="propagation-phase">capture</property>
+                        <child>
+                          <object class="GtkShortcut">
+                            <property name="trigger">Return</property>
+                            <property name="action">action(message-bar.activate)</property>
+                          </object>
+                        </child>
                       </object>
                     </child>
                   </object>
-                </child>
+                </property>
               </object>
-            </property>
+            </child>
           </object>
         </child>
 

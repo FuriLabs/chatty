@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="ChattyMessageRow" parent="GtkListBoxRow">
+    <property name="can-focus">0</property>
     <property name="selectable">0</property>
     <property name="activatable">0</property>
 
@@ -23,10 +24,10 @@
         </child>
 
         <!-- Avatar placeholder -->
-        <!-- HACK to keep the width of avatar when hidden -->
+        <!-- HACK to keep the width of avatar when hidden (box and avatar are in the same sizegroup) -->
         <child>
           <object class="GtkBox" id="hidden_box">
-            <property name="visible">0</property>
+            <property name="visible" bind-source="avatar_image" bind-property="visible" bind-flags="invert-boolean"/>
             <layout>
               <property name="column">0</property>
               <property name="row">1</property>

@@ -1,3 +1,243 @@
+chatty (0.8.6~rc.0) unstable; urgency=medium
+
+  [ Scrambled 777 ]
+  * Update Hindi translation
+
+  [ Evangelos Ribeiro Tzaras ]
+  * d/gbp.conf: Sign tags by default
+  * data: Add a couple of screenshots.
+    We can then even start using (some of) them in the metainfo.
+  * desktop: Update Comment and Keywords to include matrix
+  * d/copyright: Perform a cursory update
+  * meson: Use lower case app ID in metainfo.
+    Fixes the following appstreamcli --pedantic nag
+    P: sm.puri.Chatty:3: cid-contains-uppercase-letter sm.puri.Chatty
+       The component ID should only contain lowercase characters.
+  * meson: Rename appstream to metainfo.
+    The file got renamed some time ago
+    and while this is not really a source of confusion
+    it's neater this way
+    and should be completely uncontroversial.
+  * metainfo: Update screenshots
+  * message-row: Drop unused function prototype.
+    It was never implemented.
+  * message-row: Bind hidden box visibility to inverted avatar visibility.
+    Using the binding allows getting rid of code.
+  * message-row: Allow both showing and hiding user details.
+    This change allows messages which had their user details hidden
+    to show it again later on instead of being hidden forever
+    (or until the user manages to refresh the chat page some other way).
+    In the chat page the user details visibility is now always set
+    to ensure that the visibility is not left in a stale state.
+    Closes: https://gitlab.gnome.org/World/Chatty/-/issues/912
+  * d/gbp.conf: Include the full commit message in changelog.
+    Otherwise the release-helpers will have a hard time of
+    identifying closed bugs.
+  * d/gpb.conf: Update version in meson.build through postedit hook
+
+  [ Sabri Ünal ]
+  * Update Turkish translation
+
+  [ Andi Chandler ]
+  * Update British English translation
+
+  [ Anders Jonsson ]
+  * Update Swedish translation
+  * Update Swedish translation
+  * Update Swedish translation
+
+  [ sloth ]
+  * chatty-settings-dialog: Remove explicit finalization of adw dialog.
+    Deleting an existing account causes a segmentation fault, resulting in a crash and multiple critical warnings.
+    The AdwAlertDialog object is implicitly finalized at the end of its lifecycle,
+    so there is no need to explicitly free it.
+    Removing this explicit finalization prevents the app from crashing when deleting an account.
+    Fixes: https://gitlab.gnome.org/World/Chatty/-/issues/920
+    Fixes: eccb92d4 ("dialogs/chatty-settings-dialog.c: update error dialog to GTK 4.10")
+  * chatty-matrix: Add GTask return function in account deletion callback.
+    In the non-error case chatty_matrix_delete_account_async was finalized without calling
+    g_task_return_boolean() for the task object. This was raising a critical.
+    	* add a g_task_return_boolean based on return value by cmatrix
+    Fixes: https://gitlab.gnome.org/World/Chatty/-/issues/920
+  * chatty-matrix: Set source tag on tasks.
+    This is a useful debugging aid.
+
+  [ Juliano de Souza Camargo ]
+  * Update Brazilian Portuguese translation
+  * Update Brazilian Portuguese translation
+  * Update Brazilian Portuguese translation
+  * Update Brazilian Portuguese translation
+  * Update Brazilian Portuguese translation
+  * Update Brazilian Portuguese translation
+
+  [ Martin ]
+  * Update Slovenian translation
+  * Update Slovenian translation
+  * Update Slovenian translation
+  * Update Slovenian translation
+  * Update Slovenian translation
+  * Update Slovenian translation
+
+  [ Yuri Chornoivan ]
+  * Update Ukrainian translation
+  * Update Ukrainian translation
+  * Update Ukrainian translation
+  * Update Ukrainian translation
+  * Update Ukrainian translation
+  * Update Ukrainian translation
+
+  [ Yaron Shahrabani ]
+  * Update Hebrew translation
+  * Update Hebrew translation
+  * Update Hebrew translation
+  * Update Hebrew translation
+
+  [ Daniel Rusek ]
+  * Update Czech translation
+  * Update Czech translation
+  * Update Czech translation
+  * Update Czech translation
+
+  [ Danial Behzadi ]
+  * Update Persian translation
+  * Update Persian translation
+  * Update Persian translation
+  * Update Persian translation
+  * Update Persian translation
+
+  [ Antonio Marin ]
+  * Update Romanian translation
+  * Update Romanian translation
+  * Update Romanian translation
+  * Update Romanian translation
+  * Update Romanian translation
+
+  [ Emin Tufan Çetin ]
+  * Update Turkish translation
+  * Update Turkish translation
+
+  [ Artur S0 ]
+  * Update Russian translation
+  * Update Russian translation
+  * Update Russian translation
+
+  [ Jürgen Benvenuti ]
+  * Update German translation
+
+  [ Ekaterine Papava ]
+  * Update Georgian translation
+  * Update Georgian translation
+  * Update Georgian translation
+  * Update Georgian translation
+
+  [ Balló György ]
+  * Set default window icon.
+    This is commonly used by desktop environments on Xorg.
+
+  [ Guido Günther ]
+  * Revert "meson: Use lower case app ID in metainfo"
+    This reverts commit 142bd22e1960eaccce18799c3b30f798183b0b5c.
+    Otherwise the app icon is broken both for the running app and in the
+    app-grid as graphical shells look for sm.puri.chatty which doesn't
+    exist.
+  * data: Use lowercase app-id in metainfo
+  * message-row: Add back id.
+    Otherwise the template can't be instantiated breaking
+    display of any message.
+    Fixes: ade98078 ("message-row: Bind hidden box visibility to inverted avatar visibility")
+  * chat-page: Don't let "scroll-down" buton take focus.
+    When the text input is focused hitting the `scroll-down` button
+    would hide the the OSK as the text-input is unfocused. By not
+    letting the `scroll-down` button take focus we avoid that.
+  * chat-page: Use revealer to show / hide scroll down button.
+    The revealer was already in the UI file but not wired up. Let's use it.
+  * notification: Let the notification daemon handle feedback.
+    Chatty emitting feedback without bringing a window to the foreground (as
+    e.g. calls does on incoming calls) is very confusing when the user e.g.
+    disables notifications as the device keeps buzzing without any visual
+    indication.
+    It would make sense to emit feedback when chatty is in the foreground
+    and rather not put out a notification but let's fix that in a different
+    step (see #943).
+    Closes: https://gitlab.gnome.org/World/Chatty/-/issues/657
+  * message-bar: Drop preedit submission.
+    This has been fixed in phoc
+  * packaging: Add breaks on unfixed phoc.
+    This ensures we don't hit a phoc that doesn't have
+    the preedit fixes.
+  * message-row: Don't take focus.
+    This is similar to
+       42533e9a ("chat-page: Don't let "scroll-down" buton take focus")
+    so the OSK doesn't close.
+  * clock: Use generated cast.
+    Avoids an alignment warning on armhf
+  * clock: Use correct format specifier.
+    This fixes printing of time deltas on armhf (and presumably
+    other 32 bit architecture).
+    The corresponding test was disabled in Debian 2022 and can now be
+    reenabled.
+  * gitignore: Drop zanata.
+    Long gone
+  * po: Drop pot file.
+    This is generated by the translation tools
+  * clock: Use PRIi64 instead of G_GINT64_FORMAT.
+    This is supported by gettext. See
+    https://www.gnu.org/software/gettext/manual/html_node/Preparing-Strings.html
+    and https://savannah.gnu.org/bugs/index.php?66313
+    This then turns up as
+       msgid "%<PRIi64> minute ago"
+       msgid_plural "%<PRIi64> minutes ago"
+    in the message catalog.
+    Closes: https://gitlab.gnome.org/World/Chatty/-/issues/948
+  * libcmatrix: Update to version supporting authenticated media.
+    Needed to e.g. unbreak image downloads from matrix.org
+    See
+      https://matrix.org/blog/2024/06/20/matrix-v1.11-release/
+    and
+      https://github.com/matrix-org/matrix-spec-proposals/pull/3916
+    for details.
+  * data: End lists with a semicolon.
+    As per XDG desktop file spec
+  * treewide: Use --gapplication-service.
+    Instead of open coding most of what this option does just use it and can
+    hence drop --daemon and the `show_window` vs `daemon` logic. This will
+    allow us to use DBus activation.
+  * data: Switch chatty to DBus activation.
+    This makes sure it gets correctly activated when launched e.g. in
+    phosh while chatty is running in `--daemon` mode as the necessary
+    platform data containing the activation token is now passed via DBus.
+
+  [ Angelo Verlain ]
+  * settings: port password entry to AdwPasswordEntryRow
+  * settings-dialog: port matrix homeserver entry row to AdwEntryRow
+  * account-details: port access token row to AdwEntryRow
+  * account-details: port advanced information to AdwActionRow
+  * account-details: port main details to Adw*Row
+    note: I have not tested this with a SIM Card
+  * pp-account-details: port details to AdwActionRow
+  * pp-account-details: fix layout
+  * ma-account-details: merge all the sections into one
+  * entry: make the message entry look more native
+    also removes the `view` and `frame` styles from the entry, so that it
+    appears more close to a default `GtkEntry``
+  * ma-chat-info: port to Adw*Row
+  * pp-chat-info: port to Adw*Row
+
+  [ Rafael Fontenelle ]
+  * Update Brazilian Portuguese translation
+
+  [ Chris Talbot ]
+  * chat-page: scroll to the bottom on first load
+  * Message-Bar: Have bar fill the entire area.
+    If a message is opened from the notification, the message
+    bar won't fill up the area and it is hard to click on.
+    This ensures the message bar always fills the space.
+
+  [ Nathan Follens ]
+  * Update Dutch translation
+
+ -- Evangelos Ribeiro Tzaras <devrtz-debian@fortysixandtwo.eu>  Sat, 16 Nov 2024 12:01:09 +0100
+
 chatty (0.8.5) unstable; urgency=medium
 
   [ Scrambled 777 ]

@@ -44,10 +44,10 @@ struct _ChattyPpAccountDetails
   GtkWidget     *delete_avatar_button;
   GtkWidget     *edit_avatar_button;
 
-  GtkWidget     *account_id_label;
-  GtkWidget     *account_protocol_label;
-  GtkWidget     *status_label;
-  GtkWidget     *password_entry;
+  GtkWidget     *account_id_row;
+  GtkWidget     *account_protocol_row;
+  GtkWidget     *status_row;
+  GtkWidget     *password_row;
   GtkWidget     *delete_account_button;
 
   GtkWidget     *device_fp;
@@ -174,7 +174,7 @@ pp_details_status_changed_cb (ChattyPpAccountDetails *self)
   else
     status_text = _("disconnected");
 
-  gtk_label_set_text (GTK_LABEL (self->status_label), status_text);
+  adw_action_row_set_subtitle (ADW_ACTION_ROW (self->status_row), status_text);
 }
 
 static void
@@ -288,10 +288,10 @@ chatty_pp_account_details_class_init (ChattyPpAccountDetailsClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyPpAccountDetails, delete_avatar_button);
   gtk_widget_class_bind_template_child (widget_class, ChattyPpAccountDetails, edit_avatar_button);
 
-  gtk_widget_class_bind_template_child (widget_class, ChattyPpAccountDetails, account_id_label);
-  gtk_widget_class_bind_template_child (widget_class, ChattyPpAccountDetails, account_protocol_label);
-  gtk_widget_class_bind_template_child (widget_class, ChattyPpAccountDetails, status_label);
-  gtk_widget_class_bind_template_child (widget_class, ChattyPpAccountDetails, password_entry);
+  gtk_widget_class_bind_template_child (widget_class, ChattyPpAccountDetails, account_id_row);
+  gtk_widget_class_bind_template_child (widget_class, ChattyPpAccountDetails, account_protocol_row);
+  gtk_widget_class_bind_template_child (widget_class, ChattyPpAccountDetails, status_row);
+  gtk_widget_class_bind_template_child (widget_class, ChattyPpAccountDetails, password_row);
   gtk_widget_class_bind_template_child (widget_class, ChattyPpAccountDetails, delete_account_button);
 
   gtk_widget_class_bind_template_child (widget_class, ChattyPpAccountDetails, device_fp);
@@ -321,18 +321,18 @@ chatty_pp_account_save_async (ChattyPpAccountDetails *self,
                               gpointer                user_data)
 {
   g_autoptr(GTask) task = NULL;
-  GtkEntry *entry;
+  AdwPasswordEntryRow *row;
 
   g_return_if_fail (CHATTY_IS_PP_ACCOUNT_DETAILS (self));
   g_return_if_fail (callback);
 
-  entry = (GtkEntry *)self->password_entry;
-  chatty_account_set_password (self->account, gtk_editable_get_text (GTK_EDITABLE (entry)));
+  row = (AdwPasswordEntryRow *)self->password_row;
+  chatty_account_set_password (self->account, gtk_editable_get_text (GTK_EDITABLE (row)));
 
   chatty_account_set_remember_password (self->account, TRUE);
   chatty_account_set_enabled (self->account, TRUE);
 
-  gtk_editable_set_text (GTK_EDITABLE (entry), "");
+  gtk_editable_set_text (GTK_EDITABLE (row), "");
 
   self->modified = FALSE;
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_MODIFIED]);
@@ -368,7 +368,7 @@ chatty_pp_account_details_set_item (ChattyPpAccountDetails *self,
   g_return_if_fail (CHATTY_IS_PP_ACCOUNT_DETAILS (self));
   g_return_if_fail (!account || CHATTY_IS_ACCOUNT (account));
 
-  gtk_editable_set_text (GTK_EDITABLE (self->password_entry), "");
+  gtk_editable_set_text (GTK_EDITABLE (self->password_row), "");
 
   if (self->account != account) {
     g_clear_signal_handler (&self->status_id, self->account);
@@ -385,8 +385,8 @@ chatty_pp_account_details_set_item (ChattyPpAccountDetails *self,
   account_name = chatty_item_get_username (CHATTY_ITEM (account));
   protocol_name = chatty_account_get_protocol_name (account);
 
-  gtk_label_set_text (GTK_LABEL (self->account_id_label), account_name);
-  gtk_label_set_text (GTK_LABEL (self->account_protocol_label), protocol_name);
+  adw_action_row_set_subtitle (ADW_ACTION_ROW (self->account_id_row), account_name);
+  adw_action_row_set_subtitle (ADW_ACTION_ROW (self->account_protocol_row), protocol_name);
 
   chatty_avatar_set_item (CHATTY_AVATAR (self->avatar_image), CHATTY_ITEM (account));
 
