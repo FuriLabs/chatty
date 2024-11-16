@@ -22,6 +22,7 @@
 #include "users/cm-user-private.h"
 #include "cm-device-private.h"
 #include "cm-enc-private.h"
+#include "cm-enum-types.h"
 #include "cm-olm-private.h"
 #include "cm-client-private.h"
 #include "cm-room-private.h"
@@ -2546,7 +2547,8 @@ db_add_room_events (CmDb  *self,
                           "event_type,event_uid,txnid,replaces_event_id,replaces_event_cache_id,"
                           /*   9           10             11          12         13*/
                           "event_state,state_key,origin_server_ts,decryption,json_data) "
-                          "VALUES(?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13)",
+                          "VALUES(?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13)"
+                          "ON CONFLICT (room_events.room_id, room_events.event_uid) DO NOTHING;",
                           -1, &stmt, NULL);
       matrix_bind_int (stmt, 1, sorted_event_id, "binding when adding event");
       matrix_bind_int (stmt, 2, room_id, "binding when adding event");
@@ -2589,9 +2591,16 @@ db_add_room_events (CmDb  *self,
         }
       else
         {
-          g_warning ("Failed to save event: %s, error: %s",
+          GEnumClass *klass = g_type_class_peek (CM_TYPE_EVENT_TYPE);
+          CmEventType event_type = cm_event_get_m_type (event);
+          GEnumValue *value = g_enum_get_value (klass, event_type);
+
+          g_warning ("Failed to save event (status: %d, room: %s): %s (%s), error: %s",
+                     status,
+                     room ?: "Not a room",
                      cm_event_get_id (event),
-                     sqlite3_errmsg (self->db));
+                     value ? value->value_nick : "Type unknown",
+                     status == SQLITE_ERROR ? sqlite3_errmsg (self->db) : "Unknown error");
         }
 
       prepend ? (--sorted_event_id) : (++sorted_event_id);

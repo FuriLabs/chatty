@@ -95,7 +95,7 @@ struct _ChattySettingsDialog
   GtkWidget      *telegram_radio_button;
   GtkWidget      *new_account_settings_list;
   GtkWidget      *new_account_id_entry;
-  GtkWidget      *new_password_entry;
+  GtkWidget      *new_password_entry_row;
 
   GtkWidget      *delivery_reports_switch;
   GtkWidget      *clear_stuck_sms_switch;
@@ -119,7 +119,7 @@ struct _ChattySettingsDialog
 
   GtkWidget      *purple_settings_row;
 
-  GtkWidget      *matrix_homeserver_entry;
+  GtkWidget      *matrix_homeserver_entry_row;
 
   GtkWidget      *current_pgp_user_id_entry;
   GtkWidget      *current_pgp_public_key_fingerprint_entry;
@@ -163,7 +163,7 @@ settings_check_librem_one (ChattySettingsDialog *self)
   GtkEditable *editable;
   const char *server, *user_id;
 
-  editable = GTK_EDITABLE (self->matrix_homeserver_entry);
+  editable = GTK_EDITABLE (self->matrix_homeserver_entry_row);
   server = gtk_editable_get_text (editable);
   user_id = gtk_editable_get_text (GTK_EDITABLE (self->new_account_id_entry));
 
@@ -250,7 +250,7 @@ matrix_home_server_verify_cb (GObject      *object,
   /* verified homeserver URL */
   homeserver = cm_client_get_homeserver_finish (CM_CLIENT (object), result, &error);
   /* homeserver URL entered by the user */
-  server = gtk_editable_get_text (GTK_EDITABLE (self->matrix_homeserver_entry));
+  server = gtk_editable_get_text (GTK_EDITABLE (self->matrix_homeserver_entry_row));
 
   if (!homeserver) {
     gtk_widget_set_sensitive (self->add_button, FALSE);
@@ -272,9 +272,9 @@ matrix_home_server_verify_cb (GObject      *object,
       settings_dialog_set_save_state (self, FALSE);
       gtk_label_set_text (GTK_LABEL (self->notification_label),
                           _("Couldn't get Home server address"));
-      gtk_widget_set_visible (self->matrix_homeserver_entry, TRUE);
-      gtk_entry_grab_focus_without_selecting (GTK_ENTRY (self->matrix_homeserver_entry));
-      gtk_editable_set_position (GTK_EDITABLE (self->matrix_homeserver_entry), -1);
+      gtk_widget_set_visible (self->matrix_homeserver_entry_row, TRUE);
+      adw_entry_row_grab_focus_without_selecting (ADW_ENTRY_ROW (self->matrix_homeserver_entry_row));
+      gtk_editable_set_position (GTK_EDITABLE (self->matrix_homeserver_entry_row), -1);
     }
 
     gtk_revealer_set_reveal_child (GTK_REVEALER (self->notification_revealer), TRUE);
@@ -307,7 +307,7 @@ chatty_settings_save_matrix (ChattySettingsDialog *self,
 
   g_clear_object (&self->cancellable);
   self->cancellable = g_cancellable_new ();
-  editable = GTK_EDITABLE (self->matrix_homeserver_entry);
+  editable = GTK_EDITABLE (self->matrix_homeserver_entry_row);
   uri = gtk_editable_get_text (editable);
 
   uri_has_prefix = g_str_has_prefix (uri, "http");
@@ -338,7 +338,7 @@ chatty_settings_add_clicked_cb (ChattySettingsDialog *self)
 
   manager  = chatty_manager_get_default ();
   user_id  = gtk_editable_get_text (GTK_EDITABLE (self->new_account_id_entry));
-  password = gtk_editable_get_text (GTK_EDITABLE (self->new_password_entry));
+  password = gtk_editable_get_text (GTK_EDITABLE (self->new_password_entry_row));
 
   is_matrix = gtk_check_button_get_active (GTK_CHECK_BUTTON (self->matrix_radio_button));
   is_telegram = gtk_check_button_get_active (GTK_CHECK_BUTTON (self->telegram_radio_button));
@@ -451,7 +451,6 @@ settings_delete_account_response_cb (AdwMessageDialog *dialog,
     gtk_widget_set_visible (self->save_button, FALSE);
     gtk_stack_set_visible_child_name (GTK_STACK (self->main_stack), "main-settings");
   }
-  g_clear_object (&dialog);
 }
 
 static void
@@ -1036,8 +1035,8 @@ settings_phone_number_entry_changed_cb (ChattySettingsDialog *self,
 }
 
 static void
-settings_homeserver_entry_changed (ChattySettingsDialog *self,
-                                   GtkEntry             *entry)
+settings_homeserver_entry_row_changed (ChattySettingsDialog *self,
+                                       AdwEntryRow          *entry)
 {
   const char *server;
   gboolean valid = FALSE;
@@ -1133,11 +1132,11 @@ settings_update_new_account_view (ChattySettingsDialog *self)
 {
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
 
-  gtk_widget_set_visible (self->matrix_homeserver_entry, FALSE);
+  gtk_widget_set_visible (self->matrix_homeserver_entry_row, FALSE);
 
-  gtk_editable_set_text (GTK_EDITABLE (self->matrix_homeserver_entry), "");
+  gtk_editable_set_text (GTK_EDITABLE (self->matrix_homeserver_entry_row), "");
   gtk_editable_set_text (GTK_EDITABLE (self->new_account_id_entry), "");
-  gtk_editable_set_text (GTK_EDITABLE (self->new_password_entry), "");
+  gtk_editable_set_text (GTK_EDITABLE (self->new_password_entry_row), "");
 
   self->selected_account = NULL;
   gtk_widget_grab_focus (self->new_account_id_entry);
@@ -1344,17 +1343,17 @@ settings_new_detail_changed_cb (ChattySettingsDialog *self)
   g_assert (CHATTY_IS_SETTINGS_DIALOG (self));
 
   id = gtk_editable_get_text (GTK_EDITABLE (self->new_account_id_entry));
-  password = gtk_editable_get_text (GTK_EDITABLE (self->new_password_entry));
+  password = gtk_editable_get_text (GTK_EDITABLE (self->new_password_entry_row));
 
   if (password && *password)
-    settings_remove_style (GTK_WIDGET (self->new_password_entry), "error");
+    settings_remove_style (GTK_WIDGET (self->new_password_entry_row), "error");
   else
-    settings_apply_style (GTK_WIDGET (self->new_password_entry), "error");
+    settings_apply_style (GTK_WIDGET (self->new_password_entry_row), "error");
 
   if (!id || !*id) {
-    gtk_editable_set_text (GTK_EDITABLE (self->matrix_homeserver_entry), "");
-    gtk_widget_set_visible (self->matrix_homeserver_entry, TRUE);
-    gtk_widget_set_visible (self->matrix_homeserver_entry, FALSE);
+    gtk_editable_set_text (GTK_EDITABLE (self->matrix_homeserver_entry_row), "");
+    gtk_widget_set_visible (self->matrix_homeserver_entry_row, TRUE);
+    gtk_widget_set_visible (self->matrix_homeserver_entry_row, FALSE);
   }
 
   if (gtk_check_button_get_active (GTK_CHECK_BUTTON (self->matrix_radio_button)))
@@ -1382,9 +1381,9 @@ settings_new_detail_changed_cb (ChattySettingsDialog *self)
   /* If user tried to login to matrix via email, ask for homeserver details */
   if (protocol & CHATTY_PROTOCOL_MATRIX &&
       valid_protocol & CHATTY_PROTOCOL_EMAIL) {
-    gtk_widget_set_visible (self->matrix_homeserver_entry, TRUE);
+    gtk_widget_set_visible (self->matrix_homeserver_entry_row, TRUE);
     settings_check_librem_one (self);
-    settings_homeserver_entry_changed (self, GTK_ENTRY (self->matrix_homeserver_entry));
+    settings_homeserver_entry_row_changed (self, ADW_ENTRY_ROW (self->matrix_homeserver_entry_row));
   }
 
   /* Allow empty passwords for telegram accounts */
@@ -1701,7 +1700,7 @@ chatty_settings_dialog_class_init (ChattySettingsDialogClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, telegram_radio_button);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, new_account_settings_list);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, new_account_id_entry);
-  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, new_password_entry);
+  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, new_password_entry_row);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, current_pgp_user_id_entry);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, current_pgp_public_key_fingerprint_entry);
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, generate_pgp_user_id_entry);
@@ -1730,7 +1729,7 @@ chatty_settings_dialog_class_init (ChattySettingsDialogClass *klass)
 
   gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, purple_settings_row);
 
-  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, matrix_homeserver_entry);
+  gtk_widget_class_bind_template_child (widget_class, ChattySettingsDialog, matrix_homeserver_entry_row);
 
   gtk_widget_class_bind_template_callback (widget_class, chatty_settings_add_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, chatty_settings_save_clicked_cb);
@@ -1754,7 +1753,7 @@ chatty_settings_dialog_class_init (ChattySettingsDialogClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, chatty_settings_cancel_clicked_cb);
   gtk_widget_class_bind_template_callback (widget_class, settings_new_detail_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, settings_protocol_changed_cb);
-  gtk_widget_class_bind_template_callback (widget_class, settings_homeserver_entry_changed);
+  gtk_widget_class_bind_template_callback (widget_class, settings_homeserver_entry_row_changed);
 
   gtk_widget_class_bind_template_callback (widget_class, settings_dialog_purple_changed_cb);
   gtk_widget_class_bind_template_callback (widget_class, settings_dialog_page_changed_cb);

@@ -14,8 +14,6 @@
 # include "config.h"
 #endif
 
-#define LIBFEEDBACK_USE_UNSTABLE_API
-#include <libfeedback.h>
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 
@@ -81,24 +79,6 @@ notification_chat_changed_cb (ChattyNotification *self)
 }
 
 static void
-feedback_triggered_cb (GObject      *object,
-		       GAsyncResult *result,
-                       gpointer      user_data)
-{
-  g_autoptr (ChattyNotification) self = user_data;
-  LfbEvent *event = (LfbEvent *)object;
-  g_autoptr (GError) error = NULL;
-
-  g_assert (LFB_IS_EVENT (event));
-  g_assert (CHATTY_IS_NOTIFICATION (self));
-
-  if (!lfb_event_trigger_feedback_finish (event, result, &error)) {
-    g_warning ("Failed to trigger feedback for %s",
-	       lfb_event_get_event (event));
-  }
-}
-
-static void
 chatty_notification_finalize (GObject *object)
 {
   ChattyNotification *self = (ChattyNotification *)object;
@@ -161,7 +141,6 @@ chatty_notification_show_message (ChattyNotification *self,
                                   gboolean            is_sms)
 {
   g_autofree char *title = NULL;
-  g_autoptr(LfbEvent) event = NULL;
   ChattyMsgType type;
 
   g_return_if_fail (CHATTY_IS_NOTIFICATION (self));
@@ -241,12 +220,4 @@ chatty_notification_show_message (ChattyNotification *self,
   g_clear_handle_id (&self->timeout_id, g_source_remove);
   self->timeout_id = g_timeout_add_once (NOTIFICATION_TIMEOUT,
                                          show_notification, self);
-  if (is_sms)
-    event = lfb_event_new ("message-new-sms");
-  else
-    event = lfb_event_new ("message-new-instant");
-
-  lfb_event_trigger_feedback_async (event, NULL,
-                                    feedback_triggered_cb,
-                                    g_object_ref (self));
 }

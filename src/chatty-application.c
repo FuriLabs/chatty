@@ -43,9 +43,6 @@
 #include "chatty-clock.h"
 #include "chatty-log.h"
 
-#define LIBFEEDBACK_USE_UNSTABLE_API
-#include <libfeedback.h>
-
 /**
  * SECTION: chatty-application
  * @title: ChattyApplication
@@ -63,9 +60,6 @@ struct _ChattyApplication
 
   char *uri;
   guint open_uri_id;
-
-  gboolean daemon;
-  gboolean show_window;
 };
 
 G_DEFINE_TYPE (ChattyApplication, chatty_application, ADW_TYPE_APPLICATION)
@@ -77,7 +71,6 @@ static gboolean    cmd_verbose_cb   (const char *option_name,
 
 static GOptionEntry cmd_options[] = {
   { "version", 0, G_OPTION_FLAG_NONE, G_OPTION_ARG_NONE, NULL, N_("Show release version"), NULL },
-  { "daemon", 'D', G_OPTION_FLAG_NONE, G_OPTION_ARG_NONE, NULL, N_("Start in daemon mode"), NULL },
   { "nologin", 'n', G_OPTION_FLAG_NONE, G_OPTION_ARG_NONE, NULL, N_("Disable all accounts"), NULL },
 #ifdef PURPLE_ENABLED
   { "debug", 'd', G_OPTION_FLAG_NONE, G_OPTION_ARG_NONE, NULL, N_("Enable libpurple debug messages"), NULL },
@@ -234,7 +227,6 @@ chatty_application_show_window (GSimpleAction *action,
 
   g_assert (CHATTY_IS_APPLICATION (self));
 
-  self->show_window = TRUE;
   g_application_activate (G_APPLICATION (self));
 }
 
@@ -267,7 +259,6 @@ chatty_application_open_chat (GSimpleAction *action,
     g_info ("%s", str->str);
   }
 
-  self->show_window = TRUE;
   g_application_activate (G_APPLICATION (self));
   chatty_window_open_chat (CHATTY_WINDOW (self->main_window), chat);
 }
@@ -358,20 +349,6 @@ chatty_application_command_line (GApplication            *application,
     chatty_purple_enable_debug ();
 #endif
 
-  self->show_window = TRUE;
-  if (g_variant_dict_contains (options, "daemon")) {
-    /* Hold application only the first time daemon mode is set */
-    if (!self->daemon)
-      g_application_hold (application);
-
-    chatty_manager_load (self->manager);
-
-    self->show_window = FALSE;
-    self->daemon = TRUE;
-
-    g_debug ("Enable daemon mode");
-  }
-
   arguments = g_application_command_line_get_arguments (command_line, &argc);
 
   /* Keep only the last URI, if there are many */
@@ -401,7 +378,6 @@ chatty_application_startup (GApplication *application)
   g_autofree char *purple_dir = NULL;
   const char *help_accels[] = { "F1", NULL };
 
-  self->daemon = FALSE;
   self->manager = chatty_manager_get_default ();
 
   G_APPLICATION_CLASS (chatty_application_parent_class)->startup (application);
@@ -412,7 +388,9 @@ chatty_application_startup (GApplication *application)
 
   g_set_application_name (_("Chats"));
 
-  lfb_init (CHATTY_APP_ID, NULL);
+  if (!gtk_window_get_default_icon_name ())
+    gtk_window_set_default_icon_name (CHATTY_APP_ID);
+
   purple_dir = chatty_utils_get_purple_dir ();
   db_path =  g_build_filename (purple_dir, "chatty", "db", NULL);
   chatty_history_open (chatty_manager_get_history (self->manager),
@@ -430,6 +408,13 @@ chatty_application_startup (GApplication *application)
   g_action_map_add_action_entries (G_ACTION_MAP (self), app_entries,
                                    G_N_ELEMENTS (app_entries), self);
   gtk_application_set_accels_for_action (GTK_APPLICATION (self), "app.help", help_accels);
+
+  if (g_application_get_flags (application) & G_APPLICATION_IS_SERVICE) {
+    g_application_hold (application);
+
+    chatty_manager_load (self->manager);
+    g_debug ("Enable daemon mode");
+  }
 }
 
 
@@ -443,7 +428,7 @@ chatty_application_activate (GApplication *application)
 
   chatty_manager_load (self->manager);
 
-  if (!self->main_window && self->show_window) {
+  if (!self->main_window) {
     g_set_weak_pointer (&self->main_window, chatty_window_new (app));
     g_info ("New main window created");
 
@@ -452,8 +437,7 @@ chatty_application_activate (GApplication *application)
                              self, G_CONNECT_SWAPPED);
   }
 
-  if (self->show_window)
-    gtk_window_present (GTK_WINDOW (self->main_window));
+  gtk_window_present (GTK_WINDOW (self->main_window));
 
   /* Open with some delay so that the modem is ready when not in daemon mode */
   if (self->uri)
@@ -469,7 +453,6 @@ chatty_application_shutdown (GApplication *application)
 
   g_object_unref (chatty_settings_get_default ());
   chatty_history_close (chatty_manager_get_history (self->manager));
-  lfb_uninit ();
 
   G_APPLICATION_CLASS (chatty_application_parent_class)->shutdown (application);
 }

@@ -31,7 +31,6 @@ struct _ChattyMessageRow
 
   GtkWidget  *content_grid;
   GtkWidget  *avatar_image;
-  GtkWidget  *hidden_box;
   GtkWidget  *author_label;
 
   GtkWidget  *message_content;
@@ -53,9 +52,11 @@ struct _ChattyMessageRow
   gulong         clock_id;
   gboolean       is_im;
   gboolean       force_hide_footer;
+  gboolean       show_avatar;
 };
 
 G_DEFINE_TYPE (ChattyMessageRow, chatty_message_row, GTK_TYPE_LIST_BOX_ROW)
+
 
 static char *
 text_item_linkify (const char *message)
@@ -366,7 +367,6 @@ chatty_message_row_class_init (ChattyMessageRowClass *klass)
                                                "ui/chatty-message-row.ui");
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, content_grid);
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, avatar_image);
-  gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, hidden_box);
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, author_label);
   gtk_widget_class_bind_template_child (widget_class, ChattyMessageRow, popover);
 
@@ -384,6 +384,8 @@ static void
 chatty_message_row_init (ChattyMessageRow *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  self->show_avatar = TRUE;
 }
 
 static void
@@ -514,7 +516,7 @@ chatty_message_row_new (ChattyMessage  *message,
 
   if ((is_im && protocol != CHATTY_PROTOCOL_MATRIX) || direction == CHATTY_DIRECTION_SYSTEM ||
       direction == CHATTY_DIRECTION_OUT)
-    gtk_widget_set_visible (self->avatar_image, FALSE);
+    self->show_avatar = FALSE;
   else
     chatty_avatar_set_item (CHATTY_AVATAR (self->avatar_image),
                             chatty_message_get_user (message));
@@ -554,13 +556,11 @@ chatty_message_row_set_alias (ChattyMessageRow *self,
 }
 
 void
-chatty_message_row_hide_user_detail (ChattyMessageRow *self)
+chatty_message_row_show_user_detail (ChattyMessageRow *self,
+                                     gboolean          show)
 {
   g_return_if_fail (CHATTY_IS_MESSAGE_ROW (self));
 
-  gtk_widget_set_visible (self->author_label, FALSE);
-  if (gtk_widget_get_visible (self->avatar_image)) {
-    gtk_widget_set_visible (self->avatar_image, FALSE);
-    gtk_widget_set_visible (self->hidden_box, TRUE);
-  }
+  gtk_widget_set_visible (self->author_label, show);
+  gtk_widget_set_visible (self->avatar_image, show && self->show_avatar);
 }

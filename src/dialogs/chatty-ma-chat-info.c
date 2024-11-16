@@ -44,29 +44,29 @@ struct _ChattyMaChatInfo
 
   GtkWidget     *avatar;
 
-  GtkWidget     *name_label;
-  GtkWidget     *matrix_id_label;
-  GtkWidget     *topic_label;
+  GtkWidget     *name_row;
+  GtkWidget     *matrix_id_row;
+  GtkWidget     *topic_row;
   GtkWidget     *encryption_spinner;
-  GtkWidget     *encryption_switch;
+  GtkWidget     *encryption_row;
 };
 
 G_DEFINE_TYPE (ChattyMaChatInfo, chatty_ma_chat_info, CHATTY_TYPE_CHAT_INFO)
 
-static void     ma_chat_info_encryption_switch_changed_cb    (ChattyMaChatInfo *self);
+static void     ma_chat_info_encryption_row_changed_cb    (ChattyMaChatInfo *self);
 
 static void
 ma_chat_encrypt_changed_cb (ChattyMaChatInfo *self)
 {
   g_assert (CHATTY_IS_MA_CHAT_INFO (self));
 
-  g_signal_handlers_block_by_func (self->encryption_switch,
-                                   ma_chat_info_encryption_switch_changed_cb,
+  g_signal_handlers_block_by_func (self->encryption_row,
+                                   ma_chat_info_encryption_row_changed_cb,
                                    self);
-  gtk_switch_set_active (GTK_SWITCH (self->encryption_switch),
-                         chatty_chat_get_encryption (self->chat) == CHATTY_ENCRYPTION_ENABLED);
-  g_signal_handlers_unblock_by_func (self->encryption_switch,
-                                     ma_chat_info_encryption_switch_changed_cb,
+  adw_switch_row_set_active (ADW_SWITCH_ROW (self->encryption_row),
+                             chatty_chat_get_encryption (self->chat) == CHATTY_ENCRYPTION_ENABLED);
+  g_signal_handlers_unblock_by_func (self->encryption_row,
+                                     ma_chat_info_encryption_row_changed_cb,
                                      self);
 }
 
@@ -82,19 +82,21 @@ ma_chat_info_set_encryption_cb (GObject      *object,
   if (gtk_widget_in_destruction (GTK_WIDGET (self)))
     return;
 
+  gtk_widget_set_visible (GTK_WIDGET (self->encryption_spinner), false);
   gtk_spinner_stop (GTK_SPINNER (self->encryption_spinner));
   ma_chat_encrypt_changed_cb (self);
 }
 
 static void
-ma_chat_info_encryption_switch_changed_cb (ChattyMaChatInfo *self)
+ma_chat_info_encryption_row_changed_cb (ChattyMaChatInfo *self)
 {
   g_assert (CHATTY_IS_MA_CHAT_INFO (self));
   g_assert (self->chat);
 
-  if (!gtk_switch_get_active (GTK_SWITCH (self->encryption_switch)))
+  if (!adw_switch_row_get_active (ADW_SWITCH_ROW (self->encryption_row)))
     return;
 
+  gtk_widget_set_visible (GTK_WIDGET (self->encryption_spinner), true);
   gtk_spinner_start (GTK_SPINNER (self->encryption_spinner));
   chatty_chat_set_encryption_async (self->chat, TRUE,
                                     ma_chat_info_set_encryption_cb,
@@ -121,17 +123,17 @@ chatty_ma_chat_info_set_item (ChattyChatInfo *info,
     return;
 
   chatty_avatar_set_item (CHATTY_AVATAR (self->avatar), CHATTY_ITEM (chat));
-  gtk_label_set_text (GTK_LABEL (self->matrix_id_label),
-                      chatty_chat_get_chat_name (self->chat));
-  gtk_label_set_text (GTK_LABEL (self->name_label),
-                      chatty_item_get_name (CHATTY_ITEM (self->chat)));
-  gtk_label_set_text (GTK_LABEL (self->topic_label),
-                      chatty_ma_chat_get_topic (CHATTY_MA_CHAT (self->chat)));
+  adw_action_row_set_subtitle (ADW_ACTION_ROW (self->matrix_id_row),
+                               chatty_chat_get_chat_name (self->chat));
+  adw_action_row_set_subtitle (ADW_ACTION_ROW (self->name_row),
+                               chatty_item_get_name (CHATTY_ITEM (self->chat)));
+  adw_action_row_set_subtitle (ADW_ACTION_ROW (self->topic_row),
+                               chatty_ma_chat_get_topic (CHATTY_MA_CHAT (self->chat)));
 
   g_signal_connect_swapped (self->chat, "notify::encrypt",
                             G_CALLBACK (ma_chat_encrypt_changed_cb),
                             self);
-  gtk_widget_set_sensitive (self->encryption_switch,
+  gtk_widget_set_sensitive (self->encryption_row,
                             chatty_ma_chat_can_set_encryption (CHATTY_MA_CHAT (self->chat)));
   ma_chat_encrypt_changed_cb (self);
 }
@@ -163,13 +165,13 @@ chatty_ma_chat_info_class_init (ChattyMaChatInfoClass *klass)
 
   gtk_widget_class_bind_template_child (widget_class, ChattyMaChatInfo, avatar);
 
-  gtk_widget_class_bind_template_child (widget_class, ChattyMaChatInfo, name_label);
-  gtk_widget_class_bind_template_child (widget_class, ChattyMaChatInfo, matrix_id_label);
-  gtk_widget_class_bind_template_child (widget_class, ChattyMaChatInfo, topic_label);
+  gtk_widget_class_bind_template_child (widget_class, ChattyMaChatInfo, name_row);
+  gtk_widget_class_bind_template_child (widget_class, ChattyMaChatInfo, matrix_id_row);
+  gtk_widget_class_bind_template_child (widget_class, ChattyMaChatInfo, topic_row);
   gtk_widget_class_bind_template_child (widget_class, ChattyMaChatInfo, encryption_spinner);
-  gtk_widget_class_bind_template_child (widget_class, ChattyMaChatInfo, encryption_switch);
+  gtk_widget_class_bind_template_child (widget_class, ChattyMaChatInfo, encryption_row);
 
-  gtk_widget_class_bind_template_callback (widget_class, ma_chat_info_encryption_switch_changed_cb);
+  gtk_widget_class_bind_template_callback (widget_class, ma_chat_info_encryption_row_changed_cb);
 }
 
 static void

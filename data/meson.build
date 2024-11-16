@@ -1,5 +1,6 @@
 config_data = configuration_data()
 config_data.set('APP_ID', app_id)
+config_data.set('LOWERCASE_APP_ID', app_id.to_lower())
 
 desktop_file = i18n.merge_file(
   input: configure_file(
@@ -34,7 +35,7 @@ if desktop_utils.found()
   )
 endif
 
-appstream_file = i18n.merge_file(
+metainfo_file = i18n.merge_file(
   input: configure_file(
     input: 'sm.puri.Chatty.metainfo.xml.in.in',
     output: '@0@.metainfo.xml.in'.format(app_id),
@@ -48,8 +49,8 @@ appstream_file = i18n.merge_file(
 
 appstreamcli = find_program('appstreamcli', required: false)
 if appstreamcli.found()
-  test('Validate appstream file', appstreamcli,
-    args: ['validate', '--no-net', '--explain', appstream_file]
+  test('Validate metainfo file', appstreamcli,
+    args: ['validate', '--no-net', '--explain', metainfo_file]
   )
 endif
 
@@ -67,5 +68,18 @@ if compile_schemas.found()
     args: ['--strict', '--dry-run', meson.current_source_dir()]
   )
 endif
+
+# DBus service
+service_data = configuration_data()
+service_data.set('appid', app_id)
+service_data.set('bindir', get_option('prefix') / get_option('bindir'))
+service_file = '@0@.service'.format(app_id)
+configure_file(
+  input : service_file + '.in',
+  output : service_file,
+  configuration : service_data,
+  install : true,
+  install_dir : get_option('datadir') / 'dbus-1' / 'services'
+)
 
 subdir('icons')

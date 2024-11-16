@@ -156,3 +156,8 @@ button.delete-button {
 preferencespage.no-margin > scrolledwindow > viewport > clamp > box {
   margin: 0;
 }
+
+textview, text {
+  color: inherit;
+  background: none;
+}

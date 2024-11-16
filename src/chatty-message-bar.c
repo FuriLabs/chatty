@@ -34,6 +34,7 @@
 #include "chatty-purple.h"
 #include "chatty-settings.h"
 #include "chatty-message-bar.h"
+#include "chatty-entry.h"
 
 struct _ChattyMessageBar
 {
@@ -53,7 +54,6 @@ struct _ChattyMessageBar
   guint          save_timeout_id;
   gboolean       draft_is_loading;
   gboolean       is_self_change;
-  char          *preedit;
 #ifdef LIBSPELL_ENABLED
   SpellingChecker *checker;
 #endif
@@ -231,13 +231,7 @@ chat_page_save_message_to_db (gpointer user_data)
                 "cursor-position",
                 &cursor_location,
                 NULL);
-  if (self->preedit && *self->preedit) {
-    GString *message_string = NULL;
-    message_string = g_string_new (message_buffer_text);
-    message_string = g_string_insert (message_string, cursor_location, self->preedit);
-    text = g_string_free (message_string, false);
-  } else
-    text = g_strdup (message_buffer_text);
+  text = g_strdup (message_buffer_text);
 
   uid = g_uuid_string_random ();
   draft = chatty_message_new (NULL, text, uid, time (NULL),
@@ -354,7 +348,6 @@ message_bar_send_message_button_clicked_cb (ChattyMessageBar *self)
   g_autofree char *message_buffer_text = NULL;
   GtkTextIter    start, end;
   GList *files;
-  int cursor_location = 0;
 
   g_assert (CHATTY_IS_MESSAGE_BAR (self));
 
@@ -362,17 +355,7 @@ message_bar_send_message_button_clicked_cb (ChattyMessageBar *self)
 
   gtk_text_buffer_get_bounds (GTK_TEXT_BUFFER (self->message_buffer), &start, &end);
   message_buffer_text = gtk_text_buffer_get_text (GTK_TEXT_BUFFER (self->message_buffer), &start, &end, FALSE);
-  g_object_get (self->message_buffer,
-                "cursor-position",
-                &cursor_location,
-                NULL);
-  if (self->preedit && *self->preedit) {
-    GString *message_string = NULL;
-    message_string = g_string_new (message_buffer_text);
-    message_string = g_string_insert (message_string, cursor_location, self->preedit);
-    message = g_string_free (message_string, false);
-  } else
-    message = g_strdup (message_buffer_text);
+  message = g_strdup (message_buffer_text);
 
 #ifdef PURPLE_ENABLED
   if (CHATTY_IS_PP_CHAT (self->chat) &&
@@ -381,11 +364,6 @@ message_bar_send_message_button_clicked_cb (ChattyMessageBar *self)
 
     gtk_widget_set_visible (self->send_message_button, FALSE);
     gtk_text_buffer_delete (GTK_TEXT_BUFFER (self->message_buffer), &start, &end);
-    /* Make sure the text view things is necessary to reset the im context */
-    gtk_text_view_set_editable (GTK_TEXT_VIEW (self->message_input), FALSE);
-    gtk_text_view_set_editable (GTK_TEXT_VIEW (self->message_input), TRUE);
-    /* This clears preedit */
-    gtk_text_view_reset_im_context (GTK_TEXT_VIEW (self->message_input));
 
     return;
   }
@@ -397,7 +375,7 @@ message_bar_send_message_button_clicked_cb (ChattyMessageBar *self)
 
   gtk_widget_grab_focus (self->message_input);
 
-  if (gtk_text_buffer_get_char_count (GTK_TEXT_BUFFER (self->message_buffer)) || (self->preedit && *self->preedit) || files) {
+  if (gtk_text_buffer_get_char_count (GTK_TEXT_BUFFER (self->message_buffer)) || files) {
     g_autofree char *escaped = NULL;
 
 #ifdef PURPLE_ENABLED
@@ -426,14 +404,8 @@ message_bar_send_message_button_clicked_cb (ChattyMessageBar *self)
    * deleting the existing text, simply make the entry sensitive again. */
   if (CHATTY_IS_MA_CHAT (self->chat) && files)
     gtk_widget_set_sensitive (self->message_input, TRUE);
-  else {
+  else
     gtk_text_buffer_delete (GTK_TEXT_BUFFER (self->message_buffer), &start, &end);
-    /* Make sure the text view things is necessary to reset the im context */
-    gtk_text_view_set_editable (GTK_TEXT_VIEW (self->message_input), FALSE);
-    gtk_text_view_set_editable (GTK_TEXT_VIEW (self->message_input), TRUE);
-    /* This clears preedit */
-    gtk_text_view_reset_im_context (GTK_TEXT_VIEW (self->message_input));
-  }
 
   {
     g_autoptr(ChattyMessage) draft = NULL;
@@ -514,11 +486,8 @@ message_bar_text_view_preddit_changed_cb (ChattyMessageBar *self,
                                           char             *preedit)
 {
   gboolean has_text, has_files;
-  g_clear_pointer (&self->preedit, g_free);
-  if (preedit && *preedit)
-    self->preedit = g_strdup (preedit);
 
-  has_text = (gtk_text_buffer_get_char_count (GTK_TEXT_BUFFER (self->message_buffer)) > 0) || (self->preedit && *self->preedit);
+  has_text = (gtk_text_buffer_get_char_count (GTK_TEXT_BUFFER (self->message_buffer)) > 0) || (preedit && *preedit);
   has_files = gtk_revealer_get_reveal_child (GTK_REVEALER (self->attachment_revealer));
   gtk_widget_set_visible (self->send_message_button, has_text || has_files);
 
@@ -640,6 +609,8 @@ chatty_message_bar_class_init (ChattyMessageBarClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, message_bar_text_buffer_clipboard_paste_done_cb);
 
   gtk_widget_class_install_action (widget_class, "message-bar.activate", NULL, message_bar_activate);
+
+  g_type_ensure (CHATTY_TYPE_ENTRY);
 }
 
 static void

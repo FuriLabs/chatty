@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999-2008 Novell, Inc.
- *               2023 Purism SPC
- *               2023 Chris Talbot
+ *               2023      Purism SPC
+ *               2023-2024 Chris Talbot
  *
  * Author(s):
  *   Chris Talbot <chris@talbothome.com>

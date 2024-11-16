@@ -35,7 +35,7 @@ struct _ChattyChatPage
   GtkWidget  *chatty_message_list;
   GtkWidget  *message_bar;
   GtkWidget  *no_message_status;
-  GtkWidget  *scroll_down_button;
+  GtkRevealer *scroll_down_revealer;
   GtkAdjustment *vadjustment;
   ChattyHistory *history;
 
@@ -49,6 +49,7 @@ struct _ChattyChatPage
   guint       history_load_id;
   double      value_adjust;
   gboolean    is_bottom;
+  gboolean    first_load;
 };
 
 /* how close to the bottom is considered "at the bottom" */
@@ -331,6 +332,13 @@ chat_page_chat_changed_cb (ChattyChatPage *self)
 }
 
 static void
+scroll_to_bottom_cb (gpointer user_data)
+{
+  ChattyChatPage *self = user_data;
+  chat_page_scroll_down_clicked_cb(self);
+}
+
+static void
 chat_page_adjustment_value_changed_cb (ChattyChatPage *self)
 {
   double value;
@@ -339,6 +347,11 @@ chat_page_adjustment_value_changed_cb (ChattyChatPage *self)
 
   g_assert (CHATTY_IS_CHAT_PAGE (self));
 
+  if (!self->first_load) {
+    self->first_load = TRUE;
+    g_timeout_add_once (100, scroll_to_bottom_cb, self);
+  }
+
   value = gtk_adjustment_get_value (self->vadjustment);
   if (!G_APPROX_VALUE (value, self->value_adjust, SCROLL_THRESHOLD)) {
     is_scroll = TRUE;
@@ -346,7 +359,7 @@ chat_page_adjustment_value_changed_cb (ChattyChatPage *self)
   }
 
   is_bottom = chatty_chat_page_scroll_is_bottom (self);
-  gtk_widget_set_visible (self->scroll_down_button, !is_bottom);
+  gtk_revealer_set_reveal_child (self->scroll_down_revealer, !is_bottom);
 
   g_debug ("is bottom %d, has changed %d, user is scrolling %d",
            is_bottom, is_bottom != self->is_bottom, is_scroll);
@@ -355,7 +368,7 @@ chat_page_adjustment_value_changed_cb (ChattyChatPage *self)
     g_clear_handle_id (&self->scroll_bottom_id, g_source_remove);
     self->scroll_bottom_id = g_timeout_add_once (SCROLL_TIMEOUT, update_view_scroll, self);
 
-    gtk_widget_set_visible (self->scroll_down_button, FALSE); /* avoids flickering the button */
+    gtk_revealer_set_reveal_child (self->scroll_down_revealer, FALSE); /* avoids flickering the button */
   }
 
   self->is_bottom = is_bottom;
@@ -378,8 +391,7 @@ chat_page_update_header_func (ChattyMessageRow *row,
   a_time = chatty_message_get_time (a);
   b_time = chatty_message_get_time (b);
 
-  if (chatty_message_user_matches (a, b))
-    chatty_message_row_hide_user_detail (row);
+  chatty_message_row_show_user_detail (row, !chatty_message_user_matches (a, b));
 
   /* Don't hide footers in outgoing SMS as it helps understanding
    * the delivery status of the message
@@ -520,7 +532,7 @@ chatty_chat_page_class_init (ChattyChatPageClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyChatPage, message_view);
 
   gtk_widget_class_bind_template_child (widget_class, ChattyChatPage, scrolled_window);
-  gtk_widget_class_bind_template_child (widget_class, ChattyChatPage, scroll_down_button);
+  gtk_widget_class_bind_template_child (widget_class, ChattyChatPage, scroll_down_revealer);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatPage, message_list);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatPage, loading_spinner);
   gtk_widget_class_bind_template_child (widget_class, ChattyChatPage, typing_revealer);
@@ -605,7 +617,7 @@ chatty_chat_page_set_chat (ChattyChatPage *self,
                                           chat_page_chat_changed_cb,
                                           self);
 
-    gtk_widget_set_visible (self->scroll_down_button, FALSE);
+    gtk_revealer_set_reveal_child (self->scroll_down_revealer, FALSE);
     g_clear_handle_id (&self->history_load_id, g_source_remove);
   }
 

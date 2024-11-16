@@ -1,6 +1,6 @@
 project(
   'chatty', 'c', 'cpp',
-  version: '0.8.5',
+  version: '0.8.6~rc.0',
   meson_version: '>= 0.56.0',
 )
 
@@ -118,7 +118,6 @@ configure_file(
   configuration: run_data)
 
 libebook_dep = dependency('libebook-contacts-1.2')
-libfeedback_dep = dependency('libfeedback-0.0')
 libm_dep = cc.find_library('m')
 
 libcmatrix_dep = dependency('libcmatrix',

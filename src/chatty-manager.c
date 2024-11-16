@@ -14,8 +14,6 @@
 # include "config.h"
 #endif
 
-#define LIBFEEDBACK_USE_UNSTABLE_API
-#include <libfeedback.h>
 #include <glib/gi18n.h>
 #include <adwaita.h>
 #define CMATRIX_USE_EXPERIMENTAL_API

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-    <id>@APP_ID@</id>
+    <id>@LOWERCASE_APP_ID@</id>
     <metadata_license>CC0-1.0</metadata_license>
     <project_license>GPL-3.0-or-later</project_license>
     <name>Chats</name>
@@ -20,8 +20,33 @@
     </developer>
     <screenshots>
         <screenshot type="default">
-            <caption>Chats message window</caption>
-            <image type="source" width="906" height="621">https://gitlab.gnome.org/World/Chatty/-/raw/main/data/screenshots/screenshot.png?inline=false</image>
+            <caption>Folded view of a chat using the light theme.</caption>
+            <image type="source" width="417" height="753">https://gitlab.gnome.org/World/Chatty/-/raw/main/data/screenshots/desktop-folded-chat-light.png?inline=false</image>
+        </screenshot>
+        <screenshot type="default">
+            <caption>Folded view of a chat using the dark theme.</caption>
+            <image type="source" width="417" height="754">https://gitlab.gnome.org/World/Chatty/-/raw/main/data/screenshots/desktop-folded-chat-dark.png?inline=false</image>
+        </screenshot>
+        <screenshot type="default">
+            <caption>Unfolded view of a chat and the chat list in the sidebar.</caption>
+            <image type="source" width="417" height="754">https://gitlab.gnome.org/World/Chatty/-/raw/main/data/screenshots/desktop-unfolded-view-light.png?inline=false</image>
+        </screenshot>
+        <screenshot type="default">
+            <caption>The chat view using the dark theme as seen on a mobile phone running Phosh with unfolded keyboard.</caption>
+            <image type="source" width="496" height="991">https://gitlab.gnome.org/World/Chatty/-/raw/main/data/screenshots/phosh-ppp-chat-with-osk-dark.png?inline=false</image>
+        </screenshot>
+        <screenshot type="default">
+            <caption>The chat list view using the light theme as seen on a mobile phone running Phosh.</caption>
+            <image type="source" width="496" height="991">https://gitlab.gnome.org/World/Chatty/-/raw/main/data/screenshots/phosh-ppp-chatlist-light.png?inline=false</image>
+        </screenshot>
+        <screenshot type="default">
+            <caption>The SMS/MMS preferences using the light theme as seen on a mobile phone running Phosh.</caption>
+            <image type="source" width="496" height="991">https://gitlab.gnome.org/World/Chatty/-/raw/main/data/screenshots/phosh-ppp-chatlist-light.png?inline=false</image>
+        </screenshot>
+
+        <screenshot type="default">
+            <caption>The chat details view using the dark theme as seen on a mobile phone running Phosh.</caption>
+            <image type="source" width="496" height="991">https://gitlab.gnome.org/World/Chatty/-/raw/main/data/screenshots/phosh-ppp-chat-details-dark.png?inline=false</image>
         </screenshot>
     </screenshots>
     <provides>

@@ -4,17 +4,6 @@
 
     <child>
       <object class="AdwPreferencesGroup">
-
-        <!-- Room name -->
-        <child>
-          <object class="GtkLabel" id="room_name">
-            <property name="visible" bind-source="avatar" bind-property="visible" bind-flags="invert-boolean|bidirectional|sync-create"/>
-            <style>
-              <class name="title-2"/>
-            </style>
-          </object>
-        </child>
-
         <child>
           <object class="GtkOverlay">
             <property name="visible" bind-source="avatar" bind-property="visible" bind-flags="sync-create"/>
@@ -63,62 +52,21 @@
 
     <child>
       <object class="AdwPreferencesGroup">
-        <property name="visible" bind-source="room_topic_view" bind-property="visible" bind-flags="sync-create"/>
+
+        <!-- Room name -->
         <child>
-          <object class="GtkBox">
-            <property name="spacing">6</property>
-            <property name="orientation">vertical</property>
+          <object class="AdwActionRow" id="room_name_row">
+            <property name="title" translatable="yes">Chat</property>
+            <property name="visible" bind-source="avatar" bind-property="visible" bind-flags="invert-boolean|bidirectional|sync-create"/>
+          </object>
+        </child>
 
-            <child>
-              <object class="GtkLabel">
-                <property name="visible" bind-source="room_topic_view" bind-property="visible" bind-flags="sync-create"/>
-                <property name="halign">start</property>
-                <property name="label" translatable="yes">Room topic</property>
-                <style>
-                  <class name="heading"/>
-                </style>
-              </object>
-            </child>
-
-            <child>
-              <object class="GtkBox">
-                <property name="visible" bind-source="room_topic_view" bind-property="visible" bind-flags="sync-create"/>
-                <property name="spacing">6</property>
-
-                <!-- Topic text view -->
-                <child>
-                  <object class="GtkFrame">
-                    <property name="child">
-                      <object class="GtkTextView" id="room_topic_view">
-                        <property name="hexpand">1</property>
-                        <property name="cursor-visible">0</property>
-                        <property name="left-margin">6</property>
-                        <property name="right-margin">6</property>
-                        <property name="top-margin">6</property>
-                        <property name="bottom-margin">6</property>
-                        <property name="wrap-mode">word-char</property>
-                        <property name="buffer">topic_buffer</property>
-                      </object>
-                    </property>
-                  </object>
-                </child>
-
-                <!-- Topic edit button -->
-                <child>
-                  <object class="GtkToggleButton" id="edit_topic_button">
-                    <property name="valign">start</property>
-                    <signal name="clicked" handler="pp_chat_info_edit_topic_clicked_cb" swapped="yes"/>
-                    <child>
-                      <object class="GtkImage">
-                        <property name="icon-name">document-edit-symbolic</property>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-
-              </object>
-            </child>
-
+        <!-- Room topic -->
+        <child>
+          <object class="AdwEntryRow" id="room_topic_row">
+            <property name="title" translatable="yes">Room topic</property>
+            <property name="show-apply-button">true</property>
+            <signal name="apply" handler="pp_chat_info_room_topic_applied_cb" swapped="yes"/>
           </object>
         </child>
       </object> <!-- ./AdwPreferencesGroup -->
@@ -126,239 +74,101 @@
 
     <child>
       <object class="AdwPreferencesGroup">
+
+        <!-- User Alias -->
         <child>
-          <object class="GtkGrid">
+          <object class="AdwActionRow" id="name_row">
+            <property name="title" translatable="yes">User</property>
+          </object>
+        </child>
+
+        <!-- User ID -->
+        <child>
+          <object class="AdwActionRow" id="user_id_row">
+            <property name="title" translatable="yes">XMPP ID</property>
+          </object>
+        </child>
+
+        <!-- Encryption status -->
+        <child>
+          <object class="AdwActionRow" id="encryption_row">
+            <property name="title" translatable="yes">Encryption</property>
+          </object>
+        </child>
+
+        <!-- Online status -->
+        <child>
+          <object class="AdwActionRow" id="status_row">
+            <property name="title" translatable="yes">Status</property>
+          </object>
+        </child>
+      </object> <!-- ./AdwPreferencesGroup -->
+    </child>
+
+    <child>
+      <object class="AdwPreferencesGroup">
+        <property name="title" translatable="yes">Chat settings</property>
+
+        <!-- Notifications row -->
+        <child>
+          <object class="AdwSwitchRow" id="notification_row">
+            <property name="title" translatable="yes">Notifications</property>
+            <signal name="notify::active" handler="pp_chat_info_notification_row_changed_cb" swapped="yes"/>
+          </object>
+        </child>
+
+        <!-- Status messages row -->
+        <child>
+          <object class="AdwSwitchRow" id="show_status_row">
+            <property name="title" translatable="yes">Status Messages</property>
+            <property name="subtitle" translatable="yes">Show status messages in chat</property>
+            <signal name="notify::active" handler="pp_chat_info_show_status_row_changed_cb" swapped="yes"/>
+          </object>
+        </child>
+
+        <!-- Encryption row -->
+        <child>
+          <object class="AdwSwitchRow" id="encryption_switch_row">
+            <property name="title" translatable="yes">Encryption</property>
+            <property name="subtitle" translatable="yes">Encrypt Messages</property>
+          </object>
+        </child>
+
+      </object> <!-- ./AdwPreferencesGroup -->
+    </child>
+
+    <!-- Fingerprints/Device keys -->
+    <child>
+      <object class="AdwPreferencesGroup" id="key_group">
+        <property name="title" translatable="yes">Fingerprints</property>
+        <child>
+          <object class="GtkListBox" id="key_list">
+            <property name="visible">0</property>
             <property name="hexpand">1</property>
-            <property name="valign">start</property>
-            <property name="margin-bottom">24</property>
-            <property name="row-spacing">6</property>
-            <property name="column-spacing">6</property>
-            <property name="orientation">vertical</property>
+            <property name="vexpand">1</property>
+            <property name="selection-mode">none</property>
+            <style>
+              <class name="content"/>
+              <class name="boxed-list"/>
+            </style>
+          </object>
+        </child>
+      </object> <!-- ./AdwPreferencesGroup -->
+    </child>
 
-            <!-- User Alias -->
-            <child>
-              <object class="GtkLabel">
-                <property name="visible" bind-source="name_label" bind-property="visible" bind-flags="sync-create"/>
-                <property name="xalign">1</property>
-                <property name="label" translatable="yes">User</property>
-                <style>
-                  <class name="dim-label"/>
-                </style>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel" id="name_label">
-                <property name="hexpand">1</property>
-                <property name="vexpand">1</property>
-                <property name="halign">start</property>
-                <property name="ellipsize">end</property>
-                <property name="selectable">1</property>
-                <layout>
-                  <property name="column">1</property>
-                  <property name="row">0</property>
-                </layout>
-              </object>
-            </child>
-
-            <!-- User ID -->
-            <child>
-              <object class="GtkLabel" id="user_id_title">
-                <property name="visible" bind-source="user_id_label" bind-property="visible" bind-flags="sync-create"/>
-                <property name="xalign">1</property>
-                <property name="label" translatable="yes">XMPP ID</property>
-                <style>
-                  <class name="dim-label"/>
-                </style>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel" id="user_id_label">
-                <property name="hexpand">1</property>
-                <property name="vexpand">1</property>
-                <property name="halign">start</property>
-                <property name="ellipsize">end</property>
-                <property name="selectable">1</property>
-                <layout>
-                  <property name="column">1</property>
-                  <property name="row">1</property>
-                </layout>
-              </object>
-            </child>
-
-            <!-- Encryption status -->
-            <child>
-              <object class="GtkLabel">
-                <property name="visible" bind-source="encryption_label" bind-property="visible" bind-flags="sync-create"/>
-                <property name="xalign">1</property>
-                <property name="label" translatable="yes">Encryption</property>
-                <style>
-                  <class name="dim-label"/>
-                </style>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel" id="encryption_label">
-                <property name="visible">0</property>
-                <property name="hexpand">1</property>
-                <property name="vexpand">1</property>
-                <property name="halign">start</property>
-                <property name="ellipsize">end</property>
-                <layout>
-                  <property name="column">1</property>
-                  <property name="row">2</property>
-                </layout>
-              </object>
-            </child>
-
-            <!-- Online status -->
-            <child>
-              <object class="GtkLabel">
-                <property name="visible" bind-source="status_label" bind-property="visible" bind-flags="sync-create"/>
-                <property name="xalign">1</property>
-                <property name="label" translatable="yes">Status</property>
-                <style>
-                  <class name="dim-label"/>
-                </style>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel" id="status_label">
-                <property name="visible">0</property>
-                <property name="hexpand">1</property>
-                <property name="vexpand">1</property>
-                <property name="halign">start</property>
-                <property name="ellipsize">end</property>
-                <layout>
-                  <property name="column">1</property>
-                  <property name="row">3</property>
-                </layout>
-              </object>
-            </child>
-
-            <child>
-              <object class="GtkLabel" id="settings_label">
-                <property name="halign">start</property>
-                <property name="margin-top">12</property>
-                <property name="label" translatable="yes">Chat settings</property>
-                <style>
-                  <class name="heading"/>
-                </style>
-              </object>
-            </child>
-
-            <child>
-              <object class="GtkListBox">
-                <property name="hexpand">1</property>
-                <property name="vexpand">1</property>
-                <property name="selection-mode">none</property>
-                <style>
-                  <class name="content"/>
-                </style>
-
-                <!-- Notifications row -->
-                <child>
-                  <object class="AdwActionRow">
-                    <property name="visible" bind-source="notification_switch" bind-property="visible" bind-flags="sync-create"/>
-                    <property name="title" translatable="yes">Notifications</property>
-                    <property name="activatable-widget">notification_switch</property>
-                    <child>
-                      <object class="GtkSwitch" id="notification_switch">
-                        <property name="valign">center</property>
-                        <signal name="notify::active" handler="pp_chat_info_notification_switch_changed_cb" swapped="yes"/>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-
-                <!-- Status messages row -->
-                <child>
-                  <object class="AdwActionRow">
-                    <property name="visible" bind-source="show_status_switch" bind-property="visible" bind-flags="sync-create"/>
-                    <property name="title" translatable="yes">Status Messages</property>
-                    <property name="subtitle" translatable="yes">Show status messages in chat</property>
-                    <property name="activatable-widget">show_status_switch</property>
-                    <child>
-                      <object class="GtkSwitch" id="show_status_switch">
-                        <property name="valign">center</property>
-                        <signal name="notify::active" handler="pp_chat_info_show_status_switch_changed_cb" swapped="yes"/>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-
-                <child>
-                  <object class="AdwActionRow">
-                    <property name="visible" bind-source="encryption_switch" bind-property="visible" bind-flags="sync-create"/>
-                    <property name="title" translatable="yes">Encryption</property>
-                    <property name="subtitle" translatable="yes">Encrypt Messages</property>
-                    <property name="activatable-widget">encryption_switch</property>
-                    <child>
-                      <object class="GtkSwitch" id="encryption_switch">
-                        <property name="valign">center</property>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-                <layout>
-                  <property name="column-span">2</property>
-                </layout>
-              </object>
-            </child>
-
-            <child>
-              <object class="GtkLabel">
-                <property name="visible" bind-source="key_list" bind-property="visible" bind-flags="sync-create"/>
-                <property name="halign">start</property>
-                <property name="margin-top">12</property>
-                <property name="label" translatable="yes">Fingerprints</property>
-                <style>
-                  <class name="heading"/>
-                </style>
-              </object>
-            </child>
-
-            <!-- Fingerprints/Device keys -->
-            <child>
-              <object class="GtkListBox" id="key_list">
-                <property name="visible">0</property>
-                <property name="hexpand">1</property>
-                <property name="vexpand">1</property>
-                <property name="selection-mode">none</property>
-                <style>
-                  <class name="content"/>
-                </style>
-                <layout>
-                  <property name="column-span">2</property>
-                </layout>
-              </object>
-            </child>
-
-            <child>
-              <object class="GtkLabel" id="user_list_label">
-                <property name="visible" bind-source="user_list" bind-property="visible" bind-flags="bidirectional|sync-create"/>
-                <property name="halign">start</property>
-                <property name="margin-top">12</property>
-                <style>
-                  <class name="heading"/>
-                </style>
-              </object>
-            </child>
-
-            <!-- User List -->
-            <child>
-              <object class="GtkListBox" id="user_list">
-                <property name="visible">0</property>
-                <property name="hexpand">1</property>
-                <property name="vexpand">1</property>
-                <style>
-                  <class name="content"/>
-                </style>
-                <layout>
-                  <property name="column-span">2</property>
-                </layout>
-              </object>
-            </child>
-
+    <!-- User keys -->
+    <child>
+      <object class="AdwPreferencesGroup" id="user_group">
+        <property name="title" translatable="yes">User List</property>
+        <child>
+          <object class="GtkListBox" id="user_list">
+            <property name="visible">0</property>
+            <property name="hexpand">1</property>
+            <property name="vexpand">1</property>
+            <style>
+              <class name="content"/>
+              <class name="boxed-list"/>
+            </style>
           </object>
         </child>
       </object> <!-- ./AdwPreferencesGroup -->
