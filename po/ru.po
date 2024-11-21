@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-10-09 13:08+0000\n"
-"PO-Revision-Date: 2024-10-10 14:06+0300\n"
+"POT-Creation-Date: 2024-11-14 10:42+0000\n"
+"PO-Revision-Date: 2024-11-14 14:16+0300\n"
 "Last-Translator: Artur So <arturios2005@mail.ru>\n"
 "Language-Team: Russian\n"
 "Language: ru\n"
@@ -17,7 +17,7 @@ msgstr ""
 "X-Generator: Poedit 3.5\n"
 
 #: data/sm.puri.Chatty.desktop.in.in:3 data/sm.puri.Chatty.metainfo.xml.in.in:6
-#: src/chatty-application.c:161 src/chatty-application.c:410
+#: src/chatty-application.c:157 src/chatty-application.c:389
 #: src/chatty-side-bar.c:357 src/ui/chatty-main-view.ui:4
 #: src/ui/chatty-side-bar.ui:4 src/ui/chatty-side-bar.ui:12
 #: src/ui/chatty-window.ui:4
@@ -29,9 +29,9 @@ msgid "SMS/MMS, Matrix and XMPP chat application"
 msgstr "Приложение для общения через SMS/MMS, Matrix и XMPP"
 
 #: data/sm.puri.Chatty.desktop.in.in:7
-msgid "XMPP;SMS;chat;jabber;messaging;modem;matrix"
+msgid "XMPP;SMS;chat;jabber;messaging;modem;matrix;"
 msgstr ""
-"XMPP;SMS;chat;jabber;messaging;modem;matrix;смс;чат;общение;модем;сообщение"
+"XMPP;SMS;chat;jabber;messaging;modem;matrix;смс;чат;общение;модем;сообщение;"
 
 #: data/sm.puri.Chatty.gschema.xml:7 data/sm.puri.Chatty.gschema.xml:8
 msgid "Whether the application is launching the first time"
@@ -253,36 +253,32 @@ msgstr ""
 "Вид подробностей чата в темной теме на мобильном телефоне под управлением "
 "Phosh."
 
-#: src/chatty-application.c:76
+#: src/chatty-application.c:73
 msgid "Show release version"
 msgstr "Показать версию выпуска"
 
-#: src/chatty-application.c:77
-msgid "Start in daemon mode"
-msgstr "Запустить в режиме службы"
-
-#: src/chatty-application.c:78
+#: src/chatty-application.c:74
 msgid "Disable all accounts"
 msgstr "Отключить все уч. записи"
 
-#: src/chatty-application.c:80
+#: src/chatty-application.c:76
 msgid "Enable libpurple debug messages"
 msgstr "Включить сообщения отладки libpurple"
 
-#: src/chatty-application.c:83
+#: src/chatty-application.c:79
 msgid "Enable verbose debug messages (repeat option for more verbosity)"
 msgstr ""
 "Включить подробные сообщения отладки (опция повтора для большей детализации)"
 
-#: src/chatty-application.c:164
+#: src/chatty-application.c:160
 msgid "An SMS and XMPP messaging client"
 msgstr "Клиент обмена сообщениями SMS и XMPP"
 
-#: src/chatty-application.c:172
+#: src/chatty-application.c:168
 msgid "translator-credits"
 msgstr "Artur So <arturios2005@mail.ru>"
 
-#: src/chatty-application.c:197
+#: src/chatty-application.c:193
 #, c-format
 msgid ""
 "There was an error displaying help:\n"
@@ -291,7 +287,7 @@ msgstr ""
 "Произошла ошибка при отображении справки:\n"
 "%s"
 
-#: src/chatty-application.c:199 src/chatty-manager.c:681
+#: src/chatty-application.c:195 src/chatty-manager.c:681
 #: src/chatty-message-bar.c:467 src/purple/chatty-purple-notify.c:35
 #: src/purple/chatty-purple.c:199 src/purple/chatty-purple.c:619
 #: src/dialogs/chatty-new-chat-dialog.c:226
@@ -335,33 +331,33 @@ msgstr "Нет архивных чатов"
 msgid "Start Chatting"
 msgstr "Начать общение"
 
-#: src/chatty-chat-page.c:195 src/chatty-chat-page.c:204
+#: src/chatty-chat-page.c:196 src/chatty-chat-page.c:205
 msgid "This is an MMS conversation"
 msgstr "Это беседа по MMS"
 
-#: src/chatty-chat-page.c:197 src/chatty-chat-page.c:212
-#: src/chatty-chat-page.c:218
+#: src/chatty-chat-page.c:198 src/chatty-chat-page.c:213
+#: src/chatty-chat-page.c:219
 msgid "Your messages are not encrypted, and carrier rates may apply"
 msgstr ""
 "Ваши сообщения не зашифрованы, и могут применяться тарифы оператора связи"
 
-#: src/chatty-chat-page.c:207
+#: src/chatty-chat-page.c:208
 msgid "This is an SMS/MMS conversation"
 msgstr "Это беседа по SMS/MMS"
 
-#: src/chatty-chat-page.c:210
+#: src/chatty-chat-page.c:211
 msgid "This is an SMS conversation"
 msgstr "Это беседа по SMS"
 
-#: src/chatty-chat-page.c:216
+#: src/chatty-chat-page.c:217
 msgid "This is an IM conversation"
 msgstr "Это беседа мгновенными сообщениями"
 
-#: src/chatty-chat-page.c:222
+#: src/chatty-chat-page.c:223
 msgid "Your messages are encrypted"
 msgstr "Ваши сообщения зашифрованы"
 
-#: src/chatty-chat-page.c:225
+#: src/chatty-chat-page.c:226
 msgid "Your messages are not encrypted"
 msgstr "Ваши сообщения не зашифрованы"
 
@@ -1964,6 +1960,9 @@ msgstr "Рабочий:"
 #: src/users/chatty-contact.c:328
 msgid "Other:"
 msgstr "Другой:"
+
+#~ msgid "Start in daemon mode"
+#~ msgstr "Запустить в режиме службы"
 
 #~ msgid "%"
 #~ msgid_plural "%"
