@@ -16,6 +16,7 @@
             <property name="width-request">40</property>
             <property name="height-request">40</property>
             <property name="focus-on-click">0</property>
+            <property name="tooltip-text" translatable="yes">Download file from server</property>
             <signal name="clicked" handler="chatty_progress_button_clicked_cb" swapped="yes"/>
             <style>
               <class name="circular"/>
