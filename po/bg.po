@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-11-18 13:53+0000\n"
-"PO-Revision-Date: 2024-12-26 19:18+0100\n"
+"POT-Creation-Date: 2024-12-26 18:30+0000\n"
+"PO-Revision-Date: 2024-12-26 19:31+0100\n"
 "Last-Translator: twlvnn kraftwerk <kraft_werk@tutanota.com>\n"
 "Language-Team: Bulgarian <dict-notifications@fsa-bg.org>\n"
 "Language: bg\n"
@@ -32,7 +32,9 @@ msgstr "Програма за разговаряне чрез SMS/MMS, Matrix и
 
 #: data/sm.puri.Chatty.desktop.in.in:7
 msgid "XMPP;SMS;chat;jabber;messaging;modem;matrix;"
-msgstr "чат;разговаряне;модем;смс;есемес;джабър;матрица;матрикс;съобщение;XMPP;SMS;chat;jabber;messaging;modem;matrix;"
+msgstr ""
+"чат;разговаряне;модем;смс;есемес;джабър;матрица;матрикс;съобщение;XMPP;SMS;"
+"chat;jabber;messaging;modem;matrix;"
 
 #: data/sm.puri.Chatty.gschema.xml:7 data/sm.puri.Chatty.gschema.xml:8
 msgid "Whether the application is launching the first time"
@@ -279,8 +281,8 @@ msgstr "Клиент за изпращане на съобщения по SMS и
 #: src/chatty-application.c:168
 msgid "translator-credits"
 msgstr ""
-"Twlvnn Kraftwerk &lt;<a "
-"href='mailto:kraft_werk@tutanota.com'>kraft_werk@tutanota.com</a>&gt;\n"
+"Twlvnn Kraftwerk &lt;<a href='mailto:kraft_werk@tutanota."
+"com'>kraft_werk@tutanota.com</a>&gt;\n"
 "\n"
 "\n"
 "Проектът за превод на GNOME има нужда от подкрепа.\n"
@@ -1480,6 +1482,10 @@ msgstr "Име (по избор)"
 msgid "Add to Contacts"
 msgstr "Добавяне в контакти"
 
+#: src/ui/chatty-file-item.ui:84
+msgid "Save…"
+msgstr "Запазване…"
+
 #: src/ui/chatty-info-dialog.ui:5 src/ui/chatty-main-view.ui:126
 msgid "Chat Details"
 msgstr "Подробности за чата"
@@ -1659,6 +1665,10 @@ msgstr "Идентификатор на регистрацията"
 #: src/ui/chatty-pp-account-details.ui:88
 msgid "Own Fingerprint"
 msgstr "Собствен отпечатък"
+
+#: src/ui/chatty-progress-button.ui:19
+msgid "Download file from server"
+msgstr "Изтеглане на файл от сървър"
 
 #: src/ui/chatty-settings-dialog.ui:35
 msgid "_Save"
