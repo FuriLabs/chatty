@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-11-14 10:42+0000\n"
-"PO-Revision-Date: 2024-11-14 13:56+0100\n"
+"POT-Creation-Date: 2024-12-26 18:30+0000\n"
+"PO-Revision-Date: 2024-12-27 20:48+0100\n"
 "Last-Translator: Daniel Rusek <mail@asciiwolf.com>\n"
 "Language-Team: Czech\n"
 "Language: cs\n"
@@ -1459,6 +1459,10 @@ msgstr "Jméno (volitelně)"
 msgid "Add to Contacts"
 msgstr "Přidat kontakt"
 
+#: src/ui/chatty-file-item.ui:84
+msgid "Save…"
+msgstr "Uložit…"
+
 #: src/ui/chatty-info-dialog.ui:5 src/ui/chatty-main-view.ui:126
 msgid "Chat Details"
 msgstr "Podrobnosti konverzace"
@@ -1638,6 +1642,10 @@ msgstr "ID účtu"
 #: src/ui/chatty-pp-account-details.ui:88
 msgid "Own Fingerprint"
 msgstr "Vlastní otisk"
+
+#: src/ui/chatty-progress-button.ui:19
+msgid "Download file from server"
+msgstr "Stáhnout soubor ze serveru"
 
 #: src/ui/chatty-settings-dialog.ui:35
 msgid "_Save"
