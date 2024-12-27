@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-11-14 10:42+0000\n"
-"PO-Revision-Date: 2024-11-15 02:52+0330\n"
+"POT-Creation-Date: 2024-12-26 18:30+0000\n"
+"PO-Revision-Date: 2024-12-27 14:25+0330\n"
 "Last-Translator: Danial Behzadi <dani.behzi@ubuntu.com>\n"
 "Language-Team: Persian <fa@li.org>\n"
 "Language: fa\n"
@@ -32,8 +32,7 @@ msgstr "برنامهٔ گپ XMPP، ماتریکس و پیامک"
 
 #: data/sm.puri.Chatty.desktop.in.in:7
 msgid "XMPP;SMS;chat;jabber;messaging;modem;matrix;"
-msgstr ""
-"XMPP;SMS;chat;jabber;messaging;modem;matrix;پیامک;گپ;جبر;پیام;مودم;ماتریکس;"
+msgstr "XMPP;SMS;chat;jabber;messaging;modem;matrix;پیامک;گپ;جبر;پیام;مودم;ماتریکس;"
 
 #: data/sm.puri.Chatty.gschema.xml:7 data/sm.puri.Chatty.gschema.xml:8
 msgid "Whether the application is launching the first time"
@@ -1447,6 +1446,10 @@ msgstr "نام (اختیاری)"
 msgid "Add to Contacts"
 msgstr "افزودن به آشنایان"
 
+#: src/ui/chatty-file-item.ui:84
+msgid "Save…"
+msgstr "ذخیره…"
+
 #: src/ui/chatty-info-dialog.ui:5 src/ui/chatty-main-view.ui:126
 msgid "Chat Details"
 msgstr "جزییات گپ"
@@ -1626,6 +1629,10 @@ msgstr "شناسهٔ حساب"
 #: src/ui/chatty-pp-account-details.ui:88
 msgid "Own Fingerprint"
 msgstr "اثرانگشت خود"
+
+#: src/ui/chatty-progress-button.ui:19
+msgid "Download file from server"
+msgstr "بارگیری پرونده از کارساز"
 
 #: src/ui/chatty-settings-dialog.ui:35
 msgid "_Save"
