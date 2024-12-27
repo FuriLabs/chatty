@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-11-14 10:42+0000\n"
-"PO-Revision-Date: 2024-11-14 17:57+0100\n"
+"POT-Creation-Date: 2024-12-26 18:30+0000\n"
+"PO-Revision-Date: 2024-12-27 20:23+0100\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian <gnome-si@googlegroups.com>\n"
 "Language: sl\n"
@@ -1482,6 +1482,10 @@ msgstr "Ime (neobvezno)"
 msgid "Add to Contacts"
 msgstr "Dodaj med stike"
 
+#: src/ui/chatty-file-item.ui:84
+msgid "Save…"
+msgstr "Shrani …"
+
 #: src/ui/chatty-info-dialog.ui:5 src/ui/chatty-main-view.ui:126
 msgid "Chat Details"
 msgstr "Podrobnosti klepeta"
@@ -1661,6 +1665,10 @@ msgstr "ID računa"
 #: src/ui/chatty-pp-account-details.ui:88
 msgid "Own Fingerprint"
 msgstr "Lasten prstni odtis"
+
+#: src/ui/chatty-progress-button.ui:19
+msgid "Download file from server"
+msgstr "Prenesi datoteko s strežnika"
 
 #: src/ui/chatty-settings-dialog.ui:35
 msgid "_Save"
