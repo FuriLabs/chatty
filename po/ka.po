@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-11-14 10:42+0000\n"
-"PO-Revision-Date: 2024-11-19 04:58+0100\n"
+"POT-Creation-Date: 2024-12-26 18:30+0000\n"
+"PO-Revision-Date: 2024-12-29 04:21+0100\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language-Team: Georgian <ka@li.org>\n"
 "Language: ka\n"
@@ -1455,6 +1455,10 @@ msgstr "სახელი (არასავალდებულო)"
 msgid "Add to Contacts"
 msgstr "კონტაქტებში ჩამატება"
 
+#: src/ui/chatty-file-item.ui:84
+msgid "Save…"
+msgstr "შენახვა…"
+
 #: src/ui/chatty-info-dialog.ui:5 src/ui/chatty-main-view.ui:126
 msgid "Chat Details"
 msgstr "საუბრის დეტალები"
@@ -1634,6 +1638,10 @@ msgstr "ანგარიშის ID"
 #: src/ui/chatty-pp-account-details.ui:88
 msgid "Own Fingerprint"
 msgstr "საკუთარი ანაბეჭდი"
+
+#: src/ui/chatty-progress-button.ui:19
+msgid "Download file from server"
+msgstr "ფაილის გადმოწერა სერვერიდან"
 
 #: src/ui/chatty-settings-dialog.ui:35
 msgid "_Save"
