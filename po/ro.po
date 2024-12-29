@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-11-14 10:42+0000\n"
-"PO-Revision-Date: 2024-11-17 13:52+0100\n"
+"POT-Creation-Date: 2024-12-26 18:30+0000\n"
+"PO-Revision-Date: 2024-12-28 20:51+0100\n"
 "Last-Translator: Antonio Marin <gnmer.6qxyg@slmail.me>\n"
 "Language-Team: Romanian <gnomero-list@lists.sourceforge.net>\n"
 "Language: ro\n"
@@ -1447,7 +1447,7 @@ msgstr "Porecla (facultativ)"
 
 #: src/ui/chatty-dialog-join-muc.ui:120
 msgid "Password (optional)"
-msgstr "Parola (opțional)"
+msgstr "Parola (facultativ)"
 
 #: src/ui/chatty-dialog-new-chat.ui:76
 msgid "Group Title"
@@ -1467,11 +1467,15 @@ msgstr "ID-ul contactului"
 
 #: src/ui/chatty-dialog-new-chat.ui:225
 msgid "Name (optional)"
-msgstr "Nume (opțional)"
+msgstr "Nume (facultativ)"
 
 #: src/ui/chatty-dialog-new-chat.ui:262
 msgid "Add to Contacts"
 msgstr "Adaugă la contacte"
+
+#: src/ui/chatty-file-item.ui:84
+msgid "Save…"
+msgstr "Salvează…"
 
 #: src/ui/chatty-info-dialog.ui:5 src/ui/chatty-main-view.ui:126
 msgid "Chat Details"
@@ -1652,6 +1656,10 @@ msgstr "ID-ul contului"
 #: src/ui/chatty-pp-account-details.ui:88
 msgid "Own Fingerprint"
 msgstr "Amprenta proprie"
+
+#: src/ui/chatty-progress-button.ui:19
+msgid "Download file from server"
+msgstr "Descarcă fișierul de la server"
 
 #: src/ui/chatty-settings-dialog.ui:35
 msgid "_Save"
