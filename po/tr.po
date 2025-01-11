@@ -3,15 +3,15 @@
 # This file is distributed under the same license as the chatty package.
 #
 # Sabri Ünal <yakushabb@gmail.com>, 2023, 2024.
-# Emin Tufan Çetin <etcetin@gmail.com>, 2019-2024.
+# Emin Tufan Çetin <etcetin@gmail.com>, 2019-2025.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-11-14 10:42+0000\n"
-"PO-Revision-Date: 2024-10-22 23:23+0300\n"
-"Last-Translator: Sabri Ünal <yakushabb@gmail.com>\n"
+"POT-Creation-Date: 2024-12-26 18:30+0000\n"
+"PO-Revision-Date: 2025-01-12 08:00+0300\n"
+"Last-Translator: Emin Tufan Çetin <etcetin@gmail.com>\n"
 "Language-Team: Turkish <takim@gnome.org.tr>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
@@ -1461,6 +1461,10 @@ msgstr "Ad (isteğe bağlı)"
 msgid "Add to Contacts"
 msgstr "Kişilere Ekle"
 
+#: src/ui/chatty-file-item.ui:84
+msgid "Save…"
+msgstr "Kaydet…"
+
 #: src/ui/chatty-info-dialog.ui:5 src/ui/chatty-main-view.ui:126
 msgid "Chat Details"
 msgstr "Konuşma Ayrıntıları"
@@ -1640,6 +1644,10 @@ msgstr "Kullanıcı Kimliği"
 #: src/ui/chatty-pp-account-details.ui:88
 msgid "Own Fingerprint"
 msgstr "Kendi Parmak İzi"
+
+#: src/ui/chatty-progress-button.ui:19
+msgid "Download file from server"
+msgstr "Dosyayı sunucudan indir"
 
 #: src/ui/chatty-settings-dialog.ui:35
 msgid "_Save"
