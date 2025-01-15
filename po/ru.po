@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-11-14 10:42+0000\n"
-"PO-Revision-Date: 2024-11-14 14:16+0300\n"
+"POT-Creation-Date: 2024-12-26 18:30+0000\n"
+"PO-Revision-Date: 2025-01-13 17:43+0300\n"
 "Last-Translator: Artur So <arturios2005@mail.ru>\n"
 "Language-Team: Russian\n"
 "Language: ru\n"
@@ -1476,6 +1476,10 @@ msgstr "Имя (необязательно)"
 msgid "Add to Contacts"
 msgstr "Добавить в контакты"
 
+#: src/ui/chatty-file-item.ui:84
+msgid "Save…"
+msgstr "Сохранить…"
+
 #: src/ui/chatty-info-dialog.ui:5 src/ui/chatty-main-view.ui:126
 msgid "Chat Details"
 msgstr "Подробности чата"
@@ -1655,6 +1659,10 @@ msgstr "ID уч. записи"
 #: src/ui/chatty-pp-account-details.ui:88
 msgid "Own Fingerprint"
 msgstr "Собственный отпечаток"
+
+#: src/ui/chatty-progress-button.ui:19
+msgid "Download file from server"
+msgstr "Скачать файл с сервера"
 
 #: src/ui/chatty-settings-dialog.ui:35
 msgid "_Save"
