@@ -1027,14 +1027,6 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
 
   recipients = g_variant_dict_lookup_value (&dict, "Recipients", G_VARIANT_TYPE_STRING_ARRAY);
 
-  if (rx_modem_number && *rx_modem_number) {
-    if (g_strcmp0 (known_modem_number, rx_modem_number) != 0) {
-      g_warning ("Received Modem Number %s different than current modem number %s",
-                 known_modem_number, rx_modem_number);
-      return NULL;
-    }
-  }
-
   if (direction == CHATTY_DIRECTION_IN) {
     who = g_string_new (payload->sender);
   } else {
