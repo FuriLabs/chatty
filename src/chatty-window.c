@@ -591,6 +591,10 @@ static void
 on_search_chat_activated (GtkWidget *widget, const char *action_name, GVariant *param)
 {
   ChattyWindow *self = CHATTY_WINDOW (widget);
+  AdwNavigationSplitView *split_view = ADW_NAVIGATION_SPLIT_VIEW (self->split_view);
+
+  if (adw_navigation_split_view_get_collapsed (split_view))
+    adw_navigation_split_view_set_show_content (split_view, FALSE);
 
   chatty_side_bar_toggle_search (CHATTY_SIDE_BAR (self->side_bar));
 }
