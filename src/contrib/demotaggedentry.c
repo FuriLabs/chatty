@@ -175,6 +175,14 @@ demo_tagged_entry_remove_tag (DemoTaggedEntry *entry,
   gtk_widget_unparent (tag);
 }
 
+GtkWidget *
+demo_tagged_entry_get_text_entry (DemoTaggedEntry *entry)
+{
+  g_return_val_if_fail (DEMO_IS_TAGGED_ENTRY (entry), NULL);
+
+  return entry->text;
+}
+
 struct _DemoTaggedEntryTag
 {
   GtkWidget parent;

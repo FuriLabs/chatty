@@ -364,10 +364,18 @@ chatty_side_bar_set_show_archived (ChattySideBar *self,
 void
 chatty_side_bar_toggle_search (ChattySideBar *self)
 {
+  GtkWidget *entry;
   gboolean active;
+  gboolean has_focus;
 
   g_return_if_fail (CHATTY_IS_SIDE_BAR (self));
 
+  entry = demo_tagged_entry_get_text_entry (DEMO_TAGGED_ENTRY (self->chats_search_entry));
+  has_focus = gtk_widget_has_focus (entry);
   active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (self->search_button));
-  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (self->search_button), !active);
+
+  if (active && !has_focus)
+    gtk_widget_grab_focus (self->chats_search_entry);
+  else
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (self->search_button), !active);
 }
