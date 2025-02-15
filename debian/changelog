@@ -1,3 +1,11 @@
+chatty (0.8.6~rc.0-2) unstable; urgency=medium
+
+  * chatty-file-item: Don't assume mime type is set.
+    Otherwise we crash with every matrix attachment
+    download. (Closes: #1096022)
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 15 Feb 2025 12:32:54 +0100
+
 chatty (0.8.6~rc.0-1) unstable; urgency=medium
 
   * New upstream release
