@@ -11,7 +11,7 @@ The pgp test is flaky and we don't use PGP in chatty yet
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/tests/meson.build b/tests/meson.build
-index aa581dd..d1757ff 100644
+index 8b04342..99f1e31 100644
 --- a/tests/meson.build
 +++ b/tests/meson.build
 @@ -22,11 +22,11 @@ endif

@@ -1,0 +1,41 @@
+From: =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
+Date: Wed, 11 Dec 2024 21:45:29 +0100
+Subject: chatty-file-item: Don't assume mime type is set
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+This e.g. isn't the case for matrix downloads as
+the mime type isn't yet known.
+
+This fixes a crash when saving any attachment in a matrix chat.
+
+Fixes 4e46e701 ("file-item: name vcard and vcal after contact and event name if saving")
+
+Signed-off-by: Guido Günther <agx@sigxcpu.org>
+(cherry picked from commit ce55bb6046af9ccaf9c907268d2fa794eefcd6a9)
+---
+ src/chatty-file-item.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/chatty-file-item.c b/src/chatty-file-item.c
+index fe24e0c..e4b18db 100644
+--- a/src/chatty-file-item.c
++++ b/src/chatty-file-item.c
+@@ -489,14 +489,14 @@ download_button_clicked (ChattyFileItem *self)
+   home_folder = g_file_new_build_filename (g_get_home_dir (), NULL);
+   gtk_file_dialog_set_initial_folder (dialog, home_folder);
+ 
+-  if (strstr (chatty_file_get_mime_type (self->file), "vcard")) {
++  if (g_strcmp0 (chatty_file_get_mime_type (self->file), "vcard") == 0) {
+     g_autofree char *contact_title = NULL;
+     g_autofree char *filename = NULL;
+ 
+     contact_title = chatty_utils_vcard_get_contact_title (file_to_save);
+     filename = g_strdup_printf ("%s.vcf", contact_title);
+     gtk_file_dialog_set_initial_name (dialog,  filename);
+-  } else if (strstr (chatty_file_get_mime_type (self->file), "calendar")) {
++  } else if (g_strcmp0 (chatty_file_get_mime_type (self->file), "calendar") == 0) {
+     g_autofree char *event_title = NULL;
+     g_autofree char *filename = NULL;
+ 
