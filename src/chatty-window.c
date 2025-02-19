@@ -168,7 +168,7 @@ window_chat_list_selection_changed (ChattyWindow   *self,
   if (!chat_list->len) {
     GListModel *model;
 
-    model = chatty_chat_list_get_filter_model (CHATTY_CHAT_LIST (self->chat_list));
+    model = chatty_chat_list_get_model (CHATTY_CHAT_LIST (self->chat_list));
     if (g_list_model_get_n_items (model) == 0)
       chatty_window_set_item (self, NULL);
 

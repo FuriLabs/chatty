@@ -76,7 +76,7 @@ side_bar_update_search_mode (ChattySideBar *self)
 
   g_assert (CHATTY_IS_SIDE_BAR (self));
 
-  model = chatty_chat_list_get_filter_model (CHATTY_CHAT_LIST (self->chat_list));
+  model = chatty_chat_list_get_model (CHATTY_CHAT_LIST (self->chat_list));
   has_child = g_list_model_get_n_items (model) > 0;
 
   gtk_widget_set_visible (self->search_button, has_child);
@@ -207,7 +207,7 @@ chatty_side_bar_map (GtkWidget *widget)
 
   side_bar_active_protocols_changed_cb (self);
 
-  g_signal_connect_object (chatty_chat_list_get_filter_model (CHATTY_CHAT_LIST (self->chat_list)),
+  g_signal_connect_object (chatty_chat_list_get_model (CHATTY_CHAT_LIST (self->chat_list)),
                            "items-changed",
                            G_CALLBACK (side_bar_update_search_mode), self,
                            G_CONNECT_SWAPPED);

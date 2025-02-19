@@ -490,9 +490,17 @@ chatty_chat_list_refilter (ChattyChatList *self)
 }
 
 GListModel *
-chatty_chat_list_get_filter_model (ChattyChatList *self)
+chatty_chat_list_get_model (ChattyChatList *self)
 {
   g_return_val_if_fail (CHATTY_IS_CHAT_LIST (self), NULL);
 
   return G_LIST_MODEL (self->archive_filter_model);
+}
+
+GListModel *
+chatty_chat_list_get_filter_model (ChattyChatList *self)
+{
+  g_return_val_if_fail (CHATTY_IS_CHAT_LIST (self), NULL);
+
+  return G_LIST_MODEL (self->filter_model);
 }
