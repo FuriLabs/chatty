@@ -24,13 +24,10 @@
 #include "chatty-log.h"
 
 /**
- * SECTION: chatty-chat
- * @title: ChattyChat
- * @short_description: An abstraction over #PurpleConversation
- * @include: "chatty-chat.h"
- *
- * libpurple doesn’t have a nice OOP interface for managing anything.
- * This class hides all the complexities surrounding it.
+ * SECTION: chatty-ma-chat
+ * @title: ChattyMaChat
+ * @short_description: An abstraction over libcmatrix
+ * @include: "chatty-ma-chat.h"
  */
 
 struct _ChattyMaChat
