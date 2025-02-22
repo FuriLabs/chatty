@@ -48,6 +48,16 @@ chatty_ma_user_row_update (ChattyMaUserRow *self)
 }
 
 static void
+on_copy_id_action_activated (GtkWidget *widget, const char *action_name, GVariant *target)
+{
+  ChattyMaUserRow *self = CHATTY_MA_USER_ROW (widget);
+  GdkClipboard *clipboard =  gdk_display_get_clipboard (gdk_display_get_default());
+
+  gdk_clipboard_set_text (clipboard,
+                          chatty_item_get_username (CHATTY_ITEM (self->buddy)));
+}
+
+static void
 chatty_ma_user_row_set_property (GObject *object,
                                  guint prop_id,
                                  const GValue *value,
@@ -99,6 +109,8 @@ chatty_ma_user_row_class_init (ChattyMaUserRowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyMaUserRow, display_name);
   gtk_widget_class_bind_template_child (widget_class, ChattyMaUserRow, user_id);
 
+  gtk_widget_class_install_action (widget_class, "ma-user-row.copy_id", NULL,
+                                   on_copy_id_action_activated);
   /**
    * ChattyMaUserRow:buddy:
    *

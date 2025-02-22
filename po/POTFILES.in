@@ -88,6 +88,7 @@ src/ui/chatty-mm-chat-info.ui
 src/ui/chatty-fp-row.ui
 src/ui/chatty-list-row.ui
 src/ui/chatty-ma-account-details.ui
+src/ui/chatty-ma-user-row.ui
 src/ui/chatty-pp-account-details.ui
 src/ui/chatty-progress-button.ui
 src/ui/chatty-settings-dialog.ui
