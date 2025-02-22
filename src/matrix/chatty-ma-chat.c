@@ -718,6 +718,16 @@ chatty_ma_chat_get_protocols (ChattyItem *item)
   return CHATTY_PROTOCOL_MATRIX;
 }
 
+static GListModel *
+chatty_ma_chat_get_users (ChattyChat *chat)
+{
+  ChattyMaChat *self = (ChattyMaChat *)chat;
+
+  g_assert (CHATTY_IS_MA_CHAT (self));
+
+  return G_LIST_MODEL (self->buddy_list);
+}
+
 static void
 ma_chat_get_avatar_cb (GObject      *object,
                        GAsyncResult *result,
@@ -802,6 +812,7 @@ chatty_ma_chat_class_init (ChattyMaChatClass *klass)
   chat_class->is_loading_history = chatty_ma_chat_is_loading_history;
   chat_class->get_messages = chatty_ma_chat_get_messages;
   chat_class->get_account  = chatty_ma_chat_get_account;
+  chat_class->get_users = chatty_ma_chat_get_users;
   chat_class->get_encryption = chatty_ma_chat_get_encryption;
   chat_class->set_encryption_async = chatty_ma_chat_set_encryption_async;
   chat_class->set_encryption_finish = chatty_ma_chat_set_encryption_finish;
