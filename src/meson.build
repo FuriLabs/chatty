@@ -78,6 +78,7 @@ ui_files = files(
   'ui/chatty-ma-chat-info.ui',
   'ui/chatty-message-row.ui',
   'ui/chatty-mm-chat-info.ui',
+  'ui/chatty-ma-user-row.ui',
   'ui/chatty-settings-dialog.ui',
   'ui/chatty-window.ui',
 )
