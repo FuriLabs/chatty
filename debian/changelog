@@ -1,8 +1,9 @@
-chatty (0.8.6-1) UNRELEASED; urgency=medium
+chatty (0.8.6-1) unstable; urgency=medium
 
   * New upstream release
+  * d/patches: Remove patches applied upstream
 
- -- Evangelos Ribeiro Tzaras <devrtz-debian@fortysixandtwo.eu>  Sun, 23 Feb 2025 17:09:38 +0100
+ -- Evangelos Ribeiro Tzaras <devrtz-debian@fortysixandtwo.eu>  Sun, 23 Feb 2025 17:17:20 +0100
 
 chatty (0.8.6~rc.0-2) unstable; urgency=medium
 
