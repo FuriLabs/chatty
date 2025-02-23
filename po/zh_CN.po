@@ -1,22 +1,23 @@
-# Georgian translation for chatty.
-# Copyright (C) 2024 chatty's COPYRIGHT HOLDER
+# Chinese (China) translation for chatty.
+# Copyright (C) 2025 chatty's COPYRIGHT HOLDER
 # This file is distributed under the same license as the chatty package.
-# Ekaterine Papava <papava.e@gtu.ge>, 2024.
+# BKLR_sk <bklrsk@gmail.com>, 2024.
+# LS-Shandong <ls-shandong@outlook.com>, 2025.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: chatty main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-12-26 18:30+0000\n"
-"PO-Revision-Date: 2024-12-29 04:21+0100\n"
-"Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
-"Language-Team: Georgian <ka@li.org>\n"
-"Language: ka\n"
+"POT-Creation-Date: 2025-01-12 11:30+0000\n"
+"PO-Revision-Date: 2025-01-18 10:53-0500\n"
+"Last-Translator: LS-Shandong <ls-shandong@outlook.com>\n"
+"Language-Team: Chinese - China <i18n-zh@googlegroups.com>\n"
+"Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Poedit 2.4.3\n"
 
 #: data/sm.puri.Chatty.desktop.in.in:3 data/sm.puri.Chatty.metainfo.xml.in.in:6
 #: src/chatty-application.c:157 src/chatty-application.c:389
@@ -24,269 +25,253 @@ msgstr ""
 #: src/ui/chatty-side-bar.ui:4 src/ui/chatty-side-bar.ui:12
 #: src/ui/chatty-window.ui:4
 msgid "Chats"
-msgstr "საუბრები"
+msgstr "聊天"
 
 #: data/sm.puri.Chatty.desktop.in.in:6
 msgid "SMS/MMS, Matrix and XMPP chat application"
-msgstr "SMS/MMS, Matrix და XMPP საუბრის აპლიკაცია"
+msgstr "短信/彩信、Matrix 与 XMPP 聊天应用程序"
 
 #: data/sm.puri.Chatty.desktop.in.in:7
 msgid "XMPP;SMS;chat;jabber;messaging;modem;matrix;"
-msgstr "XMPP;SMS;საუბარი;jabber;შეტყობინებები;მოდემი;matrix;"
+msgstr "XMPP;SMS;chat;jabber;messaging;modem;matrix;"
 
 #: data/sm.puri.Chatty.gschema.xml:7 data/sm.puri.Chatty.gschema.xml:8
 msgid "Whether the application is launching the first time"
-msgstr "როცა აპლიკაცია პირველად ეშვება"
+msgstr "应用程序是否首次启动"
 
 #: data/sm.puri.Chatty.gschema.xml:13
 msgid "Country code in ISO 3166-1 alpha-2 format"
-msgstr "ქვეყნის კოდი ISO 3166-1 alpha-2 ფორმატში"
+msgstr "ISO 3166-1 alpha-2 格式的国家代码"
 
 #: data/sm.puri.Chatty.gschema.xml:14
 msgid "Two letter country code of the last available SIM/Network"
-msgstr "ბოლოს შესული SIM/ქსელის ორსიმბოლოიანი ქვეყნის კოდი"
+msgstr "最后可用的 SIM/网络的双字母国家代码"
 
 #: data/sm.puri.Chatty.gschema.xml:19
 msgid "Send message read receipts"
-msgstr "საუბრის წაკითხულობის შეტყობინების გაგზავნა"
+msgstr "发送消息已读回执"
 
 #: data/sm.puri.Chatty.gschema.xml:20
 msgid "Whether to send the status of the message if read"
-msgstr "გააგზავნოს თუ არა სტატუსი, წაკითხული იყო თუ არა შეტყობინება"
+msgstr "如果已读，是否发送消息状态"
 
 #: data/sm.puri.Chatty.gschema.xml:25
 msgid "Message carbon copies"
-msgstr "შეტყობინების ასლები"
+msgstr "消息抄送"
 
 #: data/sm.puri.Chatty.gschema.xml:26 src/ui/chatty-settings-dialog.ui:661
 msgid "Share chat history among devices"
-msgstr "საუბრის ისტორიის მოწყობილობებს შორის გაზიარება"
+msgstr "在设备间共享聊天记录"
 
 #: data/sm.puri.Chatty.gschema.xml:31
 msgid "Enable Message Archive Management"
-msgstr "შეტყობინებების არქივის მმართველის ჩართვა"
+msgstr "启用消息存档管理(MAM)"
 
 #: data/sm.puri.Chatty.gschema.xml:32
 msgid "Enable MAM archive synchronization from the server"
-msgstr "შეტყობინებების არქივის სერვერიდან სინქრონიზაციის ჩართვა"
+msgstr "从服务器启用 MAM 存档同步"
 
 #: data/sm.puri.Chatty.gschema.xml:37
 msgid "Enable purple"
-msgstr "Purple-ის ჩართვა"
+msgstr "启用 purple"
 
 #: data/sm.puri.Chatty.gschema.xml:38
 msgid "Enable purple accounts"
-msgstr "Purple-ის ანგარიშების ჩართვა"
+msgstr "启用 purple 账户"
 
 #: data/sm.puri.Chatty.gschema.xml:43
 msgid "Send typing notifications"
-msgstr "კრეფის შეტყობინების გაგზავნა"
+msgstr "发送正在输入通知"
 
 #: data/sm.puri.Chatty.gschema.xml:44
 msgid "Whether to Send typing notifications"
-msgstr "გააგზავნოს თუ არა კრეფის დაწყების შეტყობინება"
+msgstr "是否发送正在输入通知"
 
 #: data/sm.puri.Chatty.gschema.xml:49
 msgid "Strip Tracking IDs"
-msgstr "ტრეკინგი ID-ების მოცილება"
+msgstr "除去跟踪 ID"
 
 #: data/sm.puri.Chatty.gschema.xml:50
 msgid "Whether to Remove Tracking IDs from URLs Automatically"
-msgstr "წავშალო თუ არა URL-ებიდან ტრეკინგის ID-ები ავტომატურად"
+msgstr "是否自动删除 URL 中的跟踪 ID"
 
 #: data/sm.puri.Chatty.gschema.xml:55
 msgid "Whether Strip Tracking IDs was shown"
-msgstr "არის თუ არა ნაჩვენები მოცილებული ტრეკინგის ID-ები"
+msgstr "是否显示除去跟踪 ID"
 
 #: data/sm.puri.Chatty.gschema.xml:56
 msgid "Whether the Tracking IDs dialog has been shown"
-msgstr "არის თუ არა ნაჩვენები ტრეკინგის ID-ების დიალოგი"
+msgstr "是否已显示跟踪 ID 对话框"
 
 #: data/sm.puri.Chatty.gschema.xml:61
 msgid "Render Attachments"
-msgstr "დანართების რენდერი"
+msgstr "预览附件"
 
 #: data/sm.puri.Chatty.gschema.xml:62
 msgid "Whether to Render Attachments or not"
-msgstr "დავარენდერო თუ არა დანართები"
+msgstr "是否预览附件"
 
 #: data/sm.puri.Chatty.gschema.xml:67 data/sm.puri.Chatty.gschema.xml:68
 msgid "Mark Idle users differently"
-msgstr "უმოქმედო მომხმარებლების სხვა ფერად მონიშვნა"
+msgstr "以不同方式标记空闲的用户"
 
 #: data/sm.puri.Chatty.gschema.xml:73 data/sm.puri.Chatty.gschema.xml:74
 msgid "Indicate unknown contacts"
-msgstr "უცნობი კონტაქტების მონიშვნა"
+msgstr "指明未知联系人"
 
 #: data/sm.puri.Chatty.gschema.xml:79
 msgid "Convert text to emoticons"
-msgstr "ტექსტის სიცილაკებში გადაყვანა"
+msgstr "将文本转换为表情符号"
 
 #: data/sm.puri.Chatty.gschema.xml:80
 msgid "Convert text matching emoticons as real emoticons"
-msgstr "ტექსტის შესაბამისი სიცილაკების გადაქცევა რეალურ სიცილაკებად"
+msgstr "将匹配表情符号的文本转换为真正的表情符号"
 
 #: data/sm.puri.Chatty.gschema.xml:85
 msgid "Enter key sends the message"
-msgstr "ღილაკი Enter აგზავნის შეტყობინებას"
+msgstr "回车键发送信息"
 
 #: data/sm.puri.Chatty.gschema.xml:86
 msgid "Whether pressing Enter key sends the message"
-msgstr "აგზავნის თუ არა ღილაკი Enter შეტყობინებებს"
+msgstr "是否按回车键发送信息"
 
 #: data/sm.puri.Chatty.gschema.xml:91
 msgid "Request SMS delivery reports"
-msgstr "SMS-ის მიწოდების ანგარიშის მოთხოვნა"
+msgstr "索取短信发送报告"
 
 #: data/sm.puri.Chatty.gschema.xml:92
 msgid "Whether to request delivery reports for outgoing SMS"
-msgstr "მოითხოვოს თუ არა SMS-ის მიწოდების დადასტურება"
+msgstr "是否索取发出短信的发送报告"
 
 #: data/sm.puri.Chatty.gschema.xml:97
 msgid "Clear out stuck SMS"
-msgstr "გაჭედილი SMS-ების მოცილება"
+msgstr "清除卡住的短信"
 
 #: data/sm.puri.Chatty.gschema.xml:98
 msgid ""
 "Whether Chatty should clear out SMS that are stuck in receiving/unknown state"
-msgstr ""
-"უნდა მოაცილოს თუ არა Chatty-მა SMS-ები, როლებიც გაჭედილია მიღების/უცნობ "
-"მდგომარეობაში"
+msgstr "Chatty 是否应清除停留在接收中或未知状态的短信"
 
 #: data/sm.puri.Chatty.gschema.xml:103
 msgid "Enable experimental features"
-msgstr "ექსპერიმენტალური თვისებების ჩართვა"
+msgstr "启用实验性功能"
 
 #: data/sm.puri.Chatty.gschema.xml:104
 msgid "Whether to enable experimental features"
-msgstr "ჩართოს თუ არა ექსპერიმენტალური თვისებები"
+msgstr "是否启用实验性功能"
 
 #: data/sm.puri.Chatty.gschema.xml:109
 msgid "Window maximized"
-msgstr "გადიდებული ფანჯარა"
+msgstr "窗口最大化"
 
 #: data/sm.puri.Chatty.gschema.xml:110
 msgid "Window maximized state"
-msgstr "ფანჯრის სრულად გაშლილი მდგომარეობა"
+msgstr "窗口最大化状态"
 
 #: data/sm.puri.Chatty.gschema.xml:115
 msgid "Window size"
-msgstr "ფანჯრის ზომა"
+msgstr "窗口尺寸"
 
 #: data/sm.puri.Chatty.gschema.xml:116
 msgid "Window size (width, height)."
-msgstr "ფანჯრის ზომა (სიგანე, სიმაღლე)"
+msgstr "窗口尺寸（宽、高）。"
 
 #: data/sm.puri.Chatty.gschema.xml:124
 msgid "PGP user ID"
-msgstr "PGP მომხმარებლის ID"
+msgstr "PGP 用户 ID"
 
 #: data/sm.puri.Chatty.gschema.xml:125
 msgid "The user ID for PGP that Chatty will use for outgoing messages"
-msgstr ""
-"მომხმარებლის ID PGP-სთვის, რომელსაც Chatty გამავალი შეტყობინებებისთვის "
-"გამოიყენებს"
+msgstr "Chatty 发送信息时将使用的 PGP 用户 ID"
 
 #: data/sm.puri.Chatty.gschema.xml:130 src/ui/chatty-settings-dialog.ui:480
 msgid "Public Key Fingerprint"
-msgstr "საჯარო გასაღების ანაბეჭდი"
+msgstr "公钥指纹"
 
 #: data/sm.puri.Chatty.gschema.xml:131
 msgid "The default keyid the remote side should use to encrypt messages to us"
-msgstr ""
-"ნაგულისხმევი გასაღების ID დაშორებული მხრისთვის, რომელიც მან შეტყობინებების "
-"ჩვენთვის დასაშიფრად უნდა გამოიყენოს"
+msgstr "远端向我们加密信息时应使用的默认密钥 ID"
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:7
 msgid "Messaging application for mobile and desktop"
-msgstr "საუბრის აპლიკაცია კომპიუტერისა და მობილურისთვის"
+msgstr "手机和桌面消息应用程序"
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:9
 msgid ""
 "Chats is a simple to use to messaging app for 1:1 communication and small "
 "groups supporting SMS, MMS, XMPP and Matrix."
 msgstr ""
-"Chats მარტივი აპლიკაციაა 1:1 კომუნიკაციისთვის და პატარა ჯგუფებისთვის, SMS, "
-"MMS, XMPP და Matrix-ის მხარდაჭერით."
+"Chats 是一款简单易用的消息应用程序，适用于一对一交流和小型群组交流，支持短"
+"信、彩信、XMPP 和 Matrix。"
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:23
 msgid "Folded view of a chat using the light theme."
-msgstr "ჩატის დაკეცილი ხედი ღია თემის გამოყენებით."
+msgstr "使用浅色主题的聊天折叠视图。"
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:27
 msgid "Folded view of a chat using the dark theme."
-msgstr "ჩატის დაკეცილი ხედი მუქი თემის გამოყენებით."
+msgstr "使用暗色主题的聊天折叠视图。"
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:31
 msgid "Unfolded view of a chat and the chat list in the sidebar."
-msgstr "ჩატისა და ჩატის სიის გაშლილი ხედი გვერდითა ზოლში."
+msgstr "侧边栏中的聊天展开视图和聊天列表。"
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:35
 msgid ""
 "The chat view using the dark theme as seen on a mobile phone running Phosh "
 "with unfolded keyboard."
-msgstr ""
-"ჩეთის ხედი მუქი თემის გამოყენებით, როგორც ჩანს მობილური ტელეფონით, რომელიც "
-"მუშაობს Phosh გაშლილი კლავიატურით."
+msgstr "在运行 Phosh 的手机上看到的使用暗色主题的聊天视图，键盘未折叠。"
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:39
 msgid ""
 "The chat list view using the light theme as seen on a mobile phone running "
 "Phosh."
-msgstr ""
-"ჩეთის სია უყურებს სინათლის თემას, როგორც ჩანს მობილური ტელეფონით, რომელიც "
-"მუშაობს Phosh."
+msgstr "在运行 Phosh 的手机上看到的使用浅色主题的聊天列表视图。"
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:43
 msgid ""
 "The SMS/MMS preferences using the light theme as seen on a mobile phone "
 "running Phosh."
-msgstr ""
-"SMS/MMS პარამეტრები ღია თემის გამოყენებით, როგორც ჩანს მობილური ტელეფონით, "
-"რომელიც მუშაობს Phosh."
+msgstr "在运行 phosh 的手机上看到的使用浅色主题的短信/彩信首选项"
 
 #: data/sm.puri.Chatty.metainfo.xml.in.in:48
 msgid ""
 "The chat details view using the dark theme as seen on a mobile phone running "
 "Phosh."
-msgstr ""
-"ჩეთის დეტალები ხედი მუქი თემის გამოყენებისას, როგორც ჩანს მობილური "
-"ტელეფონით, რომელიც მუშაობს Phosh."
+msgstr "在运行 Phosh 的手机上看到的使用暗色主题的聊天详情视图。"
 
 #: src/chatty-application.c:73
 msgid "Show release version"
-msgstr "ვერსიის ჩვენება"
+msgstr "显示发布版本"
 
 #: src/chatty-application.c:74
 msgid "Disable all accounts"
-msgstr "ყველა ანგარიშის გამორთვა"
+msgstr "停用所有账户"
 
 #: src/chatty-application.c:76
 msgid "Enable libpurple debug messages"
-msgstr "Libpurble-ის გამართვის შეტყობინებების ჩართვა"
+msgstr "启用 libpurple 调试信息"
 
 #: src/chatty-application.c:79
 msgid "Enable verbose debug messages (repeat option for more verbosity)"
-msgstr ""
-"დამატებითი გამართვის შეტყობინებების ჩართვა (გაიმეორეთ პარამეტრი მეტი "
-"შეტყობინებისთვის)"
+msgstr "启用冗长调试信息（重复该选项可获得更多冗长信息）"
 
 #: src/chatty-application.c:160
 msgid "An SMS and XMPP messaging client"
-msgstr "SMS და XMPP შეტყობინებების კლიენტი"
+msgstr "一个 SMS 和 XMPP 消息客户端"
 
 #: src/chatty-application.c:168
 msgid "translator-credits"
-msgstr "ეკატერინე პაპავა"
+msgstr ""
+"BKLR_sk <bklrsk@gmail.com>,2024\n"
+"LS-Shandong <ls-shandong@outlook.com>,2025"
 
 #: src/chatty-application.c:193
 #, c-format
 msgid ""
 "There was an error displaying help:\n"
 "%s"
-msgstr ""
-"დახმარების ჩვენების შეცდომა:\n"
-"%s"
+msgstr "显示帮助时出现错误：%s"
 
 #: src/chatty-application.c:195 src/chatty-manager.c:681
 #: src/chatty-message-bar.c:467 src/purple/chatty-purple-notify.c:35
@@ -302,96 +287,96 @@ msgstr ""
 #: src/dialogs/chatty-settings-dialog.c:895
 #: src/dialogs/chatty-settings-dialog.c:1529 src/ui/chatty-main-view.ui:73
 msgid "Close"
-msgstr "დახურვა"
+msgstr "关闭"
 
 #: src/chatty-avatar.c:182 src/chatty-contact-list.c:393
 msgid "Send To"
-msgstr "რეციპიენტისთვის გაგზავნა"
+msgstr "发送至"
 
 #: src/chatty-chat-list.c:174
 msgid "Select a contact with the <b>“+”</b> button in the titlebar."
-msgstr "მონიშნეთ კონტაქტი სათაურის ზოლში <b>“+”</b> ღილაკით."
+msgstr "使用标题栏中的 <b>“+”</b> 按钮选择联系人。"
 
 #: src/chatty-chat-list.c:178
 msgid "Add instant messaging accounts in Preferences."
-msgstr "პარამეტრებში დაამატეთ სწრაფი შეტყობინების ანგარიშები."
+msgstr "在首选项中添加即时信息账户。"
 
 #: src/chatty-chat-list.c:214 src/chatty-contact-list.c:282
 msgid "No Search Results"
-msgstr "ძებნის შედეგების გარეშე"
+msgstr "无搜索结果"
 
 #: src/chatty-chat-list.c:215
 msgid "Try different search"
-msgstr "სცადეთ სხვა ძებნა"
+msgstr "尝试不同的搜索方式"
 
 #: src/chatty-chat-list.c:220
 msgid "No archived chats"
-msgstr "დაარქივებული ჩატების გარეშე"
+msgstr "没有聊天归档"
 
 #: src/chatty-chat-list.c:222
 msgid "Start Chatting"
-msgstr "საუბრის დაწყება"
+msgstr "开始聊天"
 
 #: src/chatty-chat-page.c:196 src/chatty-chat-page.c:205
 msgid "This is an MMS conversation"
-msgstr "ეს MMS საუბარია"
+msgstr "这是彩信对话"
 
 #: src/chatty-chat-page.c:198 src/chatty-chat-page.c:213
 #: src/chatty-chat-page.c:219
 msgid "Your messages are not encrypted, and carrier rates may apply"
-msgstr "თქვენი შეტყობინებები დაუშიფრავია და შეიძლება გადასახადებიც მოგიწიოთ"
+msgstr "您的信息未加密，且运营商可能会收取一定费用"
 
 #: src/chatty-chat-page.c:208
 msgid "This is an SMS/MMS conversation"
-msgstr "ეს SMS/MMS საუბარია"
+msgstr "这是短信/彩信对话"
 
 #: src/chatty-chat-page.c:211
 msgid "This is an SMS conversation"
-msgstr "ეს SMS საუბარია"
+msgstr "这是短信对话"
 
 #: src/chatty-chat-page.c:217
 msgid "This is an IM conversation"
-msgstr "ეს IM საუბარია"
+msgstr "这是即时通讯对话"
 
 #: src/chatty-chat-page.c:223
 msgid "Your messages are encrypted"
-msgstr "შეტყობინებები დაშიფრულია"
+msgstr "您的消息已加密"
 
 #: src/chatty-chat-page.c:226
 msgid "Your messages are not encrypted"
-msgstr "შეტყობინებები დაუშიფრავია"
+msgstr "您的消息未加密"
 
 #: src/chatty-chat.c:726
 msgid "Empty room"
-msgstr "ცარიელი ოთახი"
+msgstr "空房间"
 
 #. TRANSLATORS: %s are name/user-id/phone numbers of two users
 #: src/chatty-chat.c:733
 #, c-format
 msgid "%s and %s"
-msgstr "%s და %s"
+msgstr "%s 与 %s"
 
 #: src/chatty-chat.c:735
 #, c-format
 msgid "%s and %u other"
 msgid_plural "%s and %u others"
-msgstr[0] "%s და სხვა %u"
+msgstr[0] "%s 与 %u 其他"
 
 #: src/chatty-contact-list.c:247 src/dialogs/chatty-mm-chat-info.c:127
 msgid "Unknown Contact"
-msgstr "უცნობი კონტაქტი"
+msgstr "未知联系人"
 
 #: src/chatty-contact-list.c:283
 msgid "Try different search, or type a valid number to create new chat"
-msgstr "ახალი ჩატის შესაქმნელად სცადეთ სხვა ძებნა, ან ჩაწერეთ სწორი ნომერი"
+msgstr "尝试不同的搜索方式，或输入有效号码创建新聊天"
 
 #: src/chatty-contact-list.c:289
 msgid "No Contacts"
-msgstr "კონტაქტების გარეშე"
+msgstr "无联系人"
 
 #: src/chatty-clock.c:87
 msgid "Just Now"
-msgstr "მხოლოდ ახლა"
+msgstr "适才"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
@@ -404,29 +389,29 @@ msgstr "%I∶%M %p"
 #, c-format
 msgid "%<PRIi64> minute ago"
 msgid_plural "%<PRIi64> minutes ago"
-msgstr[0] "%<PRIi64> წუთის წინ"
+msgstr[0] "%<PRIi64> 分钟前"
 
 #: src/chatty-clock.c:114
 msgid "Today %H∶%M"
-msgstr "დღეს %H∶%M"
+msgstr "今日 %H∶%M"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “Today 06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
 #: src/chatty-clock.c:122
 msgid "Today %I∶%M %p"
-msgstr "დღეს %I∶%M %p"
+msgstr "今日 %I∶%M %p"
 
 #: src/chatty-clock.c:134
 msgid "Yesterday %H∶%M"
-msgstr "გუშინ %H∶%M"
+msgstr "昨日 %H∶%M"
 
 #. TRANSLATORS: Timestamp with 12 hour time, e.g. “Yesterday 06∶42 PM”.
 #. * See https://docs.gtk.org/glib/method.DateTime.format.html
 #.
 #: src/chatty-clock.c:139
 msgid "Yesterday %I∶%M %p"
-msgstr "გუშინ %I∶%M %p"
+msgstr "昨日 %I∶%M %p"
 
 #: src/chatty-clock.c:158
 msgid "%Y-%m-%d %H:%M"
@@ -445,134 +430,132 @@ msgstr "%Y-%m-%d"
 
 #: src/chatty-file-item.c:139 src/chatty-file-item.c:154
 msgid "Contact"
-msgstr "კონტაქტი"
+msgstr "联系人"
 
 #: src/chatty-file-item.c:151
 #, c-format
 msgid "Contact: %s"
-msgstr "კონტაქტი: %s"
+msgstr "联系人：%s"
 
 #: src/chatty-file-item.c:172
 #, c-format
 msgid "Invite: %s"
-msgstr "მოწვევა: %s"
+msgstr "邀请：%s"
 
 #: src/chatty-file-item.c:175
 msgctxt "Invitation to event"
 msgid "Invitation"
-msgstr "მოწვევა"
+msgstr "邀请"
 
 #. TRANSLATORS: %s is the Device ID
 #: src/chatty-fp-row.c:130
 #, c-format
 msgid "Device ID %s fingerprint:"
-msgstr "მოწყობილობის ID: %s ანაბეჭდი:"
+msgstr "设备 ID %s 指纹："
 
 #. TRANSLATORS: %s is the chat room name
 #: src/chatty-invite-page.c:72
 #, c-format
 msgid "Do you want to join “%s”?"
-msgstr "გნებავთ, შეუერთდეთ ოთახს “%s”?"
+msgstr "您想加入“%s”吗？"
 
 #: src/chatty-list-row.c:123
 msgid "Owner"
-msgstr "მფლობელი"
+msgstr "所有者"
 
 #: src/chatty-list-row.c:126
 msgid "Moderator"
-msgstr "მოდერატორი"
+msgstr "管理者"
 
 #: src/chatty-list-row.c:129
 msgid "Member"
-msgstr "წევრი"
+msgstr "成员"
 
 #: src/chatty-list-row.c:264 src/chatty-notification.c:180
 msgid "Picture"
-msgstr "სურათი"
+msgstr "图片"
 
 #: src/chatty-list-row.c:267 src/chatty-notification.c:184
 msgid "Video"
-msgstr "ვიდეო"
+msgstr "视频"
 
 #: src/chatty-list-row.c:270
 msgid "Audio"
-msgstr "აუდიო"
+msgstr "音频"
 
 #: src/chatty-list-row.c:273
 msgid "Location"
-msgstr "მდებარეობა"
+msgstr "位置"
 
 #: src/chatty-list-row.c:276 src/chatty-list-row.c:293
 #: src/chatty-notification.c:176
 msgid "File"
-msgstr "ფაილი"
+msgstr "文件"
 
 #: src/chatty-list-row.c:279
 msgid "MMS Message"
-msgstr "MMS შეტყობინება"
+msgstr "彩信消息"
 
 #: src/chatty-list-row.c:295
 msgid "Multiple Files"
-msgstr "ერთზე მეტი ფაილი"
+msgstr "多个文件"
 
 #: src/chatty-main-view.c:125
 msgid "Account disconnected"
-msgstr "ანგარიში განკავშირებულია"
+msgstr "账户未连接"
 
 #: src/chatty-main-view.c:127
 msgid "Account connecting…"
-msgstr "ანგარიშის დაკავშირება…"
+msgstr "账户连接中……"
 
 #: src/chatty-manager.c:679
 #, c-format
 msgid "“%s” is not a valid URI"
-msgstr "%s არ წარმოადგენს სწორ URI-ის"
+msgstr "“%s” 不是有效的 URI"
 
 #: src/chatty-message-bar.c:465 src/purple/chatty-purple.c:195
 #: src/chatty-window.c:378
 msgid "Alert"
-msgstr "გაფრთხილება"
+msgstr "警告"
 
 #: src/chatty-message-bar.c:466
 msgid "Found and automatically deleted tracking IDs from the pasted link."
-msgstr "ნაპოვნი და ავტომატურად წაშლილია ტრეკინგის ID-ები ჩასმული ბმულიდან."
+msgstr "从粘贴的链接中找到并自动删除跟踪 ID。"
 
 #: src/chatty-message-bar.c:468
 msgid "Don't Show Again"
-msgstr "აღარ მაჩვენო"
+msgstr "不再显示"
 
 #: src/chatty-message.c:230
 msgid "Got an encrypted message, but couldn't decrypt due to missing keys"
-msgstr ""
-"მივიღე დაშიფრული შეტყობინება, რომლის გაშიფვრაც შეუძლებელია საჭირო "
-"გასაღებების არარსებობის გამო"
+msgstr "收到加密信息，但由于缺少密钥而无法解密"
 
 #: src/chatty-notification.c:150
 #, c-format
 msgid "New message from %s"
-msgstr "ახალი შეტყობინება %s-სგან"
+msgstr "来自 %s 的新消息"
 
 #: src/chatty-notification.c:152
 msgid "Message Received"
-msgstr "შეტყობინება მოვიდა"
+msgstr "消息已接收"
 
 #: src/chatty-notification.c:188
 msgid "Audio File"
-msgstr "აუდიო ფაილი"
+msgstr "音频文件"
 
 #: src/chatty-notification.c:195
 msgid "MMS"
-msgstr "MMS"
+msgstr "彩信"
 
 #: src/chatty-notification.c:207
 #, c-format
 msgid "%i Message"
 msgid_plural "%i Messages"
-msgstr[0] "%i შეტყობინება"
+msgstr[0] "%i 条消息"
 
 #: src/chatty-side-bar.c:327
 msgid "Any Protocol"
-msgstr "ნებისმიერი კლიენტი"
+msgstr "任何协议"
 
 #: src/chatty-side-bar.c:328 src/ui/chatty-settings-dialog.ui:731
 msgid "Matrix"
@@ -582,7 +565,7 @@ msgstr "Matrix"
 #: src/dialogs/chatty-settings-dialog.c:1115
 #: src/ui/chatty-settings-dialog.ui:255
 msgid "SMS/MMS"
-msgstr "SMS/MMS"
+msgstr "短信/彩信"
 
 #: src/chatty-side-bar.c:332 src/ui/chatty-settings-dialog.ui:720
 msgid "XMPP"
@@ -590,46 +573,46 @@ msgstr "XMPP"
 
 #: src/chatty-side-bar.c:335 src/ui/chatty-settings-dialog.ui:744
 msgid "Telegram"
-msgstr "ტელეგრამი"
+msgstr "Telegram"
 
 #: src/chatty-side-bar.c:357
 msgid "Archived"
-msgstr "დაარქივებული"
+msgstr "已存档"
 
 #: src/purple/chatty-purple-notify.c:26 src/purple/chatty-purple.c:613
 #: src/dialogs/chatty-new-chat-dialog.c:222
 #: src/dialogs/chatty-settings-dialog.c:209
 msgid "Error"
-msgstr "შეცდომა"
+msgstr "错误"
 
 #: src/purple/chatty-purple-request.c:218
 msgid "Save File…"
-msgstr "ფაილის შენახვა…"
+msgstr "保存文件…"
 
 #: src/purple/chatty-purple-request.c:220
 msgid "Open File…"
-msgstr "ფაილის გახსნა…"
+msgstr "打开文件…"
 
 #: src/purple/chatty-purple.c:197
 #, c-format
 msgid "User %s has added %s to the contacts"
-msgstr "მომხმარებელმა %s-მა დაამატა %s კონტაქტებში"
+msgstr "用户 %s 已将 %s 添加至联系人中"
 
 #: src/purple/chatty-purple.c:283 src/dialogs/chatty-settings-dialog.c:471
 #: src/ui/chatty-ma-account-details.ui:141
 #: src/ui/chatty-pp-account-details.ui:80
 msgid "Delete Account"
-msgstr "ანგარიშის წაშლა"
+msgstr "删除账户"
 
 #: src/purple/chatty-purple.c:285
 #, c-format
 msgid "Authorize %s?"
-msgstr "%s-ის ავტორიზაცია?"
+msgstr "授权 %s？"
 
 #: src/purple/chatty-purple.c:289
 #, c-format
 msgid "Add %s to contact list"
-msgstr "%s-ის კონტაქტებში ჩამატება"
+msgstr "将 %s 添加至联系人列表"
 
 #: src/purple/chatty-purple.c:293 src/chatty-window.c:382
 #: src/chatty-window.c:478 src/dialogs/chatty-settings-dialog.c:477
@@ -638,344 +621,344 @@ msgstr "%s-ის კონტაქტებში ჩამატება"
 #: src/ui/chatty-settings-dialog.ui:75 src/ui/chatty-verification-page.ui:129
 #: src/ui/chatty-verification-page.ui:158
 msgid "_Cancel"
-msgstr "_გაუქმება"
+msgstr "取消(_C)"
 
 #: src/purple/chatty-purple.c:294
 msgid "Authorize"
-msgstr "ავტორიზაცია"
+msgstr "授权"
 
 #: src/purple/chatty-purple.c:618
 msgid "Please check ID and password"
-msgstr "გთხოვთ, შეამოწმეთ ID და პაროლი"
+msgstr "请检查 ID 和密码"
 
 #. TRANSLATORS: You may copy translations from https://github.com/matrix-org/matrix-spec-proposals/blob/old_master/data-definitions/sas-emoji.json
 #. * if available
 #: src/chatty-verification-page.c:27
 msgid "Dog"
-msgstr "ძაღლი"
+msgstr "狗"
 
 #. "U+1F436"
 #: src/chatty-verification-page.c:28
 msgid "Cat"
-msgstr "კატა"
+msgstr "猫"
 
 #. "U+1F431"
 #: src/chatty-verification-page.c:29
 msgid "Lion"
-msgstr "Lion"
+msgstr "狮"
 
 #. "U+1F981"
 #: src/chatty-verification-page.c:30
 msgid "Horse"
-msgstr "ცხენი"
+msgstr "马"
 
 #. "U+1F40E"
 #: src/chatty-verification-page.c:31
 msgid "Unicorn"
-msgstr "მარტორქა"
+msgstr "独角兽"
 
 #. "U+1F984"
 #: src/chatty-verification-page.c:32
 msgid "Pig"
-msgstr "Pig"
+msgstr "猪"
 
 #. "U+1F437"
 #: src/chatty-verification-page.c:33
 msgid "Elephant"
-msgstr "სპილო"
+msgstr "象"
 
 #. "U+1F418"
 #: src/chatty-verification-page.c:34
 msgid "Rabbit"
-msgstr "კურდღელი"
+msgstr "兔"
 
 #. "U+1F430"
 #: src/chatty-verification-page.c:35
 msgid "Panda"
-msgstr "პანდა"
+msgstr "熊猫"
 
 #. "U+1F43C"
 #: src/chatty-verification-page.c:36
 msgid "Rooster"
-msgstr "მამალი"
+msgstr "公鸡"
 
 #. "U+1F413"
 #: src/chatty-verification-page.c:37
 msgid "Penguin"
-msgstr "პინგვინი"
+msgstr "企鹅"
 
 #. "U+1F427"
 #: src/chatty-verification-page.c:38
 msgid "Turtle"
-msgstr "კუ"
+msgstr "龟"
 
 #. "U+1F422"
 #: src/chatty-verification-page.c:39
 msgid "Fish"
-msgstr "Fish"
+msgstr "鱼"
 
 #. "U+1F41F"
 #: src/chatty-verification-page.c:40
 msgid "Octopus"
-msgstr "რვაფეხა"
+msgstr "章鱼"
 
 #. "U+1F419"
 #: src/chatty-verification-page.c:41
 msgid "Butterfly"
-msgstr "პეპელა"
+msgstr "蝶"
 
 #. "U+1F98B"
 #: src/chatty-verification-page.c:42
 msgid "Flower"
-msgstr "ყვავილი"
+msgstr "花"
 
 #. "U+1F337"
 #: src/chatty-verification-page.c:43
 msgid "Tree"
-msgstr "ხე"
+msgstr "树"
 
 #. "U+1F333"
 #: src/chatty-verification-page.c:44
 msgid "Cactus"
-msgstr "კაქტუსი"
+msgstr "仙人掌"
 
 #. "U+1F335"
 #: src/chatty-verification-page.c:45
 msgid "Mushroom"
-msgstr "სოკო"
+msgstr "蘑菇"
 
 #. "U+1F344"
 #: src/chatty-verification-page.c:46
 msgid "Globe"
-msgstr "გლობალური"
+msgstr "寰球"
 
 #. "U+1F30F"
 #: src/chatty-verification-page.c:47
 msgid "Moon"
-msgstr "მთვარის"
+msgstr "月"
 
 #. "U+1F319"
 #: src/chatty-verification-page.c:48
 msgid "Cloud"
-msgstr "ღრუბელი"
+msgstr "云"
 
 #. "U+2601U+FE0F"
 #: src/chatty-verification-page.c:49
 msgid "Fire"
-msgstr "ცეცხლი"
+msgstr "火"
 
 #. "U+1F525"
 #: src/chatty-verification-page.c:50
 msgid "Banana"
-msgstr "ბანანი"
+msgstr "香蕉"
 
 #. "U+1F34C"
 #: src/chatty-verification-page.c:51
 msgid "Apple"
-msgstr "გამოყენება"
+msgstr "苹果"
 
 #. "U+1F34E"
 #: src/chatty-verification-page.c:52
 msgid "Strawberry"
-msgstr "მარწყვი"
+msgstr "高丽果"
 
 #. "U+1F353"
 #: src/chatty-verification-page.c:53
 msgid "Corn"
-msgstr "სიმინდი"
+msgstr "玉米"
 
 #. "U+1F33D"
 #: src/chatty-verification-page.c:54
 msgid "Pizza"
-msgstr "პიცა"
+msgstr "比萨饼"
 
 #. "U+1F355"
 #: src/chatty-verification-page.c:55
 msgid "Cake"
-msgstr "ნამცხვარი"
+msgstr "蛋糕"
 
 #. "U+1F382"
 #: src/chatty-verification-page.c:56
 msgid "Heart"
-msgstr "გული"
+msgstr "心脏"
 
 #. "U+2764U+FE0F"
 #: src/chatty-verification-page.c:57
 msgid "Smiley"
-msgstr "სიცილაკი"
+msgstr "笑脸"
 
 #. "U+1F600"
 #: src/chatty-verification-page.c:58
 msgid "Robot"
-msgstr "რობოტი"
+msgstr "机器人"
 
 #. "U+1F916"
 #: src/chatty-verification-page.c:59
 msgid "Hat"
-msgstr "ქუდი"
+msgstr "帽子"
 
 #. "U+1F3A9"
 #: src/chatty-verification-page.c:60
 msgid "Glasses"
-msgstr "სათვალე"
+msgstr "眼镜"
 
 #. "U+1F453"
 #: src/chatty-verification-page.c:61
 msgid "Spanner"
-msgstr "ქანჩის გასაღები"
+msgstr "扳手"
 
 #. "U+1F527"
 #: src/chatty-verification-page.c:62
 msgid "Santa"
-msgstr "სანტა"
+msgstr "圣诞老人"
 
 #. "U+1F385"
 #: src/chatty-verification-page.c:63
 msgid "Thumbs Up"
-msgstr "ცერა მაღლა"
+msgstr "大拇指"
 
 #. "U+1F44D"
 #: src/chatty-verification-page.c:64
 msgid "Umbrella"
-msgstr "ქოლგა"
+msgstr "雨伞"
 
 #. "U+2602U+FE0F"
 #: src/chatty-verification-page.c:65
 msgid "Hourglass"
-msgstr "ქვიშის საათი"
+msgstr "沙漏"
 
 #. "U+231B"
 #: src/chatty-verification-page.c:66
 msgid "Clock"
-msgstr "საათი"
+msgstr "时钟"
 
 #. "U+23F0"
 #: src/chatty-verification-page.c:67
 msgid "Gift"
-msgstr "საჩუქრები"
+msgstr "礼物"
 
 #. "U+1F381"
 #: src/chatty-verification-page.c:68
 msgid "Light Bulb"
-msgstr "ნათურა"
+msgstr "电灯泡"
 
 #. "U+1F4A1"
 #: src/chatty-verification-page.c:69
 msgid "Book"
-msgstr "წიგნი"
+msgstr "书籍"
 
 #. "U+1F4D5"
 #: src/chatty-verification-page.c:70
 msgid "Pencil"
-msgstr "ფანქარი"
+msgstr "铅笔"
 
 #. "U+270FU+FE0F"
 #: src/chatty-verification-page.c:71
 msgid "Paperclip"
-msgstr "სამაგრი"
+msgstr "回形针"
 
 #. "U+1F4CE"
 #: src/chatty-verification-page.c:72
 msgid "Scissors"
-msgstr "მაკრატლები"
+msgstr "剪刀"
 
 #. "U+2702U+FE0F"
 #: src/chatty-verification-page.c:73
 msgid "Lock"
-msgstr "ჩაკეტვა"
+msgstr "锁"
 
 #. "U+1F512"
 #: src/chatty-verification-page.c:74
 msgid "Key"
-msgstr "გასაღები"
+msgstr "钥匙"
 
 #. "U+1F511"
 #: src/chatty-verification-page.c:75
 msgid "Hammer"
-msgstr "ჩაქუჩი"
+msgstr "锤子"
 
 #. "U+1F528"
 #: src/chatty-verification-page.c:76
 msgid "Telephone"
-msgstr "ტელეფონი"
+msgstr "电话"
 
 #. "U+260EU+FE0F"
 #: src/chatty-verification-page.c:77
 msgid "Flag"
-msgstr "ალამი"
+msgstr "旗帜"
 
 #. "U+1F3C1"
 #: src/chatty-verification-page.c:78
 msgid "Train"
-msgstr "მატარებელი"
+msgstr "火车"
 
 #. "U+1F682"
 #: src/chatty-verification-page.c:79
 msgid "Bicycle"
-msgstr "ველოსიპედი"
+msgstr "自行车"
 
 #. "U+1F6B2"
 #: src/chatty-verification-page.c:80
 msgid "Aeroplane"
-msgstr "აეროპლანი"
+msgstr "飞行器"
 
 #. "U+2708U+FE0F"
 #: src/chatty-verification-page.c:81
 msgid "Rocket"
-msgstr "რაკეტა"
+msgstr "火箭"
 
 #. "U+1F680"
 #: src/chatty-verification-page.c:82
 msgid "Trophy"
-msgstr "ნადავლი"
+msgstr "奖杯"
 
 #. "U+1F3C6"
 #: src/chatty-verification-page.c:83
 msgid "Ball"
-msgstr "ბურთი"
+msgstr "球"
 
 #. "U+26BD"
 #: src/chatty-verification-page.c:84
 msgid "Guitar"
-msgstr "გიტარა"
+msgstr "吉他"
 
 #. "U+1F3B8"
 #: src/chatty-verification-page.c:85
 msgid "Trumpet"
-msgstr "ბუკი"
+msgstr "长号"
 
 #. "U+1F3BA"
 #: src/chatty-verification-page.c:86
 msgid "Bell"
-msgstr "ზარი"
+msgstr "钟"
 
 #. "U+1F514"
 #: src/chatty-verification-page.c:87
 msgid "Anchor"
-msgstr "ბმული"
+msgstr "锚"
 
 #. "U+2693"
 #: src/chatty-verification-page.c:88
 msgid "Headphones"
-msgstr "ყურსაცვამები"
+msgstr "耳机"
 
 #. "U+1F3A7"
 #: src/chatty-verification-page.c:89
 msgid "Folder"
-msgstr "საქაღალდე"
+msgstr "文件夹"
 
 #. "U+1F4C1"
 #: src/chatty-verification-page.c:90
 msgid "Pin"
-msgstr "მიმაგრება"
+msgstr "PIN 密码"
 
 #: src/chatty-verification-page.c:387
 msgid "Show Emojis"
-msgstr "ემოჯიების ჩვენაბ"
+msgstr "显示表情符号"
 
 #: src/chatty-verification-page.c:389
 msgid "Show Numbers"
-msgstr "ნომრების ჩვენება"
+msgstr "显示号码"
 
 #: src/chatty-utils.c:299
 #, c-format
@@ -994,76 +977,76 @@ msgstr "%s %s"
 
 #: src/chatty-window.c:379
 msgid "You shall no longer be notified for new messages, continue?"
-msgstr "ახალი შეტყობინებების შესახებ გაფრთხილებები აღარ მოგივათ. გავაგრძელო?"
+msgstr "您将不再收到新消息通知，继续吗？"
 
 #: src/chatty-window.c:383
 msgid "Block"
-msgstr "დაბლოკვა"
+msgstr "屏蔽"
 
 #: src/chatty-window.c:470
 #, c-format
 msgid "Delete chat with “%s”"
-msgstr "%s-თან საუბრის წაშლა"
+msgstr "删除与 “%s” 的聊天"
 
 #: src/chatty-window.c:471
 msgid "This deletes the conversation history"
-msgstr "წაშლის საუბრის ისტორიას"
+msgstr "这将删除对话历史记录"
 
 #: src/chatty-window.c:473
 #, c-format
 msgid "Disconnect group chat “%s”"
-msgstr "ჯგუფური ჩატი %s-დან გასვლა"
+msgstr "断开与群聊 “%s” 的连接"
 
 #: src/chatty-window.c:474
 msgid "This removes chat from chats list"
-msgstr "საუბრის საუბრების სიიდან წაშლა"
+msgstr "这将从聊天列表中删除聊天"
 
 #: src/chatty-window.c:479 src/dialogs/chatty-settings-dialog.c:478
 msgid "Delete"
-msgstr "წაშლა"
+msgstr "删除"
 
 #: src/dialogs/chatty-mm-chat-info.c:146
 msgctxt "Refer to self in contact list"
 msgid "You"
-msgstr "თქვენ"
+msgstr "您"
 
 #: src/dialogs/chatty-pp-chat-info.c:108
 #: src/dialogs/chatty-ma-account-details.c:168
 #: src/dialogs/chatty-pp-account-details.c:115
 msgid "Set Avatar"
-msgstr "ავატარის დაყენება"
+msgstr "设置头像"
 
 #: src/dialogs/chatty-pp-chat-info.c:115
 #: src/dialogs/chatty-ma-account-details.c:175
 #: src/dialogs/chatty-pp-account-details.c:122
 msgid "Images"
-msgstr "გამოსახულებები"
+msgstr "图像"
 
 #: src/dialogs/chatty-pp-chat-info.c:204
 msgid "Encryption is not available"
-msgstr "დაშიფრვა შეუძლებელია"
+msgstr "加密不可用"
 
 #: src/dialogs/chatty-pp-chat-info.c:208
 msgid "This chat is encrypted"
-msgstr "საუბარი დაშიფრულია"
+msgstr "此聊天已加密"
 
 #: src/dialogs/chatty-pp-chat-info.c:212
 msgid "This chat is not encrypted"
-msgstr "საუბარი დაუშიფრავია"
+msgstr "此聊天未加密"
 
 #: src/dialogs/chatty-pp-chat-info.c:236
 msgid "Encryption not available"
-msgstr "დაშიფრვა ხელმიუწვდომელია"
+msgstr "加密不可用"
 
 #: src/dialogs/chatty-pp-chat-info.c:257
 #, c-format
 msgid "%u Member"
 msgid_plural "%u Members"
-msgstr[0] "%u წევრი"
+msgstr[0] "%u 成员"
 
 #: src/dialogs/chatty-pp-chat-info.c:292 src/ui/chatty-settings-dialog.ui:385
 msgid "Phone Number"
-msgstr "ტელეფონის ნომერი"
+msgstr "电话号码"
 
 #: src/dialogs/chatty-pp-chat-info.c:295 src/ui/chatty-pp-chat-info.ui:88
 msgid "XMPP ID"
@@ -1080,134 +1063,133 @@ msgstr "Telegram ID"
 
 #: src/dialogs/chatty-new-chat-dialog.c:170
 msgid "Add"
-msgstr "დამატება"
+msgstr "添加"
 
 #: src/dialogs/chatty-new-chat-dialog.c:180
 msgid "Create"
-msgstr "შექმნა"
+msgstr "创建"
 
 #: src/dialogs/chatty-new-chat-dialog.c:186
 msgid "Add Contact"
-msgstr "კონტაქტის დამატება"
+msgstr "添加联系人"
 
 #: src/dialogs/chatty-new-chat-dialog.c:224
 #, c-format
 msgid "Error opening GNOME Contacts: %s"
-msgstr "GNOME-ის კონტაქტების გახსნის შეცდომა: %s"
+msgstr "打开 GNOME 联系人 %s 时出现错误"
 
 #: src/dialogs/chatty-new-chat-dialog.c:456
 msgid "SMS"
-msgstr "SMS"
+msgstr "短信"
 
 #: src/dialogs/chatty-new-chat-dialog.c:634
 msgid "You"
-msgstr "თქვენ"
+msgstr "您"
 
 #: src/dialogs/chatty-ma-account-details.c:418
 #: src/dialogs/chatty-pp-account-details.c:171
 msgid "connected"
-msgstr "დაკავშირებულია"
+msgstr "已连接"
 
 #: src/dialogs/chatty-ma-account-details.c:420
 #: src/dialogs/chatty-pp-account-details.c:173
 msgid "connecting…"
-msgstr "დაკავშირება…"
+msgstr "连接中"
 
 #: src/dialogs/chatty-ma-account-details.c:422
 #: src/dialogs/chatty-pp-account-details.c:175
 msgid "disconnected"
-msgstr "გათიშულია"
+msgstr "未连接"
 
 #: src/dialogs/chatty-settings-dialog.c:211
 #, c-format
 msgid "Error saving account: %s"
-msgstr "ანგარიშის შენახვის შეცდომა: %s"
+msgstr "保存账户 %s 时出现错误"
 
 #: src/dialogs/chatty-settings-dialog.c:266
 #, c-format
 msgid "Failed to verify server: %s"
-msgstr "სერვერის შემოწმების შეცდომა: %s"
+msgstr "无法验证服务器：%s"
 
 #: src/dialogs/chatty-settings-dialog.c:268
 msgid "Failed to verify server"
-msgstr "სერვერის შემოწმების შეცდომა"
+msgstr "无法验证服务器"
 
 #: src/dialogs/chatty-settings-dialog.c:274
 msgid "Couldn't get Home server address"
-msgstr "სახლის სერვერის მისამართის პოვნის შეცდომა"
+msgstr "无法获取家服务器地址"
 
 #: src/dialogs/chatty-settings-dialog.c:473
 #, c-format
 msgid "Delete account %s?"
-msgstr "წავშალო ანგარიში %s?"
+msgstr "删除账户 %s?"
 
 #: src/dialogs/chatty-settings-dialog.c:658
 #, c-format
 msgid "Chatty cannot find a valid PGP Key for %s."
-msgstr "Chatty-მა ვერ იპოვა სწორი PGP გასაღები %s-სთვის."
+msgstr "Chatty 无法为 %s 找到有效的 PGP 密钥。"
 
 #: src/dialogs/chatty-settings-dialog.c:660
 msgid "Invalid Signing ID"
-msgstr "არასწორი ხელმოწერის ID"
+msgstr "无效签名 ID"
 
 #: src/dialogs/chatty-settings-dialog.c:695
 #, c-format
 msgid "The entered Key ID %s does not match the found PGP Key for %s:%s."
-msgstr ""
-"შეყვანილი გასაღები ID-ით %s აარ ემთხვევა აღმოჩენილ PGP გასაღებს %s-სთვის: %s."
+msgstr "输入的密钥 ID %s 与找到的 %s:%s 的 PGP 密钥不匹配。"
 
 #: src/dialogs/chatty-settings-dialog.c:697
 msgid "Cannot Find Signing Key"
-msgstr "ხელმოწერის გასაღები ვერ ვიპოვე"
+msgstr "无法找到签名密钥"
 
 #: src/dialogs/chatty-settings-dialog.c:700
 #: src/dialogs/chatty-settings-dialog.c:946
 msgid "I Know What I am Doing"
-msgstr "ვიცი, რას ვაკეთებ"
+msgstr "余知吾所为。"
 
 #: src/dialogs/chatty-settings-dialog.c:782
 #: src/dialogs/chatty-settings-dialog.c:864
 #: src/dialogs/chatty-settings-dialog.c:881
 msgid "Cannot Create Signing Key"
-msgstr "ხელმოწერის გასაღების შექმნა შეუძლებელია"
+msgstr "无法创建签名密钥"
 
 #: src/dialogs/chatty-settings-dialog.c:783
 #: src/dialogs/chatty-settings-dialog.c:880
 #, c-format
 msgid "Error creating the PGP ID. Please check the logs for more details."
-msgstr "PGP ID-ის შექმნის შეცდომა. მეტი დეტალებისთვის იხილეთ ჟურნალი."
+msgstr "创建 PGP ID 时出错。详见日志。"
 
 #: src/dialogs/chatty-settings-dialog.c:796
 #, c-format
 msgid "Key %s was created for ID %s"
-msgstr "შეიქმნა გასაღები %s ID-სთვის %s"
+msgstr "已为 ID %s 创建了密钥 %s"
 
 #: src/dialogs/chatty-settings-dialog.c:797
 msgid "Successfully Created Key"
-msgstr "გასაღები წარმატებით შეიქმნა"
+msgstr "成功创建密钥"
 
 #: src/dialogs/chatty-settings-dialog.c:849
 msgid "Empty Entries"
-msgstr "ცარიელი ჩანაწერები"
+msgstr "空条目"
 
 #: src/dialogs/chatty-settings-dialog.c:850
 msgid "All entries must be filled to create a PGP Key"
-msgstr "PGP გასაღების შესაქმნელად ყველა ჩანაწერი უნდა შეავსოთ"
+msgstr "创建 PGP 密钥必须填写所有条目"
 
 #: src/dialogs/chatty-settings-dialog.c:863
 #, c-format
 msgid ""
 "%s already has key with fingerprint %s. Please choose a different PGP ID"
-msgstr "%s-ს უკვე აქვს გასაღები ანაბეჭდდით %s. აირჩიეთ სხვა PGP ID"
+msgstr "%s 已拥有指纹为 %s 的密钥。请选择不同的 PGP ID"
 
 #: src/dialogs/chatty-settings-dialog.c:892
 #, c-format
 msgid "Creating key for ID %s."
-msgstr "იქმნება გასაღები ID-სთვის %s."
+msgstr "正在为 ID %s 创建密钥。"
 
 #: src/dialogs/chatty-settings-dialog.c:893
 msgid "Creating Key"
-msgstr "მიმდინარეობს გასაღების შექმნა"
+msgstr "正在创建密钥"
 
 #. Translators: This means that the existing key will be there, but there will be a new key that Chatty will use by default instead of the existing one.
 #: src/dialogs/chatty-settings-dialog.c:941
@@ -1215,106 +1197,102 @@ msgstr "მიმდინარეობს გასაღების შე�
 msgid ""
 "Chatty is currently set to use PGP key: %s. The new key will be used instead "
 "of the existing one!"
-msgstr ""
-"Chatty ამჟამად იყენებს PGP გასაღებს: %s. არსებულის მაგიერ გამოყენებული "
-"იქნება ახალი გასაღები!"
+msgstr "Chatty 当前设置为使用 PGP 密钥：%s。新密钥将取代现有密钥！"
 
 #: src/dialogs/chatty-settings-dialog.c:943
 msgid "Signing ID Present"
-msgstr "ხელმოწერის ID არსებობს"
+msgstr "签名 ID 存在"
 
 #: src/dialogs/chatty-settings-dialog.c:945 src/ui/chatty-dialog-join-muc.ui:16
 #: src/ui/chatty-info-dialog.ui:23 src/ui/chatty-info-dialog.ui:32
 msgid "Cancel"
-msgstr "გაუქმება"
+msgstr "取消"
 
 #: src/dialogs/chatty-settings-dialog.c:1101
 msgid "Restart Chatty to disable Purple"
-msgstr "Purple-ს გასათიშად გადატვირთეთ Chatty"
+msgstr "重启 Chatty 以停用 Purple"
 
 #: src/dialogs/chatty-settings-dialog.c:1117
 #: src/ui/chatty-settings-dialog.ui:290
 msgid "Purple"
-msgstr "იისფერი"
+msgstr "Purple"
 
 #: src/dialogs/chatty-settings-dialog.c:1119
 msgid "New Account"
-msgstr "ახალი ანგარიში"
+msgstr "新账户"
 
 #: src/dialogs/chatty-settings-dialog.c:1121
 #: src/ui/chatty-settings-dialog.ui:363
 msgid "Blocked Contacts"
-msgstr "დაბლოკილი კონტაქტები"
+msgstr "被屏蔽的联系人"
 
 #: src/dialogs/chatty-settings-dialog.c:1123
 #: src/ui/chatty-settings-dialog.ui:272
 msgid "PGP Settings"
-msgstr "PGP-ის მორგება"
+msgstr "PGP 设置"
 
 #: src/dialogs/chatty-settings-dialog.c:1125
 msgid "New PGP Key"
-msgstr "ახალი PGP გასაღები"
+msgstr "新 PGP 密钥"
 
 #: src/dialogs/chatty-settings-dialog.c:1127 src/ui/chatty-side-bar.ui:111
 msgid "Preferences"
-msgstr "მორგება"
+msgstr "首选项"
 
 #: src/dialogs/chatty-settings-dialog.c:1155
 #: src/ui/chatty-pp-account-details.ui:60 src/ui/chatty-settings-dialog.ui:245
 msgid "Protocol"
-msgstr "პროტოკოლი"
+msgstr "协议"
 
 #. TRANSLATORS: Only translate 'or'
 #: src/dialogs/chatty-settings-dialog.c:1416
 msgid "@user:matrix.org or user@example.com"
-msgstr "@user:matrix.org ან user@example.com"
+msgstr "@user:matrix.org 或 user@example.com"
 
 #: src/dialogs/chatty-settings-dialog.c:1527
 msgid "Experimental Setting!"
-msgstr "ექსპერიმენტული თვისება!"
+msgstr "实验性设置！"
 
 #: src/dialogs/chatty-settings-dialog.c:1528
 msgid ""
 "This setting is experimental and may cause loss of SMS. Use at your own risk!"
-msgstr ""
-"ეს პარამეტრი ექსპერიმენტულია და შეიძლება, SMS-ების დაკარგვა გამოიწვიოს. "
-"გამოიყენეთ საკუთარი პასუხისმგებლობით!"
+msgstr "此设置为试验性设置，可能会导致短信丢失。使用风险自负！"
 
 #: src/matrix/chatty-ma-account.c:78
 #, c-format
 msgid "Please enter password for “%s”, homeserver: %s"
-msgstr "შეიყვანეთ პაროლი \"%s\"-სთვის, სახლის სერვერი: %s"
+msgstr "请输入 “%s” 的密码，家服务器：%s"
 
 #: src/matrix/chatty-ma-key-chat.c:73
 msgid "Key Verification"
-msgstr "გასაღების გადამოწმება"
+msgstr "密钥验证"
 
 #: src/mm/chatty-mmsd.c:253
 #, c-format
 msgid "Error Delivering Message to %s"
-msgstr "%s-სთვის შეტყობინების მიწოდების შეცდომა"
+msgstr "向 %s 发送消息时出错"
 
 #: src/mm/chatty-mmsd.c:254
 msgid "See logs for more details"
-msgstr "მეტი დეტალისთვის იხილეთ ჟურნალი"
+msgstr "详见日志"
 
 #: src/mm/chatty-mmsd.c:572 src/mm/chatty-mmsd.c:633 src/mm/chatty-mmsd.c:656
 msgid "MMS cannot be sent"
-msgstr "MMS-ის გაგზავნა შეუძლებელია"
+msgstr "彩信无法发送"
 
 #: src/mm/chatty-mmsd.c:574
 msgid "Please send less attachments"
-msgstr "გთხოვთ გააგზავნოთ ნაკლები დანართი"
+msgstr "请减少附件数量"
 
 #: src/mm/chatty-mmsd.c:635
 msgid "Could not resize image to be small enough"
-msgstr "გამოსახულების საკმარისად დაპატარავება შეუძლებელია"
+msgstr "无法将图像调整至足够小"
 
 #: src/mm/chatty-mmsd.c:653
 #, c-format
 msgid "The attachment is too large"
 msgid_plural "Attachments are too large"
-msgstr[0] "დანართი მეტისმეტად დიდია"
+msgstr[0] "附件过大"
 
 #. TRANSLATORS: Timestamp for minute accuracy, e.g. “2020-08-11 15:27”.
 #. See https://developer.gnome.org/glib/stable/glib-GDateTime.html#g-date-time-format
@@ -1326,392 +1304,392 @@ msgstr "%Y-%m-%d %H∶%M"
 #: src/mm/chatty-mmsd.c:1298
 #, c-format
 msgid "You received an MMS, but it expired on: %s"
-msgstr "თქვენ მიიღეთ MMS, მაგრამ მას ვადა გაუვიდა %s-ზე"
+msgstr "您收到一条彩信，但它已于 %s 过期"
 
 #: src/mm/chatty-mmsd.c:1301
 msgid "You received an empty MMS."
-msgstr "თქვენ მიიღეთ ცარიელი MMS."
+msgstr "您收到一条空彩信。"
 
 #: src/mm/chatty-mmsd.c:1782 src/mm/chatty-mmsd.c:1830
 #, c-format
 msgid "Automatically Retrying for  %i MMS"
 msgid_plural "Automatically Retrying for  %i MMSes..."
-msgstr[0] "ავტომატურად თავიდან ცდა   %i MMS-სთვის"
+msgstr[0] "自动重试 %i 彩信"
 
 #: src/mm/chatty-mmsd.c:1787
 msgid "Temporary Error Sending MMS"
-msgstr "MMS-ის გაგზავნის დროებითი შეცდომა"
+msgstr "发送彩信时出现临时错误"
 
 #: src/mm/chatty-mmsd.c:1835
 msgid "Temporary Error Receiving MMS"
-msgstr "MMS-ს მიღების დროებითი შეცდომა"
+msgstr "接收彩信时出现临时错误"
 
 #: src/mm/chatty-mmsd.c:2053
 msgid "MMSC is not configured"
-msgstr "MMSC მორგებული არაა"
+msgstr "MMSC 未配置"
 
 #: src/mm/chatty-mmsd.c:2056
 msgid "APN is not configured correctly"
-msgstr "APN არასწორია"
+msgstr "APN 配置不正确"
 
 #: src/mm/chatty-mmsd.c:2059
 msgid "Mobile Data is not configured"
-msgstr "მობილური ინტერნეტი მორგებული არაა"
+msgstr "移动数据未配置"
 
 #: src/mm/chatty-mmsd.c:2062
 msgid "Mobile Data is off"
-msgstr "მობილური ინტერნეტი გამორთულია"
+msgstr "移动数据已关闭"
 
 #: src/mm/chatty-mmsd.c:2065
 msgid "Unknown Error"
-msgstr "უცნობი შეცდომა"
+msgstr "未知错误"
 
 #: src/mm/chatty-mmsd.c:2070
 #, c-format
 msgid "Chatty cannot process %i MMS"
 msgid_plural "Chatty cannot process %i MMSes..."
-msgstr[0] "Chatty-მა ვერ დაამუშავა %i MMS"
+msgstr[0] "Chatty 无法处理 %i 彩信"
 
 #: src/mm/chatty-mm-account.c:345 src/mm/chatty-mm-account.c:396
 #, c-format
 msgid "Error Sending SMS to %s"
-msgstr "%s-სთვის SMS-ის გაგზავნის შეცდომა"
+msgstr "向 %s 发送短信时出现错误"
 
 #: src/mm/chatty-mm-account.c:532
 #, c-format
 msgid "Error Sending MMS to %s"
-msgstr "%s-სთვის MMS-ის გაგზავნის შეცდომა"
+msgstr "向 %s 发送彩信时出现错误"
 
 #: src/ui/chatty-attachment.ui:48
 msgid "Remove Attachment"
-msgstr "მიმაგრებულის წაშლა"
+msgstr "移除附件"
 
 #: src/ui/chatty-dialog-wrong-pw.ui:15
 msgid "Incorrect password"
-msgstr "არასწორი პაროლი"
+msgstr "密码错误"
 
 #: src/ui/chatty-dialog-wrong-pw.ui:33
 msgid "_OK"
-msgstr "_დიახ"
+msgstr "确定(_O)"
 
 #: src/ui/chatty-dialog-wrong-pw.ui:47
 msgid "Please re-enter the Password."
-msgstr "თავიდან შეიყვანეთ პაროლი."
+msgstr "请重新输入密码。"
 
 #: src/ui/chatty-dialog-wrong-pw.ui:53 src/ui/chatty-pp-account-details.ui:70
 #: src/ui/chatty-settings-dialog.ui:794
 msgid "Password"
-msgstr "პაროლი"
+msgstr "密码"
 
 #: src/ui/chatty-dialog-join-muc.ui:7
 msgid "New Group Chat"
-msgstr "ახალი ჯგუფური საუბარი"
+msgstr "新群聊"
 
 #: src/ui/chatty-dialog-join-muc.ui:22
 msgid "Join Chat"
-msgstr "საუბარში ჩართვა"
+msgstr "加入聊天"
 
 #: src/ui/chatty-dialog-join-muc.ui:62 src/ui/chatty-dialog-new-chat.ui:192
 msgid "Select chat account"
-msgstr "აირჩიეთ საუბრის ანგარიში"
+msgstr "选择聊天账户"
 
 #: src/ui/chatty-dialog-join-muc.ui:90
 msgid "Room address"
-msgstr "ოთახის მისამართი"
+msgstr "房间地址"
 
 #: src/ui/chatty-dialog-join-muc.ui:100
 msgid "Room alias (optional)"
-msgstr "ოთახის ფსევდონიმი (არასავალდებულო)"
+msgstr "房间别名（可选）"
 
 #: src/ui/chatty-dialog-join-muc.ui:110
 msgid "Nickname (optional)"
-msgstr "მეტსახელი (არასავალდებულო)"
+msgstr "昵称（可选）"
 
 #: src/ui/chatty-dialog-join-muc.ui:120
 msgid "Password (optional)"
-msgstr "პაროლი (არასავალდებულო)"
+msgstr "密码（可选）"
 
 #: src/ui/chatty-dialog-new-chat.ui:76
 msgid "Group Title"
-msgstr "ჯგუფის სათაური"
+msgstr "群聊名称"
 
 #: src/ui/chatty-dialog-new-chat.ui:118
 msgid "Add members from contacts…"
-msgstr "წევრების კონტაქტებიდან დამატება…"
+msgstr "从联系人中添加成员…"
 
 #: src/ui/chatty-dialog-new-chat.ui:155
 msgid "Send To:"
-msgstr "რეციპიენტისთვის გაგზავნა:"
+msgstr "发送至："
 
 #: src/ui/chatty-dialog-new-chat.ui:215 src/ui/chatty-info-dialog.ui:114
 msgid "Contact ID"
-msgstr "კონტაქტის ID"
+msgstr "联系人 ID"
 
 #: src/ui/chatty-dialog-new-chat.ui:225
 msgid "Name (optional)"
-msgstr "სახელი (არასავალდებულო)"
+msgstr "姓名（可选）"
 
 #: src/ui/chatty-dialog-new-chat.ui:262
 msgid "Add to Contacts"
-msgstr "კონტაქტებში ჩამატება"
+msgstr "添加至联系人"
 
 #: src/ui/chatty-file-item.ui:84
 msgid "Save…"
-msgstr "შენახვა…"
+msgstr "保存…"
 
 #: src/ui/chatty-info-dialog.ui:5 src/ui/chatty-main-view.ui:126
 msgid "Chat Details"
-msgstr "საუბრის დეტალები"
+msgstr "聊天详情"
 
 #: src/ui/chatty-info-dialog.ui:41
 msgid "Apply"
-msgstr "გადატარება"
+msgstr "应用"
 
 #. Translators: This is invite to a chat room
 #: src/ui/chatty-info-dialog.ui:55
 msgid "Invite"
-msgstr "მოწვევა"
+msgstr "邀请"
 
 #: src/ui/chatty-info-dialog.ui:134
 msgid "Invite message"
-msgstr "მოსაწვევის შეტყობინება"
+msgstr "邀请消息"
 
 #: src/ui/chatty-invite-page.ui:62
 msgid "_Accept"
-msgstr "_თანხმობა"
+msgstr "接受(_A)"
 
 #: src/ui/chatty-invite-page.ui:86
 msgid "_Reject"
-msgstr "_უარყოფა"
+msgstr "拒绝(_R)"
 
 #: src/ui/chatty-ma-chat-info.ui:21 src/ui/chatty-pp-chat-info.ui:59
 msgid "Chat"
-msgstr "ჩატი"
+msgstr "聊天"
 
 #: src/ui/chatty-ma-chat-info.ui:35
 msgid "Topic"
-msgstr "თემა"
+msgstr "话题"
 
 #: src/ui/chatty-ma-chat-info.ui:43 src/ui/chatty-pp-chat-info.ui:110
 msgid "Chat settings"
-msgstr "საუბრის მორგება"
+msgstr "聊天设置"
 
 #: src/ui/chatty-ma-chat-info.ui:46 src/ui/chatty-pp-chat-info.ui:95
 #: src/ui/chatty-pp-chat-info.ui:132
 msgid "Encryption"
-msgstr "დაშიფვრა"
+msgstr "加密"
 
 #: src/ui/chatty-ma-chat-info.ui:47 src/ui/chatty-pp-chat-info.ui:133
 msgid "Encrypt Messages"
-msgstr "შეტყობინებების დაშიფრვა"
+msgstr "加密消息"
 
 #: src/ui/chatty-main-view.ui:12 src/ui/chatty-settings-dialog.ui:14
 #: src/ui/chatty-side-bar.ui:19
 msgid "Back"
-msgstr "უკან"
+msgstr "返回"
 
 #: src/ui/chatty-main-view.ui:41 src/ui/chatty-list-row.ui:169
 msgid "Call"
-msgstr "ზარი"
+msgstr "呼叫"
 
 #: src/ui/chatty-main-view.ui:137
 msgid "Leave Chat"
-msgstr "საუბრის დატოვება"
+msgstr "离开聊天室"
 
 #: src/ui/chatty-main-view.ui:145
 msgid "Block Contact"
-msgstr "კონტაქტის დაბლოკვა"
+msgstr "屏蔽联系人"
 
 #: src/ui/chatty-main-view.ui:153
 msgid "Unblock Contact"
-msgstr "კონტაქტის განბლოკვა"
+msgstr "解除屏蔽联系人"
 
 #: src/ui/chatty-main-view.ui:161
 msgid "Archive chat"
-msgstr "ჩატის დაარქვება"
+msgstr "归档聊天"
 
 #: src/ui/chatty-main-view.ui:169
 msgid "Unarchive chat"
-msgstr "ჩატის დეარქივირება"
+msgstr "取消归档聊天"
 
 #: src/ui/chatty-main-view.ui:177
 msgid "Delete Chat"
-msgstr "საუბრის წაშლა"
+msgstr "删除聊天"
 
 #: src/ui/chatty-message-row.ui:161
 msgid "Copy Text"
-msgstr "ტექსტის კოპირება"
+msgstr "复制文本"
 
 #: src/ui/chatty-pp-chat-info.ui:23 src/ui/chatty-pp-account-details.ui:39
 msgid "Change Avatar"
-msgstr "ავატარის შეცვლა"
+msgstr "更改头像"
 
 #: src/ui/chatty-pp-chat-info.ui:36 src/ui/chatty-pp-account-details.ui:26
 msgid "Delete Avatar"
-msgstr "ავატარის წაშლა"
+msgstr "删除头像"
 
 #: src/ui/chatty-pp-chat-info.ui:67
 msgid "Room topic"
-msgstr "ოთახის თემა"
+msgstr "房间主题"
 
 #: src/ui/chatty-pp-chat-info.ui:81
 msgid "User"
-msgstr "მომხმარებელი"
+msgstr "用户"
 
 #: src/ui/chatty-pp-chat-info.ui:102 src/ui/chatty-ma-account-details.ui:53
 #: src/ui/chatty-pp-account-details.ui:65
 msgid "Status"
-msgstr "სტატუსი"
+msgstr "状态"
 
 #: src/ui/chatty-pp-chat-info.ui:115
 msgid "Notifications"
-msgstr "გაფრთხილებები"
+msgstr "通知"
 
 #: src/ui/chatty-pp-chat-info.ui:123
 msgid "Status Messages"
-msgstr "მდგომარეობის შეტყობინებები"
+msgstr "状态信息"
 
 #: src/ui/chatty-pp-chat-info.ui:124
 msgid "Show status messages in chat"
-msgstr "მდგომარეობის შეტყობინების საუბრის დროს ჩვენება"
+msgstr "在聊天中显示状态信息"
 
 #: src/ui/chatty-pp-chat-info.ui:143
 msgid "Fingerprints"
-msgstr "ანაბეჭდები"
+msgstr "指纹"
 
 #: src/ui/chatty-pp-chat-info.ui:162
 msgid "User List"
-msgstr "მომხმარებლების სია"
+msgstr "用户列表"
 
 #: src/ui/chatty-mm-chat-info.ui:20
 msgid "Title"
-msgstr "სათაური"
+msgstr "标题"
 
 #: src/ui/chatty-mm-chat-info.ui:23
 msgid "Blank for default"
-msgstr "ნაგულისხმევად ცარიელი"
+msgstr "空白为默认值"
 
 #: src/ui/chatty-mm-chat-info.ui:32
 msgid "Group Members"
-msgstr "ჯგუფის წევრები"
+msgstr "群成员"
 
 #: src/ui/chatty-list-row.ui:33
 msgid "Copy Number"
-msgstr "ნომრის კოპირება"
+msgstr "复制号码"
 
 #: src/ui/chatty-ma-account-details.ui:58
 msgid "Name"
-msgstr "სახელი"
+msgstr "姓名"
 
 #: src/ui/chatty-ma-account-details.ui:64
 msgid "Email"
-msgstr "ელფოტა"
+msgstr "邮箱"
 
 #: src/ui/chatty-ma-account-details.ui:69
 msgid "Phone"
-msgstr "ტელეფონი"
+msgstr "电话"
 
 #: src/ui/chatty-ma-account-details.ui:74
 msgid "Advanced information"
-msgstr "დამატებითი ინფორმაცია"
+msgstr "高级信息"
 
 #: src/ui/chatty-ma-account-details.ui:77
 msgid "Homeserver"
-msgstr "სახლის სერვერი"
+msgstr "家服务器"
 
 #: src/ui/chatty-ma-account-details.ui:103
 msgid "Device ID"
-msgstr "მოწყობილობის ID"
+msgstr "设备 ID"
 
 #: src/ui/chatty-ma-account-details.ui:118
 msgid "Sensitive information"
-msgstr "მნიშვნელოვანი ინფორმაცია"
+msgstr "敏感信息"
 
 #: src/ui/chatty-ma-account-details.ui:121
 msgid "Access token"
-msgstr "წვდომის კოდი"
+msgstr "访问令牌"
 
 #: src/ui/chatty-pp-account-details.ui:55
 msgid "Account ID"
-msgstr "ანგარიშის ID"
+msgstr "账户 ID"
 
 #: src/ui/chatty-pp-account-details.ui:88
 msgid "Own Fingerprint"
-msgstr "საკუთარი ანაბეჭდი"
+msgstr "拥有指纹"
 
 #: src/ui/chatty-progress-button.ui:19
 msgid "Download file from server"
-msgstr "ფაილის გადმოწერა სერვერიდან"
+msgstr "从服务器下载文件"
 
 #: src/ui/chatty-settings-dialog.ui:35
 msgid "_Save"
-msgstr "შ_ენახვა"
+msgstr "保存(_S)"
 
 #: src/ui/chatty-settings-dialog.ui:45 src/ui/chatty-settings-dialog.ui:65
 #: src/ui/chatty-settings-dialog.ui:85
 msgid "_Apply"
-msgstr "_გადატარება"
+msgstr "应用(_A)"
 
 #: src/ui/chatty-settings-dialog.ui:136
 msgid "Accounts"
-msgstr "ანგარიშები"
+msgstr "账户"
 
 #: src/ui/chatty-settings-dialog.ui:153 src/ui/chatty-settings-dialog.ui:639
 msgid "Privacy"
-msgstr "პირადი ინფორმაცია"
+msgstr "隐私"
 
 #: src/ui/chatty-settings-dialog.ui:158
 msgid "Read Receipts"
-msgstr "წაკითხულობის ანგარიშები"
+msgstr "已读回执"
 
 #: src/ui/chatty-settings-dialog.ui:171
 msgid "Typing Indicators"
-msgstr "კრეფის მაჩვენებლები"
+msgstr "键入状态指示器"
 
 #: src/ui/chatty-settings-dialog.ui:184
 msgid "Remove Tracking IDs From URLs"
-msgstr "ტრეკინგის ID-ების წაშლა URL-ებიდან"
+msgstr "移除 URL 中的跟踪 ID"
 
 #: src/ui/chatty-settings-dialog.ui:197
 msgid "Show Attachment Previews"
-msgstr "მიმაგრებული ფაილების მინიატურების ჩვენება"
+msgstr "显示附件预览"
 
 #: src/ui/chatty-settings-dialog.ui:213
 msgid "Editor"
-msgstr "რედაქტორი"
+msgstr "编辑器"
 
 #: src/ui/chatty-settings-dialog.ui:217
 msgid "Convert Emoticons"
-msgstr "სიცილაკების გადაყვანა"
+msgstr "转换文本表情符号"
 
 #: src/ui/chatty-settings-dialog.ui:218
 msgid "When you type :) it will be changed to 😃"
-msgstr "თუ თქვენ აკრეფთ :) ის შეიცვლება 😃-ზე"
+msgstr "输入 :) 时，会更改为 😃。"
 
 #. TRANSLATORS: Return is the Enter key.
 #: src/ui/chatty-settings-dialog.ui:231
 msgid "Send Messages With Enter"
-msgstr "შეტყობინებების Enter ღილაკით გაგზავნა"
+msgstr "用回车键发送消息"
 
 #: src/ui/chatty-settings-dialog.ui:323
 msgid "Request Delivery Reports"
-msgstr "შეტყობინების მიღების ანგარიშის მოთხოვნა"
+msgstr "请求送达报告"
 
 #: src/ui/chatty-settings-dialog.ui:335
 msgid "Clear Stuck SMS"
-msgstr "გაჭედილი SMS-ების მოცილება"
+msgstr "清除卡住的短信"
 
 #: src/ui/chatty-settings-dialog.ui:349
 msgid "SMIL for MMS"
-msgstr "SMIL MMS-თვის"
+msgstr "用于彩信的 SMIL"
 
 #: src/ui/chatty-settings-dialog.ui:381
 msgid "MMS Carrier Settings"
-msgstr "MMS-ის პროვაიდერის მორგება"
+msgstr "彩信运营商设置"
 
 #: src/ui/chatty-settings-dialog.ui:391
 msgid "Your modem's phone number"
-msgstr "თქვენი მოდემის ტელეფონის ნომერი"
+msgstr "您的调制解调器电话号码"
 
 #: src/ui/chatty-settings-dialog.ui:399
 msgid "MMSC"
@@ -1723,47 +1701,45 @@ msgstr "APN"
 
 #: src/ui/chatty-settings-dialog.ui:423
 msgid "Proxy"
-msgstr "პროქსი"
+msgstr "代理"
 
 #: src/ui/chatty-settings-dialog.ui:447
 msgid "Current PGP Key"
-msgstr "მიმდინარე PGP გასაღები"
+msgstr "当前 PGP 密钥"
 
 #: src/ui/chatty-settings-dialog.ui:448
 msgid ""
 "Chatty can use any existing key embedded with gpg. However, you are given "
 "the option to generate a key specifically for Chatty below."
 msgstr ""
-"Chatty-ის შეუძლია, gpg-ით ნებისმიერი არსებული გასაღები გამოიყენოს. ამავე "
-"დროს გეძლევათ საშუალება, ქვემოთ, გასაღები, მხოლოდ, Chatty-სთვის დააგენერიროთ."
+"Chatty 可以使用任何嵌入了 gpg 的现有密钥。不过，下面的选项可以用来来生成一个"
+"专门用于 Chatty 的密钥。"
 
 #: src/ui/chatty-settings-dialog.ui:453
 msgid "Generate Chatty PGP Key"
-msgstr "Chatty-ის PGP გასაღებს გენერაცია"
+msgstr "生成 Chatty PGP 密钥"
 
 #: src/ui/chatty-settings-dialog.ui:467
 msgid "Signing ID"
-msgstr "ხელმოწერის ID"
+msgstr "签名 ID"
 
 #: src/ui/chatty-settings-dialog.ui:472
 msgid "foo@example.com"
-msgstr "doylapia@gruzineti.com"
+msgstr "foo@example.com"
 
 #: src/ui/chatty-settings-dialog.ui:485
 msgid "Optional"
-msgstr "არასავალდებულო"
+msgstr "可选"
 
 #: src/ui/chatty-settings-dialog.ui:505
 msgid ""
 "This will generate a key for use with Chatty. Please note that this will not "
 "install the key on a smart card."
-msgstr ""
-"ეს Chatty-სთვის გასაღებს დააგენერირებს. დაიმახსოვრეთ, რომ ეს ამ გასაღებს "
-"ჭკვიან ბარათზე არ დააყენებს."
+msgstr "这将生成一个用于 Chatty 的密钥。请注意，这不会将密钥安装到智能卡上"
 
 #: src/ui/chatty-settings-dialog.ui:508
 msgid "Full Name"
-msgstr "სრული სახელი"
+msgstr "全名"
 
 #: src/ui/chatty-settings-dialog.ui:520
 msgid "PGP ID"
@@ -1771,195 +1747,169 @@ msgstr "PGP ID"
 
 #: src/ui/chatty-settings-dialog.ui:533
 msgid "PGP Passphrase"
-msgstr "PGP საკვანძო ფრაზა"
+msgstr "PGP 密码"
 
 #: src/ui/chatty-settings-dialog.ui:562
 msgid "You won't be notified by messages from blocked contacts"
-msgstr ""
-"დაბლოკილი მომხმარებლებისგან შეტყობინებების შესახებ გაფრთხილებები აღარ მოგივათ"
+msgstr "您将不会收到来自被屏蔽联系人的消息通知"
 
 #: src/ui/chatty-settings-dialog.ui:593
 msgid "No Blocked Chats"
-msgstr "დაბლოკილი საუბრების გარეშე"
+msgstr "不屏蔽聊天"
 
 #: src/ui/chatty-settings-dialog.ui:622
 msgid "Enable Purple Accounts"
-msgstr "Purple-ის ანგარიშების ჩართვა"
+msgstr "启用 Purple 账户"
 
 #: src/ui/chatty-settings-dialog.ui:645
 msgid "Message Archive Management"
-msgstr "შეტყობინებების არქივის მართვა"
+msgstr "消息存档管理(MAM)"
 
 #: src/ui/chatty-settings-dialog.ui:646
 msgid "Sync conversations with chat server"
-msgstr "საუბრის სერვერთან საუბრების სინქრონიზაცია"
+msgstr "将对话与聊天服务器同步"
 
 #: src/ui/chatty-settings-dialog.ui:660
 msgid "Message Carbon Copies"
-msgstr "შეტყობინების ასლები"
+msgstr "消息抄送"
 
 #: src/ui/chatty-settings-dialog.ui:775
 msgid "User ID"
-msgstr "მომხმარებლის ID"
+msgstr "用户 ID"
 
 #: src/ui/chatty-settings-dialog.ui:800
 msgid "Home server"
-msgstr "სახლის სერვერი"
+msgstr "家服务器"
 
 #: src/ui/chatty-settings-dialog.ui:810
 msgid "_Add"
-msgstr "_დამატება"
+msgstr "添加(_A)"
 
 #: src/ui/chatty-settings-dialog.ui:838
 msgid "Add _New Account"
-msgstr "ახალი ა_ნგარიშის დამატება"
+msgstr "添加新账户(_N)"
 
 #: src/ui/chatty-side-bar.ui:27
 msgid "Add Chat"
-msgstr "საუბრის დამატება"
+msgstr "加入聊天"
 
 #: src/ui/chatty-side-bar.ui:36
 msgid "Menu"
-msgstr "მენიუ"
+msgstr "菜单"
 
 #: src/ui/chatty-side-bar.ui:45
 msgid "Search"
-msgstr "ძებნა"
+msgstr "搜索"
 
 #: src/ui/chatty-side-bar.ui:103
 msgctxt "show archived chat list when clicked"
 msgid "Archived"
-msgstr "დაარქივებული"
+msgstr "归档"
 
 #: src/ui/chatty-side-bar.ui:118
 msgid "Keyboard _Shortcuts"
-msgstr "_კლავიატურის მალსახმობები"
+msgstr "键盘快捷键(_S)"
 
 #: src/ui/chatty-side-bar.ui:125
 msgid "Help"
-msgstr "დახმარება"
+msgstr "帮助"
 
 #: src/ui/chatty-side-bar.ui:133
 msgid "About Chats"
-msgstr "Chats-ის შესახებ"
+msgstr "关于 Chats"
 
 #: src/ui/chatty-side-bar.ui:154
 msgid "New Message…"
-msgstr "ახალი შეტყობინება…"
+msgstr "新消息…"
 
 #: src/ui/chatty-side-bar.ui:160
 msgid "New SMS/MMS Message…"
-msgstr "ახალი SMS/MMS შეტყობინება…"
+msgstr "新短信/彩信消息…"
 
 #: src/ui/chatty-side-bar.ui:166
 msgid "New Group Message…"
-msgstr "ახალი ჯგუფური შეტყობინება…"
+msgstr "新群组消息…"
 
 #: src/ui/chatty-verification-page.ui:24
 msgid "Incoming Verification Request"
-msgstr "შემომავალი გადამოწმების მოთხოვნა"
+msgstr "传入验证请求"
 
 #: src/ui/chatty-verification-page.ui:42
 msgid "Verify this user to mark them as trusted."
-msgstr "სანდოდ მოსანიშნად, გადაამოწმეთ ეს მომხმარებელი."
+msgstr "验证该用户，将其标记为受信任。"
 
 #: src/ui/chatty-verification-page.ui:78
 msgid ""
 "Verifying this user will mark their session as trusted, and also mark your "
 "session as trusted to them."
-msgstr ""
-"ამ მომხმარებლის გადამოწმება მის სესიებს სანდოდ მონიშნავს და თქვენი სესია "
-"მათთვისაც სანდოდ მოინიშნება."
+msgstr "验证该用户将把他们的会话标记为受信任，同时也把你的会话标记为受信任。"
 
 #: src/ui/chatty-verification-page.ui:98
 msgid "C_ontinue"
-msgstr "_გაგრძელება"
+msgstr "继续(_O)"
 
 #: src/ui/chatty-verification-page.ui:201
 msgid ""
 "Verify this user by confirming the following emoji appears on their screen"
-msgstr ""
-"გადაამოწმეთ ეს მომხმარებელი დადასტურებით, რომ ეს ემოჯი მის ეკრანზე გამოჩნდა"
+msgstr "通过确认屏幕上出现以下表情符号来验证该用户"
 
 #: src/ui/chatty-verification-page.ui:378
 msgid ""
 "Verify this user by confirming the following number appears on their screen."
-msgstr ""
-"გადაამოწმეთ ეს მომხმარებელი დადასტურებით, რომ ეს რიცხვი გამოჩნდა მის ეკრანზე."
+msgstr "通过确认屏幕上出现以下号码来验证该用户。"
 
 #: src/ui/chatty-verification-page.ui:413
 msgid "To be secure, do this in person or use a trusted way to communicate."
-msgstr ""
-"იმისათვის, რომ დაცულად ბრძანდებოდეთ, ეს პირადად, ან სანდო ურთიერთობის გზით "
-"გააკეთეთ."
+msgstr "为了安全起见，请当面进行交流或使用可信的交流方式。"
 
 #: src/ui/chatty-verification-page.ui:424
 msgctxt "verb, which means 'both items are not the same'"
 msgid "_Don’t Match"
-msgstr "_არ ემთხვევა"
+msgstr "不匹配(_D)"
 
 #: src/ui/chatty-verification-page.ui:434
 msgctxt "verb, which means 'both items are the same'"
 msgid "_Match"
-msgstr "_ემთხვევა"
+msgstr "相匹配(_M)"
 
 #: src/ui/help-overlay.ui:14
 msgctxt "shortcut window"
 msgid "General"
-msgstr "ზოგადი"
+msgstr "通用"
 
 #: src/ui/help-overlay.ui:19
 msgctxt "shortcut window"
 msgid "Open Menu"
-msgstr "მენიუს გახსნა"
+msgstr "打开菜单"
 
 #: src/ui/help-overlay.ui:27
 msgctxt "shortcut window"
 msgid "Open Search"
-msgstr "ძებნის გახსნა"
+msgstr "打开搜索"
 
 #: src/ui/help-overlay.ui:35
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
-msgstr "მალსახმობების ჩვენება"
+msgstr "显示快捷键"
 
 #: src/ui/help-overlay.ui:46
 msgctxt "shortcut window"
 msgid "Chat"
-msgstr "ჩატი"
+msgstr "聊天"
 
 #: src/ui/help-overlay.ui:51
 msgctxt "shortcut window"
 msgid "Show Details"
-msgstr "დეტალების ჩვენება"
+msgstr "显示详细信息"
 
 #: src/users/chatty-contact.c:324
 msgid "Mobile:"
-msgstr "მობილური:"
+msgstr "手机："
 
 #: src/users/chatty-contact.c:326
 msgid "Work:"
-msgstr "სამსახური:"
+msgstr "工作："
 
 #: src/users/chatty-contact.c:328
 msgid "Other:"
-msgstr "სხვა:"
-
-#~ msgid "Start in daemon mode"
-#~ msgstr "ფონურ რეჟიმში გაშვება"
-
-#~ msgid "Phone Number:"
-#~ msgstr "ტელეფონის ნომერი:"
-
-#~ msgid "XMPP ID:"
-#~ msgstr "XMPP ID:"
-
-#~ msgid "Matrix ID:"
-#~ msgstr "Matrix ID:"
-
-#~ msgid "Chats message window"
-#~ msgstr "Chats-ის სასაუბრო ფანჯარა"
-
-#, c-format
-#~ msgid "Contact: %s %s"
-#~ msgstr "კონტაქტი: %s %s"
+msgstr "其他："
