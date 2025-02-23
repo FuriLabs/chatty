@@ -1,15 +1,15 @@
 # Swedish translation for chatty.
-# Copyright © 2020-2024 chatty's COPYRIGHT HOLDER
+# Copyright © 2020-2025 chatty's COPYRIGHT HOLDER
 # This file is distributed under the same license as the chatty package.
-# Anders Jonsson <anders.jonsson@norsjovallen.se>, 2020, 2021, 2022, 2023, 2024.
+# Anders Jonsson <anders.jonsson@norsjovallen.se>, 2020, 2021, 2022, 2023, 2024, 2025.
 # Luna Jernberg <droidbittin@gmail.com>, 2021, 2022, 2024.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: chatty main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2024-11-14 10:42+0000\n"
-"PO-Revision-Date: 2024-11-14 11:57+0100\n"
+"POT-Creation-Date: 2024-12-26 18:30+0000\n"
+"PO-Revision-Date: 2025-02-22 22:55+0100\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -1466,6 +1466,10 @@ msgstr "Namn (valfritt)"
 msgid "Add to Contacts"
 msgstr "Lägg till i Kontakter"
 
+#: src/ui/chatty-file-item.ui:84
+msgid "Save…"
+msgstr "Spara…"
+
 #: src/ui/chatty-info-dialog.ui:5 src/ui/chatty-main-view.ui:126
 msgid "Chat Details"
 msgstr "Chattdetaljer"
@@ -1645,6 +1649,10 @@ msgstr "Konto-ID"
 #: src/ui/chatty-pp-account-details.ui:88
 msgid "Own Fingerprint"
 msgstr "Eget fingeravtryck"
+
+#: src/ui/chatty-progress-button.ui:19
+msgid "Download file from server"
+msgstr "Hämta fil från server"
 
 #: src/ui/chatty-settings-dialog.ui:35
 msgid "_Save"

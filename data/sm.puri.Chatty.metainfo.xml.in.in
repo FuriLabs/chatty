@@ -57,6 +57,16 @@
         <content_attribute id="social-chat">intense</content_attribute>
     </content_rating>
     <releases>
+      <release version="0.8.6" date="2025-02-22">
+        <description>
+          <ul>
+            <li>Modernized preferences UI</li>
+            <li>Matrix: Support authenticated media</li>
+            <li>Matrix: Uses Authorization headers</li>
+            <li>Update Translations</li>
+          </ul>
+        </description>
+      </release>
       <release version="0.8.5" date="2024-08-16">
         <description>
           <ul>

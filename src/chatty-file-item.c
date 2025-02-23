@@ -489,14 +489,14 @@ download_button_clicked (ChattyFileItem *self)
   home_folder = g_file_new_build_filename (g_get_home_dir (), NULL);
   gtk_file_dialog_set_initial_folder (dialog, home_folder);
 
-  if (strstr (chatty_file_get_mime_type (self->file), "vcard")) {
+  if (g_strcmp0 (chatty_file_get_mime_type (self->file), "vcard") == 0) {
     g_autofree char *contact_title = NULL;
     g_autofree char *filename = NULL;
 
     contact_title = chatty_utils_vcard_get_contact_title (file_to_save);
     filename = g_strdup_printf ("%s.vcf", contact_title);
     gtk_file_dialog_set_initial_name (dialog,  filename);
-  } else if (strstr (chatty_file_get_mime_type (self->file), "calendar")) {
+  } else if (g_strcmp0 (chatty_file_get_mime_type (self->file), "calendar") == 0) {
     g_autofree char *event_title = NULL;
     g_autofree char *filename = NULL;
 
