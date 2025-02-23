@@ -1,3 +1,9 @@
+chatty (0.8.6-1) UNRELEASED; urgency=medium
+
+  * New upstream release
+
+ -- Evangelos Ribeiro Tzaras <devrtz-debian@fortysixandtwo.eu>  Sun, 23 Feb 2025 17:09:38 +0100
+
 chatty (0.8.6~rc.0-2) unstable; urgency=medium
 
   * chatty-file-item: Don't assume mime type is set.
