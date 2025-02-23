@@ -14,7 +14,6 @@
 #include <gtksourceview/gtksource.h>
 
 #include "chatty-application.h"
-#include "chatty-manager.h"
 #include "chatty-log.h"
 
 int
