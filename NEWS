@@ -1,3 +1,29 @@
+chatty 0.8.6
+------------
+Released February 2025
+* Fix crash when saving matrix attachments
+* Updated libcmatrix to use Authorization headers
+* Contributors:
+    * Evangelos Ribeiro Tzaras
+    * Guido Günther
+* UI translations:
+    * Alexander Shopov (bg)
+    * Anders Jonsson (sv)
+    * Antonio Marin (ro)
+    * Artur S0 (ru)
+    * Boyuan Yang (zh_CN)
+    * Danial Behzadi (fa)
+    * Daniel Rusek (cs)
+    * Ekaterine Papava (ka)
+    * Emin Tufan Çetin (tr)
+    * Martin (sl)
+    * Pierre Michel Augustin (ht)
+    * Rafael Fontenelle (pt_BR)
+    * Sabri Ünal (tr)
+    * twlvnn kraftwerk (bg)
+    * Yaron Shahrabani (he)
+    * Yuri Chornoivan (uk)
+
 chatty 0.8.6~rc.0
 -----------------
 Released November 2024

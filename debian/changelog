@@ -1,3 +1,70 @@
+chatty (0.8.6) unstable; urgency=medium
+
+  [ Antonio Marin ]
+  * Update Romanian translation
+  * Update Romanian translation
+
+  [ Pierre Michel Augustin ]
+  * Update Haitian Creole translation
+
+  [ Ekaterine Papava ]
+  * Update Georgian translation
+  * Update Georgian translation
+
+  [ Artur S0 ]
+  * Update Russian translation
+  * Update Russian translation
+
+  [ Sabri Ünal ]
+  * Update Turkish translation
+
+  [ Guido Günther ]
+  * chatty-progress-button: Add tooltips.
+    Helps to figure out what the button does
+  * chatty-file-item: Don't assume mime type is set.
+    This e.g. isn't the case for matrix downloads as
+    the mime type isn't yet known.
+    This fixes a crash when saving any attachment in a matrix chat.
+    Fixes 4e46e701 ("file-item: name vcard and vcal after contact and event name if saving")
+
+  [ twlvnn kraftwerk ]
+  * Add Bulgarian translation
+
+  [ Alexander Shopov ]
+  * Update Bulgarian translation
+
+  [ Danial Behzadi ]
+  * Update Persian translation
+
+  [ Martin ]
+  * Update Slovenian translation
+
+  [ Daniel Rusek ]
+  * Update Czech translation
+
+  [ Yuri Chornoivan ]
+  * Update Ukrainian translation
+
+  [ Yaron Shahrabani ]
+  * Update Hebrew translation
+
+  [ Emin Tufan Çetin ]
+  * Update Turkish translation
+
+  [ Rafael Fontenelle ]
+  * Update Brazilian Portuguese translation
+
+  [ Boyuan Yang ]
+  * Add Chinese (China) translation
+
+  [ Evangelos Ribeiro Tzaras ]
+  * libcmatrix: Update to release 0.0.3
+
+  [ Anders Jonsson ]
+  * Update Swedish translation
+
+ -- Evangelos Ribeiro Tzaras <devrtz-debian@fortysixandtwo.eu>  Sun, 23 Feb 2025 16:45:30 +0100
+
 chatty (0.8.6~rc.0) unstable; urgency=medium
 
   [ Scrambled 777 ]
