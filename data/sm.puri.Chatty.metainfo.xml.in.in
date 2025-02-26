@@ -41,7 +41,7 @@
         </screenshot>
         <screenshot type="default">
             <caption>The SMS/MMS preferences using the light theme as seen on a mobile phone running Phosh.</caption>
-            <image type="source" width="496" height="991">https://gitlab.gnome.org/World/Chatty/-/raw/main/data/screenshots/phosh-ppp-chatlist-light.png?inline=false</image>
+            <image type="source" width="496" height="991">https://gitlab.gnome.org/World/Chatty/-/raw/main/data/screenshots/phosh-ppp-sms-preferences-light.png?inline=false</image>
         </screenshot>
 
         <screenshot type="default">
