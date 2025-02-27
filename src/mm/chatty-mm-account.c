@@ -1042,7 +1042,7 @@ delete_stuck_sms (gpointer key,
                   gpointer value,
                   gpointer user_data)
 {
-  g_autofree char *mm_object_path = user_data;
+  const char *mm_object_path = user_data;
   StuckSmSPayload *data = value;
   ChattyMmAccount *self = data->object;
 
@@ -1072,8 +1072,10 @@ mm_object_removed_cb (ChattyMmAccount *self,
     device = g_list_model_get_item (G_LIST_MODEL (self->device_list), i);
     if (g_strcmp0 (mm_object_get_path (MM_OBJECT (object)),
                    mm_object_get_path (device->mm_object)) == 0) {
+      const char *object_path = mm_object_get_path (MM_OBJECT (object));
+
       self->status = CHATTY_UNKNOWN;
-      g_hash_table_foreach_remove (self->stuck_sms, delete_stuck_sms, mm_object_dup_path (MM_OBJECT (object)));
+      g_hash_table_foreach_remove (self->stuck_sms, delete_stuck_sms, (gpointer) object_path);
       g_list_store_remove (self->device_list, i);
       break;
     }
