@@ -108,6 +108,7 @@ chatty_ma_chat_info_set_item (ChattyChatInfo *info,
                               ChattyChat     *chat)
 {
   ChattyMaChatInfo *self = (ChattyMaChatInfo *)info;
+  const char *topic;
 
   g_assert (CHATTY_IS_MA_CHAT_INFO (self));
   g_assert (!chat || CHATTY_IS_MA_CHAT (chat));
@@ -127,8 +128,12 @@ chatty_ma_chat_info_set_item (ChattyChatInfo *info,
                                chatty_chat_get_chat_name (self->chat));
   adw_action_row_set_subtitle (ADW_ACTION_ROW (self->name_row),
                                chatty_item_get_name (CHATTY_ITEM (self->chat)));
-  adw_action_row_set_subtitle (ADW_ACTION_ROW (self->topic_row),
-                               chatty_ma_chat_get_topic (CHATTY_MA_CHAT (self->chat)));
+
+  topic = chatty_ma_chat_get_topic (CHATTY_MA_CHAT (self->chat));
+  gtk_widget_set_visible (self->topic_row, !!topic);
+
+  if (topic)
+    adw_action_row_set_subtitle (ADW_ACTION_ROW (self->topic_row), topic);
 
   g_signal_connect_swapped (self->chat, "notify::encrypt",
                             G_CALLBACK (ma_chat_encrypt_changed_cb),
