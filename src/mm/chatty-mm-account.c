@@ -550,7 +550,8 @@ chatty_mm_account_recieve_mms_cb (ChattyMmAccount *self,
   chat = chatty_mm_account_start_chat (self, recipientlist);
   g_return_val_if_fail (CHATTY_IS_MM_CHAT (chat), FALSE);
 
-  if (message_dir == CHATTY_DIRECTION_IN) {
+  if (message_dir == CHATTY_DIRECTION_IN ||
+      message_dir == CHATTY_DIRECTION_SYSTEM) {
     GListModel *users;
     guint items;
     const char *buddy_number;
