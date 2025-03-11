@@ -969,7 +969,7 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
   } else if (g_strcmp0 (status, "expired") == 0) {
     g_autoptr(GDateTime) expire_time = NULL;
     g_autofree char *expire_date = NULL;
-    direction = CHATTY_DIRECTION_IN;
+    direction = CHATTY_DIRECTION_SYSTEM;
     mms_status = CHATTY_STATUS_RECEIVED;
 
     g_variant_dict_lookup (&dict, "Expire", "s", &expire_date);
