@@ -806,6 +806,10 @@ chatty_window_init (ChattyWindow *self)
   chatty_side_bar_set_show_end_title_buttons (CHATTY_SIDE_BAR (self->side_bar), folded);
   chatty_main_view_set_item (CHATTY_MAIN_VIEW (self->main_view), NULL);
 
+  /* we don't have a GApplication when validating ui files with gtk4-builder-tool */
+  if (!g_application_get_default ())
+    return;
+
   gtk_application_set_accels_for_action (GTK_APPLICATION (g_application_get_default ()),
                                          "win.show-chat-details",
                                          (const char *[]){"<ctrl>d", NULL, });
