@@ -14,12 +14,6 @@ subdir('matrix')
 subdir('mm')
 subdir('purple')
 
-if purple_dep.found()
-  libsrc += files([
-    'dialogs/chatty-pp-chat-info.c',
-  ])
-endif
-
 libsrc += [
   'contrib/demotaggedentry.c',
   'dialogs/chatty-chat-info.c',
@@ -82,13 +76,21 @@ ui_files = files(
   'ui/chatty-fp-row.ui',
   'ui/chatty-list-row.ui',
   'ui/chatty-message-row.ui',
-  'ui/chatty-pp-account-details.ui',
   'ui/chatty-ma-chat-info.ui',
-  'ui/chatty-pp-chat-info.ui',
   'ui/chatty-mm-chat-info.ui',
   'ui/chatty-settings-dialog.ui',
   'ui/chatty-window.ui',
 )
+
+if purple_dep.found()
+  libsrc += files([
+    'dialogs/chatty-pp-chat-info.c',
+  ])
+  ui_files += files([
+   'ui/chatty-pp-account-details.ui',
+   'ui/chatty-pp-chat-info.ui',
+  ])
+endif
 
 chatty_sources += [
   'main.c',
