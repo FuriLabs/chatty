@@ -915,6 +915,7 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
   mms_payload *payload;
   gint64 unix_time = 0;
   int delivery_report = FALSE;
+  guint attachment_index = 0;
 
   parent = g_file_new_build_filename (g_get_user_data_dir (),
                                       "chatty", NULL);
@@ -1095,6 +1096,8 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
     gsize length, written = 0;
     g_autoptr(GError) error = NULL;
 
+    ++attachment_index;
+
     g_variant_get (attach, "(ssstt)", &filenode,
                    &mimetype,
                    &containerpath,
@@ -1195,7 +1198,7 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
         g_clear_object (&new);
       }
     }
-    filename = g_strdup (filenode);
+    filename = g_strdup_printf ("%d_%s", attachment_index, filenode);
     g_strdelimit (filename, "<>", ' ');
     g_strstrip (filename);
     chatty_utils_sanitize_filename (filename);
