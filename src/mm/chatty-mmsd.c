@@ -1271,9 +1271,12 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
     chatty_file_set_status (attachment, CHATTY_FILE_DOWNLOADED);
     files = g_list_prepend (files, attachment);
     g_clear_object (&new);
+
+    if (container) {
+      g_object_unref (container);
+      container = NULL;
+    }
   }
-  if (attachments)
-    g_object_unref (container);
 
   mms_message = chatty_mmsd_process_mms_message_attachments (&files);
 
