@@ -1187,6 +1187,18 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
     filename = g_path_get_basename (filename);
     new = g_file_get_child (savepath, filename);
     out = g_file_create (new, G_FILE_CREATE_PRIVATE, NULL, &error);
+    if (error && g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND)) {
+      // This might be an old attachment (from before we had the index prefix). Try the original path.
+      g_clear_error (&error);
+      filename = g_strdup (filenode);
+      g_strdelimit (filename, "<>", ' ');
+      g_strstrip (filename);
+      chatty_utils_sanitize_filename (filename);
+      filename = g_path_get_basename (filename);
+      new = g_file_get_child (savepath, filename);
+      out = g_file_create (new, G_FILE_CREATE_PRIVATE, NULL, &error);
+    }
+
     if (error) {
       if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_EXISTS)) {
         g_autoptr(GFileInfo) file_info = NULL;
