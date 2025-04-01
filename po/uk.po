@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2025-03-10 11:23+0000\n"
-"PO-Revision-Date: 2025-03-11 22:47+0200\n"
+"POT-Creation-Date: 2025-04-01 03:58+0000\n"
+"PO-Revision-Date: 2025-04-01 09:23+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -316,28 +316,28 @@ msgstr "Закрити"
 msgid "Send To"
 msgstr "Надіслати"
 
-#: src/chatty-chat-list.c:174
+#: src/chatty-chat-list.c:194
 msgid "Select a contact with the <b>“+”</b> button in the titlebar."
 msgstr "Виберіть контакт за допомогою кнопки <b>«+»</b> на смужці заголовка."
 
-#: src/chatty-chat-list.c:178
+#: src/chatty-chat-list.c:198
 msgid "Add instant messaging accounts in Preferences."
 msgstr ""
 "Додайте облікові записи миттєвого обміну повідомленнями у «Параметрах»."
 
-#: src/chatty-chat-list.c:214 src/chatty-contact-list.c:282
+#: src/chatty-chat-list.c:234 src/chatty-contact-list.c:282
 msgid "No Search Results"
 msgstr "Нічого не знайдено"
 
-#: src/chatty-chat-list.c:215
+#: src/chatty-chat-list.c:235
 msgid "Try different search"
 msgstr "Спробувати інші критерії пошуку"
 
-#: src/chatty-chat-list.c:220
+#: src/chatty-chat-list.c:240
 msgid "No archived chats"
 msgstr "Немає архівованих спілкувань"
 
-#: src/chatty-chat-list.c:222
+#: src/chatty-chat-list.c:242
 msgid "Start Chatting"
 msgstr "Почати спілкування"
 
@@ -414,7 +414,6 @@ msgstr "Просто зараз"
 #. * reversed in RTL locales, see https://gitlab.gnome.org/Teams/Websites/developer.gnome.org-hig/-/issues/127
 #.
 #: src/chatty-clock.c:98 src/chatty-clock.c:137
-#| msgid "%I∶%M %p"
 msgid "%I:%M %p"
 msgstr "%I:%M %p"
 
@@ -431,7 +430,6 @@ msgstr[2] "%<PRIi64> хвилин тому"
 #. * reversed in RTL locales, see https://gitlab.gnome.org/Teams/Websites/developer.gnome.org-hig/-/issues/127
 #.
 #: src/chatty-clock.c:120
-#| msgid "Today %H∶%M"
 msgid "Today %H:%M"
 msgstr "Сьогодні %H:%M"
 
@@ -441,12 +439,10 @@ msgstr "Сьогодні %H:%M"
 #. * reversed in RTL locales, see https://gitlab.gnome.org/Teams/Websites/developer.gnome.org-hig/-/issues/127
 #.
 #: src/chatty-clock.c:130
-#| msgid "Today %I∶%M %p"
 msgid "Today %I:%M %p"
 msgstr "Сьогодні %I:%M %p"
 
 #: src/chatty-clock.c:144
-#| msgid "Yesterday %H∶%M"
 msgid "Yesterday %H:%M"
 msgstr "Вчора %H:%M"
 
@@ -456,7 +452,6 @@ msgstr "Вчора %H:%M"
 #. * reversed in RTL locales, see https://gitlab.gnome.org/Teams/Websites/developer.gnome.org-hig/-/issues/127
 #.
 #: src/chatty-clock.c:151
-#| msgid "Yesterday %I∶%M %p"
 msgid "Yesterday %I:%M %p"
 msgstr "Вчора %I:%M %p"
 
@@ -1328,7 +1323,7 @@ msgstr ""
 "Цей параметр є експериментальним і може спричиняти втрату SMS. Зважайте на "
 "цей ризик!"
 
-#: src/matrix/chatty-ma-account.c:78
+#: src/matrix/chatty-ma-account.c:77
 #, c-format
 msgid "Please enter password for “%s”, homeserver: %s"
 msgstr "Будь ласка, введіть пароль до «%s», домашній сервер: %s"
@@ -1373,16 +1368,22 @@ msgstr[2] "Долучення є надто великими"
 msgid "%Y-%m-%d %H∶%M"
 msgstr "%Y.%m.%d %H:%M"
 
-#: src/mm/chatty-mmsd.c:1298
+#: src/mm/chatty-mmsd.c:1308
 #, c-format
 msgid "You received an MMS, but it expired on: %s"
 msgstr "Вами отримано MMS, але строк його дії вичерпано %s"
 
-#: src/mm/chatty-mmsd.c:1301
+#: src/mm/chatty-mmsd.c:1311
+#, c-format
+#| msgid "You received an MMS, but it expired on: %s"
+msgid "You received an MMS, but it cannot be retrieved"
+msgstr "Вами отримано MMS, але його дані не можна отримати"
+
+#: src/mm/chatty-mmsd.c:1313
 msgid "You received an empty MMS."
 msgstr "Вами отримано порожнє MMS."
 
-#: src/mm/chatty-mmsd.c:1782 src/mm/chatty-mmsd.c:1830
+#: src/mm/chatty-mmsd.c:1794 src/mm/chatty-mmsd.c:1842
 #, c-format
 msgid "Automatically Retrying for  %i MMS"
 msgid_plural "Automatically Retrying for  %i MMSes..."
@@ -1390,35 +1391,35 @@ msgstr[0] "Автоматично повторюємо спробу для %i MM
 msgstr[1] "Автоматично повторюємо спробу для %i MMS…"
 msgstr[2] "Автоматично повторюємо спробу для %i MMS…"
 
-#: src/mm/chatty-mmsd.c:1787
+#: src/mm/chatty-mmsd.c:1799
 msgid "Temporary Error Sending MMS"
 msgstr "Тимчасова помилка надсилання MMS"
 
-#: src/mm/chatty-mmsd.c:1835
+#: src/mm/chatty-mmsd.c:1847
 msgid "Temporary Error Receiving MMS"
 msgstr "Тимчасова помилка отримання MMS"
 
-#: src/mm/chatty-mmsd.c:2053
+#: src/mm/chatty-mmsd.c:2065
 msgid "MMSC is not configured"
 msgstr "MMSC не налаштовано"
 
-#: src/mm/chatty-mmsd.c:2056
+#: src/mm/chatty-mmsd.c:2068
 msgid "APN is not configured correctly"
 msgstr "APN не налаштовано належним чином"
 
-#: src/mm/chatty-mmsd.c:2059
+#: src/mm/chatty-mmsd.c:2071
 msgid "Mobile Data is not configured"
 msgstr "Мобільний обмін даними не налаштовано"
 
-#: src/mm/chatty-mmsd.c:2062
+#: src/mm/chatty-mmsd.c:2074
 msgid "Mobile Data is off"
 msgstr "Мобільний обмін даними вимкнено"
 
-#: src/mm/chatty-mmsd.c:2065
+#: src/mm/chatty-mmsd.c:2077
 msgid "Unknown Error"
 msgstr "Невідома помилка"
 
-#: src/mm/chatty-mmsd.c:2070
+#: src/mm/chatty-mmsd.c:2082
 #, c-format
 msgid "Chatty cannot process %i MMS"
 msgid_plural "Chatty cannot process %i MMSes..."
