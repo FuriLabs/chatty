@@ -58,6 +58,27 @@ on_copy_id_action_activated (GtkWidget *widget, const char *action_name, GVarian
 }
 
 static void
+set_buddy (ChattyMaUserRow *self,
+           ChattyMaBuddy   *buddy)
+{
+  g_assert (CHATTY_IS_MA_USER_ROW (self));
+  g_assert (!buddy || CHATTY_IS_MA_BUDDY (buddy));
+  g_assert (!self->buddy);
+
+  /* During UI validation no proper buddy will be set, abort early */
+  if (!buddy)
+    return;
+
+  self->buddy = g_object_ref (buddy);
+  chatty_avatar_set_item (self->avatar, CHATTY_ITEM (self->buddy));
+
+  g_signal_connect_object (self->buddy, "changed",
+                           G_CALLBACK (chatty_ma_user_row_update),
+                           self, G_CONNECT_SWAPPED);
+  chatty_ma_user_row_update (self);
+}
+
+static void
 chatty_ma_user_row_set_property (GObject      *object,
                                  guint         prop_id,
                                  const GValue *value,
@@ -67,14 +88,7 @@ chatty_ma_user_row_set_property (GObject      *object,
 
   switch (prop_id) {
   case PROP_BUDDY:
-    self->buddy = g_value_dup_object (value);
-    chatty_avatar_set_item (self->avatar, CHATTY_ITEM (self->buddy));
-
-    g_signal_connect_object (self->buddy, "changed",
-                             G_CALLBACK (chatty_ma_user_row_update),
-                             self, G_CONNECT_SWAPPED);
-
-    chatty_ma_user_row_update (self);
+    set_buddy (self, g_value_get_object (value));
     break;
 
   default:
