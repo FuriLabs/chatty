@@ -58,10 +58,10 @@ on_copy_id_action_activated (GtkWidget *widget, const char *action_name, GVarian
 }
 
 static void
-chatty_ma_user_row_set_property (GObject *object,
-                                 guint prop_id,
+chatty_ma_user_row_set_property (GObject      *object,
+                                 guint         prop_id,
                                  const GValue *value,
-                                 GParamSpec *pspec)
+                                 GParamSpec   *pspec)
 {
   ChattyMaUserRow *self = CHATTY_MA_USER_ROW (object);
 
