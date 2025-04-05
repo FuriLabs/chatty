@@ -1,5 +1,5 @@
 # Georgian translation for chatty.
-# Copyright (C) 2024 chatty's COPYRIGHT HOLDER
+# Copyright (C) 2024 chatty's authors
 # This file is distributed under the same license as the chatty package.
 # Ekaterine Papava <papava.e@gtu.ge>, 2024-2025.
 #
@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: chatty main\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2025-03-10 11:23+0000\n"
-"PO-Revision-Date: 2025-03-11 01:54+0100\n"
+"POT-Creation-Date: 2025-04-04 17:54+0000\n"
+"PO-Revision-Date: 2025-04-05 06:07+0200\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language-Team: Georgian <ka@li.org>\n"
 "Language: ka\n"
@@ -289,7 +289,7 @@ msgstr ""
 "%s"
 
 #: src/chatty-application.c:195 src/chatty-manager.c:681
-#: src/chatty-message-bar.c:467 src/purple/chatty-purple-notify.c:35
+#: src/chatty-message-bar.c:468 src/purple/chatty-purple-notify.c:35
 #: src/purple/chatty-purple.c:199 src/purple/chatty-purple.c:619
 #: src/dialogs/chatty-new-chat-dialog.c:226
 #: src/dialogs/chatty-settings-dialog.c:219
@@ -308,56 +308,56 @@ msgstr "დახურვა"
 msgid "Send To"
 msgstr "რეციპიენტისთვის გაგზავნა"
 
-#: src/chatty-chat-list.c:174
+#: src/chatty-chat-list.c:194
 msgid "Select a contact with the <b>“+”</b> button in the titlebar."
 msgstr "მონიშნეთ კონტაქტი სათაურის ზოლში <b>“+”</b> ღილაკით."
 
-#: src/chatty-chat-list.c:178
+#: src/chatty-chat-list.c:198
 msgid "Add instant messaging accounts in Preferences."
 msgstr "პარამეტრებში დაამატეთ სწრაფი შეტყობინების ანგარიშები."
 
-#: src/chatty-chat-list.c:214 src/chatty-contact-list.c:282
+#: src/chatty-chat-list.c:234 src/chatty-contact-list.c:282
 msgid "No Search Results"
 msgstr "ძებნის შედეგების გარეშე"
 
-#: src/chatty-chat-list.c:215
+#: src/chatty-chat-list.c:235
 msgid "Try different search"
 msgstr "სცადეთ სხვა ძებნა"
 
-#: src/chatty-chat-list.c:220
+#: src/chatty-chat-list.c:240
 msgid "No archived chats"
 msgstr "დაარქივებული ჩატების გარეშე"
 
-#: src/chatty-chat-list.c:222
+#: src/chatty-chat-list.c:242
 msgid "Start Chatting"
 msgstr "საუბრის დაწყება"
 
-#: src/chatty-chat-page.c:196 src/chatty-chat-page.c:205
+#: src/chatty-chat-page.c:195 src/chatty-chat-page.c:204
 msgid "This is an MMS conversation"
 msgstr "ეს MMS საუბარია"
 
-#: src/chatty-chat-page.c:198 src/chatty-chat-page.c:213
-#: src/chatty-chat-page.c:219
+#: src/chatty-chat-page.c:197 src/chatty-chat-page.c:212
+#: src/chatty-chat-page.c:218
 msgid "Your messages are not encrypted, and carrier rates may apply"
 msgstr "თქვენი შეტყობინებები დაუშიფრავია და შეიძლება გადასახადებიც მოგიწიოთ"
 
-#: src/chatty-chat-page.c:208
+#: src/chatty-chat-page.c:207
 msgid "This is an SMS/MMS conversation"
 msgstr "ეს SMS/MMS საუბარია"
 
-#: src/chatty-chat-page.c:211
+#: src/chatty-chat-page.c:210
 msgid "This is an SMS conversation"
 msgstr "ეს SMS საუბარია"
 
-#: src/chatty-chat-page.c:217
+#: src/chatty-chat-page.c:216
 msgid "This is an IM conversation"
 msgstr "ეს IM საუბარია"
 
-#: src/chatty-chat-page.c:223
+#: src/chatty-chat-page.c:222
 msgid "Your messages are encrypted"
 msgstr "შეტყობინებები დაშიფრულია"
 
-#: src/chatty-chat-page.c:226
+#: src/chatty-chat-page.c:225
 msgid "Your messages are not encrypted"
 msgstr "შეტყობინებები დაუშიფრავია"
 
@@ -399,7 +399,6 @@ msgstr "მხოლოდ ახლა"
 #. * reversed in RTL locales, see https://gitlab.gnome.org/Teams/Websites/developer.gnome.org-hig/-/issues/127
 #.
 #: src/chatty-clock.c:98 src/chatty-clock.c:137
-#| msgid "%I∶%M %p"
 msgid "%I:%M %p"
 msgstr "%I:%M %p"
 
@@ -545,16 +544,16 @@ msgstr "ანგარიშის დაკავშირება…"
 msgid "“%s” is not a valid URI"
 msgstr "%s არ წარმოადგენს სწორ URI-ის"
 
-#: src/chatty-message-bar.c:465 src/purple/chatty-purple.c:195
+#: src/chatty-message-bar.c:466 src/purple/chatty-purple.c:195
 #: src/chatty-window.c:378
 msgid "Alert"
 msgstr "გაფრთხილება"
 
-#: src/chatty-message-bar.c:466
+#: src/chatty-message-bar.c:467
 msgid "Found and automatically deleted tracking IDs from the pasted link."
 msgstr "ნაპოვნი და ავტომატურად წაშლილია ტრეკინგის ID-ები ჩასმული ბმულიდან."
 
-#: src/chatty-message-bar.c:468
+#: src/chatty-message-bar.c:469
 msgid "Don't Show Again"
 msgstr "აღარ მაჩვენო"
 
@@ -633,7 +632,7 @@ msgid "User %s has added %s to the contacts"
 msgstr "მომხმარებელმა %s-მა დაამატა %s კონტაქტებში"
 
 #: src/purple/chatty-purple.c:283 src/dialogs/chatty-settings-dialog.c:477
-#: src/ui/chatty-ma-account-details.ui:141
+#: src/ui/chatty-ma-account-details.ui:144
 #: src/ui/chatty-pp-account-details.ui:80
 msgid "Delete Account"
 msgstr "ანგარიშის წაშლა"
@@ -1039,6 +1038,13 @@ msgstr "საუბრის საუბრების სიიდან წ
 msgid "Delete"
 msgstr "წაშლა"
 
+#. TRANSLATORS: %u is the number of members in a room
+#: src/dialogs/chatty-ma-chat-info.c:123
+#, c-format
+msgid "%u member"
+msgid_plural "%u members"
+msgstr[0] "%u წევრი"
+
 #: src/dialogs/chatty-mm-chat-info.c:146
 msgctxt "Refer to self in contact list"
 msgid "You"
@@ -1087,7 +1093,7 @@ msgid "XMPP ID"
 msgstr "XMPP ID"
 
 #: src/dialogs/chatty-pp-chat-info.c:301 src/ui/chatty-ma-chat-info.ui:28
-#: src/ui/chatty-ma-account-details.ui:90
+#: src/ui/chatty-ma-account-details.ui:91
 msgid "Matrix ID"
 msgstr "Matrix ID"
 
@@ -1297,7 +1303,7 @@ msgstr ""
 "ეს პარამეტრი ექსპერიმენტულია და შეიძლება, SMS-ების დაკარგვა გამოიწვიოს. "
 "გამოიყენეთ საკუთარი პასუხისმგებლობით!"
 
-#: src/matrix/chatty-ma-account.c:78
+#: src/matrix/chatty-ma-account.c:77
 #, c-format
 msgid "Please enter password for “%s”, homeserver: %s"
 msgstr "შეიყვანეთ პაროლი \"%s\"-სთვის, სახლის სერვერი: %s"
@@ -1340,50 +1346,55 @@ msgstr[0] "დანართი მეტისმეტად დიდია"
 msgid "%Y-%m-%d %H∶%M"
 msgstr "%Y-%m-%d %H∶%M"
 
-#: src/mm/chatty-mmsd.c:1298
+#: src/mm/chatty-mmsd.c:1308
 #, c-format
 msgid "You received an MMS, but it expired on: %s"
 msgstr "თქვენ მიიღეთ MMS, მაგრამ მას ვადა გაუვიდა %s-ზე"
 
-#: src/mm/chatty-mmsd.c:1301
+#: src/mm/chatty-mmsd.c:1311
+#, c-format
+msgid "You received an MMS, but it cannot be retrieved"
+msgstr "თქვენ მიიღეთ MMS, მაგრამ მისი გამოთხოვა შეუძლებელია"
+
+#: src/mm/chatty-mmsd.c:1313
 msgid "You received an empty MMS."
 msgstr "თქვენ მიიღეთ ცარიელი MMS."
 
-#: src/mm/chatty-mmsd.c:1782 src/mm/chatty-mmsd.c:1830
+#: src/mm/chatty-mmsd.c:1794 src/mm/chatty-mmsd.c:1842
 #, c-format
 msgid "Automatically Retrying for  %i MMS"
 msgid_plural "Automatically Retrying for  %i MMSes..."
 msgstr[0] "ავტომატურად თავიდან ცდა   %i MMS-სთვის"
 
-#: src/mm/chatty-mmsd.c:1787
+#: src/mm/chatty-mmsd.c:1799
 msgid "Temporary Error Sending MMS"
 msgstr "MMS-ის გაგზავნის დროებითი შეცდომა"
 
-#: src/mm/chatty-mmsd.c:1835
+#: src/mm/chatty-mmsd.c:1847
 msgid "Temporary Error Receiving MMS"
 msgstr "MMS-ს მიღების დროებითი შეცდომა"
 
-#: src/mm/chatty-mmsd.c:2053
+#: src/mm/chatty-mmsd.c:2065
 msgid "MMSC is not configured"
 msgstr "MMSC მორგებული არაა"
 
-#: src/mm/chatty-mmsd.c:2056
+#: src/mm/chatty-mmsd.c:2068
 msgid "APN is not configured correctly"
 msgstr "APN არასწორია"
 
-#: src/mm/chatty-mmsd.c:2059
+#: src/mm/chatty-mmsd.c:2071
 msgid "Mobile Data is not configured"
 msgstr "მობილური ინტერნეტი მორგებული არაა"
 
-#: src/mm/chatty-mmsd.c:2062
+#: src/mm/chatty-mmsd.c:2074
 msgid "Mobile Data is off"
 msgstr "მობილური ინტერნეტი გამორთულია"
 
-#: src/mm/chatty-mmsd.c:2065
+#: src/mm/chatty-mmsd.c:2077
 msgid "Unknown Error"
 msgstr "უცნობი შეცდომა"
 
-#: src/mm/chatty-mmsd.c:2070
+#: src/mm/chatty-mmsd.c:2082
 #, c-format
 msgid "Chatty cannot process %i MMS"
 msgid_plural "Chatty cannot process %i MMSes..."
@@ -1522,6 +1533,10 @@ msgstr "დაშიფვრა"
 msgid "Encrypt Messages"
 msgstr "შეტყობინებების დაშიფრვა"
 
+#: src/ui/chatty-ma-chat-info.ui:62
+msgid "Chat Members"
+msgstr "ჩატის წევრები"
+
 #: src/ui/chatty-main-view.ui:12 src/ui/chatty-settings-dialog.ui:14
 #: src/ui/chatty-side-bar.ui:19
 msgid "Back"
@@ -1636,15 +1651,27 @@ msgstr "დამატებითი ინფორმაცია"
 msgid "Homeserver"
 msgstr "სახლის სერვერი"
 
-#: src/ui/chatty-ma-account-details.ui:103
+#: src/ui/chatty-ma-account-details.ui:83
+msgid "Copy homeserver URL"
+msgstr "სახლის სერვერის ბმულის კოპირება"
+
+#: src/ui/chatty-ma-account-details.ui:97 src/ui/chatty-ma-user-row.ui:68
+msgid "Copy user ID"
+msgstr "მომხმარებლის ID-ის კოპირება"
+
+#: src/ui/chatty-ma-account-details.ui:105
 msgid "Device ID"
 msgstr "მოწყობილობის ID"
 
-#: src/ui/chatty-ma-account-details.ui:118
+#: src/ui/chatty-ma-account-details.ui:111
+msgid "Copy device ID"
+msgstr "მოწყობილობის ID-ის კოპირება"
+
+#: src/ui/chatty-ma-account-details.ui:121
 msgid "Sensitive information"
 msgstr "მნიშვნელოვანი ინფორმაცია"
 
-#: src/ui/chatty-ma-account-details.ui:121
+#: src/ui/chatty-ma-account-details.ui:124
 msgid "Access token"
 msgstr "წვდომის კოდი"
 
