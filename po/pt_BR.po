@@ -4,23 +4,24 @@
 # Luís Fernando Stürmer da Rosa <luisfsr@dismail.de>, 2018-2020.
 # Bruno Lopes <brunolopesdsilv@gmail.com>, 2020.
 # Matheus Barbosa <mdpb.matheus@gmail.com>, 2022.
-# Juliano de Souza Camargo <julianosc@pm.me>, 2024.
 # Rafael Fontenelle <rafaelff@gnome.org>, 2020-2025.
+# Álvaro Burns <>, 2025.
+# Juliano de Souza Camargo <julianosc@pm.me>, 2024-2025.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: purism-chatty\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Chatty/issues\n"
-"POT-Creation-Date: 2025-03-10 11:23+0000\n"
-"PO-Revision-Date: 2025-03-11 00:00-0300\n"
-"Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
+"POT-Creation-Date: 2025-04-04 17:54+0000\n"
+"PO-Revision-Date: 2025-04-05 09:13-0300\n"
+"Last-Translator: Juliano de Souza Camargo <julianosc@pm.me>\n"
 "Language-Team: Brazilian Portuguese <https://br.gnome.org/traducao>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1)\n"
-"X-Generator: Gtranslator 47.1\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Gtranslator 48.0\n"
 
 #: data/sm.puri.Chatty.desktop.in.in:3 data/sm.puri.Chatty.metainfo.xml.in.in:6
 #: src/chatty-application.c:157 src/chatty-application.c:389
@@ -295,7 +296,7 @@ msgstr ""
 "%s"
 
 #: src/chatty-application.c:195 src/chatty-manager.c:681
-#: src/chatty-message-bar.c:467 src/purple/chatty-purple-notify.c:35
+#: src/chatty-message-bar.c:468 src/purple/chatty-purple-notify.c:35
 #: src/purple/chatty-purple.c:199 src/purple/chatty-purple.c:619
 #: src/dialogs/chatty-new-chat-dialog.c:226
 #: src/dialogs/chatty-settings-dialog.c:219
@@ -314,57 +315,57 @@ msgstr "Fechar"
 msgid "Send To"
 msgstr "Enviar para"
 
-#: src/chatty-chat-list.c:174
+#: src/chatty-chat-list.c:194
 msgid "Select a contact with the <b>“+”</b> button in the titlebar."
 msgstr "Escolha um contato com o botão <b>“+”</b> na barra de título."
 
-#: src/chatty-chat-list.c:178
+#: src/chatty-chat-list.c:198
 msgid "Add instant messaging accounts in Preferences."
 msgstr "Adicionar contas de mensagens instantâneas nas Preferências."
 
-#: src/chatty-chat-list.c:214 src/chatty-contact-list.c:282
+#: src/chatty-chat-list.c:234 src/chatty-contact-list.c:282
 msgid "No Search Results"
 msgstr "Sem resultados da pesquisa"
 
-#: src/chatty-chat-list.c:215
+#: src/chatty-chat-list.c:235
 msgid "Try different search"
 msgstr "Tente uma pesquisa diferente"
 
-#: src/chatty-chat-list.c:220
+#: src/chatty-chat-list.c:240
 msgid "No archived chats"
 msgstr "Nenhuma conversa arquivada"
 
-#: src/chatty-chat-list.c:222
+#: src/chatty-chat-list.c:242
 msgid "Start Chatting"
 msgstr "Comece a conversar"
 
-#: src/chatty-chat-page.c:196 src/chatty-chat-page.c:205
+#: src/chatty-chat-page.c:195 src/chatty-chat-page.c:204
 msgid "This is an MMS conversation"
 msgstr "Esta é uma conversa por MMS"
 
-#: src/chatty-chat-page.c:198 src/chatty-chat-page.c:213
-#: src/chatty-chat-page.c:219
+#: src/chatty-chat-page.c:197 src/chatty-chat-page.c:212
+#: src/chatty-chat-page.c:218
 msgid "Your messages are not encrypted, and carrier rates may apply"
 msgstr ""
 "Suas mensagens não estão criptografadas e podem cobradas pela sua operadora"
 
-#: src/chatty-chat-page.c:208
+#: src/chatty-chat-page.c:207
 msgid "This is an SMS/MMS conversation"
 msgstr "Esta é uma conversa por SMS/MMS"
 
-#: src/chatty-chat-page.c:211
+#: src/chatty-chat-page.c:210
 msgid "This is an SMS conversation"
 msgstr "Esta é uma conversa por SMS"
 
-#: src/chatty-chat-page.c:217
+#: src/chatty-chat-page.c:216
 msgid "This is an IM conversation"
 msgstr "Esta é uma conversa por IM (Mensagem Instantânea)"
 
-#: src/chatty-chat-page.c:223
+#: src/chatty-chat-page.c:222
 msgid "Your messages are encrypted"
 msgstr "Suas mensagens estão criptografadas"
 
-#: src/chatty-chat-page.c:226
+#: src/chatty-chat-page.c:225
 msgid "Your messages are not encrypted"
 msgstr "Suas mensagens não estão criptografadas"
 
@@ -555,17 +556,17 @@ msgstr "Conectando conta…"
 msgid "“%s” is not a valid URI"
 msgstr "“%s” não é um URI válido"
 
-#: src/chatty-message-bar.c:465 src/purple/chatty-purple.c:195
+#: src/chatty-message-bar.c:466 src/purple/chatty-purple.c:195
 #: src/chatty-window.c:378
 msgid "Alert"
 msgstr "Alerta"
 
-#: src/chatty-message-bar.c:466
+#: src/chatty-message-bar.c:467
 msgid "Found and automatically deleted tracking IDs from the pasted link."
 msgstr ""
 "IDs de monitoramento encontrados e apagados automaticamente do link colado."
 
-#: src/chatty-message-bar.c:468
+#: src/chatty-message-bar.c:469
 msgid "Don't Show Again"
 msgstr "Não mostrar novamente"
 
@@ -645,7 +646,7 @@ msgid "User %s has added %s to the contacts"
 msgstr "O usuário %s adicionou %s aos contatos"
 
 #: src/purple/chatty-purple.c:283 src/dialogs/chatty-settings-dialog.c:477
-#: src/ui/chatty-ma-account-details.ui:141
+#: src/ui/chatty-ma-account-details.ui:144
 #: src/ui/chatty-pp-account-details.ui:80
 msgid "Delete Account"
 msgstr "Apagar conta"
@@ -1051,6 +1052,14 @@ msgstr "Isto removerá a conversa da lista"
 msgid "Delete"
 msgstr "Apagar"
 
+#. TRANSLATORS: %u is the number of members in a room
+#: src/dialogs/chatty-ma-chat-info.c:123
+#, c-format
+msgid "%u member"
+msgid_plural "%u members"
+msgstr[0] "%u membro"
+msgstr[1] "%u membros"
+
 #: src/dialogs/chatty-mm-chat-info.c:146
 msgctxt "Refer to self in contact list"
 msgid "You"
@@ -1100,7 +1109,7 @@ msgid "XMPP ID"
 msgstr "ID XMPP"
 
 #: src/dialogs/chatty-pp-chat-info.c:301 src/ui/chatty-ma-chat-info.ui:28
-#: src/ui/chatty-ma-account-details.ui:90
+#: src/ui/chatty-ma-account-details.ui:91
 msgid "Matrix ID"
 msgstr "ID Matrix"
 
@@ -1313,7 +1322,7 @@ msgstr ""
 "Esta opção é experimental e pode causar a perda de SMS. Use-a por sua conta "
 "e risco!"
 
-#: src/matrix/chatty-ma-account.c:78
+#: src/matrix/chatty-ma-account.c:77
 #, c-format
 msgid "Please enter password for “%s”, homeserver: %s"
 msgstr "Por favor, insira a senha para “%s”, servidor: %s"
@@ -1358,51 +1367,56 @@ msgstr[1] "Anexos são muito grandes"
 msgid "%Y-%m-%d %H∶%M"
 msgstr "%Y-%m-%d %H∶%M"
 
-#: src/mm/chatty-mmsd.c:1298
+#: src/mm/chatty-mmsd.c:1308
 #, c-format
 msgid "You received an MMS, but it expired on: %s"
 msgstr "Você recebeu um MMS, mas ele expirou em: %s"
 
-#: src/mm/chatty-mmsd.c:1301
+#: src/mm/chatty-mmsd.c:1311
+#, c-format
+msgid "You received an MMS, but it cannot be retrieved"
+msgstr "Você recebeu um MMS, mas ele não pode ser recuperado"
+
+#: src/mm/chatty-mmsd.c:1313
 msgid "You received an empty MMS."
 msgstr "Você recebeu um MMS vazio."
 
-#: src/mm/chatty-mmsd.c:1782 src/mm/chatty-mmsd.c:1830
+#: src/mm/chatty-mmsd.c:1794 src/mm/chatty-mmsd.c:1842
 #, c-format
 msgid "Automatically Retrying for  %i MMS"
 msgid_plural "Automatically Retrying for  %i MMSes..."
 msgstr[0] "Tentando novamente de forma automática para %i MMS"
 msgstr[1] "Tentando novamente de forma automática para %i MMSs..."
 
-#: src/mm/chatty-mmsd.c:1787
+#: src/mm/chatty-mmsd.c:1799
 msgid "Temporary Error Sending MMS"
 msgstr "Erro temporário ao enviar MMS"
 
-#: src/mm/chatty-mmsd.c:1835
+#: src/mm/chatty-mmsd.c:1847
 msgid "Temporary Error Receiving MMS"
 msgstr "Erro temporário ao receber MMS"
 
-#: src/mm/chatty-mmsd.c:2053
+#: src/mm/chatty-mmsd.c:2065
 msgid "MMSC is not configured"
 msgstr "MMSC não está configurado"
 
-#: src/mm/chatty-mmsd.c:2056
+#: src/mm/chatty-mmsd.c:2068
 msgid "APN is not configured correctly"
 msgstr "APN não está configurada corretamente"
 
-#: src/mm/chatty-mmsd.c:2059
+#: src/mm/chatty-mmsd.c:2071
 msgid "Mobile Data is not configured"
 msgstr "Dados móveis não está configurado"
 
-#: src/mm/chatty-mmsd.c:2062
+#: src/mm/chatty-mmsd.c:2074
 msgid "Mobile Data is off"
 msgstr "Dados móveis está desabilitado"
 
-#: src/mm/chatty-mmsd.c:2065
+#: src/mm/chatty-mmsd.c:2077
 msgid "Unknown Error"
 msgstr "Erro desconhecido"
 
-#: src/mm/chatty-mmsd.c:2070
+#: src/mm/chatty-mmsd.c:2082
 #, c-format
 msgid "Chatty cannot process %i MMS"
 msgid_plural "Chatty cannot process %i MMSes..."
@@ -1542,6 +1556,10 @@ msgstr "Criptografia"
 msgid "Encrypt Messages"
 msgstr "Criptografar mensagens"
 
+#: src/ui/chatty-ma-chat-info.ui:62
+msgid "Chat Members"
+msgstr "Membros da conversa"
+
 #: src/ui/chatty-main-view.ui:12 src/ui/chatty-settings-dialog.ui:14
 #: src/ui/chatty-side-bar.ui:19
 msgid "Back"
@@ -1656,15 +1674,27 @@ msgstr "Informações avançadas"
 msgid "Homeserver"
 msgstr "Servidor"
 
-#: src/ui/chatty-ma-account-details.ui:103
+#: src/ui/chatty-ma-account-details.ui:83
+msgid "Copy homeserver URL"
+msgstr "Copiar a URL do servidor pessoal"
+
+#: src/ui/chatty-ma-account-details.ui:97 src/ui/chatty-ma-user-row.ui:68
+msgid "Copy user ID"
+msgstr "Copiar ID do usuário"
+
+#: src/ui/chatty-ma-account-details.ui:105
 msgid "Device ID"
 msgstr "ID do dispositivo"
 
-#: src/ui/chatty-ma-account-details.ui:118
+#: src/ui/chatty-ma-account-details.ui:111
+msgid "Copy device ID"
+msgstr "Copiar ID do dispositivo"
+
+#: src/ui/chatty-ma-account-details.ui:121
 msgid "Sensitive information"
 msgstr "Informação sensível"
 
-#: src/ui/chatty-ma-account-details.ui:121
+#: src/ui/chatty-ma-account-details.ui:124
 msgid "Access token"
 msgstr "Token de acesso"
 
