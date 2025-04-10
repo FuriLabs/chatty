@@ -34,6 +34,7 @@
 #include "chatty-fp-row.h"
 #include "chatty-ma-chat.h"
 #include "chatty-ma-chat-info.h"
+#include "chatty-ma-user-row.h"
 #include "chatty-log.h"
 
 struct _ChattyMaChatInfo
@@ -49,6 +50,10 @@ struct _ChattyMaChatInfo
   GtkWidget     *topic_row;
   GtkWidget     *encryption_spinner;
   GtkWidget     *encryption_row;
+
+  AdwPreferencesGroup *members_group;
+  GListModel          *members_model;
+  GtkWidget           *members_list_box;
 };
 
 G_DEFINE_TYPE (ChattyMaChatInfo, chatty_ma_chat_info, CHATTY_TYPE_CHAT_INFO)
@@ -104,10 +109,36 @@ ma_chat_info_encryption_row_changed_cb (ChattyMaChatInfo *self)
 }
 
 static void
+on_member_model_changed (ChattyMaChatInfo *self)
+{
+  guint n_members;
+  g_autofree char *description = NULL;
+
+  g_assert (CHATTY_IS_MA_CHAT_INFO (self));
+  g_assert (G_IS_LIST_MODEL (self->members_model));
+
+  n_members = g_list_model_get_n_items (self->members_model);
+
+  /* TRANSLATORS: %u is the number of members in a room */
+  description = g_strdup_printf (g_dngettext (GETTEXT_PACKAGE, "%u member",
+                                              "%u members", n_members),
+                                 n_members);
+  adw_preferences_group_set_description (self->members_group, description);
+}
+
+static GtkWidget *
+create_row_for_members (GObject *item,
+                        gpointer unused)
+{
+  return chatty_ma_user_row_new (CHATTY_MA_BUDDY (item));
+}
+
+static void
 chatty_ma_chat_info_set_item (ChattyChatInfo *info,
                               ChattyChat     *chat)
 {
   ChattyMaChatInfo *self = (ChattyMaChatInfo *)info;
+  const char *topic;
 
   g_assert (CHATTY_IS_MA_CHAT_INFO (self));
   g_assert (!chat || CHATTY_IS_MA_CHAT (chat));
@@ -127,8 +158,12 @@ chatty_ma_chat_info_set_item (ChattyChatInfo *info,
                                chatty_chat_get_chat_name (self->chat));
   adw_action_row_set_subtitle (ADW_ACTION_ROW (self->name_row),
                                chatty_item_get_name (CHATTY_ITEM (self->chat)));
-  adw_action_row_set_subtitle (ADW_ACTION_ROW (self->topic_row),
-                               chatty_ma_chat_get_topic (CHATTY_MA_CHAT (self->chat)));
+
+  topic = chatty_ma_chat_get_topic (CHATTY_MA_CHAT (self->chat));
+  gtk_widget_set_visible (self->topic_row, !!topic);
+
+  if (topic)
+    adw_action_row_set_subtitle (ADW_ACTION_ROW (self->topic_row), topic);
 
   g_signal_connect_swapped (self->chat, "notify::encrypt",
                             G_CALLBACK (ma_chat_encrypt_changed_cb),
@@ -136,6 +171,17 @@ chatty_ma_chat_info_set_item (ChattyChatInfo *info,
   gtk_widget_set_sensitive (self->encryption_row,
                             chatty_ma_chat_can_set_encryption (CHATTY_MA_CHAT (self->chat)));
   ma_chat_encrypt_changed_cb (self);
+
+  self->members_model = chatty_chat_get_users (self->chat);
+  gtk_list_box_bind_model (GTK_LIST_BOX (self->members_list_box),
+                           self->members_model,
+                           (GtkListBoxCreateWidgetFunc)create_row_for_members,
+                           self, NULL);
+
+  g_signal_connect_object (self->members_model, "items-changed",
+                           G_CALLBACK (on_member_model_changed),
+                           self, G_CONNECT_SWAPPED);
+  on_member_model_changed (self);
 }
 
 static void
@@ -170,6 +216,8 @@ chatty_ma_chat_info_class_init (ChattyMaChatInfoClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ChattyMaChatInfo, topic_row);
   gtk_widget_class_bind_template_child (widget_class, ChattyMaChatInfo, encryption_spinner);
   gtk_widget_class_bind_template_child (widget_class, ChattyMaChatInfo, encryption_row);
+  gtk_widget_class_bind_template_child (widget_class, ChattyMaChatInfo, members_group);
+  gtk_widget_class_bind_template_child (widget_class, ChattyMaChatInfo, members_list_box);
 
   gtk_widget_class_bind_template_callback (widget_class, ma_chat_info_encryption_row_changed_cb);
 }

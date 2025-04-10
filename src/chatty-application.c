@@ -511,3 +511,21 @@ chatty_application_get_active_chat (ChattyApplication *self)
 
   return NULL;
 }
+
+/**
+ * chatty_application_set_active_chat:
+ * @self: A #ChattyApplication
+ * @chat: A #ChattyChat
+ *
+ * Set the currently shown chat
+ */
+void
+chatty_application_set_active_chat (ChattyApplication *self,
+                                    ChattyChat        *chat)
+{
+  g_return_if_fail (CHATTY_IS_APPLICATION (self));
+  g_return_if_fail (CHATTY_IS_CHAT (chat));
+  g_return_if_fail (CHATTY_IS_WINDOW (self->main_window));
+
+  chatty_window_open_chat (CHATTY_WINDOW (self->main_window), chat);
+}

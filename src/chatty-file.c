@@ -63,7 +63,11 @@ static guint signals[N_SIGNALS];
 static void
 chatty_file_finalize (GObject *object)
 {
-  ChattyFile *self = (ChattyFile *)object;
+  ChattyFile *self = CHATTY_FILE (object);
+
+  g_clear_object (&self->file);
+  g_clear_object (&self->stream);
+  g_clear_object (&self->cm_event);
 
   g_clear_pointer (&self->file_name, g_free);
   g_clear_pointer (&self->mime_type, g_free);

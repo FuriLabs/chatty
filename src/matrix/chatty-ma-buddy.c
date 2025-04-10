@@ -17,6 +17,11 @@
 #include "chatty-ma-buddy.h"
 #include "chatty-log.h"
 
+/**
+ * ChattyMaBuddy:
+ *
+ * A [class@ChattyItem] peer (or "buddy") implementation for the matrix backend.
+ */
 struct _ChattyMaBuddy
 {
   ChattyItem      parent_instance;

@@ -1,7 +1,7 @@
 project(
   'chatty', 'c', 'cpp',
-  version: '0.8.6',
-  meson_version: '>= 0.56.0',
+  version: '0.8.7',
+  meson_version: '>= 1.4.0',
 )
 
 i18n = import('i18n')
@@ -134,6 +134,7 @@ subdir('help')
 subdir('src')
 subdir('tests')
 subdir('po')
+subdir('docs')
 
 system = target_machine.system()
 if system == 'linux'
@@ -152,16 +153,12 @@ summary({'Target': system,
 summary({'Build type': get_option('buildtype'),
          'libpurple': purple_dep.found(),
          'libspelling': libspell_dep.found(),
+         'Documentation:': get_option('gtk_doc'),
         },
         bool_yn: true,
         section: 'Configuration')
 
-# gnome.post_install() is available since meson 0.59.0
-# Distributions use their own tooling (e.g. postinst, triggers, etc)
-# so it is okay if the post_install() is not run on distro builds
-if meson.version().version_compare('>=0.59.0')
-  gnome.post_install(
-    glib_compile_schemas: true,
-    gtk_update_icon_cache: true,
-  )
-endif
+gnome.post_install(
+  glib_compile_schemas: true,
+  gtk_update_icon_cache: true,
+)

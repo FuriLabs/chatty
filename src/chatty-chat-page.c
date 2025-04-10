@@ -32,7 +32,6 @@ struct _ChattyChatPage
   GtkWidget  *loading_spinner;
   GtkWidget  *typing_revealer;
   GtkWidget  *typing_indicator;
-  GtkWidget  *chatty_message_list;
   GtkWidget  *message_bar;
   GtkWidget  *no_message_status;
   GtkRevealer *scroll_down_revealer;

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="ChattyMaUserRow" parent="GtkListBoxRow">
+    <property name="child">
+      <object class="GtkGrid">
+        <property name="margin-start">12</property>
+        <property name="margin-end">12</property>
+        <property name="margin-top">12</property>
+        <property name="margin-bottom">12</property>
+        <property name="column-spacing">12</property>
+        <property name="row-spacing">6</property>
+        <style>
+          <class name="conversation_list"/>
+        </style>
+
+        <!-- Avatar -->
+        <child>
+          <object class="ChattyAvatar" id="avatar">
+            <property name="valign">center</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="row">0</property>
+              <property name="row-span">2</property>
+            </layout>
+          </object>
+        </child>
+
+        <!-- Row title -->
+        <child>
+          <object class="GtkLabel" id="display_name">
+            <property name="ellipsize">end</property>
+            <property name="hexpand">1</property>
+            <property name="halign">start</property>
+            <property name="xalign">0.0</property>
+            <style>
+              <class name="bold-label"/>
+            </style>
+            <layout>
+              <property name="column">1</property>
+              <property name="row">0</property>
+            </layout>
+          </object>
+        </child>
+
+        <!-- Subtitle -->
+        <child>
+          <object class="GtkLabel" id="user_id">
+            <property name="halign">start</property>
+            <property name="ellipsize">end</property>
+            <property name="xalign">0.0</property>
+            <property name="single-line-mode">1</property>
+            <style>
+              <class name="caption"/>
+            </style>
+            <layout>
+              <property name="column">1</property>
+              <property name="row">1</property>
+            </layout>
+          </object>
+        </child>
+
+        <!-- Copy button -->
+        <child>
+          <object class="GtkButton">
+            <property name="icon-name">edit-copy-symbolic</property>
+            <property name="action-name">ma-user-row.copy_id</property>
+            <property name="valign">center</property>
+            <property name="tooltip-text" translatable="yes">Copy user ID</property>
+            <layout>
+              <property name="column">2</property>
+              <property name="row">1</property>
+            </layout>
+          </object>
+        </child>
+
+      </object>
+    </property>
+  </template>
+</interface>

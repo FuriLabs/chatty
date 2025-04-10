@@ -88,12 +88,14 @@ clock_get_human_time (ChattyClock         *self,
 
     if (day == day_now) {
       if (clock_format == G_DESKTOP_CLOCK_FORMAT_24H)
-        return g_date_time_format (time, "%H∶%M");
+        return g_date_time_format (time, "%H:%M");
       else
         /* TRANSLATORS: Timestamp with 12 hour time, e.g. “06∶42 PM”.
          * See https://docs.gtk.org/glib/method.DateTime.format.html
+         * Note, that this is a regular colon to ensure times are not
+         * reversed in RTL locales, see https://gitlab.gnome.org/Teams/Websites/developer.gnome.org-hig/-/issues/127
          */
-        return g_date_time_format (time, _("%I∶%M %p"));
+        return g_date_time_format (time, _("%I:%M %p"));
     }
   }
 
@@ -111,32 +113,42 @@ clock_get_human_time (ChattyClock         *self,
       day == day_now) {
     if (clock_format == G_DESKTOP_CLOCK_FORMAT_24H) {
       if (detailed)
-        return g_date_time_format (time, _("Today %H∶%M"));
+        /* TRANSLATORS:
+         * Note, that this is a regular colon to ensure times are not
+         * reversed in RTL locales, see https://gitlab.gnome.org/Teams/Websites/developer.gnome.org-hig/-/issues/127
+         */
+        return g_date_time_format (time, _("Today %H:%M"));
 
-      return g_date_time_format (time, "%H∶%M");
+      return g_date_time_format (time, "%H:%M");
     } else {
       if (detailed)
         /* TRANSLATORS: Timestamp with 12 hour time, e.g. “Today 06∶42 PM”.
          * See https://docs.gtk.org/glib/method.DateTime.format.html
+         * Note, that this is a regular colon to ensure times are not
+         * reversed in RTL locales, see https://gitlab.gnome.org/Teams/Websites/developer.gnome.org-hig/-/issues/127
          */
-        return g_date_time_format (time, _("Today %I∶%M %p"));
+        return g_date_time_format (time, _("Today %I:%M %p"));
 
       /* TRANSLATORS: Timestamp with 12 hour time, e.g. “06∶42 PM”.
        * See https://docs.gtk.org/glib/method.DateTime.format.html
+         * Note, that this is a regular colon to ensure times are not
+         * reversed in RTL locales, see https://gitlab.gnome.org/Teams/Websites/developer.gnome.org-hig/-/issues/127
        */
-      return g_date_time_format (time, _("%I∶%M %p"));
+      return g_date_time_format (time, _("%I:%M %p"));
     }
   }
 
   if (time_span <= G_TIME_SPAN_DAY * 2 &&
       detailed && day_now - day == 1) {
     if (clock_format == G_DESKTOP_CLOCK_FORMAT_24H)
-      return g_date_time_format (time, _("Yesterday %H∶%M"));
+      return g_date_time_format (time, _("Yesterday %H:%M"));
 
     /* TRANSLATORS: Timestamp with 12 hour time, e.g. “Yesterday 06∶42 PM”.
      * See https://docs.gtk.org/glib/method.DateTime.format.html
+     * Note, that this is a regular colon to ensure times are not
+     * reversed in RTL locales, see https://gitlab.gnome.org/Teams/Websites/developer.gnome.org-hig/-/issues/127
      */
-    return g_date_time_format (time, _("Yesterday %I∶%M %p"));
+    return g_date_time_format (time, _("Yesterday %I:%M %p"));
   }
 
   if (time_span <= G_TIME_SPAN_DAY * 7 &&
@@ -153,12 +165,20 @@ clock_get_human_time (ChattyClock         *self,
   /* TRANSLATORS: Timestamp from more than 7 days ago or future date
    * (eg: when the system time is wrong), e.g. “2022-01-01”.
    * See https://docs.gtk.org/glib/method.DateTime.format.html
+   * Note, that this is a regular colon to ensure times are not
+   * reversed in RTL locales, see https://gitlab.gnome.org/Teams/Websites/developer.gnome.org-hig/-/issues/127
    */
   if (detailed && clock_format == G_DESKTOP_CLOCK_FORMAT_24H)
+    /* TRANSLATORS:
+   * Note, that this is a regular colon to ensure times are not
+   * reversed in RTL locales, see https://gitlab.gnome.org/Teams/Websites/developer.gnome.org-hig/-/issues/127
+     */
     return g_date_time_format (time, _("%Y-%m-%d %H:%M"));
   else if (detailed) {
   /* TRANSLATORS: Timestamp with 12 hour time, e.g. “Today 06∶42 PM”.
    * See https://docs.gtk.org/glib/method.DateTime.format.html
+   * Note, that this is a regular colon to ensure times are not
+   * reversed in RTL locales, see https://gitlab.gnome.org/Teams/Websites/developer.gnome.org-hig/-/issues/127
    */
     return g_date_time_format (time, _("%Y-%m-%d %I:%M %p"));
   }

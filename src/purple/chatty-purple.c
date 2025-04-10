@@ -1282,7 +1282,7 @@ chatty_purple_initialize (ChattyPurple *self)
                          "buddy-typing-stopped", self,
                          PURPLE_CALLBACK (purple_buddy_typing_stopped_cb), self);
 
-  /**
+  /*
    * This is default fallback history handler which is called last,
    * other plugins may intercept and suppress it if they handle history
    * on their own (eg. MAM)

@@ -80,6 +80,7 @@
                             <property name="icon-name">edit-copy-symbolic</property>
                             <property name="action-name">ma-account-details.copy</property>
                             <property name="action-target">"homeserver"</property>
+                            <property name="tooltip-text" translatable="yes">Copy homeserver URL</property>
                             <property name="valign">center</property>
                           </object>
                         </child>
@@ -93,6 +94,7 @@
                             <property name="icon-name">edit-copy-symbolic</property>
                             <property name="action-name">ma-account-details.copy</property>
                             <property name="action-target">"matrix-id"</property>
+                            <property name="tooltip-text" translatable="yes">Copy user ID</property>
                             <property name="valign">center</property>
                           </object>
                         </child>
@@ -106,6 +108,7 @@
                             <property name="icon-name">edit-copy-symbolic</property>
                             <property name="action-name">ma-account-details.copy</property>
                             <property name="action-target">"device-id"</property>
+                            <property name="tooltip-text" translatable="yes">Copy device ID</property>
                             <property name="valign">center</property>
                           </object>
                         </child>

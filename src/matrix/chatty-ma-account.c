@@ -10,7 +10,6 @@
 
 #define G_LOG_DOMAIN "chatty-ma-account"
 
-#include <libsecret/secret.h>
 #include <glib/gi18n.h>
 
 #include "chatty-history.h"

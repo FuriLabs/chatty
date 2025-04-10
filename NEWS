@@ -1,3 +1,42 @@
+chatty 0.8.7
+------------
+Released April 2025
+* Using gi-docgen for building documentation
+* Search related quality of live improvements
+* List users of matrix room in details
+* Notify user if MMS cannot be retrieved
+* Fix the odd memory leak
+* Build now validates UI files with gtk4-builder-tool
+* Issues fixed:
+    * https://gitlab.gnome.org/World/Chatty/-/issues/963
+    * https://gitlab.gnome.org/World/Chatty/-/issues/971
+    * https://gitlab.gnome.org/World/Chatty/-/issues/968
+    * https://gitlab.gnome.org/World/Chatty/-/issues/945
+* Contributors:
+    * Chris Talbot
+    * Evangelos Ribeiro Tzaras
+    * Robert Schütz
+    * Tomi Lähteenmäki
+* UI translations:
+    * Alexander Shopov (bg)
+    * Anders Jonsson (sv)
+    * Antonio Marin (ro)
+    * Artur S0 (ru)
+    * Baxrom Raxmatov (uz)
+    * Bruce Cowan (en_GB)
+    * Danial Behzadi (fa)
+    * Daniel Rusek (cs)
+    * Ekaterine Papava (ka)
+    * Emin Tufan Çetin (tr)
+    * Juliano de Souza Camargo (pt_BR)
+    * Martin (sl)
+    * Rafael Fontenelle (pt_BR)
+    * Scrambled 777 (hi)
+    * Vasil Pupkin (be)
+    * Yaron Shahrabani (he)
+    * Yosef Or Boczko (he)
+    * Yuri Chornoivan (uk)
+
 chatty 0.8.6
 ------------
 Released February 2025

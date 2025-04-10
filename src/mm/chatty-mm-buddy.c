@@ -21,10 +21,9 @@
 #include "chatty-mm-buddy.h"
 
 /**
- * SECTION: chatty-mm-buddy
- * @title: ChattyMmBuddy
- * @short_description: An abstraction over ModemManager
- * @include: "chatty-mm-buddy.h"
+ * ChattyMmBuddy:
+ *
+ * A [class@ChattyItem] peer (or "buddy") implementation for the ModemManager backend.
  */
 
 struct _ChattyMmBuddy
@@ -131,7 +130,6 @@ chatty_mm_buddy_class_init (ChattyMmBuddyClass *klass)
 
   /**
    * ChattyMmBuddy::changed:
-   * @self: a #ChattyMmBuddy
    *
    * changed signal is emitted when any detail
    * of the buddy changes.
@@ -164,11 +162,11 @@ chatty_mm_buddy_new (const char *phone_number,
 
 /**
  * chatty_mm_buddy_get_number:
- * @self: a #ChattyMmBuddy
+ * @self: The buddy
  *
- * Get the phone number of @self.
+ * Get the phone number of the buddy.
  *
- * Returns: (transfer none): the phone number of Buddy.
+ * Returns: (transfer none): the phone number of the buddy.
  * or an empty string if not found or on error.
  */
 const char *

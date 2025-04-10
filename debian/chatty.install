@@ -1,0 +1,12 @@
+etc/
+usr/bin
+usr/share/applications/*
+usr/share/bash-completion/*
+usr/share/applications
+usr/share/bash-completion
+usr/share/dbus-1
+usr/share/glib-2.0
+usr/share/help
+usr/share/icons
+usr/share/locale
+usr/share/metainfo

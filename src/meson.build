@@ -14,90 +14,87 @@ subdir('matrix')
 subdir('mm')
 subdir('purple')
 
+libsrc += [
+  'contrib/demotaggedentry.c',
+  'dialogs/chatty-chat-info.c',
+  'dialogs/chatty-info-dialog.c',
+  'dialogs/chatty-ma-account-details.c',
+  'dialogs/chatty-ma-chat-info.c',
+  'dialogs/chatty-mm-chat-info.c',
+  'dialogs/chatty-new-chat-dialog.c',
+  'dialogs/chatty-new-muc-dialog.c',
+  'dialogs/chatty-pp-account-details.c',
+  'dialogs/chatty-settings-dialog.c',
+  'dialogs/chatty-wrong-pw-dialog.c',
+  'users/chatty-account.c',
+  'users/chatty-contact.c',
+  'users/chatty-item.c',
+  'chatty-application.c',
+  'chatty-attachment.c',
+  'chatty-attachments-bar.c',
+  'chatty-avatar.c',
+  'chatty-chat-list.c',
+  'chatty-chat-page.c',
+  'chatty-chat.c',
+  'chatty-clock.c',
+  'chatty-contact-list.c',
+  'chatty-contact-provider.c',
+  'chatty-entry.c',
+  'chatty-file-item.c',
+  'chatty-file.c',
+  'chatty-fp-row.c',
+  'chatty-history.c',
+  'chatty-invite-page.c',
+  'chatty-list-row.c',
+  'chatty-log.c',
+  'chatty-main-view.c',
+  'chatty-manager.c',
+  'chatty-media.c',
+  'chatty-message-bar.c',
+  'chatty-message-row.c',
+  'chatty-message.c',
+  'chatty-notification.c',
+  'chatty-pgp.c',
+  'chatty-phone-utils.cpp',
+  'chatty-progress-button.c',
+  'chatty-selectable-row.c',
+  'chatty-settings.c',
+  'chatty-side-bar.c',
+  'chatty-utils.c',
+  'chatty-verification-page.c',
+  'chatty-window.c',
+  version_h,
+]
+
+ui_files = files(
+  'ui/chatty-chat-page.ui',
+  'ui/chatty-contact-row.ui',
+  'ui/chatty-dialog-join-muc.ui',
+  'ui/chatty-dialog-new-chat.ui',
+  'ui/chatty-dialog-wrong-pw.ui',
+  'ui/chatty-fp-row.ui',
+  'ui/chatty-info-dialog.ui',
+  'ui/chatty-list-row.ui',
+  'ui/chatty-ma-chat-info.ui',
+  'ui/chatty-message-row.ui',
+  'ui/chatty-mm-chat-info.ui',
+  'ui/chatty-ma-user-row.ui',
+  'ui/chatty-settings-dialog.ui',
+  'ui/chatty-window.ui',
+)
+
 if purple_dep.found()
   libsrc += files([
     'dialogs/chatty-pp-chat-info.c',
   ])
+  ui_files += files([
+   'ui/chatty-pp-account-details.ui',
+   'ui/chatty-pp-chat-info.ui',
+  ])
 endif
-
-libsrc += [
-  'contrib/demotaggedentry.c',
-  'dialogs/chatty-ma-account-details.c',
-  'dialogs/chatty-pp-account-details.c',
-  'dialogs/chatty-chat-info.c',
-  'dialogs/chatty-ma-chat-info.c',
-  'dialogs/chatty-mm-chat-info.c',
-  'dialogs/chatty-wrong-pw-dialog.c',
-  'users/chatty-item.c',
-  'users/chatty-contact.c',
-  'users/chatty-account.c',
-  'chatty-selectable-row.c',
-  'chatty-fp-row.c',
-  'chatty-file.c',
-  'chatty-attachment.c',
-  'chatty-attachments-bar.c',
-  'chatty-message-bar.c',
-  'chatty-list-row.c',
-  'chatty-chat-page.c',
-  'chatty-entry.c',
-  'chatty-message-row.c',
-  'chatty-progress-button.c',
-  'chatty-file-item.c',
-  'chatty-log.c',
-  'chatty-avatar.c',
-  'chatty-chat.c',
-  'chatty-clock.c',
-  'chatty-media.c',
-  'chatty-contact-provider.c',
-  'chatty-message.c',
-  'chatty-settings.c',
-  'chatty-history.c',
-  'chatty-notification.c',
-  'chatty-utils.c',
-  'chatty-phone-utils.cpp',
-  'chatty-pgp.c',
-]
-
-ui_files = files (
-  'ui/chatty-chat-page.ui',
-  'ui/chatty-contact-row.ui',
-  # FIXME: Testing this fails in CI,
-  # but works fine locally
-  'ui/chatty-info-dialog.ui',
-  'ui/chatty-dialog-join-muc.ui',
-  'ui/chatty-dialog-wrong-pw.ui',
-  # Can't test as this requires chatty-contact-list,
-  # 'ui/chatty-dialog-new-chat.ui',
-  'ui/chatty-fp-row.ui',
-  'ui/chatty-list-row.ui',
-  'ui/chatty-message-row.ui',
-  # FIXME
-  'ui/chatty-pp-account-details.ui',
-  'ui/chatty-ma-chat-info.ui',
-  'ui/chatty-pp-chat-info.ui',
-  'ui/chatty-mm-chat-info.ui',
-  'ui/chatty-settings-dialog.ui',
-  # Can't test as this requires chatty-chat-list,
-  # which is not in libsrc
-  # 'ui/chatty-window.ui',
-)
 
 chatty_sources += [
   'main.c',
-  'chatty-manager.c',
-  'chatty-application.c',
-  'chatty-chat-list.c',
-  'chatty-contact-list.c',
-  'chatty-main-view.c',
-  'chatty-side-bar.c',
-  'chatty-invite-page.c',
-  'chatty-verification-page.c',
-  'chatty-window.c',
-  'dialogs/chatty-info-dialog.c',
-  'dialogs/chatty-settings-dialog.c',
-  'dialogs/chatty-new-chat-dialog.c',
-  'dialogs/chatty-new-muc-dialog.c',
-  version_h,
 ]
 
 libphonenumber_dep = cc.find_library('phonenumber', required: true)
@@ -141,28 +138,72 @@ resources = gnome.compile_resources('chatty-resources',
   c_name: 'chatty'
 )
 
-libchatty = both_libraries(
-  'chatty', [libsrc, 'library.c'],
+chatty_enum_headers = files(['chatty-enums.h'])
+chatty_enums = gnome.mkenums_simple('enum-types',
+                                    sources: chatty_enum_headers)
+generated_sources = [
   resources,
+  chatty_enums,
+]
+
+libchatty = both_libraries(
+  'chatty', [libsrc, generated_sources],
   include_directories: src_inc,
   dependencies: chatty_deps,
 )
 
-# xxx: Requires GTK 4.10, seems to fail with older GTK.  To be enabled in the future
-# gtk_builder_tool = find_program('gtk4-builder-tool', required: false)
-# if gtk_builder_tool.found()
-#   preload_env = 'LD_PRELOAD=libadwaita-1.so:@0@'.format(libchatty_shared.full_path())
-#   foreach file: ui_files
-#     test('Validate @0@'.format(file), gtk_builder_tool,
-#          env: [preload_env],
-#          args: ['validate', file])
-#   endforeach
-# endif
-
-executable('chatty', chatty_sources, resources,
+libchatty_dep = declare_dependency(
+  sources: generated_sources,
   include_directories: src_inc,
-  dependencies: chatty_deps,
   link_with: libchatty.get_static_lib(),
+  dependencies: chatty_deps,
+)
+
+ gtk_builder_tool = find_program('gtk4-builder-tool', required: false)
+ if gtk_builder_tool.found()
+   preload_env = 'LD_PRELOAD=libadwaita-1.so:@0@'.format(libchatty.get_shared_lib().full_path())
+   schema_backend_env = 'GSETTINGS_BACKEND=memory'
+   schema_dir_env = 'GSETTINGS_SCHEMA_DIR=@0@'.format(join_paths(meson.project_build_root(), 'data'))
+
+   foreach file: ui_files
+     test('Validate @0@'.format(file.full_path()), gtk_builder_tool,
+          env: [preload_env, schema_backend_env, schema_dir_env],
+          args: ['validate', file],
+          depends: libchatty.get_shared_lib())
+   endforeach
+ endif
+
+executable('chatty', chatty_sources,
   install: true,
   install_rpath: purple_plugdir,
+  dependencies: libchatty_dep,
 )
+
+
+if get_option('gtk_doc')
+
+chatty_gir_sources = [ libsrc,
+                       chatty_sources,
+                       resources,
+                    ]
+
+chatty_gir_extra_args = [
+  '--quiet',
+]
+
+chatty_gir = gnome.generate_gir(libchatty,
+              sources : chatty_gir_sources,
+            nsversion : '0',
+            namespace : 'Chatty',
+      export_packages : 'libchatty-0',
+        symbol_prefix : 'chatty',
+    identifier_prefix : 'Chatty',
+            link_with : libchatty.get_static_lib(),
+             includes : ['Gio-2.0', 'Gtk-4.0', 'Adw-1',
+                         'GnomeDesktop-4.0', 'Soup-3.0'],
+           extra_args : chatty_gir_extra_args,
+         dependencies : libchatty_dep,
+       fatal_warnings : false,
+ )
+
+endif

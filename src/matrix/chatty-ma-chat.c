@@ -24,13 +24,10 @@
 #include "chatty-log.h"
 
 /**
- * SECTION: chatty-chat
- * @title: ChattyChat
- * @short_description: An abstraction over #PurpleConversation
- * @include: "chatty-chat.h"
- *
- * libpurple doesn’t have a nice OOP interface for managing anything.
- * This class hides all the complexities surrounding it.
+ * SECTION: chatty-ma-chat
+ * @title: ChattyMaChat
+ * @short_description: An abstraction over libcmatrix
+ * @include: "chatty-ma-chat.h"
  */
 
 struct _ChattyMaChat
@@ -277,6 +274,7 @@ chatty_ma_chat_set_encryption_async (ChattyChat          *chat,
   g_assert (self->cm_client);
 
   task = g_task_new (self, NULL, callback, user_data);
+  g_task_set_source_tag (task, chatty_ma_chat_set_encryption_async);
 
   if (!enable) {
     g_task_return_new_error (task,
@@ -290,6 +288,18 @@ chatty_ma_chat_set_encryption_async (ChattyChat          *chat,
   cm_room_enable_encryption_async (self->cm_room, NULL,
                                    ma_chat_set_encryption_cb,
                                    g_steal_pointer (&task));
+}
+
+static gboolean
+chatty_ma_chat_set_encryption_finish (ChattyChat   *self,
+                                      GAsyncResult *result,
+                                      GError       **error)
+{
+  g_assert (CHATTY_IS_CHAT (self));
+  g_assert (G_IS_TASK (result));
+  g_assert (g_task_get_source_tag (G_TASK (result)) == chatty_ma_chat_set_encryption_async);
+
+  return g_task_propagate_boolean (G_TASK (result), error);
 }
 
 static void
@@ -322,9 +332,23 @@ chatty_ma_chat_accept_invite_async (ChattyChat          *chat,
   g_assert (CHATTY_IS_MA_CHAT (chat));
 
   task = g_task_new (self, NULL, callback, user_data);
+  g_task_set_source_tag (task, chatty_ma_chat_accept_invite_async);
+
   cm_room_accept_invite_async (self->cm_room, NULL,
                                ma_chat_accept_invite_cb,
                                task);
+}
+
+static gboolean
+chatty_ma_chat_accept_invite_finish (ChattyChat   *self,
+                                     GAsyncResult *result,
+                                     GError       **error)
+{
+  g_assert (CHATTY_IS_CHAT (self));
+  g_assert (G_IS_TASK (result));
+  g_assert (g_task_get_source_tag (G_TASK (result)) == chatty_ma_chat_accept_invite_async);
+
+  return g_task_propagate_boolean (G_TASK (result), error);
 }
 
 static void
@@ -357,9 +381,23 @@ chatty_ma_chat_reject_invite_async (ChattyChat          *chat,
   g_assert (CHATTY_IS_MA_CHAT (chat));
 
   task = g_task_new (self, NULL, callback, user_data);
+  g_task_set_source_tag (task, chatty_ma_chat_reject_invite_async);
+
   cm_room_reject_invite_async (self->cm_room, NULL,
                                ma_chat_reject_invite_cb,
                                task);
+}
+
+static gboolean
+chatty_ma_chat_reject_invite_finish (ChattyChat   *self,
+                                     GAsyncResult *result,
+                                     GError       **error)
+{
+  g_assert (CHATTY_IS_CHAT (self));
+  g_assert (G_IS_TASK (result));
+  g_assert (g_task_get_source_tag (G_TASK (result)) == chatty_ma_chat_reject_invite_async);
+
+  return g_task_propagate_boolean (G_TASK (result), error);
 }
 
 static const char *
@@ -492,6 +530,7 @@ chatty_ma_chat_send_message_async (ChattyChat          *chat,
   chatty_message_set_status (message, CHATTY_STATUS_SENDING, 0);
 
   task = g_task_new (self, NULL, callback, user_data);
+  g_task_set_source_tag (task, chatty_ma_chat_send_message_async);
   g_task_set_task_data (task, g_object_ref (message), g_object_unref);
   g_list_store_append (self->message_list, message);
 
@@ -512,6 +551,18 @@ chatty_ma_chat_send_message_async (ChattyChat          *chat,
                                         ma_chat_send_message_cb, g_steal_pointer (&task));
   }
   g_object_set_data_full (G_OBJECT (message), "event-id", g_strdup (event_id), g_free);
+}
+
+static gboolean
+chatty_ma_chat_send_message_finish (ChattyChat    *self,
+                                    GAsyncResult  *result,
+                                    GError       **error)
+{
+  g_assert (CHATTY_IS_CHAT (self));
+  g_assert (G_IS_TASK (result));
+  g_assert (g_task_get_source_tag (G_TASK (result)) == chatty_ma_chat_send_message_async);
+
+  return g_task_propagate_boolean (G_TASK (result), error);
 }
 
 static void
@@ -545,6 +596,7 @@ chatty_ma_chat_get_files_async (ChattyChat          *chat,
   g_assert (CHATTY_IS_MESSAGE (message));
 
   task = g_task_new (self, NULL, callback, user_data);
+  g_task_set_source_tag (task, chatty_ma_chat_get_files_async);
   g_object_set_data_full (G_OBJECT (task), "message", g_object_ref (message), g_object_unref);
 
   files = chatty_message_get_files (message);
@@ -566,6 +618,18 @@ chatty_ma_chat_get_files_async (ChattyChat          *chat,
   chatty_file_get_stream_async (files->data, NULL,
                                 ma_chat_download_cb,
                                 g_steal_pointer (&task));
+}
+
+static gboolean
+chatty_ma_chat_get_files_finish (ChattyChat    *self,
+                                 GAsyncResult  *result,
+                                 GError       **error)
+{
+  g_assert (CHATTY_IS_CHAT (self));
+  g_assert (G_IS_TASK (result));
+  g_assert (g_task_get_source_tag (G_TASK (result)) == chatty_ma_chat_get_files_async);
+
+  return g_task_propagate_boolean (G_TASK (result), error);
 }
 
 static gboolean
@@ -654,6 +718,16 @@ chatty_ma_chat_get_protocols (ChattyItem *item)
   return CHATTY_PROTOCOL_MATRIX;
 }
 
+static GListModel *
+chatty_ma_chat_get_users (ChattyChat *chat)
+{
+  ChattyMaChat *self = (ChattyMaChat *)chat;
+
+  g_assert (CHATTY_IS_MA_CHAT (self));
+
+  return G_LIST_MODEL (self->buddy_list);
+}
+
 static void
 ma_chat_get_avatar_cb (GObject      *object,
                        GAsyncResult *result,
@@ -738,15 +812,21 @@ chatty_ma_chat_class_init (ChattyMaChatClass *klass)
   chat_class->is_loading_history = chatty_ma_chat_is_loading_history;
   chat_class->get_messages = chatty_ma_chat_get_messages;
   chat_class->get_account  = chatty_ma_chat_get_account;
+  chat_class->get_users = chatty_ma_chat_get_users;
   chat_class->get_encryption = chatty_ma_chat_get_encryption;
   chat_class->set_encryption_async = chatty_ma_chat_set_encryption_async;
+  chat_class->set_encryption_finish = chatty_ma_chat_set_encryption_finish;
   chat_class->accept_invite_async = chatty_ma_chat_accept_invite_async;
+  chat_class->accept_invite_finish = chatty_ma_chat_accept_invite_finish;
   chat_class->reject_invite_async = chatty_ma_chat_reject_invite_async;
+  chat_class->reject_invite_finish = chatty_ma_chat_reject_invite_finish;
   chat_class->get_last_message = chatty_ma_chat_get_last_message;
   chat_class->get_unread_count = chatty_ma_chat_get_unread_count;
   chat_class->set_unread_count = chatty_ma_chat_set_unread_count;
   chat_class->send_message_async = chatty_ma_chat_send_message_async;
+  chat_class->send_message_finish = chatty_ma_chat_send_message_finish;
   chat_class->get_files_async = chatty_ma_chat_get_files_async;
+  chat_class->get_files_finish = chatty_ma_chat_get_files_finish;
   chat_class->get_buddy_typing = chatty_ma_chat_get_buddy_typing;
   chat_class->set_typing = chatty_ma_chat_set_typing;
 }

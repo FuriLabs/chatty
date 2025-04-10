@@ -1,4 +1,8 @@
-((nil . ((indent-tabs-mode . nil)))
+((nil . ((indent-tabs-mode . nil)
+         (projectile-project-configure-cmd . "meson setup _build --wipe")
+         (projectile-project-compilation-cmd . "meson compile -C _build")
+         (projectile-project-test-cmd . "meson test -C _build")
+         (projectile-project-run-cmd . "_build/run -vvv")))
  (c-mode . ((c-file-style . "Linux")
             (c-basic-offset . 2)
             (c-file-offsets

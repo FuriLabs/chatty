@@ -32,16 +32,15 @@
 
 /**
  * chatty_media_scale_image_to_size_sync:
- * @name: A string
- * @protocol: A #ChattyProtocol flag
+ * @input_file: A file
+ * @desired_size: The desired file size in bytes
+ * @use_temp_file: Whether to use a directory for temporary files (see `g_get_tmp_dir()`)
  *
- * This function takes in a ChattyFileInfo, and scales the image in a new file
- * to be a size below the original_desired_size. It then creates a new
- * ChattyFileInfo to pass back. the original ChattyFileInfo is untouched.
- * original_desired_size is in bytes
+ * This function takes in a `ChattyFile`, and scales the image in a new file
+ * to be a size below the desired_size. It then creates a new
+ * ChattyFile to pass back. the original ChattyFile is untouched.
  *
- * Returns: A newly allowcated #ChattyFileInfo with all valid protocols
- * set.
+ * Returns: A newly allocated `ChattyFile`
  */
 
 ChattyFile *
@@ -109,7 +108,7 @@ chatty_media_scale_image_to_size_sync (ChattyFile *input_file,
      */
 
     if (desired_size < 25000 * aspect_ratio) {
-      g_warning ("Requested size is too small!\n");
+      g_warning ("Requested size is too small!");
       return NULL;
     }
 

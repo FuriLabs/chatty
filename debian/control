@@ -3,12 +3,10 @@ Section: net
 Priority: optional
 Maintainer: Mohammed Sadiq <sadiq@sadiqpk.org>
 Build-Depends:
- appstream,
- appstream-util,
- debhelper (>= 11),
+ debhelper-compat (= 13),
  desktop-file-utils,
- gnupg <!nocheck>,
  itstool,
+ gi-docgen <!nodoc>,
  libgtk-4-dev,
  libadwaita-1-dev (>= 1.5~),
  libebook-contacts1.2-dev,
@@ -25,13 +23,16 @@ Build-Depends:
  libspelling-1-dev,
  libsqlite3-dev (>= 3.26.0),
  libebook1.2-dev,
+ gobject-introspection <!nodoc>,
  gsettings-desktop-schemas-dev,
  meson,
 # to run the tests
- at-spi2-core,
- dbus-x11,
- xvfb,
- xauth,
+ appstream <!nocheck>,
+ at-spi2-core <!nocheck>,
+ dbus-x11 <!nocheck>,
+ gnupg <!nocheck>,
+ xvfb <!nocheck>,
+ xauth <!nocheck>,
 Standards-Version: 4.2.1
 Homepage: https://gitlab.gnome.org/World/Chatty
 Rules-Requires-Root: no
@@ -58,3 +59,19 @@ Description: Messaging application for mobile and desktop
  .
  It works on desktops but also adjusts to small screen sizes like smart phones
  and other mobile devices.
+
+Package: chatty-doc
+Architecture: all
+Multi-Arch: foreign
+Section: doc
+Build-Profiles: <!nodoc>
+Depends:
+ ${misc:Depends},
+Description: Messaging application for mobile and desktop - development documentation
+ Chatty is a simple to use to messaging app for 1:1 communication and small
+ groups supporting SMS, MMS, XMPP and Matrix.
+ .
+ It works on desktops but also adjusts to small screen sizes like smart phones
+ and other mobile devices.
+ .
+ This package contains the development documentation.

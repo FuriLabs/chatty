@@ -42,6 +42,7 @@ void            demo_tagged_entry_insert_tag_after (DemoTaggedEntry *entry,
 
 void            demo_tagged_entry_remove_tag (DemoTaggedEntry *entry,
                                               GtkWidget       *tag);
+GtkWidget      *demo_tagged_entry_get_text_entry (DemoTaggedEntry *entry);
 
 DemoTaggedEntryTag *
                 demo_tagged_entry_tag_new (const char *label);
