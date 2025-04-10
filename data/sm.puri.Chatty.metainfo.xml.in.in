@@ -57,6 +57,16 @@
         <content_attribute id="social-chat">intense</content_attribute>
     </content_rating>
     <releases>
+      <release version="0.8.7" date="2025-04-10">
+        <description>
+          <ul>
+            <li>Quality of life improvements for search</li>
+            <li>MMS: Notify user if MMS cannot be retrieved</li>
+            <li>Matrix: List users room</li>
+            <li>Update Translations</li>
+          </ul>
+        </description>
+      </release>
       <release version="0.8.6" date="2025-02-22">
         <description>
           <ul>

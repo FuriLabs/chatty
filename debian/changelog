@@ -1,8 +1,234 @@
-chatty (0.8.7~dev) UNRELEASED; urgency=medium
+chatty (0.8.7) unstable; urgency=medium
 
-  * UNRELEASED
+  [ Evangelos Ribeiro Tzaras ]
+  * ma-chat: Set and assert source tags on tasks.
+    This provides us with some safety against messing up in the future.
+  * window: Ensure activating search allows user input.
+    Activating the search action (through the acccelerator binding)
+    is not very useful when the view is collapsed to show the chat page:
+    The chat page will stay visible and the back button in the header
+    will get focused.
+    Ensure we switch to the sidebar when collapsed,
+    so that the user may perform the search.
+  * side-bar: Only toggle search off if focussed.
+    And grab focus first otherwise.
+    When the search is toggled on, but the focus is somewhere else,
+    e.g. in the chat page, a user would have to press ctrl+f twice
+    to get to the search.
+    The first accelerator activation will toggle the search off
+    (instead of focusing the entry)
+    and the second activation will toggle the search on
+    including focusing the entry, allowing direct user input.
+  * application: Add API to change shown chat
+  * list: Add API to return filtered model.
+    This model returned by the new API takes the needle being searched for
+    into account and the added function is therefore more deserving of the
+    name `chatty_chat_list_get_filter_model()`.
+    The model returned in the old API filters only for archived chats and
+    was imho confusingly named.
+    Therefore rename the old API from
+    `chatty_chat_list_get_filter_model()` to
+    `chatty_chat_list_get_model()`.
+  * side-bar: Open chat when activating single-result search
+  * ci: Update shared scripts to 0ed15ed
+  * main: Remove unused include
+  * d/control: Switch to debhelper 13
+    v13 is the currently recommended version,
+    see debhelper-compat-upgrade-checklist(7)
+    (and the use of v11 is discouraged)
+    This brings e.g.
+    - dh_installsystemduser [from v12]
+    - support for nocheck/nostrip DEB_BUILD_OPTIONS
+      (i.e. skipping dh_auto_test, dh_dwz, dh_strip targets) [from v13]
+    which we might want to consider using.
+  * packaging: Ship NEWS file
+  * purple: Prevent comments from being interpreted as gi docstring
+  * build: Remove duplicate source
+  * mmsd: Prevent comment from being interpreted as gi docstring
+  * treewide: Modernize class docstrings
+  * history: Fix docstring
+  * message: Fix docstring
+  * wrong-pw-dialog: Add missing include.
+    Fixes the following error during generation of docs in CI
+    (I have no idea why this doesn't seem to be a problem during
+     regular compilation - or why didn't occur locally):
+    /builds/World/Chatty/src/dialogs/chatty-wrong-pw-dialog.h:22: syntax error, unexpected identifier in '                                                   ChattyMaAccount *account);' at 'ChattyMaAccount'
+  * build: Bump required meson version to 0.59.0.
+    This let's us get rid of the branch.
+  * build: Move all sources to libsrc
+    - Move all sources into libsrc
+    - Sort lines
+    The docs will link against libsrc and will need all symbols.
+  * tests: Depend on libchatty
+  * build: Add gi-docgen generated documentation.
+    Warnings are not (yet) treated as errors.
+    As we are not a library this is ok for now.
+  * d/control: Annotate build dependencies with build profile
+  * d/rules: Only override dh_shlibdeps on a purple build
+  * packaging: Add chatty-doc package
+  * ci: Prefer meson test over ninja
+  * ci: Update to latest image 2025-02-23.
+    Includes new build dependency:
+    - gi-docgen
+  * ci: Build documentation
+  * tests/message-row: Initialize with gtk_test_init()
+  * build: Remove library constructors.
+    We should only really need it for the main executable anyway,
+    so put it into main.c
+    If tests need gtk they should gtk_test_init() instead of g_test_init().
+  * clock: Use regular colons.
+    The colon ":" (U+003A) is used to ensure times are not reversed
+    in RTL locales. The recommendation in the HIG to use the ratio
+    character (U+2236) has been reverted some time ago, see
+    https://gitlab.gnome.org/Teams/Websites/developer.gnome.org-hig/-/issues/127
+    Closes: https://gitlab.gnome.org/World/Chatty/-/issues/963
+  * build: User lowercase app id for metainfo and desktop files.
+    Otherwise appstreamcli validate-tree on the installed files is
+    unhappy:
+     $ appstreamcli validate-tree --strict --no-net --explain debian/chatty
+    sm.puri.Chatty.metainfo.xml
+      W: sm.puri.chatty:~: metainfo-filename-cid-mismatch
+         The metainfo filename does not match the component ID.
+  * chat-list: Refilter list when previously empty chat becomes non-empty.
+    Closes: https://gitlab.gnome.org/World/Chatty/-/issues/971
+  * ma-chat-info: Hide topic row when topic is unset.
+    Closes: https://gitlab.gnome.org/World/Chatty/-/issues/968
+  * build: Validate ui files.
+    The comment mentions GTK 4.10
+    as we're currently requiring at least 4.12
+    let's enable UI file validation again.
+    Note, that we also bump the required meson version to 1.4.0
+    so that we can use file.full_path()
+  * build: Only validate purple ui files if building with purple
+  * window: Fix ui validation tests
+  * coverage: Exclude subprojects
+  * .dir-locals: Set up projectile
+  * tree: tests: Don't set GSETTINGS_BACKEND twice.
+    We already set the memory backend in tests/meson.build.
+    No need to have it in the code.
+  * build: Generate types for enums
+  * media: Update docstring to match used arguments
+  * ma-chat: Set source tag on tasks.
+    This helps debugging tasks.
+  * file: Fix memory leaks
+  * attachment: Return early on task cancellation.
+    The cancellation check should occur as early as possible
+    to avoid accessing invalid memory.
+    In particular don't try accessing `self`
+    as it may be getting finalized.
+    Note: This is not a problem currently
+    as all async operations are holding a reference.
+  * attachment: Get rid of AttachmentData struct.
+    If we move the GtkImage into the ChattyAttachment itself,
+    we can get rid of the AttachmentData struct.
+    While we're at it, don't take a ref for the callback user data.
+    We only cancel the cancellable in finalize() and taking a ref
+    prevents the cancellation from ever getting triggered.
+  * attachment: Use g_return_if_fail typechecks instead of asserting.
+    We don't want to crash chatty in that case.
+  * ma-chat: Fix docstring
+  * ma-chat: Implement get_users()
+    This will be needed to list all room members.
+  * matrix: Add ChattyMaUserRow.
+    These rows can be used to display the members of a room.
+  * ma-chat-info: Show room members.
+    Fixes: https://gitlab.gnome.org/World/Chatty/-/issues/945
+  * ma-account-details: Add tooltip text to copy buttons
+  * ma-user-row: Allow copying user id
+  * ma-user-row: Don't assume a buddy will always have been set.
+    This is not the case when validating the UI files:
+    GLib-GObject-CRITICAL: invalid (NULL) pointer instance
+    GLib-GObject-CRITICAL: g_signal_connect_object: assertion 'G_TYPE_CHECK_INSTANCE (instance)' failed
+    **
+    ERROR:../src/matrix/chatty-ma-user-row.c:42:chatty_ma_user_row_update: assertion failed: (CHATTY_IS_MA_BUDDY (self->buddy))
+    Bail out! ERROR:../src/matrix/chatty-ma-user-row.c:42:chatty_ma_user_row_update: assertion failed: (CHATTY_IS_MA_BUDDY (self->buddy))
 
- -- Evangelos Ribeiro Tzaras <devrtz-debian@fortysixandtwo.eu>  Sun, 23 Feb 2025 18:03:39 +0100
+  [ Scrambled 777 ]
+  * Update Hindi translation
+
+  [ Chris Talbot ]
+  * mm-account: make char a const.
+    This fixes a crash if an interface disappears
+  * mmsd: Notify user if an MMS cannot be retrieved.
+    For some reason, some message services send an MMS with a wacky domain
+    and downloading it results in a TLS error. This adds the ability for
+    Chatty to alert the user that they were sent a bad MMS.
+  * mmsd: changed expired MMS message to system message
+
+  [ Tomi Lähteenmäki ]
+  * data: Fix wrong (duplicate) screenshot link.
+    The screenshot link points to wrong screenshot. It also causes `appstream-util validate-relax --nonet` to
+    fail due duplicate <screenshot> tag.
+
+  [ Antonio Marin ]
+  * Update Romanian translation
+  * Update Romanian translation
+  * Update Romanian translation
+
+  [ Danial Behzadi ]
+  * Update Persian translation
+  * Update Persian translation
+  * Update Persian translation
+
+  [ Martin ]
+  * Update Slovenian translation
+  * Update Slovenian translation
+  * Update Slovenian translation
+
+  [ Alexander Shopov ]
+  * Update Bulgarian translation
+  * Update Bulgarian translation
+
+  [ Yosef Or Boczko ]
+  * Update Hebrew translation
+
+  [ Ekaterine Papava ]
+  * Update Georgian translation
+  * Update Georgian translation
+
+  [ Rafael Fontenelle ]
+  * Update Brazilian Portuguese translation
+
+  [ Yuri Chornoivan ]
+  * Update Ukrainian translation
+  * Update Ukrainian translation
+  * Update Ukrainian translation
+
+  [ Robert Schütz ]
+  * remove unused include
+
+  [ Daniel Rusek ]
+  * Update Czech translation
+  * Update Czech translation
+  * Update Czech translation
+
+  [ Artur S0 ]
+  * Update Russian translation
+
+  [ Anders Jonsson ]
+  * Update Swedish translation
+
+  [ Emin Tufan Çetin ]
+  * Update Turkish translation
+  * Update Turkish translation
+  * Update Turkish translation
+
+  [ Bruce Cowan ]
+  * Update British English translation
+
+  [ Vasil Pupkin ]
+  * Add Belarusian translation
+
+  [ Yaron Shahrabani ]
+  * Update Hebrew translation
+
+  [ Baxrom Raxmatov ]
+  * Add Uzbek (Latin) translation
+
+  [ Juliano de Souza Camargo ]
+  * Update Brazilian Portuguese translation
+
+ -- Evangelos Ribeiro Tzaras <devrtz-debian@fortysixandtwo.eu>  Thu, 10 Apr 2025 20:16:47 +0200
 
 chatty (0.8.6) unstable; urgency=medium
 
