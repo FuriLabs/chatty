@@ -1148,7 +1148,6 @@ main (int   argc,
       char *argv[])
 {
   g_test_init (&argc, &argv, NULL);
-  g_setenv ("GSETTINGS_BACKEND", "memory", TRUE);
 
   g_test_add_func ("/history/new", test_history_new);
   g_test_add_func ("/history/message", test_history_message);

@@ -53,7 +53,7 @@
  *
  */
 
-/**
+/*
  * mmsd Context Connection:
  *
  * The enumerations if mmsd has a bearer handler error.
@@ -969,7 +969,7 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
   } else if (g_strcmp0 (status, "expired") == 0) {
     g_autoptr(GDateTime) expire_time = NULL;
     g_autofree char *expire_date = NULL;
-    direction = CHATTY_DIRECTION_IN;
+    direction = CHATTY_DIRECTION_SYSTEM;
     mms_status = CHATTY_STATUS_RECEIVED;
 
     g_variant_dict_lookup (&dict, "Expire", "s", &expire_date);
@@ -982,6 +982,14 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
      See https://developer.gnome.org/glib/stable/glib-GDateTime.html#g-date-time-format
    */
     expire_time_string = g_date_time_format (expire_time, _("%Y-%m-%d %H∶%M"));
+  } else if (g_strcmp0 (status, "retrieve-failure") == 0) {
+    /*
+     * For some reason, some message services send an MMS with a wacky domain
+     * and downloading it results in a TLS error. Just alert the user that
+     * the sender sent a bad MMS.
+     */
+    direction = CHATTY_DIRECTION_SYSTEM;
+    mms_status = CHATTY_STATUS_RECEIVED;
   } else {
     /* This is a state Chatty cannot support yet */
     return NULL;
@@ -1015,7 +1023,8 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
     known_modem_number = "";
 
   /* Fill out Sender and All Numbers */
-  if (direction == CHATTY_DIRECTION_IN) {
+  if (direction == CHATTY_DIRECTION_IN ||
+      direction == CHATTY_DIRECTION_SYSTEM) {
     const char *country_code = chatty_settings_get_country_iso_code (chatty_settings_get_default ());
 
     payload->sender = chatty_utils_check_phonenumber (sender, country_code);
@@ -1035,7 +1044,8 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
     }
   }
 
-  if (direction == CHATTY_DIRECTION_IN) {
+  if (direction == CHATTY_DIRECTION_IN ||
+      direction == CHATTY_DIRECTION_SYSTEM) {
     who = g_string_new (payload->sender);
   } else {
     who = g_string_new (NULL);
@@ -1297,6 +1307,8 @@ chatty_mmsd_receive_message (ChattyMmsd *self,
     if (g_strcmp0 (status, "expired") == 0)
       mms_message = g_strdup_printf (_("You received an MMS, but it expired on: %s"),
                                      expire_time_string);
+    else if (g_strcmp0 (status, "retrieve-failure") == 0)
+      mms_message = g_strdup_printf (_("You received an MMS, but it cannot be retrieved"));
     else
       mms_message = g_strdup (_("You received an empty MMS."));
   }

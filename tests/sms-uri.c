@@ -115,8 +115,6 @@ main (int   argc,
 {
   g_test_init (&argc, &argv, NULL);
 
-  g_setenv ("GSETTINGS_BACKEND", "memory", TRUE);
-
   g_test_add_func ("/mm/sms-uri/new", test_mm_sms_uri_new);
   g_test_add_func ("/mm/sms-uri", test_mm_sms_uri);
 

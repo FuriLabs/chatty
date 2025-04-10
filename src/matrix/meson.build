@@ -6,4 +6,5 @@ libsrc += files([
   'chatty-ma-buddy.c',
   'chatty-ma-chat.c',
   'chatty-ma-key-chat.c',
+  'chatty-ma-user-row.c',
 ])

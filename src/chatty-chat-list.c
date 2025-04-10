@@ -49,7 +49,7 @@ struct _ChattyChatList
   GtkCustomFilter    *filter;
   GtkFilterListModel *filter_model;
   GtkFilterListModel *archive_filter_model;
-  ChattyProtocol     protocol_filter;
+  ChattyProtocol      protocol_filter;
 
   ChattyManager     *manager;
   GPtrArray         *selected_items;
@@ -87,6 +87,23 @@ chat_list_filter_archived_chat (ChattyItem     *item,
   return TRUE;
 }
 
+static void
+on_chat_messages_changed (GListModel     *messages,
+                          guint           position,
+                          guint           removed,
+                          guint           added,
+                          ChattyChatList *self)
+{
+  guint n_items;
+
+  n_items = g_list_model_get_n_items (messages);
+
+  if (n_items > 0) {
+    gtk_filter_changed (GTK_FILTER (self->filter), GTK_FILTER_CHANGE_LESS_STRICT);
+    g_signal_handlers_disconnect_by_data (messages, self);
+  }
+}
+
 static gboolean
 chat_list_filter_chat (ChattyItem     *item,
                        ChattyChatList *self)
@@ -108,8 +125,11 @@ chat_list_filter_chat (ChattyItem     *item,
     message_list = chatty_chat_get_messages (CHATTY_CHAT (item));
     n_items = g_list_model_get_n_items (message_list);
 
-    if (n_items == 0)
+    if (n_items == 0) {
+      g_signal_handlers_disconnect_by_data (message_list, self);
+      g_signal_connect (message_list, "items-changed", G_CALLBACK (on_chat_messages_changed), self);
       return FALSE;
+    }
   }
 
   return chatty_item_matches (item, self->chat_needle,
@@ -490,9 +510,17 @@ chatty_chat_list_refilter (ChattyChatList *self)
 }
 
 GListModel *
-chatty_chat_list_get_filter_model (ChattyChatList *self)
+chatty_chat_list_get_model (ChattyChatList *self)
 {
   g_return_val_if_fail (CHATTY_IS_CHAT_LIST (self), NULL);
 
   return G_LIST_MODEL (self->archive_filter_model);
+}
+
+GListModel *
+chatty_chat_list_get_filter_model (ChattyChatList *self)
+{
+  g_return_val_if_fail (CHATTY_IS_CHAT_LIST (self), NULL);
+
+  return G_LIST_MODEL (self->filter_model);
 }

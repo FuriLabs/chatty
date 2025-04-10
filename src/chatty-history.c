@@ -3363,7 +3363,7 @@ chatty_history_close_async (ChattyHistory       *self,
 }
 
 /**
- * chatty_history_open_finish:
+ * chatty_history_close_finish:
  * @self: a #ChattyHistory
  * @result: a #GAsyncResult provided to callback
  * @error: a location for a #GError or %NULL

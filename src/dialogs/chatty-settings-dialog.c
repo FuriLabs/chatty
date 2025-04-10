@@ -49,7 +49,13 @@
 #include "chatty-pgp.h"
 
 /**
- * @short_description: Chatty settings Dialog
+ * ChattySettingsDialog:
+ *
+ * The settings dialog.
+ *
+ * Contains general preferences,
+ * account management for XMPP/Matrix and
+ * provides access to protocol specific settings (e.g. for MMS).
  */
 
 /* Several code has been copied from chatty-dialogs.c with modifications

@@ -168,7 +168,7 @@ window_chat_list_selection_changed (ChattyWindow   *self,
   if (!chat_list->len) {
     GListModel *model;
 
-    model = chatty_chat_list_get_filter_model (CHATTY_CHAT_LIST (self->chat_list));
+    model = chatty_chat_list_get_model (CHATTY_CHAT_LIST (self->chat_list));
     if (g_list_model_get_n_items (model) == 0)
       chatty_window_set_item (self, NULL);
 
@@ -591,6 +591,10 @@ static void
 on_search_chat_activated (GtkWidget *widget, const char *action_name, GVariant *param)
 {
   ChattyWindow *self = CHATTY_WINDOW (widget);
+  AdwNavigationSplitView *split_view = ADW_NAVIGATION_SPLIT_VIEW (self->split_view);
+
+  if (adw_navigation_split_view_get_collapsed (split_view))
+    adw_navigation_split_view_set_show_content (split_view, FALSE);
 
   chatty_side_bar_toggle_search (CHATTY_SIDE_BAR (self->side_bar));
 }
@@ -801,6 +805,10 @@ chatty_window_init (ChattyWindow *self)
   folded = adw_navigation_split_view_get_collapsed (ADW_NAVIGATION_SPLIT_VIEW (self->split_view));
   chatty_side_bar_set_show_end_title_buttons (CHATTY_SIDE_BAR (self->side_bar), folded);
   chatty_main_view_set_item (CHATTY_MAIN_VIEW (self->main_view), NULL);
+
+  /* we don't have a GApplication when validating ui files with gtk4-builder-tool */
+  if (!g_application_get_default ())
+    return;
 
   gtk_application_set_accels_for_action (GTK_APPLICATION (g_application_get_default ()),
                                          "win.show-chat-details",

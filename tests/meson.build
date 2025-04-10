@@ -50,8 +50,8 @@ foreach item: test_items_shared_lib
     item,
     item + '.c',
     include_directories: tests_inc,
-    link_with: libchatty,
-    dependencies: chatty_deps,
+    link_with: libchatty.get_static_lib(),
+    dependencies: libchatty_dep,
   )
   test(item, t, env: env, timeout: 300)
 endforeach

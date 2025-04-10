@@ -8,7 +8,7 @@ include:
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
-  IMAGE: $CI_REGISTRY/world/chatty/debian:v0.0.2024-08-05
+  IMAGE: $CI_REGISTRY/world/chatty/debian:v0.0.2025-02-23
   ALPINE_IMAGE: alpine:edge
 
 stages:
@@ -115,7 +115,7 @@ test:debian-gcc:
     - eatmydata apt-get -y install libgtk-4-bin xvfb gcovr
     - export G_DEBUG=fatal-warnings
     - export LC_ALL=C.UTF-8
-    - xvfb-run -a -s "-screen 0 1024x768x24" ninja -C _build test
+    - xvfb-run -a -s "-screen 0 1024x768x24" meson test -C _build
     - ninja -C _build coverage
   coverage: '/^\s+lines\.+:\s+([\d.]+\%)\s+/'
   except:
@@ -190,6 +190,19 @@ check-po:
   except:
     variables:
       - $FP_ONLY == "1"
+
+build-docs:
+  stage: test
+  image: ${IMAGE}
+  dependencies:
+    - build-debian-gcc-trixie
+  script:
+    - meson setup -Dgtk_doc=true _build
+    - meson compile -C _build
+    - mv _build/docs/chatty-0 _docs
+  artifacts:
+    paths:
+      - _docs
 
 package:deb-debian-trixie:arm64:
   variables:

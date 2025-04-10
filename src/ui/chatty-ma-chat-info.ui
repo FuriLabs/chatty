@@ -56,6 +56,22 @@
       </object>
     </child>
 
+    <!-- Room members -->
+    <child>
+      <object class="AdwPreferencesGroup" id="members_group">
+        <property name="title" translatable="yes">Chat Members</property>
+        <child>
+          <object class="GtkListBox" id="members_list_box">
+            <property name="hexpand">1</property>
+            <property name="vexpand">0</property>
+            <property name="selection-mode">none</property>
+            <style>
+              <class name="content"/>
+            </style>
+          </object>
+        </child>
+      </object>
+    </child>
   </template>
 
   <object class="GtkTextBuffer" id="topic_buffer"/>

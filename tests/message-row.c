@@ -123,7 +123,7 @@ int
 main (int   argc,
       char *argv[])
 {
-  g_test_init (&argc, &argv, NULL);
+  gtk_test_init (&argc, &argv, NULL);
 
   g_test_add_func ("/message-text/markup", test_message_text_markup);
 

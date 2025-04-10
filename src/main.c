@@ -14,7 +14,6 @@
 #include <gtksourceview/gtksource.h>
 
 #include "chatty-application.h"
-#include "chatty-manager.h"
 #include "chatty-log.h"
 
 int
@@ -22,6 +21,9 @@ main (int   argc,
       char *argv[])
 {
   g_autoptr(ChattyApplication) application = NULL;
+
+  gtk_init ();
+  adw_init ();
 
   g_set_prgname (CHATTY_APP_ID);
   chatty_log_init ();

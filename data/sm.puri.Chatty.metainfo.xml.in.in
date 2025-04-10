@@ -14,7 +14,7 @@
     <url type="translate">https://l10n.gnome.org/module/chatty/</url>
     <translation type="gettext">purism-chatty</translation>
     <update_contact>librem5-dev@lists.community.puri.sm</update_contact>
-    <launchable type="desktop-id">@APP_ID@.desktop</launchable>
+    <launchable type="desktop-id">@LOWERCASE_APP_ID@.desktop</launchable>
     <developer id="chatty.puri.sm">
       <name translate="no">The Chatty Team</name>
     </developer>
@@ -41,7 +41,7 @@
         </screenshot>
         <screenshot type="default">
             <caption>The SMS/MMS preferences using the light theme as seen on a mobile phone running Phosh.</caption>
-            <image type="source" width="496" height="991">https://gitlab.gnome.org/World/Chatty/-/raw/main/data/screenshots/phosh-ppp-chatlist-light.png?inline=false</image>
+            <image type="source" width="496" height="991">https://gitlab.gnome.org/World/Chatty/-/raw/main/data/screenshots/phosh-ppp-sms-preferences-light.png?inline=false</image>
         </screenshot>
 
         <screenshot type="default">
@@ -57,6 +57,16 @@
         <content_attribute id="social-chat">intense</content_attribute>
     </content_rating>
     <releases>
+      <release version="0.8.7" date="2025-04-10">
+        <description>
+          <ul>
+            <li>Quality of life improvements for search</li>
+            <li>MMS: Notify user if MMS cannot be retrieved</li>
+            <li>Matrix: List users room</li>
+            <li>Update Translations</li>
+          </ul>
+        </description>
+      </release>
       <release version="0.8.6" date="2025-02-22">
         <description>
           <ul>

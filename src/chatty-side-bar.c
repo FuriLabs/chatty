@@ -14,6 +14,7 @@
 #include <glib/gi18n.h>
 
 #include "contrib/contrib.h"
+#include "chatty-application.h"
 #include "chatty-manager.h"
 #include "chatty-mm-account.h"
 #include "chatty-purple.h"
@@ -76,7 +77,7 @@ side_bar_update_search_mode (ChattySideBar *self)
 
   g_assert (CHATTY_IS_SIDE_BAR (self));
 
-  model = chatty_chat_list_get_filter_model (CHATTY_CHAT_LIST (self->chat_list));
+  model = chatty_chat_list_get_model (CHATTY_CHAT_LIST (self->chat_list));
   has_child = g_list_model_get_n_items (model) > 0;
 
   gtk_widget_set_visible (self->search_button, has_child);
@@ -207,7 +208,7 @@ chatty_side_bar_map (GtkWidget *widget)
 
   side_bar_active_protocols_changed_cb (self);
 
-  g_signal_connect_object (chatty_chat_list_get_filter_model (CHATTY_CHAT_LIST (self->chat_list)),
+  g_signal_connect_object (chatty_chat_list_get_model (CHATTY_CHAT_LIST (self->chat_list)),
                            "items-changed",
                            G_CALLBACK (side_bar_update_search_mode), self,
                            G_CONNECT_SWAPPED);
@@ -311,9 +312,36 @@ side_bar_add_selectable_row (ChattySideBar  *self,
 }
 
 static void
+on_search_entry_activated (GtkText *text,
+                           gpointer user_data)
+{
+  ChattySideBar *self = CHATTY_SIDE_BAR (user_data);
+  GListModel *model;
+  ChattyApplication *app;
+
+  model = chatty_chat_list_get_filter_model (CHATTY_CHAT_LIST (self->chat_list));
+  app = CHATTY_APPLICATION_DEFAULT ();
+
+  if (g_list_model_get_n_items (model) == 1) {
+    g_autoptr (ChattyChat) chat = g_list_model_get_item (model, 0);
+    chatty_application_set_active_chat (app, chat);
+    gtk_search_bar_set_search_mode (GTK_SEARCH_BAR (self->chats_search_bar), FALSE);
+  }
+}
+
+static void
 chatty_side_bar_init (ChattySideBar *self)
 {
+  GtkWidget *search_entry;
+
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  search_entry = demo_tagged_entry_get_text_entry (DEMO_TAGGED_ENTRY (self->chats_search_entry));
+  g_signal_connect_object (search_entry,
+                           "activate",
+                           G_CALLBACK (on_search_entry_activated),
+                           self,
+                           G_CONNECT_AFTER);
 
   self->protocol_filter = CHATTY_PROTOCOL_ANY;
   gtk_search_bar_connect_entry (GTK_SEARCH_BAR (self->chats_search_bar),
@@ -364,10 +392,18 @@ chatty_side_bar_set_show_archived (ChattySideBar *self,
 void
 chatty_side_bar_toggle_search (ChattySideBar *self)
 {
+  GtkWidget *entry;
   gboolean active;
+  gboolean has_focus;
 
   g_return_if_fail (CHATTY_IS_SIDE_BAR (self));
 
+  entry = demo_tagged_entry_get_text_entry (DEMO_TAGGED_ENTRY (self->chats_search_entry));
+  has_focus = gtk_widget_has_focus (entry);
   active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (self->search_button));
-  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (self->search_button), !active);
+
+  if (active && !has_focus)
+    gtk_widget_grab_focus (self->chats_search_entry);
+  else
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (self->search_button), !active);
 }

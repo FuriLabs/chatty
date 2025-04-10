@@ -25,9 +25,9 @@
 #include "chatty-chat.h"
 
 /**
- * SECTION: chatty-chat
- * @title: ChattyChat
- * @short_description: The base class for Chats
+ * ChattyChat:
+ *
+ * The base class for Chats.
  */
 
 #define LAZY_LOAD_MSGS_LIMIT 20

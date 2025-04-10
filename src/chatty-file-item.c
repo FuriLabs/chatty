@@ -47,8 +47,8 @@ G_DEFINE_TYPE (ChattyFileItem, chatty_file_item, ADW_TYPE_BIN)
 
 static void
 file_item_get_stream_cb (GObject      *object,
-                          GAsyncResult *result,
-                          gpointer      user_data)
+                         GAsyncResult *result,
+                         gpointer      user_data)
 {
   g_autoptr(ChattyFileItem) self = user_data;
   g_autoptr(GInputStream) stream = NULL;

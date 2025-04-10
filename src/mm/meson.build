@@ -3,7 +3,6 @@ src_inc += include_directories('.')
 libsrc += files([
   'chatty-mm-account.c',
   'chatty-mm-buddy.c',
-  'chatty-mm-buddy.c',
   'chatty-mm-chat.c',
   'chatty-mm-notify.c',
   'chatty-mmsd.c',
