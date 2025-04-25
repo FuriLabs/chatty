@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-    <id>@LOWERCASE_APP_ID@</id>
+    <id>@APP_ID@</id>
     <metadata_license>CC0-1.0</metadata_license>
     <project_license>GPL-3.0-or-later</project_license>
     <name>Chats</name>
@@ -14,7 +14,7 @@
     <url type="translate">https://l10n.gnome.org/module/chatty/</url>
     <translation type="gettext">purism-chatty</translation>
     <update_contact>librem5-dev@lists.community.puri.sm</update_contact>
-    <launchable type="desktop-id">@LOWERCASE_APP_ID@.desktop</launchable>
+    <launchable type="desktop-id">@APP_ID@.desktop</launchable>
     <developer id="chatty.puri.sm">
       <name translate="no">The Chatty Team</name>
     </developer>

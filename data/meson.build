@@ -1,6 +1,5 @@
 config_data = configuration_data()
 config_data.set('APP_ID', app_id)
-config_data.set('LOWERCASE_APP_ID', app_id.to_lower())
 
 desktop_file = i18n.merge_file(
   input: configure_file(
@@ -8,7 +7,7 @@ desktop_file = i18n.merge_file(
     output: '@0@.desktop.in'.format(app_id),
     configuration: config_data,
   ),
-  output: '@0@.desktop'.format(app_id.to_lower()),
+  output: '@0@.desktop'.format(app_id),
   type: 'desktop',
   po_dir: '../po',
   install: true,
@@ -21,7 +20,7 @@ desktop_file = i18n.merge_file(
     output: '@0@-daemon.desktop.in'.format(app_id),
     configuration: config_data,
   ),
-  output: '@0@-daemon.desktop'.format(app_id.to_lower()),
+  output: '@0@-daemon.desktop'.format(app_id),
   type: 'desktop',
   po_dir: '../po',
   install: true,
@@ -41,7 +40,7 @@ metainfo_file = i18n.merge_file(
     output: '@0@.metainfo.xml.in'.format(app_id),
     configuration: config_data,
   ),
-  output: '@0@.metainfo.xml'.format(app_id.to_lower()),
+  output: '@0@.metainfo.xml'.format(app_id),
   po_dir: '../po',
   install: true,
   install_dir: join_paths(get_option('datadir'), 'metainfo')
