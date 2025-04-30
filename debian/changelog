@@ -1,3 +1,10 @@
+chatty (0.8.7-2) unstable; urgency=medium
+
+  * d/patches: Revert app ID patch (Closes: #1103417)
+  * debian: Add maintscript to remove duplicate xdg autostart entry
+
+ -- Evangelos Ribeiro Tzaras <devrtz-debian@fortysixandtwo.eu>  Wed, 30 Apr 2025 13:31:01 +0200
+
 chatty (0.8.7-1) unstable; urgency=medium
 
   * New upstream release
