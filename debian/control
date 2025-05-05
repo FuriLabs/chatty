@@ -2,6 +2,7 @@ Source: chatty
 Section: net
 Priority: optional
 Maintainer: DebianOnMobile Maintainers <debian-on-mobile-maintainers@alioth-lists.debian.net>
+XS-FuriOS-Force-Staging: true
 Uploaders:
  Evangelos Ribeiro Tzaras <devrtz-debian@fortysixandtwo.eu>,
  Christopher Talbot <chris@talbothome.com>,
