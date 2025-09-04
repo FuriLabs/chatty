@@ -1,6 +1,6 @@
-Test-Command: xvfb-run /usr/bin/chatty --help
+Test-Command: xwfb-run -- /usr/bin/chatty --help
 Restrictions: superficial
 Depends:
  chatty,
  xauth,
- xvfb,
+ xwayland-run
