@@ -6,10 +6,10 @@ Uploaders:
  Evangelos Ribeiro Tzaras <devrtz-debian@fortysixandtwo.eu>,
  Christopher Talbot <chris@talbothome.com>,
 Build-Depends:
+ debhelper-compat (= 13),
  appstream,
  appstream-util,
  dbus-x11,
- debhelper-compat (= 13),
  desktop-file-utils,
  gnupg (>= 2) | gnupg2,
  gsettings-desktop-schemas-dev,
@@ -22,8 +22,8 @@ Build-Depends:
  libgcrypt20-dev <!pkg.chatty.nocmatrix>,
  libglib2.0-dev (>= 2.78),
  libgnome-desktop-4-dev (>= 43),
- libgstreamer1.0-dev,
  libgspell-1-dev,
+ libgstreamer1.0-dev,
  libgtk-4-dev (>= 4.10),
  libgtksourceview-5-dev (>= 5.4.0),
  libjson-glib-dev <!pkg.chatty.nocmatrix>,
@@ -50,11 +50,11 @@ Depends:
  ${misc:Depends},
  ${shlibs:Depends},
 Recommends:
+ libgdk-pixbuf2.0-bin,
  mmsd-tng,
  purple-lurch,
  purple-xmpp-carbons,
  purple-xmpp-http-upload,
- libgdk-pixbuf2.0-bin,
 Suggests:
  gnome-calls,
 Description: Messaging application for mobile and desktop
