@@ -1,3 +1,16 @@
+chatty (0.8.7-3) unstable; urgency=medium
+
+  [ Jeremy Bicha ]
+  * autopkgtest: switch from xfvb-run to xwfb-run
+    happens to avoid stderr output with gtk4 4.20
+
+  [ Guido Günther ]
+  * Remove Rules-Requires-Root
+  * Bump standards version
+  * d/control: Wrap and sort
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 05 Sep 2025 08:37:38 +0200
+
 chatty (0.8.7-2) unstable; urgency=medium
 
   * d/patches: Revert app ID patch (Closes: #1103417)
